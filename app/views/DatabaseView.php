@@ -67,12 +67,12 @@ class DatabaseView extends EntityView
     /**
      * Show an item
      *
-     * @param int $item ID of the item to show
+     * @param int $item item array
      * @return string
      */
     public function showUnique($item)
     {
-        $this->Entity->id = $item['id'];
+        $this->Entity->id = $item['itemid'];
         $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
@@ -90,7 +90,7 @@ class DatabaseView extends EntityView
         // TITLE
         $html .= $item['title'] . "</p></a>";
         // ITEM TYPE
-        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
+        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['category'] . " </span>";
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS

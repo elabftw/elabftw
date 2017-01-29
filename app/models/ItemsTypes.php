@@ -96,7 +96,11 @@ class ItemsTypes extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
+        $sql = "SELECT items_types.id AS category_id,
+            items_types.name AS category,
+            items_types.color,
+            items_types.bookable
+            from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->execute();

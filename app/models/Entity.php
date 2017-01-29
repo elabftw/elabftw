@@ -113,9 +113,6 @@ class Entity
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
         }
 
-        $select = "SELECT DISTINCT " . $this->type . ".*,
-            status.color, status.name AS category, status.id AS category_id, uploads.up_item_id, uploads.has_attachment";
-
         $uploadsJoin = "LEFT JOIN (
             SELECT uploads.item_id AS up_item_id,
                 (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads GROUP BY uploads.item_id, uploads.type)
@@ -125,10 +122,12 @@ class Entity
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
+                $select = "SELECT DISTINCT " . $this->type . ".*,
+                    status.color, status.name AS category, status.id AS category_id, uploads.up_item_id, uploads.has_attachment";
+
                 $expCommentsSelect = ", experiments_comments.datetime";
                 $from = "FROM experiments";
 
-                $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
                 $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
                 $commentsJoin = "LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)";
                 $where = "WHERE experiments.team = :team";
@@ -138,6 +137,7 @@ class Entity
                     $expCommentsSelect . ' ' .
                     $from . ' ';
             } else {
+                $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
                 $sql = $select . ' ' .
                     $tagsSelect . ' ' .
                     $from . ' ' .
@@ -150,31 +150,26 @@ class Entity
                 $where;
 
         } elseif ($this instanceof Database) {
+            $select = "SELECT DISTINCT items.id AS itemid,
+                items.*, items_types.name AS category,
+                items_types.color,
+                items_types.id AS category_id,
+                uploads.up_item_id, uploads.has_attachment,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
+
+                $from = "FROM items
+                    LEFT JOIN items_types ON (items.type = items_types.id)
+                    LEFT JOIN users ON (users.userid = items.userid)
+                    LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)";
+                $where = "WHERE items.team = :team";
 
             if (empty($this->idFilter)) {
-                $sql = "SELECT DISTINCT items.id
-                    AS itemid, items.*, items_types.name, items_types.color, items_types.id
-                    AS itemstype, uploads.up_item_id, uploads.has_attachment,
-                    CONCAT(users.firstname, ' ', users.lastname) AS fullname
-                    FROM items
-                    LEFT JOIN items_types ON (items.type = items_types.id)
-                    LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags ON (items.id = items_tags.item_id) " . $uploadsJoin . "
-                    WHERE items.team = :team";
+                $sql = $select . ' ' . $from . ' ' . $tagsJoin;
             } else {
-                $sql = "SELECT DISTINCT items.id
-                    AS itemid, items.*, items_types.name, items_types.color, items_types.id
-                    AS itemstype, uploads.up_item_id, uploads.has_attachment,
-                    CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                    GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id
-
-                    FROM items
-                    LEFT JOIN items_types ON (items.type = items_types.id)
-                    JOIN items_tags it on (items.id = it.item_id)
-                    LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id) " . $uploadsJoin . "
-                    WHERE items.team = :team";
+                $sql = $select . ' ' . $tagsSelect . ' ' . $from . ' ' . $tagsJoin;
             }
+
+            $sql .= ' ' . $uploadsJoin . ' ' . $where;
 
         } else {
             throw new Exception('Nope.');
@@ -198,7 +193,7 @@ class Entity
         $itemsArr = $req->fetchAll();
 
         // reduce the dimension of the array if we have only one item (idFilter set)
-        if (count($itemsArr) === 1) {
+        if (count($itemsArr) === 1 && !empty($this->idFilter)) {
             $item = $itemsArr[0];
             if ((strlen($item['tags'] > 1)) || true) {
                 $tagsValueArr = explode('!----!', $item['tags']);

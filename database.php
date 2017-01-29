@@ -32,9 +32,9 @@ try {
         $EntityView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
-        if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['filter'];
-            $EntityView->searchType = 'filter';
+        if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
+            $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['cat'];
+            $EntityView->searchType = 'category';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {

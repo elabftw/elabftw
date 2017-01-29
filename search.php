@@ -99,12 +99,12 @@ if (isset($_GET['andor']) && ($_GET['andor'] === 'or')) {
 <?php // Database items types
 $itemsTypesArr = $ItemsTypes->readAll();
 foreach ($itemsTypesArr as $items_types) {
-    echo "<option value='" . $items_types['id'] . "'";
+    echo "<option value='" . $items_types['category_id'] . "'";
     // item get selected if it is in the search url
-    if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
+    if (isset($_GET['type']) && $items_types['category_id'] == $_GET['type']) {
         echo " selected='selected'";
     }
-    echo ">- " . $items_types['name'] . "</option>";
+    echo ">- " . $items_types['category'] . "</option>";
 }
 ?>
                 </select>

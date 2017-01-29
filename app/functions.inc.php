@@ -38,7 +38,7 @@ function checkSelectSort($val)
 
 function checkSelectFilter($val)
 {
-    if (isset($_GET['filter']) && $_GET['filter'] === $val) {
+    if (isset($_GET['cat']) && $_GET['cat'] === $val) {
         return " selected";
     }
 }

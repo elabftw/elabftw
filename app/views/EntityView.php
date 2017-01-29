@@ -164,6 +164,12 @@ class EntityView
             </div>";
 
         foreach ($itemsArr as $item) {
+            /*
+            echo "<br><hr>";
+            var_dump($item['itemid']);
+            echo "<br><hr>";
+            var_dump($itemsArr);
+             */
             $permissions = $this->Entity->getPermissions($item);
             if ($permissions['read']) {
                 $html .= $this->showUnique($item);
@@ -244,8 +250,8 @@ class EntityView
             $itemsTypes = new ItemsTypes($this->Entity->Users->userData['team']);
             $categoryArr = $itemsTypes->readAll();
             foreach ($categoryArr as $category) {
-                $templates .= "<li class='dropdown-item'><a style='color:#" . $category['color'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
-                    . $category['name'] . "</a></li>";
+                $templates .= "<li class='dropdown-item'><a style='color:#" . $category['color'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['category_id'] . "'>"
+                    . $category['category'] . "</a></li>";
             }
 
             // FILTER BY
@@ -279,16 +285,10 @@ class EntityView
         $html .= "<input type='hidden' name='q' value='" . $this->query . "' />";
 
         // CATEGORY
-        $html .= "<select name='filter' style='-moz-appearance:none' class='form-control select-filter-status'>";
+        $html .= "<select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . $filterTitle . "</option>";
-        if ($type === 'database') {
-            foreach ($categoryArr as $category) {
-                $html .= "<option value='" . $category['id'] . "'" . checkSelectFilter($category['id']) . ">" . $category['name'] . "</option>";
-            }
-        } else {
-            foreach ($categoryArr as $category) {
-                $html .= "<option value='" . $category['category_id'] . "'" . checkSelectFilter($category['category_id']) . ">" . $category['category'] . "</option>";
-            }
+        foreach ($categoryArr as $category) {
+            $html .= "<option value='" . $category['category_id'] . "'" . checkSelectFilter($category['category_id']) . ">" . $category['category'] . "</option>";
         }
 
         $html .= "</select>";

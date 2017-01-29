@@ -107,8 +107,8 @@ function getDbList($format = 'default')
         $link_name = str_replace("%", "", $link_name);
 
         // now build the list in both formats
-        $link_list .= "'" . $item['itemid'] . " - " . $item['name'] . " - " . $link_name . "',";
-        $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $item['itemid'] . "'>" . $link_name . "</a>\"},";
+        $link_list .= "'" . $item['id'] . " - " . $item['category'] . " - " . $link_name . "',";
+        $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $item['id'] . "'>" . $link_name . "</a>\"},";
     }
 
     if ($format === 'default') {

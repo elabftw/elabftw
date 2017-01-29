@@ -86,7 +86,9 @@ $twig = new \Twig_Environment($loader, array(
  */
 $filterOptions = array('is_safe' => array('html'));
 $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+$dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
 $twig->addFilter($msgFilter);
+$twig->addFilter($dateFilter);
 $twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // run the update script if we have the wrong schema version

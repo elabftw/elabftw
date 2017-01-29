@@ -61,11 +61,11 @@ class Tags extends Entity
      *
      * @return array
      */
-    public function read()
+    public function readFromId($id)
     {
         $sql = "SELECT DISTINCT * FROM " . $this->Entity->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':item_id', $id);
         $req->execute();
 
         return $req->fetchAll();

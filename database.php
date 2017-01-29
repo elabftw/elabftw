@@ -73,9 +73,11 @@ try {
             $EntityView->Entity->setLimit(50);
         }
         echo $EntityView->buildShow();
+        $totalTime = get_total_time();
         echo $twig->render('show.html', array(
-            'session' => $_SESSION,
-            'EntityView' => $EntityView
+            'SESSION' => $_SESSION,
+            'EntityView' => $EntityView,
+            'totalTime' => $totalTime
         ));
 
     // VIEW

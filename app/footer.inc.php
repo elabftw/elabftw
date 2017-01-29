@@ -27,7 +27,7 @@ $sqlNb = $pdo->getNumberOfQueries();
 $generationTime = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5);
 
 echo $twig->render('footer.html', array(
-    'session' => $_SESSION,
+    'SESSION' => $_SESSION,
     'Users' => $Users,
     'sqlNb' => $sqlNb,
     'generationTime' => $generationTime

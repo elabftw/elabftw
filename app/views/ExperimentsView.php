@@ -87,53 +87,6 @@ class ExperimentsView extends EntityView
     }
 
     /**
-     * Show an experiment
-     *
-     * @param array $item a unique experiment data
-     * @return string
-     */
-    public function showUnique($item)
-    {
-        $this->Entity->id = $item['id'];
-        // dim the experiment a bit if it's not yours
-        $opacity = '1';
-        if ($this->Entity->Users->userid != $item['userid']) {
-            $opacity = '0.7';
-        }
-        $html = "<section class='item " . $this->display . "' style='opacity:" . $opacity . "; border-left: 6px solid #" . $item['color'] . "'>";
-        $html .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
-
-        // show attached if there is a file attached
-        if (isset($item['has_attachment'])) {
-            $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
-        }
-        // we show the abstract of the experiment on mouse hover with the title attribute
-        $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
-
-        $html .= "<a title='" . $bodyAbstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
-        $html .= "<p class='title'>";
-        if ($item['timestamped']) {
-            $html .= "<img class='align_right' src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />";
-        }
-        // LOCK
-        if ($item['locked']) {
-            $html .= "<img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />";
-        }
-        // TITLE
-        $html .= $item['title'] . "</p></a>";
-        // STATUS
-        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['category'] . " </span>";
-        // DATE
-        $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
-        // TAGS
-        $html .= $this->showTags('show');
-
-        $html .= "</section>";
-
-        return $html;
-    }
-
-    /**
      * Generate HTML for edit experiment
      *
      * @return string $html

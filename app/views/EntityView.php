@@ -24,6 +24,9 @@ class EntityView
     /** show entities from others in the team? */
     public $showTeam = false;
 
+    /** for show mode */
+    public $itemsArr;
+
     /** can be tag, query or filter */
     public $searchType = '';
 
@@ -123,12 +126,10 @@ class EntityView
      */
     public function buildShow()
     {
-        $html = '';
-
         // RELATED SEARCH (links) for experiments
         if ($this->related && $this->Entity instanceof Experiments) {
 
-            $itemsArr = $this->Entity->readRelated($this->related);
+            $this->itemsArr = $this->Entity->readRelated($this->related);
 
         } else {
 
@@ -136,46 +137,8 @@ class EntityView
                 // filter by user
                 $this->Entity->setUseridFilter();
             }
-            $itemsArr = $this->Entity->read();
-
+            $this->itemsArr = $this->Entity->read();
         }
-
-        // show number of results found
-        $count = count($itemsArr);
-        if ($count === 0 && $this->searchType != '') {
-            return Tools::displayMessage(_("Sorry. I couldn't find anything :("), 'ko', false);
-        } elseif ($count === 0 && $this->searchType === '') {
-            return Tools::displayMessage(
-                _("Welcome to eLabFTW. Use the 'Create new' button to get started!"),
-                'ok',
-                false
-            );
-        } else {
-            $html .= $this->buildExportMenu($itemsArr);
-
-            $total_time = get_total_time();
-            $html .= "<p class='smallgray'>" . $count . " " .
-                ngettext("result found", "results found", $count) . " (" .
-                $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-        }
-        $load_more_button = "<div class='center'>
-            <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
-            <button class='button button-neutral' id='loadAllButton'>". _('Show all') . "</button>
-            </div>";
-
-        foreach ($itemsArr as $item) {
-            $permissions = $this->Entity->getPermissions($item);
-            if ($permissions['read']) {
-                $html .= $this->showUnique($item);
-            }
-        }
-
-        // show load more button if there are more results than the default display number
-        if ($count > $this->limit) {
-            $html .= $load_more_button;
-        }
-
-        return $html;
     }
 
     /**
@@ -323,14 +286,14 @@ class EntityView
      * @param string $mode show/view/edit
      * @return string Will show the HTML for tags
      */
-    protected function showTags($mode)
+    protected function showTags($mode, $id = null)
     {
         $html = '';
         $tagList = array();
 
         if ($mode === 'show') {
             $Tags = new Tags($this->Entity);
-            $tagList = $Tags->read();
+            $tagList = $Tags->readFromId($id);
             if (count($tagList) === 0) {
                 return $html;
             }

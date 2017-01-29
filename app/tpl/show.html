@@ -1,8 +1,80 @@
+{% set count = EntityView.itemsArr|length %}
+
+{% if count == 0 and EntityView.searchType != '' %}
+    {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+{% elseif count == 0 and EntityView.searchType == '' %}
+    {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
+{% else %}
+    {{ EntityView.buildExportMenu(EntityView.itemsArr)|raw }}
+    <p class='smallgray'>
+        {{ count }}
+        {% trans %}
+            result found
+        {% plural count %}
+            results found
+        {% endtrans %}
+        ({{ totalTime['time'] ~ ' ' ~ totalTime['unit'] }})
+    </p>
+
+        {% set page = 'experiments' %}
+        {% if EntityView.Entity.type == 'items' %}
+        {% set page = 'database' %}
+        {% endif %}
+
+    {% for item in EntityView.itemsArr %}
+        {% set permissions = EntityView.Entity.getPermissions(item) %}
+        {% if permissions['read'] %}
+            {# dim the experiment a bit if it's not yours #}
+            {% set opacity = '1' %}
+            {% if (EntityView.Entity.Users.userid != item['userid']) and EntityView.Entity.type == 'experiments' %}
+                {% set opacity = '0.7' %}
+            {% endif %}
+            <section class='item {{ EntityView.display }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item['color'] }}'>
+                <a href='{{ page }}.php?mode=view&id={{ item['id'] }}'>
+                {# show attached if there is a file attached #}
+                {% if item['has_attachment'] %}
+                    <img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />
+                {% endif %}
+                {% if EntityView.Entity.type == 'items' %}
+                {{ EntityView.showStars(item['rating'])|raw }}
+                {% endif %}
+
+                {# we show the abstract of the item on mouse hover with the title attribute #}
+                {# this will be removed in favor of a + that loads the body #}
+                {% set bodyAbstract = item['body']|slice(0, 100)|striptags %}
+
+                <a title='{{ bodyAbstract }}' href='{{ page }}.php?mode=view&id={{ item['id'] }}'>
+                <p class='title'>
+                {% if item['timestamped'] %}
+                    <img class='align_right' src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
+                {% endif %}
+
+                {% if item['locked'] %}
+                <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
+                {% endif %}
+                {{ item['title'] }}</p></a>
+                <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item['color'] }}'>{{ item['category'] }}</span>
+                <span class='date'><img class='image' src='app/img/calendar.png' />{{ item['date']|kdate }}</span>
+            </section>
+        {% endif %}
+    {% endfor %}
+
+    {% if count > EntityView.limit %}
+        {# show load more button if there are more results than the default display number #}
+        <div class='center'>
+            <button class='button' id='loadButton'>{{ 'Show %s more'|trans|format(EntityView.limit) }}</button>
+            <button class='button button-neutral' id='loadAllButton'>{{ 'Show all'|trans }}</button>
+        </div>
+    {% endif %}
+
+{% endif %}
+
 <script>
     $(document).ready(function(){
 
         {% if EntityView.Entity.type == 'experiments' %}
-        key('{{ session['prefs']['shortcuts']['create'] }}', function(){
+        // KEYBOARD SHORTCUT
+        key('{{ SESSION['prefs']['shortcuts']['create'] }}', function(){
             location.href = 'app/controllers/ExperimentsController.php?create=true'
         });
         {% endif %}

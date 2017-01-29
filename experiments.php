@@ -80,9 +80,11 @@ try {
 
         echo $EntityView->buildShowMenu('experiments');
         echo $EntityView->buildShow();
+        $totalTime = get_total_time();
         echo $twig->render('show.html', array(
-            'session' => $_SESSION,
-            'EntityView' => $EntityView
+            'SESSION' => $_SESSION,
+            'EntityView' => $EntityView,
+            'totalTime' => $totalTime
         ));
 
     // VIEW

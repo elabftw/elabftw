@@ -10,13 +10,13 @@
             <img src='app/img/github.png' alt='github' />
         </a>
         <span>
-            {% if session['auth'] and session['is_sysadmin'] %}
+            {% if SESSION['auth'] and SESSION['is_sysadmin'] %}
             <a href='sysconfig.php'>
                 {% trans %}Sysadmin panel{% endtrans %}
             </a>
             {% endif %}
 
-            {% if session['auth'] and session['is_admin'] %}
+            {% if SESSION['auth'] and SESSION['is_admin'] %}
             <a href='admin.php'>
                 {% trans %}Admin panel{% endtrans %}
 

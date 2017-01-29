@@ -65,43 +65,6 @@ class DatabaseView extends EntityView
     }
 
     /**
-     * Show an item
-     *
-     * @param int $item item array
-     * @return string
-     */
-    public function showUnique($item)
-    {
-        $this->Entity->id = $item['itemid'];
-        $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
-        $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
-
-        // show attached if there is a file attached
-        if ($item['has_attachment']) {
-            $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
-        }
-        // STARS
-        $html .= $this->showStars($item['rating']);
-        $html .= "<p class='title'>";
-        // LOCK
-        if ($item['locked']) {
-            $html .= "<img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />";
-        }
-        // TITLE
-        $html .= $item['title'] . "</p></a>";
-        // ITEM TYPE
-        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['category'] . " </span>";
-        // DATE
-        $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
-        // TAGS
-        $html .= $this->showTags('show');
-
-        $html .= "</section>";
-
-        return $html;
-    }
-
-    /**
      * Generate HTML for view DB
      *
      * @return string
@@ -117,18 +80,18 @@ class DatabaseView extends EntityView
         $html .= Tools::formatDate($this->Entity->entityData['date']) . "</div>";
         $html .= $this->showStars($this->Entity->entityData['rating']);
         // buttons
-        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a> 
-        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $this->Entity->entityData['itemid'] . "'><span>Duplicate Item</span><img src='app/img/duplicate.png' alt='Duplicate' /></a> 
-        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $this->Entity->entityData['itemid'] . "&type=items'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a> 
-        <a class='elab-tooltip' href='make.php?what=zip&id=" . $this->Entity->entityData['itemid'] . "&type=items'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>
-        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$this->Entity->entityData['itemid'] . "'><span>Linked Experiments</span><img src='app/img/link.png' alt='Linked Experiments' /></a> ";
+        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $this->Entity->entityData['id'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a> 
+        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $this->Entity->entityData['id'] . "'><span>Duplicate Item</span><img src='app/img/duplicate.png' alt='Duplicate' /></a> 
+        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $this->Entity->entityData['id'] . "&type=items'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a> 
+        <a class='elab-tooltip' href='make.php?what=zip&id=" . $this->Entity->entityData['id'] . "&type=items'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>
+        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$this->Entity->entityData['id'] . "'><span>Linked Experiments</span><img src='app/img/link.png' alt='Linked Experiments' /></a> ";
         // lock
         $imgSrc = 'unlock.png';
         $alt = _('Lock/Unlock item');
         if ($this->Entity->entityData['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
         }
-        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $this->Entity->entityData['itemid'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
+        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $this->Entity->entityData['id'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('view');
 
@@ -137,7 +100,7 @@ class DatabaseView extends EntityView
         // TITLE : click on it to go to edit mode
         $onClick = '';
         if ($this->Entity->entityData['locked'] === '0' || $this->Entity->entityData['locked'] === null) {
-            $onClick .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "'\" ";
+            $onClick .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->Entity->entityData['id'] . "'\" ";
         }
         $html .= "<div " . $onClick . " class='title_view'>";
         $html .= "<span style='color:#" . $this->Entity->entityData['color'] . "'>" . $this->Entity->entityData['category'] . " </span>";

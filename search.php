@@ -430,7 +430,7 @@ if (isset($_GET)) {
         }
 
         // adjust display
-        $EntityView->display = $Users->userData['prefs']['display'];
+        $EntityView->display = $Users->userData['display'];
         // we are on the search page, so we don't want any "click here to create your first..."
         $EntityView->searchType = 'something';
 

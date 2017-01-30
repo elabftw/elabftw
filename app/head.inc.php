@@ -13,6 +13,9 @@ if (!isset($pageTitle)) {
     $pageTitle = "Lab manager";
 }
 
+$actionTarget = 'experiments.php';
+$teamConfigArr = array();
+
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     $Teams = new Teams($_SESSION['team_id']);
     $teamConfigArr = $Teams->read();
@@ -20,8 +23,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     // to redirect to the right page
     if ($selectedMenu === 'Database') {
         $actionTarget = 'database.php';
-    } else {
-        $actionTarget = 'experiments.php';
     }
 
     $getQ = '';

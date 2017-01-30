@@ -68,7 +68,7 @@ try {
             } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
                 $EntityView->Entity->order = 'experiments.' . $_GET['order'];
             } elseif ($_GET['order'] === 'comment') {
-                $EntityView->Entity->order = 'experiments_comments.datetime';
+                $EntityView->Entity->order = 'experiments_comments.recentComment';
             }
         }
         // SORT

@@ -28,10 +28,18 @@ try {
 
     // Remove any path info to avoid hacking by adding relative path, etc.
     $long_filename = basename($_GET['f']);
+    // get the first two letters to get the folder
+    $folder = substr($long_filename, 0, 2);
+    $final_filename = $folder . '/' . $long_filename;
+
+    // maybe it's an old file that has no subfolder
+    if (!is_readable(ELAB_ROOT . 'uploads/' . $final_filename)) {
+        $final_filename = $long_filename;
+    }
 
     // REAL_NAME
     if (!isset($_GET['name']) || empty($_GET['name'])) {
-        $filename = $long_filename;
+        $filename = $final_filename;
     } else {
         // we redo a check for filename
         // IMPORTANT
@@ -47,7 +55,7 @@ try {
     if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv')) {
         $file_path = ELAB_ROOT . 'uploads/tmp/' . $long_filename;
     } else {
-        $file_path = ELAB_ROOT . 'uploads/' . $long_filename;
+        $file_path = ELAB_ROOT . 'uploads/' . $final_filename;
     }
 
     // MIME

@@ -60,6 +60,12 @@ class Uploads extends Entity
         }
 
         // Try to move the file to its final place
+        // create a subfolder if it doesn't exist
+        $folder = explode('/', $longName);
+        $folder = ELAB_ROOT . 'uploads/' . $folder[0];
+        if (!is_writable($folder)) {
+            mkdir($folder);
+        }
         $this->moveFile($file['file']['tmp_name'], $fullPath);
 
         // final sql
@@ -169,11 +175,14 @@ class Uploads extends Entity
     /**
      * Create a unique long filename
      *
-     * @return string Return a random string
+     * @return string Return the path for storing the folder
      */
     protected function getCleanName()
     {
-        return hash("sha512", uniqid(rand(), true));
+        $hash = hash("sha512", uniqid(rand(), true));
+        $folder = substr($hash, 0, 2);
+
+        return $folder . '/' . $hash;
     }
 
     /**

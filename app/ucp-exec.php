@@ -91,6 +91,12 @@ try {
             $new_lang = 'en_GB';
         }
 
+        // DEFAULT VIS
+        $new_default_vis = null;
+        $Experiments = new Experiments($Users);
+        if (isset($_POST['default_vis']) && $Experiments->checkVisibility($_POST['default_vis'])) {
+            $new_default_vis = $_POST['default_vis'];
+        }
 
         // SQL
         $sql = "UPDATE users SET
@@ -103,7 +109,8 @@ try {
             show_team = :new_show_team,
             close_warning = :new_close_warning,
             chem_editor = :new_chem_editor,
-            lang = :new_lang
+            lang = :new_lang,
+            default_vis = :new_default_vis
             WHERE userid = :userid;";
         $req = $pdo->prepare($sql);
         $req->execute(array(
@@ -117,6 +124,7 @@ try {
             'new_close_warning' => $new_close_warning,
             'new_chem_editor' => $new_chem_editor,
             'new_lang' => $new_lang,
+            'new_default_vis' => $new_default_vis,
             'userid' => $_SESSION['userid']
         ));
         // put it in session

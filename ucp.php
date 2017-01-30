@@ -22,8 +22,7 @@ $pageTitle = _('User Control Panel');
 $selectedMenu = null;
 require_once('app/head.inc.php');
 
-$Users = new Users();
-$user = $Users->read($_SESSION['userid']);
+$Users = new Users($_SESSION['userid']);
 
 // BEGIN UCP PAGE
 ?>
@@ -135,6 +134,40 @@ if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'
             />
             <label for='chem_editor'><?= _('Display the molecule drawer in edit mode?') ?></label>
             </p>
+            <br>
+            <p>
+            <label for 'default_vis'><?= _('Default visibility for new experiments') ?></label>
+<select name='default_vis'>
+<option value='organization'
+<?php if ($Users->userData['default_vis'] === 'organization') {
+    echo " selected='selected'";
+}
+?>
+><?= _('Organization') ?></option>
+<option value='team'
+<?php if ($Users->userData['default_vis'] === 'team') {
+    echo " selected='selected'";
+}
+?>
+><?= _('Team') ?></option>
+<option value='user'
+<?php if ($Users->userData['default_vis'] === 'user') {
+    echo " selected='selected'";
+}
+?>
+><?= _('User') ?></option>
+<?php
+$TeamGroups = new TeamGroups($Users->userData['team']);
+$teamGroupsArr = $TeamGroups->readAll();
+foreach ($teamGroupsArr as $teamGroup) {
+    echo "<option value='" . $teamGroup['id'] . "' ";
+    if ($teamGroup['id'] === $Users->userData['default_vis']) {
+        echo " selected='selected'";
+    }
+    echo ">" . _('Group') . " " . $teamGroup['name'] . "</option>";
+}
+?>
+</select>
         </section>
 
         <div style='margin-top:30px;' class='center'>
@@ -171,18 +204,18 @@ if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='firstname'><?= _('Firstname') ?></label>
-                <input name="firstname" value='<?= $user['firstname'] ?>' cols='20' rows='1' />
+                <input name="firstname" value='<?= $Users->userData['firstname'] ?>' cols='20' rows='1' />
             </div>
         </div>
 
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='lastname'><?= _('Lastname') ?></label>
-                <input name="lastname" value='<?= $user['lastname'] ?>' cols='20' rows='1' />
+                <input name="lastname" value='<?= $Users->userData['lastname'] ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='email'><?= _('Email') ?></label>
-                <input name="email" type="email" value='<?= $user['email'] ?>' cols='20' rows='1' />
+                <input name="email" type="email" value='<?= $Users->userData['email'] ?>' cols='20' rows='1' />
             </div>
         </div>
 
@@ -191,21 +224,21 @@ if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='phone'><?= _('Phone') ?> </label>
-                <input name="phone" value='<?= $user['phone'] ?>' cols='20' rows='1' />
+                <input name="phone" value='<?= $Users->userData['phone'] ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='cellphone'><?= _('Mobile') ?></label>
-                <input name="cellphone" value='<?= $user['cellphone'] ?>' cols='20' rows='1' />
+                <input name="cellphone" value='<?= $Users->userData['cellphone'] ?>' cols='20' rows='1' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='skype'><?= _('Skype') ?></label>
-                <input name="skype" value='<?= $user['skype'] ?>' cols='20' rows='1' />
+                <input name="skype" value='<?= $Users->userData['skype'] ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='website'><?= _('Website') ?></label>
-                <input name="website" type="url" value='<?= $user['website'] ?>' cols='20' rows='1' />
+                <input name="website" type="url" value='<?= $Users->userData['website'] ?>' cols='20' rows='1' />
             </div>
         </div>
 

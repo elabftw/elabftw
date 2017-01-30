@@ -54,9 +54,11 @@ class Update
      * /////////////////////////////////////////////////////
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
+     * AND REFLECT THE CHANGE IN INSTALL/ELABFTW.SQL
+     * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '15';
+    const REQUIRED_SCHEMA = '16';
 
     /**
      * Create the pdo object
@@ -289,6 +291,12 @@ class Update
             // 20170124
             $this->schema15();
             $this->updateSchema(15);
+        }
+
+        if ($current_schema < 16) {
+            // 20170124
+            $this->schema16();
+            $this->updateSchema(16);
         }
         // place new schema functions above this comment
 
@@ -604,6 +612,17 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "ALTER TABLE `users` ADD `api_key` VARCHAR(255) NULL DEFAULT NULL AFTER `show_team`;";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema15');
+        }
+    }
+    /**
+     * Add default_vis to users
+     *
+     */
+    private function schema16()
+    {
+        $sql = "ALTER TABLE `users` ADD `default_vis` VARCHAR(255) NULL DEFAULT NULL;";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema16');
         }
     }
 }

@@ -74,6 +74,11 @@ class Experiments extends Entity
             $title = _('Untitled');
         }
 
+        $visibility = 'team';
+        if (!is_null($this->Users->userData['default_vis'])) {
+            $visibility = $this->Users->userData['default_vis'];
+        }
+
         // SQL for create experiments
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
             VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
@@ -85,7 +90,7 @@ class Experiments extends Entity
             'body' => $templatesArr['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
-            'visibility' => 'team',
+            'visibility' => $visibility,
             'userid' => $this->Users->userid
         ));
 

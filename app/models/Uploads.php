@@ -60,12 +60,6 @@ class Uploads extends Entity
         }
 
         // Try to move the file to its final place
-        // create a subfolder if it doesn't exist
-        $folder = explode('/', $longName);
-        $folder = ELAB_ROOT . 'uploads/' . $folder[0];
-        if (!is_writable($folder)) {
-            mkdir($folder);
-        }
         $this->moveFile($file['file']['tmp_name'], $fullPath);
 
         // final sql
@@ -181,7 +175,11 @@ class Uploads extends Entity
     {
         $hash = hash("sha512", uniqid(rand(), true));
         $folder = substr($hash, 0, 2);
-
+        // create a subfolder if it doesn't exist
+        $folderPath = ELAB_ROOT . 'uploads/' . $folder;
+        if (!is_writable($folderPath)) {
+            mkdir($folderPath);
+        }
         return $folder . '/' . $hash;
     }
 

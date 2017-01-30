@@ -173,9 +173,9 @@ class Uploads extends Entity
     }
 
     /**
-     * Create a unique long filename
+     * Create a unique long filename with a folder
      *
-     * @return string Return the path for storing the folder
+     * @return string the path for storing the file
      */
     protected function getCleanName()
     {

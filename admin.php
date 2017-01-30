@@ -374,7 +374,7 @@ try {
             name : 'teamGroupUpdateName',
             submit : 'Save',
             cancel : 'Cancel',
-            style : 'display:inline'
+            style : 'display:inline'
 
         });
         // SORTABLE for STATUS

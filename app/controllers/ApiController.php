@@ -19,7 +19,15 @@ require_once '../../config.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 
 try {
-    $Api = new Api($_SERVER['REQUEST_METHOD'], $_REQUEST['req']);
+    // do we have an API key?
+    if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
+        throw new Exception('No API key received.');
+    }
+    $Api = new Api(
+        $_SERVER['HTTP_AUTHORIZATION'],
+        $_SERVER['REQUEST_METHOD'],
+        $_REQUEST['req']
+    );
 
     if ($Api->method === 'GET') {
         $output = $Api->getEntity();

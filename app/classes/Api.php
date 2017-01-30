@@ -36,10 +36,11 @@ class Api
     /**
      * Get data for user from the API key
      *
-     * @param string $method
-     * @param string $request
+     * @param string $key API key
+     * @param string $method GET/POST
+     * @param string $request experiments/12
      */
-    public function __construct($method, $request)
+    public function __construct($key, $method, $request)
     {
         $availMethods = array('GET', 'POST', 'PUT');
         if (!in_array($method, $availMethods)) {
@@ -63,13 +64,9 @@ class Api
         // assign the endpoint
         $this->endpoint = array_shift($this->args);
 
-        // do we have an API key?
-        if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
-            throw new Exception('No API key received.');
-        }
         // get info about user
         $Users = new Users();
-        $Users->readFromApiKey($_SERVER['HTTP_AUTHORIZATION']);
+        $Users->readFromApiKey($key);
 
         // load Entity
         if ($this->endpoint === 'experiments') {

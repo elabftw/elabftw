@@ -118,36 +118,31 @@ foreach ($itemsTypesArr as $items_types) {
             </div>
             <!-- END SEARCH IN -->
             <!-- SEARCH WITH TAG -->
-            <div class='col-md-3' id='tag_exp'>
-                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
-                <select name='tag_exp' style='max-width:80%'>
-                    <option value=''><?php echo _('Select a Tag'); ?></option>
-
 <?php
-$tag_in_url = null;
+$tagsArr = array();
 if (isset($_GET['tag_exp'])) {
-    $tag_in_url = $_GET['tag_exp'];
+    $tagsArr = $_GET['tag_exp'];
 }
 if (isset($_GET['tag_db'])) {
-    $tag_in_url = $_GET['tag_db'];
+    $tagsArr = $_GET['tag_db'];
 }
 
 $Tags = new Tags($Experiments);
-echo $Tags->generateTagList('options', $tag_in_url);
+$tag_exp_options = $Tags->generateTagList('options', $tagsArr);
+$Tags = new Tags($Database);
+$tag_db_options = $Tags->generateTagList('options', $tagsArr);
 ?>
-
+            <div class='col-md-3' id='tag_exp'>
+                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
+                <select multiple name='tag_exp[]' style='max-width:80%'>
+                    <?= $tag_exp_options ?>
                 </select>
             </div>
 
             <div class='col-md-3' id='tag_db'>
                 <label for='tag_db'><?php echo _('With the tag'); ?></label>
-                <select name='tag_db'>
-                    <option value=''><?php echo _('Select a tag'); ?></option>
-
-<?php // Database items types
-$Tags = new Tags($Database);
-echo $Tags->generateTagList('options', $tag_in_url);
-?>
+                <select multiple name='tag_db[]'>
+                    <?= $tag_db_options ?>
                 </select>
             </div>
             <!-- END SEARCH WITH TAG -->
@@ -282,7 +277,6 @@ for ($i = 1; $i <= 5; $i++) {
     </form>
 </section>
 
-
 <?php
 /**
  * Here the search begins
@@ -302,11 +296,13 @@ if (isset($_GET)) {
     }
 
     // TAGS
+    /*
     if (isset($_GET['tag_exp']) && !empty($_GET['tag_exp']) && isset($_GET['type']) && $_GET['type'] === 'experiments') {
         $tags = filter_var($_GET['tag_exp'], FILTER_SANITIZE_STRING);
     } elseif (isset($_GET['tag_db']) && !empty($_GET['tag_db']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['type'] !== 'experiments') {
         $tags = filter_var($_GET['tag_db'], FILTER_SANITIZE_STRING);
     }
+     */
 
     // STATUS
     if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId($_GET['status'])) {
@@ -361,8 +357,11 @@ if (isset($_GET)) {
     }
 
     // Tag search
-    if (!empty($tags)) {
-        $sqlTag = " AND $table.id = " . $table . "_tag.item_id AND " . $table . "_tag.tag = '$tags'";
+    if (!empty($tagsArr)) {
+        foreach ($tagsArr as $tag) {
+            $tag = filter_var($tag, FILTER_SANITIZE_STRING);
+            $sqlTag .= " AND tagt.tag LIKE '%" . $tag . "%' ";
+        }
     }
 
     // Status search
@@ -431,14 +430,16 @@ if (isset($_GET)) {
         }
 
         // adjust display
-        $EntityView->display = $_SESSION['prefs']['display'];
+        $EntityView->display = $Users->userData['prefs']['display'];
         // we are on the search page, so we don't want any "click here to create your first..."
         $EntityView->searchType = 'something';
 
-        $EntityView->Entity->useridFilter = $sqlUserid;
-        $EntityView->Entity->titleFilter = $sqlTitle;
-        $EntityView->Entity->dateFilter = $sqlDate;
+        // common filters for XP and DB
         $EntityView->Entity->bodyFilter = $sqlBody;
+        $EntityView->Entity->dateFilter = $sqlDate;
+        $EntityView->Entity->tagFilter = $sqlTag;
+        $EntityView->Entity->titleFilter = $sqlTitle;
+        $EntityView->Entity->useridFilter = $sqlUserid;
 
         // DISPLAY RESULTS
         echo "<section style='margin-top:20px'>";

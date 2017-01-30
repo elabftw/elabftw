@@ -119,7 +119,7 @@ class Tags extends Entity
      * Generate a JS list for tags autocomplete
      *
      * @param string $mode autocomplete or options
-     * @param string|null $selected the selected tag for options mode
+     * @param array|null $selected the selected tag for options mode
      * @return string
      */
     public function generateTagList($mode, $selected = null)
@@ -133,7 +133,7 @@ class Tags extends Entity
                 $tagList .= "'" . addslashes(html_entity_decode($tag['tag'], ENT_QUOTES)) . "',";
             } else {
                 $tagList .= "<option value='" . $tag['tag'] . "'";
-                if ($tag['tag'] === $selected) {
+                if (in_array($tag['tag'], $selected)) {
                     $tagList .= " selected='selected'";
                 }
                 $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";

@@ -55,6 +55,13 @@
                 {{ item['title'] }}</p></a>
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item['color'] }}'>{{ item['category'] }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item['date']|kdate }}</span>
+                {% if item['tags'] is not null %}
+                <span class='tags'><img src='app/img/tags.png' alt='tags' />
+                    {% set tagsArr = item['tags']|split('!----!') %}
+                    {% for tag in tagsArr %}
+                        <a href='{{ page }}.php?mode=show&tag={{ tag }}'>{{ tag }}</a>
+                    {% endfor %}
+                {% endif %}
             </section>
         {% endif %}
     {% endfor %}

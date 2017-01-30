@@ -123,54 +123,44 @@ class Entity
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')
             ";
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
+#$tagsSelect = ", group_concat(tagt.tag) as tags";
 
         if ($this instanceof Experiments) {
-                $select = "SELECT DISTINCT " . $this->type . ".*,
-                    status.color, status.name AS category, status.id AS category_id, uploads.up_item_id, uploads.has_attachment";
+            $select = "SELECT DISTINCT " . $this->type . ".*,
+                status.color, status.name AS category, status.id AS category_id, uploads.up_item_id, uploads.has_attachment";
 
-                $expCommentsSelect = ", experiments_comments.datetime";
-                $from = "FROM experiments";
+            $expCommentsSelect = ", experiments_comments.datetime";
+            $from = "FROM experiments";
 
-                $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
-                $commentsJoin = "LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)";
-                $where = "WHERE experiments.team = :team";
+            $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
+            $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
+            $commentsJoin = "LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)";
+            $where = "WHERE experiments.team = :team";
 
-            if (empty($this->idFilter)) {
-                $sql = $select . ' ' .
-                    $expCommentsSelect . ' ' .
-                    $from . ' ';
-            } else {
-                $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
-                $sql = $select . ' ' .
-                    $tagsSelect . ' ' .
-                    $from . ' ' .
-                    $tagsJoin . ' ';
-            }
-
-            $sql .= $statusJoin . ' ' .
+            $sql = $select . ' ' .
+                $tagsSelect . ' ' .
+                $expCommentsSelect . ' ' .
+                $from . ' ' .
+                $tagsJoin . ' ' .
+                $statusJoin . ' ' .
                 $uploadsJoin . ' ' .
                 $commentsJoin . ' ' .
                 $where;
 
         } elseif ($this instanceof Database) {
-            $sql = "SELECT DISTINCT items.id,
-                items.*, items_types.name AS category,
+            $sql = "SELECT DISTINCT items.*, items_types.name AS category,
                 items_types.color,
                 items_types.id AS category_id,
                 uploads.up_item_id, uploads.has_attachment,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
-                $from = "FROM items
-                    LEFT JOIN items_types ON (items.type = items_types.id)
-                    LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)";
-                $where = "WHERE items.team = :team";
+            $from = "FROM items
+                LEFT JOIN items_types ON (items.type = items_types.id)
+                LEFT JOIN users ON (users.userid = items.userid)
+                LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)";
+            $where = "WHERE items.team = :team";
 
-            if (!empty($this->idFilter)) {
-                $sql .= $tagsSelect;
-            }
-
-            $sql .= ' ' . $from . ' ' . $uploadsJoin . ' ' . $where;
+            $sql .= ' ' . $tagsSelect . ' ' . $from . ' ' . $uploadsJoin . ' ' . $where;
 
         } else {
             throw new Exception('Nope.');
@@ -186,7 +176,7 @@ class Entity
             $this->tagFilter . ' ' .
             $this->queryFilter . ' ' .
             $this->visibilityFilter . ' ' .
-            " ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
+            " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
@@ -194,15 +184,24 @@ class Entity
 
         $itemsArr = $req->fetchAll();
 
-        // reduce the dimension of the array if we have only one item (idFilter set)
-        if (count($itemsArr) === 1 && !empty($this->idFilter)) {
-            $item = $itemsArr[0];
-            if ((strlen($item['tags'] > 1)) || true) {
+        /*
+        // build a cool tags array
+        $i = 0;
+        foreach ($itemsArr as $item) {
+            // TODO what if we only have one tag
+            if ((strlen($item['tags'] > 1))) {
                 $tagsValueArr = explode('!----!', $item['tags']);
                 $tagsKeyArr = explode(',', $item['tags_id']);
                 $tagsArr = array_combine($tagsKeyArr, $tagsValueArr);
-                $item['tagsArr'] = $tagsArr;
             }
+            $i++;
+        }
+         */
+
+
+        // reduce the dimension of the array if we have only one item (idFilter set)
+        if (count($itemsArr) === 1 && !empty($this->idFilter)) {
+            $item = $itemsArr[0];
             return $item;
         }
         return $itemsArr;

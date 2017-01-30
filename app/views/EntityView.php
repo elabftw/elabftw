@@ -281,52 +281,6 @@ class EntityView
     }
 
     /**
-     * Display the tags
-     *
-     * @param string $mode view/edit
-     * @return string Will show the HTML for tags
-     */
-    protected function showTags($mode)
-    {
-        $html = '';
-        $page = 'database';
-        if ($this->Entity->type === 'experiments') {
-            $page = 'experiments';
-        }
-
-        if ($mode === 'view') {
-
-            $html .= "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
-
-            foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {
-                    $html .= "<a href='" . $page . ".php?mode=show&tag=" .
-                        urlencode(stripslashes($tag)) . "'>" .
-                        stripslashes($tag) . "</a> ";
-            }
-
-            $html .= "</span>";
-
-            return $html;
-        }
-
-
-        $html = "<img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
-        $html .= "<div class='tags'><span id='tags_div'>";
-
-        // display tags for edit mode
-        foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {
-            $html .= "<span class='tag'><a onclick=\"destroyTag('" .
-                $this->Entity->type . "', " .
-                $this->Entity->id . ", " .
-                $tagId . ")\">" .
-                stripslashes($tag) . "</a></span>";
-        }
-        $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
-
-        return $html;
-    }
-
-    /**
      * HTML for back to something link
      *
      * @param string $type experiments or database

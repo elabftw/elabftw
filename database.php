@@ -40,7 +40,7 @@ try {
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
             $EntityView->tag = $tag;
-            $EntityView->Entity->tagFilter = "AND items_tags.tag LIKE '" . $tag . "'";
+            $EntityView->Entity->tagFilter = "AND tagt.tag LIKE '%" . $tag . "%'";
             $EntityView->searchType = 'tag';
         }
         // QUERY FILTER

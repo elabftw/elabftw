@@ -93,7 +93,17 @@ class DatabaseView extends EntityView
         }
         $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $this->Entity->entityData['id'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
-        $html .= " " . $this->showTags('view');
+        // build the tag array
+        if (strlen($this->Entity->entityData['tags'] > '1')) {
+            $tagsValueArr = explode('!----!', $this->Entity->entityData['tags']);
+            $tagsKeyArr = explode(',', $this->Entity->entityData['tags_id']);
+            $tagsArr = array_combine($tagsKeyArr, $tagsValueArr);
+            $html .= "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
+            foreach ($tagsArr as $tag) {
+                $html .= "<a href='experiments.php?mode=show&tag=" .
+                    urlencode(stripslashes($tag)) . "'>" . stripslashes($tag) . "</a> ";
+            }
+        }
 
         // CATEGORY
 
@@ -133,8 +143,24 @@ class DatabaseView extends EntityView
         $html .= "<section class='box' style='border-left: 6px solid #" . $this->Entity->entityData['color'] . "'>";
         $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
 
-        // tags
-        $html .= $this->showTags('edit');
+        // TAGS
+        $html .= "<img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
+        $html .= "<div class='tags'><span id='tags_div'>";
+        // build the tag array
+        if (strlen($this->Entity->entityData['tags'] > '1')) {
+            $tagsValueArr = explode('!----!', $this->Entity->entityData['tags']);
+            $tagsKeyArr = explode(',', $this->Entity->entityData['tags_id']);
+            $tagsArr = array_combine($tagsKeyArr, $tagsValueArr);
+            // display tags for edit mode
+            foreach ($tagsArr as $tagId => $tag) {
+                $html .= "<span class='tag'><a onclick=\"destroyTag('" .
+                    $this->Entity->type . "', " .
+                    $this->Entity->id . ", " .
+                    $tagId . ")\">" .
+                    stripslashes($tag) . "</a></span>";
+            }
+        }
+        $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";

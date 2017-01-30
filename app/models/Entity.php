@@ -123,7 +123,6 @@ class Entity
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')
             ";
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
-#$tagsSelect = ", group_concat(tagt.tag) as tags";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
@@ -183,21 +182,6 @@ class Entity
         $req->execute();
 
         $itemsArr = $req->fetchAll();
-
-        /*
-        // build a cool tags array
-        $i = 0;
-        foreach ($itemsArr as $item) {
-            // TODO what if we only have one tag
-            if ((strlen($item['tags'] > 1))) {
-                $tagsValueArr = explode('!----!', $item['tags']);
-                $tagsKeyArr = explode(',', $item['tags_id']);
-                $tagsArr = array_combine($tagsKeyArr, $tagsValueArr);
-            }
-            $i++;
-        }
-         */
-
 
         // reduce the dimension of the array if we have only one item (idFilter set)
         if (count($itemsArr) === 1 && !empty($this->idFilter)) {

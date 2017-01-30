@@ -76,7 +76,9 @@ try {
     // CREATE TAG
     if (isset($_POST['createTag'])) {
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+        // also remove | because we use this as separator for tags in SQL
         $tag = strtr(filter_var($_POST['tag'], FILTER_SANITIZE_STRING), '\\', '');
+        $tag = strtr($tag, '|', ' ');
         // check for string length and if user owns the experiment
         if (strlen($tag) < 1) {
             throw new Exception(_('Tag is too short!'));

@@ -122,7 +122,7 @@ class Entity
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')
             ";
-        $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
+        $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
@@ -183,12 +183,21 @@ class Entity
 
         $itemsArr = $req->fetchAll();
 
+        // loop the array and only add the ones we can read
+        $finalArr = array();
+        foreach ($itemsArr as $item) {
+            $permissions = $this->getPermissions($item);
+            if ($permissions['read']) {
+                $finalArr[] = $item;
+            }
+        }
+
         // reduce the dimension of the array if we have only one item (idFilter set)
-        if (count($itemsArr) === 1 && !empty($this->idFilter)) {
-            $item = $itemsArr[0];
+        if (count($finalArr) === 1 && !empty($this->idFilter)) {
+            $item = $finalArr[0];
             return $item;
         }
-        return $itemsArr;
+        return $finalArr;
     }
 
     /**

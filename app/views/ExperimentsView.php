@@ -107,7 +107,7 @@ class ExperimentsView extends EntityView
         $html .= "<div class='tags'><span id='tags_div'>";
         // build the tag array
         if (strlen($this->Entity->entityData['tags'] > '1')) {
-            $tagsValueArr = explode('!----!', $this->Entity->entityData['tags']);
+            $tagsValueArr = explode('|', $this->Entity->entityData['tags']);
             $tagsKeyArr = explode(',', $this->Entity->entityData['tags_id']);
             $tagsArr = array_combine($tagsKeyArr, $tagsValueArr);
             // display tags for edit mode
@@ -320,7 +320,7 @@ class ExperimentsView extends EntityView
 
         // build the tag array
         if (strlen($this->Entity->entityData['tags'] > '1')) {
-            $tagsValueArr = explode('!----!', $this->Entity->entityData['tags']);
+            $tagsValueArr = explode('|', $this->Entity->entityData['tags']);
             $tagsKeyArr = explode(',', $this->Entity->entityData['tags_id']);
             $tagsArr = array_combine($tagsKeyArr, $tagsValueArr);
             $html .= "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";

@@ -85,9 +85,7 @@ class Api
      */
     public function getEntity()
     {
-        $this->Entity->canOrExplode('read');
-
-        return $this->Entity->entityData;
+        return $this->Entity->read();
     }
 
     /**

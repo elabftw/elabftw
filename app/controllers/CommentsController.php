@@ -18,7 +18,8 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Comments = new Comments(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
+    $Users = new Users($_SESSION['userid']);
+    $Comments = new Comments(new Experiments($Users));
 
     // CREATE
     if (isset($_POST['commentsCreate'])) {

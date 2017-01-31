@@ -74,7 +74,7 @@ class EntityView
      *
      * @return bool
      */
-    protected function isReadOnly()
+    public function isReadOnly()
     {
         $permissions = $this->Entity->getPermissions();
         return $permissions['read'] && !$permissions['write'];
@@ -251,7 +251,7 @@ class EntityView
     {
         if ($type === 'experiments') {
             $text = _('Back to Experiments Listing');
-        } elseif ($type === 'database') {
+        } elseif ($type === 'items') {
             $text = _('Back to Database Listing');
         } else {
             return "";

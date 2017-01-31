@@ -12,7 +12,7 @@
 
 <script src='app/js/edit.mode.min.js'></script>
 
-{{ Ev.backToLink('experiments')|raw }}
+{{ Ev.backToLink(Ev.Entity.type)|raw }}
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Ev.Entity.entityData['color'] }}'>
     <img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick="entityDestroy('{{ Ev.Entity.type }}', {{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')" />

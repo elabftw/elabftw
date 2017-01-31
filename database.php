@@ -78,6 +78,10 @@ try {
     } elseif ($_GET['mode'] === 'view') {
 
         $EntityView->Entity->setId($_GET['id']);
+        $EntityView->initViewEdit();
+        echo $twig->render('view.html', array(
+            'Ev' => $EntityView
+        ));
         echo $EntityView->view();
 
     // EDIT

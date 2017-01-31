@@ -85,6 +85,14 @@ try {
     } elseif ($_GET['mode'] === 'view') {
 
         $EntityView->Entity->setId($_GET['id']);
+        $EntityView->initViewEdit();
+        $EntityView->ro = $EntityView->isReadOnly();
+
+        echo $twig->render('view.html', array(
+            'Ev' => $EntityView,
+            'Status' => $Status,
+            'Tags' => $Tags
+        ));
         echo $EntityView->view();
 
     // EDIT

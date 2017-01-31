@@ -218,7 +218,7 @@ class ExperimentsView extends EntityView
      * @param int $id Experiment id
      * @param string $mode edit or view
      * @return string $html
-     *
+     */
     public function showLinks($id, $mode)
     {
         $linksArr = $this->Entity->Links->read();

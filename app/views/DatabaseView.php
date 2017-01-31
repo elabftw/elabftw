@@ -36,9 +36,6 @@ class DatabaseView extends EntityView
      */
     public function view()
     {
-        //$this->initViewEdit();
-
-        //$this->html .= $this->buildView();
         $this->html .= $this->UploadsView->buildUploads('view');
 
         return $this->html;

@@ -46,20 +46,13 @@ class ExperimentsView extends EntityView
      */
     public function view()
     {
-        /*
-        $this->initViewEdit();
-        $this->ro = $this->isReadOnly();
-         */
-
         if ($this->Entity->entityData['timestamped']) {
             $this->html .= $this->showTimestamp();
         }
 
-        //$this->html .= $this->buildView();
         $this->html .= $this->UploadsView->buildUploads('view');
         $this->html .= $this->buildComments();
         $this->html .= $this->buildCommentsCreate();
-        //$this->html .= $this->buildViewJs();
 
         return $this->html;
     }
@@ -82,7 +75,7 @@ class ExperimentsView extends EntityView
      *
      * @return string
      */
-    private function getVisibility()
+    public function getVisibility()
     {
         if (Tools::checkId($this->Entity->entityData['visibility'])) {
             return $this->TeamGroups->readName($this->Entity->entityData['visibility']);

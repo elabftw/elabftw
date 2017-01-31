@@ -406,40 +406,28 @@ function commentsDestroy(id, expId, confirmText) {
     }
 }
 
-// EXPERIMENTS
-function experimentsDestroy(id, confirmText) {
+// ENTITY DESTROY
+function entityDestroy(type, id, confirmText) {
     var you_sure = confirm(confirmText);
     if (you_sure !== true) {
         return false;
     }
-    $.post('app/controllers/ExperimentsController.php', {
-        destroy: true,
-        id: id
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            window.location.replace('experiments.php');
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
+    if (type == 'experiments') {
+        controller = 'app/controllers/ExperimentsController.php';
+        location = 'experiments.php';
+    } else {
+        controller = 'app/controllers/DatabaseController.php';
+        location = 'database.php';
+    }
 
-// DATABASE
-function databaseDestroy(id, confirmText) {
-    var you_sure = confirm(confirmText);
-    if (you_sure !== true) {
-        return false;
-    }
-    $.post('app/controllers/DatabaseController.php', {
+    $.post(controller, {
         destroy: true,
         id: id
     }).done(function(data) {
         var json = JSON.parse(data);
         if (json.res) {
             notif(json.msg, 'ok');
-            window.location.replace('database.php');
+            window.location.replace(location);
         } else {
             notif(json.msg, 'ko');
         }

@@ -1,3 +1,9 @@
+{% if Ev.Entity.type == 'experiments' %}
+    {% set controller = 'app/controllers/ExperimentsController.php' %}
+{% else %}
+    {% set controller = 'app/controllers/DatabaseController.php' %}
+{% endif %}
+
 {% if Ev.Entity.Users.userData['chem_editor'] %}
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
@@ -9,7 +15,7 @@
 {{ Ev.backToLink('experiments')|raw }}
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Ev.Entity.entityData['color'] }}'>
-    <img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick="experimentsDestroy({{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')" />
+    <img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick="entityDestroy('{{ Ev.Entity.type }}', {{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')" />
 
     <!-- TAGS -->
     <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
@@ -20,12 +26,12 @@
                 {% set tagsIdArr = Ev.Entity.entityData['tags_id']|split(',') %}
                 {% set tagsValueArr = Ev.Entity.entityData['tags']|split('|') %}
                 {% for key, tag in tagsValueArr %}
-                {# the key allows to get the id stored in tagsIdArr #}
-                <span class='tag'>
-                    <a onclick="destroyTag('{{ Ev.Entity.type }}', {{ Ev.Entity.id }}, {{ tagsIdArr[key] }})">
-                        {{ tag }}
-                    </a>
-                </span>
+                    {# the key allows to get the id stored in tagsIdArr #}
+                    <span class='tag'>
+                        <a onclick="destroyTag('{{ Ev.Entity.type }}', {{ Ev.Entity.id }}, {{ tagsIdArr[key] }})">
+                            {{ tag }}
+                        </a>
+                    </span>
                 {% endfor %}
             {% endif %}
         </span>
@@ -33,7 +39,7 @@
     </div>
 
     <!--  MAIN FORM -->
-    <form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>
+    <form id='main_form' method='post' action='{{ controller }}' enctype='multipart/form-data'>
         <input name='update' type='hidden' value='true' />
         <input name='id' type='hidden' value='{{ Ev.Entity.id }}' />
 
@@ -46,7 +52,16 @@
                     <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
                     <input name='date' id='datepicker' size='8' type='text' value='{{ Ev.Entity.entityData['date'] }}' />
                 </div>
+                {% if Ev.Entity.type == 'items' %}
+                    <!-- STAR RATING -->
+                    <div class='align_right'>
+                        {% for i in range(1, 6) %}
+                        <input id='star{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Ev.Entity.entityData['rating'] == i ? ' checked=checked' }} />
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
+            {% if Ev.Entity.type == 'experiments' %}
                 <!-- VISIBILITY -->
                 <div class='col-md-4'>
                     <img src='app/img/eye.png' alt='visibility' />
@@ -71,6 +86,7 @@
                         {% endfor %}
                     </select>
                 </div>
+            {% endif %}
             </div>
 
             <!-- TITLE -->
@@ -78,7 +94,12 @@
             <input id='title_input' name='title' rows='1' value='{{ Ev.Entity.entityData['title'] }}' required />
 
             <!-- BODY -->
-            <h4>{{ 'Experiment'|trans }}</h4>
+            {% if Ev.Entity.type == 'experiments' %}
+                <h4>{{ 'Experiment'|trans }}</h4>
+            {% else %}
+                <h4>{{ 'Infos'|trans }}</h4>
+            {% endif %}
+
             <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>
                 {{ Ev.Entity.entityData['body']|raw }}
             </textarea>
@@ -91,27 +112,28 @@
     <!-- REVISIONS -->
     {{ Revisions.showCount|raw }}
 
-    <!-- LINKS -->
-    <section>
-        <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
-        <br>
-        <span id='links_div'>
-            {% set linksArr = Ev.Entity.Links.read %}
-            {% if linksArr|length > 0 %}
-            <ul class='list-group'>
-                {% for link in linksArr %}
-                <li class='list-group-item'>{{ link['name']|raw }} - <a href='database.php?mode=view&id="{{ link['itemid'] }}'>
-                        {{ link['title']|raw }}</a>
-                    <a onClick="experimentsDestroyLink({{ link['linkid'] }}, {{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')">
-                    <img class='align_right' src='app/img/small-trash.png' title='delete' alt='delete' /></a></li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </span>
-        <p class='inline'>{{ 'Add a link'|trans }}</p>
-        <input id='linkinput' size='60' type='text' name='link' placeholder='{{ 'from the database'|trans }}' />
-    </section>
-
+    {% if Ev.Entity.type == 'experiments' %}
+        <!-- LINKS -->
+        <section>
+            <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
+            <br>
+            <span id='links_div'>
+                {% set linksArr = Ev.Entity.Links.read %}
+                {% if linksArr|length > 0 %}
+                <ul class='list-group'>
+                    {% for link in linksArr %}
+                    <li class='list-group-item'>{{ link['name']|raw }} - <a href='database.php?mode=view&id="{{ link['itemid'] }}'>
+                            {{ link['title']|raw }}</a>
+                        <a onClick="experimentsDestroyLink({{ link['linkid'] }}, {{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')">
+                        <img class='align_right' src='app/img/small-trash.png' title='delete' alt='delete' /></a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </span>
+            <p class='inline'>{{ 'Add a link'|trans }}</p>
+            <input id='linkinput' size='60' type='text' name='link' placeholder='{{ 'from the database'|trans }}' />
+        </section>
+    {% endif %}
 </section>
 
 {% if Ev.Entity.Users.userData['chem_editor'] %}
@@ -143,36 +165,39 @@
 
         // user finished typing, save work
         function doneTyping () {
-            quickSave('experiments', {{ Ev.Entity.id }});
+            quickSave('{{ Ev.Entity.type }}', {{ Ev.Entity.id }});
         }
         // KEYBOARD SHORTCUTS
         key('{{ Ev.Entity.Users.userData['sc_create'] }}', function(){
-            location.href = 'app/controllers/ExperimentsController?create=true';
+            location.href = '{{ controller }}?create=true';
         });
         key('{{ Ev.Entity.Users.userData['sc_submit'] }}', function(){
-            document.forms['editXP'].submit();
+            document.forms['main_form'].submit();
         });
 
+
+        // CREATE TAG
+        // listen keypress, add tag when it's enter
+        $('#createTagInput').keypress(function (e) {
+            createTag(e, '{{ Ev.Entity.type }}', {{ Ev.Entity.id }});
+        });
         // autocomplete the tags
         $('#createTagInput').autocomplete({
             source: [{{ Tags.generateTagList('autocomplete')|raw }}]
         });
 
-        // autocomplete the links
-        $( '#linkinput' ).autocomplete({
-            source: [{{ Ev.Entity.getEntityList('default')|raw }}]
-        });
+        {% if Ev.Entity.type == 'experiments' %}
+            // CREATE LINK
+            // listen keypress, add link when it's enter
+            $('#linkinput').keypress(function (e) {
+                experimentsCreateLink(e, {{ Ev.Entity.id }});
+            });
+            // autocomplete the links
+            $( '#linkinput' ).autocomplete({
+                source: [{{ Ev.Entity.getEntityList('default')|raw }}]
+            });
 
-        // CREATE TAG
-        // listen keypress, add tag when it's enter
-        $('#createTagInput').keypress(function (e) {
-            createTag(e, 'experiments', {{ Ev.Entity.id }});
-        });
-        // CREATE LINK
-        // listen keypress, add link when it's enter
-        $('#linkinput').keypress(function (e) {
-            experimentsCreateLink(e, {{ Ev.Entity.id }});
-        });
+        {% endif %}
 
         // DATEPICKER
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
@@ -194,7 +219,7 @@
             removed_menuitems : 'newdocument',
             // save button :
             save_onsavecallback: function() {
-                quickSave('experiments', {{ Ev.Entity.id }});
+                quickSave({{ Ev.Entity.type }}, {{ Ev.Entity.id }});
             },
             // keyboard shortcut to insert today's date at cursor in editor
             setup : function(editor) {

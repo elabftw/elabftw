@@ -84,10 +84,21 @@ try {
     } elseif ($_GET['mode'] === 'edit') {
 
         $EntityView->Entity->setId($_GET['id']);
+        $EntityView->initViewEdit();
+        // check permissions
+        $EntityView->Entity->canOrExplode('write');
+        // a locked item cannot be edited
+        if ($EntityView->Entity->entityData['locked']) {
+            throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
+        }
+        $Revisions = new Revisions($EntityView->Entity);
+        $Tags = new Tags($EntityView->Entity);
         echo $twig->render('edit.html', array(
-            'EntityView' => $EntityView
+            'Ev' => $EntityView,
+            'Revisions' => $Revisions,
+            'Tags' => $Tags
         ));
-        //echo $EntityView->edit();
+        echo $EntityView->edit();
     }
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');

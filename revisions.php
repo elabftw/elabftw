@@ -24,13 +24,14 @@ require_once 'app/head.inc.php';
 
 
 try {
+    $Users = new Users($_SESSION['userid']);
     if ($_GET['type'] === 'experiments') {
-        $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
+        $Entity = new Experiments($Users, $_GET['item_id']);
         $location = 'experiments';
 
     } elseif ($_GET['type'] === 'items') {
 
-        $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
+        $Entity = new Database($Users, $_GET['item_id']);
         $location = 'database';
 
     } else {

@@ -92,7 +92,7 @@ try {
 
         $EntityView->Entity->setId($_GET['id']);
         $EntityView->initViewEdit();
-        // only owner can edit an experiment
+        // check permissions
         $EntityView->Entity->canOrExplode('write');
 
         // a locked experiment cannot be edited

@@ -1073,3 +1073,7 @@ canvas {
 .clickable:hover {
     cursor: pointer;
 }
+
+.bodyToggle {
+    display: none;
+}

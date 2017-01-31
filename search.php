@@ -387,7 +387,6 @@ if (isset($_GET)) {
 
             // USERID FILTER
             if (isset($_GET['owner'])) {
-                $EntityView->searchType = 'userid';
                 if (Tools::checkId($_GET['owner'])) {
                     $owner = $_GET['owner'];
                     $sqlUserid = " AND experiments.userid = " . $owner;
@@ -416,7 +415,6 @@ if (isset($_GET)) {
             if (Tools::checkId($_GET['type'])) {
                 // filter on database items types
                 $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['type'];
-                $EntityView->searchType = 'filter';
             }
         }
 
@@ -436,7 +434,7 @@ if (isset($_GET)) {
         echo "<section style='margin-top:20px'>";
         echo $EntityView->buildShow();
         echo $twig->render('show.html', array(
-            'EntityView' => $EntityView
+            'Ev' => $EntityView
         ));
         echo "</section>";
     }

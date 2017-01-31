@@ -17,15 +17,12 @@ use \Exception;
  * Entry point for database things
  *
  */
-require_once 'app/init.inc.php';
-$pageTitle = _('Database');
-$selectedMenu = 'Database';
-require_once 'app/head.inc.php';
-
-// add the chemdoodle stuff if we want it
-echo addChemdoodle();
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = _('Database');
+    $selectedMenu = 'Database';
+    require_once 'app/head.inc.php';
+
     $EntityView = new DatabaseView(new Database(new Users($_SESSION['userid'])));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
@@ -90,7 +87,10 @@ try {
     } elseif ($_GET['mode'] === 'edit') {
 
         $EntityView->Entity->setId($_GET['id']);
-        echo $EntityView->edit();
+        echo $twig->render('edit.html', array(
+            'EntityView' => $EntityView
+        ));
+        //echo $EntityView->edit();
     }
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');

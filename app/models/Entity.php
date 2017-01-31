@@ -333,4 +333,56 @@ class Entity
 
         return !in_array(false, $success);
     }
+
+    /**
+     * Generate a JS list of DB + XP items to use for links or # autocomplete
+     *
+     * @param $format string ask if you want the default list for links, or the one for the mentions
+     * @since 1.1.7 it adds the XP of user
+     * @return string
+     */
+    public function getEntityList($format = 'default')
+    {
+        $link_list = "";
+        $tinymce_list = "";
+
+        $Users = new Users($_SESSION['userid']);
+        $Database = new Database($Users);
+        $itemsArr = $Database->read();
+
+        foreach ($itemsArr as $item) {
+
+            // html_entity_decode is needed to convert the quotes
+            // str_replace to remove ' because it messes everything up
+            $link_name = str_replace(array("'", "\""), "", html_entity_decode(substr($item['title'], 0, 60), ENT_QUOTES));
+            // remove also the % (see issue #62)
+            $link_name = str_replace("%", "", $link_name);
+
+            // now build the list in both formats
+            $link_list .= "'" . $item['id'] . " - " . $item['category'] . " - " . $link_name . "',";
+            $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $item['id'] . "'>" . $link_name . "</a>\"},";
+        }
+
+        if ($format === 'default') {
+            return $link_list;
+        }
+
+        // complete the list with experiments (only for tinymce)
+        // fix #191
+        $Experiments = new Experiments($Users);
+        if ($format === 'mention-user') {
+            $Experiments->setUseridFilter();
+        }
+        $expArr = $Experiments->read();
+
+        foreach ($expArr as $exp) {
+
+            $link_name = str_replace(array("'", "\""), "", html_entity_decode(substr($exp['title'], 0, 60), ENT_QUOTES));
+            // remove also the % (see issue #62)
+            $link_name = str_replace("%", "", $link_name);
+            $tinymce_list .= "{ name : \"<a href='experiments.php?mode=view&id=" . $exp['id'] . "'>" . $link_name . "</a>\"},";
+        }
+
+        return $tinymce_list;
+    }
 }

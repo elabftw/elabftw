@@ -66,6 +66,29 @@ class TeamGroups
         return $req->fetchAll();
     }
 
+    public function readFull()
+    {
+        $idArr = array();
+        $nameArr = array();
+
+        $groups = $this->readAll();
+
+        foreach ($groups as $group) {
+            $idArr[] = $group['id'];
+            $nameArr[] = $group['name'];
+        }
+        $tgArr = array_combine($idArr, $nameArr);
+
+        $visibilityArr = array(
+            'organization' => 'Everyone with an account',
+            'team' => 'Only the team',
+            'user' => 'Only me'
+        );
+
+        return $visibilityArr + $tgArr;
+    }
+
+
     /**
      * Get the name of a group
      *

@@ -58,7 +58,7 @@ class EntityView
      * Common stuff for view and edit (but not show)
      *
      */
-    protected function initViewEdit()
+    public function initViewEdit()
     {
         $this->Entity->populate();
         // add the title in the page name (see #324)
@@ -78,45 +78,6 @@ class EntityView
     {
         $permissions = $this->Entity->getPermissions();
         return $permissions['read'] && !$permissions['write'];
-    }
-
-
-    /**
-     * Add chemdoodle JS
-     *
-     * @return string
-     */
-    public function injectChemEditor()
-    {
-        $html = '';
-        if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<div class='box chemdoodle'>";
-            $html .= "<h3>" . _('Molecule drawer') . "</h3>";
-            $html .= "<div class='center'>
-                        <script>
-                            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
-                        </script>
-                    </div>
-            </div>";
-        }
-
-        return $html;
-    }
-
-    /**
-     * Ask the user if he really wants to navigate out of the page
-     *
-     * @return string
-     */
-    public function injectCloseWarning()
-    {
-        $js = '';
-        if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-            $js .= "window.onbeforeunload = function (e) {
-                  e = e || window.event;
-                  return '" . _('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';};";
-        }
-        return $js;
     }
 
     /**

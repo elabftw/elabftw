@@ -11,21 +11,18 @@
 
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Entry point for all experiment stuff
  *
  */
-require_once 'app/init.inc.php';
-$pageTitle = ngettext('Experiment', 'Experiments', 2);
-$selectedMenu = 'Experiments';
-require_once 'app/head.inc.php';
-
-// add the chemdoodle stuff if we want it
-echo addChemdoodle();
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = ngettext('Experiment', 'Experiments', 2);
+    $selectedMenu = 'Experiments';
+    require_once 'app/head.inc.php';
+
     $EntityView = new ExperimentsView(new Experiments(new Users($_SESSION['userid'])));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
@@ -97,6 +94,25 @@ try {
     } elseif ($_GET['mode'] === 'edit') {
 
         $EntityView->Entity->setId($_GET['id']);
+        $EntityView->initViewEdit();
+        // only owner can edit an experiment
+        $EntityView->Entity->canOrExplode('write');
+
+        // a locked experiment cannot be edited
+        if ($EntityView->Entity->entityData['locked']) {
+            throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
+        }
+
+        $Revisions = new Revisions($EntityView->Entity);
+        $Status = new Status($EntityView->Entity->Users->userData['team']);
+        $Tags = new Tags($EntityView->Entity);
+
+        echo $twig->render('edit.html', array(
+            'Ev' => $EntityView,
+            'Revisions' => $Revisions,
+            'Status' => $Status,
+            'Tags' => $Tags
+        ));
         echo $EntityView->edit();
     }
 

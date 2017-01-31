@@ -295,15 +295,6 @@ if (isset($_GET)) {
         $table = 'experiments';
     }
 
-    // TAGS
-    /*
-    if (isset($_GET['tag_exp']) && !empty($_GET['tag_exp']) && isset($_GET['type']) && $_GET['type'] === 'experiments') {
-        $tags = filter_var($_GET['tag_exp'], FILTER_SANITIZE_STRING);
-    } elseif (isset($_GET['tag_db']) && !empty($_GET['tag_db']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['type'] !== 'experiments') {
-        $tags = filter_var($_GET['tag_db'], FILTER_SANITIZE_STRING);
-    }
-     */
-
     // STATUS
     if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId($_GET['status'])) {
         $status = $_GET['status'];

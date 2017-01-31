@@ -1,0 +1,243 @@
+{% if Ev.Entity.Users.userData['chem_editor'] %}
+    <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
+    <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
+    <script>ChemDoodle.iChemLabs.useHTTPS();</script>
+{% endif %}
+
+<script src='app/js/edit.mode.min.js'></script>
+
+{{ Ev.backToLink('experiments')|raw }}
+
+<section class='box' id='main_section' style='border-left: 6px solid #{{ Ev.Entity.entityData['color'] }}'>
+    <img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick="experimentsDestroy({{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')" />
+
+    <!-- TAGS -->
+    <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
+    <div class='tags'>
+        <span id='tags_div'>
+            <!--  build the tag array -->
+            {% if Ev.Entity.entityData['tags']|length > 0 %}
+                {% set tagsIdArr = Ev.Entity.entityData['tags_id']|split(',') %}
+                {% set tagsValueArr = Ev.Entity.entityData['tags']|split('|') %}
+                {% for key, tag in tagsValueArr %}
+                {# the key allows to get the id stored in tagsIdArr #}
+                <span class='tag'>
+                    <a onclick="destroyTag('{{ Ev.Entity.type }}', {{ Ev.Entity.id }}, {{ tagsIdArr[key] }})">
+                        {{ tag }}
+                    </a>
+                </span>
+                {% endfor %}
+            {% endif %}
+        </span>
+        <input type='text' id='createTagInput' placeholder='{{ 'Add a tag'|trans }}' />
+    </div>
+
+    <!--  MAIN FORM -->
+    <form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>
+        <input name='update' type='hidden' value='true' />
+        <input name='id' type='hidden' value='{{ Ev.Entity.id }}' />
+
+        <!-- DATE -->
+            <div class='row'>
+                <div class='col-md-4'>
+                    <img src='app/img/calendar.png' title='date' alt='calendar' />
+                    <label for='datepicker'>{{ 'Date'|trans }}</label>
+                    <!-- if firefox has support for it: type = date -->
+                    <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
+                    <input name='date' id='datepicker' size='8' type='text' value='{{ Ev.Entity.entityData['date'] }}' />
+                </div>
+
+                <!-- VISIBILITY -->
+                <div class='col-md-4'>
+                    <img src='app/img/eye.png' alt='visibility' />
+                    <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
+                    <select id='visibility_select' onchange='updateVisibility({{ Ev.Entity.id }}, this.value)'>
+                        {% for key, value in Ev.TeamGroups.readFull %}
+                            <option value='{{ key }}'
+                            {{ Ev.Entity.entityData['visibility'] == key ? ' selected' }}
+                            >{{ value|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- STATUS -->
+                <div class='col-md-4'>
+                    <img src='app/img/status.png' alt='status' />
+                    <label for='status_select'>{{ 'Status'|trans }}</label>
+                    <select id='status_select' name='status' onchange='updateStatus({{ Ev.Entity.id }}, this.value)'>
+                        {% for status in Status.readAll() %}
+                            <option value='{{ status['category_id'] }}'
+                            {{ Ev.Entity.entityData['category_id'] == status['category_id'] ? ' selected' }}>{{ status['category'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- TITLE -->
+            <h4>{{ 'Title'|trans }}</h4>
+            <input id='title_input' name='title' rows='1' value='{{ Ev.Entity.entityData['title'] }}' required />
+
+            <!-- BODY -->
+            <h4>{{ 'Experiment'|trans }}</h4>
+            <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>
+                {{ Ev.Entity.entityData['body']|raw }}
+            </textarea>
+
+            <div id='saveButton'>
+                <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>
+            </div>
+        </form>
+
+    <!-- REVISIONS -->
+    {{ Revisions.showCount|raw }}
+
+    <!-- LINKS -->
+    <section>
+        <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
+        <br>
+        <span id='links_div'>
+            {% set linksArr = Ev.Entity.Links.read %}
+            {% if linksArr|length > 0 %}
+            <ul class='list-group'>
+                {% for link in linksArr %}
+                <li class='list-group-item'>{{ link['name']|raw }} - <a href='database.php?mode=view&id="{{ link['itemid'] }}'>
+                        {{ link['title']|raw }}</a>
+                    <a onClick="experimentsDestroyLink({{ link['linkid'] }}, {{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')">
+                    <img class='align_right' src='app/img/small-trash.png' title='delete' alt='delete' /></a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </span>
+        <p class='inline'>{{ 'Add a link'|trans }}</p>
+        <input id='linkinput' size='60' type='text' name='link' placeholder='{{ 'from the database'|trans }}' />
+    </section>
+
+</section>
+
+{% if Ev.Entity.Users.userData['chem_editor'] %}
+<div class='box chemdoodle'>
+    <h3>{{ 'Molecule drawer'|trans }}</h3>
+    <div class='center'>
+        <script>
+            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
+        </script>
+    </div>
+</div>
+{% endif %}
+
+{% if Ev.Entity.Users.userData['close_warning'] %}
+    <script>
+        window.onbeforeunload = function (e) {
+                  e = e || window.event;
+                  return '{{ 'Do you want to navigate away from this page? Unsaved changes will be lost!'|trans }}';
+        };
+    </script>
+{% endif %}
+
+<script>
+    // READY ? GO !!
+    $(document).ready(function() {
+        // AUTOSAVE
+        var typingTimer;                // timer identifier
+        var doneTypingInterval = 7000;  // time in ms between end of typing and save
+
+        // user finished typing, save work
+        function doneTyping () {
+            quickSave('experiments', {{ Ev.Entity.id }});
+        }
+        // KEYBOARD SHORTCUTS
+        key('{{ Ev.Entity.Users.userData['sc_create'] }}', function(){
+            location.href = 'app/controllers/ExperimentsController?create=true';
+        });
+        key('{{ Ev.Entity.Users.userData['sc_submit'] }}', function(){
+            document.forms['editXP'].submit();
+        });
+
+        // autocomplete the tags
+        $('#createTagInput').autocomplete({
+            source: [{{ Tags.generateTagList('autocomplete')|raw }}]
+        });
+
+        // autocomplete the links
+        $( '#linkinput' ).autocomplete({
+            source: [{{ Ev.Entity.getEntityList('default')|raw }}]
+        });
+
+        // CREATE TAG
+        // listen keypress, add tag when it's enter
+        $('#createTagInput').keypress(function (e) {
+            createTag(e, 'experiments', {{ Ev.Entity.id }});
+        });
+        // CREATE LINK
+        // listen keypress, add link when it's enter
+        $('#linkinput').keypress(function (e) {
+            experimentsCreateLink(e, {{ Ev.Entity.id }});
+        });
+
+        // DATEPICKER
+        $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
+        // If the title is 'Untitled', clear it on focus
+        $('#title_input').focus(function(){
+            if ($(this).val() === {{ 'Untitled'|trans }}) {
+                $('#title_input').val('');
+            }
+        });
+
+        // EDITOR
+        tinymce.init({
+            mode : 'specific_textareas',
+            editor_selector : 'mceditable',
+            content_css : 'app/css/tinymce.css',
+            plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention',
+            pagebreak_separator: '<pagebreak>',
+            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',
+            removed_menuitems : 'newdocument',
+            // save button :
+            save_onsavecallback: function() {
+                quickSave('experiments', {{ Ev.Entity.id }});
+            },
+            // keyboard shortcut to insert today's date at cursor in editor
+            setup : function(editor) {
+                editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+                editor.on('keydown', function(event) {
+                    clearTimeout(typingTimer);
+                });
+                editor.on('keyup', function(event) {
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                });
+            },
+            mentions: {
+                delimiter: ['#', '$'],
+                source: function (query, process, delimiter) {
+                            if (delimiter === '#') {
+                                process([{{ Ev.Entity.getEntityList('mention')|raw }}]);
+                            }
+                            if (delimiter === '$') {
+                                process([{{ Ev.Entity.getEntityList('mention-user')|raw }}]);
+                            }
+                        }
+            },
+            language : '{{ Ev.Entity.Users.userData['lang'] }}',
+            style_formats_merge: true,
+            style_formats: [
+                {
+                    title: 'Image Left',
+                    selector: 'img',
+                    styles: {
+                        'float': 'left',
+                        'margin': '0 10px 0 10px'
+                    }
+                 },
+                 {
+                     title: 'Image Right',
+                     selector: 'img',
+                     styles: {
+                         'float': 'right',
+                         'margin': '0 0 10px 10px'
+                     }
+                 }
+            ]
+    });
+});
+</script>

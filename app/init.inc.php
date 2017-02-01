@@ -16,117 +16,117 @@ use Exception;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
-if (!isset($_SESSION)) {
-    session_start();
-}
-
-// add check for php version here also
-if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
-    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
-    die($message);
-}
-
-// check that the config file is here and readable
-if (is_readable('config.php')) {
-    require_once 'config.php';
-} elseif (is_readable('../config.php')) {
-    // we might be called from app folder
-    require_once '../config.php';
-} elseif (is_readable('../../config.php')) {
-    require_once '../../config.php';
-} elseif (is_readable('../../../config.php')) {
-    require_once '../../../config.php';
-} else {
-    header('Location: install');
-    exit;
-}
-
-require_once ELAB_ROOT . 'vendor/autoload.php';
-
-// SQL CONNECT
 try {
-    $pdo = Db::getConnection();
-} catch (Exception $e) {
-    die('Error connecting to the database : ' . $e->getMessage());
-}
-// END SQL CONNECT
+    if (!isset($_SESSION)) {
+        session_start();
+    }
 
-// require common stuff
-require_once ELAB_ROOT . 'app/functions.inc.php';
+    // add check for php version here also
+    if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
+        $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
+        throw new Exception($message);
+    }
 
-$Update = new Update(new Config);
-
-// i18n (gettext)
-if (isset($_SESSION['prefs']['lang'])) {
-    $locale = $_SESSION['prefs']['lang'] . '.utf8';
-} else {
-    // this will throw an exception if the SQL structure is not imported yet
-    // so we redirect to the install folder
-    try {
-        $locale = $Update->Config->configArr['lang'] . '.utf8';
-    } catch (Exception $e) {
+    // check that the config file is here and readable
+    if (is_readable('config.php')) {
+        require_once 'config.php';
+    } elseif (is_readable('../config.php')) {
+        // we might be called from app folder
+        require_once '../config.php';
+    } elseif (is_readable('../../config.php')) {
+        require_once '../../config.php';
+    } elseif (is_readable('../../../config.php')) {
+        require_once '../../../config.php';
+    } else {
         header('Location: install');
-        exit;
+        throw new Exception('Redirecting to install folder');
     }
-}
-$domain = 'messages';
-putenv("LC_ALL=$locale");
-$res = setlocale(LC_ALL, $locale);
-bindtextdomain($domain, ELAB_ROOT . "app/locale");
-textdomain($domain);
-// END i18n
 
-// TWIG
-$loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
-$twig = new \Twig_Environment($loader);
-$cache = ELAB_ROOT . 'uploads/tmp';
-$options = array();
+    require_once ELAB_ROOT . 'vendor/autoload.php';
 
-// enable cache if not in debug (dev) mode
-if (!$Update->Config->configArr['debug']) {
-    $options = array('cache' => $cache);
-}
-$twig = new \Twig_Environment($loader, $options);
+    // SQL CONNECT
+    // to remove
+    $pdo = Db::getConnection();
+    // END SQL CONNECT
 
-// custom twig filters |msg and |kdate
-$filterOptions = array('is_safe' => array('html'));
-$msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-$dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-$twig->addFilter($msgFilter);
-$twig->addFilter($dateFilter);
+    // require common stuff
+    require_once ELAB_ROOT . 'app/functions.inc.php';
 
-// i18n for twig
-$twig->addExtension(new \Twig_Extensions_Extension_I18n());
+    $Update = new Update(new Config);
 
-// run the update script if we have the wrong schema version
-if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
-    try {
-        $_SESSION['ok'] = $Update->runUpdateScript();
-    } catch (Exception $e) {
-        $_SESSION['ko'][] = 'Error updating: ' . $e->getMessage();
+    // i18n (gettext)
+    if (isset($_SESSION['prefs']['lang'])) {
+        $locale = $_SESSION['prefs']['lang'] . '.utf8';
+    } else {
+        // this will throw an exception if the SQL structure is not imported yet
+        // so we redirect to the install folder
+        try {
+            $locale = $Update->Config->configArr['lang'] . '.utf8';
+        } catch (Exception $e) {
+            header('Location: install');
+            throw new Exception('Redirecting to install folder');
+        }
     }
-}
+    $domain = 'messages';
+    putenv("LC_ALL=$locale");
+    $res = setlocale(LC_ALL, $locale);
+    bindtextdomain($domain, ELAB_ROOT . "app/locale");
+    textdomain($domain);
+    // END i18n
 
-// pages where you don't need to be logged in
-// reset.php is in fact app/reset.php but we use basename so...
-$nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-exec.php', 'change-pass.php', 'reset.php', 'ResetPasswordController.php');
+    // TWIG
+    $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
+    $twig = new \Twig_Environment($loader);
+    $cache = ELAB_ROOT . 'uploads/tmp';
+    $options = array();
 
-if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologin_arr)) {
-    // try to login with the cookie
-    $Auth = new Auth();
-    if (!$Auth->loginWithCookie()) {
-        // maybe we clicked an email link and we want to be redirected to the page upon successful login
-        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        $host = $_SERVER['HTTP_HOST'];
-        $script = $_SERVER['SCRIPT_NAME'];
-        $params = '?' . $_SERVER['QUERY_STRING'];
-        $url = 'https://' . $host . $script . $params;
-        // remove trailing ? if there was no query string
-        $url = rtrim($url, '?');
-
-        setcookie('redirect', $url, time() + 300, '/', null, true, true);
-
-        header('location: app/logout.php');
-        exit;
+    // enable cache if not in debug (dev) mode
+    if (!$Update->Config->configArr['debug']) {
+        $options = array('cache' => $cache);
     }
+    $twig = new \Twig_Environment($loader, $options);
+
+    // custom twig filters |msg and |kdate
+    $filterOptions = array('is_safe' => array('html'));
+    $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+    $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
+    $twig->addFilter($msgFilter);
+    $twig->addFilter($dateFilter);
+
+    // i18n for twig
+    $twig->addExtension(new \Twig_Extensions_Extension_I18n());
+
+    // run the update script if we have the wrong schema version
+    if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
+        try {
+            $_SESSION['ok'] = $Update->runUpdateScript();
+        } catch (Exception $e) {
+            $_SESSION['ko'][] = 'Error updating: ' . $e->getMessage();
+        }
+    }
+
+    // pages where you don't need to be logged in
+    // reset.php is in fact app/reset.php but we use basename so...
+    $nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-exec.php', 'change-pass.php', 'reset.php', 'ResetPasswordController.php');
+
+    if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologin_arr)) {
+        // try to login with the cookie
+        $Auth = new Auth();
+        if (!$Auth->loginWithCookie()) {
+            // maybe we clicked an email link and we want to be redirected to the page upon successful login
+            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+            $host = $_SERVER['HTTP_HOST'];
+            $script = $_SERVER['SCRIPT_NAME'];
+            $params = '?' . $_SERVER['QUERY_STRING'];
+            $url = 'https://' . $host . $script . $params;
+            // remove trailing ? if there was no query string
+            $url = rtrim($url, '?');
+
+            setcookie('redirect', $url, time() + 300, '/', null, true, true);
+
+            header('location: app/logout.php');
+        }
+    }
+} catch (Exception $e) {
+    echo $e->getMessage();
 }

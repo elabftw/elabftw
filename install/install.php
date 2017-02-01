@@ -47,7 +47,7 @@ try {
     // Check if there is already a config file, redirect to index if yes.
     if (file_exists('../config.php')) {
         header('Location: ../install/index.php');
-        exit;
+        throw new Exception('Redirecting to install page');
     }
 
     // POST data

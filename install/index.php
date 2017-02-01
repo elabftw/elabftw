@@ -104,7 +104,7 @@ try {
                 }
             }
             header('Location: ../register.php');
-            exit;
+            throw new Exception('Redirecting to register page');
         }
 
         $sql = "SELECT * FROM users";
@@ -113,7 +113,7 @@ try {
         // redirect to register page if no users are in the database
         if ($req->rowCount() === 0) {
             header('Location: ../register.php');
-            exit;
+            throw new Exception('Redirecting to register page');
         } else {
             $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
             throw new Exception($message);

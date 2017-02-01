@@ -16,23 +16,23 @@ use Exception;
  * Login page
  *
  */
-require_once 'app/init.inc.php';
-$pageTitle = _('Login');
-$selectedMenu = null;
-
-// Check if already logged in
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    header('Location: experiments.php');
-    exit;
-}
-
-require_once 'app/head.inc.php';
-
-$Config = new Config();
-$formKey = new FormKey();
-$BannedUsers = new BannedUsers();
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = _('Login');
+    $selectedMenu = null;
+
+    // Check if already logged in
+    if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+        header('Location: experiments.php');
+        throw new Exception('Already logged in');
+    }
+
+    require_once 'app/head.inc.php';
+
+    $Config = new Config();
+    $formKey = new FormKey();
+    $BannedUsers = new BannedUsers();
+
     // if we are not in https, die saying we work only in https
     if (!Tools::usingSsl()) {
         // get the url to display a link to click (without the port)
@@ -63,14 +63,7 @@ try {
         unset($_SESSION['failed_attempt']);
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
-
-} catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
-    require_once 'app/footer.inc.php';
-    exit;
-}
 ?>
-
 <script>
 // Check for cookies
 function checkCookiesEnabled() {
@@ -145,4 +138,9 @@ $(document).ready(function(){
 });
 </script>
 
-<?php require_once 'app/footer.inc.php';
+<?php
+} catch (Exception $e) {
+    echo Tools::displayMessage($e->getMessage(), 'ko');
+} finally {
+    require_once 'app/footer.inc.php';
+}

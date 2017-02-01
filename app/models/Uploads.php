@@ -302,11 +302,11 @@ class Uploads extends Entity
         $mime = finfo_file($finfo, $src);
         // the used fonction is different depending on extension
         if ($mime === 'image/jpeg') {
-            $sourceImage = @imagecreatefromjpeg($src);
+            $sourceImage = imagecreatefromjpeg($src);
         } elseif ($mime === 'image/png') {
-            $sourceImage = @imagecreatefrompng($src);
+            $sourceImage = imagecreatefrompng($src);
         } elseif ($mime === 'image/gif') {
-            $sourceImage = @imagecreatefromgif($src);
+            $sourceImage = imagecreatefromgif($src);
         } else {
             return false;
         }

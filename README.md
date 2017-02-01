@@ -6,10 +6,11 @@
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/master)
 [![Codeclimate](https://d3s6mut3hikguw.cloudfront.net/github/elabftw/elabftw/badges/gpa.svg)](https://codeclimate.com/github/elabftw/elabftw)
 [![Codacy Badge](https://www.codacy.com/project/badge/9942fbe6c6f14f488be69e51e93a1c10)](https://www.codacy.com/app/elabftw/elabftw)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7f8ef03c-64b1-44c2-9914-b66059af755c/mini.png)](https://insight.sensiolabs.com/projects/7f8ef03c-64b1-44c2-9914-b66059af755c)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Release](https://img.shields.io/github/release/elabftw/elabftw.svg)](https://github.com/elabftw/elabftw/releases/latest)
+
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7f8ef03c-64b1-44c2-9914-b66059af755c/small.png)](https://insight.sensiolabs.com/projects/7f8ef03c-64b1-44c2-9914-b66059af755c)
 
 # Description
 

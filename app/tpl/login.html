@@ -1,0 +1,53 @@
+<script>
+// Check for cookies
+if (!checkCookiesEnabled()) {
+    var cookie_alert =
+        "<div class='alert alert-danger'><p>{{ 'Please enable cookies in your navigator to continue.'|trans }}</p></div>";
+    document.write(cookie_alert);
+}
+</script>
+
+<menu class='border' style='color:#29AEB9'>{{ 'Note: You need cookies enabled to log in.'|trans }}</menu>
+
+<section class='center'>
+    <!-- Login form , the id is for an acceptance test -->
+    <form method="post" id='login' action="app/login-exec.php" autocomplete="off">
+        <h2>{{ 'Sign in to your account'|trans }}</h2>
+        <br>
+        <p class="login-area">
+        <label class='block' for="email">{{ 'Email'|trans }}</label>
+        <input class="login-area-input" name="email" type="email" value='{{ SESSION.email ? SESSION.email }}' required /><br>
+        <label class='block' for="password">{{ 'Password'|trans }}</label>
+            <input class="login-area-input" name="password" type="password" required /><br>
+            <!-- form key -->
+            {{ FormKey.getFormkey|raw }}
+        <input type='checkbox' name='rememberme' id='rememberme' />
+        <label for='rememberme'>{{ 'Remember me'|trans }}</label>
+        </p>
+        <div id='loginButtonDiv'>
+            <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
+        </div>
+    </form>
+    <p>
+        {{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(
+            "<a href='register.php'>",
+            "</a>",
+            "<a href='#' class='trigger'>",
+            "</a>")|raw }}
+    </p>
+    <div class='toggle_container'>
+    <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+        <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+        <button class='button' type="submit" name="Submit">{{ 'Send new password'|trans }}</button>
+    </form>
+    </div>
+</section>
+
+<script>
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("a.trigger").click(function(){
+		$('.toggle_container').slideToggle("slow");
+	});
+});
+</script>

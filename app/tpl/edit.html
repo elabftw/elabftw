@@ -1,15 +1,4 @@
-{% if Ev.Entity.type == 'experiments' %}
-    {% set controller = 'app/controllers/ExperimentsController.php' %}
-{% else %}
-    {% set controller = 'app/controllers/DatabaseController.php' %}
-{% endif %}
-
-{% if Ev.Entity.Users.userData['chem_editor'] %}
-    <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
-    <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
-    <script>ChemDoodle.iChemLabs.useHTTPS();</script>
-{% endif %}
-
+{% include 'view-edit.html' %}
 <script src='app/js/edit.mode.min.js'></script>
 
 {{ Ev.backToLink(Ev.Entity.type)|raw }}

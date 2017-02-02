@@ -1,10 +1,4 @@
-{% if Ev.Entity.type == 'experiments' %}
-    {% set controller = 'app/controllers/ExperimentsController.php' %}
-    {% set page = 'experiments.php' %}
-{% else %}
-    {% set controller = 'app/controllers/DatabaseController.php' %}
-    {% set page = 'database.php' %}
-{% endif %}
+{% include 'view-edit.html' %}
 
 {% if Ev.ro %}
     {{ 'Read-only mode. Experiment of %s.'|trans|format(Ev.Entity.Users.userData['fullname'])|msg('ok', false) }}

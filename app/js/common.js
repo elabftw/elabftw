@@ -5,9 +5,9 @@
 
 function checkCookiesEnabled() {
     var cookieEnabled = (navigator.cookieEnabled) ? true : false;
-    if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) {
+    if (typeof navigator.cookieEnabled === "undefined" && !cookieEnabled) {
         document.cookie="testcookie";
-        cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
+        cookieEnabled = (document.cookie.indexOf("testcookie") !== -1) ? true : false;
     }
 
     return (cookieEnabled);

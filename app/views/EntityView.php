@@ -145,6 +145,18 @@ class EntityView
      */
     public function buildShowMenu($type)
     {
+        $getCat = '';
+        $getOrder = '';
+        $getSort = '';
+        if (isset($_GET['cat'])) {
+            $getCat = $_GET['cat'];
+        }
+        if (isset($_GET['order'])) {
+            $getOrder = $_GET['order'];
+        }
+        if (isset($_GET['sort'])) {
+            $getSort = $_GET['sort'];
+        }
         $templates = '';
         $createItem = '';
 
@@ -214,7 +226,7 @@ class EntityView
         $html .= "<select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . $filterTitle . "</option>";
         foreach ($categoryArr as $category) {
-            $html .= "<option value='" . $category['category_id'] . "'" . Tools::addSelected($_GET['cat'], $category['category_id']) . ">" . $category['category'] . "</option>";
+            $html .= "<option value='" . $category['category_id'] . "'" . Tools::addSelected($getcat, $category['category_id']) . ">" . $category['category'] . "</option>";
         }
 
         $html .= "</select>";
@@ -224,22 +236,22 @@ class EntityView
         // ORDER
         $html .= "<select name='order' style='-moz-appearance:none' class='form-control select-order'>";
         $html .= "<option value=''>" . _('Order by') . "</option>";
-        $html .= "<option value='cat'" . Tools::addSelected($_GET['order'], 'cat') . ">" . _('Category') . "</option>";
-        $html .= "<option value='date'" . Tools::addSelected($_GET['order'], 'date') . ">" . _('Date') . "</option>";
+        $html .= "<option value='cat'" . Tools::addSelected($getOrder, 'cat') . ">" . _('Category') . "</option>";
+        $html .= "<option value='date'" . Tools::addSelected($getOrder, 'date') . ">" . _('Date') . "</option>";
         if ($type === 'database') {
-            $html .= "<option value='rating'" . Tools::addSelected($_GET['order'], 'rating') . ">" . _('Rating') . "</option>";
+            $html .= "<option value='rating'" . Tools::addSelected($getOrder, 'rating') . ">" . _('Rating') . "</option>";
         }
-        $html .= "<option value='title'" . Tools::addSelected($_GET['order'], 'title') . ">" . _('Title') . "</option>";
+        $html .= "<option value='title'" . Tools::addSelected($getOrder, 'title') . ">" . _('Title') . "</option>";
         if ($type === 'experiments') {
-            $html .= "<option value='comment'" . Tools::addSelected($_GET['order'], 'comment') . ">" . _('Comment') . "</option>";
+            $html .= "<option value='comment'" . Tools::addSelected($getOrder, 'comment') . ">" . _('Comment') . "</option>";
         }
         $html .= "</select>";
 
         // SORT
         $html .= "<select name='sort' style='-moz-appearance:none' class='form-control select-sort'>";
         $html .= "<option value=''>" . _('Sort') . "</option>";
-        $html .= "<option value='desc'" . Tools::addSelected($_GET['sort'], 'desc') . ">" . _('DESC') . "</option>";
-        $html .= "<option value='asc'" . Tools::addSelected($_GET['sort'], 'asc') . ">" . _('ASC') . "</option>";
+        $html .= "<option value='desc'" . Tools::addSelected($getSort, 'desc') . ">" . _('DESC') . "</option>";
+        $html .= "<option value='asc'" . Tools::addSelected($getSort, 'asc') . ">" . _('ASC') . "</option>";
         $html .= "</select>";
         $html .= "<button class='btn btn-elab submit-order'>" . _('Order') . "</button>";
         $html .= "<button type='reset' class='btn btn-danger submit-reset' onClick=\"javascript:location.href='" . $type . ".php?mode=show'\">";

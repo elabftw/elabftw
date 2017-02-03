@@ -24,6 +24,7 @@ try {
     require_once 'app/head.inc.php';
 
     $EntityView = new ExperimentsView(new Experiments(new Users($_SESSION['userid'])));
+    $Status = new Status($EntityView->Entity->Users->userData['team']);
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $EntityView->display = $_SESSION['prefs']['display'];
@@ -109,7 +110,6 @@ try {
         }
 
         $Revisions = new Revisions($EntityView->Entity);
-        $Status = new Status($EntityView->Entity->Users->userData['team']);
         $Tags = new Tags($EntityView->Entity);
 
         echo $twig->render('edit.html', array(

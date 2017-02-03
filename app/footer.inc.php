@@ -31,5 +31,5 @@ echo $twig->render('footer.html', array(
     'SESSION' => $_SESSION,
     'Users' => $Users,
     'sqlNb' => $sqlNb,
-    'generationTime' => $generationTime
+    'generationTime' => ' ' . $generationTime . ' '
 ));

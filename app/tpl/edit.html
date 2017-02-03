@@ -125,6 +125,20 @@
     {% endif %}
 </section>
 
+<!-- DOODLE -->
+<section class='box'>
+    <img src='app/img/pencil.png' />
+    <h3 style='display:inline' class='clickable' onclick="$('.canvasDiv').toggle();">{{ 'Draw something'|trans }}</h3>
+    <br><br>
+    <div class='canvasDiv' style='display:none'>
+        <canvas id='doodleCanvas' width='700px' height='600px'></canvas>
+        <button class='button button-delete' onClick='clearCanvas()'>{{ 'Clear'|trans }}</button>
+        <button class='button' onClick="saveCanvas('{{ Ev.Entity.type }}', {{ Ev.Entity.id }})">{{ 'Save'|trans }}</button>
+    </div>
+</section>
+<script src='app/js/doodle.js'></script>
+
+
 {% if Ev.Entity.Users.userData['chem_editor'] %}
 <div class='box chemdoodle'>
     <h3>{{ 'Molecule drawer'|trans }}</h3>

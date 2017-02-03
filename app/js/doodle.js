@@ -1,7 +1,7 @@
 // code from http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
-var clickX = new Array();
-var clickY = new Array();
-var clickDrag = new Array();
+var clickX = [];
+var clickY = [];
+var clickDrag = [];
 var paint;
 context = document.getElementById('doodleCanvas').getContext("2d");
 
@@ -35,8 +35,8 @@ function redraw() {
     context.strokeStyle = "#29AEB9";
     context.lineJoin = "round";
     context.lineWidth = 5;
-            
-    for(var i=0; i < clickX.length; i++) {		
+
+    for(var i=0; i < clickX.length; i++) {
     context.beginPath();
     if(clickDrag[i] && i){
       context.moveTo(clickX[i-1], clickY[i-1]);
@@ -56,15 +56,19 @@ function clearCanvas() {
     clickDrag = [];
 }
 
-function saveCanvas(id) {
+function saveCanvas(type, id) {
     var image = ($('#doodleCanvas')[0]).toDataURL();
-    $.post('app/controllers/ExperimentsController.php', {
+    $.post('app/controllers/EntityController.php', {
         addFromString: true,
         id: id,
-        type: 'png',
+        type: type,
+        fileType: 'png',
         string: image
     }).done(function() {
-        $("#filesdiv").load("experiments.php?mode=edit&id=" + id + " #filesdiv");
+        if (type === 'items') {
+            type = 'database';
+        }
+        $("#filesdiv").load(type + ".php?mode=edit&id=" + id + " #filesdiv");
     });
 
 }

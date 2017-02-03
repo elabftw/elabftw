@@ -157,6 +157,24 @@ try {
         }
     }
 
+    // ADD MOL FILE OR PNG
+    if (isset($_POST['addFromString'])) {
+        $Uploads = new Uploads($Entity);
+        $Entity->canOrExplode('write');
+        if ($Uploads->createFromString($_POST['fileType'], $_POST['string'])) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+
     // DESTROY UPLOAD
     if (isset($_POST['uploadsDestroy'])) {
         $Uploads = new Uploads($Entity);

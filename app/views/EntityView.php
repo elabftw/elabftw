@@ -51,9 +51,6 @@ class EntityView
     /** instance of UploadsView */
     protected $UploadsView;
 
-    /** instance of DoodleView */
-    protected $DoodleView;
-
     /**
      * Common stuff for view and edit (but not show)
      *
@@ -66,7 +63,6 @@ class EntityView
 
         // get the UploadsView object
         $this->UploadsView = new UploadsView(new Uploads($this->Entity));
-        $this->DoodleView = new DoodleView($this->Entity);
     }
 
     /**

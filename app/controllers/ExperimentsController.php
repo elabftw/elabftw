@@ -81,24 +81,6 @@ try {
         }
     }
 
-    // ADD MOL FILE OR PNG
-    if (isset($_POST['addFromString'])) {
-        $Uploads = new Uploads($Entity);
-        $Entity->setId($_POST['id']);
-        $Entity->canOrExplode('write');
-        if ($Uploads->createFromString($_POST['type'], $_POST['string'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
-
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
         $Entity->setId($_POST['id']);

@@ -64,7 +64,6 @@ class ExperimentsView extends EntityView
     public function edit()
     {
         $this->html .= $this->UploadsView->buildUploadForm();
-        $this->html .= $this->DoodleView->buildDoodle();
         $this->html .= $this->UploadsView->buildUploads('edit');
 
         return $this->html;

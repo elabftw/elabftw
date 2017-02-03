@@ -90,25 +90,25 @@ class Uploads extends Entity
     /**
      * Create an upload from a string, from Chemdoodle or Doodle
      *
-     * @param string $type 'mol' or 'png'
+     * @param string $fileType 'mol' or 'png'
      * @param string $string
      * @return bool
      */
-    public function createFromString($type, $string)
+    public function createFromString($fileType, $string)
     {
-        if ($type === 'png') {
+        if ($fileType === 'png') {
             $realName = 'Doodle.png';
             // get the image in binary
             $string = str_replace('data:image/png;base64,', '', $string);
             $string = str_replace(' ', '+', $string);
             $string = base64_decode($string);
-        } elseif ($type === 'mol') {
+        } elseif ($fileType === 'mol') {
             $realName = 'Mol-file.mol';
         } else {
             throw new Exception('Bad type!');
         }
 
-        $longName = $this->getCleanName() . "." . $type;
+        $longName = $this->getCleanName() . "." . $fileType;
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
         if (!empty($string) && !file_put_contents($fullPath, $string)) {

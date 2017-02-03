@@ -13752,15 +13752,21 @@ ChemDoodle.uis.gui.imageDepot = (function() {
             // save directly in a file and upload it
             var query = getQueryParams(document.location.search);
             var item = query.id;
+            var page = location.pathname.substring(1);
+            var type = 'experiments';
+            if (page === 'database.php') {
+                type = 'items';
+            }
             // only if we are editing an experiment, not from team page
             if (item % 1 === 0) {
-                $.post('app/controllers/ExperimentsController.php', {
+                $.post('app/controllers/EntityController.php', {
                     addFromString: true,
-                    type: 'mol',
+                    fileType: 'mol',
+                    type: type,
                     id: item,
                     string: c.writeMOL(sketcher.molecules[0])
                 }).done(function() {
-                    $("#filesdiv").load("experiments.php?mode=edit&id=" + item + " #filesdiv");
+                    $("#filesdiv").load(page + "?mode=edit&id=" + item + " #filesdiv");
                 });
             } else if (sketcher.useServices) {
 				sketcher.dialogManager.saveDialog.clear();

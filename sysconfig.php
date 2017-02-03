@@ -17,9 +17,9 @@ use Exception;
  * Administrate elabftw install
  *
  */
-require_once 'app/init.inc.php';
 
 try {
+    require_once 'app/init.inc.php';
     $pageTitle = _('eLabFTW Configuration');
     $selectedMenu = null;
     require_once 'app/head.inc.php';
@@ -29,7 +29,6 @@ try {
     }
 
     $Config = new Config();
-    $formKey = new FormKey();
     $SysconfigView = new SysconfigView(new Update($Config), new Logs(), new TeamsView(new Teams()));
     $UsersView = new UsersView(new Users());
 

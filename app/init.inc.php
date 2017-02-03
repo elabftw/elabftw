@@ -44,14 +44,6 @@ try {
 
     require_once ELAB_ROOT . 'vendor/autoload.php';
 
-    // SQL CONNECT
-    // to remove
-    $pdo = Db::getConnection();
-    // END SQL CONNECT
-
-    // require common stuff
-    require_once ELAB_ROOT . 'app/functions.inc.php';
-
     $Update = new Update(new Config);
 
     // i18n (gettext)

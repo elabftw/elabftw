@@ -23,6 +23,7 @@ if (isset($_SESSION['auth'])) {
 }
 
 // show some stats about generation time and number of SQL queries
+$pdo = Db::getConnection();
 $sqlNb = $pdo->getNumberOfQueries();
 $generationTime = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5);
 

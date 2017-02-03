@@ -412,4 +412,18 @@ class Tools
         $html .= '</ul>';
         return $html;
     }
+
+    /**
+     * Used when generating options for select menus
+     *
+     * @param string $getParam
+     * @param string $value
+     * @return string
+     */
+    public static function addSelected($getParam, $value)
+    {
+        if ($getParam === $value) {
+            return " selected";
+        }
+    }
 }

@@ -38,18 +38,6 @@ class DatabaseView extends EntityView
 
         return $this->html;
     }
-    /**
-     * Edit item
-     *
-     * @return string HTML for editDB
-     */
-    public function edit()
-    {
-        $this->html .= $this->UploadsView->buildUploadForm();
-        $this->html .= $this->UploadsView->buildUploads('edit');
-
-        return $this->html;
-    }
 
     /**
      * Display the stars rating for a DB item

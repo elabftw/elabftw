@@ -56,18 +56,6 @@ class ExperimentsView extends EntityView
 
         return $this->html;
     }
-    /**
-     * Edit experiment
-     *
-     * @return string
-     */
-    public function edit()
-    {
-        $this->html .= $this->UploadsView->buildUploadForm();
-        $this->html .= $this->UploadsView->buildUploads('edit');
-
-        return $this->html;
-    }
 
     /**
      * If int, get the name of the team group instead of a number

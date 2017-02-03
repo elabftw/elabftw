@@ -99,6 +99,19 @@ class EntityView
     }
 
     /**
+     * Generate html for upload form and display of uploads in edit mode
+     *
+     * @return string HTML uploads
+     */
+    public function buildUploadsHtml()
+    {
+        $this->html .= $this->UploadsView->buildUploadForm();
+        $this->html .= $this->UploadsView->buildUploads('edit');
+
+        return $this->html;
+    }
+
+    /**
      * Generate html for zip/csv export buttons
      *
      * @param array $itemArr a whole bunch of items

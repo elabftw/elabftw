@@ -118,7 +118,7 @@ try {
             'Status' => $Status,
             'Tags' => $Tags
         ));
-        echo $EntityView->edit();
+        echo $EntityView->buildUploadsHtml();
     }
 
 } catch (Exception $e) {

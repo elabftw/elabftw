@@ -102,7 +102,7 @@ try {
             'Revisions' => $Revisions,
             'Tags' => $Tags
         ));
-        echo $EntityView->edit();
+        echo $EntityView->buildUploadsHtml();
     }
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');

@@ -6,7 +6,7 @@
     {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
 {% else %}
     {{ Ev.buildExportMenu(Ev.itemsArr)|raw }}
-    <p class='smallgray'>
+    <p class='smallgray' style='display:inline'>
         {{ count }}
         {% trans %}
             result found

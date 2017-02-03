@@ -1,0 +1,103 @@
+<menu class='border'>
+    <a href='login.php'>
+        <img src='app/img/arrow-left-blue.png' alt='' />{{ 'go back to login page'|trans }}
+    </a>
+</menu>
+
+<section class='center'>
+    <h2>{{ 'Create your account'|trans }}</h2>
+    <br><br>
+    <!-- Register form -->
+    <form id='regform' method="post" class='loginform' autocomplete="off" action="app/register-exec.php">
+
+        <input style='display:none' type='text' name='bot' value=''>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <label class='block' for='team'>{{ 'Team'|trans }}</label>
+                <select name='team' id='team' required>
+                    <option value=''>{{ '------ Select a team ------'|trans }}</option>
+                    {% for team in teamsArr %}
+                        <option value = '{{ team['team_id'] }}'>{{ team['team_name'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class='col-md-4'>
+                <label class='block' for="email">{{ 'Email'|trans }}</label>
+                <input name="email" type="email" id="email" required />
+            </div>
+            <div class='col-md-4'>
+                <label class='block' for="password">{{ 'Password'|trans }}</label>
+                <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <label class='block' for="firstname">{{ 'Firstname'|trans }}</label>
+                <input name='firstname' type='text' id='firstname' required />
+            </div>
+
+            <div class='col-md-4'>
+                <label class='block' for="lastname">{{ 'Lastname'|trans }}</label>
+                <input name='lastname' type='text' id='lastname' required />
+            </div>
+
+            <div class='col-md-4'>
+                <label class='block' for='complexity'>{{ 'Password complexity'|trans }}</label>
+                <input id="complexity" disabled />
+            </div>
+        </div>
+
+        <div class='submitButtonDiv'>
+            <button type="submit" name="Submit" class='button'>{{ 'create'|trans }}</button>
+        </div>
+    </form>
+<!-- end register form -->
+</section>
+
+<script>
+$(document).ready(function() {
+    // give focus to the first field on page load
+    document.getElementById("team").focus();
+    // password complexity
+    $("#password").complexify({}, function (valid, complexity){
+        if (complexity < 20) {
+            $('#complexity').css({'background-color':'red'});
+            $('#complexity').css({'color':'white'});
+            $('#complexity').val('{{ 'Weak password'|trans }}');
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+        } else if (complexity < 30) {
+            $('#complexity').css({'color':'#white'});
+            $('#complexity').css({'background-color':'orange'});
+            $('#complexity').val('{{ 'Average password'|trans }}');
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+        } else if (complexity < 50) {
+            $('#complexity').css({'color':'white'});
+            $('#complexity').val('{{ 'Good password'|trans }}');
+            $('#complexity').css({'background-color':'green'});
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+        } else if (complexity < 99) {
+            $('#complexity').css({'color':'black'});
+            $('#complexity').val('{{ 'Strong password'|trans }}');
+            $('#complexity').css({'background-color':'#ffd700'});
+            $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
+            $('#complexity').css({'border' : 'none'});
+            $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
+        } else {
+            $('#complexity').css({'color':'#797979'});
+            $('#complexity').val('{{ 'No way that is your real password!'|trans }}');
+            $('#complexity').css({'background-color':'#e3e3e3'});
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+        }
+    });
+});
+</script>

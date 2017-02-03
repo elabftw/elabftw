@@ -86,7 +86,7 @@ class Teams
      */
     public function readAll()
     {
-        $sql = "SELECT * FROM teams ORDER BY datetime DESC";
+        $sql = "SELECT * FROM teams ORDER BY team_name ASC";
         $req = $this->pdo->prepare($sql);
         $req->execute();
 

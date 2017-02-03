@@ -418,7 +418,7 @@ class Tools
      *
      * @param string $getParam
      * @param string $value
-     * @return string
+     * @return string|null
      */
     public static function addSelected($getParam, $value)
     {

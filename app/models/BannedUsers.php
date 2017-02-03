@@ -20,10 +20,13 @@ class BannedUsers
     /** db connection */
     protected $pdo;
 
+    /** instance of Config */
     public $Config;
 
     /**
-     * get pdo
+     * Constructor
+     *
+     * @param Config $config
      */
     public function __construct(Config $config)
     {

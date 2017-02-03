@@ -66,6 +66,11 @@ class TeamGroups
         return $req->fetchAll();
     }
 
+    /**
+     * When we need to build a select menu with visibility + team groups
+     *
+     * @return array
+     */
     public function readFull()
     {
         $idArr = array();

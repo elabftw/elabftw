@@ -360,7 +360,7 @@ CREATE TABLE IF NOT EXISTS `team_events` (
 CREATE TABLE IF NOT EXISTS `todolist` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `body` text NOT NULL,
-  `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)

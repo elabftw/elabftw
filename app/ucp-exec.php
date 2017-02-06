@@ -23,15 +23,15 @@ $tab = '1';
 $Auth = new Auth();
 $Users = new Users();
 
+// TMP
+$pdo = Db::getConnection();
+
 try {
     // TAB 1 : PREFERENCES
     if (isset($_POST['display'])) {
-        if ($_POST['display'] === 'default') {
-            $new_display = 'default';
-        } elseif ($_POST['display'] === 'compact') {
+        $new_display = 'default';
+        if ($_POST['display'] === 'compact') {
             $new_display = 'compact';
-        } else {
-            $new_display = 'default';
         }
 
         // LIMIT
@@ -113,7 +113,7 @@ try {
             default_vis = :new_default_vis
             WHERE userid = :userid;";
         $req = $pdo->prepare($sql);
-        $req->execute(array(
+        if ($req->execute(array(
             'new_display' => $new_display,
             'new_limit' => $new_limit,
             'new_sc_create' => $new_sc_create,
@@ -126,19 +126,22 @@ try {
             'new_lang' => $new_lang,
             'new_default_vis' => $new_default_vis,
             'userid' => $_SESSION['userid']
-        ));
-        // put it in session
-        $_SESSION['prefs']['display'] = $new_display;
-        $_SESSION['prefs']['limit'] = $new_limit;
-        $_SESSION['prefs']['shortcuts']['create'] = $new_sc_create;
-        $_SESSION['prefs']['shortcuts']['edit'] = $new_sc_edit;
-        $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
-        $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
-        $_SESSION['prefs']['show_team'] = $new_show_team;
-        $_SESSION['prefs']['close_warning'] = $new_close_warning;
-        $_SESSION['prefs']['chem_editor'] = $new_chem_editor;
-        $_SESSION['prefs']['lang'] = $new_lang;
-        $_SESSION['ok'][] = _('Preferences updated.');
+        ))) {
+            // put it in session
+            $_SESSION['prefs']['display'] = $new_display;
+            $_SESSION['prefs']['limit'] = $new_limit;
+            $_SESSION['prefs']['shortcuts']['create'] = $new_sc_create;
+            $_SESSION['prefs']['shortcuts']['edit'] = $new_sc_edit;
+            $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
+            $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
+            $_SESSION['prefs']['show_team'] = $new_show_team;
+            $_SESSION['prefs']['close_warning'] = $new_close_warning;
+            $_SESSION['prefs']['chem_editor'] = $new_chem_editor;
+            $_SESSION['prefs']['lang'] = $new_lang;
+            $_SESSION['ok'][] = _('Preferences updated.');
+        } else {
+            $_SESSION['ko'][] = Tools::error();
+        }
     }
     // END TAB 1
 

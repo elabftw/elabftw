@@ -143,7 +143,7 @@
     <h3 style='display:inline' class='clickable' onclick="$('.canvasDiv').toggle();">{{ 'Draw something'|trans }}</h3>
     <br><br>
     <div class='canvasDiv' style='display:none'>
-        <canvas id='doodleCanvas' width='700px' height='600px'></canvas>
+        <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
         <button class='button button-delete' onClick='clearCanvas()'>{{ 'Clear'|trans }}</button>
         <button class='button' onClick="saveCanvas('{{ Ev.Entity.type }}', {{ Ev.Entity.id }})">{{ 'Save'|trans }}</button>
     </div>

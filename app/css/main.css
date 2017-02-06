@@ -1063,7 +1063,7 @@ ul#todoItems-list.ui-sortable {
 }
 
 /* doodle canvas */
-canvas {
+canvas.doodle {
     border: 1px solid #dcdddc;
     border-radius: 5px;
     display: block;

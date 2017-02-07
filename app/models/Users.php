@@ -19,7 +19,6 @@ use Swift_Message;
  */
 class Users extends Auth
 {
-
     /** instance of Config */
     public $Config;
 
@@ -33,7 +32,7 @@ class Users extends Auth
     public $userid;
 
     /**
-     * Assign the config object
+     * Constructor
      *
      * @param int|null $userid
      * @param Config|null $config

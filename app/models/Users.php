@@ -505,7 +505,7 @@ class Users extends Auth
         }
         $new_sc_todo = substr($params['sc_todo'], 0, 1);
         if (!ctype_alpha($new_sc_todo)) {
-            $new_sc_todo= 't';
+            $new_sc_todo = 't';
         }
 
         // SHOW TEAM

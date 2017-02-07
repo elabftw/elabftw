@@ -33,9 +33,6 @@ class EntityView
     /** are we looking for exp related to an item ? */
     public $related = 0;
 
-    /** can be compact */
-    public $display = '';
-
     /** the tag searched */
     public $tag = '';
 
@@ -226,7 +223,7 @@ class EntityView
         $html .= "<select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . $filterTitle . "</option>";
         foreach ($categoryArr as $category) {
-            $html .= "<option value='" . $category['category_id'] . "'" . Tools::addSelected($getcat, $category['category_id']) . ">" . $category['category'] . "</option>";
+            $html .= "<option value='" . $category['category_id'] . "'" . Tools::addSelected($getCat, $category['category_id']) . ">" . $category['category'] . "</option>";
         }
 
         $html .= "</select>";

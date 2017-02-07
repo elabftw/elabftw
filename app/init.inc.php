@@ -47,8 +47,9 @@ try {
     $Update = new Update(new Config);
 
     // i18n (gettext)
-    if (isset($_SESSION['prefs']['lang'])) {
-        $locale = $_SESSION['prefs']['lang'] . '.utf8';
+    if (isset($_SESSION['auth'])) {
+        $Users = new Users($_SESSION['userid']);
+        $locale = $Users->userData['lang'] . '.utf8';
     } else {
         // this will throw an exception if the SQL structure is not imported yet
         // so we redirect to the install folder

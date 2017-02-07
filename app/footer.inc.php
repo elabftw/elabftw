@@ -15,9 +15,10 @@ if (isset($_SESSION['auth'])) {
     // todolist
     $Todolist = new Todolist($_SESSION['userid']);
     $todoItems = $Todolist->readAll();
+    $Users->setId($_SESSION['userid']);
 
     echo $twig->render('todolist.html', array(
-        'session' => $_SESSION,
+        'Users' => $Users,
         'todoItems' => $todoItems
     ));
 }

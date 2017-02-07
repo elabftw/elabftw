@@ -94,7 +94,7 @@ $('#todo-form').submit(function(e) {
     }
 });
 {# shortcut to show todolist #}
-key('{{ session['prefs']['shortcuts']['todo'] }}', function(){
+key('{{ Users.userData['sc_todo'] }}', function(){
     toggleTodoList();
 });
 </script>

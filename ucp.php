@@ -15,17 +15,15 @@ namespace Elabftw\Elabftw;
  *
  */
 ?>
-<script src="app/js/edit.mode.min.js"></script>
 <?php
 require_once 'app/init.inc.php';
 $pageTitle = _('User Control Panel');
 $selectedMenu = null;
 require_once('app/head.inc.php');
 
-$Users = new Users($_SESSION['userid']);
-
 // BEGIN UCP PAGE
 ?>
+<script src="app/js/edit.mode.min.js"></script>
 
 <menu>
     <ul>
@@ -38,7 +36,7 @@ $Users = new Users($_SESSION['userid']);
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
 
-    <form action='app/ucp-exec.php' method='post'>
+    <form action='app/controllers/UcpController.php' method='post'>
         <section class='box'>
             <h3><?= _('Language') ?></h3>
             <hr>
@@ -48,7 +46,7 @@ $Users = new Users($_SESSION['userid']);
 $langsArr = Tools::getLangsArr();
 foreach ($langsArr as $lang => $text) {
     echo "<option ";
-    if ($_SESSION['prefs']['lang'] === $lang) {
+    if ($Users->userData['lang'] === $lang) {
         echo ' selected ';
     }
     echo "value='" . $lang . "'>" . $text . "</option>";
@@ -62,19 +60,19 @@ foreach ($langsArr as $lang => $text) {
             <hr>
             <p>
             <input id='radio_view_default' type='radio' name='display' value='default' 
-            <?= ($_SESSION['prefs']['display'] === 'default') ? "checked" : "" ?>
+            <?= ($Users->userData['display'] === 'default') ? "checked" : "" ?>
              />
             <label for='radio_view_default'><?= _('Default') ?></label>
 
             <input id='radio_view_compact' type='radio' name='display' value='compact' 
-            <?= ($_SESSION['prefs']['display'] === 'compact') ? "checked" : "" ?>
+            <?= ($Users->userData['display'] === 'compact') ? "checked" : "" ?>
              />
             <label for='radio_view_compact'><?= _('Compact') ?></label>
             </p>
 
             <p style='margin-top:20px;'>
             <label for='limit'><?= _('Items per page:') ?></label>
-            <input id='limit' type='text' size='2' maxlength='2' value='<?= $_SESSION['prefs']['limit'] ?>' name='limit'>
+            <input id='limit' type='text' size='2' maxlength='2' value='<?= $Users->userData['limit_nb'] ?>' name='limit'>
             </p>
         </section>
 
@@ -88,19 +86,19 @@ foreach ($langsArr as $lang => $text) {
                     <th><?= _('Shortcut') ?></th></tr>
 
                 <tr><td><?= _('Create') ?></td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $_SESSION['prefs']['shortcuts']['create'] ?>' name='key_create' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $Users->userData['sc_create'] ?>' name='sc_create' />
                     </td></tr>
 
                     <tr><td><?= _('Edit') ?></td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $_SESSION['prefs']['shortcuts']['edit'] ?>' name='key_edit' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $Users->userData['sc_edit'] ?>' name='sc_edit' />
                     </td></tr>
 
                     <tr><td><?= _('Submit') ?></td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $_SESSION['prefs']['shortcuts']['submit'] ?>' name='key_submit' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $Users->userData['sc_submit'] ?>' name='sc_submit' />
                     </td></tr>
 
                     <tr><td><?= _('TODO list') ?></td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $_SESSION['prefs']['shortcuts']['todo'] ?>' name='key_todo' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='<?= $Users->userData['sc_todo'] ?>' name='sc_todo' />
                     </td></tr>
                 </table>
             </p>
@@ -112,7 +110,7 @@ foreach ($langsArr as $lang => $text) {
             <p>
             <input id='show_team' type='checkbox' name='show_team'
 <?php
-if (isset($_SESSION['prefs']['show_team']) && $_SESSION['prefs']['show_team'] === 1) {
+if (isset($Users->userData['show_team']) && $Users->userData['show_team'] === '1') {
     echo "checked='checked'  ";
 };?>
             />
@@ -120,7 +118,7 @@ if (isset($_SESSION['prefs']['show_team']) && $_SESSION['prefs']['show_team'] ==
             <br>
             <input id='close_warning' type='checkbox' name='close_warning'
 <?php
-if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+if (isset($Users->userData['close_warning']) && $Users->userData['close_warning'] === '1') {
     echo "checked='checked'  ";
 };?>
             />
@@ -128,7 +126,7 @@ if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warn
             <br>
             <input id='chem_editor' type='checkbox' name='chem_editor'
 <?php
-if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'] === 1) {
+if (isset($Users->userData['chem_editor']) && $Users->userData['chem_editor'] === '1') {
     echo "checked='checked'  ";
 };?>
             />
@@ -296,7 +294,8 @@ echo "</ul>";
         echo "<input type='hidden' name='tpl_form' />";
         echo "<input type='hidden' name='tpl_id[]' value='" . $template['id'] . "' />";
         echo "<input name='tpl_name[]' value='" . stripslashes($template['name']) . "' style='width:90%' /><br />";
-        echo "<textarea id='" . $template['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" .
+        // the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762
+        echo "<textarea id='e" . $template['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" .
             stripslashes($template['body']) . "</textarea><br />";
         echo "<div class='center'>";
         echo "<button type='submit' name='Submit' class='button'>" . _('Edit template') . "</button>";
@@ -402,7 +401,7 @@ $(document).ready(function() {
         plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
         toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
         removed_menuitems : "newdocument",
-        language : '<?= $_SESSION['prefs']['lang'] ?>'
+        language : '<?= $Users->userData['lang'] ?>'
     });
 });
 </script>

@@ -27,8 +27,6 @@ try {
     $Status = new Status($EntityView->Entity->Users->userData['team']);
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $EntityView->display = $_SESSION['prefs']['display'];
-
         // CATEGORY FILTER
         if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
             $EntityView->Entity->categoryFilter = " AND status.id = " . $_GET['cat'];

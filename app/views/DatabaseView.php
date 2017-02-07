@@ -23,7 +23,7 @@ class DatabaseView extends EntityView
     public function __construct(Entity $entity)
     {
         $this->Entity = $entity;
-        $this->limit = $_SESSION['prefs']['limit'];
+        $this->limit = $this->Entity->Users->userData['limit_nb'];
 
     }
 

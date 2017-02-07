@@ -28,7 +28,7 @@
             {% if (Ev.Entity.Users.userid != item['userid']) and Ev.Entity.type == 'experiments' %}
                 {% set opacity = '0.7' %}
             {% endif %}
-            <section class='item {{ Ev.display }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item['color'] }}'>
+            <section class='item {{ Ev.Entity.Users.userData.display }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item['color'] }}'>
                 <a href='{{ page }}.php?mode=view&id={{ item['id'] }}'>
                 {# show attached if there is a file attached #}
                 {% if item['has_attachment'] %}

@@ -33,7 +33,7 @@ class ExperimentsView extends EntityView
     public function __construct(Entity $entity)
     {
         $this->Entity = $entity;
-        $this->limit = $_SESSION['prefs']['limit'];
+        $this->limit = $this->Entity->Users->userData['limit_nb'];
         $this->showTeam = $_SESSION['prefs']['show_team'];
 
         $this->TeamGroups = new TeamGroups($this->Entity->Users->userData['team']);

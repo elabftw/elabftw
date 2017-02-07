@@ -152,7 +152,7 @@ class UploadsView extends EntityView
                 $html .= "<img class='thumb' src='app/img/thumb-" . $ext . ".png' alt='' />";
 
             // special case for mol files, only in view mode
-            } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $mode === 'view') {
+            } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
                 // we need to escape \n in the mol file or we get unterminated string literal error in JS
                 $mol = str_replace("\n", "\\n", file_get_contents($filepath));
                 $html .= "<div class='center'><script>

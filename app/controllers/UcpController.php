@@ -19,14 +19,28 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
-    if (Tools::checkId($_POST['id']) === false) {
-        throw new Exception('The id parameter is invalid!');
-    }
+    $tab = 1;
+    $redirect = false;
 
-    $Templates = new Templates($_SESSION['team_id']);
+    // TAB 1 : PREFERENCES
+    if (isset($_POST['display'])) {
+        $redirect = true;
+        if ($Users->updatePreferences($_POST)) {
+            $_SESSION['ok'][] = _('Preferences updated.');
+        } else {
+            $_SESSION['ko'][] = Tools::error();
+        }
+    }
+    // END TAB 1
 
     // TEMPLATES DESTROY
     if (isset($_POST['templatesDestroy'])) {
+        if (Tools::checkId($_POST['id']) === false) {
+            throw new Exception('The id parameter is invalid!');
+        }
+
+        $Templates = new Templates($_SESSION['team_id']);
+
         if ($Templates->destroy($_POST['id'], $_SESSION['userid'])) {
             echo json_encode(array(
                 'res' => true,
@@ -43,4 +57,8 @@ try {
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+} finally {
+    if ($redirect) {
+        header('Location: ../../ucp.php?tab=' . $tab);
+    }
 }

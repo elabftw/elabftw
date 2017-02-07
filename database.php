@@ -26,8 +26,6 @@ try {
     $EntityView = new DatabaseView(new Database(new Users($_SESSION['userid'])));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $EntityView->display = $_SESSION['prefs']['display'];
-
         // CATEGORY FILTER
         if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
             $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['cat'];

@@ -467,6 +467,113 @@ class Users extends Auth
     }
 
     /**
+     * Update preferences from user control panel
+     *
+     * @param array $params
+     * @return bool
+     */
+    public function updatePreferences($params)
+    {
+        // DISPLAY
+        $new_display = 'default';
+        if ($params['display'] === 'compact') {
+            $new_display = 'compact';
+        }
+
+        // LIMIT
+        $filter_options = array(
+            'options' => array(
+                'default' => 15,
+                'min_range' => 1,
+                'max_range' => 500
+            ));
+        $new_limit = filter_var($params['limit'], FILTER_VALIDATE_INT, $filter_options);
+
+        // KEYBOARD SHORTCUTS
+        // only take first letter
+        $new_sc_create = substr($params['sc_create'], 0, 1);
+        if (!ctype_alpha($new_sc_create)) {
+            $new_sc_create = 'c';
+        }
+        $new_sc_edit = substr($params['sc_edit'], 0, 1);
+        if (!ctype_alpha($new_sc_edit)) {
+            $new_sc_edit = 'e';
+        }
+        $new_sc_submit = substr($params['sc_submit'], 0, 1);
+        if (!ctype_alpha($new_sc_submit)) {
+            $new_sc_submit = 's';
+        }
+        $new_sc_todo = substr($params['sc_todo'], 0, 1);
+        if (!ctype_alpha($new_sc_todo)) {
+            $new_sc_todo= 't';
+        }
+
+        // SHOW TEAM
+        if (isset($params['show_team']) && $params['show_team'] === 'on') {
+            $new_show_team = 1;
+        } else {
+            $new_show_team = 0;
+        }
+
+        // CLOSE WARNING
+        if (isset($params['close_warning']) && $params['close_warning'] === 'on') {
+            $new_close_warning = 1;
+        } else {
+            $new_close_warning = 0;
+        }
+        // CHEM EDITOR
+        if (isset($params['chem_editor']) && $params['chem_editor'] === 'on') {
+            $new_chem_editor = 1;
+        } else {
+            $new_chem_editor = 0;
+        }
+
+        // LANG
+        $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_BR', 'pt_PT', 'ru_RU', 'sl_SI', 'zh_CN');
+        if (isset($params['lang']) && in_array($params['lang'], $lang_array)) {
+            $new_lang = $params['lang'];
+        } else {
+            $new_lang = 'en_GB';
+        }
+
+        // DEFAULT VIS
+        $new_default_vis = null;
+        $Experiments = new Experiments($this);
+        if (isset($params['default_vis']) && $Experiments->checkVisibility($params['default_vis'])) {
+            $new_default_vis = $params['default_vis'];
+        }
+
+        $sql = "UPDATE users SET
+            display = :new_display,
+            limit_nb = :new_limit,
+            sc_create = :new_sc_create,
+            sc_edit = :new_sc_edit,
+            sc_submit = :new_sc_submit,
+            sc_todo = :new_sc_todo,
+            show_team = :new_show_team,
+            close_warning = :new_close_warning,
+            chem_editor = :new_chem_editor,
+            lang = :new_lang,
+            default_vis = :new_default_vis
+            WHERE userid = :userid;";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':new_display', $new_display);
+        $req->bindParam(':new_limit', $new_limit);
+        $req->bindParam(':new_sc_create', $new_sc_create);
+        $req->bindParam(':new_sc_edit', $new_sc_edit);
+        $req->bindParam(':new_sc_submit', $new_sc_submit);
+        $req->bindParam(':new_sc_todo', $new_sc_todo);
+        $req->bindParam(':new_show_team', $new_show_team);
+        $req->bindParam(':new_close_warning', $new_close_warning);
+        $req->bindParam(':new_chem_editor', $new_chem_editor);
+        $req->bindParam(':new_lang', $new_lang);
+        $req->bindParam(':new_default_vis', $new_default_vis);
+        $req->bindParam(':userid', $this->userid);
+
+        return $req->execute();
+    }
+
+    /**
      * Update the password for a user, or for ourself if none provided
      *
      * @param string $password The new password

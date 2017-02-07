@@ -108,15 +108,6 @@ class Auth
         $_SESSION['is_admin'] = $group['is_admin'];
         $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
 
-        // PREFS
-        $_SESSION['prefs'] = array(
-            'display' => $this->userData['display'],
-            'limit' => $this->userData['limit_nb'],
-            'shortcuts' => array('create' => $this->userData['sc_create'], 'edit' => $this->userData['sc_edit'], 'submit' => $this->userData['sc_submit'], 'todo' => $this->userData['sc_todo']),
-            'lang' => $this->userData['lang'],
-            'close_warning' => intval($this->userData['close_warning']),
-            'chem_editor' => intval($this->userData['chem_editor']),
-            'show_team' => intval($this->userData['show_team']));
         // Make a unique token and store it in sql AND cookie
         $this->token = md5(uniqid(rand(), true));
         // and SESSION

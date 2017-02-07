@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * User Control Panel
  *

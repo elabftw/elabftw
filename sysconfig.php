@@ -314,7 +314,6 @@ try {
         echo _('A password is set.');
         echo "<span class='button' id='editSmtpPassword'>" . _('Edit') . "</span>";
         echo "<input class='clean-form col-3-form' type='password' name='smtp_password' style='display:none' id='hidden_smtp_password' />";
-
     }
     ?>
                 </p>

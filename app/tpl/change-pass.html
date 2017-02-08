@@ -1,0 +1,83 @@
+<section class='center'>
+    <form method="post" class='loginform' action="app/controllers/ResetPasswordController.php">
+        <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
+        <p>
+            <!-- output the key and userid as hidden fields -->
+            <input type="hidden" name="key" value="{{ key|e }}" />
+            <input type="hidden" name="deadline" value="{{ deadline|e }}" />
+            <input type="hidden" name="userid" value="{{ userid|e }}" />
+
+            {# min pass length minimum, no maximum #}
+            {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', Auth) ~ ',}' %}
+
+            <label class='block' for='passwordtxt'>{{ 'New password'|trans }}</label>
+            <input id='password' type='password' pattern='{{ pattern }}' value='' name='password' required />
+
+            <label class='block' for='cpasswordtxt'>{{ 'Type it again'|trans }}</label>
+            <input id='cpassword' type='password' pattern='{{ pattern }}' value='' name='cpassword' required />
+            <label class='block' for='complexity'>{{ 'Complexity'|trans }}</label>
+            <input id='complexity' disabled />
+            <div id="checkPasswordMatchDiv">
+                <p>{{ 'The passwords do not match!'|trans }}</p>
+            </div>
+        </p>
+    </form>
+</section>
+
+<script>
+    function checkPasswordMatch() {
+        password = $("#password").val();
+        confirmPassword = $("#cpassword").val();
+
+        if (password != confirmPassword)
+            $("#checkPasswordMatchDiv").html("<p>{{ 'The passwords do not match!'|trans }}</p>");
+        else
+            $("#checkPasswordMatchDiv").html("<button class='button' type='submit' name='Submit'>{{ 'Save new password'|trans }}</button>");
+    }
+
+    $(document).ready(function () {
+        // check if passwords match
+       $("#cpassword").keyup(checkPasswordMatch);
+        // give focus to the first input field
+        document.getElementById("password").focus();
+        // password complexity
+        $("#password").complexify({}, function (valid, complexity){
+            if (complexity < 20) {
+                $('#complexity').css({'background-color':'red'});
+                $('#complexity').css({'color':'white'});
+                $('#complexity').val('{{ 'Weak password'|trans|e('js') }}');
+                $('#complexity').css({'border-color' : '#e3e3e3'});
+                $('#complexity').css({'box-shadow': '0 0  yellow'});
+                $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+            } else if (complexity < 30) {
+                $('#complexity').css({'color':'#white'});
+                $('#complexity').css({'background-color':'orange'});
+                $('#complexity').val('{{ 'Average password'|trans|e('js') }}');
+                $('#complexity').css({'box-shadow': '0 0  yellow'});
+                $('#complexity').css({'border-color' : '#e3e3e3'});
+                $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+            } else if (complexity < 50) {
+                $('#complexity').css({'color':'white'});
+                $('#complexity').val('{{ 'Good password'|trans|e('js') }}');
+                $('#complexity').css({'background-color':'green'});
+                $('#complexity').css({'box-shadow': '0 0  yellow'});
+                $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+                $('#complexity').css({'border-color' : '#e3e3e3'});
+            } else if (complexity < 99) {
+                $('#complexity').css({'color':'black'});
+                $('#complexity').val('{{ 'Strong password'|trans|e('js') }}');
+                $('#complexity').css({'background-color':'#ffd700'});
+                $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
+                $('#complexity').css({'border' : 'none'});
+                $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
+            } else {
+                $('#complexity').css({'color':'#797979'});
+                $('#complexity').val('{{ 'No way that is your real password!'|trans|e('js') }}');
+                $('#complexity').css({'background-color':'#e3e3e3'});
+                $('#complexity').css({'box-shadow': '0 0  yellow'});
+                $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+                $('#complexity').css({'border-color' : '#e3e3e3'});
+            }
+        });
+    });
+</script>

@@ -131,7 +131,7 @@
 <div class='divhandle' id='tab2div'>
     <div class='box'>
 
-    <form method="post" action="app/ucp-exec.php">
+    <form method="post" action="app/controllers/UcpController.php">
         <div class='row'>
             <div class='col-md-6'>
                 <h4>{{ 'Modify your personal informations'|trans }}</h4>
@@ -214,7 +214,7 @@
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
     <p onClick="$('#import_tpl').toggle()" style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' />{{ 'Import from File'|trans }}</p>
-        <form action='app/ucp-exec.php' method='post'>
+        <form action='app/controllers/UcpController.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.tpl' id='import_tpl'>
             <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='{{ 'Name of the Template'|trans }}' />
@@ -231,7 +231,7 @@
         <div class='subdivhandle' id='subtab_{{ template['id'] }}div'>
             <img class='align_right' src='app/img/download.png' title='Export Template' alt='Export' onClick="exportTpl('{{ template['name'] }}', '{{ template['id'] }}')" />
             <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' onClick="templatesDestroy({{ template['id'] }})" />
-            <form action='app/ucp-exec.php' method='post'>
+            <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />
                 <input type='hidden' name='tpl_id[]' value='{{ template['id'] }}' />
                 <input name='tpl_name[]' value='{{ template['name'] }}' style='width:90%' /><br />

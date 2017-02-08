@@ -31,7 +31,7 @@ try {
     echo $twig->render('ucp.html', array(
         'Users' => $Users,
         'langsArr' => Tools::getLangsArr(),
-        'teamsGroupsArr' => $teamsGroupsArr,
+        'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr
     ));
 

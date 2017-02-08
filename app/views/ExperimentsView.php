@@ -34,7 +34,7 @@ class ExperimentsView extends EntityView
     {
         $this->Entity = $entity;
         $this->limit = $this->Entity->Users->userData['limit_nb'];
-        $this->showTeam = $_SESSION['prefs']['show_team'];
+        $this->showTeam = $this->Entity->Users->userData['show_team'];
 
         $this->TeamGroups = new TeamGroups($this->Entity->Users->userData['team']);
     }

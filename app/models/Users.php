@@ -573,6 +573,72 @@ class Users extends Auth
     }
 
     /**
+     * Update things from UCP
+     *
+     * @param array $params
+     * @return bool
+     */
+    public function updateAccount($params)
+    {
+        $Auth = new Auth();
+        // check that we got the good password
+        if (!$Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
+            throw new Exception(_("Please input your current password!"));
+        }
+        // PASSWORD CHANGE
+        if (strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
+            if ($params['newpass'] != $params['cnewpass']) {
+                throw new Exception(_('The passwords do not match!'));
+            }
+
+            $this->updatePassword($params['newpass']);
+        }
+
+        $params['firstname'] = Tools::purifyFirstname($params['firstname']);
+        $params['lastname'] = Tools::purifyLastname($params['lastname']);
+
+        $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
+
+        if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {
+            throw new Exception(_('Someone is already using that email address!'));
+        }
+
+        // Check phone
+        $params['phone'] = filter_var($params['phone'], FILTER_SANITIZE_STRING);
+        // Check cellphone
+        $params['cellphone'] = filter_var($params['cellphone'], FILTER_SANITIZE_STRING);
+        // Check skype
+        $params['skype'] = filter_var($params['skype'], FILTER_SANITIZE_STRING);
+
+        // Check website
+        if (!filter_var($params['website'], FILTER_VALIDATE_URL)) {
+            throw new Exception(_('A mandatory field is missing!'));
+        }
+
+        $sql = "UPDATE users SET
+            email = :email,
+            firstname = :firstname,
+            lastname = :lastname,
+            phone = :phone,
+            cellphone = :cellphone,
+            skype = :skype,
+            website = :website
+            WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
+
+        $req->bindParam(':email', $params['email']);
+        $req->bindParam(':firstname', $params['firstname']);
+        $req->bindParam(':lastname', $params['lastname']);
+        $req->bindParam(':phone', $params['phone']);
+        $req->bindParam(':cellphone', $params['cellphone']);
+        $req->bindParam(':skype', $params['skype']);
+        $req->bindParam(':website', $params['website']);
+        $req->bindParam(':userid', $this->userid);
+
+        return $req->execute();
+    }
+
+    /**
      * Update the password for a user, or for ourself if none provided
      *
      * @param string $password The new password

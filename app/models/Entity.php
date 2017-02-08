@@ -242,7 +242,7 @@ class Entity
     /**
      * Verify we can read/write an item
      *
-     * @param array $item one item array
+     * @param array|null $item one item array
      * @throws Exception
      * @return array
      */

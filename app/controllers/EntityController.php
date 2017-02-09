@@ -33,11 +33,19 @@ try {
         $permissions = $Entity->getPermissions();
 
         // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if (!$User->userData['can_lock'] && !$permissions['write']) {
+        if (!$Users->userData['can_lock'] && !$permissions['write']) {
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
 
-        if ($Entity->toggleLock()) {
+        $errMsg = Tools::error();
+        $res = null;
+        try {
+            $res = $Entity->toggleLock();
+        } catch (Exception $e) {
+            $errMsg = $e->getMessage();
+        }
+
+        if ($res) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -45,7 +53,7 @@ try {
         } else {
             echo json_encode(array(
                 'res' => false,
-                'msg' => Tools::error()
+                'msg' => $errMsg
             ));
         }
     }

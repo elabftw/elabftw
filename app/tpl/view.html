@@ -54,19 +54,14 @@
 </a>
 
 <!-- LOCK -->
-{% set onClick = " onClick=\"toggleLock('{{ Ev.Entity.type }}', {{ Ev.Entity.id }})\"" %}
 {% set imgSrc = 'unlock.png' %}
 {% set alt = 'Lock/Unlock item'|trans %}
 {% if Ev.Entity.entityData['locked'] != 0 %}
     {% set imgSrc = 'lock-gray.png' %}
-    {# don't allow clicking lock if experiment is timestamped #}
-    {% if Ev.Entity.entityData['timestamped'] %}
-        {% set onClick = '' %}
-    {% endif %}
 {% endif %}
 <a class='elab-tooltip' href='#'>
     <span>{{ alt }}</span>
-    <img id='lock' {{ onClick }} src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
+    <img id='lock' onClick="toggleLock('{{ Ev.Entity.type }}', {{ Ev.Entity.id }})" src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
 </a>
 
 <!-- show timestamp button if not timestamped already -->

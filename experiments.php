@@ -25,6 +25,7 @@ try {
 
     $EntityView = new ExperimentsView(new Experiments(new Users($_SESSION['userid'])));
     $Status = new Status($EntityView->Entity->Users->userData['team']);
+    $Tags = new Tags($EntityView->Entity);
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         // CATEGORY FILTER
@@ -87,6 +88,11 @@ try {
         $EntityView->initViewEdit();
         $EntityView->ro = $EntityView->isReadOnly();
 
+        if ($EntityView->Entity->entityData['timestamped']) {
+            echo $EntityView->showTimestamp();
+        }
+
+
         echo $twig->render('view.html', array(
             'Ev' => $EntityView,
             'Status' => $Status,
@@ -108,7 +114,6 @@ try {
         }
 
         $Revisions = new Revisions($EntityView->Entity);
-        $Tags = new Tags($EntityView->Entity);
 
         echo $twig->render('edit.html', array(
             'Ev' => $EntityView,

@@ -46,10 +46,6 @@ class ExperimentsView extends EntityView
      */
     public function view()
     {
-        if ($this->Entity->entityData['timestamped']) {
-            $this->html .= $this->showTimestamp();
-        }
-
         $this->html .= $this->UploadsView->buildUploads('view');
         $this->html .= $this->buildComments();
         $this->html .= $this->buildCommentsCreate();
@@ -75,7 +71,7 @@ class ExperimentsView extends EntityView
      *
      * @return string
      */
-    private function showTimestamp()
+    public function showTimestamp()
     {
         $Users = new Users();
         $timestamper = $Users->read($this->Entity->entityData['timestampedby']);

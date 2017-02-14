@@ -218,7 +218,7 @@
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
         // If the title is 'Untitled', clear it on focus
         $('#title_input').focus(function(){
-            if ($(this).val() === {{ 'Untitled'|trans }}) {
+            if ($(this).val() === '{{ 'Untitled'|trans }}') {
                 $('#title_input').val('');
             }
         });

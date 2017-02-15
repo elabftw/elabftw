@@ -44,6 +44,7 @@ class UserStats
      */
     public function __construct(Users $users, $count)
     {
+        $this->Users = $users;
         $this->count = $count;
         $this->pdo = Db::getConnection();
         $this->countStatus();

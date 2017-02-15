@@ -327,8 +327,6 @@ class Entity
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':team', $this->Users->userData['team']);
-            // TODO use line above when everyone has a Users instance
-            //$req->bindParam(':team', $_SESSION['team_id']);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $success[] = $req->execute();
         }

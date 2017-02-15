@@ -32,7 +32,7 @@ try {
     if (isset($_GET['item']) && !empty($_GET['item'])) {
         $Scheduler->Database->setId($_GET['item']);
         $Scheduler->populate();
-        if (strlen($Scheduler->itemData['name']) === 0) {
+        if (strlen($Scheduler->itemData['category']) === 0) {
             throw new Exception(_('Nothing to show with this id'));
         }
     }

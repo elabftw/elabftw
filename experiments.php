@@ -24,7 +24,7 @@ try {
     require_once 'app/head.inc.php';
 
     $EntityView = new ExperimentsView(new Experiments(new Users($_SESSION['userid'])));
-    $Status = new Status($EntityView->Entity->Users->userData['team']);
+    $Status = new Status($EntityView->Entity->Users);
     $Tags = new Tags($EntityView->Entity);
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {

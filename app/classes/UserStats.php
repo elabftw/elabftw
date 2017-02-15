@@ -15,12 +15,8 @@ namespace Elabftw\Elabftw;
  */
 class UserStats
 {
-
-    /** our team */
-    private $team;
-
-    /** id of our user */
-    private $userid;
+    /** instance of Users */
+    private $Users;
 
     /** count of experiments */
     private $count = 0;
@@ -43,14 +39,11 @@ class UserStats
     /**
      * Init the object with a userid and the total count of experiments
      *
-     * @param int $team
-     * @param int $userid
+     * @param Users $users
      * @param int $count total count of experiments
      */
-    public function __construct($team, $userid, $count)
+    public function __construct(Users $users, $count)
     {
-        $this->team = $team;
-        $this->userid = $userid;
         $this->count = $count;
         $this->pdo = Db::getConnection();
         $this->countStatus();
@@ -64,7 +57,7 @@ class UserStats
     private function countStatus()
     {
         // get all status name and id
-        $Status = new Status($this->team);
+        $Status = new Status($this->Users);
         $statusAll = $Status->readAll();
 
         // populate arrays
@@ -80,7 +73,7 @@ class UserStats
                 WHERE userid = :userid
                 AND status = :status";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':userid', $this->userid);
+            $req->bindParam(':userid', $this->Users->userid);
             $req->bindParam(':status', $key);
             $req->execute();
             $this->countArr[$key] = $req->fetchColumn();

@@ -28,13 +28,13 @@ try {
     // UPDATE ORDERING
     if (isset($_POST['updateOrdering'])) {
         if ($_POST['table'] === 'status') {
-            $Entity = new Status($_SESSION['team_id']);
+            $Entity = new Status($Users);
         } elseif ($_POST['table'] === 'items_types') {
-            $Entity = new ItemsTypes($_SESSION['team_id']);
+            $Entity = new ItemsTypes($Users);
         } elseif ($_POST['table'] === 'experiments_templates') {
             // remove the create new entry
             unset($_POST['ordering'][0]);
-            $Entity = new Templates($_SESSION['team_id']);
+            $Entity = new Templates($Users);
         }
 
         if ($Entity->updateOrdering($_POST)) {
@@ -72,7 +72,7 @@ try {
 
     // UPDATE COMMON TEMPLATE
     if (isset($_POST['commonTplUpdate'])) {
-        $Templates = new Templates($_SESSION['team_id']);
+        $Templates = new Templates($Users);
         $Templates->update($_POST['commonTplUpdate']);
     }
 

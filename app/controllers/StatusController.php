@@ -18,7 +18,7 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Status = new Status($_SESSION['team_id']);
+    $Status = new Status($Users);
 
     if (!$_SESSION['is_admin']) {
         throw new Exception('Non admin user tried to access admin panel.');

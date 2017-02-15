@@ -67,7 +67,7 @@ try {
 
         if ($Entity->updateStatus($_POST['status'])) {
             // get the color of the status for updating the css
-            $Status = new Status($_SESSION['team_id']);
+            $Status = new Status($Users);
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved'),

@@ -18,17 +18,17 @@ use Exception;
  */
 class Status extends Entity
 {
-    /** our team */
-    private $team;
+    /** instance of Users */
+    public $Users;
 
     /**
      * Constructor
      *
-     * @param int $team
+     * @param Users $users
      */
-    public function __construct($team)
+    public function __construct(Users $users)
     {
-        $this->team = $team;
+        $this->Users = $users;
         $this->pdo = Db::getConnection();
     }
 
@@ -38,10 +38,14 @@ class Status extends Entity
      * @param string $name
      * @param string $color
      * @param int $default
+     * @param int|null $team
      * @return int id of the new item
      */
-    public function create($name, $color, $default = 0)
+    public function create($name, $color, $default = 0, $team = null)
     {
+        if (is_null($team)) {
+            $team = $this->Users->userData['team'];
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
@@ -54,7 +58,7 @@ class Status extends Entity
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $team);
         $req->bindValue(':is_default', $default);
 
         $req->execute();
@@ -65,14 +69,15 @@ class Status extends Entity
     /**
      * Create a default set of status for a new team
      *
+     * @param int $team the new team id
      * @return bool
      */
-    public function createDefault()
+    public function createDefault($team)
     {
-        return $this->create('Running', '29AEB9', 1) &&
-            $this->create('Success', '54AA08', 0) &&
-            $this->create('Need to be redone', 'C0C0C0', 0) &&
-            $this->create('Fail', 'C24F3D', 0);
+        return $this->create('Running', '29AEB9', 1, $team) &&
+            $this->create('Success', '54AA08', 0, $team) &&
+            $this->create('Need to be redone', 'C0C0C0', 0, $team) &&
+            $this->create('Fail', 'C24F3D', 0, $team);
     }
 
     /**
@@ -88,7 +93,7 @@ class Status extends Entity
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         return $req->fetchAll();
@@ -121,7 +126,7 @@ class Status extends Entity
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
 
         return $req->execute();
     }
@@ -157,7 +162,7 @@ class Status extends Entity
         $req->bindParam(':color', $color);
         $req->bindParam(':is_default', $default);
         $req->bindParam(':id', $id);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
 
         return $req->execute();
     }

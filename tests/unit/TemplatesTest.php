@@ -7,7 +7,7 @@ class TemplatesTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Templates= new Templates(1);
+        $this->Templates= new Templates(new Users(1));
     }
 
     public function testCreate()
@@ -22,7 +22,7 @@ class TemplatesTest extends \PHPUnit_Framework_TestCase
     }
     public function testReadFromUserid()
     {
-        $this->assertTrue(is_array($this->Templates->readFromUserid(1)));
+        $this->assertTrue(is_array($this->Templates->readFromUserid()));
     }
     public function testUpdate()
     {

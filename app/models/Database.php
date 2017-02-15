@@ -45,7 +45,7 @@ class Database extends Entity
      */
     public function create($itemType)
     {
-        $itemsTypes = new ItemsTypes($this->Users->userData['team'], $itemType);
+        $itemsTypes = new ItemsTypes($this->Users, $itemType);
 
         // SQL for create DB item
         $sql = "INSERT INTO items(team, title, date, body, userid, type)

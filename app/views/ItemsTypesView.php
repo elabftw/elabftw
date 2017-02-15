@@ -67,24 +67,24 @@ class ItemsTypesView
 
         foreach ($itemsTypesArr as $itemType) {
 
-            $html .= "<li id='itemstypes_" . $itemType['id'] . "' class='list-group-item'>";
+            $html .= "<li id='itemstypes_" . $itemType['category_id'] . "' class='list-group-item'>";
 
             $html .= "<ul class='list-inline'>";
 
-            $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName_" . $itemType['id'] . "' value='" . $itemType['name'] . "' /></li>";
-            $html .= "<li style='color:#" . $itemType['color'] . "'>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['color'] . "' /></li>";
-            $html .= "<li><input id='itemsTypesBookable_" . $itemType['id'] . "' type='checkbox' ";
+            $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName_" . $itemType['category_id'] . "' value='" . $itemType['category'] . "' /></li>";
+            $html .= "<li style='color:#" . $itemType['color'] . "'>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['category_id'] . "' value='" . $itemType['color'] . "' /></li>";
+            $html .= "<li><input id='itemsTypesBookable_" . $itemType['category_id'] . "' type='checkbox' ";
             if ($itemType['bookable']) {
                 $html .= 'checked ';
             }
-            $html .= "> <label for='itemsTypesBookable_" . $itemType['id'] . "'>" . _('Bookable') . "</label></li>";
-            $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button button-neutral'>" . _('Edit the template') . "</button></li>";
-            $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
-            $html .= "<li><button class='button button-delete' onClick=\"itemsTypesDestroy(" . $itemType['id'] . ")\">";
+            $html .= "> <label for='itemsTypesBookable_" . $itemType['category_id'] . "'>" . _('Bookable') . "</label></li>";
+            $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['category_id'] . ")' class='button button-neutral'>" . _('Edit the template') . "</button></li>";
+            $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['category_id'] . ")' class='button'>" . _('Save') . "</button></li>";
+            $html .= "<li><button class='button button-delete' onClick=\"itemsTypesDestroy(" . $itemType['category_id'] . ")\">";
             $html .= _('Delete') . "</button></li>";
 
             $html .= "</li>";
-            $html .= "<li class='itemsTypesEditor' id='itemsTypesEditor_" . $itemType['id'] . "'><textarea class='mceditable' style='height:50px' id='itemsTypesTemplate_" . $itemType['id'] . "' />" . $itemType['template'] . "</textarea></li>";
+            $html .= "<li class='itemsTypesEditor' id='itemsTypesEditor_" . $itemType['category_id'] . "'><textarea class='mceditable' style='height:50px' id='itemsTypesTemplate_" . $itemType['category_id'] . "' />" . $itemType['template'] . "</textarea></li>";
             $html .= "</ul>";
         }
         $html .= "</ul>";

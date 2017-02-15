@@ -22,7 +22,6 @@ try {
     $selectedMenu = 'Team';
     require_once 'app/head.inc.php';
 
-    $Users = new Users($_SESSION['userid']);
     $TeamsView = new TeamsView(new Teams($_SESSION['team_id']));
     $Database = new Database($Users);
     // we only want the bookable type of items
@@ -42,7 +41,7 @@ try {
         'TeamsView' => $TeamsView,
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
-        'lang' => Tools::getCalendarLang($_SESSION['prefs']['lang'])
+        'lang' => Tools::getCalendarLang($Users->userData['lang'])
     ));
 
 } catch (Exception $e) {

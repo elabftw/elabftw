@@ -20,11 +20,10 @@ $pageTitle = _('Search');
 $selectedMenu = 'Search';
 require_once 'app/head.inc.php';
 
-$Users = new Users($_SESSION['userid']);
 $Experiments = new Experiments($Users);
 $Database = new Database($Users);
-$ItemsTypes = new ItemsTypes($_SESSION['team_id']);
-$Status = new Status($_SESSION['team_id']);
+$ItemsTypes = new ItemsTypes($Users);
+$Status = new Status($Users);
 
 // TYPE
 if (isset($_GET['type']) && $_GET['type'] === 'database') {

@@ -17,7 +17,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $this->Experiments->populate();
         $this->Experiments->toggleLock();
         $this->assertTrue($this->Experiments->destroy());
-        $this->Templates = new Templates('1');
+        $this->Templates = new Templates($this->Users);
         $this->Templates->create('my template', 'is so cool', '1');
         $new = $this->Experiments->create('1');
         $this->assertTrue((bool) Tools::checkId($new));

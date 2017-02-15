@@ -60,7 +60,7 @@ class Experiments extends Entity
      */
     public function create($tpl = null)
     {
-        $Templates = new Templates($this->Users->userData['team']);
+        $Templates = new Templates($this->Users);
 
         // do we want template ?
         if (!is_null($tpl)) {

@@ -28,15 +28,15 @@ try {
 
     $formKey = new FormKey();
     $Config = new Config();
+    $Users = new Users($_SESSION['userid'], $Config);
 
-    $StatusView = new StatusView(new Status($_SESSION['team_id']));
-    $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
+    $StatusView = new StatusView(new Status($Users));
+    $ItemsTypesView = new ItemsTypesView(new ItemsTypes($Users));
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
     $Auth = new Auth();
-    $Users = new Users(null, $Config);
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
     $UsersView = new UsersView($Users);
-    $Templates = new Templates($_SESSION['team_id']);
+    $Templates = new Templates($Users);
     $Teams = new Teams($_SESSION['team_id']);
 
     // VALIDATE USERS BLOCK

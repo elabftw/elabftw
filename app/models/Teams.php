@@ -60,21 +60,23 @@ class Teams
         $newId = $this->pdo->lastInsertId();
 
         // create default status
-        $Status = new Status($newId);
-        $result2 = $Status->createDefault();
+        $Users = new Users();
+        $Status = new Status($Users);
+        $result2 = $Status->createDefault($newId);
 
         // create default item type
-        $ItemsTypes = new ItemsTypes($newId);
+        $ItemsTypes = new ItemsTypes($Users);
         $result3 = $ItemsTypes->create(
             'Edit me',
             '32a100',
             0,
-            '<p>Go to the admin panel to edit/add more items types!</p>'
+            '<p>Go to the admin panel to edit/add more items types!</p>',
+            $newId
         );
 
         // create default experiment template
-        $Templates = new Templates($newId);
-        $result4 = $Templates->createDefault();
+        $Templates = new Templates($Users);
+        $result4 = $Templates->createDefault($newId);
 
         return $result1 && $result2 && $result3 && $result4;
     }

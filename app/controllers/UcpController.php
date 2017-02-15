@@ -65,7 +65,7 @@ try {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
         $tpl_body = Tools::checkBody($_POST['new_tpl_body']);
 
-        $Templates = new Templates($_SESSION['team_id']);
+        $Templates = new Templates($Users);
         if (!$Templates->create($tpl_name, $tpl_body, $_SESSION['userid'])) {
             throw new Exception(Tools::error());
         }
@@ -113,7 +113,7 @@ try {
             throw new Exception('The id parameter is invalid!');
         }
 
-        $Templates = new Templates($_SESSION['team_id']);
+        $Templates = new Templates($Users);
 
         if ($Templates->destroy($_POST['id'], $_SESSION['userid'])) {
             echo json_encode(array(

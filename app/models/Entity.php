@@ -322,11 +322,13 @@ class Entity
         foreach ($post['ordering'] as $ordering => $id) {
             $id = explode('_', $id);
             $id = $id[1];
-            // update the ordering
+            // the table param is whitelisted here
             $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':team', $this->Users->userData['team']);
+            // TODO use line above when everyone has a Users instance
+            //$req->bindParam(':team', $_SESSION['team_id']);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $success[] = $req->execute();
         }

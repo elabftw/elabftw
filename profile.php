@@ -23,13 +23,12 @@ require_once 'app/head.inc.php';
 
 try {
     // get total number of experiments
-    $Users = new Users($_SESSION['userid']);
     $Entity = new Experiments($Users);
     $Entity->setUseridFilter();
     $itemsArr = $Entity->read();
     $count = count($itemsArr);
-    $UserStats = new UserStats($_SESSION['team_id'], $_SESSION['userid'], $count);
-    $TagCloud = new TagCloud($_SESSION['userid']);
+    $UserStats = new UserStats($Users, $count);
+    $TagCloud = new TagCloud($Users->userid);
 
     echo $twig->render('profile.html', array(
         'Users' => $Users,

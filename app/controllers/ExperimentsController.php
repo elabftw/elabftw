@@ -17,11 +17,10 @@ use Exception;
  * Experiments
  *
  */
-require_once '../../app/init.inc.php';
-
 try {
+    require_once '../../app/init.inc.php';
 
-    $Entity = new Experiments(new Users($_SESSION['userid']));
+    $Entity = new Experiments($Users);
 
     // CREATE
     if (isset($_GET['create'])) {

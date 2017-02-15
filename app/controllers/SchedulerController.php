@@ -18,7 +18,6 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Users = new Users($_SESSION['userid']);
     $Database = new Database($Users);
     $Scheduler = new Scheduler($Database);
 

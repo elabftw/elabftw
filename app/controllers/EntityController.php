@@ -19,8 +19,6 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
-    $Users = new Users($_SESSION['userid']);
-
     if ($_POST['type'] === 'experiments') {
         $Entity = new Experiments($Users, $_POST['id']);
     } else {

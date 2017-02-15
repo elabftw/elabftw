@@ -11,22 +11,21 @@
 
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Database
  *
  */
-require_once '../../app/init.inc.php';
-
-$mode = 'show';
-$id = '';
-$redirect = false;
-
 try {
+    require_once '../../app/init.inc.php';
 
-    $Users = new Users($_SESSION['userid']);
     $Entity = new Database($Users);
+
+    $mode = 'show';
+    $id = '';
+    $redirect = false;
+
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {

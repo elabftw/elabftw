@@ -23,7 +23,7 @@ try {
     $selectedMenu = 'Experiments';
     require_once 'app/head.inc.php';
 
-    $EntityView = new ExperimentsView(new Experiments(new Users($_SESSION['userid'])));
+    $EntityView = new ExperimentsView(new Experiments($Users));
     $Status = new Status($EntityView->Entity->Users);
     $Tags = new Tags($EntityView->Entity);
 

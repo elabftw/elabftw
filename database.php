@@ -23,7 +23,7 @@ try {
     $selectedMenu = 'Database';
     require_once 'app/head.inc.php';
 
-    $EntityView = new DatabaseView(new Database(new Users($_SESSION['userid'])));
+    $EntityView = new DatabaseView(new Database($Users));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         // CATEGORY FILTER

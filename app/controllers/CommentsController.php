@@ -18,7 +18,7 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Users = new Users($_SESSION['userid']);
+
     $Comments = new Comments(new Experiments($Users));
 
     // CREATE

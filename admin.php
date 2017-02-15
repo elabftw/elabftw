@@ -296,8 +296,8 @@ try {
             <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
             <?php
             foreach ($itemsTypesArr as $items_types) {
-                echo "<option value='" . $items_types['id'] . "' name='type' ";
-                echo ">" . $items_types['name'] . "</option>";
+                echo "<option value='" . $items_types['category_id'] . "' name='type' ";
+                echo ">" . $items_types['category'] . "</option>";
             }
             ?>
             </select>
@@ -327,8 +327,8 @@ try {
                     <option class='disabled-input' value='' disabled>Import items</option>
     <?php
     foreach ($itemsTypesArr as $items_types) {
-        echo "<option value='" . $items_types['id'] . "' name='type' ";
-        echo ">" . $items_types['name'] . "</option>";
+        echo "<option value='" . $items_types['category_id'] . "' name='type' ";
+        echo ">" . $items_types['category'] . "</option>";
     }
     echo "<option class='disabled-input' value='' disabled>Import experiments</option>";
 

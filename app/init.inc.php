@@ -27,20 +27,15 @@ try {
         throw new Exception($message);
     }
 
-    // check that the config file is here and readable
-    if (is_readable('config.php')) {
-        require_once 'config.php';
-    } elseif (is_readable('../config.php')) {
-        // we might be called from app folder
-        require_once '../config.php';
-    } elseif (is_readable('../../config.php')) {
-        require_once '../../config.php';
-    } elseif (is_readable('../../../config.php')) {
-        require_once '../../../config.php';
-    } else {
+    // load the config file with info to connect to DB
+    $configFilePath = dirname(dirname(__FILE__)) . '/config.php';
+    // redirect to install page if the config file is not here
+    if (!is_readable($configFilePath)) {
         header('Location: install');
         throw new Exception('Redirecting to install folder');
     }
+
+    require_once $configFilePath;
 
     require_once ELAB_ROOT . 'vendor/autoload.php';
 

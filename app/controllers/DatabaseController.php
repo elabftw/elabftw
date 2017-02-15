@@ -55,8 +55,8 @@ try {
     }
 
     // DUPLICATE
-    if (isset($_GET['databaseDuplicateId'])) {
-        $Entity->setId($_GET['databaseDuplicateId']);
+    if (isset($_GET['duplicateId'])) {
+        $Entity->setId($_GET['duplicateId']);
         $Entity->canOrExplode('read');
 
         $id = $Entity->duplicate();

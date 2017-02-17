@@ -594,11 +594,10 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
      */
     private function schema14()
     {
-        $sql = "ALTER TABLE `experiments` DROP `links`";
         $sql2 = "ALTER TABLE `users` DROP `order_by`";
         $sql3 = "ALTER TABLE `users` DROP `sort_by`";
         $sql4 = "ALTER TABLE `items_types` CHANGE `bgcolor` `color` VARCHAR(6)";
-        if (!$this->pdo->q($sql) || !$this->pdo->q($sql2) || !$this->pdo->q($sql3) || !$this->pdo->q($sql4)) {
+        if (!$this->pdo->q($sql2) || !$this->pdo->q($sql3) || !$this->pdo->q($sql4)) {
             throw new Exception('Error updating to schema14');
         }
     }

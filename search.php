@@ -20,6 +20,10 @@ $pageTitle = _('Search');
 $selectedMenu = 'Search';
 require_once 'app/head.inc.php';
 
+if (!isset($Users)) {
+    $Users = new Users($_SESSION['userid']);
+}
+
 $Experiments = new Experiments($Users);
 $Database = new Database($Users);
 $ItemsTypes = new ItemsTypes($Users);

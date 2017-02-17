@@ -22,6 +22,10 @@ try {
     $selectedMenu = 'Team';
     require_once 'app/head.inc.php';
 
+    if (!isset($Users)) {
+        $Users = new Users($_SESSION['userid']);
+    }
+
     $TeamsView = new TeamsView(new Teams($_SESSION['team_id']));
     $Database = new Database($Users);
     // we only want the bookable type of items

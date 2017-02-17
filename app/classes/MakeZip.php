@@ -138,7 +138,7 @@ class MakeZip extends Make
         if ($this->Entity->type === 'experiments') {
             $this->folder = $this->Entity->entityData['date'] . "-" . $this->cleanTitle;
         } else { // items
-            $this->folder = $this->Entity->entityData['name'] . " - " . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['category'] . " - " . $this->cleanTitle;
         }
     }
 
@@ -153,7 +153,11 @@ class MakeZip extends Make
         $long_name = array();
 
         // SQL to get filesattached (of the right type)
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
+        if ($this->Entity->type === 'experiments') {
+            $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
+        } else {
+            $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+        }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->Entity->type);

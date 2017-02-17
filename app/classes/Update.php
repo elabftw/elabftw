@@ -617,7 +617,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
      */
     private function schema16()
     {
-        $sql = "ALTER TABLE `users` ADD `default_vis` VARCHAR(255) NULL DEFAULT NULL;";
+        $sql = "ALTER TABLE `users` ADD `default_vis` VARCHAR(255) NULL DEFAULT 'team';";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema16');
         }

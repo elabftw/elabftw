@@ -238,7 +238,7 @@ class MakeZip extends Make
             $this->addAsn1Token($id);
             $this->addAttachedFiles($id);
             $this->addCsv($id);
-            $this->addPdf($id);
+            $this->addPdf();
             // add an entry to the json file
             $elabid = 'None';
             if ($this->Entity->type === 'experiments') {

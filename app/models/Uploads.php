@@ -371,8 +371,7 @@ class Uploads extends Entity
         $resultsArr = array();
 
         foreach ($uploadArr as $upload) {
-            $this->id = $upload['id'];
-            $resultsArr[] = $this->destroy();
+            $resultsArr[] = $this->destroy($upload['id']);
         }
 
         if (in_array(false, $resultsArr)) {

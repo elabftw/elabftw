@@ -97,7 +97,7 @@ class ImportZip extends Import
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
-        $this->type = $this->checkType($this->json[0]['type']);
+        $this->type = $this->json[0]['type'];
     }
 
     /**

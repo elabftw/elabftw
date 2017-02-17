@@ -25,7 +25,7 @@ try {
     $TeamGroups = new TeamGroups($Users->userData['team']);
     $teamGroupsArr = $TeamGroups->readAll();
 
-    $Templates = new Templates($Users->userData['team']);
+    $Templates = new Templates($Users);
     $templatesArr = $Templates->readFromUserid();
 
     echo $twig->render('ucp.html', array(

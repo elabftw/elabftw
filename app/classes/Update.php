@@ -589,15 +589,13 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     }
 
     /**
-     * Remove unused columns and make bgcolor be color
+     * Make bgcolor be color
      *
      */
     private function schema14()
     {
-        $sql2 = "ALTER TABLE `users` DROP `order_by`";
-        $sql3 = "ALTER TABLE `users` DROP `sort_by`";
-        $sql4 = "ALTER TABLE `items_types` CHANGE `bgcolor` `color` VARCHAR(6)";
-        if (!$this->pdo->q($sql2) || !$this->pdo->q($sql3) || !$this->pdo->q($sql4)) {
+        $sql = "ALTER TABLE `items_types` CHANGE `bgcolor` `color` VARCHAR(6)";
+        if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema14');
         }
     }

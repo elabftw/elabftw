@@ -55,7 +55,7 @@
                 {% if Ev.Entity.type == 'items' %}
                     <!-- STAR RATING -->
                     <div class='align_right'>
-                        {% for i in range(1, 6) %}
+                        {% for i in range(1, 5) %}
                         <input id='star{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Ev.Entity.entityData['rating'] == i ? ' checked=checked' }} />
                         {% endfor %}
                     </div>

@@ -12,7 +12,7 @@
 {% endif %}
 
 {% if Ev.ro %}
-    {{ 'Read-only mode. Experiment of %s.'|trans|format(Ev.Entity.Users.userData['fullname'])|msg('ok', false) }}
+    {{ 'Read-only mode. Experiment of %s.'|trans|format(ownerName)|msg('ok', false) }}
 {% endif %}
 
 {{ Ev.backToLink(Ev.Entity.type)|raw }}

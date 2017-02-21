@@ -92,6 +92,13 @@ try {
         $EntityView->initViewEdit();
         $EntityView->ro = $EntityView->isReadOnly();
 
+        $ownerName = '';
+        if ($EntityView->ro) {
+            // we need to get the fullname of the user who owns the experiment to display the RO message
+            $Owner = new Users($EntityView->Entity->entityData['userid']);
+            $ownerName = $Owner->userData['fullname'];
+        }
+
         if ($EntityView->Entity->entityData['timestamped']) {
             echo $EntityView->showTimestamp();
         }
@@ -100,7 +107,8 @@ try {
         echo $twig->render('view.html', array(
             'Ev' => $EntityView,
             'Status' => $Status,
-            'Tags' => $Tags
+            'Tags' => $Tags,
+            'ownerName' => $ownerName
         ));
         echo $EntityView->view();
 

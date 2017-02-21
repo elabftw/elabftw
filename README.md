@@ -10,8 +10,6 @@
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Release](https://img.shields.io/github/release/elabftw/elabftw.svg)](https://github.com/elabftw/elabftw/releases/latest)
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7f8ef03c-64b1-44c2-9914-b66059af755c/small.png)](https://insight.sensiolabs.com/projects/7f8ef03c-64b1-44c2-9914-b66059af755c)
-
 # Description
 
 - Tired of that shared excel file for your antibodies or plasmids ?

@@ -24,6 +24,16 @@ try {
     } else {
         $Entity = new Database($Users, $_POST['id']);
     }
+    // GET BODY
+    if (isset($_POST['getBody'])) {
+        $permissions = $Entity->getPermissions();
+
+        if ($permissions['read'] === false) {
+            throw new Exception(Tools::error(true));
+        }
+
+        echo $Entity->entityData['body'];
+    }
 
     // LOCK
     if (isset($_POST['lock'])) {

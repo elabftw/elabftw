@@ -34,13 +34,10 @@
                 {% if item['has_attachment'] %}
                     <img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />
                 {% endif %}
-                {% if Ev.Entity.type == 'items' %}
-                {{ Ev.showStars(item['rating'])|raw }}
-                {% endif %}
 
-                {# we show the abstract of the item on mouse hover with the title attribute #}
-                {# this will be removed in favor of a + that loads the body #}
-                {% set bodyAbstract = item['body']|slice(0, 100)|striptags %}
+                {% if Ev.Entity.type == 'items' %}
+                    {{ Ev.showStars(item['rating'])|raw }}
+                {% endif %}
 
                 <a href='{{ page }}.php?mode=view&id={{ item['id'] }}'>
                 <p class='title'>
@@ -93,7 +90,17 @@
             id = $(this).attr('id');
             idArr = id.split("_");
             id = idArr[1];
-            $('#bodyToggle_' + id).toggle();
+            // get html of body
+            $.post('app/controllers/EntityController.php', {
+                'getBody' : true,
+                'id' : id,
+                'type' : '{{ Ev.Entity.type }}'
+            // and put it in the div and show the div
+            }).done(function(body) {
+                $('#bodyToggle_' + id).html(body);
+                $('#bodyToggle_' + id).toggle();
+
+            });
         });
 
         {% if Ev.Entity.type == 'experiments' %}

@@ -4,13 +4,14 @@
     "homepage": "https://www.elabftw.net",
     "require": {
         "php": ">=5.6.0",
-        "swiftmailer/swiftmailer":"@stable",
+        "ext-pdo": "*",
         "ext-gd":"*",
         "ext-gettext":"*",
         "ext-curl":"*",
         "ext-openssl":"*",
         "defuse/php-encryption": "2.0.*",
         "mpdf/mpdf": "^6.1",
+        "swiftmailer/swiftmailer":"@stable",
         "twig/extensions": "^1.4"
 
     },

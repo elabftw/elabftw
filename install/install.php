@@ -32,7 +32,6 @@ try {
     /* install/index.php to get an installation up and running */
     session_start();
     require_once '../vendor/autoload.php';
-    require_once '../app/functions.inc.php';
 
     /* install/install.php to get an installation up and running */
     /* this script will :

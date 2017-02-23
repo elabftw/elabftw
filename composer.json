@@ -10,6 +10,7 @@
         "ext-gettext":"*",
         "ext-openssl":"*",
         "ext-pdo": "*",
+        "ext-zip": "*",
         "defuse/php-encryption": "2.0.*",
         "mpdf/mpdf": "^6.1",
         "swiftmailer/swiftmailer":"@stable",

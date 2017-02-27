@@ -307,7 +307,7 @@ CREATE TABLE `users` (
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `api_key` varchar(255) NULL DEFAULT NULL,
-  `default_vis` varchar(255) NULL DEFAULT NULL,
+  `default_vis` varchar(255) NULL DEFAULT 'team',
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

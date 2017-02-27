@@ -143,6 +143,8 @@ class Tools
             case 'k':
                 $input /= 1024;
                 break;
+            default:
+                return 2;
         }
 
         return intval($input);
@@ -184,7 +186,7 @@ class Tools
         if (strlen($date) != 8) {
             return false;
         }
-        return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
+        return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];
     }
 
     /**
@@ -250,17 +252,17 @@ class Tools
      */
     public static function buildStringFromArray($array, $delim = '+')
     {
-        $string = "";
+        $str = "";
 
         if (!is_array($array)) {
             return false;
         }
 
         foreach ($array as $i) {
-            $string .= $i . $delim;
+            $str .= $i . $delim;
         }
         // remove last delimiter
-        return rtrim($string, $delim);
+        return rtrim($str, $delim);
     }
 
     /**

@@ -43,16 +43,16 @@ class Config
      */
     public function read()
     {
-        $final = array();
+        $configArr = array();
 
         $sql = "SELECT * FROM config";
         $req = $this->pdo->prepare($sql);
         $req->execute();
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         foreach ($config as $name => $value) {
-            $final[$name] = $value[0];
+            $configArr[$name] = $value[0];
         }
-        return $final;
+        return $configArr;
     }
 
     /**

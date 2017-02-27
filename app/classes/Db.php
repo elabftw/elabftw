@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * Connect to the database with a singleton class

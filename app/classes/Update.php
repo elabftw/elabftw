@@ -10,13 +10,13 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use \RecursiveDirectoryIterator;
-use \RecursiveIteratorIterator;
-use \FilesystemIterator;
-use \Defuse\Crypto\Crypto as Crypto;
-use \Defuse\Crypto\Exception as Ex;
-use \Defuse\Crypto\Key as Key;
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use FilesystemIterator;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Exception as Ex;
+use Defuse\Crypto\Key as Key;
 
 /**
  * Use this to check for latest version or update the database schema

@@ -51,5 +51,5 @@ try {
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');
 } finally {
-    require_once('app/footer.inc.php');
+    require_once 'app/footer.inc.php' ;
 }

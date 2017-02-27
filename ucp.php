@@ -20,7 +20,7 @@ try {
     require_once 'app/init.inc.php';
     $pageTitle = _('User Control Panel');
     $selectedMenu = null;
-    require_once('app/head.inc.php');
+    require_once 'app/head.inc.php';
 
     $TeamGroups = new TeamGroups($Users->userData['team']);
     $teamGroupsArr = $TeamGroups->readAll();

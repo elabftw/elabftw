@@ -11,7 +11,7 @@
 
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Entry point for database things

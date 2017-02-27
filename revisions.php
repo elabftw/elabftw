@@ -49,7 +49,7 @@ try {
 
         $Revisions->restore($revId);
 
-        header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id'] . "");
+        header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id']);
         throw new Exception('Redirect');
     }
 

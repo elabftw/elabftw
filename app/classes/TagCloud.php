@@ -89,8 +89,8 @@ class TagCloud
             // calculate ratio
             $ratio = floor((($tag['total'] - $last['total']) / $spread) * 100);
             // assign a class: font size will be different depending on ratio
-            $class = $this->getClassFromRatio($ratio);
-            $this->cloudArr[$tag['tag']] = $class;
+            $cssClass = $this->getClassFromRatio($ratio);
+            $this->cloudArr[$tag['tag']] = $cssClass;
         }
     }
 }

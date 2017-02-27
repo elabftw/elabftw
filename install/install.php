@@ -26,7 +26,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use \Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Key as Key;
 
 try {
     /* install/index.php to get an installation up and running */

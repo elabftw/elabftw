@@ -14,6 +14,7 @@ $Users = new Users();
 if (isset($_SESSION['auth'])) {
     // todolist
     $Todolist = new Todolist($_SESSION['userid']);
+    $Users = new Users($_SESSION['userid']);
     $todoItems = $Todolist->readAll();
 
     echo $twig->render('todolist.html', array(

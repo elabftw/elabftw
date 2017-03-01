@@ -398,7 +398,6 @@ if (isset($_GET)) {
                     $sqlUserid = " AND experiments.userid = " . $owner;
                 }
                 if ($_GET['owner'] === '0') {
-                    $sqlUserid = '';
                     // read all experiments from team
                     $EntityView->showTeam = true;
                 }

@@ -11,7 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-
+use PDO;
 /**
  * Deal with ajax requests sent from the user control panel
  *
@@ -74,7 +74,9 @@ try {
 
     // EDIT TEMPLATES
     if (isset($_POST['tpl_form'])) {
+        $pdo = Db::getConnection();
         $tab = '3';
+        $redirect = true;
 
         $tpl_id = array();
         foreach ($_POST['tpl_id'] as $id) {

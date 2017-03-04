@@ -10,7 +10,11 @@
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
 {% endif %}
-
+<script>
+$(document).ready(function() {
+        document.cookie = "port=" + location.port;
+});
+</script>
 {% if Ev.ro %}
     {{ 'Read-only mode. Experiment of %s.'|trans|format(ownerName)|msg('ok', false) }}
 {% endif %}

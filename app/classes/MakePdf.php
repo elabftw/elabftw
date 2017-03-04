@@ -284,8 +284,10 @@ class MakePdf extends Make
         } else {
             $server_address = $_SERVER['SERVER_NAME'];
         }
-
-        $url = 'https://' . $server_address . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+        
+        $port = $this->getPort();
+        
+        $url = 'https://' . $server_address . ':' . $port . $_SERVER['PHP_SELF'];
         if ($this->Entity->type === 'experiments') {
             $target = $this->Entity->type . '.php';
         } else {
@@ -296,6 +298,23 @@ class MakePdf extends Make
         $full_url = $url . "?mode=view&id=" . $this->Entity->id;
 
         return $full_url;
+    }
+
+    /**
+     * Return the port of the url from client perspective. This port can be different 
+     * from the server view, if the mapping in docker was changed.
+     *
+     * @return string port of the url
+     */
+    private function getPort()
+    {
+        // Retrieve port from cookie set by JavaScript (if run in docker the port can be different)       
+        $port = $_COOKIE["port"];                                                                       
+        if($port == null){                                                                                
+            // If the port could not be set, use the server side field                                    
+            $port = $_SERVER['SERVER_PORT'];                                                              
+        }
+        return $port;  
     }
 
     /**
@@ -346,7 +365,7 @@ class MakePdf extends Make
                 $row_cnt = $req->rowCount();
 
                 // add the item with a link
-                $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+                $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $this->getPort() . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
 
                     $item_url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);

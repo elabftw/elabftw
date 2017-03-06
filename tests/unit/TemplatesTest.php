@@ -26,7 +26,7 @@ class TemplatesTest extends \PHPUnit_Framework_TestCase
     }
     public function testUpdate()
     {
-        $this->assertTrue($this->Templates->update('Plop'));
+        $this->assertTrue($this->Templates->updateCommon('Plop'));
     }
     public function testDestroy()
     {

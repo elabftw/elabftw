@@ -75,6 +75,7 @@ try {
     // EDIT TEMPLATES
     if (isset($_POST['tpl_form'])) {
         $tab = '3';
+        $redirect = true;
 
         $tpl_id = array();
         foreach ($_POST['tpl_id'] as $id) {
@@ -88,21 +89,12 @@ try {
         foreach ($_POST['tpl_name'] as $name) {
             $new_tpl_name[] = $name;
         }
-        $new_tpl_body[] = filter_var($_POST['tpl_body'], FILTER_SANITIZE_STRING);
-        $new_tpl_name[] = filter_var($_POST['tpl_name'], FILTER_SANITIZE_STRING);
-        $sql = "UPDATE experiments_templates SET
-            body = :body,
-            name = :name
-            WHERE userid = :userid AND id = :id";
-        $req = $pdo->prepare($sql);
+
+        $Templates = new Templates($Users);
+
         $cnt = count($_POST['tpl_body']);
         for ($i = 0; $i < $cnt; $i++) {
-            $req->execute(array(
-                'id' => $tpl_id[$i],
-                'body' => $new_tpl_body[$i],
-                'name' => $new_tpl_name[$i],
-                'userid' => $_SESSION['userid']
-            ));
+            $Templates->update($tpl_id[$i], $new_tpl_name[$i], $new_tpl_body[$i]);
         }
         $_SESSION['ok'][] = _('Template successfully edited.');
     }

@@ -133,7 +133,7 @@ class Templates extends Entity
      * @param string $body Content of the template
      * @return bool true if sql success
      */
-    public function update($body)
+    public function updateCommon($body)
     {
         $body = Tools::checkBody($body);
         $sql = "UPDATE experiments_templates SET
@@ -144,6 +144,33 @@ class Templates extends Entity
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->bindParam(':body', $body);
+
+        return $req->execute();
+    }
+
+    /**
+     * Update a template
+     *
+     * @param int $id Id of the template
+     * @param string $name Title of the template
+     * @param string $body Content of the template
+     * @return bool
+     */
+    public function update($id, $name, $body)
+    {
+        $body = Tools::checkBody($body);
+        $name = Tools::checkTitle($name);
+        $this->setId($id);
+
+        $sql = "UPDATE experiments_templates SET
+            name = :name,
+            body = :body
+            WHERE userid = :userid AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id);
 
         return $req->execute();
     }

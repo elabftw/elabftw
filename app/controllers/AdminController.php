@@ -73,7 +73,7 @@ try {
     // UPDATE COMMON TEMPLATE
     if (isset($_POST['commonTplUpdate'])) {
         $Templates = new Templates($Users);
-        $Templates->update($_POST['commonTplUpdate']);
+        $Templates->updateCommon($_POST['commonTplUpdate']);
     }
 
 } catch (Exception $e) {

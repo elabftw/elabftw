@@ -39,21 +39,21 @@ try {
 
     require_once ELAB_ROOT . 'vendor/autoload.php';
 
-    $Update = new Update(new Config);
+    // this will throw an exception if the SQL structure is not imported yet
+    // so we redirect to the install folder
+    try {
+        $Update = new Update(new Config);
+    } catch (Exception $e) {
+        header('Location: install');
+        throw new Exception('Redirecting to install folder');
+    }
 
     // i18n (gettext)
     if (isset($_SESSION['auth'])) {
         $Users = new Users($_SESSION['userid']);
         $locale = $Users->userData['lang'] . '.utf8';
     } else {
-        // this will throw an exception if the SQL structure is not imported yet
-        // so we redirect to the install folder
-        try {
-            $locale = $Update->Config->configArr['lang'] . '.utf8';
-        } catch (Exception $e) {
-            header('Location: install');
-            throw new Exception('Redirecting to install folder');
-        }
+        $locale = $Update->Config->configArr['lang'] . '.utf8';
     }
     $domain = 'messages';
     putenv("LC_ALL=$locale");

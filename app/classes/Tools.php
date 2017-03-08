@@ -143,6 +143,8 @@ class Tools
             case 'k':
                 $input /= 1024;
                 break;
+            case 'm':
+                break;
             default:
                 return 2;
         }

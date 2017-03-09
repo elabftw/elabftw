@@ -63,7 +63,7 @@ class ItemsTypesView
 
         $html = "<div class='box'>";
         $html .= "<h3>" . _('Database Items Types') . "</h3><hr>";
-        $html .= "<ul class='draggable sortable_itemstypes list-group'>";
+        $html .= "<ul class='list-group'>";
 
         foreach ($itemsTypesArr as $itemType) {
 
@@ -89,6 +89,17 @@ class ItemsTypesView
         }
         $html .= "</ul>";
         $html .= "</div>";
+
+        $html .= "<div class='box'>";
+        $html .= "<h3>" . _('Modify ordering') . "</h3><hr>";
+
+        $html .= "<ul class='draggable sortable_itemstypes list-group'>";
+        foreach ($itemsTypesArr as $itemType) {
+
+            $html .= "<li class='list-group-item' id='itemstypesOrder_" . $itemType['category_id'] . "'>" . $itemType['ordering'] .
+                " <span style='color:#" . $itemType['color'] . "'>" . $itemType['category'] . "</span></li>";
+        }
+        $html .= "</ul>";
 
         return $html;
     }

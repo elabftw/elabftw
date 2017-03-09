@@ -104,7 +104,8 @@ class ItemsTypes extends Entity
             items_types.name AS category,
             items_types.color,
             items_types.bookable,
-            items_types.template
+            items_types.template,
+            items_types.ordering
             from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);

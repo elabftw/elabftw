@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use mPDF;
+use Exception;
 
 /**
  * Create a pdf given an id and a type

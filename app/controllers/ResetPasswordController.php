@@ -59,7 +59,7 @@ try {
 
         // Get info to build the URL
         $protocol = 'https://';
-        $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+        $reset_url = $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['REQUEST_URI'];
         $reset_link = $protocol .
             str_replace('app/controllers/ResetPasswordController', 'change-pass', $reset_url) .
             '?key=' . $key .

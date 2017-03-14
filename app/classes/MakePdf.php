@@ -285,7 +285,7 @@ class MakePdf extends Make
             $server_address = $_SERVER['SERVER_NAME'];
         }
 
-        $url = 'https://' . $server_address . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+        $url = 'https://' . $server_address . Tools::getServerPort() . $_SERVER['PHP_SELF'];
         if ($this->Entity->type === 'experiments') {
             $target = $this->Entity->type . '.php';
         } else {
@@ -346,7 +346,7 @@ class MakePdf extends Make
                 $row_cnt = $req->rowCount();
 
                 // add the item with a link
-                $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+                $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
 
                     $item_url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);

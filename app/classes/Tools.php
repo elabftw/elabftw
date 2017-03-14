@@ -430,4 +430,24 @@ class Tools
             return " selected";
         }
     }
+
+    /**
+     * When you want to know the server port used
+     * We cannot rely on SERVER_PORT because it'll always be 443 inside Docker
+     * See issue #364
+     * If the port is standard (443), it will not appear in HTTP_HOST, but otherwise it'll be there
+     * so we can get the custom port from here
+     *
+     * @return string empty if standard port or ":444"
+     */
+    public static function getServerPort()
+    {
+        $port = '';
+        if (strpos($_SERVER['HTTP_HOST'], ':')) {
+            $hostArr = explode(':', $_SERVER['HTTP_HOST']);
+            $port = ':' . $hostArr[1];
+        }
+
+        return $port;
+    }
 }

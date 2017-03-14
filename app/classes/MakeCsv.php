@@ -102,7 +102,7 @@ class MakeCsv extends Make
      */
     private function getUrl($id)
     {
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
         $needle = array('make.php', 'app/controllers/ExperimentsController.php');
 
         if ($this->Entity->type === 'experiments') {

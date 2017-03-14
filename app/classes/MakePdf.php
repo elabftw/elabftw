@@ -60,9 +60,18 @@ class MakePdf extends Make
         $this->setCleanTitle();
         $this->setTags();
         $this->buildContent();
+
+        // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
+        $tmpDir = ELAB_ROOT . 'uploads/tmp/mpdf/';
+        if (!is_dir($tmpDir)) {
+            if (!mkdir($tmpDir)) {
+                throw new Exception("Could not create the $tmpDir directory. Please check permissions on this folder.");
+            }
+        }
+        define("_MPDF_TEMP_PATH", $tmpDir);
+        define("_MPDF_TTFONTDATAPATH", $tmpDir);
+
         // create the pdf
-        define("_MPDF_TEMP_PATH", ELAB_ROOT . 'uploads/tmp/');
-        define("_MPDF_TTFONTDATAPATH", ELAB_ROOT . 'uploads/tmp/');
         $mpdf = new \mPDF('utf-8', 'A4');
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';

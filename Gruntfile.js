@@ -66,7 +66,7 @@ module.exports = function(grunt) {
               'bower_components/fullcalendar/dist/fullcalendar.css',
               'bower_components/bootstrap/dist/css/bootstrap.css',
               'bower_components/colorpicker/jquery.colorpicker.css',
-              'bower_components/fancybox/jquery.fancybox.css',
+              'bower_components/fancybox/source/jquery.fancybox.css',
               'bower_components/jquery-ui/themes/smoothness/jquery-ui.css',
               'app/css/main.css'],
 

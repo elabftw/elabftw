@@ -1,6 +1,6 @@
 {
   "name": "elabftw",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Free and open source electronic lab notebook for research labs",
   "main": "Gruntfile.js",
   "directories": {

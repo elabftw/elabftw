@@ -1,4 +1,5 @@
 *~
+.scannerwork/*
 *.bak
 _api/
 bower_components

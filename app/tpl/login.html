@@ -28,6 +28,13 @@ if (!checkCookiesEnabled()) {
             <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
         </div>
     </form>
+
+    <form method='post' id='saml-login' action='app/login-saml.php' autocomplete='off'>
+        <h2>{{ 'Login through your institution'|trans }}</h2>
+        <br>
+        <button class='button' type='submit' name='submit'>Go</button>
+    </form>
+
     <p>
         {{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(
             "<a href='register.php'>",
@@ -41,6 +48,7 @@ if (!checkCookiesEnabled()) {
         <button class='button' type="submit" name="Submit">{{ 'Send new password'|trans }}</button>
     </form>
     </div>
+
 </section>
 
 <script>

@@ -11,4 +11,4 @@ $settings = $Saml->getSettings();
 
 //require_once('../vendor/onelogin/php-saml/_toolkit_loader.php');
 $auth = new OneLogin_Saml2_Auth($settings);
-$auth->login();
+$auth->login('https://elab.local/index.php?acs');

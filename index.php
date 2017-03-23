@@ -11,17 +11,20 @@
 
 namespace Elabftw\Elabftw;
 
+use OneLogin_Saml2_Auth;
+
 session_start();
+
 if (isset($_GET['acs'])) {
 
-    require_once 'vendor/onelogin/php-saml/_toolkit_loader.php';
+    //require_once 'vendor/onelogin/php-saml/_toolkit_loader.php';
 
     require_once 'app/init.inc.php';
 
     $Saml = new Saml();
 
     $settings = $Saml->getSettings();
-    $auth = new \OneLogin_Saml2_Auth($settings);
+    $SamlAuth = new OneLogin_Saml2_Auth($settings);
 
     if (isset($_SESSION) && isset($_SESSION['AuthNRequestID'])) {
         $requestID = $_SESSION['AuthNRequestID'];
@@ -29,36 +32,26 @@ if (isset($_GET['acs'])) {
         $requestID = null;
     }
 
-    $auth->processResponse($requestID);
+    $SamlAuth->processResponse($requestID);
 
-    $errors = $auth->getErrors();
+    $errors = $SamlAuth->getErrors();
 
     if (!empty($errors)) {
         print_r('<p>'.implode(', ', $errors).'</p>');
     }
 
-    if (!$auth->isAuthenticated()) {
+    if (!$SamlAuth->isAuthenticated()) {
         echo "<p>Not authenticated</p>";
         exit();
     }
 
-    $_SESSION['samlUserdata'] = $auth->getAttributes();
-    $_SESSION['samlNameId'] = $auth->getNameId();
-    $_SESSION['samlNameIdFormat'] = $auth->getNameIdFormat();
-    $_SESSION['samlSessionIndex'] = $auth->getSessionIndex();
+    $_SESSION['samlUserdata'] = $SamlAuth->getAttributes();
+    $_SESSION['samlNameId'] = $SamlAuth->getNameId();
+    $_SESSION['samlNameIdFormat'] = $SamlAuth->getNameIdFormat();
+    $_SESSION['samlSessionIndex'] = $SamlAuth->getSessionIndex();
     unset($_SESSION['AuthNRequestID']);
     if (isset($_POST['RelayState']) && OneLogin_Saml2_Utils::getSelfURL() != $_POST['RelayState']) {
-        $auth->redirectTo($_POST['RelayState']);
-    }
-
-    if (!empty($errors)) {
-        print_r('<p>'.implode(', ', $errors).'</p>');
-        exit();
-    }
-
-    if (!$auth->isAuthenticated()) {
-        echo "<p>Not authenticated</p>";
-        exit();
+        $SamlAuth->redirectTo($_POST['RelayState']);
     }
 
     $attributes = $_SESSION['samlUserdata'];

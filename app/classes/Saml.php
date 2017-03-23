@@ -37,7 +37,7 @@ class Saml
             'strict' => false,
 
             // Enable debug mode (to print errors)
-            'debug' => false,
+            'debug' => true,
 
             // Set a BaseURL to be used instead of try to guess
             // the BaseURL of the view that process the SAML Message.
@@ -53,18 +53,18 @@ class Saml
                 // returned to the requester, in this case our SP.
                 'assertionConsumerService' => array (
                     // URL Location where the <Response> from the IdP will be returned
-                    'url' => 'https://elab.local/',
+                    'url' => 'https://elab.local/index.php?acs',
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
                 ),
                 // If you need to specify requested attributes, set a
                 // attributeConsumingService. nameFormat, attributeValue and
                 // friendlyName can be omitted. Otherwise remove this section.
                 "attributeConsumingService"=> array(
-                        "ServiceName" => "SP test",
-                        "serviceDescription" => "Test Service",
+                        "ServiceName" => "eLabFTW",
+                        "serviceDescription" => "Electronic Lab Notebook",
                         "requestedAttributes" => array(
                             array(
                                 "name" => "",

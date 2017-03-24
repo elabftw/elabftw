@@ -98,7 +98,7 @@
     {% if Ev.Entity.type == 'items' %}
         <span style='color:#{{ Ev.Entity.entityData['color'] }}'>{{ Ev.Entity.entityData['category'] }}</span>
     {% endif %}
-    {{ Ev.Entity.entityData['title'] }}
+    {{ Ev.Entity.entityData['title']|raw }}
 </div>
 <!--  BODY (show only if not empty -->
 {% if Ev.Entity.entityData['body'] != '' %}

@@ -99,7 +99,7 @@ class ItemsTypesView
             $html .= "<li class='list-group-item' id='itemstypesOrder_" . $itemType['category_id'] . "'>" . $itemType['ordering'] .
                 " <span style='color:#" . $itemType['color'] . "'>" . $itemType['category'] . "</span></li>";
         }
-        $html .= "</ul>";
+        $html .= "</ul></div>";
 
         return $html;
     }

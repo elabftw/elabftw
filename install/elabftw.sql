@@ -419,4 +419,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '16');
+('schema', '17');

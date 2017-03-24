@@ -17,8 +17,8 @@
             {% if SESSION['auth'] and SESSION['is_admin'] %}
                 <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-                    {% if Users.readAllFromTeam(session['team_id'], 0)|length > 0 %}
-                        <span class='badge'>{{ Users.readAllFromTeam(session['team_id'], 0)|length }}</span>
+                    {% if Users.readAllFromTeam(SESSION['team_id'], 0)|length > 0 %}
+                        <span class='badge'>{{ Users.readAllFromTeam(SESSION['team_id'], 0)|length }}</span>
                     {% endif %}
                 </a>
             {% endif %}

@@ -48,7 +48,7 @@ class Update
      * UPDATE IT ALSO IN package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.5.4';
+    const INSTALLED_VERSION = '1.5.5';
 
     /**
      * /////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '16';
+    const REQUIRED_SCHEMA = '17';
 
     /**
      * Create the pdo object
@@ -297,6 +297,12 @@ class Update
             // 20170124
             $this->schema16();
             $this->updateSchema(16);
+        }
+
+        if ($current_schema < 17) {
+            // 20170324
+            // here we only want to empty the twig cache
+            $this->updateSchema(17);
         }
         // place new schema functions above this comment
 

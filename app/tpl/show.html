@@ -49,7 +49,7 @@
                 <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
                 {% endif %}
 
-                {{ item['title'] }}</p></a>
+                {{ item['title']|raw }}</p></a>
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item['color'] }}'>
                     <img id='bodyToggleImg_{{ item['id'] }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item['category'] }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item['date']|kdate }}</span>

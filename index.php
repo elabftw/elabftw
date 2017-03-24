@@ -44,34 +44,15 @@ if (isset($_GET['acs'])) {
         exit();
     }
 
+    $Auth = new Auth();
     $_SESSION['samlUserdata'] = $SamlAuth->getAttributes();
-    $_SESSION['samlNameId'] = $SamlAuth->getNameId();
-    $_SESSION['samlNameIdFormat'] = $SamlAuth->getNameIdFormat();
-    $_SESSION['samlSessionIndex'] = $SamlAuth->getSessionIndex();
-    unset($_SESSION['AuthNRequestID']);
-    if (isset($_POST['RelayState']) && OneLogin_Saml2_Utils::getSelfURL() != $_POST['RelayState']) {
-        $SamlAuth->redirectTo($_POST['RelayState']);
-    }
+    if ($Auth->loginWithSaml($_SESSION['samlUserdata']['User.email'][0])) {
 
-    $attributes = $_SESSION['samlUserdata'];
-
-    if (!empty($attributes)) {
-        echo '<h1>'._('User attributes:').'</h1>';
-        echo '<table><thead><th>'._('Name').'</th><th>'._('Values').'</th></thead><tbody>';
-        foreach ($attributes as $attributeName => $attributeValues) {
-            echo '<tr><td>'.htmlentities($attributeName).'</td><td><ul>';
-            foreach ($attributeValues as $attributeValue) {
-                echo '<li>'.htmlentities($attributeValue).'</li>';
-            }
-            echo '</ul></td></tr>';
-        }
-        echo '</tbody></table>';
-        if (!empty($_SESSION['IdPSessionIndex'])) {
-            echo '<p>The SessionIndex of the IdP is: '.$_SESSION['IdPSessionIndex'].'</p>';
-        }
+        header('Location: experiments.php');
     } else {
-        echo _('Attributes not found');
+        echo 'No user with this email';
     }
+
 } else {
     /**
      * As there is nothing to show on the index page, we go to the experiments page directly

@@ -12,12 +12,11 @@
 namespace Elabftw\Elabftw;
 
 use OneLogin_Saml2_Auth;
+use OneLogin_Saml2_Utils;
 
 session_start();
 
 if (isset($_GET['acs'])) {
-
-    //require_once 'vendor/onelogin/php-saml/_toolkit_loader.php';
 
     require_once 'app/init.inc.php';
 

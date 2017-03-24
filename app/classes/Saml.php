@@ -103,7 +103,7 @@ class Saml
                 // SSO endpoint info of the IdP. (Authentication Request protocol)
                 'singleSignOnService' => array (
                     // URL Target of the IdP where the SP will send the Authentication Request Message
-                    'url' => 'https://app.onelogin.com/saml/metadata/639081',
+                    'url' => 'https://elab-dev.onelogin.com/trust/saml2/http-post/sso/639081',
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-POST binding only

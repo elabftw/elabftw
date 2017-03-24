@@ -91,7 +91,7 @@
 
             <!-- TITLE -->
             <h4>{{ 'Title'|trans }}</h4>
-            <input id='title_input' name='title' rows='1' value='{{ Ev.Entity.entityData['title'] }}' required />
+            <input id='title_input' name='title' rows='1' value='{{ Ev.Entity.entityData['title']|raw }}' required />
 
             <!-- BODY -->
             {% if Ev.Entity.type == 'experiments' %}

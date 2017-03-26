@@ -1,6 +1,6 @@
 ![elabftw logo](https://i.imgur.com/hq6SAZf.png)
 
-###[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.readthedocs.io)
+[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.readthedocs.io)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/master)

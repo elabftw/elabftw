@@ -125,6 +125,7 @@ select{
 }
 .form-control{
     -moz-appearance:none;
+    -webkit-appearance:none;
     background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;
     padding-right: 31px;
 }

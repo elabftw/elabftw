@@ -10,6 +10,9 @@ engines:
       - php
   fixme:
     enabled: true
+    checks:
+      TODO:
+        enabled: false
   phpmd:
     enabled: true
 ratings:
@@ -26,4 +29,3 @@ exclude_paths:
 - app/js/*
 - vendor/*
 - tests/*
-- doc/*

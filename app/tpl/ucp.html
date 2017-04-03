@@ -109,10 +109,10 @@
                 <option value='user'
                   {{ Users.userData['default_vis'] == 'user' ? " selected='selected'" }}
                 >{{ 'User'|trans }}</option>
-                {% for teamGroup in teamGroupArr %}
+                {% for teamGroup in teamGroupsArr %}
                     <option value='{{ teamGroup['id'] }}'
                       {{ teamGroup['id'] == Users.userData['default_vis'] ? " selected='selected'" }}
-                                      >{{ 'Group'|trans }} ~ ' ' ~ {{ teamGroup['name'] }}
+                    >{{ 'Group'|trans }} - {{ teamGroup['name'] }}
                     </option>
                 {% endfor %}
             </select>

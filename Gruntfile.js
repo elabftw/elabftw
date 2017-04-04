@@ -31,7 +31,8 @@ module.exports = function(grunt) {
               'app/js/cornify.js',
               'app/js/jquery.rating.js',
               'app/js/3Dmol-nojquery.js',
-              'app/js/3dmol_helpers.js'],
+              'app/js/3dmol_helpers.js',
+              'app/js/prism.js'],
 
           'app/js/chemdoodle/chemdoodle.min.js': [
               'app/js/chemdoodle/chemdoodle-unpacked.js',
@@ -62,6 +63,7 @@ module.exports = function(grunt) {
               'app/css/tagcloud.css',
               'app/css/jquery.rating.css',
               'app/css/autocomplete.css',
+              'app/css/prism.css',
               'bower_components/dropzone/dist/dropzone.css',
               'bower_components/fullcalendar/dist/fullcalendar.css',
               'bower_components/bootstrap/dist/css/bootstrap.css',

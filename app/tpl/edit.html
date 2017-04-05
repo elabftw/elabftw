@@ -264,7 +264,7 @@
                 ],
             // save button :
             save_onsavecallback: function() {
-                quickSave({{ Ev.Entity.type }}, {{ Ev.Entity.id }});
+                quickSave('{{ Ev.Entity.type }}', {{ Ev.Entity.id }});
             },
             // keyboard shortcut to insert today's date at cursor in editor
             setup : function(editor) {

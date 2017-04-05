@@ -120,6 +120,7 @@ class Auth
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
      *
+     * @return bool
      */
     private function setToken()
     {
@@ -129,7 +130,8 @@ class Auth
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':token', $this->token);
         $req->bindParam(':userid', $this->userData['userid']);
-        $req->execute();
+
+        return $req->execute();
     }
 
     /**
@@ -145,7 +147,7 @@ class Auth
         if ($this->checkCredentials($email, $password)) {
             $this->populateSession();
             if ($setCookie === 'on') {
-                $this->setToken();
+                return $this->setToken();
             }
             return true;
         }

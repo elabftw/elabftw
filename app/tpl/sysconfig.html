@@ -1,0 +1,244 @@
+<menu>
+    <ul>
+        <li class='tabhandle' id='tab1'>{{ 'Teams'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Users'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Server'|trans }}</li>
+        <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
+        <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
+        <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
+        <li class='tabhandle' id='tab7'>{{ 'Logs'|trans }}</li>
+    </ul>
+</menu>
+
+<!-- TAB 1 TEAMS -->
+<div class='divhandle' id='tab1div'>
+    <div id='teamsDiv'>
+        <div class='box'>
+            <h3>{{ 'Usage Statistics'|trans }}</h3>
+            <hr>
+            <p>{{ SysconfigView.TeamsView.showStats|raw }}</p>
+        </div>
+        {{ SysconfigView.TeamsView.showPromoteSysadmin|raw }}
+        {{ SysconfigView.TeamsView.showCreate|raw }}
+        {{ SysconfigView.TeamsView.show|raw }}
+        {{ SysconfigView.TeamsView.showMassEmail|raw }}
+    </div>
+</div>
+
+<!-- TAB 2 USERS -->
+<div class='divhandle' id='tab2div'>
+    {{ UsersView.showEditUsers|raw }}
+</div>
+
+<!-- TAB 3 SERVER -->
+<div class='divhandle' id='tab3div'>
+    <form class='box' method='post' action='app/controllers/SysconfigController.php'>
+        <h3>{{ 'Under the Hood'|trans }}</h3>
+        <hr>
+        <input type='hidden' name='updateConfig' value='true' />
+        <label class="block" for='lang'>{{ 'Language'|trans }}</label>
+        <select id='lang' name="lang" class="clean-form col-3-form">
+            {% for lang, text in langsArr %}
+            <option {{ Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label class='block' for='proxy'>{{ 'Address of the Proxy:'|trans }}</label>
+        <input class='clean-form col-3-form' type='text' value='{{ Config.configArr.proxy }}' name='proxy' id='proxy' />
+        <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
+
+        <div class='submitButtonDiv'>
+            <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+        </div>
+    </form>
+
+    <div class='box'>
+        <h3>{{ 'Informations'|trans }}</h3>
+        <hr>
+        <ul class='clean-list'>
+            <li><p>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</p></li>
+            <li><p>{{ 'PHP Version'|trans }}: {{ phpInfos.1 }}</p></li>
+            <li><p>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</p></li>
+            <li><p>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</p></li>
+        </ul>
+    </div>
+</div>
+
+<!-- TAB 4 TIMESTAMP -->
+<div class='divhandle' id='tab4div'>
+    <form class='box' method='post' action='app/controllers/SysconfigController.php'>
+        <h3>{{ 'Timestamping Configuration'|trans }}</h3>
+        <hr>
+        <input type='hidden' name='updateConfig' value='true' />
+        <label for='stampshare'>{{ 'The teams can use the credentials below to timestamp:'|trans }}</label>
+        <select class="clean-form" name='stampshare' id='stampshare'>
+            <option value='1' {{ Config.configArr.stampshare ? ' selected' }}>{{ 'Yes'|trans }}</option>
+            <option value='0' {{ not Config.configArr.stampshare ? 'selected' }}>{{ 'No'|trans }}</option>
+        </select>
+        <p class='smallgray'>{{ 'You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.'|trans }}</p>
+        <p>
+        <label class="block" for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
+        <input class="clean-form col-3-form" type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ Config.configArr.stampprovider }}' name='stampprovider' id='stampprovider' />
+        <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>") }}</span>
+        </p>
+        <p>
+        <label class="block" for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
+        <input class="clean-form col-3-form" type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ Config.configArr.stampcert }}' name='stampcert' id='stampcert' />
+        <span class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>") }}</span>
+        </p>
+        <label class="block" for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
+        <input class="clean-form col-3-form" autocomplete='off' type='text' value='{{ Config.configArr.stamplogin }}' name='stamplogin' id='stamplogin' /><br>
+        <label class="block" for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
+        {% if Config.configArr.stamppass|length > 1 %}
+    <p>A password is already set.
+    <a href='app/controllers/SysconfigController.php?clearStamppass=1'>Clear it</a> or change it below:</p>
+    {% endif %}
+        <input class='clean-form col-3-form' autocomplete='off' type='password' name='stamppass' id='stamppass' />
+        <div class='submitButtonDiv'>
+            <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+        </div>
+    </form>
+</div>
+
+<!-- TAB 5 SECURITY -->
+<div class='divhandle' id='tab5div'>
+    <div class='box'>
+        <h3>{{ 'Security Settings'|trans }}</h3>
+        <hr>
+        <form method='post' action='app/controllers/SysconfigController.php'>
+            <input type='hidden' name='updateConfig' value='true' />
+
+            <label for='admin_validate'>{{ 'Users need validation by admin after registration:'|trans }}</label>
+            <select class="clean-form" name='admin_validate' id='admin_validate'>
+                <option value='1' {{ Config.configArr.admin_validate ? " selected" }}>{{ 'Yes'|trans }}</option>
+                <option value='0' {{ not Config.configArr.admin_validate ? " selected" }}>{{ 'No'|trans }}</option>
+            </select>
+            <p class='smallgray'>{{ 'Set to yes for added security.'|trans }}</p>
+            <label class="block" for='login_tries'>{{ 'Number of allowed login attempts:'|trans }}</label>
+            <input class="clean-form col-3-form" type='number' value='{{ Config.configArr.login_tries }}' name='login_tries' id='login_tries' />
+            <p class='smallgray'>{{ '3 might be too few. See for yourself :)'|trans }}</p>
+            <label class="block" for='ban_time'>{{ 'Time of the ban after failed login attempts (in minutes):'|trans }}</label>
+            <input class="clean-form col-3-form" type='number' value='{{ Config.configArr.ban_time }}' name='ban_time' id='ban_time' />
+            <p class='smallgray'>
+            {{ 'To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'|trans }}
+            </p>
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- TAB 6 EMAIL -->
+<div class='divhandle' id='tab6div'>
+    <div class='box'>
+        <h3>{{ 'E-mail Settings'|trans }}</h3>
+        <hr>
+    <form method='post' action='app/controllers/SysconfigController.php'>
+        <input type='hidden' name='updateConfig' value='true' />
+        <p>{{ "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific smtp2go.com account and add the infos here."|trans }}</p>
+        <p>
+        <label class="block" for='mail_method'>{{ 'Send e-mails via:'|trans }}</label>
+        <select class="clean-form col-3-form" onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
+            <option value=''>{{ 'Select mailing method...'|trans }}</option>
+
+            <option value="sendmail" {{ not disable_sendmail ? " selected" }}>{{ 'Local MTA (default)'|trans }}</option>
+            <option value="smtp" {{ not disable_smtp ? " selected" }}>{{ 'SMTP'|trans }}</option>
+            <option value="php" {{ not disable_php ? " selected" }}>{{ 'PHP'|trans }}</option>
+
+        </select>
+        </p>
+
+        <div id='general_mail_config'>
+            <p>
+            <label class="block" for='mail_from'>{{ 'Sender address:'|trans }}</label>
+            <input class="clean-form col-3-form" type='text' value='{{ Config.configArr.mail_from }}' name='mail_from' id='mail_from' />
+            </p>
+        </div>
+        <div id='sendmail_config'>
+            <p>
+            <label class="block" for='sendmail_path'>{{ 'Path to sendmail:'|trans }}</label>
+            <input class="clean-form col-3-form" type='text' placeholder='/usr/bin/sendmail' value='{{ Config.configArr.sendmail_path }}' name='sendmail_path' id='sendmail_path' />
+            </p>
+        </div>
+        <div id='smtp_config'>
+            <p>
+            <label class="block" for='smtp_address'>{{ 'Address of the SMTP server:'|trans }}</label>
+            <input class="clean-form col-3-form" type='text' value='{{ Config.configArr.smtp_address }}' name='smtp_address' id='smtp_address' />
+            <span class='smallgray'>mail.smtp2go.com</span>
+            <label class="block" for='smtp_encryption'>{{ 'SMTP encryption:'|trans }}</label>
+            <select class="clean-form col-3-form" name='smtp_encryption'>
+                <option value='none' {{ Config.configArr.smtp_encryption == 'none' ? ' selected' }}>None</option>
+                <option value='tls' {{ Config.configArr.smtp_encryption == 'tls' ? ' selected' }}>TLS</option>
+                <option value='startssl' {{ Config.configArr.smtp_encryption == 'startssl' ? ' selected' }}>STARTSSL</option>
+            </select>
+            <span class='smallgray'>{{ 'Probably TLS'|trans }}</span>
+            <label class="block" for='smtp_port'>{{ 'SMTP Port:'|trans }}</label>
+            <input class="clean-form col-3-form" type='text' value='{{ Config.configArr.smtp_port }}' name='smtp_port' id='smtp_port' />
+            <span class='smallgray'>{{ 'Default is 587.'|trans }}</span>
+            <label class="block" for='smtp_username'>{{ 'SMTP username:'|trans }}</label>
+            <input class="clean-form col-3-form" type='text' value='{{ Config.configArr.smtp_username }}' name='smtp_username' id='smtp_username' />
+            <label class="block" for='smtp_password'>{{ 'SMTP password'|trans }}</label>
+            {% if Config.configArr.smtp_password|length == 0 %}
+                <input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' />
+            {% else %}
+            {{ 'A password is set.'|trans }}
+            <span class='button' id='editSmtpPassword'>{{ 'Edit'|trans }}</span>
+            <input class='clean-form col-3-form' type='password' name='smtp_password' style='display:none' id='hidden_smtp_password' />
+            {% endif %}
+            </p>
+            </div>
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TEST EMAIL -->
+    {{ SysconfigView.testemailShow|raw }}
+
+</div>
+
+<!-- TAB 7 LOGS -->
+<div class='divhandle' id='tab7div'>
+    {{ SysconfigView.logsShow|raw }}
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#editSmtpPassword').click(function() {
+            $('#hidden_smtp_password').toggle();
+        });
+        // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
+        var input_list = document.getElementsByTagName('input');
+        for (var i=0; i < input_list.length; i++) {
+            var input = input_list[i];
+            input.disabled = false;
+        }
+        // TABS
+        // get the tab=X parameter in the url
+        var params = getGetParameters();
+        var tab = parseInt(params['tab']);
+        if (!isInt(tab)) {
+            var tab = 1;
+        }
+        var initdiv = '#tab' + tab + 'div';
+        var inittab = '#tab' + tab;
+        // init
+        $(".divhandle").hide();
+        $(initdiv).show();
+        $(inittab).addClass('selected');
+
+        $(".tabhandle" ).click(function(event) {
+            var tabhandle = '#' + event.target.id;
+            var divhandle = '#' + event.target.id + 'div';
+            $(".divhandle").hide();
+            $(divhandle).show();
+            $(".tabhandle").removeClass('selected');
+            $(tabhandle).addClass('selected');
+        });
+        // END TABS
+        // honor already saved mail_method setting and hide unused options accordingly
+        toggleMailMethod('{{ Config.configArr.mail_method }}');
+    });
+</script>

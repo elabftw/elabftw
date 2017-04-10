@@ -7,6 +7,7 @@
         <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
         <li class='tabhandle' id='tab7'>{{ 'Logs'|trans }}</li>
+        <li class='tabhandle' id='tab8'>{{ 'Authentication'|trans }}</li>
     </ul>
 </menu>
 
@@ -16,12 +17,12 @@
         <div class='box'>
             <h3>{{ 'Usage Statistics'|trans }}</h3>
             <hr>
-            <p>{{ SysconfigView.TeamsView.showStats|raw }}</p>
+            <p>{{ TeamsView.showStats|raw }}</p>
         </div>
-        {{ SysconfigView.TeamsView.showPromoteSysadmin|raw }}
-        {{ SysconfigView.TeamsView.showCreate|raw }}
-        {{ SysconfigView.TeamsView.show|raw }}
-        {{ SysconfigView.TeamsView.showMassEmail|raw }}
+        {{ TeamsView.showPromoteSysadmin|raw }}
+        {{ TeamsView.showCreate|raw }}
+        {{ TeamsView.show|raw }}
+        {{ TeamsView.showMassEmail|raw }}
     </div>
 </div>
 
@@ -195,14 +196,47 @@
     </div>
 
     <!-- TEST EMAIL -->
-    {{ SysconfigView.testemailShow|raw }}
+    <div class='box'>
+        <label class='block' for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
+        <input class='clean-form col-3-form' type='email' placeholder='you@email.com' id='testemailEmail' />
+        <button id='testemailButton' onClick='testemailSend()' class='button'>{{ 'Send'|trans }}</button>
+    </div>
 
 </div>
 
 <!-- TAB 7 LOGS -->
 <div class='divhandle' id='tab7div'>
-    {{ SysconfigView.logsShow|raw }}
+    <div id='logsDiv'>
+        <div class='well'>
+            <ul class='clean-list'>
+                {% if logsArr %}
+                    {% for logs in logsArr %}
+                        <li>✪ {{ logs.datetime }} [ {{ logs.type }} ] {{ logs.body }} ({{ logs.user }})</li>
+                    {% endfor %}
+                {% else %}
+                    <li>{{ 'Nothing to display'|trans }}</li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class='submitButtonDiv'>
+            <button id='logsDestroyButton' onClick='logsDestroy()' class='button button-delete'>{{ 'Clear all logs'|trans }}</button>
+        </div>
+    </div>
 </div>
+
+<!-- TAB 8 AUTHENTICATION -->
+<div class='divhandle' id='tab8div'>
+    <div class='box'>
+        <!--
+        <select class="clean-form col-3-form" name='idp_select'>
+            <option value='1' {{ Config.configArr.use_idp == '1' ? ' selected' }}>Yes</option>
+            <option value='0' {{ Config.configArr.use_idp == '0' ? ' selected' }}>No</option>
+        </select>
+        -->
+    </div>
+
+</div>
+
 
 <script>
     $(document).ready(function() {

@@ -1,6 +1,6 @@
 ![elabftw logo](https://i.imgur.com/hq6SAZf.png)
 
-###[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.readthedocs.io)
+[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.readthedocs.io)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/master)
@@ -9,6 +9,7 @@
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Release](https://img.shields.io/github/release/elabftw/elabftw.svg)](https://github.com/elabftw/elabftw/releases/latest)
+[![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/elabftw/elabftw)
 
 # Description
 

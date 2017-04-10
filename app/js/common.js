@@ -279,8 +279,8 @@ function createTag(e, type, item) { // the argument here is the event (needed to
 }
 // DESTROY TAG
 function destroyTag(type, item, tag){
-    var you_sure = confirm('Delete this?');
-    if (you_sure) {
+    var youSure = confirm('Delete this?');
+    if (youSure) {
         $.post('app/controllers/EntityController.php', {
             destroyTag: true,
             type:type,
@@ -397,8 +397,8 @@ function commentsCreate(id) {
 
 // destroy
 function commentsDestroy(id, expId, confirmText) {
-    var you_sure = confirm(confirmText);
-    if (you_sure === true) {
+    var youSure = confirm(confirmText);
+    if (youSure === true) {
         $.post('app/controllers/CommentsController.php', {
             destroy: true,
             id: id
@@ -418,11 +418,11 @@ function commentsDestroy(id, expId, confirmText) {
 
 // ENTITY DESTROY
 function entityDestroy(type, id, confirmText) {
-    var you_sure = confirm(confirmText);
-    if (you_sure !== true) {
+    var youSure = confirm(confirmText);
+    if (youSure !== true) {
         return false;
     }
-    if (type == 'experiments') {
+    if (type === 'experiments') {
         controller = 'app/controllers/ExperimentsController.php';
         location = 'experiments.php';
     } else {
@@ -620,8 +620,8 @@ function teamGroupUpdate(action) {
 }
 
 function teamGroupDestroy(groupid, confirmText) {
-    var you_sure = confirm(confirmText);
-    if (you_sure === true) {
+    var youSure = confirm(confirmText);
+    if (youSure === true) {
         $.post('app/controllers/TeamGroupsController.php', {
             teamGroupDestroy: true,
             teamGroupGroup: groupid
@@ -760,13 +760,13 @@ function massSend() {
 
 // called when mail_method selector is changed; enables/disables the config for the selected/unselected method
 function toggleMailMethod(value) {
-    if (value == 'sendmail') {
+    if (value === 'sendmail') {
         $('#smtp_config').hide();
         $('#sendmail_config').show();
-    } else if (value == 'smtp') {
+    } else if (value === 'smtp') {
         $('#smtp_config').show();
         $('#sendmail_config').hide();
-    } else if (value == 'php') {
+    } else if (value === 'php') {
         $('#smtp_config').hide();
         $('#sendmail_config').hide();
         $('#general_mail_config').show();
@@ -817,14 +817,14 @@ function logsDestroy() {
     });
 }
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment(type, item_id) {
+function makeEditableFileComment(type, itemId) {
     $('.thumbnail p.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
             type: type,
             comment : value,
             comment_id : $(this).attr('id'),
-            id: item_id
+            id: itemId
         }).done(function(data) {
             var json = JSON.parse(data);
             if (json.res) {
@@ -846,13 +846,13 @@ function makeEditableFileComment(type, item_id) {
 }
 
 // UPLOADS DESTROY
-function uploadsDestroy(id, type, item_id, confirmText) {
+function uploadsDestroy(id, type, itemId, confirmText) {
     var youSure = confirm(confirmText);
     if (youSure === true) {
         $.post('app/controllers/EntityController.php', {
             uploadsDestroy: true,
             upload_id: id,
-            id: item_id,
+            id: itemId,
             type: type
         }).done(function(data) {
             var json = JSON.parse(data);
@@ -861,7 +861,7 @@ function uploadsDestroy(id, type, item_id, confirmText) {
                 if (type === 'items') {
                     type = 'database';
                 }
-                $("#filesdiv").load(type + ".php?mode=edit&id=" + item_id + " #filesdiv");
+                $("#filesdiv").load(type + ".php?mode=edit&id=" + itemId + " #filesdiv");
             } else {
                 notif(json.msg, 'ko');
             }
@@ -896,7 +896,7 @@ function insertParamAndReload(key, value) {
         var i = kvp.length; var x; while (i--) {
             x = kvp[i].split('=');
 
-            if (x[0] == key) {
+            if (x[0] === key) {
                 x[1] = value;
                 kvp[i] = x.join('=');
                 break;
@@ -914,8 +914,8 @@ function insertParamAndReload(key, value) {
 
 // TEMPLATES DESTROY
 function templatesDestroy(id) {
-    var you_sure = confirm('Delete this ?');
-    if (you_sure === true) {
+    var youSure = confirm('Delete this ?');
+    if (youSure === true) {
         $.post('app/controllers/UcpController.php', {
             templatesDestroy: true,
             id: id

@@ -222,18 +222,49 @@
             }
         });
 
+        // STAR RATING
+        $('input.star').rating();
+        $('#star1').click(function() {
+            updateRating(1, {{ Ev.Entity.id }});
+        });
+        $('#star2').click(function() {
+            updateRating(2, {{ Ev.Entity.id }});
+        });
+        $('#star3').click(function() {
+            updateRating(3, {{ Ev.Entity.id }});
+        });
+        $('#star4').click(function() {
+            updateRating(4, {{ Ev.Entity.id }});
+        });
+        $('#star5').click(function() {
+            updateRating(5, {{ Ev.Entity.id }});
+        });
+
         // EDITOR
         tinymce.init({
             mode : 'specific_textareas',
             editor_selector : 'mceditable',
             content_css : 'app/css/tinymce.css',
-            plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image link pagebreak mention',
+            plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image link pagebreak mention codesample',
             pagebreak_separator: '<pagebreak>',
-            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',
+            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | image link | save',
             removed_menuitems : 'newdocument',
+            codesample_languages: [
+                {text: 'HTML/XML', value: 'markup'},
+                {text: 'JavaScript', value: 'javascript'},
+                {text: 'CSS', value: 'css'},
+                {text: 'PHP', value: 'php'},
+                {text: 'Ruby', value: 'ruby'},
+                {text: 'R', value: 'r'},
+                {text: 'Python', value: 'python'},
+                {text: 'Java', value: 'java'},
+                {text: 'C', value: 'c'},
+                {text: 'C#', value: 'csharp'},
+                {text: 'C++', value: 'cpp'}
+                ],
             // save button :
             save_onsavecallback: function() {
-                quickSave({{ Ev.Entity.type }}, {{ Ev.Entity.id }});
+                quickSave('{{ Ev.Entity.type }}', {{ Ev.Entity.id }});
             },
             // keyboard shortcut to insert today's date at cursor in editor
             setup : function(editor) {

@@ -22,7 +22,7 @@ module.exports = function(grunt) {
               'bower_components/bootstrap/js/button.js',
               'bower_components/bootstrap/js/dropdown.js',
               'bower_components/colorpicker/jquery.colorpicker.js',
-              'bower_components/fancybox/source/jquery.fancybox.js',
+              'bower_components/fancybox/dist/jquery.fancybox.js',
               'bower_components/jeditable/jquery.jeditable.js',
               'bower_components/jquery.complexify/jquery.complexify.js',
               'bower_components/jquery.complexify/jquery.complexify.banlist.js',
@@ -31,7 +31,8 @@ module.exports = function(grunt) {
               'app/js/cornify.js',
               'app/js/jquery.rating.js',
               'app/js/3Dmol-nojquery.js',
-              'app/js/3dmol_helpers.js'],
+              'app/js/3dmol_helpers.js',
+              'app/js/prism.js'],
 
           'app/js/chemdoodle/chemdoodle.min.js': [
               'app/js/chemdoodle/chemdoodle-unpacked.js',
@@ -62,11 +63,12 @@ module.exports = function(grunt) {
               'app/css/tagcloud.css',
               'app/css/jquery.rating.css',
               'app/css/autocomplete.css',
+              'app/css/prism.css',
               'bower_components/dropzone/dist/dropzone.css',
               'bower_components/fullcalendar/dist/fullcalendar.css',
               'bower_components/bootstrap/dist/css/bootstrap.css',
               'bower_components/colorpicker/jquery.colorpicker.css',
-              'bower_components/fancybox/source/jquery.fancybox.css',
+              'bower_components/fancybox/dist/jquery.fancybox.css',
               'bower_components/jquery-ui/themes/smoothness/jquery-ui.css',
               'app/css/main.css'],
 

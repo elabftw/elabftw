@@ -490,19 +490,19 @@ class Users extends Auth
 
         // KEYBOARD SHORTCUTS
         // only take first letter
-        $new_sc_create = substr($params['sc_create'], 0, 1);
+        $new_sc_create = $params['sc_create'][0];
         if (!ctype_alpha($new_sc_create)) {
             $new_sc_create = 'c';
         }
-        $new_sc_edit = substr($params['sc_edit'], 0, 1);
+        $new_sc_edit = $params['sc_edit'][0];
         if (!ctype_alpha($new_sc_edit)) {
             $new_sc_edit = 'e';
         }
-        $new_sc_submit = substr($params['sc_submit'], 0, 1);
+        $new_sc_submit = $params['sc_submit'][0];
         if (!ctype_alpha($new_sc_submit)) {
             $new_sc_submit = 's';
         }
-        $new_sc_todo = substr($params['sc_todo'], 0, 1);
+        $new_sc_todo = $params['sc_todo'][0];
         if (!ctype_alpha($new_sc_todo)) {
             $new_sc_todo = 't';
         }

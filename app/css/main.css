@@ -125,6 +125,7 @@ select{
 }
 .form-control{
     -moz-appearance:none;
+    -webkit-appearance:none;
     background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;
     padding-right: 31px;
 }
@@ -358,7 +359,7 @@ a.elab-tooltip:hover span{
     position:absolute;
     color:#ffffff;
     background:#343434;
-    top: 0px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -689,7 +690,7 @@ input[type='checkbox']{
 
 .col-md-6 input{
     width: 95%;
-    margin: 0px 0 15px;
+    margin: 0 0 15px;
 }
 .col-md-6 label{
     margin: 0;
@@ -697,14 +698,7 @@ input[type='checkbox']{
 /* NEW Template Settings */
 .new-tpl-box input{
     width: 100%;
-    margin: 0px 0 15px;
-}
-
-/* on admin.php for items types
- * it's bettor to have a pointer to show that you can click
- */
-a[class*='trigger_']:hover {
-    cursor:pointer;
+    margin: 0 0 15px;
 }
 
 .draggable {
@@ -925,7 +919,7 @@ a[class*='trigger_']:hover {
 /* title on editXP */
 #title_input {
     width:100%;
-    margin: 0px 0 15px;
+    margin: 0 0 15px;
 
 }
 
@@ -1024,7 +1018,6 @@ code {
     margin-bottom: 5px;
     padding: 10px;
     text-align: left;
-    cursor: auto;
 }
 
 #todoList ul li:hover a:link {
@@ -1040,7 +1033,7 @@ code {
 }
 
 /* fix the padding for sortable list */
-ul#todoItems-list.ui-sortable {
+#todoItems-list.ui-sortable {
     padding-left: 0;
 }
 
@@ -1064,7 +1057,7 @@ ul#todoItems-list.ui-sortable {
 }
 
 /* doodle canvas */
-canvas.doodle {
+.doodle {
     border: 1px solid #dcdddc;
     border-radius: 5px;
     display: block;

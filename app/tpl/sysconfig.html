@@ -23,6 +23,15 @@
         {{ TeamsView.showCreate|raw }}
         {{ TeamsView.show|raw }}
         {{ TeamsView.showMassEmail|raw }}
+        <div class='box'>
+            <h3>{{ 'Send a Mass Email'|trans }}</h3><hr>
+            <p>{{ 'Email Subject'|trans }}<br>
+                <input class='clean-form col-3-form' type='text' id='massSubject' size='45' /><br>
+                {{ 'Email Body'|trans }}<br>
+                <textarea class='clean-form col-textarea-form' id='massBody'></textarea><br>
+                <button id='massSend' onClick='massSend()' class='button'>{{ 'Send'|trans }}</button>
+            </p>
+        </div>
     </div>
 </div>
 

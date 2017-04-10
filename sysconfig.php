@@ -31,7 +31,7 @@ try {
     $Config = new Config();
     $Logs = new Logs();
     $Update = new Update($Config);
-    $TeamsView = new TeamsView(new Teams()));
+    $TeamsView = new TeamsView(new Teams());
     $UsersView = new UsersView(new Users());
 
     try {

@@ -84,7 +84,7 @@ class MakePdf extends Make
         $mpdf->SetKeywords($this->tags);
         $mpdf->SetCreator('www.elabftw.net');
         $mpdf->WriteHTML($this->content);
-        $mpdf->PDFA= true;
+        $mpdf->PDFA = true;
 
         // output
         if ($toFile) {

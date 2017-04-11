@@ -122,7 +122,7 @@
                 {% if linksArr|length > 0 %}
                 <ul class='list-group'>
                     {% for link in linksArr %}
-                    <li class='list-group-item'>{{ link['name']|raw }} - <a href='database.php?mode=view&id="{{ link['itemid'] }}'>
+                    <li class='list-group-item'>{{ link['name']|raw }} - <a href='database.php?mode=view&id={{ link['itemid'] }}'>
                             {{ link['title']|raw }}</a>
                         <a onClick="experimentsDestroyLink({{ link['linkid'] }}, {{ Ev.Entity.id }}, '{{ 'Delete this?'|trans }}')">
                         <img class='align_right' src='app/img/small-trash.png' title='delete' alt='delete' /></a></li>

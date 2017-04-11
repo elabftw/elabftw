@@ -52,6 +52,13 @@
     <img src='app/img/zip.png' alt='ZIP' />
 </a>
 
+{% if Ev.Entity.type == 'items' %}
+<a class='elab-tooltip' href='experiments.php?mode=show&related={{ Ev.Entity.id }}'>
+    <span>Show related</span>
+    <img src='app/img/link.png' alt='Related' />
+</a>
+{% endif %}
+
 <!-- LOCK -->
 {% set imgSrc = 'unlock.png' %}
 {% set alt = 'Lock/Unlock item'|trans %}

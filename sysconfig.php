@@ -30,34 +30,33 @@ try {
 
     $Config = new Config();
     $Logs = new Logs();
-    $Update = new Update($Config);
     $TeamsView = new TeamsView(new Teams());
     $UsersView = new UsersView(new Users());
 
     try {
         // we put another try here because an exception here would end the page
         // and not getting the latest version is not a big deal
-        $Update->getUpdatesIni();
+        $ReleaseCheck = new ReleaseCheck($Config);
     } catch (Exception $e) {
         echo Tools::displayMessage($e->getMessage(), 'ko');
     }
 
     // display current and latest version
-    echo "<p>" . _('Installed version:') . " " . $Update->getInstalledVersion() . " ";
-    if ($Update->success === true) {
+    echo "<p>" . _('Installed version:') . " " . $ReleaseCheck::INSTALLED_VERSION . " ";
+    if ($ReleaseCheck->success === true) {
         // show a little green check if we have latest version
-        if (!$Update->updateIsAvailable()) {
+        if (!$ReleaseCheck->updateIsAvailable()) {
             echo "<img src='app/img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:2px' alt='OK' />";
         }
         // display latest version
-        echo "<br>" . _('Latest version:') . " " . $Update->getLatestVersion() . "</p>";
+        echo "<br>" . _('Latest version:') . " " . $ReleaseCheck->getLatestVersion() . "</p>";
 
         // if we don't have the latest version, show button redirecting to doc
-        if ($Update->updateIsAvailable()) {
-            $message = $Update->getReleaseDate() . " - " .
+        if ($ReleaseCheck->updateIsAvailable()) {
+            $message = $ReleaseCheck->getReleaseDate() . " - " .
                 _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/latest/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>
-                <a href='" . $Update->getChangelogLink() . "'><button class='button'>Read changelog</button></a>";
+                <a href='" . $ReleaseCheck->getChangelogLink() . "'><button class='button'>Read changelog</button></a>";
             echo Tools::displayMessage($message, 'warning');
         }
     } else {

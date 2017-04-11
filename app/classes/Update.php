@@ -23,32 +23,11 @@ use Defuse\Crypto\Key as Key;
  */
 class Update
 {
-    /** 1.1.4 */
-    private $version;
-    /** release date of the version */
-    protected $releaseDate;
-
     /** our favorite pdo object */
     private $pdo;
 
-    /** this is used to check if we managed to get a version or not */
-    public $success = false;
-
     /** instance of Config */
     public $Config;
-
-    /** where to get info from */
-    const URL = 'https://get.elabftw.net/updates.ini';
-    /** if we can't connect in https for some reason, use http */
-    const URL_HTTP = 'http://get.elabftw.net/updates.ini';
-
-    /**
-     * ////////////////////////////
-     * UPDATE THIS AFTER RELEASING
-     * UPDATE IT ALSO IN package.json
-     * ///////////////////////////
-     */
-    const INSTALLED_VERSION = '1.5.6';
 
     /**
      * /////////////////////////////////////////////////////
@@ -61,7 +40,7 @@ class Update
     const REQUIRED_SCHEMA = '18';
 
     /**
-     * Create the pdo object
+     * Init Update with Config and pdo
      *
      * @param Config $config
      */
@@ -69,143 +48,6 @@ class Update
     {
         $this->Config = $config;
         $this->pdo = Db::getConnection();
-    }
-
-    /**
-     * Return the installed version of elabftw
-     *
-     * @return string
-     */
-    public function getInstalledVersion()
-    {
-        return self::INSTALLED_VERSION;
-    }
-
-    /**
-     * Make a get request with cURL, using proxy setting if any
-     *
-     * @param string $url URL to hit
-     * @param bool|string $toFile path where we want to save the file
-     * @return string|boolean Return true if the download succeeded, else false
-     */
-    protected function get($url, $toFile = false)
-    {
-        if (!extension_loaded('curl')) {
-            throw new Exception('Please install php5-curl package.');
-        }
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        // this is to get content
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // add proxy if there is one
-        if (strlen($this->Config->configArr['proxy']) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->Config->configArr['proxy']);
-        }
-        // disable certificate check
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-
-        // add user agent
-        // http://developer.github.com/v3/#user-agent-required
-        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . self::INSTALLED_VERSION);
-
-        // add a timeout, because if you need proxy, but don't have it, it will mess up things
-        // 5 seconds
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-
-        // we don't want the header
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-
-        if ($toFile) {
-            $handle = fopen($toFile, 'w');
-            curl_setopt($ch, CURLOPT_FILE, $handle);
-        }
-
-        // DO IT!
-        return curl_exec($ch);
-    }
-
-    /**
-     * Return the latest version of elabftw
-     * Will fetch updates.ini file from elabftw.net
-     *
-     * @throws Exception the version we have doesn't look like one
-     * @return string|bool|null latest version or false if error
-     */
-    public function getUpdatesIni()
-    {
-        $ini = $this->get(self::URL);
-        // try with http if https failed (see #176)
-        if (!$ini) {
-            $ini = $this->get(self::URL_HTTP);
-        }
-        if (!$ini) {
-            $this->success = false;
-            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
-        }
-        // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
-        $versions = parse_ini_string($ini, true);
-        // get the latest version
-        $this->version = array_keys($versions)[0];
-        $this->releaseDate = $versions[$this->version]['date'];
-
-        if (!$this->validateVersion()) {
-            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
-        }
-        $this->success = true;
-    }
-
-    /**
-     * Check if the version string actually looks like a version
-     *
-     * @return int 1 if version match
-     */
-    private function validateVersion()
-    {
-        return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
-    }
-
-    /**
-     * Return true if there is a new version out there
-     *
-     * @return bool
-     */
-    public function updateIsAvailable()
-    {
-        return self::INSTALLED_VERSION != $this->version;
-    }
-
-    /**
-     * Return the latest version string
-     *
-     * @return string|int 1.1.4
-     */
-    public function getLatestVersion()
-    {
-        return $this->version;
-    }
-
-    /**
-     * Get when the latest version was released
-     *
-     * @return string
-     */
-    public function getReleaseDate()
-    {
-        return $this->releaseDate;
-    }
-
-    /**
-     * Get the documentation link for the changelog button
-     *
-     * @return string URL for changelog
-     */
-    public function getChangelogLink()
-    {
-        $base = "https://elabftw.readthedocs.io/en/latest/changelog.html#version-";
-        $dashedVersion = str_replace(".", "-", $this->version);
-
-        return $base . $dashedVersion;
     }
 
     /**

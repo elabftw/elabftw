@@ -89,6 +89,8 @@ class Auth
     /**
      * Store userid and permissions in $_SESSION
      *
+     * @param string $email
+     * @return bool
      */
     private function populateSession($email = null)
     {
@@ -168,6 +170,12 @@ class Auth
         return false;
     }
 
+    /**
+     * Login with SAML
+     *
+     * @param string $email
+     * @return bool
+     */
     public function loginWithSaml($email)
     {
         if (!$this->populateSession($email)) {

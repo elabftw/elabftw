@@ -89,12 +89,12 @@ class Auth
     /**
      * Store userid and permissions in $_SESSION
      *
-     * @param string $email
+     * @param string|null $email
      * @return bool
      */
     private function populateSession($email = null)
     {
-        if ($email) {
+        if ($email !== null) {
             $sql = "SELECT * FROM users WHERE email = :email AND validated = 1";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':email', $email);

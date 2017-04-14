@@ -85,7 +85,11 @@ class Api
      */
     public function getEntity()
     {
-        return $this->Entity->read();
+        $Uploads = new Uploads($this->Entity);
+        $uploadedFilesArr = $Uploads->readAll();
+        $entityArr = $this->Entity->read();
+        $entityArr['uploads'] = $uploadedFilesArr;
+        return $entityArr;
     }
 
     /**

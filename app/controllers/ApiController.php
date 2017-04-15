@@ -33,8 +33,10 @@ try {
         $output = $Api->getEntity();
     } else {
 
+        // file upload
         if (count($_FILES) >= 1) {
             $output = $Api->uploadFile();
+        // title date body update
         } else {
             $output = $Api->updateEntity();
         }

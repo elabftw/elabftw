@@ -354,6 +354,7 @@ class Users extends Auth
         }
 
         $this->userData = $this->read($userid);
+        $this->userid = $this->userData['userid'];
     }
 
     /**

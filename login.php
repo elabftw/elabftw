@@ -29,6 +29,7 @@ try {
     }
 
     $Config = new Config();
+    $Idps = new Idps();
     $FormKey = new FormKey();
     $BannedUsers = new BannedUsers($Config);
 
@@ -63,11 +64,14 @@ try {
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 
+    $idpsArr = $Idps->read();
+
     echo $twig->render('login.html', array(
         'BannedUsers' => $BannedUsers,
         'Config' => $Config,
         'FormKey' => $FormKey,
-        'SESSION' => $_SESSION
+        'SESSION' => $_SESSION,
+        'idpsArr' => $idpsArr
     ));
 
 } catch (Exception $e) {

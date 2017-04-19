@@ -37,7 +37,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '18';
+    const REQUIRED_SCHEMA = '19';
 
     /**
      * Init Update with Config and pdo
@@ -153,6 +153,10 @@ class Update
             // maybe I should think of a better way than abusing the schema stuff
             // but for now it'll do. I mean it works, so why not.
             $this->updateSchema(18);
+        }
+        if ($current_schema < 19) {
+            $this->schema19();
+            $this->updateSchema(19);
         }
         // place new schema functions above this comment
 
@@ -476,6 +480,27 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "ALTER TABLE `users` ADD `default_vis` VARCHAR(255) NULL DEFAULT 'team';";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema16');
+        }
+    }
+
+    /**
+     * Add IDPs table for Identity Providers
+     *
+     */
+    private function schema19()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `idps` (
+          `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+          `name` VARCHAR(255) NOT NULL,
+          `entityid` VARCHAR(255) NOT NULL,
+          `sso_url` VARCHAR(255) NOT NULL,
+          `sso_binding` VARCHAR(255) NOT NULL,
+          `slo_url` VARCHAR(255) NOT NULL,
+          `slo_binding` VARCHAR(255) NOT NULL,
+          `x509` text NOT NULL,
+          PRIMARY KEY (`id`));";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema19');
         }
     }
 }

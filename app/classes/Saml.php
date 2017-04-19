@@ -17,8 +17,11 @@ class Saml
 {
     private $settings = array();
 
-    public function __construct()
+    private $Idps;
+
+    public function __construct(Idps $idps)
     {
+        $this->Idps = $idps
         $this->setSettings();
     }
 
@@ -27,8 +30,10 @@ class Saml
         return $this->settings;
     }
 
-    private function setSettings()
+    private function setSettings($id)
     {
+        $idpsArr = $this->read($id);
+
         $this->settings = array (
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
             // or unencrypted messages if it expects them signed or encrypted
@@ -99,51 +104,27 @@ class Saml
             // Identity Provider Data that we want connect with our SP
             'idp' => array (
                 // Identifier of the IdP entity  (must be a URI)
-                'entityId' => 'https://app.onelogin.com/saml/metadata/639081',
+                'entityId' => $idpsArr['entityid'],
                 // SSO endpoint info of the IdP. (Authentication Request protocol)
                 'singleSignOnService' => array (
                     // URL Target of the IdP where the SP will send the Authentication Request Message
-                    'url' => 'https://elab-dev.onelogin.com/trust/saml2/http-post/sso/639081',
+                    'url' => $idpsArr['sso_url'],
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-POST binding only
-                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                    'binding' => $idpsArr['sso_binding'],
                 ),
                 // SLO endpoint info of the IdP.
                 'singleLogoutService' => array (
                     // URL Location of the IdP where the SP will send the SLO Request
-                    'url' => 'https://app.onelogin.com/saml/metadata/639081',
+                    'url' => $idpsArr['slo_url'],
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                    'binding' => $idps['slo_binding'],
                 ),
                 // Public x509 certificate of the IdP
-                'x509cert' => '-----BEGIN CERTIFICATE-----
-                MIIELDCCAxSgAwIBAgIUaFt6pFX/TrAJo207cGFEJEdGaLgwDQYJKoZIhvcNAQEF
-                BQAwXzELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYD
-                VQQLDAxPbmVMb2dpbiBJZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAy
-                OTU4MB4XDTE3MDMxOTExMzExNloXDTIyMDMyMDExMzExNlowXzELMAkGA1UEBhMC
-                VVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYDVQQLDAxPbmVMb2dpbiBJ
-                ZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAyOTU4MIIBIjANBgkqhkiG
-                9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzNKk3lhtLUJKvyl+0HZF3xpsjYRFT0HR30xA
-                DhRUGT/7lwVl3SnkgN6Us6NtOdKRFqFntz37s4qkmbzD0tGG6GirIIvgFx8HKhTw
-                YgjsMsC/+NcS854zB/9pDlwNpZwhjGXZgE9YQUXuiZp1W/1kE+KZANr1KJKjtlsi
-                WjNWah9VXLKCjQfKHdgYxSiSW9mv/Phz6ZjW0M3wdnJQRGg0iUzDxWhYp7sGUvjI
-                hPtdb+VCYVm2MymYESXbkXH60kG26TPvvJrELPkAJ54RWsuPkWADBZxIozeS/1He
-                hjg2vIcH7T/x41+qSN9IzlhWQTYtVCkpR2ShNbXL7AUXMM5bsQIDAQABo4HfMIHc
-                MAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFPERoVBCoadgrSI2Wdy7zPWIUuWyMIGc
-                BgNVHSMEgZQwgZGAFPERoVBCoadgrSI2Wdy7zPWIUuWyoWOkYTBfMQswCQYDVQQG
-                EwJVUzEXMBUGA1UECgwOSW5zdGl0dXQgQ3VyaWUxFTATBgNVBAsMDE9uZUxvZ2lu
-                IElkUDEgMB4GA1UEAwwXT25lTG9naW4gQWNjb3VudCAxMDI5NTiCFGhbeqRV/06w
-                CaNtO3BhRCRHRmi4MA4GA1UdDwEB/wQEAwIHgDANBgkqhkiG9w0BAQUFAAOCAQEA
-                Z7CjWWuRdwJFBsUyEewobXi/yYr/AnlmkjNDOJyDGs2DHNHVEmrm7z4LWmzLHWPf
-                zAu4w55wovJg8jrjhTaFiBO5zcAa/3XQyI4atKKu4KDlZ6cM/2a14mURBhPT6I+Z
-                ZUVeX6411AgWQmohsESXmamEZtd89aOWfwlTFfAw8lbe3tHRkZvD5Y8N5oawvdHS
-                urapSo8fde/oWUkO8I3JyyTUzlFOA6ri8bbnWz3YnofB5TXoOtdXui1SLuVJu8AB
-                BEbhgv/m1o36VdOoikJjlZOUjfX5xjEupRkX/YTp0yfNmxt71kjgVLs66b1+dRG1
-                c2Zk0y2rp0x3y3KG6K61Ug==
-                -----END CERTIFICATE-----',
+                'x509cert' => $idps['x509'],
                 /*
                  *  Instead of use the whole x509cert you can use a fingerprint
                  *  (openssl x509 -noout -fingerprint -in "idp.crt" to generate it,

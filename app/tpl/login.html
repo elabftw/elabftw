@@ -32,6 +32,11 @@ if (!checkCookiesEnabled()) {
     <form method='post' id='saml-login' action='app/login-saml.php' autocomplete='off'>
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
+        <select name='idp_select'>
+            {% for idp in idpsArr %}
+                <option name='idp' value='{{ idp.id }}'>{{ idp.name }}</option>
+            {% endfor %}
+        </select>
         <button class='button' type='submit' name='submit'>Go</button>
     </form>
 

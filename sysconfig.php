@@ -29,6 +29,7 @@ try {
     }
 
     $Config = new Config();
+    $Idps = new Idps();
     $Logs = new Logs();
     $TeamsView = new TeamsView(new Teams());
     $UsersView = new UsersView(new Users());
@@ -96,6 +97,8 @@ try {
 
     $logsArr = $Logs->read();
 
+    $idpsArr = $Idps->read();
+
     echo $twig->render('sysconfig.html', array(
         'Config' => $Config,
         'UsersView' => $UsersView,
@@ -104,6 +107,7 @@ try {
         'disable_sendmail' => $disable_sendmail,
         'disable_smtp' => $disable_smtp,
         'disable_php' => $disable_php,
+        'idpsArr' => $idpsArr,
         'phpInfos' => $phpInfos,
         'logsArr' => $logsArr
     ));

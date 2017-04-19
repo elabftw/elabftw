@@ -236,14 +236,98 @@
 <!-- TAB 8 AUTHENTICATION -->
 <div class='divhandle' id='tab8div'>
     <div class='box'>
-        <!--
-        <select class="clean-form col-3-form" name='idp_select'>
-            <option value='1' {{ Config.configArr.use_idp == '1' ? ' selected' }}>Yes</option>
-            <option value='0' {{ Config.configArr.use_idp == '0' ? ' selected' }}>No</option>
+        <h3>Service provider (this instance of eLabFTW)</h3>
+        <p>Debug mode:</p>
+        <select class="clean-form col-3-form" name='saml_debug'>
+            <option value='1'{{ Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
+            <option value='0'{{ Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
         </select>
-        -->
+        <p>Strict mode:</p>
+        <select class="clean-form col-3-form" name='saml_strict'>
+            <option value='1'{{ Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
+            <option value='0'{{ Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
+        </select>
+        <p>Base url:</p>
+        <input type='url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_baseurl }}' />
+        <p>entityId:</p>
+        <input type='url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_sp_entityid }}' />
+        <p>Assertion consumer service URL: (add /index.php?acs to baseurl)</p>
+        <input type='url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ Config.configArr.saml_acsurl }}' />
+        <p>SAML protocol binding to be used when returning the <Response> message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
+        <input type='text' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_acs_binding}}' />
+
+        <p>Single Logout Service</p>
+        <input type='url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_slo }}' />
+        <p>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
+        <input type='text' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_slo_binding }}' />
+        <p>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</p>
+        <input type='text' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ Config.configArr.saml_nameidformat }}' />
     </div>
 
+    <div class='box'>
+        <h3>Identity Providers</h3>
+
+        <h4>Add new Identity Provider</h4>
+        <form method='post' action='app/controllers/IdpsController.php'>
+            <input type='hidden' name='idpsCreate' />
+
+            <label class='block' for='name'>{{ 'Name'|trans }}</label>
+            <input type='text' id='name' name='name' required />
+
+            <label class='block' for='entityid'>EntityId</label>
+            <input type='url' id='entityid' name='entityid' required />
+
+            <label class='block' for='ssoUrl'>SSO URL</label>
+            <input type='url' id='ssoUrl' name='ssoUrl' required />
+
+            <label class='block' for='ssoBinding'>SSO Binding</label>
+            <input type='text' id='ssoBinding' name='ssoBinding' required />
+
+            <label class='block' for='sloUrl'>SLO URL</label>
+            <input type='url' id='sloUrl' name='sloUrl' required />
+
+            <label class='block' for='sloBinding'>SLO Binding</label>
+            <input type='text' id='sloBinding' name='sloBinding' required />
+
+            <label class='block' for='x509'>x509 Certificate</label>
+            <textarea id='x509' name='x509' required /></textarea>
+
+            <div class='submitButtonDiv'>
+                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+
+        {% if idpsArr|length == 0 %}
+        <p>No Identity Provider saved. Add one below.</p>
+        {% else %}
+            {% for idp in idpsArr %}
+            <form method='post' action='app/controllers/IdpsController.php'>
+                <div class='box'>
+                    <input type='hidden' name='idpsUpdate' />
+                    <input type='hidden' name='id' value='{{ idp.id }}' />
+                    <p>Name:</p>
+                    <input type='text' name='name' value='{{ idp.name }}' />
+                    <p>entityId:</p>
+                    <input type='url' name='entityid' value='{{ idp.entityid }}' />
+                    <p>Single Sign-On URL:</p>
+                    <input type='url' name='ssoUrl' value='{{ idp.sso_url }}' />
+                    <p>Single Sign-On binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST".</p>
+                    <input type='text' name='ssoBinding' value='{{ idp.sso_binding }}' />
+                    <p>Single Log Out URL:</p>
+                    <input type='url' name='sloUrl' value='{{ idp.slo_url }}' />
+                    <p>Single Log Out binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
+                    <input type='text' name='sloBinding' value='{{ idp.slo_binding }}' />
+                    <p>x509cert:</p>
+                    <input type='textarea' name='x509' value='{{ idp.x509 }}' />
+                    <div class='submitButtonDiv'>
+                        <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+                    </div>
+                </div>
+            </form>
+            {% endfor %}
+        {% endif %}
+
+    </div>
 </div>
 
 

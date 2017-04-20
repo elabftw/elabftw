@@ -11,7 +11,7 @@ if (!checkCookiesEnabled()) {
 
 <section class='center'>
     <!-- Login form , the id is for an acceptance test -->
-    <form method="post" id='login' action="app/login-exec.php" autocomplete="off">
+    <form method="post" id='login' action="app/controllers/LoginController.php" autocomplete="off">
         <h2>{{ 'Sign in to your account'|trans }}</h2>
         <br>
         <p class="login-area">
@@ -32,9 +32,9 @@ if (!checkCookiesEnabled()) {
     <form method='post' id='saml-login' action='app/login-saml.php' autocomplete='off'>
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
-        <select name='idp_select'>
+        <select name='idp_id'>
             {% for idp in idpsArr %}
-                <option name='idp' value='{{ idp.id }}'>{{ idp.name }}</option>
+                <option value='{{ idp.id }}'>{{ idp.name }}</option>
             {% endfor %}
         </select>
         <button class='button' type='submit' name='submit'>Go</button>

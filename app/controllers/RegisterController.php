@@ -13,12 +13,12 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 try {
-    require_once '../app/init.inc.php';
+    require_once '../init.inc.php';
 
     $Users = new Users(null, new Config);
 
     // default location to redirect to
-    $location = '../login.php';
+    $location = '../../login.php';
 
     // Stop bot registration by checking if the (invisible to humans) bot input is filled
     if (isset($_POST['bot']) && !empty($_POST['bot'])) {
@@ -54,7 +54,7 @@ try {
 
 } catch (Exception $e) {
     $_SESSION['ko'][] = $e->getMessage();
-    $location = '../register.php';
+    $location = '../../register.php';
 
 } finally {
     header("location: $location");

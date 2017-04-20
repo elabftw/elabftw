@@ -97,7 +97,7 @@ try {
 
     $logsArr = $Logs->read();
 
-    $idpsArr = $Idps->read();
+    $idpsArr = $Idps->readAll();
 
     echo $twig->render('sysconfig.html', array(
         'Config' => $Config,

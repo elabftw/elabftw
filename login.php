@@ -64,7 +64,7 @@ try {
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 
-    $idpsArr = $Idps->read();
+    $idpsArr = $Idps->readAll();
 
     echo $twig->render('login.html', array(
         'BannedUsers' => $BannedUsers,

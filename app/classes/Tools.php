@@ -232,7 +232,6 @@ class Tools
     }
 
     /**
-     * Used in login.php, login-exec.php and install/index.php
      * This is needed in the case you run an http server but people are connecting
      * through haproxy with ssl, with a http_x_forwarded_proto header.
      *

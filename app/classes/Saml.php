@@ -21,18 +21,18 @@ class Saml
 
     public function __construct(Idps $idps)
     {
-        $this->Idps = $idps
-        $this->setSettings();
+        $this->Idps = $idps;
     }
 
-    public function getSettings()
+    public function getSettings($id)
     {
+        $this->setSettings($id);
         return $this->settings;
     }
 
     private function setSettings($id)
     {
-        $idpsArr = $this->read($id);
+        $idpsArr = $this->Idps->read($id);
 
         $this->settings = array (
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
@@ -121,10 +121,10 @@ class Saml
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => $idps['slo_binding'],
+                    'binding' => $idpsArr['slo_binding'],
                 ),
                 // Public x509 certificate of the IdP
-                'x509cert' => $idps['x509'],
+                'x509cert' => $idpsArr['x509'],
                 /*
                  *  Instead of use the whole x509cert you can use a fingerprint
                  *  (openssl x509 -noout -fingerprint -in "idp.crt" to generate it,

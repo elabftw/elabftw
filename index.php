@@ -20,9 +20,9 @@ if (isset($_GET['acs'])) {
 
     require_once 'app/init.inc.php';
 
-    $Saml = new Saml();
+    $Saml = new Saml(new Idps());
 
-    $settings = $Saml->getSettings();
+    $settings = $Saml->getSettings(2);
     $SamlAuth = new OneLogin_Saml2_Auth($settings);
 
     if (isset($_SESSION) && isset($_SESSION['AuthNRequestID'])) {

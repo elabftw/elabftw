@@ -21,7 +21,7 @@ class Idps
     protected $pdo;
 
     /** data about IDPs */
-    public $idpsArr;
+    public $idpsArr = array();
 
     /**
      * Constructor

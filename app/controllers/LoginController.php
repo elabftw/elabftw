@@ -13,10 +13,10 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 try {
-    require_once '../app/init.inc.php';
+    require_once '../init.inc.php';
 
     // default location for redirect
-    $location = '../login.php';
+    $location = '../../login.php';
 
     $formKey = new FormKey();
     $Auth = new Auth();
@@ -48,7 +48,7 @@ try {
         if (isset($_COOKIE['redirect'])) {
             $location = $_COOKIE['redirect'];
         } else {
-            $location = '../experiments.php';
+            $location = '../../experiments.php';
         }
     } else {
         // log the attempt if the login failed

@@ -524,7 +524,7 @@ function itemsTypesCreate() {
         var json = JSON.parse(data);
         if (json.res) {
             notif(json.msg, 'ok');
-            window.location.replace('admin.php?tab=4');
+            window.location.replace('admin.php?tab=5');
         } else {
             notif(json.msg, 'ko');
         }

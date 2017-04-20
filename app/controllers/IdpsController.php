@@ -44,6 +44,7 @@ try {
     // UPDATE IDP
     if (isset($_POST['idpsUpdate'])) {
         if ($Idps->update(
+            $_POST['id'],
             $_POST['name'],
             $_POST['entityid'],
             $_POST['ssoUrl'],

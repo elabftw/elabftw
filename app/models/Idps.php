@@ -71,7 +71,7 @@ class Idps
         $this->idpsArr = $this->read();
     }
 
-    public function update($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
+    public function update($id, $name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
     {
         $sql = "UPDATE idps SET
             name = :name,
@@ -80,8 +80,10 @@ class Idps
             sso_binding = :sso_binding,
             slo_url = :slo_url,
             slo_binding = :slo_binding,
-            x509 = :x509";
+            x509 = :x509
+            WHERE id = :id";
         $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
         $req->bindParam(':sso_url', $ssoUrl);

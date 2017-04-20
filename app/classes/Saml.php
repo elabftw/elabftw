@@ -17,14 +17,16 @@ class Saml
 {
     private $settings = array();
 
+    private $Config;
     private $Idps;
 
-    public function __construct(Idps $idps)
+    public function __construct(Config $config, Idps $idps)
     {
+        $this->Config = $config;
         $this->Idps = $idps;
     }
 
-    public function getSettings($id)
+    public function getSettings($id = null)
     {
         $this->setSettings($id);
         return $this->settings;
@@ -32,37 +34,40 @@ class Saml
 
     private function setSettings($id)
     {
-        $idpsArr = $this->Idps->read($id);
+        $idpsArr = array();
+        if ($id !== null) {
+            $idpsArr = $this->Idps->read($id);
+        }
 
         $this->settings = array (
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
             // or unencrypted messages if it expects them signed or encrypted
             // Also will reject the messages if not strictly follow the SAML
             // standard: Destination, NameId, Conditions ... are validated too.
-            'strict' => false,
+            'strict' => $this->Config->configArr['saml_strict'],
 
             // Enable debug mode (to print errors)
-            'debug' => true,
+            'debug' => $this->Config->configArr['saml_debug'],
 
             // Set a BaseURL to be used instead of try to guess
             // the BaseURL of the view that process the SAML Message.
             // Ex. http://sp.example.com/
             //     http://example.com/sp/
-            'baseurl' => 'https://elab.local',
+            'baseurl' => $this->Config->configArr['saml_baseurl'],
 
             // Service Provider Data that we are deploying
             'sp' => array (
                 // Identifier of the SP entity  (must be a URI)
-                'entityId' => 'https://elab.local',
+                'entityId' => $this->Config->configArr['saml_entityid'],
                 // Specifies info about where and how the <AuthnResponse> message MUST be
                 // returned to the requester, in this case our SP.
                 'assertionConsumerService' => array (
                     // URL Location where the <Response> from the IdP will be returned
-                    'url' => 'https://elab.local/index.php?acs',
+                    'url' => $this->Config->configArr['saml_acs_url'],
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                    'binding' => $this->Config->configArr['saml_acs_binding'],
                 ),
                 // If you need to specify requested attributes, set a
                 // attributeConsumingService. nameFormat, attributeValue and
@@ -84,21 +89,21 @@ class Saml
                 // returned to the requester, in this case our SP.
                 'singleLogoutService' => array (
                     // URL Location where the <Response> from the IdP will be returned
-                    'url' => 'https://elab.local',
+                    'url' => $this->Config->configArr['saml_slo_url'],
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+                    'binding' => $this->Config->configArr['saml_slo_binding'],
                 ),
                 // Specifies constraints on the name identifier to be used to
                 // represent the requested subject.
                 // Take a look on lib/Saml2/Constants.php to see the NameIdFormat supported
-                'NameIDFormat' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+                'NameIDFormat' => $this->Config->configArr['saml_nameidformat'],
 
                 // Usually x509cert and privateKey of the SP are provided by files placed at
                 // the certs folder. But we can also provide them with the following parameters
-                'x509cert' => '',
-                'privateKey' => '',
+                'x509cert' => $this->Config->configArr['saml_x509'],
+                'privateKey' => $this->Config->configArr['saml_privatekey'],
             ),
 
             // Identity Provider Data that we want connect with our SP

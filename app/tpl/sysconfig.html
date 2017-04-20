@@ -236,32 +236,42 @@
 <!-- TAB 8 AUTHENTICATION -->
 <div class='divhandle' id='tab8div'>
     <div class='box'>
-        <h3>Service provider (this instance of eLabFTW)</h3>
-        <p>Debug mode:</p>
-        <select class="clean-form col-3-form" name='saml_debug'>
-            <option value='1'{{ Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
-            <option value='0'{{ Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
-        </select>
-        <p>Strict mode:</p>
-        <select class="clean-form col-3-form" name='saml_strict'>
-            <option value='1'{{ Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
-            <option value='0'{{ Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
-        </select>
-        <p>Base url:</p>
-        <input type='url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_baseurl }}' />
-        <p>entityId:</p>
-        <input type='url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_sp_entityid }}' />
-        <p>Assertion consumer service URL: (add /index.php?acs to baseurl)</p>
-        <input type='url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ Config.configArr.saml_acsurl }}' />
-        <p>SAML protocol binding to be used when returning the <Response> message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
-        <input type='text' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_acs_binding}}' />
+        <form method='post' action='app/controllers/SysconfigController.php'>
+            <h3>Service provider (this instance of eLabFTW)</h3>
+            <input type='hidden' name='updateConfig' value='true' />
+            <p>Debug mode:</p>
+            <select class="clean-form col-3-form" name='saml_debug'>
+                <option value='1'{{ Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
+                <option value='0'{{ Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
+            </select>
+            <p>Strict mode:</p>
+            <select class="clean-form col-3-form" name='saml_strict'>
+                <option value='1'{{ Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
+                <option value='0'{{ Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
+            </select>
+            <p>Base url:</p>
+            <input type='url' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_baseurl }}' />
+            <p>entityId:</p>
+            <input type='url' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_entityid }}' />
+            <p>Assertion consumer service URL: (add /index.php?acs to baseurl)</p>
+            <input type='url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ Config.configArr.saml_acs_url }}' />
+            <p>SAML protocol binding to be used when returning the <Response> message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
+            <input type='text' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_acs_binding}}' />
 
-        <p>Single Logout Service</p>
-        <input type='url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_slo }}' />
-        <p>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
-        <input type='text' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_slo_binding }}' />
-        <p>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</p>
-        <input type='text' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ Config.configArr.saml_nameidformat }}' />
+            <p>Single Logout Service</p>
+            <input type='url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_slo_url }}' />
+            <p>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
+            <input type='text' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_slo_binding }}' />
+            <p>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</p>
+            <input type='text' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ Config.configArr.saml_nameidformat }}' />
+            <label class='block' for='x509'>x509 Certificate</label>
+            <textarea id='x509' name='saml_x509' />{{ Config.configArr.saml_x509 }}</textarea>
+            <label class='block' for='x509'>Private key</label>
+            <textarea id='x509' name='saml_privatekey' />{{ Config.configArr.saml_privatekey }}</textarea>
+            <div class='submitButtonDiv'>
+                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+            </div>
+        </form>
     </div>
 
     <div class='box'>

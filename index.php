@@ -20,7 +20,7 @@ if (isset($_GET['acs'])) {
 
     require_once 'app/init.inc.php';
 
-    $Saml = new Saml(new Idps());
+    $Saml = new Saml(new Config, new Idps);
 
     $settings = $Saml->getSettings(2);
     $SamlAuth = new OneLogin_Saml2_Auth($settings);

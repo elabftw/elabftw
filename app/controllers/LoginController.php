@@ -21,12 +21,12 @@ try {
 
     $formKey = new FormKey();
     $Auth = new Auth();
-    $Saml = new Saml(new Idps());
+    $Saml = new Saml(new Config, new Idps);
 
     if (isset($_POST['idp_id'])) { // login with SAML
         $settings = $Saml->getSettings($_POST['idp_id']);
         $auth = new OneLogin_Saml2_Auth($settings);
-        $returnUrl = "https://elab.local/index.php?acs&idp=" . $_POST['idp_id'];
+        $returnUrl = $settings['baseurl'] . "/index.php?acs&idp=" . $_POST['idp_id'];
         $auth->login($returnUrl);
 
     } else {

@@ -10,7 +10,7 @@ use OneLogin_Saml2_Settings;
 try {
     require_once 'app/init.inc.php';
 
-    $Saml = new Saml();
+    $Saml = new Saml(new Config, new Idps);
     $settingsArr = $Saml->getSettings();
 
     // Now we only validate SP settings

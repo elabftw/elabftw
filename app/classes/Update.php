@@ -502,5 +502,22 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema19');
         }
+
+        // add more config options for saml auth
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
+            ('saml_debug', '0'),
+            ('saml_strict', '1'),
+            ('saml_baseurl', NULL),
+            ('saml_entityid', NULL),
+            ('saml_acs_url', NULL),
+            ('saml_acs_binding', NULL),
+            ('saml_slo_url', NULL),
+            ('saml_slo_binding', NULL),
+            ('saml_nameidformat', NULL),
+            ('saml_x509', NULL),
+            ('saml_privatekey', NULL)";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema19');
+        }
     }
 }

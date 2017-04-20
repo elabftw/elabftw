@@ -29,7 +29,7 @@ if (!checkCookiesEnabled()) {
         </div>
     </form>
 
-    <form method='post' id='saml-login' action='app/login-saml.php' autocomplete='off'>
+    <form method='post' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
         <select name='idp_id'>

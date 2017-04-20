@@ -294,10 +294,10 @@
             <input type='text' id='ssoBinding' name='ssoBinding' required />
 
             <label class='block' for='sloUrl'>SLO URL</label>
-            <input type='url' id='sloUrl' name='sloUrl' required />
+            <input type='url' id='sloUrl' name='sloUrl' />
 
             <label class='block' for='sloBinding'>SLO Binding</label>
-            <input type='text' id='sloBinding' name='sloBinding' required />
+            <input type='text' id='sloBinding' name='sloBinding' />
 
             <label class='block' for='x509'>x509 Certificate</label>
             <textarea id='x509' name='x509' required /></textarea>
@@ -328,7 +328,7 @@
                     <p>Single Log Out binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
                     <input type='text' name='sloBinding' value='{{ idp.slo_binding }}' />
                     <p>x509cert:</p>
-                    <input type='textarea' name='x509' value='{{ idp.x509 }}' />
+                    <textarea name='x509'>{{ idp.x509 }}'</textarea>
                     <div class='submitButtonDiv'>
                         <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
                     </div>

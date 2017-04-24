@@ -63,7 +63,7 @@ class Experiments extends Entity
         $Templates = new Templates($this->Users);
 
         // do we want template ?
-        if ($tpl) {
+        if ($tpl !== null) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];

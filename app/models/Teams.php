@@ -40,10 +40,30 @@ class Teams
     }
 
     /**
+     * Check if the team exists already and create one if not
+     *
+     * @param string $name Name of the team (case sensitive)
+     * @return int The team ID
+     */
+    public function initializeIfNeeded($name)
+    {
+        $sql = 'SELECT team_id, team_name FROM teams';
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+        $teamsArr = $req->fetchAll();
+        foreach ($teamsArr as $team) {
+            if ($team['team_name'] === $name) {
+                return $team['team_id'];
+            }
+        }
+        return $this->create($name);
+    }
+
+    /**
      * Add a new team
      *
      * @param string $name The new name of the team
-     * @return bool The results of the SQL queries
+     * @return bool|int false on error, new team id otherwise
      */
     public function create($name)
     {
@@ -78,7 +98,11 @@ class Teams
         $Templates = new Templates($Users);
         $result4 = $Templates->createDefault($newId);
 
-        return $result1 && $result2 && $result3 && $result4;
+        if ($result1 && $result2 && $result3 && $result4) {
+            return $newId;
+        }
+        return false;
+
     }
 
     /**

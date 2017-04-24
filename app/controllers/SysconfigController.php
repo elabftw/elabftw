@@ -138,7 +138,7 @@ try {
         }
     }
 
-    // TAB 3 to 6
+    // TAB 3 to 6 + 8
     if (isset($_POST['updateConfig'])) {
         $redirect = true;
 
@@ -156,6 +156,10 @@ try {
 
         if (isset($_POST['mail_method'])) {
             $tab = '6';
+        }
+
+        if (isset($_POST['saml_debug'])) {
+            $tab = '8';
         }
 
         if (!$Config->update($_POST)) {

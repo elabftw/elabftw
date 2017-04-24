@@ -89,9 +89,24 @@ class Auth
     /**
      * Store userid and permissions in $_SESSION
      *
+     * @param string|null $email
+     * @return bool
      */
-    private function populateSession()
+    private function populateSession($email = null)
     {
+        if ($email !== null) {
+            $sql = "SELECT * FROM users WHERE email = :email AND validated = 1";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':email', $email);
+            //Check whether the query was successful or not
+            if ($req->execute() && $req->rowCount() === 1) {
+                // populate the userData
+                $this->userData = $req->fetch();
+            } else {
+                return false;
+            }
+        }
+
         session_regenerate_id();
         $_SESSION['auth'] = 1;
         $_SESSION['userid'] = $this->userData['userid'];
@@ -113,6 +128,7 @@ class Auth
         // and SESSION
         $_SESSION['token'] = $this->token;
         session_write_close();
+        return true;
     }
 
     /**
@@ -152,6 +168,23 @@ class Auth
             return true;
         }
         return false;
+    }
+
+    /**
+     * Login with SAML
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function loginWithSaml($email)
+    {
+        if (!$this->populateSession($email)) {
+            return false;
+        }
+        if ($setCookie === 'on') {
+            $this->setToken();
+        }
+        return true;
     }
 
     /**

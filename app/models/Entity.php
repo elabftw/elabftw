@@ -268,9 +268,10 @@ class Entity
                 $permissions['read'] = true;
                 $permissions['write'] = true;
 
-            // admin can view any experiment
+            // admin can view and write any experiment
             } elseif (($item['userid'] != $this->Users->userid) && $isAdmin) {
                 $permissions['read'] = true;
+                $permissions['write'] = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
             } elseif (($item['userid'] != $this->Users->userid) && !$isAdmin) {

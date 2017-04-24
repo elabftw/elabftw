@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 /**
  * Store informations about different identity providers for auth with SAML
  */

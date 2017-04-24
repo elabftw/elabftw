@@ -4,6 +4,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
 use OneLogin_Saml2_Error;
 use OneLogin_Saml2_Settings;
 

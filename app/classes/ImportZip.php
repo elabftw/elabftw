@@ -185,7 +185,7 @@ class ImportZip extends Import
             $this->dbInsert();
             if (is_array($item['files'])) {
                 foreach ($item['files'] as $file) {
-                    $this->importFile($file);
+                    $this->importFile(array_keys($file)[0]);
                 }
             }
             $this->inserted += 1;

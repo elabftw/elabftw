@@ -182,7 +182,7 @@ class MakeZip extends Make
                 // add files to archive
                 $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $realName);
                 // reference them in the json file
-                $this->fileArr[] = $this->folder . "/" . $real_name[$i];
+                $this->fileArr[] = array($this->folder . "/" . $real_name[$i] => $long_name[$i]);
             }
         }
     }
@@ -250,10 +250,13 @@ class MakeZip extends Make
             }
             $this->jsonArr[] = array(
                 'type' => $this->Entity->type,
+                'id' => $this->Entity->id,
                 'title' => stripslashes($this->Entity->entityData['title']),
                 'body' => stripslashes($this->Entity->entityData['body']),
                 'date' => $this->Entity->entityData['date'],
                 'elabid' => $elabid,
+                'category' => $this->Entity->entityData['category'],
+                'color' => $this->Entity->entityData['color'],
                 'files' => $this->fileArr
             );
             unset($this->fileArr);

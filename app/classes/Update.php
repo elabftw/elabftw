@@ -37,7 +37,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '19';
+    const REQUIRED_SCHEMA = '20';
 
     /**
      * Init Update with Config and pdo
@@ -154,18 +154,18 @@ class Update
             // but for now it'll do. I mean it works, so why not.
             $this->updateSchema(18);
         }
-<<<<<<< HEAD
 
         if ($current_schema < 19) {
             // 20170404
             // here we only want to empty the twig cache
             // maybe I should think of a better way than abusing the schema stuff
             // but for now it'll do. I mean it works, so why not.
-=======
-        if ($current_schema < 19) {
-            $this->schema19();
->>>>>>> saml
             $this->updateSchema(19);
+        }
+
+        if ($current_schema < 20) {
+            $this->schema20();
+            $this->updateSchema(20);
         }
         // place new schema functions above this comment
 
@@ -496,7 +496,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
      * Add IDPs table for Identity Providers
      *
      */
-    private function schema19()
+    private function schema20()
     {
         $sql = "CREATE TABLE IF NOT EXISTS `idps` (
           `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,

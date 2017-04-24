@@ -366,6 +366,23 @@ CREATE TABLE IF NOT EXISTS `todolist` (
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- idps
+--
+CREATE TABLE IF NOT EXISTS `idps` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `entityid` VARCHAR(255) NOT NULL,
+  `sso_url` VARCHAR(255) NOT NULL,
+  `sso_binding` VARCHAR(255) NOT NULL,
+  `slo_url` VARCHAR(255) NOT NULL,
+  `slo_binding` VARCHAR(255) NOT NULL,
+  `x509` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 
 
@@ -419,4 +436,15 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '19');
+('schema', '20'),
+('saml_debug', '0'),
+('saml_strict', '1'),
+('saml_baseurl', NULL),
+('saml_entityid', NULL),
+('saml_acs_url', NULL),
+('saml_acs_binding', NULL),
+('saml_slo_url', NULL),
+('saml_slo_binding', NULL),
+('saml_nameidformat', NULL),
+('saml_x509', NULL),
+('saml_privatekey', NULL);

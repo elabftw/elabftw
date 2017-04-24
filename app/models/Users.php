@@ -72,23 +72,23 @@ class Users extends Auth
     }
 
     /**
-     * Create a new user
+     * Create a new user. If no password is provided, it's because we create it from SAML.
      *
      * @param string $email
-     * @param string $password
      * @param int $team
      * @param string $firstname
      * @param string $lastname
+     * @param string $password
      * @return bool
      */
-    public function create($email, $password, $team, $firstname, $lastname)
+    public function create($email, $team, $firstname = '', $lastname = '', $password = '')
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
             throw new Exception(_('Someone is already using that email address!'));
         }
 
-        if (!$this->checkPasswordLength($password)) {
+        if (!$this->checkPasswordLength($password) && strlen($password) > 0) {
             $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
             throw new Exception($error);
         }
@@ -101,7 +101,7 @@ class Users extends Auth
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
         // Create hash
-        $passwordHash = hash("sha512", $salt . $_POST['password']);
+        $passwordHash = hash("sha512", $salt . $password);
 
         // Registration date is stored in epoch
         $registerDate = time();

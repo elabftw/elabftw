@@ -40,7 +40,7 @@ try {
     }
 
     //Check whether the query was successful or not
-    if (!$Users->create($_POST['email'], $_POST['password'], $_POST['team'], $_POST['firstname'], $_POST['lastname'])) {
+    if (!$Users->create($_POST['email'], $_POST['team'], $_POST['firstname'], $_POST['lastname'], $_POST['password'])) {
         throw new Exception('Failed inserting new account in SQL!');
     }
 

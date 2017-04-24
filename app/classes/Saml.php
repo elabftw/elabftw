@@ -11,27 +11,50 @@
 namespace Elabftw\Elabftw;
 
 /**
- * SAMLFTW
+ * Saml settings
  */
 class Saml
 {
-    private $settings = array();
+    /** instance of Config */
+    public $Config;
 
-    private $Config;
+    /** instance of Idps */
     private $Idps;
 
+    /** the settings array */
+    private $settings = array();
+
+    /**
+     * Constructor
+     *
+     * @param Config $config
+     * @param Idps $idps
+     */
     public function __construct(Config $config, Idps $idps)
     {
         $this->Config = $config;
         $this->Idps = $idps;
     }
 
+    /**
+     * Get the settings array
+     *
+     * @param int|null $id Return the settings array with infos from Idp with id $id
+     * @return array
+     */
     public function getSettings($id = null)
     {
         $this->setSettings($id);
         return $this->settings;
     }
 
+    /**
+     * Set the settings array to $this->settings
+     * If the $id is null, the idp part of the settings will be empty
+     * but it's ok because we don't always need it
+     *
+     * @param int|null $id Id of the IDP
+     */
     private function setSettings($id)
     {
         $idpsArr = array();

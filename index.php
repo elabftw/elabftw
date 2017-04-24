@@ -46,17 +46,21 @@ if (isset($_GET['acs'])) {
 
     $Auth = new Auth();
     $_SESSION['samlUserdata'] = $SamlAuth->getAttributes();
-    if ($Auth->loginWithSaml($_SESSION['samlUserdata']['User.email'][0])) {
+    if (!$Auth->loginWithSaml($_SESSION['samlUserdata']['User.email'][0])) {
+        // the user doesn't exist yet in the db
+        // check if the team exists
+        $Teams = new Teams();
+        $Users = new Users(null, $Saml->Config);
 
-        header('Location: experiments.php');
-    } else {
-        echo 'No user with this email';
+        $team = $_SESSION['samlUserdata']['memberOf'][0];
+        $teamId = $Teams->initializeIfNeeded($team);
+        $Users->create($_SESSION['samlUserdata']['User.email'][0], $teamId, $_SESSION['samlUserdata']['User.FirstName'][0], $_SESSION['samlUserdata']['User.LastName'][0]);
+        if (!$Auth->loginWithSaml($_SESSION['samlUserdata']['User.email'][0])) {
+            echo "<p>Not authenticated</p>";
+            exit();
+        }
     }
 
-} else {
-    /**
-     * As there is nothing to show on the index page, we go to the experiments page directly
-     *
-     */
-    header('Location: experiments.php');
 }
+
+header('Location: experiments.php');

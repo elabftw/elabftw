@@ -20,9 +20,6 @@ class Idps
     /** db connection */
     protected $pdo;
 
-    /** data about IDPs */
-    public $idpsArr = array();
-
     /**
      * Constructor
      *
@@ -32,6 +29,18 @@ class Idps
         $this->pdo = Db::getConnection();
     }
 
+    /**
+     * Create an IDP
+     *
+     * @param string $name
+     * @param string $entityid
+     * @param string $ssoUrl Single Sign On URL
+     * @param string $ssoBinding
+     * @param string $sloUrl Single Log Out URL
+     * @param string $sloBinding
+     * @param string $x509 Public x509 Certificate
+     * @return bool
+     */
     public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
     {
         $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509) VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509)";
@@ -47,6 +56,12 @@ class Idps
         return $req->execute();
     }
 
+    /**
+     * Read info about an IDP
+     *
+     * @param int $id
+     * @return array
+     */
     public function read($id)
     {
         $sql = "SELECT * FROM idps WHERE id = :id";
@@ -57,6 +72,11 @@ class Idps
         return $req->fetch();
     }
 
+    /**
+     * Read all IDPs
+     *
+     * @return array
+     */
     public function readAll()
     {
         $sql = "SELECT * FROM idps";
@@ -66,11 +86,19 @@ class Idps
         return $req->fetchAll();
     }
 
-    public function populate()
-    {
-        $this->idpsArr = $this->read();
-    }
-
+    /**
+     * Update info about an IDP
+     *
+     * @param int $id
+     * @param string $name
+     * @param string $entityid
+     * @param string $ssoUrl Single Sign On URL
+     * @param string $ssoBinding
+     * @param string $sloUrl Single Log Out URL
+     * @param string $sloBinding
+     * @param string $x509 Public x509 Certificate
+     * @return bool
+     */
     public function update($id, $name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
     {
         $sql = "UPDATE idps SET
@@ -95,6 +123,12 @@ class Idps
         return $req->execute();
     }
 
+    /**
+     * Destroy an IDP
+     *
+     * @param int $id
+     * @return bool
+     */
     public function destroy($id)
     {
         $sql = "DELETE FROM idps WHERE id = :id";

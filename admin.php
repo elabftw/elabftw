@@ -39,7 +39,6 @@ try {
     $itemsTypesArr = $ItemsTypesView->ItemsTypes->readAll();
     $teamConfigArr = $Teams->read();
     $teamGroupsArr = $TeamGroups->readAll();
-    echo Tools::printArr($teamGroupsArr);
     $templatesArr = $Templates->readCommon();
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
 

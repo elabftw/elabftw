@@ -275,41 +275,44 @@
     </div>
 
     <div class='box'>
-        <h3>Identity Providers</h3>
+        <h3>Identity Providers Configuration</h3>
 
-        <h4>Add new Identity Provider</h4>
-        <form method='post' action='app/controllers/IdpsController.php'>
-            <input type='hidden' name='idpsCreate' />
+        <div class='well'>
+            <h4>Add new Identity Provider</h4>
+            <form method='post' action='app/controllers/IdpsController.php'>
+                <input type='hidden' name='idpsCreate' />
 
-            <label class='block' for='name'>{{ 'Name'|trans }}</label>
-            <input type='text' id='name' name='name' required />
+                <label class='block' for='name'>{{ 'Name'|trans }}</label>
+                <input type='text' id='name' name='name' required />
 
-            <label class='block' for='entityid'>EntityId</label>
-            <input type='url' id='entityid' name='entityid' required />
+                <label class='block' for='entityid'>EntityId</label>
+                <input type='url' id='entityid' name='entityid' required />
 
-            <label class='block' for='ssoUrl'>SSO URL</label>
-            <input type='url' id='ssoUrl' name='ssoUrl' required />
+                <label class='block' for='ssoUrl'>SSO URL</label>
+                <input type='url' id='ssoUrl' name='ssoUrl' required />
 
-            <label class='block' for='ssoBinding'>SSO Binding</label>
-            <input type='text' id='ssoBinding' name='ssoBinding' required />
+                <label class='block' for='ssoBinding'>SSO Binding</label>
+                <input type='text' id='ssoBinding' name='ssoBinding' required />
 
-            <label class='block' for='sloUrl'>SLO URL</label>
-            <input type='url' id='sloUrl' name='sloUrl' />
+                <label class='block' for='sloUrl'>SLO URL</label>
+                <input type='url' id='sloUrl' name='sloUrl' />
 
-            <label class='block' for='sloBinding'>SLO Binding</label>
-            <input type='text' id='sloBinding' name='sloBinding' />
+                <label class='block' for='sloBinding'>SLO Binding</label>
+                <input type='text' id='sloBinding' name='sloBinding' />
 
-            <label class='block' for='x509'>x509 Certificate</label>
-            <textarea id='x509' name='x509' required /></textarea>
+                <label class='block' for='x509'>x509 Certificate</label>
+                <textarea id='x509' name='x509' required /></textarea>
 
-            <div class='submitButtonDiv'>
-                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
-            </div>
-        </form>
+                <div class='submitButtonDiv'>
+                    <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+                </div>
+            </form>
+        </div>
 
         {% if idpsArr|length > 0 %}
+            <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
-                <div class='box'>
+                <div class='well'>
                     <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                     <form method='post' action='app/controllers/IdpsController.php'>
                     <input type='hidden' name='idpsUpdate' />

@@ -111,6 +111,7 @@ input, select, textarea {
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
     margin:5px 0;
+    line-height: 1;
 }
 .disabled-input{
     color:#989898;

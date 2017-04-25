@@ -21,7 +21,6 @@ use Exception;
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('eLabFTW Configuration');
-    $selectedMenu = null;
     require_once 'app/head.inc.php';
 
     if ($_SESSION['is_sysadmin'] != 1) {

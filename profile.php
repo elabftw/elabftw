@@ -19,7 +19,6 @@ use Exception;
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Profile');
-    $selectedMenu = null;
     require_once 'app/head.inc.php';
 
     // get total number of experiments

@@ -19,7 +19,6 @@ use Exception;
 
 require_once 'app/init.inc.php';
 $pageTitle = _('Export');
-$selectedMenu = null;
 
 try {
     $Users = new Users($_SESSION['userid']);

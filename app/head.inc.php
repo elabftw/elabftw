@@ -13,6 +13,10 @@ if (!isset($pageTitle)) {
     $pageTitle = "Lab manager";
 }
 
+if (!isset($selectedMenu)) {
+    $selectedMenu = null;
+}
+
 $actionTarget = 'experiments.php';
 $teamConfigArr = array();
 

@@ -21,7 +21,6 @@ use Defuse\Crypto\Key as Key;
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Reset password');
-    $selectedMenu = null;
     require_once 'app/head.inc.php';
 
     $Auth = new Auth();

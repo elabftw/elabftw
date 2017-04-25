@@ -19,7 +19,6 @@ use Exception;
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Revisions');
-    $selectedMenu = null;
     $errflag = false;
     require_once 'app/head.inc.php';
 

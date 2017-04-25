@@ -19,7 +19,6 @@ use Exception;
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Register');
-    $selectedMenu = null;
     require_once 'app/head.inc.php';
 
     // Check if we're logged in

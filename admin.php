@@ -13,13 +13,12 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 /**
- * Administration of a team
+ * Administration panel of a team
  *
  */
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Admin panel');
-    $selectedMenu = null;
     require_once 'app/head.inc.php';
 
     if (!$_SESSION['is_admin']) {
@@ -75,7 +74,7 @@ try {
         'StatusView' => $StatusView,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
-        'teamGroupsView' => $teamGroupsView,
+        'TeamGroupsView' => $TeamGroupsView,
         'templatesArr' => $templatesArr,
         'Users' => $Users,
         'usersArr' => $usersArr

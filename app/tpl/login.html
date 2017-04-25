@@ -28,17 +28,19 @@ if (!checkCookiesEnabled()) {
             <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
         </div>
     </form>
+    {% if idpsArr|length > 0 %}
 
-    <form method='post' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
-        <select name='idp_id'>
-            {% for idp in idpsArr %}
-                <option value='{{ idp.id }}'>{{ idp.name }}</option>
-            {% endfor %}
-        </select>
-        <button class='button' type='submit' name='submit'>Go</button>
-    </form>
+        <form method='post' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
+            <select name='idp_id'>
+                {% for idp in idpsArr %}
+                    <option value='{{ idp.id }}'>{{ idp.name }}</option>
+                {% endfor %}
+            </select>
+            <button class='button' type='submit' name='submit'>Go</button>
+        </form>
+    {% endif %}
 
     <p>
         {{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(

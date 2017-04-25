@@ -37,7 +37,7 @@
                     <li>
                         <label class='block' for='usersUpdateUsergroup'>{{ 'Group'|trans }}</label>
                         <select class='clean-form' name='usergroup' id='usersUpdateUsergroup'>
-                            {% if SESSION.is_sysadmin %}
+                            {% if session.is_sysadmin %}
                                 <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
                             {% endif %}
                             <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>

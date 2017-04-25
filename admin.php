@@ -31,21 +31,22 @@ try {
 
     $StatusView = new StatusView(new Status($Users));
     $ItemsTypesView = new ItemsTypesView(new ItemsTypes($Users));
-    $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
+    $TeamGroups = new TeamGroups($_SESSION['team_id']);
     $Auth = new Auth();
-    $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
     $Templates = new Templates($Users);
     $Teams = new Teams($_SESSION['team_id']);
 
+    $itemsTypesArr = $ItemsTypesView->ItemsTypes->readAll();
+    $teamConfigArr = $Teams->read();
+    $teamGroupsArr = $TeamGroups->readAll();
+    echo Tools::printArr($teamGroupsArr);
+    $templatesArr = $Templates->readCommon();
+    $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
+
     // VALIDATE USERS BLOCK
+    // only show the frame if there is some users to validate and there is an email config
     $unvalidatedUsersArr = $Users->readAllFromTeam($_SESSION['team_id'], 0);
 
-    $teamConfigArr = $Teams->read();
-    $teamGroupsArr = $TeamGroupsView->TeamGroups->readAll();
-    $templatesArr = $Templates->readCommon();
-    $itemsTypesArr = $ItemsTypesView->ItemsTypes->readAll();
-
-    // only show the frame if there is some users to validate and there is an email config
     if (count($unvalidatedUsersArr) != 0 && $Config->configArr['mail_from'] != 'notconfigured@example.com') {
         $message = _('There are users waiting for validation of their account:');
         $message .= "<form method='post' action='app/controllers/UsersController.php'>";
@@ -70,11 +71,10 @@ try {
         'FormKey' => $FormKey,
         'itemsTypesArr' => $itemsTypesArr,
         'ItemsTypesView' => $ItemsTypesView,
-        'SESSION' => $_SESSION,
         'StatusView' => $StatusView,
+        'session' => $_SESSION,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
-        'TeamGroupsView' => $TeamGroupsView,
         'templatesArr' => $templatesArr,
         'Users' => $Users,
         'usersArr' => $usersArr

@@ -106,6 +106,7 @@ try {
         'idpsArr' => $idpsArr,
         'phpInfos' => $phpInfos,
         'logsArr' => $logsArr,
+        'session' => $_SESSION,
         'usersArr' => $usersArr
     ));
 

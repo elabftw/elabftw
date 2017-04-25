@@ -54,16 +54,36 @@ class TeamGroups
     /**
      * Read team groups
      *
-     * @return array all team groups
+     * @return array all team groups with users in group as array
      */
     public function readAll()
     {
+        $fullGroups = array();
+
         $sql = "SELECT id, name FROM team_groups WHERE team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->execute();
 
-        return $req->fetchAll();
+        $groups = $req->fetchAll();
+
+        $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM users CROSS JOIN users2team_groups
+            ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+        $req = $this->pdo->prepare($sql);
+
+        foreach ($groups as $group) {
+            $req->bindParam(':groupid', $group['id']);
+            $req->execute();
+            $usersInGroup = $req->fetchAll();
+            $fullGroups[] = array(
+                'id' => $group['id'],
+                'name' => $group['name'],
+                'users' => $usersInGroup
+            );
+        }
+
+        return $fullGroups;
     }
 
     /**

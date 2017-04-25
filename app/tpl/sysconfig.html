@@ -307,16 +307,15 @@
             </div>
         </form>
 
-        {% if idpsArr|length == 0 %}
-        <p>No Identity Provider saved. Add one below.</p>
-        {% else %}
+        {% if idpsArr|length > 0 %}
             {% for idp in idpsArr %}
-            <form method='post' action='app/controllers/IdpsController.php'>
                 <div class='box'>
+                    <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
+                    <form method='post' action='app/controllers/IdpsController.php'>
                     <input type='hidden' name='idpsUpdate' />
                     <input type='hidden' name='id' value='{{ idp.id }}' />
                     <p>Name:</p>
-                    <input type='text' name='name' value='{{ idp.name }}' />
+                    <input type='text' id='editIdpName' name='name' value='{{ idp.name }}' />
                     <p>entityId:</p>
                     <input type='url' name='entityid' value='{{ idp.entityid }}' />
                     <p>Single Sign-On URL:</p>

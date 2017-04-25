@@ -34,13 +34,10 @@ try {
     $TeamsView = new TeamsView(new Teams());
     $Users = new Users();
     $usersArr = $Users->readAll();
-
-    try {
-        // we put another try here because an exception here would end the page
-        // and not getting the latest version is not a big deal
-        $ReleaseCheck = new ReleaseCheck($Config);
-    } catch (Exception $e) {
-        echo Tools::displayMessage($e->getMessage(), 'ko');
+    $ReleaseCheck = new ReleaseCheck($Config);
+    if (!$ReleaseCheck->getUpdatesIni()) {
+        $message = 'Error getting latest version information from server! Check the proxy setting.';
+        echo Tools::displayMessage($message, 'ko');
     }
 
     // display current and latest version
@@ -102,7 +99,6 @@ try {
 
     echo $twig->render('sysconfig.html', array(
         'Config' => $Config,
-        'UsersView' => $UsersView,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,
         'disable_sendmail' => $disable_sendmail,

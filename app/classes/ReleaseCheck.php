@@ -50,7 +50,6 @@ class ReleaseCheck
     public function __construct(Config $config)
     {
         $this->Config = $config;
-        $this->getUpdatesIni();
     }
 
     /**
@@ -93,10 +92,9 @@ class ReleaseCheck
      * Return the latest version of elabftw
      * Will fetch updates.ini file from elabftw.net
      *
-     * @throws Exception the version we have doesn't look like one
-     * @return string|bool|null latest version or false if error
+     * @return bool latest version or false if error
      */
-    private function getUpdatesIni()
+    public function getUpdatesIni()
     {
         $ini = $this->get(self::URL);
         // try with http if https failed (see #176)
@@ -104,7 +102,7 @@ class ReleaseCheck
             $ini = $this->get(self::URL_HTTP);
         }
         if (!$ini) {
-            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
+            return false;
         }
         // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
         $versions = parse_ini_string($ini, true);
@@ -113,9 +111,10 @@ class ReleaseCheck
         $this->releaseDate = $versions[$this->version]['date'];
 
         if (!$this->validateVersion()) {
-            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
+            return false;
         }
         $this->success = true;
+        return true;
     }
 
     /**

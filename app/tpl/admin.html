@@ -22,12 +22,8 @@
             <p>
                 <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
                 <select class='clean-form' name='deletable_xp' id='deletable_xp'>
-                    <option value='1'
-                      {{ teamConfigArr.deleteable_xp ? " selected='selected'" }}
-                    >{{ 'Yes'|trans }}</option>
-                    <option value='0'
-                    {{ teamConfigArr.deletable_xp ? " selected='selected'" }}
-                    >{{ 'No'|trans }}</option>
+                    <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                    <option value='0'{{ not teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
                 </select>
                 <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
             </p>

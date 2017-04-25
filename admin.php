@@ -35,7 +35,6 @@ try {
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
     $Auth = new Auth();
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
-    $UsersView = new UsersView($Users);
     $Templates = new Templates($Users);
     $Teams = new Teams($_SESSION['team_id']);
 

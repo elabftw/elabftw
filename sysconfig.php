@@ -32,7 +32,8 @@ try {
     $Idps = new Idps();
     $Logs = new Logs();
     $TeamsView = new TeamsView(new Teams());
-    $UsersView = new UsersView(new Users());
+    $Users = new Users();
+    $usersArr = $Users->readAll();
 
     try {
         // we put another try here because an exception here would end the page
@@ -109,7 +110,8 @@ try {
         'disable_php' => $disable_php,
         'idpsArr' => $idpsArr,
         'phpInfos' => $phpInfos,
-        'logsArr' => $logsArr
+        'logsArr' => $logsArr,
+        'usersArr' => $usersArr
     ));
 
 } catch (Exception $e) {

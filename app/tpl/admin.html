@@ -1,0 +1,384 @@
+<menu>
+    <ul>
+        <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Users'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Groups'|trans }}</li>
+        <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
+        <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
+        <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
+        <li class='tabhandle' id='tab7'>{{ 'Import CSV'|trans }}</li>
+        <li class='tabhandle' id='tab8'>{{ 'Import ZIP'|trans }}</li>
+    </ul>
+</menu>
+
+<!-- TAB 1 TEAM CONFIG -->
+<div class='divhandle' id='tab1div'>
+    <div class='box'>
+        <h3>{{ 'Configure your Team'|trans }}</h3>
+        <hr>
+        <form method='post' action='app/controllers/AdminController.php' autocomplete='off'>
+            <input type='hidden' value='true' name='teamsUpdateFull' />
+
+            <p>
+                <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
+                <select class='clean-form' name='deletable_xp' id='deletable_xp'>
+                    <option value='1'
+                      {{ teamConfigArr.deleteable_xp ? " selected='selected'" }}
+                    >{{ 'Yes'|trans }}</option>
+                    <option value='0'
+                    {{ teamConfigArr.deletable_xp ? " selected='selected'" }}
+                    >{{ 'No'|trans }}</option>
+                </select>
+                <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
+            </p>
+
+            <p>
+                <label class="block" for='link_name'>{{ 'Name of the link in the top menu:'|trans }}</label>
+                <input class="clean-form col-3-form" type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
+            </p>
+
+            <p>
+                <label class="block" for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
+                <input class="clean-form col-3-form" type='text' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
+            </p>
+
+            <br>
+            <span class='button button-neutral' onClick='toggleTimestampInputs()'>{{ 'Override general timestamping config'|trans }}</span>
+            <br><br>
+            <div class='timestampInputs'>
+                <p>
+                    <br>
+                    <label class='block' for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
+                    <input class='clean-form col-3-form' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
+                    <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>") }}</span>
+                </p>
+
+                <p>
+                    <label class='block' for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
+                    <input class='clean-form col-3-form' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ teamConfigArr.stampcert }}' name='stampcert' id='stampcert' />
+                    <span class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>")|raw }}</span>
+                </p>
+                    <label class='block' for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
+                    <input class='clean-form col-3-form' autocomplete='off' type='text' value='{{ teamConfigArr.stamplogin }}' name='stamplogin' id='stamplogin' />
+                    <span class='smallgray'>{{ 'This should be the login associated with your timestamping service provider'|trans }}</span>
+                </p>
+
+                <p>
+                    <label class='block' for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
+                    {% if teamConfigArr.stamppass|length > 1 %}
+                        <p>A password is already set.
+                        <a href='app/controllers/AdminController.php?clearStamppass=1'>Clear it</a> or change it below:
+                        </p>
+                    {% endif %}
+                    <input class='clean-form col-3-form' autocomplete='off' type='password' name='stamppass' id='stamppass' />
+                    <span class='smallgray'>{{ 'Your timestamping service provider password'|trans }}</span>
+                </p>
+            </div>
+
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button'>Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- TAB 2 USERS -->
+<div class='divhandle' id='tab2div'>
+    {{ include('editusers.html') }}
+
+    <!-- DELETE USER -->
+    <ul class='list-group'>
+        <li class='list-group-item danger-zone-area'>
+            <p>{{ 'DANGER ZONE'|trans }}</p><hr>
+            <p><strong>{{ 'Delete an account'|trans }}</strong></p>
+            <form action='app/controllers/UsersController.php' method='post'>
+                <!-- form key -->
+                {{ FormKey.getFormkey|raw }}
+                <input type='hidden' name='usersDestroy' value='true' />
+                <label class='block' for='usersDestroyEmail'>{{ 'Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'|trans }}</label>
+                <input class='clean-form col-3-form' autocomplete='off' type='email' placeholder='Email Address' name='usersDestroyEmail' id='usersDestroyEmail' required />
+                <label class='block' for='usersDestroyPassword'>{{ 'Type your password:'|trans }}</label>
+                <input class='clean-form col-3-form' autocomplete='off' type='password' placeholder='Your Password' name='usersDestroyPassword' id='usersDestroyPassword' required />
+                <div class='center'>
+                    <button type='submitButtonDiv' class='button button-delete'>{{ 'Delete this user!'|trans }}</button>
+                </div>
+            </form>
+        </li>
+    </ul>
+</div>
+
+<!-- TAB 3 TEAM GROUPS -->
+<div class='divhandle' id='tab3div'>
+    <div class='box tooltip-box'>
+        <h3>{{ 'Manage Groups of Users'|trans }}</h3>
+        <hr>
+
+        <!-- CREATE A GROUP -->
+        <label class='block' for='teamGroupCreate'>{{ 'Create a group'|trans }}</label>
+        <input class='clean-form col-3-form' id='teamGroupCreate' type='text' />
+        <button type='submit' onclick='teamGroupCreate()' class='button'>{{ 'Create'|trans }}</button>
+        <!-- END CREATE GROUP -->
+
+        <div id='team_groups_div'>
+            <div>
+            <hr>
+                <section>
+                    <!-- ADD USER TO GROUP -->
+                    <label class='block' for='teamGroupUserAdd'>{{ 'Add this user'|trans }}</label>
+                    <select class='clean-form col-3-form' id='teamGroupUserAdd'>
+                        {% for user in usersArr %}
+                            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label class='block' for='teamGroupGroupAdd'>{{ 'to this group'|trans }}</label>
+                    <select class="clean-form col-3-form" id='teamGroupGroupAdd'>
+                        {% for teamGroup in teamGroupsArr %}
+                            <option value='{{ teamGroup.id }}'>{{ teamGroup.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type='submit' onclick="teamGroupUpdate('add')" class='button'>{{ 'Add'|trans }}</button>
+                </section>
+
+                <section>
+                    <hr>
+                    <!-- RM USER FROM GROUP -->
+                    <label class='block' for='teamGroupUserRm'>{{ 'Remove this user'|trans }}</label>
+                    <select class="clean-form col-3-form" id='teamGroupUserRm'>
+                        {% for user in usersArr %}
+                            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label class='block' for='teamGroupGroupRm'>{{ 'from this group'|trans }}</label>
+                    <select class='clean-form col-3-form' id='teamGroupGroupRm'>
+                        {% for teamGroup in teamGroupsArr %}
+                            <option value='{{ teamGroup.id }}'>{{ teamGroup.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type='submit' onclick="teamGroupUpdate('rm')" class='button button-delete'>{{ 'Remove'|trans }}</button>
+                </section>
+            </div>
+
+            <!-- SHOW EXISTING GROUPS -->
+            <hr>
+            <h3>{{ 'Existing groups'|trans }}</h3>
+            {{ TeamGroupsView.show(teamGroupsArr)|raw }}
+        </div>
+    </div>
+</div>
+<!-- END TEAM GROUPS -->
+
+<!-- TAB 4 STATUS -->
+<div class='divhandle' id='tab4div'>
+    {{ StatusView.showCreate|raw }}
+    {{ StatusView.show|raw }}
+</div>
+
+<!-- TAB 5 ITEMS TYPES-->
+<div class='divhandle' id='tab5div'>
+    {{ ItemsTypesView.showCreate|raw }}
+    {{ ItemsTypesView.show|raw }}
+</div>
+
+<!-- TAB 6 COMMON EXPERIMENT TEMPLATE -->
+<div class='divhandle' id='tab6div'>
+    <div class='box'>
+        <h3>{{ 'Common Experiment Template'|trans }}</h3><hr>
+        <p>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
+        <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+            {{ templatesArr.body|raw }}
+        </textarea>
+        <div class='submitButtonDiv'>
+            <button type='submit' class='button' onClick='commonTplUpdate()'>{{ 'Save'|trans }}</button>
+        </div>
+    </div>
+</div>
+
+<!-- TAB 7 IMPORT CSV -->
+<div class='divhandle' id='tab7div'>
+    <div class='box'>
+        <h3>{{ 'Import a CSV File'|trans }}</h3>
+        <hr>
+        <p style='text-align:justify'>
+            {{ "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."|trans|raw }}
+            <span class='strong'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
+        </p>
+
+        <label class='block' for='item_selector'>{{ '1. Select a type of item to import to:'|trans }}</label>
+        <select class='clean-form col-3-form' id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+            {% for itemsType in itemsTypesArr %}
+                <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
+            {% endfor %}
+        </select>
+
+        <div class='import_block'>
+            <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+                <label class='block' for='uploader'>{{ '2. Select a CSV file to import:'|trans }}</label>
+                <input id='uploader' name='file' type='file' accept='.csv' />
+                <input name='type' type='hidden' value='csv' />
+                <div class='submitButtonDiv'>
+                    <button type='submit' class='button'>{{ 'Import CSV'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- TAB 8 IMPORT ZIP -->
+<div class='divhandle' id='tab8div'>
+    <div class='box'>
+        <h3>{{ 'Import a ZIP File'|trans }}</h3>
+        <hr>
+        <p>
+            {{ "This page will allow you to import a .elabftw.zip archive."|trans }}
+            <br><span class='strong'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
+        </p>
+
+        <label class='block' for='item_selector'>{{ '1. Select where to import:'|trans }}</label>
+        <select class='clean-form col-3-form' id='item_selector' onchange='goNext(this.value)'>
+            <option value='' selected>-------</option>
+            <option class='disabled-input' value='' disabled>Import items</option>
+            {% for itemsType in itemsTypesArr %}
+                <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
+            {% endfor %}
+            <option class='disabled-input' value='' disabled>Import experiments</option>
+
+            {% for user in usersArr %}
+                <option value='{{ user.userid }}' name='type'>{{ user.fullname }}</option>
+            {% endfor %}
+        </select><br>
+        <div class='import_block'>
+            <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+                <label class='block' for='uploader'>{{ '2. Select a ZIP file to import:'|trans }}</label>
+                <input id='uploader' name='file' type='file' accept='.elabftw.zip' />
+                <input name='type' type='hidden' value='zip' />
+                <div class='submitButtonDiv'>
+                    <button type='submit' class='button'>{{ 'Import ZIP'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src='app/js/edit.mode.min.js'></script>
+<script>
+function toggleTimestampInputs() {
+    $('.timestampInputs').toggle();
+}
+$(document).ready(function() {
+    $('.timestampInputs').hide();
+    // validate on enter
+    $('#create_teamgroup').keypress(function (e) {
+        var keynum;
+        if (e.which) {
+            keynum = e.which;
+        }
+        if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+            teamGroupCreate();
+        }
+    });
+    // edit the team group name
+    $('h3.teamgroup_name').editable('app/controllers/TeamGroupsController.php', {
+        indicator : 'Saving...',
+        name : 'teamGroupUpdateName',
+        submit : 'Save',
+        cancel : 'Cancel',
+        style : 'display:inline'
+
+    });
+    // SORTABLE for STATUS
+    $('.sortable_status').sortable({
+        // limit to vertical dragging
+        axis : 'y',
+        helper : 'clone',
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(".sortable_status").sortable("toArray");
+
+            $.post("app/controllers/AdminController.php", {
+                'updateOrdering': true,
+                'table': 'status',
+                'ordering': ordering
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        }
+    });
+
+    $('.itemsTypesEditor').hide();
+
+    // SORTABLE for ITEMS TYPES
+    $('.sortable_itemstypes').sortable({
+        // limit to horizontal dragging
+        axis : 'y',
+        helper : 'clone',
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(".sortable_itemstypes").sortable("toArray");
+
+            $.post("app/controllers/AdminController.php", {
+                'updateOrdering': true,
+                'table': 'items_types',
+                'ordering': ordering
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        }
+    });
+    // IMPORT
+    $('.import_block').hide();
+
+    // TABS
+    // get the tab=X parameter in the url
+    var params = getGetParameters();
+    var tab = parseInt(params['tab']);
+    if (!isInt(tab)) {
+        var tab = 1;
+    }
+    var initdiv = '#tab' + tab + 'div';
+    var inittab = '#tab' + tab;
+    // init
+    $(".divhandle").hide();
+    $(initdiv).show();
+    $(inittab).addClass('selected');
+
+    $(".tabhandle" ).click(function(event) {
+        var tabhandle = '#' + event.target.id;
+        var divhandle = '#' + event.target.id + 'div';
+        $(".divhandle").hide();
+        $(divhandle).show();
+        $(".tabhandle").removeClass('selected');
+        $(tabhandle).addClass('selected');
+    });
+    // END TABS
+    // COLORPICKER
+    $('.colorpicker').colorpicker({
+        hsv: false,
+        okOnEnter: true,
+        rgb: false
+    });
+    // EDITOR
+    tinymce.init({
+        mode : "specific_textareas",
+        editor_selector : "mceditable",
+        content_css : "app/css/tinymce.css",
+        plugins : "table textcolor searchreplace lists advlist code fullscreen insertdatetime paste charmap save image link",
+        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
+        removed_menuitems : "newdocument",
+        language : '{{ Users.userData.lang }}'
+    });
+});
+</script>

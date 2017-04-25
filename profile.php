@@ -16,12 +16,12 @@ use Exception;
  * Display profile of current user
  *
  */
-require_once 'app/init.inc.php';
-$pageTitle = _('Profile');
-$selectedMenu = null;
-require_once 'app/head.inc.php';
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = _('Profile');
+    $selectedMenu = null;
+    require_once 'app/head.inc.php';
+
     // get total number of experiments
     $Entity = new Experiments($Users);
     $Entity->setUseridFilter();

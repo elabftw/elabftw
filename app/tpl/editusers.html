@@ -1,0 +1,67 @@
+<div class='box'>
+    <h3>{{ 'Edit Users'|trans }}</h3>
+    <hr>
+    <ul class='list-group'>
+
+        {% for user in usersArr %}
+        <li>
+            <form method='post' action='app/controllers/UsersController.php'>
+                <input type='hidden' value='true' name='usersUpdate' />
+                <input type='hidden' value='{{ user.userid }}' name='userid' />
+                <ul class='list-inline'>
+
+                    <li>
+                        <label class='block' for='usersUpdateFirstname'>{{ 'Firstname'|trans }}</label>
+                        <input class='clean-form' id='usersUpdateFirstname' type='text' value='{{ user.firstname }}' name='firstname' />
+                    </li>
+
+                    <li>
+                        <label class='block' for='usersUpdateLastname'>{{ 'Lastname'|trans }}</label>
+                        <input class='clean-form' id='usersUpdateLastname' type='text' value='{{ user.lastname }}' name='lastname' />
+                    </li>
+
+                    <li>
+                        <label class='block' for='usersUpdateEmail'>{{ 'Email'|trans }}</label>
+                        <input class='clean-form' id='usersUpdateEmail' type='email' value='{{ user.email }}' name='email' />
+                    </li>
+
+                    <li>
+                        <label class='block' for='usersUpdateValidated'>{{ 'Has an active account?'|trans }}</label>
+                        <select class='clean-form' name='validated' id='usersUpdateValidated'>
+                            <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                            <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+
+                        </select>
+                    </li>
+                
+                    <li>
+                        <label class='block' for='usersUpdateUsergroup'>{{ 'Group'|trans }}</label>
+                        <select class='clean-form' name='usergroup' id='usersUpdateUsergroup'>
+                            {% if SESSION.is_sysadmin %}
+                                <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
+                            {% endif %}
+                            <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
+                            <option value='3' {{ user.usergroup == '3' ? " selected='selected'" }}>Admins + Lock power</option>
+                            <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
+
+                        </select>
+                    </li>
+
+                    <li>
+                        <label class='block' for='usersUpdatePassword'>{{ 'Reset user password'|trans }}</label>
+                        {# add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox #}
+                <input type='text' style='display:none'>
+                <input type='password' style='display:none'>
+                {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', Auth) ~ ',}' %}
+                <input autocomplete='new-password' class='clean-form' id='usersUpdatePassword' type='password' pattern='{{ pattern }}' value='' name='password' />
+                <span class='smallgray'>
+                <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
+                    </li>
+                </ul>
+                <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+            </form>
+        </li>
+        <hr>
+        {% endfor %}
+    </ul>
+</div>

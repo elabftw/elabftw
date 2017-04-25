@@ -16,7 +16,7 @@ namespace Elabftw\Elabftw;
 class ItemsTypesView
 {
     /** instance of ItemsTypes */
-    public $itemsTypes;
+    public $ItemsTypes;
 
     /**
      * Constructor
@@ -25,7 +25,7 @@ class ItemsTypesView
      */
     public function __construct(ItemsTypes $itemsTypes)
     {
-        $this->itemsTypes = $itemsTypes;
+        $this->ItemsTypes = $itemsTypes;
     }
 
     /**
@@ -59,7 +59,7 @@ class ItemsTypesView
      */
     public function show()
     {
-        $itemsTypesArr = $this->itemsTypes->readAll();
+        $itemsTypesArr = $this->ItemsTypes->readAll();
 
         $html = "<div class='box'>";
         $html .= "<h3>" . _('Database Items Types') . "</h3><hr>";

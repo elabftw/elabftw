@@ -95,9 +95,19 @@ try {
 
     // pages where you don't need to be logged in
     // reset.php is in fact app/reset.php but we use basename so...
-    $nologin_arr = array('index.php', 'metadata.php', 'login.php', 'LoginController.php', 'register.php', 'RegisterController.php', 'change-pass.php', 'reset.php', 'ResetPasswordController.php');
+    $nologinArr = array(
+        'change-pass.php',
+        'index.php',
+        'login.php',
+        'LoginController.php',
+        'metadata.php',
+        'register.php',
+        'RegisterController.php',
+        'reset.php',
+        'ResetPasswordController.php'
+    );
 
-    if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologin_arr)) {
+    if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologinArr)) {
         // try to login with the cookie
         $Auth = new Auth();
         if (!$Auth->loginWithCookie()) {
@@ -106,7 +116,7 @@ try {
             $host = $_SERVER['HTTP_HOST'];
             $script = $_SERVER['SCRIPT_NAME'];
             $params = '?' . $_SERVER['QUERY_STRING'];
-            $url = 'https://' . $host . $script . $params;
+            $url = 'https://' . $host . Tools::getServerPort() . $script . $params;
             // remove trailing ? if there was no query string
             $url = rtrim($url, '?');
 

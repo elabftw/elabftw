@@ -39,25 +39,20 @@ abstract class Make
     }
 
     /**
-     * Attach the absolute path to a filename in the temporary folder
-     *
-     * @param string $fileName
-     * @return string Absolute path
-     */
-    protected function getTempFilePath($fileName)
-    {
-        return ELAB_ROOT . 'uploads/tmp/' . $fileName;
-    }
-
-    /**
      * Attach the absolute path to a filename
      *
      * @param string $fileName
+     * @param bool $tmp set to true if you want a temporary path (in uploads/tmp)
      * @return string Absolute path
      */
-    protected function getFilePath($fileName)
+    protected function getFilePath($fileName, $tmp = false)
     {
-        return ELAB_ROOT . 'uploads/' . $fileName;
+        $tempPath = '';
+
+        if ($tmp) {
+            $tempPath = 'tmp/';
+        }
+        return ELAB_ROOT . 'uploads/' . $tempPath . $fileName;
     }
     /**
      * Validate the type we have.

@@ -65,7 +65,7 @@ class MakeZip extends Make
         $this->idList = $idList;
 
         $this->fileName = $this->getFileName();
-        $this->filePath = $this->getTempFilePath($this->fileName);
+        $this->filePath = $this->getFilePath($this->fileName, true);
 
         $this->createZipArchive();
         $this->loopIdArr();
@@ -188,7 +188,7 @@ class MakeZip extends Make
     }
 
     /**
-     * Add PDF to archive
+     * Add a PDF file to the ZIP archive
      *
      */
     private function addPdf()
@@ -199,13 +199,12 @@ class MakeZip extends Make
     }
 
     /**
-     * Add a CSV file
+     * Add a CSV file to the ZIP archive
      *
      * @param int $id The id of the item we are zipping
      */
     private function addCsv($id)
     {
-        // add CSV file to archive
         $csv = new MakeCsv($this->Entity, $id);
         $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;

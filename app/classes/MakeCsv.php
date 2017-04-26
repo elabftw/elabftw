@@ -44,7 +44,7 @@ class MakeCsv extends Make
         $this->Entity = $entity;
 
         $this->fileName = $this->getFileName();
-        $this->filePath = $this->getTempFilePath($this->fileName);
+        $this->filePath = $this->getFilePath($this->fileName, true);
 
         $this->idList = $idList;
 

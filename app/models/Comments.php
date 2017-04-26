@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
 use Swift_Message;
 
@@ -19,18 +18,18 @@ use Swift_Message;
  */
 class Comments extends Entity
 {
-    /** instance of Experiments */
-    public $Experiments;
+    /** instance of Entity */
+    public $Entity;
 
     /**
      * Constructor
      *
-     * @param Experiments
+     * @param Entity $entity
      */
-    public function __construct(Experiments $experiments)
+    public function __construct(Entity $entity)
     {
         $this->pdo = Db::getConnection();
-        $this->Experiments = $experiments;
+        $this->Entity = $entity;
     }
 
     /**
@@ -47,9 +46,9 @@ class Comments extends Entity
             VALUES(:datetime, :exp_id, :comment, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':datetime', date("Y-m-d H:i:s"));
-        $req->bindParam(':exp_id', $this->Experiments->id);
+        $req->bindParam(':exp_id', $this->Entity->id);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':userid', $this->Experiments->Users->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
 
         if (!$req->execute()) {
             throw new Exception('Error inserting comment!');
@@ -71,7 +70,7 @@ class Comments extends Entity
         // get the first and lastname of the commenter
         $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->Experiments->Users->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->execute();
         $commenter = $req->fetch();
 
@@ -79,19 +78,19 @@ class Comments extends Entity
         $sql = "SELECT email, userid, firstname, lastname FROM users
             WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         $users = $req->fetch();
 
         // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $this->Experiments->Users->userid) {
+        if ($users['userid'] === $this->Entity->Users->userid) {
             return 1;
         }
 
         // Create the message
         $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
         $url = str_replace('app/controllers/CommentsController.php', 'experiments.php', $url);
-        $full_url = $url . "?mode=view&id=" . $this->Experiments->id;
+        $full_url = $url . "?mode=view&id=" . $this->Entity->id;
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 
@@ -126,7 +125,7 @@ class Comments extends Entity
             LEFT JOIN users ON (experiments_comments.userid = users.userid)
             WHERE exp_id = :id ORDER BY experiments_comments.datetime ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         if ($req->rowCount() > 0) {
             return $req->fetchAll();
@@ -155,8 +154,8 @@ class Comments extends Entity
             WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Experiments->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $id);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
 
         return $req->execute();
     }
@@ -171,7 +170,7 @@ class Comments extends Entity
     {
         $sql = "DELETE FROM experiments_comments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $id);
 
         return $req->execute();
     }
@@ -185,7 +184,7 @@ class Comments extends Entity
     {
         $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id);
 
         return $req->execute();
     }

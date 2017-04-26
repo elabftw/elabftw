@@ -23,7 +23,7 @@ try {
 
     // CREATE
     if (isset($_POST['commentsCreate'])) {
-        $Comments->Experiments->setId($_POST['id']);
+        $Comments->Entity->setId($_POST['id']);
         if ($Comments->create($_POST['comment'])) {
             echo json_encode(array(
                 'res' => true,

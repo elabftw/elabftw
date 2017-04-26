@@ -74,9 +74,9 @@ class EntityView
     }
 
     /**
-     * Generate HTML for show mode
+     * Get the items in itemsArr
      *
-     * @return string
+     * @return null
      */
     public function buildShow()
     {

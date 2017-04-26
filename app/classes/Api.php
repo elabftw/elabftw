@@ -81,7 +81,7 @@ class Api
     /**
      * Read an entity
      *
-     * @return array
+     * @return array<string,array>
      */
     public function getEntity()
     {

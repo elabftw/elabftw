@@ -36,7 +36,7 @@ try {
 
         $errors = $SamlAuth->getErrors();
 
-        if (!empty($errors && $Saml->Config->configArr['debug'])) {
+        if (!empty($errors) && $Saml->Config->configArr['debug']) {
             echo "Something went wrong:<br>";
             echo Tools::printArr(implode(', ', $errors));
         }

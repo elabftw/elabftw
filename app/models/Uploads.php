@@ -300,7 +300,7 @@ class Uploads extends Entity
         // get mime type of the file
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $src);
-        // the used fonction is different depending on extension
+        // the used function is different depending on extension
         if ($mime === 'image/jpeg') {
             $sourceImage = imagecreatefromjpeg($src);
         } elseif ($mime === 'image/png') {

@@ -366,8 +366,11 @@ class Users extends Auth
      */
     public function readAllFromTeam($team, $validated = 1)
     {
-        $sql = "SELECT *, CONCAT (firstname, ' ', lastname) AS fullname
-            FROM users WHERE validated = :validated AND team = :team";
+        $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
+            teams.team_name AS teamname
+            FROM users
+            LEFT JOIN teams ON (users.team = teams.team_id)
+            WHERE users.validated = :validated AND users.team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':validated', $validated);
         $req->bindValue(':team', $team);

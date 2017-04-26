@@ -27,6 +27,7 @@ try {
         throw new Exception(_('This section is out of your reach.'));
     }
 
+    $Auth = new Auth();
     $Config = new Config();
     $Idps = new Idps();
     $Logs = new Logs();
@@ -90,13 +91,14 @@ try {
             $disable_php = true;
     }
 
-    $phpInfos = array(PHP_OS, PHP_VERSION, PHP_INT_MAX, PHP_SYSCONFDIR); 
+    $phpInfos = array(PHP_OS, PHP_VERSION, PHP_INT_MAX, PHP_SYSCONFDIR);
 
     $logsArr = $Logs->read();
 
     $idpsArr = $Idps->readAll();
 
     echo $twig->render('sysconfig.html', array(
+        'Auth' => $Auth,
         'Config' => $Config,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,

@@ -4,6 +4,7 @@
     <ul class='list-group'>
 
         {% for user in usersArr %}
+        <li><p>Team: {{ user.teamname }}</p></li>
         <li>
             <form method='post' action='app/controllers/UsersController.php'>
                 <input type='hidden' value='true' name='usersUpdate' />
@@ -50,13 +51,13 @@
                     <li>
                         <label class='block' for='usersUpdatePassword'>{{ 'Reset user password'|trans }}</label>
                         {# add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox #}
-                <input type='text' style='display:none'>
-                <input type='password' style='display:none'>
-                {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', Auth) ~ ',}' %}
-                <input autocomplete='new-password' class='clean-form' id='usersUpdatePassword' type='password' pattern='{{ pattern }}' value='' name='password' />
-                <span class='smallgray'>
-                <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
+                        <input type='text' style='display:none'>
+                        <input type='password' style='display:none'>
+                        {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', Auth) ~ ',}' %}
+                        <input autocomplete='new-password' class='clean-form' id='usersUpdatePassword' type='password' pattern='{{ pattern }}' value='' name='password' />
+                        <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
                     </li>
+
                 </ul>
                 <button type='submit' class='button'>{{ 'Save'|trans }}</button>
             </form>

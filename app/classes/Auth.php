@@ -181,9 +181,7 @@ class Auth
         if (!$this->populateSession($email)) {
             return false;
         }
-        if ($setCookie === 'on') {
-            $this->setToken();
-        }
+        $this->setToken();
         return true;
     }
 

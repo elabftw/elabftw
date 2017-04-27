@@ -1,3 +1,29 @@
+<!-- UNVALIDATED USERS BLOCK -->
+{% if unvalidatedUsersArr|length > 0 and (Config.configArr.mail_from != 'notconfigured@example.com') %}
+    <form method='post' action='app/controllers/UsersController.php'>
+        <input type='hidden' name='usersValidate' value='true' />
+        {{ FormKey.getFormkey|raw }}
+        <div class='alert alert-danger'>
+            <span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
+            {{ 'There are users waiting for validation of their account:'|trans }}
+            <ul>
+            {% for user in unvalidatedUsersArr %}
+                <li>
+                    <label>
+                    <input type='checkbox' name='usersValidateIdArr[]'
+                    value='{{ user.userid }}'> {{ user.fullname }} ({{ user.email }})
+                    </label>
+                </li>
+            {% endfor %}
+            </ul>
+            <div class='submitButtonDiv'>
+                <button class='button' type='submit'>{{ 'Validate'|trans }}</button>
+            </div>
+        </div>
+    </form>
+{% endif %}
+
+<!-- ADMIN PANEL MAIN MENU -->
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>

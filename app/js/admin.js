@@ -133,9 +133,9 @@ $(document).ready(function() {
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();
-    var tab = parseInt(params['tab']);
+    var tab = parseInt(params.tab, 10);
     if (!isInt(tab)) {
-        var tab = 1;
+        tab = 1;
     }
     var initdiv = '#tab' + tab + 'div';
     var inittab = '#tab' + tab;

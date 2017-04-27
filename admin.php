@@ -32,7 +32,7 @@ try {
     $Users = new Users($_SESSION['userid'], $Config);
 
     $Auth = new Auth();
-    $ItemsTypes = new ItemsTypes($Users));
+    $ItemsTypes = new ItemsTypes($Users);
     $Status = new Status($Users);
     $TeamGroups = new TeamGroups($_SESSION['team_id']);
     $Templates = new Templates($Users);

@@ -18,6 +18,15 @@ use Exception;
  *
  */
 trait EntityTrait {
+
+    /** a positive int */
+    public $id;
+
+    /** the PDO object */
+    protected $pdo;
+
+    public $Users;
+
     /**
      * Check and set id
      *

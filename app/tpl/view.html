@@ -11,7 +11,7 @@
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
 {% endif %}
 
-{% if Ev.ro %}
+{% if Ev.isReadOnly %}
     {{ 'Read-only mode. Experiment of %s.'|trans|format(ownerName)|msg('ok', false) }}
 {% endif %}
 

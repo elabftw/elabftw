@@ -16,8 +16,10 @@ use Exception;
 /**
  * Things related to status in admin panel
  */
-class Status extends Entity
+class Status
 {
+    use EntityTrait;
+
     /** instance of Users */
     public $Users;
 

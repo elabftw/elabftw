@@ -18,9 +18,6 @@ use Datetime;
  */
 class ExperimentsView extends EntityView
 {
-    /** Read only switch */
-    public $ro = false;
-
     /** instance of TeamGroups */
     public $TeamGroups;
 

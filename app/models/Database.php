@@ -18,6 +18,8 @@ use Exception;
  */
 class Database extends Entity
 {
+    use EntityTrait;
+
     /**
      * Constructor
      *

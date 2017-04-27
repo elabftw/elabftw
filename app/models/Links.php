@@ -15,7 +15,7 @@ use Exception;
 /**
  * All about the experiments links
  */
-class Links extends Entity
+class Links
 {
     /** pdo object */
     protected $pdo;

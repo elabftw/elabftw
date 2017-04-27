@@ -13,8 +13,10 @@ namespace Elabftw\Elabftw;
 /**
  * All about the templates
  */
-class Templates extends Entity
+class Templates
 {
+    use EntityTrait;
+
     /** pdo object */
     protected $pdo;
 

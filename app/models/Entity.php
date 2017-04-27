@@ -18,6 +18,8 @@ use PDO;
  */
 class Entity
 {
+    use EntityTrait;
+
     /** pdo object */
     protected $pdo;
 
@@ -77,21 +79,6 @@ class Entity
 
     /** what you get after you ->read() */
     public $entityData;
-
-    /**
-     * Check and set id
-     *
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        if (Tools::checkId($id) === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-        $this->id = $id;
-        // prevent reusing of old data from previous id
-        unset($this->entityData);
-    }
 
     /**
      * Now that we have an id, we can read the data and set the permissions
@@ -213,6 +200,7 @@ class Entity
      */
     public function update($title, $date, $body)
     {
+        $this->populate();
         // don't update if locked
         if ($this->entityData['locked']) {
             return false;
@@ -357,30 +345,6 @@ class Entity
         }
 
         return $permissions;
-    }
-    /**
-     * Update ordering for status, experiment templates or items types
-     *
-     * @param array $post POST
-     * @return bool
-     */
-    public function updateOrdering($post)
-    {
-        $success = array();
-
-        foreach ($post['ordering'] as $ordering => $id) {
-            $id = explode('_', $id);
-            $id = $id[1];
-            // the table param is whitelisted here
-            $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-            $req->bindParam(':team', $this->Users->userData['team']);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $success[] = $req->execute();
-        }
-
-        return !in_array(false, $success);
     }
 
     /**

@@ -16,8 +16,10 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends Entity
+class ItemsTypes
 {
+    use EntityTrait;
+
     /** The PDO object */
     protected $pdo;
 

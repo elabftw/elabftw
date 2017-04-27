@@ -20,6 +20,7 @@ class MakePdf extends Make
 {
     /** our favorite pdo object */
     protected $pdo;
+
     /** Entity instance */
     private $Entity;
 
@@ -31,15 +32,19 @@ class MakePdf extends Make
 
     /** a sha512 sum */
     public $fileName;
+
     /** full path of file */
     public $filePath;
 
     /** who */
     public $author;
+
     /** raw title */
     public $title;
+
     /** list of tags */
-    public $tags;
+    public $tags = '';
+
     /** the whole html string to write */
     public $content;
 
@@ -140,11 +145,11 @@ class MakePdf extends Make
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
-        $this->tags = null;
-        while ($data = $req->fetch()) {
-            $this->tags .= $data['tag'] . ' ';
+        if ($req->rowCount() > 0) {
+            while ($data = $req->fetch()) {
+                $this->tags .= $data['tag'] . ' ';
+            }
         }
-        $req->closeCursor();
     }
 
     /**

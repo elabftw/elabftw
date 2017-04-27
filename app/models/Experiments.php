@@ -18,6 +18,8 @@ use Exception;
  */
 class Experiments extends Entity
 {
+    use EntityTrait;
+
     /** pdo object */
     public $pdo;
 

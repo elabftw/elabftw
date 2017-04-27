@@ -15,7 +15,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags extends Entity
+class Tags
 {
     /** an instance of Experiments or Database */
     public $Entity;

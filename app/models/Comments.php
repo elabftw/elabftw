@@ -16,7 +16,7 @@ use Swift_Message;
 /**
  * All about the comments
  */
-class Comments extends Entity
+class Comments
 {
     /** instance of Entity */
     public $Entity;

@@ -459,7 +459,7 @@ function statusCreate() {
         var json = JSON.parse(data);
         if (json.res) {
             notif(json.msg, 'ok');
-            window.location.replace('admin.php?tab=3');
+            window.location.replace('admin.php?tab=4');
         } else {
             notif(json.msg, 'ko');
         }

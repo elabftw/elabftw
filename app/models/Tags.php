@@ -20,6 +20,9 @@ class Tags
     /** an instance of Experiments or Database */
     public $Entity;
 
+    /** pdo object */
+    protected $pdo;
+
     /**
      * Constructor
      *

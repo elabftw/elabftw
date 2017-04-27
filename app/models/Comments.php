@@ -21,6 +21,9 @@ class Comments
     /** instance of Entity */
     public $Entity;
 
+    /** pdo object */
+    protected $pdo;
+
     /**
      * Constructor
      *

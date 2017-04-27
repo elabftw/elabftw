@@ -90,10 +90,9 @@ try {
 
         $EntityView->Entity->setId($_GET['id']);
         $EntityView->initViewEdit();
-        $EntityView->ro = $EntityView->isReadOnly();
 
         $ownerName = '';
-        if ($EntityView->ro) {
+        if ($EntityView->isReadOnly()) {
             // we need to get the fullname of the user who owns the experiment to display the RO message
             $Owner = new Users($EntityView->Entity->entityData['userid']);
             $ownerName = $Owner->userData['fullname'];

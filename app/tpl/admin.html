@@ -39,9 +39,8 @@
             </p>
 
             <br>
-            <span class='button button-neutral' onClick='toggleTimestampInputs()'>{{ 'Override general timestamping config'|trans }}</span>
-            <br><br>
-            <div class='timestampInputs'>
+            <span class='button button-neutral togglable-next'>{{ 'Override general timestamping config'|trans }}</span>
+            <div class='togglable-hidden'>
                 <p>
                     <br>
                     <label class='block' for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
@@ -112,7 +111,7 @@
         <!-- CREATE A GROUP -->
         <label class='block' for='teamGroupCreate'>{{ 'Create a group'|trans }}</label>
         <input class='clean-form col-3-form' id='teamGroupCreate' type='text' />
-        <button type='submit' onclick='teamGroupCreate()' class='button'>{{ 'Create'|trans }}</button>
+        <button type='submit' class='button'>{{ 'Create'|trans }}</button>
         <!-- END CREATE GROUP -->
 
         <div id='team_groups_div'>
@@ -133,7 +132,7 @@
                             <option value='{{ teamGroup.id }}'>{{ teamGroup.name }}</option>
                         {% endfor %}
                     </select>
-                    <button type='submit' onclick="teamGroupUpdate('add')" class='button'>{{ 'Add'|trans }}</button>
+                    <button type='submit' class='button'>{{ 'Add'|trans }}</button>
                 </section>
 
                 <section>
@@ -152,7 +151,7 @@
                             <option value='{{ teamGroup.id }}'>{{ teamGroup.name }}</option>
                         {% endfor %}
                     </select>
-                    <button type='submit' onclick="teamGroupUpdate('rm')" class='button button-delete'>{{ 'Remove'|trans }}</button>
+                    <button type='submit' class='button button-delete'>{{ 'Remove'|trans }}</button>
                 </section>
             </div>
 
@@ -163,7 +162,7 @@
                 <div class='well'>
                     <a class='elab-tooltip' style='float:right;' href='#'>
                     <span>{{ 'Remove this Group'|trans }}</span>
-                    <img onclick="teamGroupDestroy({{ teamGroup.id }}, '{{ 'Delete this?'|trans }}')" src='app/img/small-trash.png' style='float:right' alt='trash' /></a>
+                    <img class='teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" src='app/img/small-trash.png' style='float:right' alt='trash' /></a>
                     <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
                     <ul class='group-list'>
                         {% for user in teamGroup.users %}
@@ -179,14 +178,109 @@
 
 <!-- TAB 4 STATUS -->
 <div class='divhandle' id='tab4div'>
-    {{ StatusView.showCreate|raw }}
-    {{ StatusView.show|raw }}
+    <div class='box'>
+        <h3>{{ 'Add a New Status'|trans }}</h3>
+        <hr>
+        <ul class='list-group'>
+            <li>
+                <ul class='list-inline'>
+                    <li>{{ 'Name'|trans }} <input type='text' id='statusName' /></li>
+                    <li>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>
+                    <li><button class='button' id='statusCreate'>{{ 'Save'|trans }}</button></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class='box'>
+        <h3>{{ 'Edit an Existing Status'|trans }}</h3>
+        <hr>
+        <ul class='draggable sortable_status list-group'>
+            {% for status in statusArr %}
+            <li id='status_{{ status.category_id }}' class='list-group-item'>
+                <ul class='list-inline'>
+                    <li>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
+                    <li style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
+                    </li>
+                    <li><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }}>
+                        {{ 'Default status'|trans }}</li>
+
+
+                    <li><button data-id='{{ status.category_id }}' class='button statusSave'>{{ 'Save'|trans }}</button></li>
+
+                    <li><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
+
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 <!-- TAB 5 ITEMS TYPES-->
 <div class='divhandle' id='tab5div'>
-    {{ ItemsTypesView.showCreate|raw }}
-    {{ ItemsTypesView.show|raw }}
+    <div class='box'>
+        <h3>{{ 'Add a new type of item'|trans }}</h3>
+        <hr>
+        <ul class='list-inline'>
+            <li>{{ 'Name'|trans }} <input type='text' id='itemsTypesName' /></li>
+            <li>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li>
+            <li><input type='checkbox' id='itemsTypesBookable'> <label for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label></li>
+        </ul>
+        <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
+        <div class='submitButtonDiv'>
+            <button id='itemsTypesCreate' class='button'>{{ 'Save'|trans }}</button>
+        </div>
+    </div>
+
+    <div class='box'>
+        <h3>{{ 'Database Items Types'|trans }}</h3>
+        <hr>
+        <ul class='list-group'>
+            {% for itemType in itemsTypesArr %}
+            <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
+            <ul class='list-inline'>
+                <li>
+                    {{ 'Name'|trans }} <input type='text' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
+                </li>
+                <li style='color:#{{ itemType.color }}'>
+                    {{ 'Color'|trans }} <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_{{ itemType.category_id }}' value='{{ itemType.color }}' />
+                </li>
+                <li>
+                    <input id='itemsTypesBookable_{{ itemType.category_id }}' type='checkbox' {{ itemType.bookable ? " checked" }} />
+                    <label for='itemsTypesBookable_{{ itemType.category_id }}'>{{ 'Bookable'|trans }}</label>
+                </li>
+                <li>
+                    <button data-id='{{ itemType.category_id }}' class='button button-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
+                </li>
+                <li>
+                    <button data-id='{{ itemType.category_id }}' class='button itemsTypesUpdate'>{{ 'Save'|trans }}</button>
+                </li>
+                <li>
+                    <button data-id='{{ itemType.category_id }}' class='button button-delete itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
+                </li>
+
+                <!--/li -->
+                <li class='itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
+                    <textarea class='mceditable' style='height:50px' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
+                </li>
+            </ul>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class='box'>
+        <h3>{{ 'Modify ordering'|trans }}</h3>
+        <hr>
+
+        <ul class='draggable sortable_itemstypes list-group'>
+            {% for itemType in itemsTypesArr %}
+            <li class='list-group-item' id='itemstypesOrder_{{ itemType.category_id }}'>{{ itemType.ordering }}
+                <span style='color:#{{ itemType.color }}'>{{ itemType.category }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 <!-- TAB 6 COMMON EXPERIMENT TEMPLATE -->
@@ -194,11 +288,11 @@
     <div class='box'>
         <h3>{{ 'Common Experiment Template'|trans }}</h3><hr>
         <p>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
-        <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+        <textarea style='height:400px' data-lang='{{ Users.userData.lang }}' class='mceditable' id='commonTplTemplate' />
             {{ templatesArr.body|raw }}
         </textarea>
         <div class='submitButtonDiv'>
-            <button type='submit' class='button' onClick='commonTplUpdate()'>{{ 'Save'|trans }}</button>
+            <button type='submit' class='button'>{{ 'Save'|trans }}</button>
         </div>
     </div>
 </div>
@@ -213,8 +307,9 @@
             <span class='strong'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
         </p>
 
-        <label class='block' for='item_selector'>{{ '1. Select a type of item to import to:'|trans }}</label>
-        <select class='clean-form col-3-form' id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+        <label class='block' for='item_selector_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
+        <select class='clean-form col-3-form item-selector' id='item_selector_csv'>
+            <option value='' selected disabled>--------</option>
             {% for itemsType in itemsTypesArr %}
                 <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
             {% endfor %}
@@ -243,9 +338,9 @@
             <br><span class='strong'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
         </p>
 
-        <label class='block' for='item_selector'>{{ '1. Select where to import:'|trans }}</label>
-        <select class='clean-form col-3-form' id='item_selector' onchange='goNext(this.value)'>
-            <option value='' selected>-------</option>
+        <label class='block' for='item_selector_zip'>{{ '1. Select where to import:'|trans }}</label>
+        <select class='clean-form col-3-form item-selector' id='item_selector_zip'>
+            <option value='' selected disabled>-------</option>
             <option class='disabled-input' value='' disabled>Import items</option>
             {% for itemsType in itemsTypesArr %}
                 <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
@@ -270,123 +365,4 @@
 </div>
 
 <script src='app/js/edit.mode.min.js'></script>
-<script>
-function toggleTimestampInputs() {
-    $('.timestampInputs').toggle();
-}
-$(document).ready(function() {
-    $('.timestampInputs').hide();
-    // validate on enter
-    $('#create_teamgroup').keypress(function (e) {
-        var keynum;
-        if (e.which) {
-            keynum = e.which;
-        }
-        if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-            teamGroupCreate();
-        }
-    });
-    // edit the team group name
-    $('h3.teamgroup_name').editable('app/controllers/TeamGroupsController.php', {
-        indicator : 'Saving...',
-        name : 'teamGroupUpdateName',
-        submit : 'Save',
-        cancel : 'Cancel',
-        style : 'display:inline'
-
-    });
-    // SORTABLE for STATUS
-    $('.sortable_status').sortable({
-        // limit to vertical dragging
-        axis : 'y',
-        helper : 'clone',
-        // do ajax request to update db with new order
-        update: function(event, ui) {
-            // send the orders as an array
-            var ordering = $(".sortable_status").sortable("toArray");
-
-            $.post("app/controllers/AdminController.php", {
-                'updateOrdering': true,
-                'table': 'status',
-                'ordering': ordering
-            }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
-                } else {
-                    notif(json.msg, 'ko');
-                }
-            });
-        }
-    });
-
-    $('.itemsTypesEditor').hide();
-
-    // SORTABLE for ITEMS TYPES
-    $('.sortable_itemstypes').sortable({
-        // limit to horizontal dragging
-        axis : 'y',
-        helper : 'clone',
-        // do ajax request to update db with new order
-        update: function(event, ui) {
-            // send the orders as an array
-            var ordering = $(".sortable_itemstypes").sortable("toArray");
-
-            $.post("app/controllers/AdminController.php", {
-                'updateOrdering': true,
-                'table': 'items_types',
-                'ordering': ordering
-            }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
-                } else {
-                    notif(json.msg, 'ko');
-                }
-            });
-        }
-    });
-    // IMPORT
-    $('.import_block').hide();
-
-    // TABS
-    // get the tab=X parameter in the url
-    var params = getGetParameters();
-    var tab = parseInt(params['tab']);
-    if (!isInt(tab)) {
-        var tab = 1;
-    }
-    var initdiv = '#tab' + tab + 'div';
-    var inittab = '#tab' + tab;
-    // init
-    $(".divhandle").hide();
-    $(initdiv).show();
-    $(inittab).addClass('selected');
-
-    $(".tabhandle" ).click(function(event) {
-        var tabhandle = '#' + event.target.id;
-        var divhandle = '#' + event.target.id + 'div';
-        $(".divhandle").hide();
-        $(divhandle).show();
-        $(".tabhandle").removeClass('selected');
-        $(tabhandle).addClass('selected');
-    });
-    // END TABS
-    // COLORPICKER
-    $('.colorpicker').colorpicker({
-        hsv: false,
-        okOnEnter: true,
-        rgb: false
-    });
-    // EDITOR
-    tinymce.init({
-        mode : "specific_textareas",
-        editor_selector : "mceditable",
-        content_css : "app/css/tinymce.css",
-        plugins : "table textcolor searchreplace lists advlist code fullscreen insertdatetime paste charmap save image link",
-        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
-        removed_menuitems : "newdocument",
-        language : '{{ Users.userData.lang }}'
-    });
-});
-</script>
+<script src='app/js/admin.js'></script>

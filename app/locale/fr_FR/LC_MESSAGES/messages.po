@@ -1504,7 +1504,7 @@ msgstr "Cette page permet l'import d'archive .elabftw.zip."
 
 #: admin.php:303
 msgid "1. Select where to import:"
-msgstr "2. Choisissez où importer :"
+msgstr "1. Choisissez où importer :"
 
 #: admin.php:322
 msgid "2. Select a ZIP file to import:"

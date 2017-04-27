@@ -17,6 +17,8 @@ use Exception;
  *
  */
 try {
+//header("Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval' https://www.google.com/; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://ajax.googleapis.com/ https://www.google.com/; font-src 'self'; object-src 'self';");
+
     require_once 'app/init.inc.php';
     $pageTitle = _('Admin panel');
     require_once 'app/head.inc.php';
@@ -29,18 +31,19 @@ try {
     $Config = new Config();
     $Users = new Users($_SESSION['userid'], $Config);
 
-    $StatusView = new StatusView(new Status($Users));
-    $ItemsTypesView = new ItemsTypesView(new ItemsTypes($Users));
-    $TeamGroups = new TeamGroups($_SESSION['team_id']);
     $Auth = new Auth();
+    $ItemsTypes = new ItemsTypes($Users));
+    $Status = new Status($Users);
+    $TeamGroups = new TeamGroups($_SESSION['team_id']);
     $Templates = new Templates($Users);
     $Teams = new Teams($_SESSION['team_id']);
 
-    $itemsTypesArr = $ItemsTypesView->ItemsTypes->readAll();
+    $itemsTypesArr = $ItemsTypes->readAll();
     $teamConfigArr = $Teams->read();
     $teamGroupsArr = $TeamGroups->readAll();
     $templatesArr = $Templates->readCommon();
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
+    $statusArr = $Status->readAll();
 
     // VALIDATE USERS BLOCK
     // only show the frame if there is some users to validate and there is an email config
@@ -69,8 +72,7 @@ try {
         'Auth' => $Auth,
         'FormKey' => $FormKey,
         'itemsTypesArr' => $itemsTypesArr,
-        'ItemsTypesView' => $ItemsTypesView,
-        'StatusView' => $StatusView,
+        'statusArr' => $statusArr,
         'session' => $_SESSION,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,

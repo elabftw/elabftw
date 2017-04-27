@@ -633,15 +633,6 @@ function teamGroupDestroy(groupid, confirmText) {
 }
 // END TEAM GROUP
 
-// used on import csv/zip to go to next step
-function goNext(x) {
-    if(x === '') {
-        return;
-    }
-    document.cookie = 'itemType='+x;
-    $('.import_block').show();
-}
-
 // sysconfig.php
 // =============
 

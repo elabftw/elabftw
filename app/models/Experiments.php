@@ -21,7 +21,7 @@ class Experiments extends Entity
     use EntityTrait;
 
     /** pdo object */
-    public $pdo;
+    protected $pdo;
 
     /** our team */
     public $team;

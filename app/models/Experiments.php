@@ -123,39 +123,6 @@ class Experiments extends Entity
     }
 
     /**
-     * Update an experiment
-     *
-     * @param string $title
-     * @param string $date
-     * @param string $body
-     * @return bool
-     */
-    public function update($title, $date, $body)
-    {
-        $title = Tools::checkTitle($title);
-        $date = Tools::kdate($date);
-        $body = Tools::checkBody($body);
-
-        $sql = "UPDATE experiments SET
-            title = :title,
-            date = :date,
-            body = :body
-            WHERE userid = :userid
-            AND id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':title', $title);
-        $req->bindParam(':date', $date);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userid);
-        $req->bindParam(':id', $this->id);
-
-        // add a revision
-        $Revisions = new Revisions($this);
-
-        return $req->execute() && $Revisions->create($body);
-    }
-
-    /**
      * Check if we have a correct value
      *
      * @param string $visibility

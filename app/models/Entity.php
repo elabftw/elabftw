@@ -204,6 +204,54 @@ class Entity
     }
 
     /**
+     * Update an entity
+     *
+     * @param string $title
+     * @param string $date
+     * @param string $body
+     * @return bool
+     */
+    public function update($title, $date, $body)
+    {
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            return false;
+        }
+
+        $title = Tools::checkTitle($title);
+        $date = Tools::kdate($date);
+        $body = Tools::checkBody($body);
+
+        if ($this->type === 'experiments') {
+            $sql = "UPDATE experiments SET
+                title = :title,
+                date = :date,
+                body = :body
+                WHERE userid = :userid
+                AND id = :id";
+        } else {
+            $sql = "UPDATE items SET
+                title = :title,
+                date = :date,
+                body = :body,
+                userid = :userid
+                WHERE id = :id";
+        }
+
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':date', $date);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id);
+
+        // add a revision
+        $Revisions = new Revisions($this);
+
+        return $req->execute() && $Revisions->create($body);
+    }
+
+    /**
      * Set a limit for sql read
      *
      * @param int $num

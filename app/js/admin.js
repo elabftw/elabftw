@@ -1,4 +1,60 @@
 $(document).ready(function() {
+    // STATUS
+    var Status = {
+        controller: 'app/controllers/StatusController.php',
+        create: function() {
+            name = $('#statusName').val();
+            color = $('#statusColor').val();
+            $.post(this.controller, {
+                statusCreate: true,
+                name: name,
+                color: color
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                    window.location.replace('admin.php?tab=4');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        },
+        update: function(id) {
+            name = $('#statusName_' + id).val();
+            color = $('#statusColor_' + id).val();
+            isDefault = $('#statusDefault_' + id).is(':checked');
+
+            $.post(this.controller, {
+                statusUpdate: true,
+                id: id,
+                name: name,
+                color: color,
+                isDefault: isDefault
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        },
+        destroy: function(id) {
+            $.post(this.controller, {
+                statusDestroy: true,
+                id: id
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                    $('#status_' + id).hide();
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        }
+    };
+
     $('.togglable-next').click(function() {
         $(this).next().toggle();
     });
@@ -30,14 +86,14 @@ $(document).ready(function() {
     });
 
     $('#statusCreate').click(function() {
-        statusCreate();
+        Status.create();
     });
 
     $('.statusSave').click(function() {
-        statusUpdate($(this).data('id'));
+        Status.update($(this).data('id'));
     });
     $('.statusDestroy').click(function() {
-        statusDestroy($(this).data('id'));
+        Status.destroy($(this).data('id'));
     });
 
     $('#itemsTypesCreate').click(function() {
@@ -55,7 +111,6 @@ $(document).ready(function() {
     $('.itemsTypesDestroy').click(function() {
         itemsTypesDestroy($(this).data('id'));
     });
-
 
     // validate on enter
     $('#create_teamgroup').keypress(function (e) {

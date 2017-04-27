@@ -447,62 +447,6 @@ function entityDestroy(type, id, confirmText) {
 // admin.php
 // =========
 
-// STATUS
-function statusCreate() {
-    name = $('#statusName').val();
-    color = $('#statusColor').val();
-    $.post('app/controllers/StatusController.php', {
-        statusCreate: true,
-        name: name,
-        color: color
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            window.location.replace('admin.php?tab=4');
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-function statusUpdate(id) {
-    name = $('#statusName_' + id).val();
-    color = $('#statusColor_' + id).val();
-    isDefault = $('#statusDefault_' + id).is(':checked');
-
-    $.post('app/controllers/StatusController.php', {
-        statusUpdate: true,
-        id: id,
-        name: name,
-        color: color,
-        isDefault: isDefault
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-function statusDestroy(id) {
-    $.post('app/controllers/StatusController.php', {
-        statusDestroy: true,
-        id: id
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            $('#status_' + id).hide();
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-
 // ITEMS TYPES
 function itemsTypesCreate() {
     name = $('#itemsTypesName').val();

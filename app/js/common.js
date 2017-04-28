@@ -521,7 +521,6 @@ function itemsTypesDestroy(id) {
     });
 }
 
-
 // COMMON TEMPLATE
 function commonTplUpdate() {
     template = tinymce.get('commonTplTemplate').getContent();
@@ -531,51 +530,6 @@ function commonTplUpdate() {
         notif('Saved', 'ok');
     });
 }
-
-// TEAM GROUP
-function teamGroupCreate() {
-    var name = $('#teamGroupCreate').val();
-    if (name.length > 0) {
-        $.post('app/controllers/TeamGroupsController.php', {
-            teamGroupCreate: name
-        }).done(function() {
-            $('#team_groups_div').load('admin.php #team_groups_div');
-            $('#teamGroupCreate').val('');
-        });
-    }
-}
-
-function teamGroupUpdate(action) {
-    if (action === 'add') {
-        user = $('#teamGroupUserAdd').val();
-        group = $('#teamGroupGroupAdd').val();
-    } else {
-        user = $('#teamGroupUserRm').val();
-        group = $('#teamGroupGroupRm').val();
-    }
-    $.post('app/controllers/TeamGroupsController.php', {
-        teamGroupUpdate: true,
-        action: action,
-        teamGroupUser: user,
-        teamGroupGroup: group
-    }).done(function() {
-        $('#team_groups_div').load('admin.php #team_groups_div');
-    });
-}
-
-function teamGroupDestroy(groupid, confirmText) {
-    var youSure = confirm(confirmText);
-    if (youSure === true) {
-        $.post('app/controllers/TeamGroupsController.php', {
-            teamGroupDestroy: true,
-            teamGroupGroup: groupid
-        }).done(function() {
-            $("#team_groups_div").load("admin.php #team_groups_div");
-        });
-    }
-    return false;
-}
-// END TEAM GROUP
 
 // sysconfig.php
 // =============

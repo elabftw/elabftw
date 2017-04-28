@@ -3,8 +3,9 @@ $(document).ready(function() {
     var Status = {
         controller: 'app/controllers/StatusController.php',
         create: function() {
-            name = $('#statusName').val();
-            color = $('#statusColor').val();
+            var name = $('#statusName').val();
+            var color = $('#statusColor').val();
+
             $.post(this.controller, {
                 statusCreate: true,
                 name: name,
@@ -20,9 +21,9 @@ $(document).ready(function() {
             });
         },
         update: function(id) {
-            name = $('#statusName_' + id).val();
-            color = $('#statusColor_' + id).val();
-            isDefault = $('#statusDefault_' + id).is(':checked');
+            var name = $('#statusName_' + id).val();
+            var color = $('#statusColor_' + id).val();
+            var isDefault = $('#statusDefault_' + id).is(':checked');
 
             $.post(this.controller, {
                 statusUpdate: true,
@@ -69,30 +70,77 @@ $(document).ready(function() {
         $('.import_block').show();
     });
 
-    $('#teamGroupCreate').next('.button').click(function() {
-        teamGroupCreate();
+    // TEAMGROUPS
+    var TeamGroups = {
+        controller: 'app/controllers/TeamGroupsController.php',
+        create: function() {
+            var name = $('#teamGroupCreate').val();
+            if (name.length > 0) {
+                $.post(this.controller, {
+                    teamGroupCreate: name
+                }).done(function() {
+                    $('#team_groups_div').load('admin.php #team_groups_div');
+                    $('#teamGroupCreate').val('');
+                    notif('Saved', 'ok');
+                });
+            }
+        },
+        update: function(action) {
+            if (action === 'add') {
+                user = $('#teamGroupUserAdd').val();
+                group = $('#teamGroupGroupAdd').val();
+            } else {
+                user = $('#teamGroupUserRm').val();
+                group = $('#teamGroupGroupRm').val();
+            }
+            $.post(this.controller, {
+                teamGroupUpdate: true,
+                action: action,
+                teamGroupUser: user,
+                teamGroupGroup: group
+            }).done(function() {
+                $('#team_groups_div').load('admin.php #team_groups_div');
+            });
+        },
+        destroy: function(id, confirmText) {
+            var youSure = confirm(confirmText);
+            if (youSure === true) {
+                $.post(this.controller, {
+                    teamGroupDestroy: true,
+                    teamGroupGroup: id
+                }).done(function() {
+                    $("#team_groups_div").load("admin.php #team_groups_div");
+                });
+            }
+            return false;
+        }
+    };
+
+    $(document).on('click', '#teamGroupCreateBtn', function() {
+        TeamGroups.create();
     });
 
-    $('#teamGroupGroupAdd').next('.button').click(function() {
-        teamGroupUpdate('add');
+    $(document).on('click', '#teamGroupGroupAddBtn', function() {
+        TeamGroups.update('add');
     });
 
-    $('#teamGroupGroupRm').next('.button').click(function() {
-        teamGroupUpdate('rm');
+    $(document).on('click', '#teamGroupGroupRmBtn', function() {
+        TeamGroups.update('rm');
     });
 
-    $('.teamGroupDelete').click(function() {
-        teamGroupDestroy($(this).data('id'), $(this).data('confirm'));
+    $(document).on('click', '.teamGroupDelete', function() {
+        TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
     });
 
-    $('#statusCreate').click(function() {
+    $(document).on('click', '#statusCreate', function() {
         Status.create();
     });
 
-    $('.statusSave').click(function() {
+    $(document).on('click', '.statusSave', function() {
         Status.update($(this).data('id'));
     });
-    $('.statusDestroy').click(function() {
+
+    $(document).on('click', '.statusDestroy', function() {
         Status.destroy($(this).data('id'));
     });
 

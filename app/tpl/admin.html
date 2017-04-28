@@ -137,7 +137,7 @@
         <!-- CREATE A GROUP -->
         <label class='block' for='teamGroupCreate'>{{ 'Create a group'|trans }}</label>
         <input class='clean-form col-3-form' id='teamGroupCreate' type='text' />
-        <button type='submit' class='button'>{{ 'Create'|trans }}</button>
+        <button type='submit' id='teamGroupCreateBtn' class='button'>{{ 'Create'|trans }}</button>
         <!-- END CREATE GROUP -->
 
         <div id='team_groups_div'>
@@ -158,7 +158,7 @@
                             <option value='{{ teamGroup.id }}'>{{ teamGroup.name }}</option>
                         {% endfor %}
                     </select>
-                    <button type='submit' class='button'>{{ 'Add'|trans }}</button>
+                    <button type='submit' id='teamGroupGroupAddBtn' class='button'>{{ 'Add'|trans }}</button>
                 </section>
 
                 <section>
@@ -177,7 +177,7 @@
                             <option value='{{ teamGroup.id }}'>{{ teamGroup.name }}</option>
                         {% endfor %}
                     </select>
-                    <button type='submit' class='button button-delete'>{{ 'Remove'|trans }}</button>
+                    <button type='submit' id='teamGroupGroupRmBtn' class='button button-delete'>{{ 'Remove'|trans }}</button>
                 </section>
             </div>
 

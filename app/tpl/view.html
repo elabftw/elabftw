@@ -137,26 +137,30 @@
 </section>
 
 {% if Ev.Entity.type == 'experiments' %}
+    <section id='expcomment_container'>
+        <div id='expcomment' class='box'>
+            <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>
+
+            {% if commentsArr|length > 0 %}
+                {% for comment in commentsArr %}
+                    <div class='expcomment_box'>
+                        <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Ev.Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
+                        <span>On {{ comment.datetime }} {{ comment.fullname }} wrote :</span>
+                        <!-- .editable uses the id of the element to send to the controller -->
+                        <p class='editable' id='{{ comment.id }}' data-expid='{{ Ev.Entity.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <textarea id='commentsCreateArea' placeholder='{{ 'Add a comment'|trans }}'></textarea>
+            <div id='commentsCreateButtonDiv' class='submitButtonDiv'>
+                <button class='button' id='commentsCreateButton' data-expid='{{ Ev.Entity.id }}'>{{ 'Save'|trans }}</button>
+            </div>
+        </div>
+    </section>
+
+<script src='app/js/view.js'></script>
 <script>
-    function commentsUpdate() {
-        // Experiment comment is editable
-        $('div#expcomment').on('mouseover', '.editable', function(){
-            $('div#expcomment p.editable').editable('app/controllers/CommentsController.php', {
-                name: 'commentsUpdate',
-                tooltip : 'Click to edit',
-                indicator : '{{ 'Saving'|trans }}',
-                submit : '{{ 'Save'|trans }}',
-                cancel : '{{ 'Cancel'|trans }}',
-                style : 'display:inline',
-                callback : function() {
-                    // now we reload the comments part to show the comment we just submitted
-                    $('#expcomment_container').load('experiments.php?mode=view&id={{ Ev.Entity.id }} #expcomment');
-                    // we reload the function so editable zones are editable again
-                    commentsUpdate();
-                }
-            })
-        });
-    }
     // TIMESTAMP
     function confirmTimestamp() {
         $('#confirm-timestamp').dialog({
@@ -181,14 +185,12 @@
         $('#commentsCreateButtonDiv').hide();
 
         // Keyboard shortcuts
-        key('{{ Ev.Entity.Users.userData['sc_create'] }}', function(){
+        key('{{ Ev.Entity.Users.userData.sc_create }}', function(){
             location.href = '{{ controller }}?create=true';
         });
-        key('{{ Ev.Entity.Users.userData['sc_edit'] }}', function(){
+        key('{{ Ev.Entity.Users.userData.sc_edit }}', function(){
             location.href = '{{ page }}?mode=edit&id={{ Ev.Entity.id }}';
         });
-        // make editable
-        setInterval(commentsUpdate, 50);
     });
 </script>
 {% endif %}

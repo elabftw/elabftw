@@ -44,8 +44,6 @@ class ExperimentsView extends EntityView
     public function view()
     {
         $this->html .= $this->UploadsView->buildUploads('view');
-        $this->html .= $this->buildComments();
-        $this->html .= $this->buildCommentsCreate();
 
         return $this->html;
     }
@@ -98,51 +96,5 @@ class ExperimentsView extends EntityView
             'ok',
             false
         );
-    }
-
-    /**
-     * Display comments for an experiment
-     *
-     */
-    private function buildComments()
-    {
-        $Comments = new Comments($this->Entity);
-        $commentsArr = $Comments->read();
-
-        //  we need to add a container here so the reload function in the callback of .editable() doesn't mess things up
-        $html = "<section id='expcomment_container'>";
-        $html .= "<div id='expcomment' class='box'>";
-        $html .= "<h3><img src='app/img/comment.png' alt='comment' />" . _('Comments') . "</h3>";
-
-        if (is_array($commentsArr)) {
-            // there is comments to display
-            foreach ($commentsArr as $comment) {
-                if (empty($comment['firstname'])) {
-                    $comment['firstname'] = '[deleted]';
-                }
-                $html .= "<div class='expcomment_box'>
-                    <img class='align_right' src='app/img/small-trash.png' ";
-                $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(" .
-                    $comment['id'] . ", " . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
-                $html .= "<span>On " . $comment['datetime'] . " " . $comment['firstname'] . " " .
-                    $comment['lastname'] . " wrote :</span><br />";
-                $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";
-            }
-        }
-        return $html;
-    }
-
-    /**
-     * HTML for the add new comment block
-     */
-    private function buildCommentsCreate()
-    {
-        $html = "<textarea onFocus='commentsCreateButtonDivShow()' id='commentsCreateArea' placeholder='" .
-            _('Add a comment') . "'></textarea>";
-        $html .= "<div id='commentsCreateButtonDiv' class='submitButtonDiv'>";
-        $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" .
-            $this->Entity->id . ")'>" . _('Save') . "</button></div></div></section>";
-
-        return $html;
     }
 }

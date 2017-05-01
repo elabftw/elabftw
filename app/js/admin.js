@@ -32,8 +32,7 @@ $(document).ready(function() {
             });
         },
         destroy: function(id, confirmText) {
-            var youSure = confirm(confirmText);
-            if (youSure === true) {
+            if (confirm(confirmText)) {
                 $.post(this.controller, {
                     teamGroupDestroy: true,
                     teamGroupGroup: id

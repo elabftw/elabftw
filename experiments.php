@@ -89,8 +89,10 @@ try {
     } elseif ($_GET['mode'] === 'view') {
 
         $EntityView->Entity->setId($_GET['id']);
+        $Comments = new Comments($EntityView->Entity);
         $EntityView->initViewEdit();
 
+        $commentsArr = $Comments->read();
         $ownerName = '';
         if ($EntityView->isReadOnly()) {
             // we need to get the fullname of the user who owns the experiment to display the RO message
@@ -102,11 +104,11 @@ try {
             echo $EntityView->showTimestamp();
         }
 
-
         echo $twig->render('view.html', array(
             'Ev' => $EntityView,
             'Status' => $Status,
             'Tags' => $Tags,
+            'commentsArr' => $commentsArr,
             'ownerName' => $ownerName
         ));
         echo $EntityView->view();

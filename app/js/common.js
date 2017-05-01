@@ -364,58 +364,6 @@ function timestamp(id) {
     });
 }
 
-// COMMENTS
-function commentsCreateButtonDivShow() {
-    $('#commentsCreateButtonDiv').show();
-}
-
-// create
-function commentsCreate(id) {
-    document.getElementById('commentsCreateButton').disabled = true;
-    comment = $('#commentsCreateArea').val();
-    // check length
-    if (comment.length < 2) {
-        notif('Comment too short!');
-        document.getElementById('commentsCreateButton').disabled = false;
-        return false;
-    }
-
-    $.post('app/controllers/CommentsController.php', {
-        commentsCreate: true,
-        comment: comment,
-        id: id
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-// destroy
-function commentsDestroy(id, expId, confirmText) {
-    var youSure = confirm(confirmText);
-    if (youSure === true) {
-        $.post('app/controllers/CommentsController.php', {
-            destroy: true,
-            id: id
-        }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
-                 $('#expcomment_container').load("experiments.php?mode=view&id=" + expId + " #expcomment");
-            } else {
-                notif(json.msg, 'ko');
-            }
-        });
-    } else {
-        return false;
-    }
-}
-
 // ENTITY DESTROY
 function entityDestroy(type, id, confirmText) {
     var youSure = confirm(confirmText);

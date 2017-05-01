@@ -71,14 +71,14 @@ class Comments
         $Config = new Config();
 
         // get the first and lastname of the commenter
-        $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
+        $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->execute();
         $commenter = $req->fetch();
 
         // get email of the XP owner
-        $sql = "SELECT email, userid, firstname, lastname FROM users
+        $sql = "SELECT email, userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users
             WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
@@ -103,12 +103,11 @@ class Comments
         // Set the From address with an associative array
         ->setFrom(array($Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
-        ->setTo(array($users['email'] => $users['firstname'] . $users['lastname']))
+        ->setTo(array($users['email'] => $users['fullname']))
         // Give it a body
         ->setBody(sprintf(
-            _('Hi. %s %s left a comment on your experiment. Have a look: %s'),
-            $commenter['firstname'],
-            $commenter['lastname'],
+            _('Hi. %s left a comment on your experiment. Have a look: %s'),
+            $commenter['fullname'],
             $full_url
         ) . $footer);
         $Email = new Email(new Config);
@@ -124,7 +123,9 @@ class Comments
      */
     public function read()
     {
-        $sql = "SELECT * FROM experiments_comments
+        $sql = "SELECT experiments_comments.*,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM experiments_comments
             LEFT JOIN users ON (experiments_comments.userid = users.userid)
             WHERE exp_id = :id ORDER BY experiments_comments.datetime ASC";
         $req = $this->pdo->prepare($sql);
@@ -167,13 +168,15 @@ class Comments
      * Destroy a comment
      *
      * @param int $id id of the comment
+     * @param int $userid
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id, $userid)
     {
-        $sql = "DELETE FROM experiments_comments WHERE id = :id";
+        $sql = "DELETE FROM experiments_comments WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
+        $req->bindParam(':userid', $userid);
 
         return $req->execute();
     }

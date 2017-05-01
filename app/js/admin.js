@@ -1,4 +1,65 @@
 $(document).ready(function() {
+    // TEAMGROUPS
+    var TeamGroups = {
+        controller: 'app/controllers/TeamGroupsController.php',
+        create: function() {
+            var name = $('#teamGroupCreate').val();
+            if (name.length > 0) {
+                $.post(this.controller, {
+                    teamGroupCreate: name
+                }).done(function() {
+                    $('#team_groups_div').load('admin.php #team_groups_div');
+                    $('#teamGroupCreate').val('');
+                    notif('Saved', 'ok');
+                });
+            }
+        },
+        update: function(action) {
+            if (action === 'add') {
+                user = $('#teamGroupUserAdd').val();
+                group = $('#teamGroupGroupAdd').val();
+            } else {
+                user = $('#teamGroupUserRm').val();
+                group = $('#teamGroupGroupRm').val();
+            }
+            $.post(this.controller, {
+                teamGroupUpdate: true,
+                action: action,
+                teamGroupUser: user,
+                teamGroupGroup: group
+            }).done(function() {
+                $('#team_groups_div').load('admin.php #team_groups_div');
+            });
+        },
+        destroy: function(id, confirmText) {
+            var youSure = confirm(confirmText);
+            if (youSure === true) {
+                $.post(this.controller, {
+                    teamGroupDestroy: true,
+                    teamGroupGroup: id
+                }).done(function() {
+                    $("#team_groups_div").load("admin.php #team_groups_div");
+                });
+            }
+            return false;
+        }
+    };
+    $(document).on('click', '#teamGroupCreateBtn', function() {
+        TeamGroups.create();
+    });
+
+    $(document).on('click', '#teamGroupGroupAddBtn', function() {
+        TeamGroups.update('add');
+    });
+
+    $(document).on('click', '#teamGroupGroupRmBtn', function() {
+        TeamGroups.update('rm');
+    });
+
+    $(document).on('click', '.teamGroupDelete', function() {
+        TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
+    });
+
     // STATUS
     var Status = {
         controller: 'app/controllers/StatusController.php',
@@ -55,83 +116,6 @@ $(document).ready(function() {
             });
         }
     };
-
-    $('.togglable-next').click(function() {
-        $(this).next().toggle();
-    });
-    $('.togglable-hidden').hide();
-
-    $('#commonTplTemplate').closest('div').find('.button').click(function() {
-        commonTplUpdate();
-    });
-
-    $('.item-selector').on('change', function() {
-        document.cookie = 'itemType=' + this.value;
-        $('.import_block').show();
-    });
-
-    // TEAMGROUPS
-    var TeamGroups = {
-        controller: 'app/controllers/TeamGroupsController.php',
-        create: function() {
-            var name = $('#teamGroupCreate').val();
-            if (name.length > 0) {
-                $.post(this.controller, {
-                    teamGroupCreate: name
-                }).done(function() {
-                    $('#team_groups_div').load('admin.php #team_groups_div');
-                    $('#teamGroupCreate').val('');
-                    notif('Saved', 'ok');
-                });
-            }
-        },
-        update: function(action) {
-            if (action === 'add') {
-                user = $('#teamGroupUserAdd').val();
-                group = $('#teamGroupGroupAdd').val();
-            } else {
-                user = $('#teamGroupUserRm').val();
-                group = $('#teamGroupGroupRm').val();
-            }
-            $.post(this.controller, {
-                teamGroupUpdate: true,
-                action: action,
-                teamGroupUser: user,
-                teamGroupGroup: group
-            }).done(function() {
-                $('#team_groups_div').load('admin.php #team_groups_div');
-            });
-        },
-        destroy: function(id, confirmText) {
-            var youSure = confirm(confirmText);
-            if (youSure === true) {
-                $.post(this.controller, {
-                    teamGroupDestroy: true,
-                    teamGroupGroup: id
-                }).done(function() {
-                    $("#team_groups_div").load("admin.php #team_groups_div");
-                });
-            }
-            return false;
-        }
-    };
-
-    $(document).on('click', '#teamGroupCreateBtn', function() {
-        TeamGroups.create();
-    });
-
-    $(document).on('click', '#teamGroupGroupAddBtn', function() {
-        TeamGroups.update('add');
-    });
-
-    $(document).on('click', '#teamGroupGroupRmBtn', function() {
-        TeamGroups.update('rm');
-    });
-
-    $(document).on('click', '.teamGroupDelete', function() {
-        TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
-    });
-
     $(document).on('click', '#statusCreate', function() {
         Status.create();
     });
@@ -144,20 +128,111 @@ $(document).ready(function() {
         Status.destroy($(this).data('id'));
     });
 
-    $('#itemsTypesCreate').click(function() {
-        itemsTypesCreate();
+    // ITEMSTYPES
+    var ItemsTypes = {
+        controller: 'app/controllers/ItemsTypesController.php',
+        create: function() {
+            var name = $('#itemsTypesName').val();
+            var color = $('#itemsTypesColor').val();
+            var checkbox = $('#itemsTypesBookable').is(":checked");
+            var bookable = 0;
+            if (checkbox) {
+                bookable = 1;
+            }
+            template = tinymce.get('itemsTypesTemplate').getContent();
+            $.post(this.controller, {
+                itemsTypesCreate: true,
+                name: name,
+                color: color,
+                bookable: bookable,
+                template: template
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                    window.location.replace('admin.php?tab=5');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        },
+        showEditor: function(id) {
+            $('#itemsTypesEditor_' + id).toggle();
+        },
+        update: function(id) {
+            var name = $('#itemsTypesName_' + id).val();
+            var color = $('#itemsTypesColor_' + id).val();
+            var checkbox = $('#itemsTypesBookable_' + id).is(":checked");
+            var bookable = 0;
+            if (checkbox) {
+                bookable = 1;
+            }
+            var template = tinymce.get('itemsTypesTemplate_' + id).getContent();
+
+            $.post(this.controller, {
+                itemsTypesUpdate: true,
+                id: id,
+                name: name,
+                color: color,
+                bookable: bookable,
+                template: template
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        },
+        destroy: function(id) {
+            $.post(this.controller, {
+                itemsTypesDestroy: true,
+                id: id
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                    $('#itemstypes_' + id).hide();
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        }
+    };
+    $('.itemsTypesEditor').hide();
+    $(document).on('click', '#itemsTypesCreate', function() {
+        ItemsTypes.create();
+    });
+    $(document).on('click', '.itemsTypesShowEditor', function() {
+        ItemsTypes.showEditor($(this).data('id'));
+    });
+    $(document).on('click', '.itemsTypesUpdate', function() {
+        ItemsTypes.update($(this).data('id'));
+    });
+    $(document).on('click', '.itemsTypesDestroy', function() {
+        ItemsTypes.destroy($(this).data('id'));
     });
 
-    $('.itemsTypesShowEditor').click(function() {
-        itemsTypesShowEditor($(this).data('id'));
+    // COMMON TEMPLATE
+    $('#commonTplTemplate').closest('div').find('.button').click(function() {
+        var template = tinymce.get('commonTplTemplate').getContent();
+        $.post('app/controllers/AdminController.php', {
+            commonTplUpdate: template
+        }).done(function() {
+            notif('Saved', 'ok');
+        });
     });
 
-    $('.itemsTypesUpdate').click(function() {
-        itemsTypesUpdate($(this).data('id'));
+    // COMMON
+    $('.togglable-next').click(function() {
+        $(this).next().toggle();
     });
+    $('.togglable-hidden').hide();
 
-    $('.itemsTypesDestroy').click(function() {
-        itemsTypesDestroy($(this).data('id'));
+    $('.item-selector').on('change', function() {
+        document.cookie = 'itemType=' + this.value;
+        $('.import_block').show();
     });
 
     // validate on enter
@@ -203,8 +278,6 @@ $(document).ready(function() {
             });
         }
     });
-
-    $('.itemsTypesEditor').hide();
 
     // SORTABLE for ITEMS TYPES
     $('.sortable_itemstypes').sortable({

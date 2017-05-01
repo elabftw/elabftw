@@ -32,6 +32,7 @@ try {
     $Idps = new Idps();
     $Logs = new Logs();
     $TeamsView = new TeamsView(new Teams());
+    $teamsArr = $TeamsView->Teams->readAll();
     $Users = new Users();
     $usersArr = $Users->readAll();
     $ReleaseCheck = new ReleaseCheck($Config);
@@ -109,6 +110,7 @@ try {
         'phpInfos' => $phpInfos,
         'logsArr' => $logsArr,
         'session' => $_SESSION,
+        'teamsArr' => $teamsArr,
         'usersArr' => $usersArr
     ));
 

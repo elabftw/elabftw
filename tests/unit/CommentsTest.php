@@ -30,7 +30,7 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 
     public function testDestroy()
     {
-        $this->assertTrue($this->Comments->destroy(1));
+        $this->assertTrue($this->Comments->destroy(1, 1));
     }
 
     public function testDestroyAll()

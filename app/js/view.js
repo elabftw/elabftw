@@ -22,13 +22,14 @@ $(document).ready(function() {
         });
     });
 
+    // CLICK TITLE TO GO IN EDIT MODE
     $(document).on('click', '.click2Edit', function() {
         var page = $(this).data('page');
         var id = $(this).data('id');
         document.location = page + '?mode=edit&id=' + id;
     });
 
-
+    // COMMENTS
     var Comments = {
         controller: 'app/controllers/CommentsController.php',
         create: function(expId) {
@@ -75,13 +76,17 @@ $(document).ready(function() {
         }
     };
 
+    // CREATE COMMENTS
     $('#commentsCreateButtonDiv').hide();
     $(document).on('focus', '#commentsCreateArea', function() {
         $('#commentsCreateButtonDiv').show();
     });
+
     $(document).on('click', '#commentsCreateButton', function() {
         Comments.create($(this).data('expid'));
     });
+
+    // UPDATE COMMENTS
     $(document).on('mouseover', '.editable', function(){
         expId = $(this).data('expid');
         $('div#expcomment p.editable').editable(Comments.controller, {
@@ -97,6 +102,8 @@ $(document).ready(function() {
             }
         });
     });
+
+    // DESTROY COMMENTS
     $(document).on('click', '.commentsDestroy', function() {
         Comments.destroy($(this).data('id'), $(this).data('expid'), $(this).data('confirm'));
     });

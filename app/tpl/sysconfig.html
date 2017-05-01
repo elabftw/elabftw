@@ -19,17 +19,60 @@
             <hr>
             <p>{{ TeamsView.showStats|raw }}</p>
         </div>
-        {{ TeamsView.showPromoteSysadmin|raw }}
-        {{ TeamsView.showCreate|raw }}
-        {{ TeamsView.show|raw }}
-        {{ TeamsView.showMassEmail|raw }}
+        <!-- PROMOTE SYSADMIN -->
+        <div class='box'>
+            <h3>{{ 'Promote Someone to Sysadmin'|trans }}</h3>
+            <hr>
+            <input class='clean-form col-3-form' required type='email' placeholder='louis@pasteur.fr' id='promoteSysadmin' />
+            <button id='promoteSysadminButton' class='button'>{{ 'Save'|trans }}</button>
+        </div>
+
+        <!-- CREATE TEAM -->
+        <div class='box'>
+            <h3>{{ 'Add a New Team'|trans }}</h3>
+            <hr>
+            <input class='clean-form col-3-form' required type='text' placeholder='Pasteur lab' id='teamsName' />
+            <button id='teamsCreateButton' class='button'>{{ 'Save'|trans }}</button>
+        </div>
+
+        <!-- DISPLAY TEAMS -->
+        <div class='box'>
+            <h3>{{ 'Edit Existing Teams'|trans }}</h3>
+            <hr>
+
+            {% for team in teamsArr %}
+            {% set count = TeamsView.Teams.getStats(team.team_id) %}
+            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.team_id }}' type='text' value='{{ team.team_name }}' />
+            <button data-id='{{ team.team_id }}' disabled id='teamsUpdateButton_{{ team.team_id }}' class='button teamsUpdateButton'>
+                {{ 'Save'|trans }}
+            </button>
+            {% if count.totusers == 0 %}
+            <button data-id='{{ team.team_id }}' id='teamsDestroyButton_{{ team.team_id }}' class='button button-delete teamsDestroyButton'>
+                {{ 'Delete'|trans }}
+            </button>
+            {% else %}
+            <button data-id='{{ team.team_id }}' id='teamsArchiveButton_{{ team.team_id }}' class='button button-neutral teamsArchiveButton'>
+                {{ 'Archive'|trans }}
+            </button>
+            {% endif %}
+            <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
+            {% trans %}
+            Experiment
+            {% plural count.totxp %}
+            Experiments
+            {% endtrans %}
+            : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
+            {% endfor %}
+        </div>
+
+        <!-- MASS EMAIL -->
         <div class='box'>
             <h3>{{ 'Send a Mass Email'|trans }}</h3><hr>
             <p>{{ 'Email Subject'|trans }}<br>
                 <input class='clean-form col-3-form' type='text' id='massSubject' size='45' /><br>
                 {{ 'Email Body'|trans }}<br>
                 <textarea class='clean-form col-textarea-form' id='massBody'></textarea><br>
-                <button id='massSend' onClick='massSend()' class='button'>{{ 'Send'|trans }}</button>
+                <button id='massSend' class='button'>{{ 'Send'|trans }}</button>
             </p>
         </div>
     </div>
@@ -148,8 +191,8 @@
         <input type='hidden' name='updateConfig' value='true' />
         <p>{{ "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific smtp2go.com account and add the infos here."|trans }}</p>
         <p>
-        <label class="block" for='mail_method'>{{ 'Send e-mails via:'|trans }}</label>
-        <select class="clean-form col-3-form" onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
+        <label class="block" for='selectMailMethod'>{{ 'Send e-mails via:'|trans }}</label>
+        <select class="clean-form col-3-form" data-mailmethod='{{ Config.configArr.mail_method }}' name='mail_method' id='selectMailMethod'>
             <option value=''>{{ 'Select mailing method...'|trans }}</option>
 
             <option value="sendmail" {{ not disable_sendmail ? " selected" }}>{{ 'Local MTA (default)'|trans }}</option>
@@ -208,7 +251,7 @@
     <div class='box'>
         <label class='block' for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
         <input class='clean-form col-3-form' type='email' placeholder='you@email.com' id='testemailEmail' />
-        <button id='testemailButton' onClick='testemailSend()' class='button'>{{ 'Send'|trans }}</button>
+        <button id='testemailButton' class='button'>{{ 'Send'|trans }}</button>
     </div>
 
 </div>
@@ -228,7 +271,7 @@
             </ul>
         </div>
         <div class='submitButtonDiv'>
-            <button id='logsDestroyButton' onClick='logsDestroy()' class='button button-delete'>{{ 'Clear all logs'|trans }}</button>
+            <button id='logsDestroyButton' class='button button-delete'>{{ 'Clear all logs'|trans }}</button>
         </div>
     </div>
 </div>
@@ -342,42 +385,6 @@
     </div>
 </div>
 
-
-<script>
-    $(document).ready(function() {
-        $('#editSmtpPassword').click(function() {
-            $('#hidden_smtp_password').toggle();
-        });
-        // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-        var input_list = document.getElementsByTagName('input');
-        for (var i=0; i < input_list.length; i++) {
-            var input = input_list[i];
-            input.disabled = false;
-        }
-        // TABS
-        // get the tab=X parameter in the url
-        var params = getGetParameters();
-        var tab = parseInt(params['tab']);
-        if (!isInt(tab)) {
-            var tab = 1;
-        }
-        var initdiv = '#tab' + tab + 'div';
-        var inittab = '#tab' + tab;
-        // init
-        $(".divhandle").hide();
-        $(initdiv).show();
-        $(inittab).addClass('selected');
-
-        $(".tabhandle" ).click(function(event) {
-            var tabhandle = '#' + event.target.id;
-            var divhandle = '#' + event.target.id + 'div';
-            $(".divhandle").hide();
-            $(divhandle).show();
-            $(".tabhandle").removeClass('selected');
-            $(tabhandle).addClass('selected');
-        });
-        // END TABS
-        // honor already saved mail_method setting and hide unused options accordingly
-        toggleMailMethod('{{ Config.configArr.mail_method }}');
-    });
-</script>
+<!--script src='app/js/sysconfig.min.js'></script-->
+<script src='app/js/sysconfig.js'></script>
+<script src='app/js/tabs.min.js'></script>

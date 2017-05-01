@@ -50,7 +50,9 @@ module.exports = function(grunt) {
 
           'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js',
           'app/js/admin.min.js': 'app/js/admin.js',
-          'app/js/view.min.js': 'app/js/view.js'
+          'app/js/view.min.js': 'app/js/view.js',
+          'app/js/tabs.min.js': 'app/js/tabs.js',
+          'app/js/sysconfig.min.js': 'app/js/sysconfig.js'
         }
       }
     },

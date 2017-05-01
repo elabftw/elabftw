@@ -67,11 +67,11 @@
 {% endif %}
 <a class='elab-tooltip' href='#'>
     <span>{{ alt }}</span>
-    <img id='lock' onClick="toggleLock('{{ Ev.Entity.type }}', {{ Ev.Entity.id }})" src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
+    <img id='lock' data-type='{{ Ev.Entity.type }}' data-id='{{ Ev.Entity.id }}' src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
 </a>
 
 <!-- show timestamp button if not timestamped already -->
-{% if not Ev.Entity.entityData['timestamped'] and Ev.Entity.type == 'experiments' %}
+{% if not Ev.Entity.entityData.timestamped and Ev.Entity.type == 'experiments' %}
     <a class='elab-tooltip'>
         <span>{{ 'Timestamp Experiment' }}</span>
         <img id='confirmTimestamp' data-expid='{{ Ev.Entity.id }}' src='app/img/stamp.png' alt='Timestamp' />
@@ -85,10 +85,10 @@
 {% endif %}
 
 <!-- build the tag array -->
-{% if Ev.Entity.entityData['tags']|length > 0 %}
+{% if Ev.Entity.entityData.tags|length > 0 %}
     <span class='tags'><img src='app/img/tags.png' alt='tags' />
-    {% set tagsIdArr = Ev.Entity.entityData['tags_id']|split(',') %}
-    {% set tagsValueArr = Ev.Entity.entityData['tags']|split('|') %}
+    {% set tagsIdArr = Ev.Entity.entityData.tags_id|split(',') %}
+    {% set tagsValueArr = Ev.Entity.entityData.tags|split('|') %}
     {% for key, tag in tagsValueArr %}
         {# the key allows to get the id stored in tagsIdArr #}
         <a href='{{ page }}?mode=show&tag={{ tag|url_encode }}'>{{ tag }}</a>
@@ -96,20 +96,20 @@
 {% endif %}
 
 <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-{% if not Ev.ro and not Ev.Entity.entityData['locked'] %}
-    {% set onClick = "\"document.location='{{ page }}?mode=edit&id={{ Ev.Entity.entityData['id'] }}'\"" %}
+{% if not Ev.ro and not Ev.Entity.entityData.locked %}
+    {% set click2Edit = 'click2Edit' %}
 {% else %}
-    {% set onClick = '' %}
+    {% set click2Edit = '' %}
 {% endif %}
-<div {{ onClick }} class='title_view'>
+<div data-page='{{ page }}' data-id='{{ Ev.Entity.entityData.id }}' class='{{ click2Edit }} title_view'>
     {% if Ev.Entity.type == 'items' %}
-        <span style='color:#{{ Ev.Entity.entityData['color'] }}'>{{ Ev.Entity.entityData['category'] }}</span>
+        <span style='color:#{{ Ev.Entity.entityData['color'] }}'>{{ Ev.Entity.entityData.category }}</span>
     {% endif %}
-    {{ Ev.Entity.entityData['title']|raw }}
+    {{ Ev.Entity.entityData.title|raw }}
 </div>
 <!--  BODY (show only if not empty -->
-{% if Ev.Entity.entityData['body'] != '' %}
-<div id='body_view' class='txt'>{{ Ev.Entity.entityData['body']|raw }}</div>
+{% if Ev.Entity.entityData.body != '' %}
+<div id='body_view' class='txt'>{{ Ev.Entity.entityData.body|raw }}</div>
 <br>
 {% endif %}
 
@@ -159,7 +159,10 @@
         </div>
     </section>
 
-<script src='app/js/view.min.js'></script>
+{% endif %}
+
+<!-- script src='app/js/view.min.js'></script-->
+<script src='app/js/view.js'></script>
 <script>
     // Keyboard shortcuts
     key('{{ Ev.Entity.Users.userData.sc_create }}', function(){
@@ -169,4 +172,3 @@
         location.href = '{{ page }}?mode=edit&id={{ Ev.Entity.id }}';
     });
 </script>
-{% endif %}

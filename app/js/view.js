@@ -1,4 +1,34 @@
 $(document).ready(function() {
+    // TOGGLE LOCK
+    $(document).on('click', '#lock', function() {
+        $.post("app/controllers/EntityController.php", {
+            lock: true,
+            type: $(this).data('type'),
+            id: $(this).data('id')
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+                // change the lock icon
+                current = $('#lock').attr('src');
+                if (current === 'app/img/lock-gray.png') {
+                    $('#lock').attr('src', 'app/img/unlock.png');
+                } else {
+                    $('#lock').attr('src', 'app/img/lock-gray.png');
+                }
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+    });
+
+    $(document).on('click', '.click2Edit', function() {
+        var page = $(this).data('page');
+        var id = $(this).data('id');
+        document.location = page + '?mode=edit&id=' + id;
+    });
+
+
     var Comments = {
         controller: 'app/controllers/CommentsController.php',
         create: function(expId) {

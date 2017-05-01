@@ -349,21 +349,6 @@ function experimentsDestroyLink(link, item, confirmText) {
     return false;
 }
 
-// TIMESTAMP
-function timestamp(id) {
-    $.post('app/controllers/ExperimentsController.php', {
-        timestamp: true,
-        id: id
-    }).done(function (data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            window.location.replace("experiments.php?mode=view&id=" + id);
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
 // ENTITY DESTROY
 function entityDestroy(type, id, confirmText) {
     var youSure = confirm(confirmText);

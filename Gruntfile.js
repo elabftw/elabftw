@@ -43,13 +43,14 @@ module.exports = function(grunt) {
               'bower_components/fullcalendar/dist/fullcalendar.js',
               'bower_components/fullcalendar/dist/locale-all.js'],
 
-          'app/js/edit.mode.min.js': [
+          'app/js/edit.min.js': [
               'bower_components/tinymce/tinymce.js',
               'app/js/tinymce-langs/*',
               'bower_components/dropzone/dist/dropzone.js'],
 
           'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js',
-          'app/js/admin.min.js': 'app/js/admin.js'
+          'app/js/admin.min.js': 'app/js/admin.js',
+          'app/js/view.min.js': 'app/js/view.js'
         }
       }
     },

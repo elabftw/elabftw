@@ -74,9 +74,9 @@
 {% if not Ev.Entity.entityData['timestamped'] and Ev.Entity.type == 'experiments' %}
     <a class='elab-tooltip'>
         <span>{{ 'Timestamp Experiment' }}</span>
-        <img onClick='confirmTimestamp()' src='app/img/stamp.png' alt='Timestamp' />
+        <img id='confirmTimestamp' data-expid='{{ Ev.Entity.id }}' src='app/img/stamp.png' alt='Timestamp' />
     </a>
-    <div id='confirm-timestamp' title='{{ 'Timestamp this experiment?'|trans }}'>
+    <div id='confirmTimestampDiv' data-wait='{{ 'Please wait…' }}' title='{{ 'Timestamp this experiment?'|trans }}'>
         <p>
             <span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>
             {{ 'Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?'|trans }}
@@ -159,38 +159,14 @@
         </div>
     </section>
 
-<script src='app/js/view.js'></script>
+<script src='app/js/view.min.js'></script>
 <script>
-    // TIMESTAMP
-    function confirmTimestamp() {
-        $('#confirm-timestamp').dialog({
-            resizable: false,
-            height: 'auto',
-            width: 400,
-            modal: true,
-            buttons: {
-                'Timestamp it': function() {
-                    timestamp({{ Ev.Entity.id }});
-                },
-                Cancel: function() {
-                    $(this).dialog('close');
-                }
-            }
-        });
-    }
-
-    // READY ? GO !!
-    $(document).ready(function() {
-        $('#confirm-timestamp').hide();
-        $('#commentsCreateButtonDiv').hide();
-
-        // Keyboard shortcuts
-        key('{{ Ev.Entity.Users.userData.sc_create }}', function(){
-            location.href = '{{ controller }}?create=true';
-        });
-        key('{{ Ev.Entity.Users.userData.sc_edit }}', function(){
-            location.href = '{{ page }}?mode=edit&id={{ Ev.Entity.id }}';
-        });
+    // Keyboard shortcuts
+    key('{{ Ev.Entity.Users.userData.sc_create }}', function(){
+        location.href = '{{ controller }}?create=true';
+    });
+    key('{{ Ev.Entity.Users.userData.sc_edit }}', function(){
+        location.href = '{{ page }}?mode=edit&id={{ Ev.Entity.id }}';
     });
 </script>
 {% endif %}

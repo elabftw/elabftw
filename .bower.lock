@@ -1,0 +1,21 @@
+bower check-new     Checking for new versions of the project dependencies...
+elabftw /srv/http/elabftw
+├─┬ bootstrap#3.3.7 extraneous (latest is 4.0.0-alpha.6)
+│ └── jquery#3.2.1
+├─┬ colorpicker#1.2.12 extraneous
+│ ├── jquery#3.2.1
+│ └─┬ jquery-ui#1.12.1
+│   └── jquery#3.2.1
+├── dropzone#4.3.0 extraneous
+├── fancybox#3.0.47 extraneous
+├── file-saver.js#1.20150507.2 extraneous
+├─┬ fullcalendar#3.4.0 extraneous
+│ ├── jquery#3.2.1
+│ └── moment#2.18.1
+├── jeditable#1.7.3 extraneous
+├─┬ jquery-mousewheel#3.1.13 extraneous
+│ └── jquery#3.2.1
+├── jquery.complexify#0.5.1 extraneous
+├── keymaster#1.6.3 extraneous
+├── prism#1.6.0 extraneous
+└── tinymce#4.5.7 extraneous

@@ -9,3 +9,6 @@ $('#help_container').hide();
 $('#help').click(function() {
     $('#help_container').toggle();
 });
+$(document).on('click', '.helpClose', function() {
+    $('#help_container').hide();
+});

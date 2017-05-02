@@ -240,7 +240,7 @@ $(document).ready(function() {
         if (e.which) {
             keynum = e.which;
         }
-        if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+        if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
             teamGroupCreate();
         }
     });

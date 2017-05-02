@@ -178,7 +178,7 @@ function createTag(e, type, item) { // the argument here is the event (needed to
     if (e.which) {
         keynum = e.which;
     }
-    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+    if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
         // get tag
         tag = $('#createTagInput').val();
         // POST request

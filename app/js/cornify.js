@@ -15,7 +15,7 @@ cornifyAdd = function() {
 	var height = 0;
 	var width = 0;
 	var de = document.documentElement;
-	if (typeof(window.innerHeight) == 'number') {
+	if (typeof(window.innerHeight) === 'number') {
 		windowHeight = window.innerHeight;
 		windowWidth = window.innerWidth;
 	} else if(de && de.clientHeight) {
@@ -30,12 +30,12 @@ cornifyAdd = function() {
 	div.style.zIndex = 10;
 	div.style.outline = 0;
 
-	if (cornifyCount == 15) {
+	if (cornifyCount === 15) {
 		div.style.top = Math.max( 0, Math.round( (windowHeight-530)/2 ) )  + 'px';
 		div.style.left = Math.round( (windowWidth-530)/2 ) + 'px';
 		div.style.zIndex = 1000;
 	} else {
-		if( numType=='px' ) {
+		if(numType === 'px') {
             div.style.top = Math.round( windowHeight*heightRandom ) + numType; 
         } else {
             div.style.top = height;
@@ -46,7 +46,7 @@ cornifyAdd = function() {
 	var img = document.createElement('img');
 	var currentTime = new Date();
 	var submitTime = currentTime.getTime();
-	if( cornifyCount==15 ) submitTime = 0;
+	if (cornifyCount === 15) submitTime = 0;
 	img.setAttribute('src',cornifyUrl+'getacorn.php?r=' + submitTime);
 	var ease = "all .1s linear";
 	div.style.WebkitTransition = ease;
@@ -63,7 +63,7 @@ cornifyAdd = function() {
 		var size = 0.9+Math.round(Math.random()*10)/100;
 		var angle = Math.round(Math.random()*6-3);
 		var result = "rotate("+angle+"deg) scale("+size+","+size+")";
-		this.style.transform = result;	
+		this.style.transform = result;
 		this.style.WebkitTransform = result;
 	};
 	var body = document.getElementsByTagName('body')[0];
@@ -71,7 +71,7 @@ cornifyAdd = function() {
 	div.appendChild(img);
 
 	// Add stylesheet
-	if (cornifyCount == 1) {
+	if (cornifyCount === 1) {
 		var cssExisting = document.getElementById('__cornify_css');
 		if (!cssExisting) {
 			var head = document.getElementsByTagName("head")[0];
@@ -113,14 +113,14 @@ var cornami = {
 	clear:setTimeout('cornami.clearInput()',5000),
 	load: function() {
 		window.document.onkeydown = function(e) {
-			if (cornami.input == cornami.pattern) {
+			if (cornami.input === cornami.pattern) {
 				cornifyAdd();
 				clearTimeout(cornami.clear);
 				return;
 			}
 			else {
 				cornami.input += e ? e.keyCode : event.keyCode;
-				if (cornami.input == cornami.pattern) cornifyAdd();
+				if (cornami.input === cornami.pattern) cornifyAdd();
 				clearTimeout(cornami.clear);
 				cornami.clear = setTimeout("cornami.clearInput()", 5000);
 			}

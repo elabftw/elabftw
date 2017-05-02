@@ -5,7 +5,7 @@ $(document).ready(function() {
         var password = $("#password").val();
         var confirmPassword = $("#cpassword").val();
 
-        if (password != confirmPassword) {
+        if (password !== confirmPassword) {
             $("#checkPasswordMatchDiv").html("<p>" + $('#passwordMatch').data('not') + "</p>");
         } else {
             $("#checkPasswordMatchDiv").html("<button class='button' type='submit' name='Submit'>" + $('#passwordMatch').data('save') + "</button>");

@@ -22,7 +22,6 @@ module.exports = function(grunt) {
               'bower_components/bootstrap/js/button.js',
               'bower_components/bootstrap/js/dropdown.js',
               'bower_components/colorpicker/jquery.colorpicker.js',
-              'bower_components/fancybox/dist/jquery.fancybox.js',
               'bower_components/jeditable/jquery.jeditable.js',
               'bower_components/jquery.complexify/jquery.complexify.js',
               'bower_components/jquery.complexify/jquery.complexify.banlist.js',
@@ -50,7 +49,9 @@ module.exports = function(grunt) {
 
           'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js',
           'app/js/admin.min.js': 'app/js/admin.js',
-          'app/js/view.min.js': 'app/js/view.js',
+          'app/js/view.min.js': [
+              'app/js/view.js',
+              'bower_components/fancybox/dist/jquery.fancybox.js'],
           'app/js/tabs.min.js': 'app/js/tabs.js',
           'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
           'app/js/footer.min.js': 'app/js/footer.js',

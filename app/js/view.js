@@ -139,4 +139,12 @@ $(document).ready(function() {
         });
     });
     $('#confirmTimestampDiv').hide();
+
+    // KEYBOARD SHORTCUTS
+    key($('#shortcuts').data('create'), function(){
+        location.href = $('#shortcuts').data('controller') + '?create=true';
+    });
+    key($('#shortcuts').data('edit'), function(){
+        location.href = $('#shortcuts').data('page') + '?mode=edit&id=' + $('#shortcuts').data('id');
+    });
 });

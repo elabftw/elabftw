@@ -161,14 +161,10 @@
 
 {% endif %}
 
-<!-- script src='app/js/view.min.js'></script-->
-<script src='app/js/view.js'></script>
-<script>
-    // Keyboard shortcuts
-    key('{{ Ev.Entity.Users.userData.sc_create }}', function(){
-        location.href = '{{ controller }}?create=true';
-    });
-    key('{{ Ev.Entity.Users.userData.sc_edit }}', function(){
-        location.href = '{{ page }}?mode=edit&id={{ Ev.Entity.id }}';
-    });
-</script>
+<div id='shortcuts'
+    data-create='{{ Ev.Entity.Users.userData.sc_create }}'
+    data-edit='{{ Ev.Entity.Users.userData.sc_edit }}'
+    data-controller='{{ controller }}'
+    data-page='{{ page }}'
+    data-id='{{ Ev.Entity.id }}'></div>
+<script src='app/js/view.min.js'></script>

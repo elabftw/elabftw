@@ -55,7 +55,8 @@ module.exports = function(grunt) {
           'app/js/tabs.min.js': 'app/js/tabs.js',
           'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
           'app/js/footer.min.js': 'app/js/footer.js',
-          'app/js/todolist.min.js': 'app/js/todolist.js'
+          'app/js/todolist.min.js': 'app/js/todolist.js',
+          'app/js/login.min.js': 'app/js/login.js'
         }
       }
     },

@@ -1,12 +1,3 @@
-<script>
-// Check for cookies
-if (!checkCookiesEnabled()) {
-    var cookie_alert =
-        "<div class='alert alert-danger'><p>{{ 'Please enable cookies in your navigator to continue.'|trans }}</p></div>";
-    document.write(cookie_alert);
-}
-</script>
-
 <menu class='border' style='color:#29AEB9'>{{ 'Note: You need cookies enabled to log in.'|trans }}</menu>
 
 <section class='center'>
@@ -58,11 +49,4 @@ if (!checkCookiesEnabled()) {
 
 </section>
 
-<script>
-$(document).ready(function(){
-	$(".toggle_container").hide();
-	$("a.trigger").click(function(){
-		$('.toggle_container').slideToggle("slow");
-	});
-});
-</script>
+<script src='app/js/login.min.js'></script>

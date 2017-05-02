@@ -308,12 +308,9 @@ class Uploads extends Entity
         throw new Exception('Thumbnail creation failed: gmagick extension not loaded!');
       }
 
-      // do some sane whitelisting; in theory gmagick handles almost all
-      // image formats, but the processing of rarely used formats may be
-      // less tested/stable or may have security issues;
-      // when adding new mime types take care of ambiguities:
-      // e.g. image/eps may be a valid application/postscript;
-      // image/bmp may also be image/x-bmp or image/x-ms-bmp
+      // do some sane white-listing; in theory, gmagick handles almost all image formats, but the processing of rarely // used formats may be less tested/stable or may have security issues; when adding new mime types take care of
+      // ambiguities: e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
+      // image/x-ms-bmp
       $allowed_mime = array('image/png',
                             'image/jpeg',
                             'image/gif',
@@ -323,10 +320,9 @@ class Uploads extends Entity
                             'application/postscript');
 
       if (in_array($mime, $allowed_mime)) {
-        // if pdf or postscript, generate image using the first page (index 0)
-        // do the same for postscript files; sometimes eps images will be
-        // identified as application/postscript as well, but thumbnail
-        // generation still works in those cases
+        // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files;
+        // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
+        // works in those cases
         if ($mime === 'application/pdf' || $mime === 'application/postscript') {
           $src = $src . '[0]';
         }
@@ -334,8 +330,7 @@ class Uploads extends Entity
       } else {
         return false;
       }
-      // create thumbnail of width 100px; height is calculated automatically
-      // to keep the aspect ratio
+      // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
       $image->thumbnailimage(100, 0);
       // create the physical thumbnail image to its destination (85% quality)
       $image->setCompressionQuality(85);

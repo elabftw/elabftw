@@ -6,95 +6,16 @@
     <p>
         <ul id='todoItems-list'>
             {% for todoItem in todoItems %}
-            <li id='todoItem_{{ todoItem['id'] }}'><a href='#' onClick='destroyTodolist({{ todoItem['id'] }})'>X</a>
+            <li id='todoItem_{{ todoItem['id'] }}'><a href='#' class='destroyTodoItem' data-id='{{ todoItem.id }}'>X</a>
                 <span style='font-size:60%;display:block;'>{{ todoItem['creation_time'] }}</span>
                 <span id='todoItem_{{ todoItem['id'] }}' class='editable'>{{ todoItem['body'] }}</span></li>
             {% endfor %}
         </ul>
         <br><br>
-        <a class='button' href="#" onClick='toggleTodoList()'>Close</a>
+        <a class='button todoToggle' href="#">Close</a>
     </p>
-    <a href="#" style='float:left' onClick='destroyAllTodolist()'>Clear All</a>
+    <a href="#" style='float:left' class='todoDestroyAll'>Clear All</a>
 </div>
 
-<script>
-// check for old style items and add them to SQL
-var orderList = localStorage.getItem('todo-orders');
-orderList = orderList ? orderList.split(',') : [];
-for( j = 0, k = orderList.length; j < k; j++) {
-    $.post("app/controllers/TodolistController.php", {
-        create: true,
-        body: localStorage.getItem(orderList[j])
-    });
-}
-// delete old style storage
-localStorage.clear();
-
-// SORTABLE for TODOLIST items
-$('#todoItems-list').sortable({
-    // limit to vertical dragging
-    axis : 'y',
-    helper : 'clone',
-    // do ajax request to update db with new order
-    update: function(event, ui) {
-        // send the orders as an array
-        var ordering = $("#todoItems-list").sortable("toArray");
-
-        $.post("app/controllers/TodolistController.php", {
-            'updateOrdering': true,
-            'ordering': ordering
-        }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
-            } else {
-                notif(json.msg, 'ko');
-            }
-        });
-    }
-});
-$('#todoItems-list').on('mouseover', '.editable', function(){
-    makeEditableTodoitem();
-});
-
-// Create
-$('#todo-form').submit(function(e) {
-    e.preventDefault();
-    var body = $('#todo').val();
-    var currentdate = new Date();
-    var datetime = currentdate.getFullYear() + "-" +
-        (currentdate.getMonth()+1)  + "-" +
-        currentdate.getDate() + " " +
-        currentdate.getHours() + ":" +
-        currentdate.getMinutes() + ":" +
-        currentdate.getSeconds();
-    if (body !== "") {
-        $.post("app/controllers/TodolistController.php", {
-            create: true,
-            body: body
-        }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                // add the todoitem
-                $('#todoItems-list').prepend("<li class='todoItem' id='todoItem_" +
-                        json.id +
-                        "'><a href='#' onClick='destroyTodolist(" +
-                        json.id +
-                        ")'>X</a><span style='font-size:60%;display:block;'>" +
-                        datetime + "</span><span id='todoItem_" + json.id + "' class='editable'>" + body +
-                        '</li>');
-                // make it editable right away
-                makeEditableTodoitem();
-                // and clear the input
-                $('#todo').val("");
-            } else {
-                notif(json.msg, 'ko');
-            }
-        });
-    }
-});
-{# shortcut to show todolist #}
-key('{{ Users.userData['sc_todo'] }}', function(){
-    toggleTodoList();
-});
-</script>
+<div id='todoSc' data-toggle='{{ Users.userData.sc_todo }}'></div>
+<script src='app/js/todolist.min.js'></script>

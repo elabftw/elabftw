@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * Everything related to the team groups
@@ -54,17 +54,65 @@ class TeamGroups
     /**
      * Read team groups
      *
-     * @return array all team groups
+     * @return array all team groups with users in group as array
      */
     public function readAll()
     {
+        $fullGroups = array();
+
         $sql = "SELECT id, name FROM team_groups WHERE team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->execute();
 
-        return $req->fetchAll();
+        $groups = $req->fetchAll();
+
+        $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM users CROSS JOIN users2team_groups
+            ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+        $req = $this->pdo->prepare($sql);
+
+        foreach ($groups as $group) {
+            $req->bindParam(':groupid', $group['id']);
+            $req->execute();
+            $usersInGroup = $req->fetchAll();
+            $fullGroups[] = array(
+                'id' => $group['id'],
+                'name' => $group['name'],
+                'users' => $usersInGroup
+            );
+        }
+
+        return $fullGroups;
     }
+
+    /**
+     * When we need to build a select menu with visibility + team groups
+     *
+     * @return array
+     */
+    public function readFull()
+    {
+        $idArr = array();
+        $nameArr = array();
+
+        $groups = $this->readAll();
+
+        foreach ($groups as $group) {
+            $idArr[] = $group['id'];
+            $nameArr[] = $group['name'];
+        }
+        $tgArr = array_combine($idArr, $nameArr);
+
+        $visibilityArr = array(
+            'organization' => 'Everyone with an account',
+            'team' => 'Only the team',
+            'user' => 'Only me'
+        );
+
+        return $visibilityArr + $tgArr;
+    }
+
 
     /**
      * Get the name of a group
@@ -184,5 +232,4 @@ class TeamGroups
 
         return in_array($userid, $authUsersArr);
     }
-
 }

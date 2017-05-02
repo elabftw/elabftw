@@ -10,25 +10,32 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * All about the templates
  */
-class Templates extends Entity
+class Templates
 {
+    use EntityTrait;
+
     /** pdo object */
     protected $pdo;
+
+    /** instance of Users */
+    public $Users;
 
     /**
      * Give me the team on init
      *
-     * @param int $team
+     * @param Users $users
+     * @param int|null $id
      */
-    public function __construct($team)
+    public function __construct(Users $users, $id = null)
     {
         $this->pdo = Db::getConnection();
-        $this->team = $team;
+        $this->Users = $users;
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
     }
 
     /**
@@ -37,16 +44,20 @@ class Templates extends Entity
      * @param string $name
      * @param string $body
      * @param int $userid
+     * @param int|null $team
      * @return bool
      */
-    public function create($name, $body, $userid)
+    public function create($name, $body, $userid, $team = null)
     {
+        if (is_null($team)) {
+            $team = $this->Users->userData['team'];
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $body = Tools::checkBody($body);
 
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $team);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
         $req->bindParam('userid', $userid);
@@ -55,17 +66,33 @@ class Templates extends Entity
     }
 
     /**
+     * Create a default template for a new team
+     *
+     * @param int $team the id of the new team
+     * @return bool
+     */
+    public function createDefault($team)
+    {
+        $defaultBody = "<p><span style='font-size: 14pt;'><strong>Goal :</strong></span></p>
+        <p>&nbsp;</p>
+        <p><span style='font-size: 14pt;'><strong>Procedure :</strong></span></p>
+        <p>&nbsp;</p>
+        <p><span style='font-size: 14pt;'><strong>Results :</strong></span></p><p>&nbsp;</p>";
+
+        return $this->create('default', $defaultBody, 0, $team);
+    }
+
+    /**
      * Read a template
      *
-     * @param int $id
      * @return array
      */
-    public function read($id)
+    public function read()
     {
         $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         return $req->fetch();
@@ -74,14 +101,13 @@ class Templates extends Entity
     /**
      * Read templates for a user
      *
-     * @param int $userid
      * @return array
      */
-    public function readFromUserid($userid)
+    public function readFromUserid()
     {
         $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
 
         return $req->fetchAll();
@@ -97,7 +123,7 @@ class Templates extends Entity
     {
         $sql = "SELECT * FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         return $req->fetch();
@@ -109,7 +135,7 @@ class Templates extends Entity
      * @param string $body Content of the template
      * @return bool true if sql success
      */
-    public function update($body)
+    public function updateCommon($body)
     {
         $body = Tools::checkBody($body);
         $sql = "UPDATE experiments_templates SET
@@ -118,8 +144,35 @@ class Templates extends Entity
             body = :body
             WHERE userid = 0 AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->bindParam(':body', $body);
+
+        return $req->execute();
+    }
+
+    /**
+     * Update a template
+     *
+     * @param int $id Id of the template
+     * @param string $name Title of the template
+     * @param string $body Content of the template
+     * @return bool
+     */
+    public function update($id, $name, $body)
+    {
+        $body = Tools::checkBody($body);
+        $name = Tools::checkTitle($name);
+        $this->setId($id);
+
+        $sql = "UPDATE experiments_templates SET
+            name = :name,
+            body = :body
+            WHERE userid = :userid AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id);
 
         return $req->execute();
     }

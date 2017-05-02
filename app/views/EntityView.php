@@ -15,14 +15,23 @@ namespace Elabftw\Elabftw;
  */
 class EntityView
 {
-    /** our Database instance */
-    public $Database;
+    /** our Database or Experiments instance */
+    public $Entity;
 
     /** number of items to display per page */
     public $limit = 15;
 
-    /** can be compact */
-    public $display = '';
+    /** show entities from others in the team? */
+    public $showTeam = false;
+
+    /** for show mode */
+    public $itemsArr;
+
+    /** can be tag, query or filter */
+    public $searchType = '';
+
+    /** are we looking for exp related to an item ? */
+    public $related = 0;
 
     /** the tag searched */
     public $tag = '';
@@ -30,62 +39,101 @@ class EntityView
     /** the query entered */
     public $query = '';
 
-    /**
-     * Add chemdoodle JS
-     *
-     * @return string
-     */
-    public function injectChemEditor()
-    {
-        $html = '';
-        if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<div class='box chemdoodle'>";
-            $html .= "<h3>" . _('Molecule drawer') . "</h3>";
-            $html .= "<div class='center'>
-                        <script>
-                            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
-                        </script>
-                    </div>
-            </div>";
-        }
+    /** what you get after you ->read() */
+    public $entityData;
 
-        return $html;
+    /** our html output */
+    protected $html = '';
+
+    /** instance of UploadsView */
+    protected $UploadsView;
+
+    /**
+     * Common stuff for view and edit (but not show)
+     *
+     */
+    public function initViewEdit()
+    {
+        $this->Entity->populate();
+        // add the title in the page name (see #324)
+        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->Entity->entityData['title']) . "';</script>";
+
+        // get the UploadsView object
+        $this->UploadsView = new UploadsView(new Uploads($this->Entity));
     }
 
     /**
-     * Ask the user if he really wants to navigate out of the page
+     * Check if the entity is read only
      *
-     * @return string
+     * @return bool
      */
-    public function injectCloseWarning()
+    public function isReadOnly()
     {
-        $js = '';
-        if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-            $js .= "window.onbeforeunload = function (e) {
-                  e = e || window.event;
-                  return '" . _('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';};";
+        $permissions = $this->Entity->getPermissions();
+        return $permissions['read'] && !$permissions['write'];
+    }
+
+    /**
+     * Get the items in itemsArr
+     *
+     * @return null
+     */
+    public function buildShow()
+    {
+        // RELATED SEARCH (links) for experiments
+        if ($this->related && $this->Entity instanceof Experiments) {
+
+            $this->itemsArr = $this->Entity->readRelated($this->related);
+
+        } else {
+
+            if (!$this->showTeam && $this->Entity instanceof Experiments) {
+                // filter by user only if we are not making a search
+                if ($this->searchType === '') {
+                    $this->Entity->setUseridFilter();
+                }
+            }
+            $this->itemsArr = $this->Entity->read();
         }
-        return $js;
+    }
+
+    /**
+     * Generate html for upload form and display of uploads in edit mode
+     *
+     * @return string HTML uploads
+     */
+    public function buildUploadsHtml()
+    {
+        $this->html .= $this->UploadsView->buildUploadForm();
+        $this->html .= $this->UploadsView->buildUploads('edit');
+
+        return $this->html;
     }
 
     /**
      * Generate html for zip/csv export buttons
      *
-     * @param array $idArr
-     * @param string $type items or experiments
+     * @param array $itemArr a whole bunch of items
      * @return string
      */
-    public function buildExportMenu($idArr, $type)
+    public function buildExportMenu($itemArr)
     {
-            $html = "<div class='align_right'>";
-            $html .= "<a name='anchor'></a>";
-            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>";
-            $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <span>Export in CSV</span><img src='app/img/spreadsheet.png' alt='Export CSV' /></a></div>";
+        $idArr = array();
 
-            return $html;
+        foreach ($itemArr as $item) {
+            $idArr[] = $item['id'];
+        }
+        $html = "<div class='align_right'>";
+        $html .= "<a name='anchor'></a>";
+        $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
+        $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" .
+            Tools::buildStringFromArray($idArr) . "&type=" . $this->Entity->type . "'>";
+        $html .= " <span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>";
+        $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" .
+            Tools::buildStringFromArray($idArr) . "&type=" . $this->Entity->type . "'>";
+        $html .= " <span>Export in CSV</span><img src='app/img/spreadsheet.png' alt='Export CSV' /></a></div>";
+
+        return $html;
     }
 
     /**
@@ -96,18 +144,30 @@ class EntityView
      */
     public function buildShowMenu($type)
     {
+        $getCat = '';
+        $getOrder = '';
+        $getSort = '';
+        if (isset($_GET['cat'])) {
+            $getCat = $_GET['cat'];
+        }
+        if (isset($_GET['order'])) {
+            $getOrder = $_GET['order'];
+        }
+        if (isset($_GET['sort'])) {
+            $getSort = $_GET['sort'];
+        }
         $templates = '';
         $createItem = '';
 
         if ($type === 'experiments') {
 
-            $Status = new Status($_SESSION['team_id']);
+            $Status = new Status($this->Entity->Users);
             $categoryArr = $Status->readAll();
             $createItem .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>";
             $createItem .= ngettext('Experiment', 'Experiments', 1) . "</a></li>";
             $createItem .= "<li role='separator' class='divider'></li>";
-            $Templates = new Templates($_SESSION['team_id']);
-            $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
+            $Templates = new Templates($this->Entity->Users);
+            $templatesArr = $Templates->readFromUserid();
             if (count($templatesArr) > 0) {
                 foreach ($templatesArr as $tpl) {
                     $templates .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true&tpl="
@@ -124,11 +184,11 @@ class EntityView
         } else {
 
             // filter by type list
-            $itemsTypes = new ItemsTypes($this->Database->team);
+            $itemsTypes = new ItemsTypes($this->Entity->Users);
             $categoryArr = $itemsTypes->readAll();
             foreach ($categoryArr as $category) {
-                $templates .= "<li class='dropdown-item'><a style='color:#" . $category['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
-                    . $category['name'] . "</a></li>";
+                $templates .= "<li class='dropdown-item'><a style='color:#" . $category['color'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['category_id'] . "'>"
+                    . $category['category'] . "</a></li>";
             }
 
             // FILTER BY
@@ -140,7 +200,7 @@ class EntityView
         $html = "<div class='row'>";
 
         // LEFT MENU - CREATE NEW
-        $html .= "<div class='col-md-2 col-xs-2'>";
+        $html .= "<div class='col-md-2'>";
         $html .= "<div class='dropdown'>";
         $html .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
         $html .= _('Create new');
@@ -152,22 +212,22 @@ class EntityView
         $html .= "</div></div>";
 
         // RIGHT MENU
-        // padding 0 is necessary to get the menu fully to the right
-        $html .= "<div class='col-md-10 col-xs-12' style='padding:0'>";
+        // we hide this menu for small devices
+        $html .= "<div class='col-md-10 hidden-xs'>";
 
         // FILTERS
-        $html .= "<div class='col-md-10 align_right'>";
         $html .= "<form class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='tag' value='" . $this->tag . "' />";
         $html .= "<input type='hidden' name='q' value='" . $this->query . "' />";
 
         // CATEGORY
-        $html .= "<select name='filter' style='-moz-appearance:none' class='form-control select-filter-status'>";
+        $html .= "<select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . $filterTitle . "</option>";
         foreach ($categoryArr as $category) {
-            $html .= "<option value='" . $category['id'] . "'" . checkSelectFilter($category['id']) . ">" . $category['name'] . "</option>";
+            $html .= "<option value='" . $category['category_id'] . "'" . Tools::addSelected($getCat, $category['category_id']) . ">" . $category['category'] . "</option>";
         }
+
         $html .= "</select>";
         $html .= "<input type='hidden' name='mode' value='show' />";
         $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";
@@ -175,113 +235,28 @@ class EntityView
         // ORDER
         $html .= "<select name='order' style='-moz-appearance:none' class='form-control select-order'>";
         $html .= "<option value=''>" . _('Order by') . "</option>";
-        $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
-        $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
+        $html .= "<option value='cat'" . Tools::addSelected($getOrder, 'cat') . ">" . _('Category') . "</option>";
+        $html .= "<option value='date'" . Tools::addSelected($getOrder, 'date') . ">" . _('Date') . "</option>";
         if ($type === 'database') {
-            $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
+            $html .= "<option value='rating'" . Tools::addSelected($getOrder, 'rating') . ">" . _('Rating') . "</option>";
         }
-        $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
+        $html .= "<option value='title'" . Tools::addSelected($getOrder, 'title') . ">" . _('Title') . "</option>";
+        if ($type === 'experiments') {
+            $html .= "<option value='comment'" . Tools::addSelected($getOrder, 'comment') . ">" . _('Comment') . "</option>";
+        }
         $html .= "</select>";
 
         // SORT
         $html .= "<select name='sort' style='-moz-appearance:none' class='form-control select-sort'>";
         $html .= "<option value=''>" . _('Sort') . "</option>";
-        $html .= "<option value='desc'" . checkSelectSort('desc') . ">" . _('DESC') . "</option>";
-        $html .= "<option value='asc'" . checkSelectSort('asc') . ">" . _('ASC') . "</option>";
+        $html .= "<option value='desc'" . Tools::addSelected($getSort, 'desc') . ">" . _('DESC') . "</option>";
+        $html .= "<option value='asc'" . Tools::addSelected($getSort, 'asc') . ">" . _('ASC') . "</option>";
         $html .= "</select>";
         $html .= "<button class='btn btn-elab submit-order'>" . _('Order') . "</button>";
         $html .= "<button type='reset' class='btn btn-danger submit-reset' onClick=\"javascript:location.href='" . $type . ".php?mode=show'\">";
-        $html .= _('Reset') . "</button></div></form></div>";
+        $html .= _('Reset') . "</button></div></form>";
 
         $html .= "</div></div><hr>";
-
-        return $html;
-    }
-
-    /**
-     * JS for show
-     *
-     * @param string $type experiments or items
-     * @return string
-     */
-    protected function buildShowJs($type)
-    {
-        if ($type === 'experiments') {
-            $shortcut = "
-            // KEYBOARD SHORTCUTS
-            key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){
-                location.href = 'app/controllers/ExperimentsController.php?create=true'
-                });";
-        } else {
-            $shortcut = '';
-        }
-        $html = "<script>
-        $(document).ready(function(){
-
-            // SHOW MORE BUTTON
-            $('section.item').hide(); // hide everyone
-            $('section.item').slice(0, " . $this->limit . ").show(); // show only the default at the beginning
-            $('#loadButton').click(function(e){ // click to load more
-                e.preventDefault();
-                $('section.item:hidden').slice(0, " . $this->limit . ").show();
-                if ($('section.item:hidden').length == 0) { // check if there are more exp to show
-                    $('#loadButton').hide(); // hide load button when there is nothing more to show
-                    $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-                }
-            });
-            $('#loadAllButton').click(function(e){ // click to load more
-                e.preventDefault();
-                $('section.item:hidden').show();
-                $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-                $('#loadButton').hide(); // hide load button when there is nothing more to show
-            });" . $shortcut . "});
-        </script>";
-
-        return $html;
-    }
-
-    /**
-     * Display the tags
-     *
-     * @param string $type experiments or items
-     * @param string $mode edit or view
-     * @param int $item The ID of the item for which we want the tags
-     * @return string Will show the HTML for tags
-     */
-    protected function showTags($type, $mode, $item)
-    {
-        $Tags = new Tags($type, $item);
-        $tagList = $Tags->read();
-
-        $html = '';
-
-        if (count($tagList) === 0 && $mode != 'edit') {
-            return $html;
-        }
-
-        if ($mode === 'view') {
-
-            $html = "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
-            foreach ($tagList as $tag) {
-                if ($type === 'experiments') {
-                    $html .= "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
-                } else { // type is items
-                    $html .= "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
-                }
-            }
-            $html .= "</span>";
-
-            return $html;
-        }
-
-
-        $html = "<img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
-        $html .= "<div class='tags'><span id='tags_div'>";
-
-        foreach ($tagList as $tag) {
-            $html .= "<span class='tag'><a onclick=\"destroyTag('" . $type . "', " . $item . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
-        }
-        $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
 
         return $html;
     }
@@ -296,7 +271,7 @@ class EntityView
     {
         if ($type === 'experiments') {
             $text = _('Back to Experiments Listing');
-        } elseif ($type === 'database') {
+        } elseif ($type === 'items') {
             $text = _('Back to Database Listing');
         } else {
             return "";
@@ -306,5 +281,17 @@ class EntityView
         $html .= "<img src='app/img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
 
         return $html;
+    }
+
+    /**
+     * This is used to include the title in the page name (see #324)
+     * It removes #, ' and " and appends "- eLabFTW"
+     *
+     * @param $title string
+     * @return string
+     */
+    protected function getCleanTitle($title)
+    {
+        return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
     }
 }

@@ -12,9 +12,9 @@
  */
 namespace Elabftw\Elabftw;
 
-use \DateTime;
-use \Exception;
-use \Elabftw\Elabftw\Update;
+use DateTime;
+use Exception;
+use Elabftw\Elabftw\Update;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 
@@ -25,8 +25,8 @@ use Defuse\Crypto\Key as Key;
  */
 class TrustedTimestamps extends Entity
 {
-    /** array with config */
-    private $configArr;
+    /** instance of Config*/
+    private $Config;
 
     /** array with config of the team */
     private $teamConfigArr;
@@ -34,8 +34,8 @@ class TrustedTimestamps extends Entity
     /** our database connection */
     protected $pdo;
 
-    /** the id of the experiment */
-    public $id;
+    /** instance of Entity */
+    public $Entity;
 
     /** ELAB_ROOT . uploads/ . $pdfFileName */
     private $pdfPath;
@@ -67,17 +67,15 @@ class TrustedTimestamps extends Entity
      *
      * @param Config $config
      * @param Teams $teams
-     * @param int $id The id of the experiment
+     * @param Entity $entity
      */
-    public function __construct(Config $config, Teams $teams, $id)
+    public function __construct(Config $config, Teams $teams, Entity $entity)
     {
-        $this->configArr = $config->read();
+        $this->Config = $config;
+        $this->Entity = $entity;
         $this->teamConfigArr = $teams->read();
 
         $this->pdo = Db::getConnection();
-
-        // will be used in sqlUpdate()
-        $this->setId($id);
 
         $this->generatePdf();
 
@@ -104,7 +102,7 @@ class TrustedTimestamps extends Entity
     private function generatePdf()
     {
         try {
-            $pdf = new MakePdf($this->id, 'experiments', true);
+            $pdf = new MakePdf($this->Entity, true);
             $this->pdfPath = $pdf->filePath;
             $this->pdfLongName = $pdf->fileName;
         } catch (Exception $e) {
@@ -125,8 +123,8 @@ class TrustedTimestamps extends Entity
         // otherwise use the general config if we can
         if (strlen($this->teamConfigArr['stampprovider']) > 2) {
             $config = $this->teamConfigArr;
-        } elseif ($this->configArr['stampshare']) {
-            $config = $this->configArr;
+        } elseif ($this->Config->configArr['stampshare']) {
+            $config = $this->Config->configArr;
         } else {
             throw new Exception(_('Please configure Timestamping in the admin panel.'));
         }
@@ -324,8 +322,8 @@ class TrustedTimestamps extends Entity
             curl_setopt($ch, CURLOPT_USERPWD, $this->stampParams['stamplogin'] . ":" . $this->stampParams['stamppassword']);
         }
         // add proxy if there is one
-        if (strlen($this->configArr['proxy']) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->configArr['proxy']);
+        if (strlen($this->Config->configArr['proxy']) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->Config->configArr['proxy']);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
@@ -333,7 +331,7 @@ class TrustedTimestamps extends Entity
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($this->requestfilePath));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . Update::INSTALLED_VERSION);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . ReleaseCheck::INSTALLED_VERSION);
         $binaryResponseString = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
@@ -383,8 +381,8 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':real_name', $real_name);
         $req->bindParam(':long_name', $long_name);
         $req->bindValue(':comment', "Timestamp token");
-        $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $this->getHash($this->responsefilePath));
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -491,8 +489,8 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':when', $this->responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $this->responsefilePath);
-        $req->bindParam(':userid', $_SESSION['userid']);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':id', $this->Entity->id);
         if (!$req->execute()) {
             throw new Exception('Cannot update SQL!');
         }
@@ -506,7 +504,7 @@ class TrustedTimestamps extends Entity
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         if (!$req->execute()) {
             throw new Exception('Cannot get elabid!');
         }
@@ -525,8 +523,8 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
-        $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindValue(':type', 'exp-pdf-timestamp');
         $req->bindParam(':hash', $this->getHash($this->pdfPath));
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -535,6 +533,78 @@ class TrustedTimestamps extends Entity
             throw new Exception('Cannot insert into SQL!');
         }
 
+    }
+
+    /**
+     * Decode asn1 encoded token
+     *
+     * @param string $token
+     * @return string
+     */
+    public function decodeAsn1($token)
+    {
+        $cmd = "asn1parse -inform DER -in " . escapeshellarg(ELAB_ROOT . "uploads/" . $token);
+
+        $opensslResult = $this->runOpenSSL($cmd);
+        $retarray = $opensslResult['retarray'];
+        $retcode = $opensslResult['retcode'];
+
+        if ($retcode !== 0) {
+            throw new Exception("Error decoding ASN1 file: " . implode(", ", $retarray));
+        }
+
+        // now let's parse this
+        $out = "<br><hr>";
+
+        $statusArr = explode(":", $retarray[4]);
+        $status = $statusArr[3];
+
+        $versionArr = explode(":", $retarray[111]);
+        $version = $versionArr[3];
+
+        $oidArr = explode(":", $retarray[81]);
+        $oid = $oidArr[3];
+
+        $hashArr = explode(":", $retarray[12]);
+        $hash = $hashArr[3];
+
+        $messageArr = explode(":", $retarray[17]);
+        $message = $messageArr[3];
+
+        $timestampArr = explode(":", $retarray[142]);
+        // for some reason the DateTime::createFromFormat didn't work
+        // so we do it manually
+        $timestamp = rtrim($timestampArr[3], 'Z');
+        $year = "20" . substr($timestamp, 0, 2);
+        $month = substr($timestamp, 2, 2);
+        $day = substr($timestamp, 4, 2);
+        $hour = substr($timestamp, 6, 2);
+        $minute = substr($timestamp, 8, 2);
+        $second = substr($timestamp, 10, 2);
+
+        $countryArr = explode(":", $retarray[31]);
+        $country = $countryArr[3];
+
+        $tsaArr = explode(":", $retarray[121]);
+        $tsa = $tsaArr[3];
+
+        $tsaArr = explode(":", $retarray[39]);
+        $tsa .= ", " . $tsaArr[3];
+        $tsaArr = explode(":", $retarray[43]);
+        $tsa .= ", " . $tsaArr[3];
+
+        $out .= "Status: " . $status;
+        $out .= "<br>Version: " . $version;
+        $out .= "<br>OID: " . $oid;
+        $out .= "<br>Hash algorithm: " . $hash;
+        $out .= "<br>Message data: 0x" . $message;
+        $out .= "<br>Timestamp: " . $year . "-" . $month . "-" . $day . " at " . $hour . ":" . $minute . ":" . $second;
+
+        $out .= "<br><br>TSA info:";
+        $out .= "<br>TSA: " . $tsa;
+        $out .= "<br>Country: " . $country;
+
+        return $out;
     }
 
     /**

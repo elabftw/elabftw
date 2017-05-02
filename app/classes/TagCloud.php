@@ -15,12 +15,14 @@ namespace Elabftw\Elabftw;
  */
 class TagCloud
 {
-
     /** id of our user */
     private $userid;
 
     /** pdo object */
     private $pdo;
+
+    /** tag + class */
+    public $cloudArr = array();
 
     /**
      * Init the object with a userid
@@ -31,6 +33,7 @@ class TagCloud
     {
         $this->userid = $userid;
         $this->pdo = Db::getConnection();
+        $this->setCloudArr();
     }
 
     /**
@@ -64,30 +67,16 @@ class TagCloud
     }
 
     /**
-     * Show the tag cloud or a message if not enough tags
+     * Create an array with tag => css class for cloud
      *
-     * @return string $html
      */
-    public function show()
+    private function setCloudArr()
     {
         $tags = $this->readAll();
-
-        $html = "<section class='box'>";
-        $html .= "<img src='app/img/cloud.png' alt='' /> <h4 style='display:inline'>" . _('Tag cloud') . "</h4>";
-        $html .= "<hr>";
-        $html .= "<div>";
-
-        // handle minimum tag count
-        if (count($tags) <= 10) {
-            $html .= _('Not enough tags to make a tagcloud.');
-            $html .= "</div></section>";
-            return $html;
-        }
-
-        // calculate the spread, max number of tag occurence - min number of tag occurence
         $first = reset($tags);
         $last = end($tags);
         $spread = $first['total'] - $last['total'];
+
         if ($spread === 0) {
             $spread = 1;
         }
@@ -95,17 +84,13 @@ class TagCloud
         // randomize the tags
         shuffle($tags);
 
+        // fill the array
         foreach ($tags as $tag) {
             // calculate ratio
             $ratio = floor((($tag['total'] - $last['total']) / $spread) * 100);
             // assign a class: font size will be different depending on ratio
-            $class = $this->getClassFromRatio($ratio);
-
-            $html .= "<a href='experiments.php?mode=show&tag=" . $tag['tag'] . "' class='" . $class . "'>" . stripslashes($tag['tag']) . "</a> ";
+            $cssClass = $this->getClassFromRatio($ratio);
+            $this->cloudArr[$tag['tag']] = $cssClass;
         }
-
-        $html .= "</div></section>";
-
-        return $html;
     }
 }

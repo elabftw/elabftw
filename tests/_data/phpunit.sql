@@ -23,6 +23,18 @@ CREATE DATABASE IF NOT EXISTS `phpunit` DEFAULT CHARACTER SET utf8 COLLATE utf8_
 USE `phpunit`;
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `todolist`
+--
+
+CREATE TABLE `todolist` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `body` text NOT NULL,
+  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Table structure for table `banned_users`
@@ -58,7 +70,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '11'),
+('schema', '18'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -85,7 +97,6 @@ CREATE TABLE `experiments` (
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
   `status` varchar(255) NOT NULL,
-  `links` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -103,8 +114,8 @@ CREATE TABLE `experiments` (
 -- Dumping data for table `experiments`
 --
 
-INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `links`, `userid`, `elabid`, `locked`, `lockedby`, `lockedwhen`, `timestamped`, `timestampedby`, `timestamptoken`, `timestampedwhen`, `visibility`, `datetime`) VALUES
-(1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '1', NULL, 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
+INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `userid`, `elabid`, `locked`, `lockedby`, `lockedwhen`, `timestamped`, `timestampedby`, `timestamptoken`, `timestampedwhen`, `visibility`, `datetime`) VALUES
+(1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '1', 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
 
 -- --------------------------------------------------------
 
@@ -282,7 +293,7 @@ CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
-  `bgcolor` varchar(6) DEFAULT '000000',
+  `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `bookable` tinyint(1) DEFAULT '0'
@@ -292,7 +303,7 @@ CREATE TABLE `items_types` (
 -- Dumping data for table `items_types`
 --
 
-INSERT INTO `items_types` (`id`, `team`, `name`, `bgcolor`, `template`, `ordering`, `bookable`) VALUES
+INSERT INTO `items_types` (`id`, `team`, `name`, `color`, `template`, `ordering`, `bookable`) VALUES
 (1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>', NULL, 0);
 
 -- --------------------------------------------------------
@@ -447,7 +458,9 @@ CREATE TABLE `users` (
   `close_warning` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
-  `lang` varchar(5) NOT NULL DEFAULT 'en_GB'
+  `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
+  `api_key` varchar(255) NULL DEFAULT NULL,
+  `default_vis` varchar(255) NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -691,6 +704,14 @@ ALTER TABLE `uploads`
 --
 ALTER TABLE `users`
   MODIFY `userid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- Indexes for table `todolist`
+--
+ALTER TABLE `todolist`
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `todolist`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

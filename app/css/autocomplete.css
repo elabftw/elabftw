@@ -42,7 +42,7 @@
     left: 10px;
 }
 
-.rte-autocomplete > li.loading {
+.rte-autocomplete > .loading {
 	background: url(images/ajax-loader.gif) center no-repeat;
 	height: 16px;
 }

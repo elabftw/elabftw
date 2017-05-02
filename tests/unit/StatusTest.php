@@ -7,7 +7,7 @@ class StatusTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Status = new Status(1);
+        $this->Status = new Status(new Users(1));
     }
 
     public function testCreate()

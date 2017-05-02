@@ -7,7 +7,8 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Experiments = new Experiments(1, 1, 1);
+        $this->Users = new Users(1);
+        $this->Experiments = new Experiments($this->Users, 1);
         $this->Comments = new Comments($this->Experiments);
     }
 
@@ -23,14 +24,13 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $this->Comments = new Comments($this->Experiments, 1);
-        $this->assertTrue($this->Comments->Update('Udpated'));
-        $this->assertFalse($this->Comments->Update('a'));
+        $this->assertTrue($this->Comments->Update('Udpated', 1), 1);
+        $this->assertFalse($this->Comments->Update('a', 1), 1);
     }
 
     public function testDestroy()
     {
-        $this->assertTrue($this->Comments->destroy());
+        $this->assertTrue($this->Comments->destroy(1, 1));
     }
 
     public function testDestroyAll()

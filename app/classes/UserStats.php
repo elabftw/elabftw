@@ -15,12 +15,8 @@ namespace Elabftw\Elabftw;
  */
 class UserStats
 {
-
-    /** our team */
-    private $team;
-
-    /** id of our user */
-    private $userid;
+    /** instance of Users */
+    private $Users;
 
     /** count of experiments */
     private $count = 0;
@@ -35,22 +31,20 @@ class UserStats
     private $statusArr = array();
 
     /** array with colors for status */
-    private $statusColors = array();
+    public $colorsArr = array();
 
     /** array with percentage and status name */
-    private $percentArr = array();
+    public $percentArr = array();
 
     /**
      * Init the object with a userid and the total count of experiments
      *
-     * @param int $team
-     * @param int $userid
+     * @param Users $users
      * @param int $count total count of experiments
      */
-    public function __construct($team, $userid, $count)
+    public function __construct(Users $users, $count)
     {
-        $this->team = $team;
-        $this->userid = $userid;
+        $this->Users = $users;
         $this->count = $count;
         $this->pdo = Db::getConnection();
         $this->countStatus();
@@ -64,13 +58,13 @@ class UserStats
     private function countStatus()
     {
         // get all status name and id
-        $Status = new Status($this->team);
+        $Status = new Status($this->Users);
         $statusAll = $Status->readAll();
 
         // populate arrays
         foreach ($statusAll as $status) {
-            $this->statusArr[$status['id']] = $status['name'];
-            $this->statusColors[] = $status['color'];
+            $this->statusArr[$status['category_id']] = $status['category'];
+            $this->colorsArr[] = $status['color'];
         }
 
         // count experiments for each status
@@ -80,7 +74,7 @@ class UserStats
                 WHERE userid = :userid
                 AND status = :status";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':userid', $this->userid);
+            $req->bindParam(':userid', $this->Users->userid);
             $req->bindParam(':status', $key);
             $req->execute();
             $this->countArr[$key] = $req->fetchColumn();
@@ -94,64 +88,8 @@ class UserStats
     private function makePercent()
     {
         foreach ($this->statusArr as $key => $value) {
+            $value = str_replace("'", "\'", html_entity_decode($value, ENT_QUOTES));
             $this->percentArr[$value] = round(($this->countArr[$key] / $this->count) * 100);
         }
-    }
-
-    /**
-     * Generate a JS list of colors
-     *
-     * @return string
-     */
-    private function getColorList()
-    {
-        // string that will hold the list of colors correctly formatted
-        $colorList = "";
-        foreach ($this->statusColors as $color) {
-            $colorList .= "'#" . $color . "',";
-        }
-        // remove last ,
-        $colorList = rtrim($colorList, ",");
-
-        return $colorList;
-    }
-
-    /**
-     * Generate HTML for the graph
-     *
-     * @return string
-     */
-    public function show()
-    {
-        $html = "<img src='app/img/statistics.png' alt='' /> <h4 style='display:inline'>" . _('Statistics') . "</h4>";
-        $html .= "<hr>";
-        $html .= "<script src='https://www.google.com/jsapi'></script>";
-        $html .= "<script>
-          google.load('visualization', '1', {packages:['corechart']});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'status');
-            data.addColumn('number', 'Experiments number');
-            data.addRows([";
-        foreach ($this->percentArr as $name => $percent) {
-            // as we replace all the quotes (ENT_QUOTES), we need to translate ' to \'
-            // otherwise the js code is broken
-            $name = str_replace("'", "\'", html_entity_decode($name, ENT_QUOTES));
-            $html .= "['$name', $percent],";
-        }
-        $html .= "]);";
-
-        $html .= "var options = {
-            title: '" . ngettext('Experiment', 'Experiments', 2) . "',
-            backgroundColor: '#fff',
-            colors: [" . $this->getColorList() . "]};";
-        $html .= "var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-          }
-        </script>";
-        $html .= "<div id='chart_div' class='center'></div>";
-
-        return $html;
     }
 }

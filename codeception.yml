@@ -2,9 +2,8 @@ coverage:
     enabled: true
     whitelist:
         include:
-            - app/*
-        exclude:
-            - app/controllers/*
+            - app/models/*
+            - app/classes/*
 actor: Tester
 paths:
     tests: tests

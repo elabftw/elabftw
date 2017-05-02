@@ -18,41 +18,53 @@ class Scheduler extends Entity
     /** pdo object */
     protected $pdo;
 
-    /** id of the event */
-    public $id;
+    /** instance of Database */
+    public $Database;
+
+    /** data array for item if it's selected */
+    public $itemData;
 
     /**
      * Constructor
      *
-     * @param int $team
+     * @param Database $database
      */
-    public function __construct($team)
+    public function __construct(Database $database)
     {
-        $this->team = $team;
         $this->pdo = Db::getConnection();
+        $this->Database = $database;
+    }
+
+    /**
+     * Read the db items and store it in itemData
+     *
+     */
+    public function populate()
+    {
+        $this->itemData = $this->Database->read();
     }
 
     /**
      * Add an event for an item in the team
      *
-     * @param int $item our selected item
      * @param string $start 2016-07-22T13:37:00
      * @param string $end 2016-07-22T19:42:00
      * @param string $title the comment entered by user
-     * @param int $userid
      * @return bool
      */
-    public function create($item, $start, $end, $title, $userid)
+    public function create($start, $end, $title)
     {
+        $title = filter_var($title, FILTER_SANITIZE_STRING);
+
         $sql = "INSERT INTO team_events(team, item, start, end, userid, title)
             VALUES(:team, :item, :start, :end, :userid, :title)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
-        $req->bindParam(':item', $item);
+        $req->bindParam(':team', $this->Database->Users->userData['team']);
+        $req->bindParam(':item', $this->Database->id);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
         $req->bindParam(':title', $title);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->Database->Users->userid);
 
         return $req->execute();
     }
@@ -71,8 +83,8 @@ class Scheduler extends Entity
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.team = :team AND team_events.item = :item";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
-        $req->bindParam(':item', $this->id);
+        $req->bindParam(':team', $this->Database->Users->userData['team']);
+        $req->bindParam(':item', $this->Database->id);
         $req->execute();
 
         return json_encode($req->fetchall());
@@ -89,7 +101,7 @@ class Scheduler extends Entity
         $sql = "UPDATE team_events SET start = :start WHERE team = :team AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':start', $start);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Database->Users->userData['team']);
         $req->bindParam(':id', $this->id);
 
         return $req->execute();
@@ -106,7 +118,7 @@ class Scheduler extends Entity
         $sql = "UPDATE team_events SET end = :end WHERE team = :team AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':end', $end);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Database->Users->userData['team']);
         $req->bindParam(':id', $this->id);
 
         return $req->execute();

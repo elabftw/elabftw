@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \RecursiveIteratorIterator;
-use \RecursiveDirectoryIterator;
 use Exception;
 
 /**
@@ -48,6 +46,41 @@ class Tools
 
 
     /**
+     * For displaying messages using jquery ui highlight/error messages
+     *
+     * @param string $message The message to display
+     * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross
+     * @param bool $cross do we display a cross or not?
+     * @return string the HTML of the message
+     */
+    public static function displayMessage($message, $type, $cross = true)
+    {
+        $glyphicon = 'info-sign';
+        $alert = 'success';
+
+        if ($type === 'ko') {
+            $glyphicon = 'exclamation-sign';
+            $alert = 'danger';
+        } elseif ($type === 'warning') {
+            $glyphicon = 'chevron-right';
+            $alert = $type;
+        }
+
+        $crossLink = '';
+
+        if ($cross) {
+            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times</a>";
+        }
+
+        $begin = "<div class='alert alert-" . $alert .
+            "'><span class='glyphicon glyphicon-" . $glyphicon .
+            "' aria-hidden='true'></span>";
+        $end = "</div>";
+
+        return $begin . $crossLink . ' ' . $message . $end;
+    }
+
+    /**
      * Sanitize title with a filter_var and remove the line breaks.
      *
      * @param string $input The title to sanitize
@@ -72,7 +105,7 @@ class Tools
     public static function checkBody($input)
     {
         $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
-            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak>";
+            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>";
         return strip_tags($input, $whitelist);
     }
 
@@ -110,6 +143,10 @@ class Tools
             case 'k':
                 $input /= 1024;
                 break;
+            case 'm':
+                break;
+            default:
+                return 2;
         }
 
         return intval($input);
@@ -151,7 +188,29 @@ class Tools
         if (strlen($date) != 8) {
             return false;
         }
-        return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
+        return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];
+    }
+
+    /**
+     * Put firstname lowercase and first letter uppercase
+     *
+     * @param string $firstname
+     * @return string
+     */
+    public static function purifyFirstname($firstname)
+    {
+        return ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
+    }
+
+    /**
+     * Put lastname in capital letters
+     *
+     * @param string $lastname
+     * @return string
+     */
+    public static function purifyLastname($lastname)
+    {
+        return strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
     }
 
     /**
@@ -173,7 +232,6 @@ class Tools
     }
 
     /**
-     * Used in login.php, login-exec.php and install/index.php
      * This is needed in the case you run an http server but people are connecting
      * through haproxy with ssl, with a http_x_forwarded_proto header.
      *
@@ -195,17 +253,17 @@ class Tools
      */
     public static function buildStringFromArray($array, $delim = '+')
     {
-        $string = "";
+        $str = "";
 
         if (!is_array($array)) {
             return false;
         }
 
         foreach ($array as $i) {
-            $string .= $i . $delim;
+            $str .= $i . $delim;
         }
         // remove last delimiter
-        return rtrim($string, $delim);
+        return rtrim($str, $delim);
     }
 
     /**
@@ -222,36 +280,6 @@ class Tools
                 'min_range' => 1
             ));
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
-    }
-
-    /**
-     * Get the size of a dir
-     *
-     * @param string $directory
-     * @return integer
-     */
-    public static function dirSize($directory)
-    {
-        $size = 0;
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-            $size += $file->getSize();
-        }
-        return $size;
-    }
-
-    /**
-     * Get the number of files in a dir
-     *
-     * @param string $directory
-     * @return int number of files in dir
-     */
-    public static function dirNum($directory)
-    {
-        $num = 0;
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-            $num++;
-        }
-        return $num;
     }
 
     /**
@@ -309,7 +337,7 @@ class Tools
         $ftwArr[] = 'Full Time Workers';
         $ftwArr[] = 'Fabricated To Win';
         $ftwArr[] = 'Furiously Taunted Wookies';
-        $ftwArr[] = 'Flash The Watch';
+        $ftwArr[] = 'Find The Wally';
 
         shuffle($ftwArr);
 
@@ -364,5 +392,61 @@ class Tools
         );
 
         return $langs;
+    }
+
+    /**
+     * A better print_r()
+     *
+     * @param array $arr
+     * @return string
+     */
+    public static function printArr($arr)
+    {
+        $html = '<ul>';
+        if (is_array($arr)) {
+            foreach ($arr as $key => $val) {
+                if (is_array($val)) {
+                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
+                } else {
+                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
+                }
+            }
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+
+    /**
+     * Used when generating options for select menus
+     *
+     * @param string $getParam
+     * @param string $value
+     * @return string|null
+     */
+    public static function addSelected($getParam, $value)
+    {
+        if ($getParam === $value) {
+            return " selected";
+        }
+    }
+
+    /**
+     * When you want to know the server port used
+     * We cannot rely on SERVER_PORT because it'll always be 443 inside Docker
+     * See issue #362
+     * If the port is standard (443), it will not appear in HTTP_HOST, but otherwise it'll be there
+     * so we can get the custom port from here
+     *
+     * @return string empty if standard port or ":444"
+     */
+    public static function getServerPort()
+    {
+        $port = '';
+        if (strpos($_SERVER['HTTP_HOST'], ':')) {
+            $hostArr = explode(':', $_SERVER['HTTP_HOST']);
+            $port = ':' . $hostArr[1];
+        }
+
+        return $port;
     }
 }

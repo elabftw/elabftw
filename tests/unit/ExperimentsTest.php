@@ -1,27 +1,27 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 class ExperimentsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Experiments= new Experiments(1, 1);
+        $this->Users = new Users(1);
+        $this->Experiments = new Experiments($this->Users);
     }
 
     public function testCreateAndDestroy()
     {
         $new = $this->Experiments->create();
         $this->assertTrue((bool) Tools::checkId($new));
-        $this->Experiments = new Experiments(1, 1, $new);
+        $this->Experiments->setId($new);
+        $this->Experiments->populate();
         $this->Experiments->toggleLock();
         $this->assertTrue($this->Experiments->destroy());
-        $this->Templates = new Templates(1);
-        $this->Templates->create('my template', 'is so cool', 1);
-        $new = $this->Experiments->create(1);
+        $this->Templates = new Templates($this->Users);
+        $this->Templates->create('my template', 'is so cool', '1');
+        $new = $this->Experiments->create('1');
         $this->assertTrue((bool) Tools::checkId($new));
-        $this->Experiments = new Experiments(1, 1, $new);
+        $this->Experiments = new Experiments($this->Users, $new);
         $this->assertTrue($this->Experiments->destroy());
     }
 
@@ -33,24 +33,14 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
-        $this->Experiments->setId(1);
+        $this->Experiments->setId('1');
+        $this->Experiments->populate();
         $experiment = $this->Experiments->read();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
         $this->assertEquals('20160729', $experiment['date']);
         $this->setExpectedException('Exception');
-        $this->Experiments->setId(9999999999);
-        $this->Experiments->read();
-    }
-
-    public function testReadAll()
-    {
-        $this->assertTrue(is_array($this->Experiments->readAllFromUser()));
-    }
-
-    public function testReadAllFromTeam()
-    {
-        $this->assertTrue(is_array($this->Experiments->readAllFromTeam()));
+        $this->Experiments->setId('a9999999999');
     }
 
     public function testReadRelated()
@@ -64,36 +54,34 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     public function testUpdate()
     {
         $this->Experiments->setId(1);
+        $this->Experiments->populate();
         $this->assertEquals(1, $this->Experiments->id);
-        $this->assertEquals(1, $this->Experiments->userid);
+        $this->assertEquals(1, $this->Experiments->Users->userid);
         $this->assertTrue($this->Experiments->update('Untitled', '20160729', '<p>Body</p>'));
-
-        $this->Experiments->setId(5);
-        $this->setExpectedException('Exception');
-        $this->Experiments->update('o', 'o', 'o');
     }
 
     public function testUpdateVisibility()
     {
         $this->Experiments->setId(1);
+        $this->Experiments->populate();
         $this->assertTrue($this->Experiments->updateVisibility('public'));
         $this->assertTrue($this->Experiments->updateVisibility('organization'));
         $this->assertTrue($this->Experiments->updateVisibility('team'));
         $this->assertTrue($this->Experiments->updateVisibility('user'));
         $this->assertTrue($this->Experiments->updateVisibility(1));
-        $this->setExpectedException('Exception');
-        $this->Experiments->updateVisibility('pwet');
     }
 
     public function testUpdateStatus()
     {
         $this->Experiments->setId(1);
+        $this->Experiments->populate();
         $this->assertTrue($this->Experiments->updateStatus(3));
     }
 
     public function testDuplicate()
     {
         $this->Experiments->setId(1);
+        $this->Experiments->populate();
         $this->assertInternalType("int", $this->Experiments->duplicate());
     }
 }

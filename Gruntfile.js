@@ -15,8 +15,52 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'js/elabftw.min.js': ['js/common.js', 'js/cornify.js', 'js/jquery.rating.js', 'js/keymaster/keymaster.js', 'js/todolist.js', 'js/fancybox/source/jquery.fancybox.pack.js', 'js/colorpicker/jquery.colorpicker.js', 'js/jeditable/jquery.jeditable.js', 'js/jquery.complexify.js/jquery.complexify.js', 'js/jquery.complexify.js/jquery.complexify.banlist.js', 'js/3Dmol-nojquery.js', 'js/3dmol_helpers.js', 'js/dropzone/dist/min/dropzone.min.js'],
-          'js/chemdoodle/chemdoodle.min.js': ['js/chemdoodle/chemdoodle-unpacked.js', 'js/chemdoodle/chemdoodle-uis-unpacked.js']
+          'app/js/elabftw.min.js': [
+              'bower_components/jquery/dist/jquery.js',
+              'bower_components/jquery-ui/jquery-ui.js',
+              'bower_components/bootstrap/js/alert.js',
+              'bower_components/bootstrap/js/button.js',
+              'bower_components/bootstrap/js/dropdown.js',
+              'bower_components/colorpicker/jquery.colorpicker.js',
+              'bower_components/jeditable/jquery.jeditable.js',
+              'bower_components/keymaster/keymaster.js',
+              'app/js/common.js',
+              'app/js/cornify.js',
+              'app/js/jquery.rating.js',
+              'app/js/3Dmol-nojquery.js',
+              'app/js/3dmol_helpers.js',
+              'app/js/prism.js'],
+
+          'app/js/chemdoodle/chemdoodle.min.js': [
+              'app/js/chemdoodle/chemdoodle-unpacked.js',
+              'app/js/chemdoodle/chemdoodle-uis-unpacked.js'],
+
+          'app/js/scheduler.min.js': [
+              'bower_components/moment/moment.js',
+              'bower_components/fullcalendar/dist/fullcalendar.js',
+              'bower_components/fullcalendar/dist/locale-all.js'],
+
+          'app/js/edit.min.js': [
+              'bower_components/tinymce/tinymce.js',
+              'app/js/tinymce-langs/*',
+              'bower_components/dropzone/dist/dropzone.js'],
+
+          'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js',
+          'app/js/admin.min.js': 'app/js/admin.js',
+          'app/js/view.min.js': [
+              'app/js/view.js',
+              'bower_components/fancybox/dist/jquery.fancybox.js'],
+          'app/js/tabs.min.js': 'app/js/tabs.js',
+          'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
+          'app/js/footer.min.js': 'app/js/footer.js',
+          'app/js/todolist.min.js': 'app/js/todolist.js',
+          'app/js/login.min.js': 'app/js/login.js',
+          'app/js/register.min.js': [
+              'bower_components/jquery.complexify/jquery.complexify.js',
+              'bower_components/jquery.complexify/jquery.complexify.banlist.js',
+              'app/js/register.js' ],
+          'app/js/change-pass.min.js': 'app/js/change-pass.js'
+
         }
       }
     },
@@ -27,8 +71,20 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'app/css/main.min.css': ['app/css/tagcloud.css', 'app/css/jquery.rating.css', 'app/css/autocomplete.css', 'js/dropzone/dist/min/dropzone.min.css', 'js/fullcalendar/dist/fullcalendar.css', 'app/css/main.css'],
-          'app/css/pdf.min.css': ['app/css/pdf.css']
+          'app/css/elabftw.min.css': [
+              'app/css/tagcloud.css',
+              'app/css/jquery.rating.css',
+              'app/css/autocomplete.css',
+              'app/css/prism.css',
+              'bower_components/dropzone/dist/dropzone.css',
+              'bower_components/fullcalendar/dist/fullcalendar.css',
+              'bower_components/bootstrap/dist/css/bootstrap.css',
+              'bower_components/colorpicker/jquery.colorpicker.css',
+              'bower_components/fancybox/dist/jquery.fancybox.css',
+              'bower_components/jquery-ui/themes/smoothness/jquery-ui.css',
+              'app/css/main.css'],
+
+          'app/css/pdf.min.css': 'app/css/pdf.css'
         }
       }
     },

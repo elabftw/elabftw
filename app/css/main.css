@@ -111,6 +111,7 @@ input, select, textarea {
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
     margin:5px 0;
+    line-height: 1;
 }
 .disabled-input{
     color:#989898;
@@ -124,6 +125,7 @@ select{
 }
 .form-control{
     -moz-appearance:none;
+    -webkit-appearance:none;
     background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;
     padding-right: 31px;
 }
@@ -357,7 +359,7 @@ a.elab-tooltip:hover span{
     position:absolute;
     color:#ffffff;
     background:#343434;
-    top: 0px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -570,7 +572,7 @@ div.txt li {
 
 /* fix for big images uploaded in the text */
 section.item div.txt {
-    overflow:scroll;
+    overflow:auto;
 }
 
 /* size of the editable box in edit mode */
@@ -669,7 +671,7 @@ tr:nth-child(odd) {
     margin-top: 10px;
     border-radius: 5px;
     padding: 20px;
-    overflow: hidden;
+    overflow: auto;
 }
 .tooltip-box {
     overflow: visible;
@@ -688,7 +690,7 @@ input[type='checkbox']{
 
 .col-md-6 input{
     width: 95%;
-    margin: 0px 0 15px;
+    margin: 0 0 15px;
 }
 .col-md-6 label{
     margin: 0;
@@ -696,14 +698,7 @@ input[type='checkbox']{
 /* NEW Template Settings */
 .new-tpl-box input{
     width: 100%;
-    margin: 0px 0 15px;
-}
-
-/* on admin.php for items types
- * it's bettor to have a pointer to show that you can click
- */
-a[class*='trigger_']:hover {
-    cursor:pointer;
+    margin: 0 0 15px;
 }
 
 .draggable {
@@ -924,7 +919,7 @@ a[class*='trigger_']:hover {
 /* title on editXP */
 #title_input {
     width:100%;
-    margin: 0px 0 15px;
+    margin: 0 0 15px;
 
 }
 
@@ -1014,14 +1009,7 @@ code {
     margin:10px;
     border: 1px solid #fff;
 }
-#todoList a, a:link {
-    outline: none;
-}
 
-#todoList ul {
-    margin-top:30px;
-    width: 80%;
-}
 #todoList ul li {
     list-style-type: none;
     font-size: 18px;
@@ -1031,16 +1019,24 @@ code {
     padding: 10px;
     text-align: left;
 }
-#todoList ul li {
-    cursor: auto;
+
+#todoList ul li:hover a:link {
+    display: inline;
 }
 #todoList ul li a,
 #todoList ul li a:link {
     float: right;
+    font-size: 60%;
     display: none;
     text-decoration: none;
     color: #303030;
 }
+
+/* fix the padding for sortable list */
+#todoItems-list.ui-sortable {
+    padding-left: 0;
+}
+
 #todoList ul li a:hover {
     color:red;
 }
@@ -1058,4 +1054,20 @@ code {
 .dropzone:hover {
     border: 1px solid #29AEB9;
     border-radius: 5px;
+}
+
+/* doodle canvas */
+.doodle {
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    display: block;
+    margin: 10px 0 10px 0;
+}
+
+.clickable:hover {
+    cursor: pointer;
+}
+
+.bodyToggle {
+    display: none;
 }

@@ -30,7 +30,6 @@ use Exception;
 /* install/index.php to get an installation up and running */
 session_start();
 require_once '../vendor/autoload.php';
-require_once '../app/functions.inc.php';
 $errflag = false;
 ?>
 
@@ -45,14 +44,9 @@ $errflag = false;
 <link rel="icon" type="image/ico" href="../app/img/favicon.ico" />
 <title>eLabFTW - INSTALL</title>
 <!-- CSS -->
-<!-- Bootstrap -->
-<link rel="stylesheet" media="all" href="../js/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" media="all" href="../app/css/main.min.css" />
-<link rel="stylesheet" media="all" href="../js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
-
+<link rel="stylesheet" media="all" href="../app/css/elabftw.min.css" />
 <!-- JAVASCRIPT -->
-<script src="../js/jquery/dist/jquery.min.js"></script>
-<script src="../js/jquery-ui/jquery-ui.min.js"></script>
+<script src="../app/js/elabftw.min.js"></script>
 </head>
 
 <body>
@@ -86,9 +80,31 @@ try {
         $req->execute();
         $res = $req->fetch();
         if ($res['tablesCount'] < 2) {
-            import_sql_structure();
+            // bootstrap MySQL database
+            $sqlFile = __DIR__ . '/elabftw.sql';
+            // temporary variable, used to store current query
+            $queryline = '';
+            // read in entire file
+            $lines = file($sqlFile);
+            // loop through each line
+            foreach ($lines as $line) {
+                // Skip it if it's a comment
+                if (substr($line, 0, 2) == '--' || $line == '') {
+                        continue;
+                }
+
+                // Add this line to the current segment
+                $queryline .= $line;
+                // If it has a semicolon at the end, it's the end of the query
+                if (substr(trim($line), -1, 1) == ';') {
+                    // Perform the query
+                    $pdo->q($queryline);
+                    // Reset temp variable to empty
+                    $queryline = '';
+                }
+            }
             header('Location: ../register.php');
-            exit;
+            throw new Exception('Redirecting to register page');
         }
 
         $sql = "SELECT * FROM users";
@@ -97,7 +113,7 @@ try {
         // redirect to register page if no users are in the database
         if ($req->rowCount() === 0) {
             header('Location: ../register.php');
-            exit;
+            throw new Exception('Redirecting to register page');
         } else {
             $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
             throw new Exception($message);
@@ -118,7 +134,7 @@ try {
     // CHECK PHP version
     if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
         $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
-        display_message('ko_nocross', $message);
+        echo Tools::displayMessage($message, 'ko', false);
         $errflag = true;
     }
 
@@ -136,7 +152,7 @@ try {
         // check the folders
         if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
             $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
-            display_message('ok_nocross', $message);
+            echo Tools::displayMessage($message, 'ok', false);
         } else { // failed at creating the folder
             $message = "Failed creating <em>uploads/</em> directory. You need to do it manually. 
                 <a href='https://elabftw.readthedocs.io/en/stable/faq.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
@@ -159,7 +175,7 @@ try {
     }
 
     $message = 'Everything is good on your server. You can install eLabFTW :)';
-    display_message('ok_nocross', $message);
+    echo Tools::displayMessage($message, 'ok', false);
     ?>
     <h3>Configuration</h3>
 
@@ -172,32 +188,32 @@ try {
     <p>
     <label for='db_host'>Host for mysql database:</label><br />
     <input id='db_host' name='db_host' type='text' value='localhost' />
-    <span class='smallgray'>(you can safely leave 'localhost' here)</span>
+    <p class='smallgray'>(you can safely leave 'localhost' here)</p>
     </p>
 
     <p>
     <label for='db_name'>Name of the database:</label><br />
     <input id='db_name' name='db_name' type='text' value='elabftw' />
-    <span class='smallgray'>(should be 'elabftw' if you followed the instructions)</span>
+    <p class='smallgray'>(should be 'elabftw' if you followed the instructions)</p>
     </p>
 
     <p>
     <label for='db_user'>Username to connect to the MySQL server:</label><br />
     <input id='db_user' name='db_user' type='text' value='<?php
     // we show root here if we're on windoze or Mac OS X
-    if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Windows' || PHP_OS == 'Darwin') {
+    if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'Windows' || PHP_OS == 'Darwin') {
         echo 'root';
     } else {
         echo 'elabftw';
     }
     ?>' />
-    <span class='smallgray'>(should be 'elabftw' or 'root' if you're on Mac/Windows)</span>
+    <p class='smallgray'>(should be 'elabftw' or 'root' if you're on Mac/Windows)</p>
     </p>
 
     <p>
     <label for='db_password'>Password:</label><br />
     <input id='db_password' name='db_password' type='password' />
-    <span class='smallgray'>(should be a very complicated one that you won't have to remember)</span>
+    <p class='smallgray'>(should be a very complicated one that you won't have to remember)</p>
     </p>
 
     <div class='center' style='margin-top:8px'>
@@ -261,7 +277,7 @@ try {
     </script>
     <?php
 } catch (Exception $e) {
-    display_message('ko_nocross', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
     echo "</section></section>";
 } finally {
     echo "</body></html>";

@@ -10,42 +10,34 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Show history of body of experiment or db item
  *
  */
-require_once 'app/init.inc.php';
-$page_title = _('Revisions');
-$selected_menu = null;
-$errflag = false;
-require_once 'app/head.inc.php';
-
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = _('Revisions');
+    $errflag = false;
+    require_once 'app/head.inc.php';
+
+    $Users = new Users($_SESSION['userid']);
     if ($_GET['type'] === 'experiments') {
-        // only experiment owner can change or see revisions
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
-        if (!$Experiments->isOwnedByUser($Experiments->userid, 'experiments', $Experiments->id)) {
-            throw new Exception(_('This section is out of your reach.'));
-        }
+        $Entity = new Experiments($Users, $_GET['item_id']);
         $location = 'experiments';
 
     } elseif ($_GET['type'] === 'items') {
 
-        // check if item is in team
-        $Database = new Database($_SESSION['team_id'], $_GET['item_id']);
-        if (!$Database->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
-        }
+        $Entity = new Database($Users, $_GET['item_id']);
         $location = 'database';
 
     } else {
         throw new Exception('Bad type!');
     }
 
-    $Revisions = new Revisions($_GET['type'], $_GET['item_id'], $_SESSION['userid']);
+    $Entity->canOrExplode('write');
+    $Revisions = new Revisions($Entity);
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {
@@ -56,8 +48,8 @@ try {
 
         $Revisions->restore($revId);
 
-        header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id'] . "");
-        exit;
+        header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id']);
+        throw new Exception('Redirect');
     }
 
     // BEGIN PAGE
@@ -69,9 +61,7 @@ try {
     }
 
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
 } finally {
     require_once 'app/footer.inc.php';
 }

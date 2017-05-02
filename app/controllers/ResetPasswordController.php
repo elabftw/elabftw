@@ -17,7 +17,9 @@ use Defuse\Crypto\Key as Key;
 
 try {
     require_once '../../app/init.inc.php';
-    $Users = new Users();
+    $Config = new Config();
+    $Email = new Email($Config);
+    $Users = new Users(null, $Config);
     $Logs = new Logs();
 
     if (isset($_POST['email'])) {
@@ -57,7 +59,7 @@ try {
 
         // Get info to build the URL
         $protocol = 'https://';
-        $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+        $reset_url = $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['REQUEST_URI'];
         $reset_link = $protocol .
             str_replace('app/controllers/ResetPasswordController', 'change-pass', $reset_url) .
             '?key=' . $key .
@@ -69,15 +71,14 @@ try {
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject('[eLabFTW] Password reset for ' . $user['name'])
+        ->setSubject('[eLabFTW] Password reset for ' . $user['fullname'])
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        ->setFrom(array($Email->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
-        ->setTo(array($email => $user['name']))
+        ->setTo(array($email => $user['fullname']))
         // Give it a body
         ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
         // generate Swift_Mailer instance
-        $Email = new Email(new Config);
         $mailer = $Email->getMailer();
         // now we try to send the email
         if (!$mailer->send($message)) {

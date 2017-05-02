@@ -15,15 +15,30 @@ use Exception;
 /**
  * Users infos from admin page
  */
+$redirect = true;
+
 try {
     require_once '../../app/init.inc.php';
 
-    if (!$_SESSION['is_admin']) {
-        throw new Exception('Non admin user tried to access admin panel.');
-    }
-
     $FormKey = new FormKey();
-    $Users = new Users();
+    $Users = new Users(null, new Config);
+
+    // (RE)GENERATE AN API KEY (from profile)
+    if (isset($_POST['generateApiKey'])) {
+        $redirect = false;
+        $Users->setId($_SESSION['userid']);
+        if ($Users->generateApiKey()) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
 
     $tab = 1;
     $location = '../../admin.php?tab=' . $tab;
@@ -31,6 +46,10 @@ try {
     // VALIDATE
     if (isset($_POST['usersValidate'])) {
         $tab = 2;
+        if (!$_SESSION['is_admin']) {
+            throw new Exception('Non admin user tried to access admin panel.');
+        }
+
         // loop the array
         foreach ($_POST['usersValidateIdArr'] as $userid) {
             $_SESSION['ok'][] = $Users->validate($userid);
@@ -40,6 +59,9 @@ try {
     // UPDATE USERS
     if (isset($_POST['usersUpdate'])) {
         $tab = 2;
+        if (!$_SESSION['is_admin']) {
+            throw new Exception('Non admin user tried to access admin panel.');
+        }
         if (isset($_POST['fromSysconfig'])) {
             $location = "../../sysconfig.php?tab=$tab";
         } else {
@@ -57,6 +79,9 @@ try {
         && isset($_POST['usersDestroy'])) {
 
         $tab = 2;
+        if (!$_SESSION['is_admin']) {
+            throw new Exception('Non admin user tried to access admin panel.');
+        }
 
         if ($Users->destroy(
             $_POST['usersDestroyEmail'],
@@ -72,5 +97,7 @@ try {
     $_SESSION['ko'][] = Tools::error();
 
 } finally {
-    header("Location: $location");
+    if ($redirect) {
+        header("Location: $location");
+    }
 }

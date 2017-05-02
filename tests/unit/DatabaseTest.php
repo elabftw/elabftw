@@ -1,18 +1,17 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 class DatabaseTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Database= new Database(1);
+        $this->Users = new Users(1);
+        $this->Database= new Database($this->Users);
     }
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Database->create(1, 1);
+        $new = $this->Database->create(1);
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Database->setId($new);
         $this->assertTrue($this->Database->destroy());
@@ -26,19 +25,14 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
-        $this->Database = new Database(1, 1);
-        $item = $this->Database->read();
-        $this->assertTrue(is_array($item));
-        $this->assertEquals('Database item 1', $item['title']);
-        $this->assertEquals('20160729', $item['date']);
-        $this->Database = new Database(1, 9999);
+        $new = $this->Database->create(1);
+        $this->Database->setId($new);
+        $this->Database->populate();
+        $this->assertTrue(is_array($this->Database->entityData));
+        $this->assertEquals('Untitled', $this->Database->entityData['title']);
+        $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
         $this->setExpectedException('Exception');
-        $this->Database->read();
-    }
-
-    public function testReadAll()
-    {
-        $this->assertTrue(is_array($this->Database->readAll()));
+        $this->Database = new Database($this->Users, 'yep');
     }
 
     public function testUpdate()
@@ -56,6 +50,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
     public function testDuplicate()
     {
         $this->Database->setId(1);
+        $this->Database->populate();
         $this->assertTrue((bool) Tools::checkId($this->Database->duplicate(1)));
     }
 

@@ -10,35 +10,28 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
 
 /**
  * All about the tag
  */
-class Tags extends Entity
+class Tags
 {
+    /** an instance of Experiments or Database */
+    public $Entity;
+
     /** pdo object */
     protected $pdo;
-
-    /** experiments or items */
-    private $type;
 
     /**
      * Constructor
      *
-     * @param string $type experiments or items
-     * @param int $id id of our entity
+     * @param Entity $entity
      */
-    public function __construct($type, $id)
+    public function __construct(Entity $entity)
     {
         $this->pdo = Db::getConnection();
-        if ($type === 'experiments' || $type === 'items') {
-            $this->type = $type;
-        } else {
-            throw new Exception('Invalid type');
-        }
-        $this->setId($id);
+        $this->Entity = $entity;
     }
 
     /**
@@ -49,43 +42,43 @@ class Tags extends Entity
      */
     public function create($tag)
     {
-        // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        $tag = strtr(filter_var($tag, FILTER_SANITIZE_STRING), '\\', '');
-
-        // check for string length and if user owns the experiment
-        if (strlen($tag) < 1) {
-            throw new Exception(_('Tag is too short!'));
-        }
-
-        if ($this->type === 'experiments' && !$this->isOwnedByUser($_SESSION['userid'], $this->type, $this->id)) {
-            throw new Exception(Tools::error(true));
-        }
-
-        if ($this->type === 'experiments') {
-            $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        if ($this->Entity->type === 'experiments') {
+            $userOrTeam = 'userid';
+            $userOrTeamValue = $this->Entity->Users->userid;
         } else {
-            $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, team_id) VALUES(:tag, :item_id, :team_id)";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+            $userOrTeam = 'team_id';
+            $userOrTeamValue = $this->Entity->Users->userData['team'];
         }
+        $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, " . $userOrTeam . ")
+            VALUES(:tag, :item_id, :userOrTeam)";
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':tag', $tag, PDO::PARAM_STR);
-        $req->bindParam(':item_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userOrTeam', $userOrTeamValue);
 
         return $req->execute();
     }
 
     /**
-     * Read tags for an item
+     * Read all the tags from team
      *
      * @return array
      */
-    public function read()
+    public function readAll()
     {
-        $sql = "SELECT DISTINCT * FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        if ($this->Entity->type === 'experiments') {
+            $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
+                FROM experiments_tags
+                INNER JOIN users ON (experiments_tags.userid = users.userid)
+                WHERE users.team = :team GROUP BY tag ORDER BY tag ASC";
+        } else {
+            $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
+                FROM items_tags
+                WHERE team_id = :team
+                GROUP BY tag ORDER BY tag ASC";
+        }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':team', $this->Entity->Users->userData['team']);
         $req->execute();
 
         return $req->fetchAll();
@@ -100,23 +93,19 @@ class Tags extends Entity
     public function copyTags($newId)
     {
         // TAGS
-        if ($this->type === 'experiments') {
-            $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
-        } else {
-            $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
-        }
+        $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         if ($req->rowCount() > 0) {
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newId is the new exp created
-                if ($this->type === 'experiments') {
+                if ($this->Entity->type === 'experiments') {
                     $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
                     $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
-                    $reqtag->bindParam(':userid', $_SESSION['userid']);
+                    $reqtag->bindParam(':userid', $this->Entity->Users->userid);
                 } else {
                     $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
                     $reqtag = $this->pdo->prepare($sql);
@@ -132,24 +121,26 @@ class Tags extends Entity
     /**
      * Generate a JS list for tags autocomplete
      *
+     * @param string $mode autocomplete or options
+     * @param array|null $selected the selected tag for options mode
      * @return string
      */
-    public function generateTagList()
+    public function generateTagList($mode, $selected = null)
     {
-        if ($this->type === 'experiments') {
-            $sql = "SELECT DISTINCT tag FROM experiments_tags
-                INNER JOIN users ON (experiments_tags.userid = users.userid)
-                WHERE users.team = :team GROUP BY tag ORDER BY tag DESC";
-        } else {
-            $sql = "SELECT DISTINCT tag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag DESC";
-        }
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
-        $req->execute();
+        $tagsArr = $this->readAll();
 
         $tagList = "";
-        while ($tag = $req->fetch()) {
-            $tagList .= "'" . addslashes(html_entity_decode($tag['tag'], ENT_QUOTES)) . "',";
+
+        foreach ($tagsArr as $tag) {
+            if ($mode === 'autocomplete') {
+                $tagList .= "'" . addslashes(html_entity_decode($tag['tag'], ENT_QUOTES)) . "',";
+            } else {
+                $tagList .= "<option value='" . $tag['tag'] . "'";
+                if (in_array($tag['tag'], $selected)) {
+                    $tagList .= " selected='selected'";
+                }
+                $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";
+            }
         }
 
         return $tagList;
@@ -158,17 +149,12 @@ class Tags extends Entity
     /**
      * Destroy a tag
      *
-     * @param int $userid
      * @param int $id id of the tag
      * @return bool
      */
-    public function destroy($userid, $id)
+    public function destroy($id)
     {
-        if ($this->type === 'experiments' && !$this->isOwnedByUser($userid, $this->type, $this->id)) {
-            throw new Exception(Tools::error(true));
-        }
-
-        $sql = "DELETE FROM " . $this->type . "_tags WHERE id = :id";
+        $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
 
@@ -182,14 +168,14 @@ class Tags extends Entity
      */
     public function destroyAll()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $sql = "DELETE FROM experiments_tags WHERE item_id = :id";
         } else {
             $sql = "DELETE FROM items_tags WHERE item_id = :id";
         }
 
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
 
         return $req->execute();
     }

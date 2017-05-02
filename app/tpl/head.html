@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<!--
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ *
+-->
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name='referrer' content='origin'>
+<link rel="icon" type="image/ico" href="app/img/favicon.ico" />
+<title>{{ pageTitle }}</title>
+<!-- CSS -->
+<link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
+<!-- see Gruntfile.js to see what gets inside this -->
+<script src="app/js/elabftw.min.js"></script>
+</head>
+
+<body>
+<section id="container" class='container'>
+
+<nav>
+    {% if session['auth'] == 1 %}
+    <form id='big_search' method='get' action='{{ actionTarget }}'>
+        <input id='big_search_input' type='search' name='q' size='50' value='{{ getQ }}' />
+    </form>
+    <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
+    <a href='experiments.php?mode=show'
+         {% if selectedMenu == 'Experiments' %}
+            class='selected'
+         {% endif %}
+         >{{ 'Experiments'|trans }}</a>
+    <a href='database.php?mode=show'
+         {% if selectedMenu == 'Database' %}
+            class='selected'
+         {% endif %}
+         >{{ 'Database'|trans }}</a>
+
+    <a href='team.php'
+         {% if selectedMenu == 'Team' %}
+            class='selected'
+         {% endif %}
+         >{{ 'Team'|trans }}</a>
+
+    <a href='search.php'
+         {% if selectedMenu == 'Search' %}
+            class='selected'
+         {% endif %}
+     >{{ 'Search'|trans }}</a>
+
+    <a href='{{ teamConfigArr['link_href'] }}' target='_blank'>{{ teamConfigArr['link_name'] }}</a>
+    {% else %}
+        <span id='logonav' class='navleft'>elab<strong>FTW</strong></span>
+    {% endif %}
+</nav>
+
+<div id='real_container'>
+    {% if session['auth'] == 1 %}
+    <div class="user-nav">
+        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>My Profile</span> {{ session['firstname'] }}</a><br>
+        <a class="elab-tooltip" href='ucp.php'><span>{{ 'Settings'|trans }}</span><img src='app/img/settings.png' alt='{{ 'Settings'|trans }}' /></a> |
+        <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>{{ 'Help'|trans }}</span>?</strong></a> |
+        <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><img src='app/img/logout.png' alt='{{ 'Logout'|trans }}' /></a>
+    </div>
+    <div id='help_container' class='well help-container'>
+        <p><a href='#' class='close helpClose'>&times</a>
+            <ul>
+                <li class='tip'>
+                    {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://elabftw.readthedocs.io/en/stable/manual.html'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ "You can use a TODOlist by pressing 't'."|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'You can have experiments templates (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=3'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ 'You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'|trans|format("<a href='admin.php?tab=4'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ 'If you press Ctrl Shift D in the editor, the date will appear under the cursor.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'Custom shortcuts are available (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=1'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ 'You can duplicate experiments in one click.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'Click a tag to list all items with this tag.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'|trans }}
+                </li>
+            </ul>
+        </p>
+    </div>
+    {% endif %}
+
+<noscript><!-- show warning if javascript is disabled -->
+    <div class='alert alert-danger'>
+        <p><strong>Javascript is disabled.</strong> Please enable Javascript to view eLabFTW in all its glory.</p>
+    </div>
+</noscript>
+<!-- TITLE -->
+<h2>{{ pageTitle }}</h2>

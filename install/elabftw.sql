@@ -49,7 +49,6 @@ CREATE TABLE `experiments` (
   `date` int(10) unsigned NOT NULL,
   `body` mediumtext,
   `status` varchar(255) NOT NULL,
-  `links` varchar(255) DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -200,7 +199,7 @@ CREATE TABLE `items_types` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned NOT NULL,
   `name` text NOT NULL,
-  `bgcolor` varchar(6) DEFAULT '000000',
+  `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) unsigned DEFAULT NULL,
   `bookable` tinyint(1) DEFAULT '0',
@@ -307,6 +306,8 @@ CREATE TABLE `users` (
   `chem_editor` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
+  `api_key` varchar(255) NULL DEFAULT NULL,
+  `default_vis` varchar(255) NULL DEFAULT 'team',
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -353,12 +354,41 @@ CREATE TABLE IF NOT EXISTS `team_events` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- todolist
+--
+
+CREATE TABLE IF NOT EXISTS `todolist` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `body` text NOT NULL,
+  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- idps
+--
+CREATE TABLE IF NOT EXISTS `idps` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `entityid` VARCHAR(255) NOT NULL,
+  `sso_url` VARCHAR(255) NOT NULL,
+  `sso_binding` VARCHAR(255) NOT NULL,
+  `slo_url` VARCHAR(255) NOT NULL,
+  `slo_binding` VARCHAR(255) NOT NULL,
+  `x509` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 
 
 -- ELABFTW
 /* the default item_types */
-INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES
+INSERT INTO `items_types` (`team`, `id`, `name`, `color`, `template`) VALUES
 (1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');
 
 /* the default status */
@@ -377,7 +407,7 @@ INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
 <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);
 /* the default team */
 INSERT INTO `teams` (`team_id`, `team_name`, `deletable_xp`, `link_name`, `link_href`) VALUES
-(1, 'Editme', 1, 'Documentation', 'https://elabftw.readthedocs.io');
+(1, 'Default team', 1, 'Documentation', 'https://elabftw.readthedocs.io');
 /* the groups */
 INSERT INTO `groups` (`group_id`, `group_name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
 (1, 'Sysadmins', 1, 1, 0),
@@ -395,10 +425,10 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_method', 'sendmail'),
 ('proxy', ''),
 ('sendmail_path', '/usr/sbin/sendmail'),
-('smtp_address', 'smtp.mailgun.org'),
+('smtp_address', 'mail.smtp2go.com'),
 ('smtp_encryption', 'tls'),
 ('smtp_password', ''),
-('smtp_port', '587'),
+('smtp_port', '2525'),
 ('smtp_username', ''),
 ('stamplogin', ''),
 ('stamppass', ''),
@@ -406,4 +436,15 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '12');
+('schema', '20'),
+('saml_debug', '0'),
+('saml_strict', '1'),
+('saml_baseurl', NULL),
+('saml_entityid', NULL),
+('saml_acs_url', NULL),
+('saml_acs_binding', NULL),
+('saml_slo_url', NULL),
+('saml_slo_binding', NULL),
+('saml_nameidformat', NULL),
+('saml_x509', NULL),
+('saml_privatekey', NULL);

@@ -16,22 +16,22 @@ use Exception;
  * Login page
  *
  */
-require_once 'app/init.inc.php';
-$page_title = _('Login');
-$selected_menu = null;
-
-// Check if already logged in
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    header('Location: experiments.php');
-    exit;
-}
-
-require_once 'app/head.inc.php';
-
-$formKey = new FormKey();
-$BannedUsers = new BannedUsers();
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = _('Login');
+    require_once 'app/head.inc.php';
+
+    // Check if already logged in
+    if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+        header('Location: experiments.php');
+        throw new Exception('Already logged in');
+    }
+
+    $Config = new Config();
+    $Idps = new Idps();
+    $FormKey = new FormKey();
+    $BannedUsers = new BannedUsers($Config);
+
     // if we are not in https, die saying we work only in https
     if (!Tools::usingSsl()) {
         // get the url to display a link to click (without the port)
@@ -46,14 +46,14 @@ try {
     }
 
     // show message if there is a failed_attempt
-    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
-        $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
-        $message = _('Number of login attempt left before being banned for') . ' ' . get_config('ban_time') . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
-        display_message('ko', $message);
+    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < $Config->configArr['login_tries']) {
+        $number_of_tries_left = $Config->configArr['login_tries'] - $_SESSION['failed_attempt'];
+        $message = _('Number of login attempt left before being banned for') . ' ' . $Config->configArr['ban_time'] . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
+        echo Tools::displayMessage($message, 'ko');
     }
 
     // disable login if too much failed_attempts
-    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_config('login_tries')) {
+    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= $Config->configArr['login_tries']) {
         // get user infos
         $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list
@@ -63,85 +63,18 @@ try {
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 
+    $idpsArr = $Idps->readAll();
+
+    echo $twig->render('login.html', array(
+        'BannedUsers' => $BannedUsers,
+        'Config' => $Config,
+        'FormKey' => $FormKey,
+        'SESSION' => $_SESSION,
+        'idpsArr' => $idpsArr
+    ));
+
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
+} finally {
     require_once 'app/footer.inc.php';
-    exit;
 }
-?>
-
-<script>
-// Check for cookies
-function checkCookiesEnabled() {
-    var cookieEnabled = (navigator.cookieEnabled) ? true : false;
-    if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) {
-        document.cookie="testcookie";
-        cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
-    }
-return (cookieEnabled);
-}
-if (!checkCookiesEnabled()) {
-    var cookie_alert =
-        "<div class='alert alert-danger'><p><?= _('Please enable cookies in your navigator to continue.') ?></p></div>";
-    document.write(cookie_alert);
-}
-</script>
-
-<?php
-// put the email in the field if we just registered
-if (isset($_SESSION['email'])) {
-    $email = $_SESSION['email'];
-} else {
-    $email = '';
-}
-?>
-
-<menu class='border' style='color:#29AEB9'><?= _('Note: You need cookies enabled to log in.') ?></menu>
-<section class='center'>
-    <!-- Login form , the id is for an acceptance test -->
-    <form method="post" id='login' action="app/login-exec.php" autocomplete="off">
-        <h2><?= _('Sign in to your account') ?></h2>
-        <br/>
-        <p class="login-area">
-        <label class='block' for="email"><?= _('Email') ?></label>
-        <input class="login-area-input" name="email" type="email" value='<?= $email ?>' required /><br>
-            <label class='block' for="password"><?= _('Password') ?></label>
-            <input class="login-area-input" name="password" type="password" required /><br>
-            <!-- form key -->
-            <?= $formKey->getFormkey() ?>
-        <input type='checkbox' name='rememberme' id='rememberme' />
-        <label for='rememberme'><?= _('Remember me') ?></label>
-        </p>
-        <div id='loginButtonDiv'>
-        <button type="submit" class='button' name="Submit"><?= _('Login') ?></button>
-        </div>
-    </form>
-    <p>
-<?php
-printf(
-    _("Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"),
-    "<a href='register.php'>",
-    "</a>",
-    "<a href='#' class='trigger'>",
-    "</a>"
-);
-?>
-    </p>
-    <div class='toggle_container'>
-    <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
-    <input placeholder='<?= _('Enter your email address') ?>' name='email' type='email' required />
-    <button class='button' type="submit" name="Submit"><?= _('Send new password') ?></button>
-    </form>
-    </div>
-</section>
-
-<script>
-$(document).ready(function(){
-	$(".toggle_container").hide();
-	$("a.trigger").click(function(){
-		$('.toggle_container').slideToggle("slow");
-	});
-});
-</script>
-
-<?php require_once 'app/footer.inc.php';

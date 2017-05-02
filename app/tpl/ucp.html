@@ -1,0 +1,324 @@
+<script src="app/js/edit.min.js"></script>
+
+<menu>
+    <ul>
+        <li class='tabhandle' id='tab1'>{{ 'Preferences'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Account'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
+    </ul>
+</menu>
+
+<!-- TAB 1 - USER PREFERENCES -->
+<div class='divhandle' id='tab1div'>
+
+    <form action='app/controllers/UcpController.php' method='post'>
+        <!-- LANGUAGE -->
+        <section class='box'>
+            <h3>{{ 'Language'|trans }}</h3>
+            <hr>
+            <p>
+            <select id='lang' name='lang'>
+            {% for lang, text in langsArr %}
+                <option value='{{ lang }}'
+                  {{ Users.userData['lang'] == lang ? ' selected' }}
+                  >{{ text }}</option>
+            {% endfor %}
+            </select>
+        </section>
+
+        <!-- DISPLAY -->
+        <section class='box'>
+
+            <h3>{{ 'Display'|trans }}</h3>
+            <hr>
+            <p>
+            <input id='radio_view_default' type='radio' name='display' value='default'
+          {{ Users.userData['display'] == 'default' ? " checked" }}
+             />
+            <label for='radio_view_default'>{{ 'Default'|trans }}</label>
+
+            <input id='radio_view_compact' type='radio' name='display' value='compact'
+          {{ Users.userData['display'] == 'compact' ? " checked" }}
+             />
+            <label for='radio_view_compact'>{{ 'Compact'|trans }}</label>
+            </p>
+
+            <p style='margin-top:20px;'>
+            <label for='limit'>{{ 'Items per page:'|trans }}</label>
+            <input id='limit' type='text' size='2' maxlength='2' value='{{ Users.userData['limit_nb'] }}' name='limit'>
+            </p>
+        </section>
+
+        <section class='box'>
+            <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
+            <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
+            <hr>
+            <p>
+                <table>
+                <tr><th>{{ 'Action'|trans }}</th>
+                    <th>{{ 'Shortcut'|trans }}</th></tr>
+
+                <tr><td>{{ 'Create'|trans }}</td><td>
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_create'] }}' name='sc_create' />
+                    </td></tr>
+
+                    <tr><td>{{ 'Edit'|trans }}</td><td>
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_edit'] }}' name='sc_edit' />
+                    </td></tr>
+
+                    <tr><td>{{ 'Submit'|trans }}</td><td>
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_submit'] }}' name='sc_submit' />
+                    </td></tr>
+
+                    <tr><td>{{ 'TODO list'|trans }}</td><td>
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_todo'] }}' name='sc_todo' />
+                    </td></tr>
+                </table>
+            </p>
+        </section>
+
+        <section class='box'>
+            <h3>{{ 'Miscellaneous'|trans }}</h3>
+            <hr>
+            <p>
+            <input id='show_team' type='checkbox' name='show_team'
+              {{ Users.userData['show_team'] == '1' ? " checked='checked'" }}
+            />
+            <label for='show_team'>{{ 'Show experiments from the team on the Experiments page?'|trans }}</label>
+            <br>
+            <input id='close_warning' type='checkbox' name='close_warning'
+              {{ Users.userData['close_warning'] == '1' ? " checked='checked'" }}
+            />
+            <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab?'|trans }}</label>
+            <br>
+            <input id='chem_editor' type='checkbox' name='chem_editor'
+              {{ Users.userData['chem_editor'] == '1' ? " checked='checked'" }}
+            />
+            <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode?'|trans }}</label>
+            </p>
+            <br>
+            <p>
+            <label for 'default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
+            <select name='default_vis'>
+                <option value='organization'
+                  {{ Users.userData['default_vis'] == 'organization' ? " selected='selected'" }}
+                >{{ 'Organization'|trans }}</option>
+                <option value='team'
+                  {{ Users.userData['default_vis'] == 'team' ? " selected='selected'" }}
+                >{{ 'Team'|trans }}</option>
+                <option value='user'
+                  {{ Users.userData['default_vis'] == 'user' ? " selected='selected'" }}
+                >{{ 'User'|trans }}</option>
+                {% for teamGroup in teamGroupsArr %}
+                    <option value='{{ teamGroup['id'] }}'
+                      {{ teamGroup['id'] == Users.userData['default_vis'] ? " selected='selected'" }}
+                    >{{ 'Group'|trans }} - {{ teamGroup['name'] }}
+                    </option>
+                {% endfor %}
+            </select>
+        </section>
+
+        <div style='margin-top:30px;' class='center'>
+            <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+        </div>
+
+        </p>
+    </form>
+
+</div>
+
+<!-- TAB 2 - USER INFORMATIONS -->
+<div class='divhandle' id='tab2div'>
+    <div class='box'>
+
+    <form method="post" action="app/controllers/UcpController.php">
+        <div class='row'>
+            <div class='col-md-6'>
+                <h4>{{ 'Modify your personal informations'|trans }}</h4>
+                <label class='block' for='currpass'>{{ 'Enter your password to edit infos.'|trans }}</label>
+                <input id='currpass' name="currpass" type="password" required />
+            </div>
+            <div class='col-md-6'>
+                <h4>{{ 'Modify your password'|trans }}</h4>
+                <label class='block' for='newpass'>{{ 'New password'|trans }}</label>
+                <input name="newpass" type="password" />
+                <label class='block' for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
+                <input name="cnewpass" type="password" />
+            </div>
+        </div>
+
+        <hr><br>
+
+        <h4>{{ 'Modify your identity'|trans }}</h4>
+
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='firstname'>{{ 'Firstname'|trans }}</label>
+                <input name="firstname" value='{{ Users.userData['firstname'] }}' cols='20' rows='1' />
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='lastname'>{{ 'Lastname'|trans }}</label>
+                <input name="lastname" value='{{ Users.userData['lastname'] }}' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='email'>{{ 'Email'|trans }}</label>
+                <input name="email" type="email" value='{{ Users.userData['email'] }}' cols='20' rows='1' />
+            </div>
+        </div>
+
+        <hr><br>
+        <h4>{{ 'Modify your contact information'|trans }}</h4>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='phone'>{{ 'Phone'|trans }} </label>
+                <input name="phone" value='{{ Users.userData['phone'] }}' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='cellphone'>{{ 'Mobile'|trans }}</label>
+                <input name="cellphone" value='{{ Users.userData['cellphone'] }}' cols='20' rows='1' />
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='skype'>{{ 'Skype'|trans }}</label>
+                <input name="skype" value='{{ Users.userData['skype'] }}' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='website'>{{ 'Website'|trans }}</label>
+                <input name="website" type="url" value='{{ Users.userData['website'] }}' cols='20' rows='1' />
+            </div>
+        </div>
+
+    </div>
+        <div class='submitButtonDiv'>
+            <button type="submit" name="Submit" class='button'>{{ 'Update profile'|trans }}</button>
+        </div>
+    </form>
+
+</div>
+<!-- TAB 3 - USER TEMPLATES -->
+<div class='divhandle' id='tab3div'>
+
+<div class='box new-tpl-box'>
+    <h3>{{ 'Experiments Templates'|trans }}</h3>
+    <ul class='nav nav-pills' role='tablist'>
+        <li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>{{ 'Create New'|trans }}</li>
+        {% for template in templatesArr %}
+            <li class='sortable subtabhandle badge badgetab' id='subtab_{{ template['id'] }}'>{{ template['name'] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- CREATE NEW TPL TAB -->
+    <div class='subdivhandle' id='subtab_1div'>
+    <p onClick="$('#import_tpl').toggle()" style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' />{{ 'Import from File'|trans }}</p>
+        <form action='app/controllers/UcpController.php' method='post'>
+            <input type='hidden' name='new_tpl_form' />
+            <input type='file' accept='.tpl' id='import_tpl'>
+            <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='{{ 'Name of the Template'|trans }}' />
+            <br>
+            <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
+            <br>
+            <div class='center'>
+                <button type="submit" name="Submit" class='button'>{{ 'Add template'|trans }}</button>
+            </div>
+        </form>
+    </div>
+
+    {% for template in templatesArr %}
+        <div class='subdivhandle' id='subtab_{{ template['id'] }}div'>
+            <img class='align_right' src='app/img/download.png' title='Export Template' alt='Export' onClick="exportTpl('{{ template['name'] }}', '{{ template['id'] }}')" />
+            <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' onClick="templatesDestroy({{ template['id'] }})" />
+            <form action='app/controllers/UcpController.php' method='post'>
+                <input type='hidden' name='tpl_form' />
+                <input type='hidden' name='tpl_id[]' value='{{ template['id'] }}' />
+                <input name='tpl_name[]' value='{{ template['name'] }}' style='width:90%' /><br />
+                {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+                <textarea id='e{{ template['id'] }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template['body'] }}</textarea><br />
+                <div class='center'>
+                    <button type='submit' name='Submit' class='button'>{{ 'Edit template'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+<!-- END PAGE -->
+
+<!-- to export templates -->
+<script src='app/js/file-saver.min.js'></script>
+<script src='app/js/tabs.min.js'></script>
+<script>
+// READY ? GO !!
+$(document).ready(function() {
+
+    // hide the file input
+    $('#import_tpl').hide();
+    $('#import_tpl').on('change', function(e){
+        var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "");
+        readFile(this.files[0], function(e) {
+            tinyMCE.get('new_tpl_txt').setContent(e.target.result);
+            $('#new_tpl_name').val(title);
+            $('#import_tpl').hide();
+        });
+    });
+
+    $('.nav-pills').sortable({
+        // limit to horizontal dragging
+        axis : 'x',
+        helper : 'clone',
+        // we don't want the Create new pill to be sortable
+        cancel: "#subtab_1",
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(".nav-pills").sortable("toArray");
+
+            $.post("app/controllers/AdminController.php", {
+                'updateOrdering': true,
+                'table': 'experiments_templates',
+                'ordering': ordering
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        }
+    });
+
+    // SUB TABS
+    var tab = 1;
+    var initdiv = '#subtab_' + tab + 'div';
+    var inittab = '#subtab_' + tab;
+    // init
+    $(".subdivhandle").hide();
+    $(initdiv).show();
+    $(inittab).addClass('selected');
+
+    $(".subtabhandle" ).click(function(event) {
+        var tabhandle = '#' + event.target.id;
+        var divhandle = '#' + event.target.id + 'div';
+        $(".subdivhandle").hide();
+        $(divhandle).show();
+        $(".subtabhandle").removeClass('badgetabactive');
+        $(tabhandle).addClass('badgetabactive');
+    });
+    // END SUB TABS
+
+    // TinyMCE
+    tinymce.init({
+        mode : "specific_textareas",
+        editor_selector : "mceditable",
+        content_css : "app/css/tinymce.css",
+        plugins : "table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link",
+        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
+        removed_menuitems : "newdocument",
+        language : '{{ Users.userData['lang'] }}'
+    });
+});
+</script>

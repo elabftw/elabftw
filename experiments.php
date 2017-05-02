@@ -11,85 +11,139 @@
 
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Entry point for all experiment stuff
  *
  */
-require_once 'app/init.inc.php';
-$page_title = ngettext('Experiment', 'Experiments', 2);
-$selected_menu = 'Experiments';
-require_once 'app/head.inc.php';
-
-// add the chemdoodle stuff if we want it
-echo addChemdoodle();
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = ngettext('Experiment', 'Experiments', 2);
+    $selectedMenu = 'Experiments';
+    require_once 'app/head.inc.php';
+
+    if (!isset($Users)) {
+        $Users = new Users($_SESSION['userid']);
+    }
+
+    $EntityView = new ExperimentsView(new Experiments($Users));
+    $Status = new Status($EntityView->Entity->Users);
+    $Tags = new Tags($EntityView->Entity);
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
-        $ExperimentsView->display = $_SESSION['prefs']['display'];
-
         // CATEGORY FILTER
-        if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $ExperimentsView->Experiments->categoryFilter = "AND status.id = " . $_GET['filter'];
-            $ExperimentsView->searchType = 'filter';
+        if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
+            $EntityView->Entity->categoryFilter = " AND status.id = " . $_GET['cat'];
+            $EntityView->searchType = 'filter';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $ExperimentsView->tag = $tag;
-            $ExperimentsView->Experiments->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
-            $ExperimentsView->searchType = 'tag';
+            $EntityView->Entity->tagFilter = " AND tagt.tag LIKE '" . $tag . "'";
+            $EntityView->searchType = 'tag';
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-            $ExperimentsView->query = $query;
-            $ExperimentsView->Experiments->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
-            $ExperimentsView->searchType = 'query';
+            $EntityView->query = $query;
+            $EntityView->Entity->queryFilter = " AND (
+                title LIKE '%$query%' OR
+                date LIKE '%$query%' OR
+                body LIKE '%$query%' OR
+                elabid LIKE '%$query%'
+            )";
+            $EntityView->searchType = 'query';
         }
         // RELATED FILTER
         if (isset($_GET['related']) && Tools::checkId($_GET['related'])) {
-            $ExperimentsView->related = $_GET['related'];
-            $ExperimentsView->searchType = 'related';
+            $EntityView->related = $_GET['related'];
+            $EntityView->searchType = 'related';
         }
         // ORDER
         // default by date
-        $ExperimentsView->Experiments->order = 'experiments.date';
+        $EntityView->Entity->order = 'experiments.date';
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
-                $ExperimentsView->Experiments->order = 'status.name';
+                $EntityView->Entity->order = 'status.name';
             } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
-                $ExperimentsView->Experiments->order = 'experiments.' . $_GET['order'];
+                $EntityView->Entity->order = 'experiments.' . $_GET['order'];
+            } elseif ($_GET['order'] === 'comment') {
+                $EntityView->Entity->order = 'experiments_comments.recentComment';
             }
         }
         // SORT
         if (isset($_GET['sort'])) {
             if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {
-                $ExperimentsView->Experiments->sort = $_GET['sort'];
+                $EntityView->Entity->sort = $_GET['sort'];
             }
         }
 
-        echo $ExperimentsView->buildShowMenu('experiments');
-        echo $ExperimentsView->buildShow();
+        echo $EntityView->buildShowMenu('experiments');
+        echo $EntityView->buildShow();
+        echo $twig->render('show.html', array(
+            'Ev' => $EntityView
+        ));
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']));
-        echo $ExperimentsView->view();
+        $EntityView->Entity->setId($_GET['id']);
+        $Comments = new Comments($EntityView->Entity);
+        $EntityView->initViewEdit();
+
+        $commentsArr = $Comments->read();
+        $ownerName = '';
+        if ($EntityView->isReadOnly()) {
+            // we need to get the fullname of the user who owns the experiment to display the RO message
+            $Owner = new Users($EntityView->Entity->entityData['userid']);
+            $ownerName = $Owner->userData['fullname'];
+        }
+
+        if ($EntityView->Entity->entityData['timestamped']) {
+            echo $EntityView->showTimestamp();
+        }
+
+        echo $twig->render('view.html', array(
+            'Ev' => $EntityView,
+            'Status' => $Status,
+            'Tags' => $Tags,
+            'commentsArr' => $commentsArr,
+            'ownerName' => $ownerName
+        ));
+        echo $EntityView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']));
-        echo $ExperimentsView->edit();
+        $EntityView->Entity->setId($_GET['id']);
+        $EntityView->initViewEdit();
+        // check permissions
+        $EntityView->Entity->canOrExplode('write');
+
+        // a locked experiment cannot be edited
+        if ($EntityView->Entity->entityData['locked']) {
+            throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
+        }
+
+        $Revisions = new Revisions($EntityView->Entity);
+
+        echo $twig->render('edit.html', array(
+            'Ev' => $EntityView,
+            'Revisions' => $Revisions,
+            'Status' => $Status,
+            'Tags' => $Tags
+        ));
+        echo $EntityView->buildUploadsHtml();
     }
 
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage());
+    $debug = false;
+    $message = $e->getMessage();
+    if ($debug) {
+        $message .= ' ' . $e->getFile() . '(' . $e->getLine() . ')';
+    }
+    echo Tools::displayMessage($message, 'ko');
 } finally {
     require_once 'app/footer.inc.php';
 }

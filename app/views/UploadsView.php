@@ -34,6 +34,10 @@ class UploadsView extends EntityView
      */
     public function buildUploadForm()
     {
+        $page = 'experiments';
+        if ($this->Uploads->Entity->type === 'items') {
+            $page = 'database';
+        }
         $html = "<section class='box'>";
         $html .= "<img src='app/img/attached.png' /> ";
         $html .= "<h3 style='display:inline'>" . _('Attach a file') . "</h3>";
@@ -41,13 +45,6 @@ class UploadsView extends EntityView
         $html .= "</section>";
 
         $html .= "<script>
-        // we need this to reload the #filesdiv (div displaying uploaded files)
-        var type = '" . $this->Uploads->type . "';
-        if (type == 'items') {
-            type = 'database';
-        }
-        var item_id = '" . $this->Uploads->itemId . "';
-
         // config for dropzone, id is camelCased.
         Dropzone.options.elabftwDropzone = {
             // i18n message to user
@@ -58,13 +55,13 @@ class UploadsView extends EntityView
                 // add additionnal parameters (id and type)
                 this.on('sending', function(file, xhr, formData) {
                     formData.append('upload', true);
-                    formData.append('item_id', '" . $this->Uploads->itemId . "');
-                    formData.append('type', '" . $this->Uploads->type . "');
+                    formData.append('id', '" . $this->Uploads->Entity->id . "');
+                    formData.append('type', '" . $this->Uploads->Entity->type . "');
                 });
 
                 // once it is done
                 this.on('complete', function(answer) {
-                    // check the answer we get back from app/uploads.php
+                    // check the answer we get back from app/controllers/EntityController.php
                     var json = JSON.parse(answer.xhr.responseText);
                     if (json.res) {
                         notif(json.msg, 'ok');
@@ -73,9 +70,11 @@ class UploadsView extends EntityView
                     }
                     // reload the #filesdiv once the file is uploaded
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        $('#filesdiv').load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {
+                        $('#filesdiv').load('" . $page .
+                            ".php?mode=edit&id=" . $this->Uploads->Entity->id . " #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
-                            makeEditableFileComment();
+                            makeEditableFileComment('" . $this->Uploads->Entity->type . "', " .
+                                $this->Uploads->Entity->id . ");
                         });
                     }
                 });
@@ -140,11 +139,11 @@ class UploadsView extends EntityView
 
             // only display the thumbnail if the file is here
             if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif|tif|tiff|pdf|eps)$/i', $ext)) {
-                // we add rel='gallery' to the images for fancybox to display it as an album
-                // (possibility to go next/previous)
-                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' class='fancybox' rel='gallery' ";
+                // if it's a picture, we display it with fancybox
+                // see: http://fancyapps.com/fancybox/3/docs/
+                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' data-fancybox='group' ";
                 if ($upload['comment'] != 'Click to add a comment') {
-                    $html .= "title='" . $upload['comment'] . "'";
+                    $html .= "title='" . $upload['comment'] . "' data-caption='" . $upload['comment'] . "'";
                 }
                 $html .= "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
 
@@ -153,7 +152,7 @@ class UploadsView extends EntityView
                 $html .= "<img class='thumb' src='app/img/thumb-" . $ext . ".png' alt='' />";
 
             // special case for mol files, only in view mode
-            } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $mode === 'view') {
+            } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
                 // we need to escape \n in the mol file or we get unterminated string literal error in JS
                 $mol = str_replace("\n", "\\n", file_get_contents($filepath));
                 $html .= "<div class='center'><script>
@@ -166,7 +165,7 @@ class UploadsView extends EntityView
                 // all files that are not in pdb format
                 $style = 'stick';
                 if ($ext === 'pdb') {
-                  $style = 'cartoon:color=spectrum';
+                    $style = 'cartoon:color=spectrum';
                 }
                 $molviewer = new MolViewer($upload['id'], $filepath, false, $style);
                 $html .= $molviewer->getViewerDiv();
@@ -203,7 +202,7 @@ class UploadsView extends EntityView
         // add editable comments in edit mode
         if ($mode === 'edit') {
             $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
-                    makeEditableFileComment();
+                    makeEditableFileComment('" . $this->Uploads->Entity->type . "', " . $this->Uploads->Entity->id . ");
                 });";
         }
         $html .= "});</script>";

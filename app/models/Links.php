@@ -10,13 +10,12 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
 
 /**
  * All about the experiments links
  */
-class Links extends Entity
+class Links
 {
     /** pdo object */
     protected $pdo;
@@ -44,19 +43,10 @@ class Links extends Entity
      */
     public function create($link)
     {
-        // check link is int and experiment is owned by user
-        $link = Tools::checkId($link);
-        if ($link === false) {
-            throw new Exception('The id parameter is invalid!');
-        }
-        if (!$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
-            throw new Exception(Tools::error(true));
-        }
-
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Experiments->id);
+        $req->bindParam(':link_id', $link);
 
         return $req->execute();
     }
@@ -78,7 +68,7 @@ class Links extends Entity
             LEFT JOIN items_types ON (items.type = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Experiments->id);
         $req->execute();
 
         return $req->fetchAll();
@@ -117,13 +107,9 @@ class Links extends Entity
      */
     public function destroy($link)
     {
-        if (!Tools::checkId($link) ||
-            !$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
-            throw new Exception('Error removing link');
-        }
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $link, PDO::PARAM_INT);
+        $req->bindParam(':id', $link);
 
         return $req->execute();
     }

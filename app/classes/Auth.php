@@ -89,9 +89,24 @@ class Auth
     /**
      * Store userid and permissions in $_SESSION
      *
+     * @param string|null $email
+     * @return bool
      */
-    private function populateSession()
+    private function populateSession($email = null)
     {
+        if ($email !== null) {
+            $sql = "SELECT * FROM users WHERE email = :email AND validated = 1";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':email', $email);
+            //Check whether the query was successful or not
+            if ($req->execute() && $req->rowCount() === 1) {
+                // populate the userData
+                $this->userData = $req->fetch();
+            } else {
+                return false;
+            }
+        }
+
         session_regenerate_id();
         $_SESSION['auth'] = 1;
         $_SESSION['userid'] = $this->userData['userid'];
@@ -108,20 +123,12 @@ class Auth
         $_SESSION['is_admin'] = $group['is_admin'];
         $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
 
-        // PREFS
-        $_SESSION['prefs'] = array(
-            'display' => $this->userData['display'],
-            'limit' => $this->userData['limit_nb'],
-            'shortcuts' => array('create' => $this->userData['sc_create'], 'edit' => $this->userData['sc_edit'], 'submit' => $this->userData['sc_submit'], 'todo' => $this->userData['sc_todo']),
-            'lang' => $this->userData['lang'],
-            'close_warning' => intval($this->userData['close_warning']),
-            'chem_editor' => intval($this->userData['chem_editor']),
-            'show_team' => intval($this->userData['show_team']));
         // Make a unique token and store it in sql AND cookie
         $this->token = md5(uniqid(rand(), true));
         // and SESSION
         $_SESSION['token'] = $this->token;
         session_write_close();
+        return true;
     }
 
     /**
@@ -129,6 +136,7 @@ class Auth
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
      *
+     * @return bool
      */
     private function setToken()
     {
@@ -138,7 +146,8 @@ class Auth
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':token', $this->token);
         $req->bindParam(':userid', $this->userData['userid']);
-        $req->execute();
+
+        return $req->execute();
     }
 
     /**
@@ -154,11 +163,26 @@ class Auth
         if ($this->checkCredentials($email, $password)) {
             $this->populateSession();
             if ($setCookie === 'on') {
-                $this->setToken();
+                return $this->setToken();
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Login with SAML
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function loginWithSaml($email)
+    {
+        if (!$this->populateSession($email)) {
+            return false;
+        }
+        $this->setToken();
+        return true;
     }
 
     /**

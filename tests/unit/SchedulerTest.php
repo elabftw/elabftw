@@ -7,12 +7,14 @@ class SchedulerTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Scheduler = new Scheduler(1);
+        $Users = new Users(1);
+        $Database = new Database($Users, 1);
+        $this->Scheduler = new Scheduler($Database);
     }
 
     public function testCreate()
     {
-        $this->assertTrue($this->Scheduler->create(1, '2016-07-22T19:42:00', '2016-07-23T19:42:00', 'Yep', 1));
+        $this->assertTrue($this->Scheduler->create('2016-07-22T19:42:00', '2016-07-23T19:42:00', 'Yep'));
     }
 
     public function testUpdateStart()

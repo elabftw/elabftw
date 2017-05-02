@@ -11,40 +11,41 @@
 
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Database
  *
  */
-require_once '../../app/init.inc.php';
-
-$mode = 'show';
-$id = '';
-$redirect = false;
-
 try {
+    require_once '../../app/init.inc.php';
 
-    $Database = new Database($_SESSION['team_id']);
+    $Entity = new Database($Users);
+
+    $mode = 'show';
+    $id = '';
+    $redirect = false;
+
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
         $redirect = true;
         // can raise an exception
-        $id = $Database->create($_GET['databaseCreateId'], $_SESSION['userid']);
+        $id = $Entity->create($_GET['databaseCreateId']);
         $mode = 'edit';
     }
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Database->setId($_POST['id']);
-        if ($Database->update(
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->update(
             $_POST['title'],
             $_POST['date'],
-            $_POST['body'],
-            $_SESSION['userid']
+            $_POST['body']
         )) {
-            $id = $Database->id;
+            $id = $Entity->id;
             $mode = 'view';
             $redirect = true;
         } else {
@@ -53,17 +54,21 @@ try {
     }
 
     // DUPLICATE
-    if (isset($_GET['databaseDuplicateId'])) {
-        $Database->setId($_GET['databaseDuplicateId']);
-        $id = $Database->duplicate($_SESSION['userid']);
+    if (isset($_GET['duplicateId'])) {
+        $Entity->setId($_GET['duplicateId']);
+        $Entity->canOrExplode('read');
+
+        $id = $Entity->duplicate();
         $mode = 'edit';
         $redirect = true;
     }
 
     // UPDATE RATING
     if (isset($_POST['rating'])) {
-        $Database->setId($_POST['id']);
-        if ($Database->updateRating($_POST['rating'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->updateRating($_POST['rating'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -78,8 +83,8 @@ try {
 
     // DESTROY
     if (isset($_POST['destroy'])) {
-        $Database->setId($_POST['id']);
-        if ($Database->destroy()) {
+        $Entity->setId($_POST['id']);
+        if ($Entity->destroy()) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Item deleted successfully')

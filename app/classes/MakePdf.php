@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \mPDF;
-use \Exception;
+use mPDF;
+use Exception;
 
 /**
  * Create a pdf given an id and a type
@@ -21,26 +21,30 @@ class MakePdf extends Make
     /** our favorite pdo object */
     protected $pdo;
 
-    /** the id of the item we want */
-    private $id;
+    /** Entity instance */
+    private $Entity;
+
     /** 'experiments' or 'items' */
     protected $type;
-    /** everything about the item */
-    private $data;
+
     /** a formatted title for our pdf */
     private $cleanTitle;
 
     /** a sha512 sum */
     public $fileName;
+
     /** full path of file */
     public $filePath;
 
     /** who */
     public $author;
+
     /** raw title */
     public $title;
+
     /** list of tags */
-    public $tags;
+    public $tags = '';
+
     /** the whole html string to write */
     public $content;
 
@@ -48,30 +52,32 @@ class MakePdf extends Make
     /**
      * Everything is done in the constructor
      *
-     * @param int $id The id of the item we want
-     * @param string $type 'experiments' or 'items'
+     * @param Entity $entity Experiments or Database
      * @param bool|null $toFile Do we want to write it to a file ?
      */
-    public function __construct($id, $type, $toFile = false)
+    public function __construct(Entity $entity, $toFile = false)
     {
         $this->pdo = Db::getConnection();
-
-        $this->id = $id;
-        $this->validateId();
-
-        // assign and check type
-        $this->type = $this->checkType($type);
-        $this->checkVisibility($this->id);
+        $this->Entity = $entity;
+        $this->Entity->canOrExplode('read');
 
         // build the pdf content
-        $this->initData();
         $this->setAuthor();
         $this->setCleanTitle();
         $this->setTags();
         $this->buildContent();
+
+        // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
+        $tmpDir = ELAB_ROOT . 'uploads/tmp/mpdf/';
+        if (!is_dir($tmpDir)) {
+            if (!mkdir($tmpDir)) {
+                throw new Exception("Could not create the $tmpDir directory. Please check permissions on this folder.");
+            }
+        }
+        define("_MPDF_TEMP_PATH", $tmpDir);
+        define("_MPDF_TTFONTDATAPATH", $tmpDir);
+
         // create the pdf
-        define("_MPDF_TEMP_PATH", ELAB_ROOT . 'uploads/tmp/');
-        define("_MPDF_TTFONTDATAPATH", ELAB_ROOT . 'uploads/tmp/');
         $mpdf = new \mPDF('utf-8', 'A4');
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';
@@ -83,26 +89,15 @@ class MakePdf extends Make
         $mpdf->SetKeywords($this->tags);
         $mpdf->SetCreator('www.elabftw.net');
         $mpdf->WriteHTML($this->content);
+        $mpdf->PDFA = true;
 
         // output
         if ($toFile) {
             $this->fileName = $this->getFileName() . '.pdf';
-            $this->filePath = $this->getFilePath($this->fileName);
+            $this->filePath = $this->getFilePath($this->fileName, true);
             $mpdf->Output($this->filePath, 'F');
         } else {
             $mpdf->Output($this->getCleanName(), 'I');
-        }
-    }
-
-    /**
-     * Validate the id we get.
-     *
-     * @throws Exception if id is bad
-     */
-    private function validateId()
-    {
-        if (!Tools::checkId($this->id)) {
-            throw new Exception('Bad id!');
         }
     }
 
@@ -117,20 +112,6 @@ class MakePdf extends Make
     }
 
     /**
-     * Get data about the item we are pdf'ing
-     *
-     */
-    private function initData()
-    {
-        // one cannot use placeholders as table or column identifiers in a prepared statement
-        $sql = "SELECT * FROM " . $this->type . " WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, \PDO::PARAM_INT);
-        $req->execute();
-        $this->data = $req->fetch();
-    }
-
-    /**
      * Get firstname and lastname to put in pdf
      */
     private function setAuthor()
@@ -138,7 +119,7 @@ class MakePdf extends Make
         // SQL to get firstname + lastname
         $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->data['userid'], \PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->entityData['userid'], \PDO::PARAM_INT);
         $req->execute();
         $data = $req->fetch();
 
@@ -150,8 +131,8 @@ class MakePdf extends Make
      */
     private function setCleanTitle()
     {
-        $this->title = stripslashes($this->data['title']);
-        $this->cleanTitle = $this->data['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->data['title']));
+        $this->title = stripslashes($this->Entity->entityData['title']);
+        $this->cleanTitle = $this->Entity->entityData['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->Entity->entityData['title']));
     }
 
     /**
@@ -160,15 +141,15 @@ class MakePdf extends Make
     private function setTags()
     {
         // SQL to get tags
-        $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id, \PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
-        $this->tags = null;
-        while ($data = $req->fetch()) {
-            $this->tags .= $data['tag'] . ' ';
+        if ($req->rowCount() > 0) {
+            while ($data = $req->fetch()) {
+                $this->tags .= $data['tag'] . ' ';
+            }
         }
-        $req->closeCursor();
     }
 
     /**
@@ -176,8 +157,8 @@ class MakePdf extends Make
      */
     private function addElabid()
     {
-        if ($this->type === 'experiments') {
-            return "<p class='elabid'>elabid : " . $this->data['elabid'] . "</p>";
+        if ($this->Entity->type === 'experiments') {
+            return "<p class='elabid'>elabid : " . $this->Entity->entityData['elabid'] . "</p>";
         }
     }
 
@@ -186,16 +167,16 @@ class MakePdf extends Make
      */
     private function addLockinfo()
     {
-        if ($this->data['locked'] == '1' && $this->type == 'experiments') {
+        if ($this->Entity->entityData['locked'] == '1' && $this->Entity->type == 'experiments') {
             // get info about the locker
             $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
             $reqlock = $this->pdo->prepare($sql);
-            $reqlock->bindParam(':userid', $this->data['lockedby']);
+            $reqlock->bindParam(':userid', $this->Entity->entityData['lockedby']);
             $reqlock->execute();
             $lockuser = $reqlock->fetch();
 
             // separate the date and time
-            $lockdate = explode(' ', $this->data['lockedwhen']);
+            $lockdate = explode(' ', $this->Entity->entityData['lockedwhen']);
             return "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
         }
     }
@@ -212,7 +193,7 @@ class MakePdf extends Make
             WHERE exp_id = :id
             ORDER BY experiments_comments.datetime DESC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         // if we have comments
         if ($req->rowCount() > 0) {
@@ -252,8 +233,8 @@ class MakePdf extends Make
         // SQL to get attached files
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
         $real_name = array();
@@ -319,15 +300,15 @@ class MakePdf extends Make
             $server_address = $_SERVER['SERVER_NAME'];
         }
 
-        $url = 'https://' . $server_address . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-        if ($this->type === 'experiments') {
-            $target = $this->type . '.php';
+        $url = 'https://' . $server_address . Tools::getServerPort() . $_SERVER['PHP_SELF'];
+        if ($this->Entity->type === 'experiments') {
+            $target = $this->Entity->type . '.php';
         } else {
             $target = 'database.php';
         }
 
         $url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), $target, $url);
-        $full_url = $url . "?mode=view&id=" . $this->id;
+        $full_url = $url . "?mode=view&id=" . $this->Entity->id;
 
         return $full_url;
     }
@@ -346,7 +327,7 @@ class MakePdf extends Make
      */
     private function addLinkedItems()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             // SQL to get linked items
             $sql = "SELECT experiments_links.*,
                 experiments_links.link_id AS item_id,
@@ -357,7 +338,7 @@ class MakePdf extends Make
                 LEFT JOIN items_types ON (items.type = items_types.id)
                 WHERE item_id = :item_id";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':item_id', $this->id);
+            $req->bindParam(':item_id', $this->Entity->id);
             $req->execute();
             $links_id_arr = array();
             $links_title_arr = array();
@@ -380,7 +361,7 @@ class MakePdf extends Make
                 $row_cnt = $req->rowCount();
 
                 // add the item with a link
-                $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+                $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
 
                     $item_url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);
@@ -398,7 +379,7 @@ class MakePdf extends Make
      */
     private function buildBody()
     {
-        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
+        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $this->Entity->entityData['body']);
     }
 
     /**
@@ -418,7 +399,7 @@ class MakePdf extends Make
     private function buildHeader()
     {
 
-        $date = date_create($this->data['date']);
+        $date = date_create($this->Entity->entityData['date']);
         $date_str = date_format($date, 'Y-m-d');
         $header = '
                 <html>
@@ -428,7 +409,7 @@ class MakePdf extends Make
                 <body>
                 <htmlpageheader name="header">
                     <div id="header">
-                        <h1>' . $this->data['title'] . '</h1>
+                        <h1>' . $this->Entity->entityData['title'] . '</h1>
                         <p style="float:left; width:90%;">
                             <strong>Date:</strong> ' . $date_str . '<br />
                             <strong>Tags:</strong> <em>' . $this->tags . '</em> <br />
@@ -442,7 +423,7 @@ class MakePdf extends Make
                 <htmlpagefooter name="footer">
                     <div id="footer">
                         PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-                        <p style="font-size:6pt;">File generated on {DATE j-m-Y H:m}</p>
+                        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
                     </div>
                 </htmlpagefooter>';
 

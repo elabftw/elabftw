@@ -12,7 +12,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $this->assertTrue($this->Teams->create('Test team'));
+        $this->assertInternalType('int', (int) $this->Teams->create('Test team'));
     }
 
     public function testRead()

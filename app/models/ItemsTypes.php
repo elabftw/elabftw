@@ -16,21 +16,30 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends Entity
+class ItemsTypes
 {
+    use EntityTrait;
+
     /** The PDO object */
     protected $pdo;
+
+    /** instance of Users */
+    public $Users;
 
     /**
      * Constructor
      *
-     * @param int $team
+     * @param Users $users
+     * @param int|null $id
      * @throws Exception if user is not admin
      */
-    public function __construct($team)
+    public function __construct(Users $users, $id = null)
     {
         $this->pdo = Db::getConnection();
-        $this->team = $team;
+        $this->Users = $users;
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
     }
 
     /**
@@ -40,10 +49,14 @@ class ItemsTypes extends Entity
      * @param string $color hexadecimal color code
      * @param int $bookable
      * @param string $template html for new body
+     * @param int|null $team
      * @return bool true if sql success
      */
-    public function create($name, $color, $bookable, $template)
+    public function create($name, $color, $bookable, $template, $team = null)
     {
+        if (is_null($team)) {
+            $team = $this->Users->userData['team'];
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (strlen($name) < 1) {
             $name = 'Unnamed';
@@ -51,13 +64,13 @@ class ItemsTypes extends Entity
 
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
-        $sql = "INSERT INTO items_types(name, bgcolor, bookable, template, team) VALUES(:name, :bgcolor, :bookable, :template, :team)";
+        $sql = "INSERT INTO items_types(name, color, bookable, template, team) VALUES(:name, :color, :bookable, :template, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $team);
 
         return $req->execute();
     }
@@ -65,15 +78,14 @@ class ItemsTypes extends Entity
     /**
      * Read from an id
      *
-     * @param int $id
      * @return array
      */
-    public function read($id)
+    public function read()
     {
         $sql = "SELECT template FROM items_types WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         if ($req->rowCount() === 0) {
@@ -90,9 +102,15 @@ class ItemsTypes extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
+        $sql = "SELECT items_types.id AS category_id,
+            items_types.name AS category,
+            items_types.color,
+            items_types.bookable,
+            items_types.template,
+            items_types.ordering
+            from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         return $req->fetchAll();
@@ -116,16 +134,16 @@ class ItemsTypes extends Entity
         $sql = "UPDATE items_types SET
             name = :name,
             team = :team,
-            bgcolor = :bgcolor,
+            color = :color,
             bookable = :bookable,
             template = :template
             WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
@@ -161,7 +179,7 @@ class ItemsTypes extends Entity
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
 
         return $req->execute();
     }

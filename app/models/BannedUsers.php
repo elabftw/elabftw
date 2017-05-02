@@ -20,12 +20,18 @@ class BannedUsers
     /** db connection */
     protected $pdo;
 
+    /** instance of Config */
+    public $Config;
+
     /**
-     * get pdo
+     * Constructor
+     *
+     * @param Config $config
      */
-    public function __construct()
+    public function __construct(Config $config)
     {
         $this->pdo = Db::getConnection();
+        $this->Config = $config;
     }
 
     /**
@@ -50,9 +56,7 @@ class BannedUsers
      */
     public function readAll()
     {
-        $Config = new Config();
-        $banConfig = $Config->read('ban_time');
-        $banTime = date("Y-m-d H:i:s", strtotime('-' . $banConfig . ' minutes'));
+        $banTime = date("Y-m-d H:i:s", strtotime('-' . $this->Config->configArr['ban_time'] . ' minutes'));
 
         $sql = "SELECT user_infos FROM banned_users WHERE time > :ban_time";
         $req = $this->pdo->prepare($sql);

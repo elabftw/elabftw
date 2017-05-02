@@ -1,0 +1,83 @@
+<!-- USER INFOS -->
+<section class='box'>
+    <img src='app/img/user.png' alt='user' /> <h4 style='display:inline'>{% trans %}Infos{% endtrans %}</h4>
+    <hr>
+    <div>
+        <p>{{ Users.userData['firstname'] }} {{ Users.userData['lastname'] }} ({{ Users.userData['email'] }})</p>
+    <p>{{ count }} {% trans %}
+        experiments done since
+        {% endtrans %} {{ Users.userData['register_date']|date("l jS \\of F Y") }}</p>
+        <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
+        <div id='api_div'><h4>{% trans %}API key{% endtrans %}</h4>
+            {% if Users.userData['api_key']|length > 0 %}
+            <input value='{{ Users.userData['api_key'] }}'></input>
+            {% endif %}
+            <button class='button' onClick='generateApiKey()'>{% trans %}Generate an API Key{% endtrans %}</button></p>
+        </div>
+    </div>
+</section>
+
+<!-- STATUS STAT -->
+<section class='box'>
+    {% if count == 0 %} {# fix division by zero #}
+        {% trans %}No statistics available yet.{% endtrans %}
+    {% else %}
+        <img src='app/img/statistics.png' alt='' /> <h4 style='display:inline'>
+            {% trans %}
+                Statistics
+            {% endtrans %}
+        </h4>
+        <hr>
+        <script src='https://www.google.com/jsapi'></script>
+        <script>
+          google.load('visualization', '1', {packages:['corechart']});
+          google.setOnLoadCallback(drawChart);
+          function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'status');
+            data.addColumn('number', 'Experiments number');
+            data.addRows([
+                {% for name, percent in UserStats.percentArr %}
+                    ['{{name|raw}}', {{percent}}],
+                {% endfor %}
+            ]);
+            var options = {
+                title: '{% trans %}
+                      Experiments
+                      {% endtrans %}',
+            backgroundColor: '#fff',
+            colors: [
+                {% for color in UserStats.colorsArr %}
+                    '#{{color}}',
+                {% endfor %}
+            ]};
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+          }
+        </script>
+        <div id='chart_div' class='center'></div>
+    {% endif %}
+</section>
+
+<!-- TAG CLOUD -->
+<section class='box'>
+    <img src='app/img/cloud.png' alt='' /> <h4 style='display:inline'>
+        {% trans %}
+            Tag cloud
+        {% endtrans %}
+    </h4>
+    <hr>
+    <div>
+        {# handle minimum tag count #}
+        {% if TagCloud.cloudArr|length <= 10 %}
+            {% trans %}
+                Not enough tags to make a tagcloud
+            {% endtrans %}
+        {% else %}
+        {% for tag, class in TagCloud.cloudArr %}
+            <a href='experiments.php?mode=show&tag={{ tag }}' class='{{ class }}'>{{ tag }}</a>
+        {% endfor %}
+
+        {% endif %}
+    </div>
+</section>

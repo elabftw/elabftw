@@ -18,7 +18,7 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
-    $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
+    $ItemsTypes = new ItemsTypes($Users);
 
     if (!$_SESSION['is_admin']) {
         throw new Exception('Non admin user tried to access admin panel.');

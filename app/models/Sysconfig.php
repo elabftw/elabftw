@@ -48,7 +48,7 @@ class Sysconfig
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
         // Set the From address with an associative array
-        ->setFrom(array($this->Email->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom(array($this->Email->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($email => 'Admin eLabFTW'))
         // Give it a body
@@ -83,7 +83,7 @@ class Sysconfig
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         ->setSubject($subject)
-        ->setFrom(array($this->Email->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom(array($this->Email->Config->configArr['mail_from'] => 'eLabFTW'))
         ->setTo($to)
         ->setBody($body . $footer);
         $mailer = $this->Email->getMailer();

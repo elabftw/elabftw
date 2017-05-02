@@ -10,188 +10,44 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use \RecursiveDirectoryIterator;
-use \RecursiveIteratorIterator;
-use \FilesystemIterator;
-use \Defuse\Crypto\Crypto as Crypto;
-use \Defuse\Crypto\Exception as Ex;
-use \Defuse\Crypto\Key as Key;
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use FilesystemIterator;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Exception as Ex;
+use Defuse\Crypto\Key as Key;
 
 /**
  * Use this to check for latest version or update the database schema
  */
 class Update
 {
-    /** 1.1.4 */
-    private $version;
-    /** release date of the version */
-    protected $releaseDate;
-
     /** our favorite pdo object */
     private $pdo;
 
-    /** this is used to check if we managed to get a version or not */
-    public $success = false;
-
-    /** array with config */
-    private $configArr;
-
-    /** where to get info from */
-    const URL = 'https://get.elabftw.net/updates.ini';
-    /** if we can't connect in https for some reason, use http */
-    const URL_HTTP = 'http://get.elabftw.net/updates.ini';
-
-    /**
-     * ////////////////////////////
-     * UPDATE THIS AFTER RELEASING
-     * UPDATE IT ALSO IN doc/conf.py
-     * AND package.json
-     * ///////////////////////////
-     */
-    const INSTALLED_VERSION = '1.3.1';
+    /** instance of Config */
+    public $Config;
 
     /**
      * /////////////////////////////////////////////////////
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
+     * AND REFLECT THE CHANGE IN INSTALL/ELABFTW.SQL
+     * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '12';
+    const REQUIRED_SCHEMA = '20';
 
     /**
-     * Create the pdo object
+     * Init Update with Config and pdo
      *
      * @param Config $config
      */
     public function __construct(Config $config)
     {
-        $this->configArr = $config->read();
+        $this->Config = $config;
         $this->pdo = Db::getConnection();
-    }
-
-    /**
-     * Return the installed version of elabftw
-     *
-     * @return string
-     */
-    public function getInstalledVersion()
-    {
-        return self::INSTALLED_VERSION;
-    }
-
-    /**
-     * Make a get request with cURL, using proxy setting if any
-     *
-     * @param string $url URL to hit
-     * @param bool|string $toFile path where we want to save the file
-     * @return string|boolean Return true if the download succeeded, else false
-     */
-    protected function get($url, $toFile = false)
-    {
-        if (!extension_loaded('curl')) {
-            throw new Exception('Please install php5-curl package.');
-        }
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        // this is to get content
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // add proxy if there is one
-        if (strlen($this->configArr['proxy']) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->configArr['proxy']);
-        }
-        // disable certificate check
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-
-        // add user agent
-        // http://developer.github.com/v3/#user-agent-required
-        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . self::INSTALLED_VERSION);
-
-        // add a timeout, because if you need proxy, but don't have it, it will mess up things
-        // 5 seconds
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-
-        // we don't want the header
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-
-        if ($toFile) {
-            $handle = fopen($toFile, 'w');
-            curl_setopt($ch, CURLOPT_FILE, $handle);
-        }
-
-        // DO IT!
-        return curl_exec($ch);
-    }
-
-    /**
-     * Return the latest version of elabftw
-     * Will fetch updates.ini file from elabftw.net
-     *
-     * @throws Exception the version we have doesn't look like one
-     * @return string|bool|null latest version or false if error
-     */
-    public function getUpdatesIni()
-    {
-        $ini = $this->get(self::URL);
-        // try with http if https failed (see #176)
-        if (!$ini) {
-            $ini = $this->get(self::URL_HTTP);
-        }
-        if (!$ini) {
-            $this->success = false;
-            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
-        }
-        // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
-        $versions = parse_ini_string($ini, true);
-        // get the latest version
-        $this->version = array_keys($versions)[0];
-        $this->releaseDate = $versions[$this->version]['date'];
-
-        if (!$this->validateVersion()) {
-            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
-        }
-        $this->success = true;
-    }
-
-    /**
-     * Check if the version string actually looks like a version
-     *
-     * @return int 1 if version match
-     */
-    private function validateVersion()
-    {
-        return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
-    }
-
-    /**
-     * Return true if there is a new version out there
-     *
-     * @return bool
-     */
-    public function updateIsAvailable()
-    {
-        return self::INSTALLED_VERSION != $this->version;
-    }
-
-    /**
-     * Return the latest version string
-     *
-     * @return string|int 1.1.4
-     */
-    public function getLatestVersion()
-    {
-        return $this->version;
-    }
-
-    /**
-     * Get when the latest version was released
-     *
-     * @return string
-     */
-    public function getReleaseDate()
-    {
-        return $this->releaseDate;
     }
 
     /**
@@ -203,7 +59,7 @@ class Update
     {
         $msg_arr = array();
 
-        $current_schema = $this->configArr['schema'];
+        $current_schema = $this->Config->configArr['schema'];
 
         if ($current_schema < 2) {
             // 20150727
@@ -261,10 +117,63 @@ class Update
             $this->schema12();
             $this->updateSchema(12);
         }
+        if ($current_schema < 13) {
+            // 20161219
+            $this->schema13();
+            $this->updateSchema(13);
+        }
 
+        if ($current_schema < 14) {
+            // 20170121
+            $this->schema14();
+            $this->updateSchema(14);
+        }
+
+        if ($current_schema < 15) {
+            // 20170124
+            $this->schema15();
+            $this->updateSchema(15);
+        }
+
+        if ($current_schema < 16) {
+            // 20170124
+            $this->schema16();
+            $this->updateSchema(16);
+        }
+
+        if ($current_schema < 17) {
+            // 20170324
+            // here we only want to empty the twig cache
+            $this->updateSchema(17);
+        }
+
+        if ($current_schema < 18) {
+            // 20170404
+            // here we only want to empty the twig cache
+            // maybe I should think of a better way than abusing the schema stuff
+            // but for now it'll do. I mean it works, so why not.
+            $this->updateSchema(18);
+        }
+
+        if ($current_schema < 19) {
+            // 20170404
+            // here we only want to empty the twig cache
+            // maybe I should think of a better way than abusing the schema stuff
+            // but for now it'll do. I mean it works, so why not.
+            $this->updateSchema(19);
+        }
+
+        if ($current_schema < 20) {
+            $this->schema20();
+            $this->updateSchema(20);
+        }
         // place new schema functions above this comment
+
+        // remove files in uploads/tmp
         $this->cleanTmp();
+
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
+
         return $msg_arr;
     }
 
@@ -293,7 +202,7 @@ class Update
             $schema = self::REQUIRED_SCHEMA;
         }
         $config_arr = array('schema' => $schema);
-        if (!update_config($config_arr)) {
+        if (!$this->Config->Update($config_arr)) {
             throw new Exception('Failed at updating the schema!');
         }
     }
@@ -426,15 +335,15 @@ class Update
         $new_key = Key::createNewRandomKey();
 
         // update smtp_password first
-        if ($this->configArr['smtp_password']) {
+        if ($this->Config->configArr['smtp_password']) {
             try {
-                $plaintext = Crypto::legacyDecrypt(hex2bin($this->configArr['smtp_password']), $legacy_key);
+                $plaintext = Crypto::legacyDecrypt(hex2bin($this->Config->configArr['smtp_password']), $legacy_key);
             } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
             // now encrypt it with the new method
             $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
-            update_config(array('smtp_password' => $new_ciphertext));
+            $this->Config->update(array('smtp_password' => $new_ciphertext));
         }
 
         // now update the stamppass from the teams
@@ -458,15 +367,15 @@ class Update
         }
 
         // update the main stamppass
-        if ($this->configArr['stamppass']) {
+        if ($this->Config->configArr['stamppass']) {
             try {
-                $plaintext = Crypto::legacyDecrypt(hex2bin($this->configArr['stamppass']), $legacy_key);
+                $plaintext = Crypto::legacyDecrypt(hex2bin($this->Config->configArr['stamppass']), $legacy_key);
             } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
             // now encrypt it with the new method
             $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
-            update_config(array('stamppass' => $new_ciphertext));
+            $this->Config->update(array('stamppass' => $new_ciphertext));
         }
 
             // rewrite the config file with the new key
@@ -514,10 +423,110 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
      */
     private function schema12()
     {
-        if (get_config('stampcert') == 'vendor/pki.dfn.pem') {
-            if (!update_config(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
+        if ($this->Config->configArr['stampcert'] === 'vendor/pki.dfn.pem') {
+            if (!$this->Config->update(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
                 throw new Exception('Error changing path to timestamping cert. (updating to schema 12)');
             }
+        }
+    }
+
+    /**
+     * Add todolist table and update any old documentation link (local one)
+     *
+     */
+    private function schema13()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `todolist` (
+          `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+          `body` text NOT NULL,
+          `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `ordering` int(10) UNSIGNED DEFAULT NULL,
+          `userid` int(10) UNSIGNED NOT NULL,
+          PRIMARY KEY (`id`));";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 13!');
+        }
+
+        // update the links. Use % because we might have index.html at the end
+        $sql = "UPDATE teams
+            SET link_href = 'https://elabftw.readthedocs.io'
+            WHERE link_href LIKE 'doc/_build/html%'";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 13!');
+        }
+    }
+
+    /**
+     * Make bgcolor be color
+     *
+     */
+    private function schema14()
+    {
+        $sql = "ALTER TABLE `items_types` CHANGE `bgcolor` `color` VARCHAR(6)";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema14');
+        }
+    }
+
+    /**
+     * Add api key to users
+     *
+     */
+    private function schema15()
+    {
+        $sql = "ALTER TABLE `users` ADD `api_key` VARCHAR(255) NULL DEFAULT NULL AFTER `show_team`;";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema15');
+        }
+    }
+    /**
+     * Add default_vis to users
+     *
+     */
+    private function schema16()
+    {
+        $sql = "ALTER TABLE `users` ADD `default_vis` VARCHAR(255) NULL DEFAULT 'team';";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema16');
+        }
+    }
+
+    /**
+     * Add IDPs table for Identity Providers
+     *
+     */
+    private function schema20()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `idps` (
+          `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+          `name` VARCHAR(255) NOT NULL,
+          `entityid` VARCHAR(255) NOT NULL,
+          `sso_url` VARCHAR(255) NOT NULL,
+          `sso_binding` VARCHAR(255) NOT NULL,
+          `slo_url` VARCHAR(255) NOT NULL,
+          `slo_binding` VARCHAR(255) NOT NULL,
+          `x509` text NOT NULL,
+          PRIMARY KEY (`id`));";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema19');
+        }
+
+        // add more config options for saml auth
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
+            ('saml_debug', '0'),
+            ('saml_strict', '1'),
+            ('saml_baseurl', NULL),
+            ('saml_entityid', NULL),
+            ('saml_acs_url', NULL),
+            ('saml_acs_binding', NULL),
+            ('saml_slo_url', NULL),
+            ('saml_slo_binding', NULL),
+            ('saml_nameidformat', NULL),
+            ('saml_x509', NULL),
+            ('saml_privatekey', NULL)";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema19');
         }
     }
 }

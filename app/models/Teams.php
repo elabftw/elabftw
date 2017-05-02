@@ -12,8 +12,8 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
-use \Defuse\Crypto\Crypto as Crypto;
-use \Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Key as Key;
 
 /**
  * All about the teams
@@ -24,7 +24,7 @@ class Teams
     protected $pdo;
 
     /** our team id */
-    private $team;
+    public $team;
 
     /**
      * Constructor
@@ -40,10 +40,30 @@ class Teams
     }
 
     /**
+     * Check if the team exists already and create one if not
+     *
+     * @param string $name Name of the team (case sensitive)
+     * @return int The team ID
+     */
+    public function initializeIfNeeded($name)
+    {
+        $sql = 'SELECT team_id, team_name FROM teams';
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+        $teamsArr = $req->fetchAll();
+        foreach ($teamsArr as $team) {
+            if ($team['team_name'] === $name) {
+                return $team['team_id'];
+            }
+        }
+        return $this->create($name);
+    }
+
+    /**
      * Add a new team
      *
      * @param string $name The new name of the team
-     * @return bool The results of the SQL queries
+     * @return bool|int false on error, new team id otherwise
      */
     public function create($name)
     {
@@ -59,35 +79,30 @@ class Teams
         // grab the team ID
         $newId = $this->pdo->lastInsertId();
 
-        // now we need to insert a new default set of status for the newly created team
-        $sql = "INSERT INTO status (team, name, color, is_default) VALUES
-        (:team, 'Running', '29AEB9', 1),
-        (:team, 'Success', '54aa08', 0),
-        (:team, 'Need to be redone', 'c0c0c0', 0),
-        (:team, 'Fail', 'c24f3d', 0);";
-        $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $newId);
-        $result2 = $req->execute();
+        // create default status
+        $Users = new Users();
+        $Status = new Status($Users);
+        $result2 = $Status->createDefault($newId);
 
-        // insert only one item type with editme name
-        $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`)
-            VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
-        $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $newId);
-        $result3 = $req->execute();
+        // create default item type
+        $ItemsTypes = new ItemsTypes($Users);
+        $result3 = $ItemsTypes->create(
+            'Edit me',
+            '32a100',
+            0,
+            '<p>Go to the admin panel to edit/add more items types!</p>',
+            $newId
+        );
 
-        // now we need to insert a new default experiment template for the newly created team
-        $sql = "INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
-        (:team, '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
-        <p>&nbsp;</p>
-        <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
-        <p>&nbsp;</p>
-        <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);";
-        $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $newId);
-        $result4 = $req->execute();
+        // create default experiment template
+        $Templates = new Templates($Users);
+        $result4 = $Templates->createDefault($newId);
 
-        return $result1 && $result2 && $result3 && $result4;
+        if ($result1 && $result2 && $result3 && $result4) {
+            return $newId;
+        }
+        return false;
+
     }
 
     /**
@@ -97,7 +112,7 @@ class Teams
      */
     public function readAll()
     {
-        $sql = "SELECT * FROM teams ORDER BY datetime DESC";
+        $sql = "SELECT * FROM teams ORDER BY team_name ASC";
         $req = $this->pdo->prepare($sql);
         $req->execute();
 

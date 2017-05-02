@@ -17,25 +17,27 @@ use Exception;
  * Experiments
  *
  */
-require_once '../../app/init.inc.php';
-
 try {
+    require_once '../../app/init.inc.php';
+
+    $Entity = new Experiments($Users);
 
     // CREATE
     if (isset($_GET['create'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
         if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
-            $id = $Experiments->create($_GET['tpl']);
+            $id = $Entity->create($_GET['tpl']);
         } else {
-            $id = $Experiments->create();
+            $id = $Entity->create();
         }
         header("location: ../../experiments.php?mode=edit&id=" . $id);
     }
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        if ($Experiments->update(
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->update(
             $_POST['title'],
             $_POST['date'],
             $_POST['body']
@@ -48,18 +50,23 @@ try {
 
     // DUPLICATE
     if (isset($_GET['duplicateId'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['duplicateId']);
-        $id = $Experiments->duplicate();
+        $Entity->setId($_GET['duplicateId']);
+        $Entity->canOrExplode('read');
+
+        $id = $Entity->duplicate();
         $mode = 'edit';
         header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
     }
 
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        if ($Experiments->updateStatus($_POST['status'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+
+        if ($Entity->updateStatus($_POST['status'])) {
             // get the color of the status for updating the css
-            $Status = new Status($_SESSION['team_id']);
+            $Status = new Status($Users);
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved'),
@@ -73,16 +80,16 @@ try {
         }
     }
 
-    // ADD MOL FILE
-    if (isset($_POST['addMol'])) {
-        $Uploads = new Uploads('experiments', $_POST['item']);
-        echo $Uploads->createFromMol($_POST['mol']);
-    }
-
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        if ($Experiments->updateVisibility($_POST['visibility'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if (!$Entity->checkVisibility($_POST['visibility'])) {
+            throw new Exception('Bad visibility argument');
+        }
+
+        if ($Entity->updateVisibility($_POST['visibility'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -97,8 +104,10 @@ try {
 
     // CREATE LINK
     if (isset($_POST['createLink'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        if ($Experiments->Links->create($_POST['linkId'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Links->create($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -113,8 +122,10 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['destroyLink'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        if ($Experiments->Links->destroy($_POST['linkId'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Links->destroy($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Link deleted successfully')
@@ -130,7 +141,9 @@ try {
     // TIMESTAMP
     if (isset($_POST['timestamp'])) {
         try {
-            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $_POST['id']);
+            $Entity->setId($_POST['id']);
+            $Entity->canOrExplode('write');
+            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
             if ($ts->timeStamp()) {
                 echo json_encode(array(
                     'res' => true
@@ -149,18 +162,18 @@ try {
 
     // DESTROY
     if (isset($_POST['destroy'])) {
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        $Teams = new Teams($_SESSION['team_id']);
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
 
-        if ((($Teams->read('deletable_xp') == '0') &&
-            !$_SESSION['is_admin']) ||
-            !$Experiments->isOwnedByUser($_SESSION['userid'], 'experiments', $Experiments->id)) {
+        $Teams = new Teams($Entity->team);
+
+        if (($Teams->read('deletable_xp') == '0') && !$_SESSION['is_admin']) {
             echo json_encode(array(
                 'res' => false,
                 'msg' => _("You don't have the rights to delete this experiment.")
             ));
         } else {
-            if ($Experiments->destroy()) {
+            if ($Entity->destroy()) {
                 echo json_encode(array(
                     'res' => true,
                     'msg' => _('Experiment successfully deleted')
@@ -172,6 +185,17 @@ try {
                 ));
             }
         }
+    }
+
+    // DECODE ASN1 TOKEN
+    if (isset($_POST['asn1']) && is_readable(ELAB_ROOT . "uploads/" . $_POST['asn1'])) {
+        $Entity->setId($_POST['exp_id']);
+        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
+
+        echo json_encode(array(
+            'res' => true,
+            'msg' => $TrustedTimestamps->decodeAsn1($_POST['asn1'])
+        ));
     }
 
 } catch (Exception $e) {

@@ -39,7 +39,7 @@ class ImportZip extends Import
     private $body;
 
     /** experiments or items */
-    private $category;
+    private $type;
 
     /** date of the item we import */
     private $date;
@@ -54,7 +54,7 @@ class ImportZip extends Import
     private $newItemId;
 
     /**
-     * Need the path to zip tmp_name, the type and the db object
+     * Constructor
      *
      */
     public function __construct()
@@ -97,22 +97,7 @@ class ImportZip extends Import
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
-        $this->category = $this->checkCategory($this->json[0]['type']);
-    }
-
-    /**
-     * Validate the category we have.
-     *
-     * @param string $category experiments or items
-     * @return string The valid category
-     */
-    private function checkCategory($category)
-    {
-        $correctValuesArr = array('experiments', 'items');
-        if (!in_array($category, $correctValuesArr)) {
-            throw new Exception('Bad category!');
-        }
-        return $category;
+        $this->type = $this->json[0]['type'];
     }
 
     /**
@@ -137,17 +122,19 @@ class ImportZip extends Import
      */
     private function dbInsert()
     {
-        if ($this->category === 'experiments') {
-            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid) VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
-        } else {
-            $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
+        $sql = "INSERT INTO items(team, title, date, body, userid, type)
+            VALUES(:team, :title, :date, :body, :userid, :type)";
+
+        if ($this->type === 'experiments') {
+            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid)
+                VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
         $req->bindParam(':title', $this->title);
         $req->bindParam(':date', $this->date);
         $req->bindParam(':body', $this->body);
-        if ($this->category === 'items') {
+        if ($this->type === 'items') {
             $req->bindParam(':userid', $_SESSION['userid'], \PDO::PARAM_INT);
             $req->bindParam(':type', $this->target);
         } else {
@@ -173,7 +160,13 @@ class ImportZip extends Import
      */
     private function importFile($file)
     {
-        $Upload = new Uploads($this->category, $this->newItemId);
+        $Users = new Users($_SESSION['userid']);
+        if ($this->type === 'experiments') {
+            $Entity = new Experiments($Users, $this->newItemId);
+        } else {
+            $Entity = new Database($Users, $this->newItemId);
+        }
+        $Upload = new Uploads($Entity);
         $Upload->createFromLocalFile($this->tmpPath . '/' . $file);
     }
 
@@ -192,7 +185,7 @@ class ImportZip extends Import
             $this->dbInsert();
             if (is_array($item['files'])) {
                 foreach ($item['files'] as $file) {
-                    $this->importFile($file);
+                    $this->importFile(array_keys($file)[0]);
                 }
             }
             $this->inserted += 1;

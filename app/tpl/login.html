@@ -1,0 +1,52 @@
+<menu class='border' style='color:#29AEB9'>{{ 'Note: You need cookies enabled to log in.'|trans }}</menu>
+
+<section class='center'>
+    <!-- Login form , the id is for an acceptance test -->
+    <form method="post" id='login' action="app/controllers/LoginController.php" autocomplete="off">
+        <h2>{{ 'Sign in to your account'|trans }}</h2>
+        <br>
+        <p class="login-area">
+        <label class='block' for="email">{{ 'Email'|trans }}</label>
+        <input class="login-area-input" name="email" type="email" value='{{ SESSION.email ? SESSION.email }}' required /><br>
+        <label class='block' for="password">{{ 'Password'|trans }}</label>
+            <input class="login-area-input" name="password" type="password" required /><br>
+            <!-- form key -->
+            {{ FormKey.getFormkey|raw }}
+        <input type='checkbox' name='rememberme' id='rememberme' />
+        <label for='rememberme'>{{ 'Remember me'|trans }}</label>
+        </p>
+        <div id='loginButtonDiv'>
+            <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
+        </div>
+    </form>
+    {% if idpsArr|length > 0 %}
+
+        <h2>{{ 'Login through your institution'|trans }}</h2>
+        <br>
+        <form method='post' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
+            <select name='idp_id'>
+                {% for idp in idpsArr %}
+                    <option value='{{ idp.id }}'>{{ idp.name }}</option>
+                {% endfor %}
+            </select>
+            <button class='button' type='submit' name='submit'>Go</button>
+        </form>
+    {% endif %}
+
+    <p>
+        {{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(
+            "<a href='register.php'>",
+            "</a>",
+            "<a href='#' class='trigger'>",
+            "</a>")|raw }}
+    </p>
+    <div class='toggle_container'>
+    <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+        <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+        <button class='button' type="submit" name="Submit">{{ 'Send new password'|trans }}</button>
+    </form>
+    </div>
+
+</section>
+
+<script src='app/js/login.min.js'></script>

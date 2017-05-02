@@ -4,14 +4,19 @@
     "homepage": "https://www.elabftw.net",
     "require": {
         "php": ">=5.6.0",
-        "swiftmailer/swiftmailer":"@stable",
+        "ext-ctype": "*",
+        "ext-curl":"*",
         "ext-gd":"*",
         "ext-gettext":"*",
-        "ext-curl":"*",
         "ext-openssl":"*",
         "ext-gmagick":"*",
-        "defuse/php-encryption": "2.0.1",
-        "mpdf/mpdf": "^6.1"
+        "ext-pdo": "*",
+        "ext-zip": "*",
+        "defuse/php-encryption": "2.0.*",
+        "mpdf/mpdf": "^6.1",
+        "swiftmailer/swiftmailer":"@stable",
+        "twig/extensions": "^1.4",
+        "onelogin/php-saml": "^2.10"
 
     },
     "require-dev": {

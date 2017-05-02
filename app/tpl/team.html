@@ -1,0 +1,165 @@
+<script src='app/js/scheduler.min.js'></script>
+
+<menu>
+    <ul>
+        <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li><span class='beta'>beta</span>
+        <li class='tabhandle' id='tab2'>{{ 'Infos'|trans }}</li>
+    </ul>
+</menu>
+
+<!-- TAB 1 SCHEDULER -->
+<div class='divhandle' id='tab1div'>
+    {% if itemsArr|length == 0 %}
+        {{ 'No bookable items.'|trans|msg('warning', false) }}
+    {% elseif Scheduler.Database.id is not null %}
+        <a href='#' onClick="insertParamAndReload('item', '')">{{ 'Change item'|trans }}</a>
+        <h4><span style='color:#{{ Scheduler.itemData['color'] }}'>{{ Scheduler.itemData['category'] }}</span> - {{ Scheduler.itemData['title'] }}</h4>
+        <div id='scheduler'></div>
+    {% else %}
+    <div class='row'>
+        <div class='col-md-2'>
+            <div class='dropdown'>
+            <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
+                {{ 'Select an equipment'|trans }}
+            <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
+                {% for item in itemsArr %}
+                <li class='dropdown-item'><a data-value='{{ item['title'] }}' href='team.php?item={{ item['id'] }}'><span style='color:#{{ item['color'] }} '>{{ item['category'] }}</span> - {{ item['title'] }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- TAB 2 INFOS -->
+<div class='divhandle' id='tab2div'>
+    {{ 'You belong to the %s team. %s'|trans|format(TeamsView.Teams.read('team_name'),TeamsView.showStats(true))|msg('ok', false) }}
+
+    <table id='teamtable' class='table'>
+        <tr>
+            <th>{{ 'Name'|trans }}</th>
+            <th>{{ 'Phone'|trans }}</th>
+            <th>{{ 'Mobile'|trans }}</th>
+            <th>{{ 'Website'|trans }}</th>
+            <th>{{ 'Skype'|trans }}</th>
+        </tr>
+        {% for user in Users.readAllFromTeam(Users.userData['team']) %}
+        <tr>
+            <td><a href='mailto:{{ user['email'] }}'>
+                    <span
+                    {# put sysadmin, admin and chiefs in bold #}
+                    {% if user['usergroup'] in range(1, 3) %}
+                        style='font-weight:bold'
+                    {% endif %}
+                    >{{ user['fullname'] }}
+                    </span>
+                </a>
+            </td>
+            <td>{{ user['phone'] }}</td>
+            <td>{{ user['cellphone'] }}</td>
+            <td><a href='{{ user['website'] }}'>{{ user['website'] }}</a></td>
+            <td>{{ user['skype'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+<script src='app/js/tabs.min.js'></script>
+<script>
+$(document).ready(function() {
+    // SCHEDULER
+	$('#scheduler').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'agendaWeek'
+			},
+            defaultView: 'agendaWeek',
+            // allow selection of range
+			selectable: true,
+            // draw an event while selecting
+			selectHelper: true,
+            editable: true,
+            // i18n
+            lang: '{{ lang }}',
+            // allow "more" link when too many events
+			eventLimit: true,
+            // load the events as JSON
+            events: {{ Scheduler.read|raw }},
+            // first day is monday
+            firstDay: 1,
+            // remove possibility to book whole day, might add it later
+            allDaySlot: false,
+            // day start at 6 am
+            minTime: "06:00:00",
+            eventBackgroundColor: "rgb(41,174,185)",
+            dayClick: function(start) {
+                schedulerCreate(start.format());
+            },
+            // selection
+            select: function(start, end) {
+                schedulerCreate(start.format(), end.format());
+            },
+            // delete by clicking it
+            eventClick: function(calEvent) {
+                if (confirm('Delete this event?')) {
+                    $('#scheduler').fullCalendar('removeEvents', calEvent.id);
+                    $.post('app/controllers/SchedulerController.php', {
+                        destroy: true,
+                        id: calEvent.id
+                    }).done(function() {
+                        notif('Deleted', 'ok');
+                    });
+                }
+            },
+            // a drop means we change start date
+            eventDrop: function(calEvent) {
+                $.post('app/controllers/SchedulerController.php', {
+                    updateStart: true,
+                    start: calEvent.start.format(),
+                    id: calEvent.id
+                }).done(function() {
+                    notif('Saved', 'ok');
+                });
+            },
+            // a resize means we change end date
+            eventResize: function(calEvent) {
+                $.post('app/controllers/SchedulerController.php', {
+                    updateEnd: true,
+                    end: calEvent.end.format(),
+                    id: calEvent.id
+                }).done(function() {
+                    notif('Saved', 'ok');
+                });
+            }
+
+		});
+});
+
+function schedulerCreate(start, end = null) {
+    var title = prompt('Comment:');
+    if (title) {
+        // add it to SQL
+        $.post('app/controllers/SchedulerController.php', {
+            create: true,
+            start: start,
+            end: end,
+            title: title,
+            item: {{ Scheduler.itemData['id']|default(1) }}
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+                window.location.replace('team.php?tab=1&item={{ Scheduler.itemData['id']|default(1) }}');
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+    }
+}
+</script>

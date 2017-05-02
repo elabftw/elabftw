@@ -10,6 +10,9 @@ engines:
       - php
   fixme:
     enabled: true
+    checks:
+      TODO:
+        enabled: false
   phpmd:
     enabled: true
 ratings:
@@ -23,7 +26,6 @@ ratings:
   - "**.py"
   - "**.rb"
 exclude_paths:
-- js/*
+- app/js/*
 - vendor/*
 - tests/*
-- doc/*

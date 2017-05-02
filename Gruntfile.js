@@ -23,8 +23,6 @@ module.exports = function(grunt) {
               'bower_components/bootstrap/js/dropdown.js',
               'bower_components/colorpicker/jquery.colorpicker.js',
               'bower_components/jeditable/jquery.jeditable.js',
-              'bower_components/jquery.complexify/jquery.complexify.js',
-              'bower_components/jquery.complexify/jquery.complexify.banlist.js',
               'bower_components/keymaster/keymaster.js',
               'app/js/common.js',
               'app/js/cornify.js',
@@ -56,7 +54,13 @@ module.exports = function(grunt) {
           'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
           'app/js/footer.min.js': 'app/js/footer.js',
           'app/js/todolist.min.js': 'app/js/todolist.js',
-          'app/js/login.min.js': 'app/js/login.js'
+          'app/js/login.min.js': 'app/js/login.js',
+          'app/js/register.min.js': [
+              'bower_components/jquery.complexify/jquery.complexify.js',
+              'bower_components/jquery.complexify/jquery.complexify.banlist.js',
+              'app/js/register.js' ],
+          'app/js/change-pass.min.js': 'app/js/change-pass.js'
+
         }
       }
     },

@@ -56,48 +56,11 @@
 <!-- end register form -->
 </section>
 
-<script>
-$(document).ready(function() {
-    // give focus to the first field on page load
-    document.getElementById("team").focus();
-    // password complexity
-    $("#password").complexify({}, function (valid, complexity){
-        if (complexity < 20) {
-            $('#complexity').css({'background-color':'red'});
-            $('#complexity').css({'color':'white'});
-            $('#complexity').val('{{ 'Weak password'|trans }}');
-            $('#complexity').css({'border-color' : '#e3e3e3'});
-            $('#complexity').css({'box-shadow': '0 0  yellow'});
-            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
-        } else if (complexity < 30) {
-            $('#complexity').css({'color':'#white'});
-            $('#complexity').css({'background-color':'orange'});
-            $('#complexity').val('{{ 'Average password'|trans }}');
-            $('#complexity').css({'box-shadow': '0 0  yellow'});
-            $('#complexity').css({'border-color' : '#e3e3e3'});
-            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
-        } else if (complexity < 50) {
-            $('#complexity').css({'color':'white'});
-            $('#complexity').val('{{ 'Good password'|trans }}');
-            $('#complexity').css({'background-color':'green'});
-            $('#complexity').css({'box-shadow': '0 0  yellow'});
-            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
-            $('#complexity').css({'border-color' : '#e3e3e3'});
-        } else if (complexity < 99) {
-            $('#complexity').css({'color':'black'});
-            $('#complexity').val('{{ 'Strong password'|trans }}');
-            $('#complexity').css({'background-color':'#ffd700'});
-            $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
-            $('#complexity').css({'border' : 'none'});
-            $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
-        } else {
-            $('#complexity').css({'color':'#797979'});
-            $('#complexity').val('{{ 'No way that is your real password!'|trans }}');
-            $('#complexity').css({'background-color':'#e3e3e3'});
-            $('#complexity').css({'box-shadow': '0 0  yellow'});
-            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
-            $('#complexity').css({'border-color' : '#e3e3e3'});
-        }
-    });
-});
-</script>
+<div id='complexityDiv'
+    data-weak='{{ 'Weak password'|trans }}'
+    data-average='{{ 'Average password'|trans }}'
+    data-good='{{ 'Good password'|trans }}'
+    data-strong='{{ 'Strong password'|trans }}'
+    data-wtf='{{ 'No way that is your real password!'|trans }}'></div>
+
+<script src='app/js/register.min.js'></script>

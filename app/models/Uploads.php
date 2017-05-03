@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Gmagick;
 
 /**
  * All about the file uploads
@@ -326,7 +327,7 @@ class Uploads extends Entity
         if ($mime === 'application/pdf' || $mime === 'application/postscript') {
           $src = $src . '[0]';
         }
-        $image = new \Gmagick($src);
+        $image = new Gmagick($src);
       } else {
         return false;
       }

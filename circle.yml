@@ -5,7 +5,9 @@ machine:
 dependencies:
     pre:
         - sudo apt-get update
-        - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+        - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server php-pear php7.0-dev graphicsmagick libgraphicsmagick1-dev
+        - printf "\n"|sudo pecl install gmagick-2.0.4RC1
+        - sudo sh -c "echo 'extension=gmagick.so' >> /etc/php/7.0/apache2/php.ini"
 database:
     override:
         - mysql -uroot < tests/_data/phpunit.sql

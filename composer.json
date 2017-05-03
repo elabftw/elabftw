@@ -6,7 +6,6 @@
         "php": ">=5.6.0",
         "ext-ctype": "*",
         "ext-curl":"*",
-        "ext-gd":"*",
         "ext-gettext":"*",
         "ext-openssl":"*",
         "ext-gmagick":"*",

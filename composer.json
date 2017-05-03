@@ -9,6 +9,7 @@
         "ext-gd":"*",
         "ext-gettext":"*",
         "ext-openssl":"*",
+        "ext-gmagick":"*",
         "ext-pdo": "*",
         "ext-zip": "*",
         "defuse/php-encryption": "2.0.*",

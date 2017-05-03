@@ -138,7 +138,7 @@ class UploadsView extends EntityView
             }
 
             // only display the thumbnail if the file is here
-            if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+            if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif|tif|tiff|pdf|eps)$/i', $ext)) {
                 // if it's a picture, we display it with fancybox
                 // see: http://fancyapps.com/fancybox/3/docs/
                 $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' data-fancybox='group' ";

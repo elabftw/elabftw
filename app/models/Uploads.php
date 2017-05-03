@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Gmagick;
 
 /**
  * All about the file uploads
@@ -282,7 +283,7 @@ class Uploads extends Entity
     }
 
     /**
-     * Create a jpg thumbnail from images of type jpg, png or gif.
+     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      *
      * @param string $src Path to the original file
      * @param string $dest Path to the place to save the thumbnail
@@ -291,44 +292,51 @@ class Uploads extends Entity
      */
     public function makeThumb($src, $dest, $desiredWidth)
     {
-        // we don't want to work on too big images
-        // put the limit to 5 Mbytes
-        if (filesize($src) > 5000000) {
-            return false;
+      // we don't want to work on too big images
+      // put the limit to 5 Mbytes
+      if (filesize($src) > 5000000) {
+          return false;
+      }
+
+      // get mime type of the file
+      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $mime = finfo_file($finfo, $src);
+
+      // check if gmagick extension is loaded
+      if (!extension_loaded('gmagick')) {
+        // if not, throw exception; thumbnails won't be generated, but no need to crash here;
+        // there may be valid reasons to (temporarily) disable this particular extension (e.g. security reasons)
+        throw new Exception('Thumbnail creation failed: gmagick extension not loaded!');
+      }
+
+      // do some sane white-listing; in theory, gmagick handles almost all image formats, but the processing of rarely // used formats may be less tested/stable or may have security issues; when adding new mime types take care of
+      // ambiguities: e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
+      // image/x-ms-bmp
+      $allowed_mime = array('image/png',
+                            'image/jpeg',
+                            'image/gif',
+                            'image/tiff',
+                            'image/x-eps',
+                            'application/pdf',
+                            'application/postscript');
+
+      if (in_array($mime, $allowed_mime)) {
+        // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files;
+        // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
+        // works in those cases
+        if ($mime === 'application/pdf' || $mime === 'application/postscript') {
+          $src = $src . '[0]';
         }
-
-        // get mime type of the file
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $src);
-        // the used function is different depending on extension
-        if ($mime === 'image/jpeg') {
-            $sourceImage = imagecreatefromjpeg($src);
-        } elseif ($mime === 'image/png') {
-            $sourceImage = imagecreatefrompng($src);
-        } elseif ($mime === 'image/gif') {
-            $sourceImage = imagecreatefromgif($src);
-        } else {
-            return false;
-        }
-
-        if ($sourceImage === false) {
-            return false;
-        }
-
-        $width = imagesx($sourceImage);
-        $height = imagesy($sourceImage);
-
-        // find the "desired height" of this thumbnail, relative to the desired width
-        $desiredHeight = floor($height * ($desiredWidth / $width));
-
-        // create a new, "virtual" image
-        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
-
-        // copy source image at a resized size
-        imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
-
-        // create the physical thumbnail image to its destination (85% quality)
-        imagejpeg($virtualImage, $dest, 85);
+        $image = new Gmagick($src);
+      } else {
+        return false;
+      }
+      // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
+      $image->thumbnailimage(100, 0);
+      // create the physical thumbnail image to its destination (85% quality)
+      $image->setCompressionQuality(85);
+      $image->write($dest);
+      $image->clear();
     }
 
     /**

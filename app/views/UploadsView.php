@@ -141,7 +141,12 @@ class UploadsView extends EntityView
             if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif|tif|tiff|pdf|eps)$/i', $ext)) {
                 // if it's a picture, we display it with fancybox
                 // see: http://fancyapps.com/fancybox/3/docs/
-                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' data-fancybox='group' ";
+                $fancybox = ' ';
+                if (preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+                    $fancybox = " data-fancybox='group' ";
+                }
+
+                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "'" . $fancybox;
                 if ($upload['comment'] != 'Click to add a comment') {
                     $html .= "title='" . $upload['comment'] . "' data-caption='" . $upload['comment'] . "'";
                 }

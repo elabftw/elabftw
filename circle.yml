@@ -5,7 +5,10 @@ machine:
 dependencies:
     pre:
         - sudo apt-get update
-        - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+        - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server graphicsmagick libgraphicsmagick1-dev
+        - yes|sudo pecl install gmagick-2.0.4RC1
+        - sudo echo "extension=gmagick.so" >> /opt/circleci/php/7.0.7/etc/php.ini
+
 database:
     override:
         - mysql -uroot < tests/_data/phpunit.sql

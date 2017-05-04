@@ -317,6 +317,7 @@ class Uploads extends Entity
                             'image/gif',
                             'image/tiff',
                             'image/x-eps',
+                            'image/svg+xml',
                             'application/pdf',
                             'application/postscript');
 

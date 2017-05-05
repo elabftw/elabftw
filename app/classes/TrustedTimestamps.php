@@ -102,7 +102,7 @@ class TrustedTimestamps extends Entity
     private function generatePdf()
     {
         try {
-            $pdf = new MakePdf($this->Entity, true);
+            $pdf = new MakePdf($this->Entity, true, true);
             $this->pdfPath = $pdf->filePath;
             $this->pdfLongName = $pdf->fileName;
         } catch (Exception $e) {

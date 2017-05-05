@@ -25,6 +25,7 @@ trait EntityTrait {
     /** the PDO object */
     protected $pdo;
 
+    /** instance of Users */
     public $Users;
 
     /**

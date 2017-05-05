@@ -54,8 +54,9 @@ class MakePdf extends Make
      *
      * @param Entity $entity Experiments or Database
      * @param bool|null $toFile Do we want to write it to a file ?
+     * @param bool|unll $timestamp Is it a timestamp pdf we are doing ? If yes save it in normal path, not tmp
      */
-    public function __construct(Entity $entity, $toFile = false)
+    public function __construct(Entity $entity, $toFile = false, $timestamp = false)
     {
         $this->pdo = Db::getConnection();
         $this->Entity = $entity;
@@ -94,7 +95,12 @@ class MakePdf extends Make
         // output
         if ($toFile) {
             $this->fileName = $this->getFileName() . '.pdf';
-            $this->filePath = $this->getFilePath($this->fileName, true);
+
+            if ($timestamp) {
+                $this->filePath = $this->getFilePath($this->fileName, false);
+            } else {
+                $this->filePath = $this->getFilePath($this->fileName, true);
+            }
             $mpdf->Output($this->filePath, 'F');
         } else {
             $mpdf->Output($this->getCleanName(), 'I');

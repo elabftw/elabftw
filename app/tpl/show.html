@@ -51,7 +51,7 @@
 
                 {{ item['title']|raw }}</p></a>
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item['color'] }}'>
-                    <img id='bodyToggleImg_{{ item['id'] }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item['category'] }}</span>
+                    <img id='bodyToggleImg_{{ item['id'] }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item['category'] }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item['date']|kdate }}</span>
                 {% if item['tags'] is not null %}
                 <span class='tags'><img src='app/img/tags.png' alt='tags' />
@@ -75,57 +75,6 @@
 
 {% endif %}
 
-<script>
-    $(document).ready(function(){
-
-        // bodyToggleImg is the little +/- image
-        $('.bodyToggleImg').click(function() {
-            // transform the + in - and vice versa
-            if ($(this).attr('src') == 'app/img/show-more.png') {
-                $(this).attr('src', 'app/img/show-less.png');
-            } else {
-                $(this).attr('src', 'app/img/show-more.png');
-            }
-            // get the id to show the toggleBody
-            id = $(this).attr('id');
-            idArr = id.split("_");
-            id = idArr[1];
-            // get html of body
-            $.post('app/controllers/EntityController.php', {
-                'getBody' : true,
-                'id' : id,
-                'type' : '{{ Ev.Entity.type }}'
-            // and put it in the div and show the div
-            }).done(function(body) {
-                $('#bodyToggle_' + id).html(body);
-                $('#bodyToggle_' + id).toggle();
-
-            });
-        });
-
-        {% if Ev.Entity.type == 'experiments' %}
-        // KEYBOARD SHORTCUT
-        key('{{ Ev.Entity.Users.userData['sc_create'] }}', function(){
-            location.href = 'app/controllers/ExperimentsController.php?create=true'
-        });
-        {% endif %}
-
-        // SHOW MORE BUTTON
-        $('section.item').hide(); // hide everyone
-        $('section.item').slice(0, {{ Ev.limit }} ).show(); // show only the default at the beginning
-        $('#loadButton').click(function(e){ // click to load more
-            e.preventDefault();
-            $('section.item:hidden').slice(0, {{ Ev.limit }} ).show();
-            if ($('section.item:hidden').length == 0) { // check if there are more exp to show
-                $('#loadButton').hide(); // hide load button when there is nothing more to show
-                $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-            }
-        });
-        $('#loadAllButton').click(function(e){ // click to load more
-            e.preventDefault();
-            $('section.item:hidden').show();
-            $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-            $('#loadButton').hide(); // hide load button when there is nothing more to show
-        });
-    });
-</script>
+<div id='shortcuts' data-create='{{ Ev.Entity.Users.userData.sc_create }}'></div>
+<div id='limit' data-limit='{{ Ev.limit }}'></div>
+<script src='app/js/min/show.min.js'></script>

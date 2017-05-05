@@ -200,9 +200,11 @@ class UploadsView extends EntityView
         } // end foreach
         $html .= "</div></div></div>";
 
-        $html .= "<script>$(document).ready(function() {
-                // we use fancybox to display thumbnails
-                $('a.fancybox').fancybox();";
+        $html .= "<script>$(document).ready(function() {";
+        if ($mode === 'view') {
+                // we use fancybox to display thumbnails only in view mode
+            $html .= "$('a.fancybox').fancybox();";
+        }
 
         // add editable comments in edit mode
         if ($mode === 'edit') {

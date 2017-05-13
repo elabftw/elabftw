@@ -290,6 +290,7 @@ if (isset($_GET)) {
     // assign variables from get
 
     $table = 'items';
+    $tableTag = 'items_tags';
     $status = '';
     $rating = '';
     $tags = '';
@@ -297,6 +298,7 @@ if (isset($_GET)) {
     // TABLE
     if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
         $table = 'experiments';
+        $tableTag = 'items_tags';
     }
 
     // STATUS
@@ -355,7 +357,7 @@ if (isset($_GET)) {
     if (!empty($tagsArr)) {
         foreach ($tagsArr as $tag) {
             $tag = filter_var($tag, FILTER_SANITIZE_STRING);
-            $sqlTag .= " AND tagt.tag LIKE '%" . $tag . "%' ";
+            $sqlTag .= " AND EXISTS (SELECT 1 FROM " . $tableTag . " tagt WHERE tagt.item_id = " . $table . ".id AND tagt.tag LIKE '%" . $tag . "%') ";
         }
     }
 

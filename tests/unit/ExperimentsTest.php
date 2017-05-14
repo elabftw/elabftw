@@ -53,9 +53,10 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $this->Experiments->setId(1);
+        $new = $this->Experiments->create();
+        $this->Experiments->setId($new);
         $this->Experiments->populate();
-        $this->assertEquals(1, $this->Experiments->id);
+        $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userid);
         $this->assertTrue($this->Experiments->update('Untitled', '20160729', '<p>Body</p>'));
     }

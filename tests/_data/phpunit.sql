@@ -70,7 +70,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '18'),
+('schema', '20'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -108,6 +108,21 @@ CREATE TABLE `experiments` (
   `timestampedwhen` timestamp NULL DEFAULT NULL,
   `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `idps`
+--
+
+CREATE TABLE `idps` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `entityid` varchar(255) NOT NULL,
+  `sso_url` varchar(255) NOT NULL,
+  `sso_binding` varchar(255) NOT NULL,
+  `slo_url` varchar(255) NOT NULL,
+  `slo_binding` varchar(255) NOT NULL,
+  `x509` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -604,6 +619,12 @@ ALTER TABLE `uploads`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`userid`);
+
+--
+-- Indexes for table `idps`
+--
+ALTER TABLE `idps`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables

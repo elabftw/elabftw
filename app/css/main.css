@@ -44,12 +44,6 @@ body:before {
     box-shadow: 0 0 10px rgba(0,0,0,.8);
 }
 
-/* set background image */
-body {
-    background:url(images/bg.png) no-repeat center center fixed;
-    background-size: cover;
-}
-
 /* this is the big white thing that holds everything */
 #container {
     background: #fff;

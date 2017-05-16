@@ -8,21 +8,23 @@
  *
 -->
 <html>
+
 <head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name='referrer' content='origin'>
-<link rel="icon" type="image/ico" href="app/img/favicon.ico" />
-<title>{{ pageTitle }}</title>
-<!-- CSS -->
-<link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
-<!-- see Gruntfile.js to see what gets inside this -->
-<script src="app/js/elabftw.min.js"></script>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name='referrer' content='origin'>
+    <link rel="icon" type="image/ico" href="app/img/favicon.ico" />
+    <title>{{ pageTitle }}</title>
+    <!-- CSS -->
+    <link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
+    <!-- see Gruntfile.js to see what gets inside this -->
+    <script src="app/js/elabftw.min.js"></script>
 </head>
 
 <body>
-<section id="container" class='container'>
+<!-- container-fluid is from bootstrap -->
+<section id="container" class='container-fluid'>
 
 <nav>
     {% if session['auth'] == 1 %}

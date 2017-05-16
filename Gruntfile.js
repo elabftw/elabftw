@@ -59,7 +59,8 @@ module.exports = function(grunt) {
               'bower_components/jquery.complexify/jquery.complexify.js',
               'bower_components/jquery.complexify/jquery.complexify.banlist.js',
               'app/js/register.js' ],
-          'app/js/change-pass.min.js': 'app/js/change-pass.js'
+          'app/js/change-pass.min.js': 'app/js/change-pass.js',
+          'app/js/show.min.js': 'app/js/show.js'
 
         }
       }

@@ -123,10 +123,10 @@ foreach ($itemsTypesArr as $items_types) {
             <!-- SEARCH WITH TAG -->
 <?php
 $tagsArr = array();
-if (isset($_GET['tag_exp'])) {
+if ($_GET['type'] === 'experiments' && isset($_GET['tag_exp'])) {
     $tagsArr = $_GET['tag_exp'];
 }
-if (isset($_GET['tag_db'])) {
+if ($_GET['type'] === 'database' && isset($_GET['tag_db'])) {
     $tagsArr = $_GET['tag_db'];
 }
 
@@ -290,6 +290,7 @@ if (isset($_GET)) {
     // assign variables from get
 
     $table = 'items';
+    $tagTable = 'items_tags';
     $status = '';
     $rating = '';
     $tags = '';
@@ -297,6 +298,7 @@ if (isset($_GET)) {
     // TABLE
     if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
         $table = 'experiments';
+        $tagTable = 'experiments_tags';
     }
 
     // STATUS
@@ -355,7 +357,7 @@ if (isset($_GET)) {
     if (!empty($tagsArr)) {
         foreach ($tagsArr as $tag) {
             $tag = filter_var($tag, FILTER_SANITIZE_STRING);
-            $sqlTag .= " AND tagt.tag LIKE '%" . $tag . "%' ";
+            $sqlTag .= " AND EXISTS (SELECT 1 FROM " . $tagTable . " tagt WHERE tagt.item_id = " . $table . ".id AND tagt.tag LIKE '%" . $tag . "%') ";
         }
     }
 

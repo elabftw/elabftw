@@ -649,6 +649,7 @@ tr:nth-child(odd) {
 
 /* ITEMS */
 .item {
+    min-width: 100%;
     border:  1px solid #dcdddc;
     border-radius: 5px;
     margin: 5px auto;
@@ -778,9 +779,14 @@ input[type='checkbox']{
 }
 
 /* fix the white space when columned items don't have the same height */
-@media (min-width: 1200px) {
-    .row-fix > .col-lg-4:nth-child(3n+1) {
-        clear: left;
+/* see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643 */
+.row.display-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.row.display-flex > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
 }
 
 /* fix for bootstrap's thumbnail class */

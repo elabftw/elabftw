@@ -89,7 +89,7 @@ class EntityView
 
             if (!$this->showTeam && $this->Entity instanceof Experiments) {
                 // filter by user only if we are not making a search
-                if ($this->searchType === '') {
+                if ($this->searchType === '' || $this->searchType === 'filter') {
                     $this->Entity->setUseridFilter();
                 }
             }

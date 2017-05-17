@@ -32,6 +32,10 @@ ffc1b7 => light red
     url('fonts/lato-medium-webfont.svg#webfont') format('svg');
 }
 
+body {
+    min-width: 380px;
+}
+
 /* little shadow on top of the screen for no reasons */
 body:before {
     content: "";

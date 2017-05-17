@@ -91,6 +91,21 @@ class Scheduler extends Entity
     }
 
     /**
+     * Read info from an event id
+     *
+     * @return array
+     */
+    public function readFromId()
+    {
+        $sql = "SELECT * from team_events WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->execute();
+
+        return $req->fetch();
+    }
+
+    /**
      * Update the start of an event (when you drag and drop it)
      *
      * @param string $start 2016-07-22T13:37:00
@@ -131,9 +146,10 @@ class Scheduler extends Entity
      */
     public function destroy()
     {
-        $sql = "DELETE FROM team_events WHERE id = :id";
+        $sql = "DELETE FROM team_events WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id);
+        $req->bindParam(':userid', $this->Database->Users->userid);
 
         return $req->execute();
     }

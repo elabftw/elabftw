@@ -70,16 +70,24 @@ try {
     // DESTROY
     if (isset($_POST['destroy'])) {
         $Scheduler->setId($_POST['id']);
-        if ($Scheduler->destroy()) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Event deleted successfully')
-            ));
-        } else {
+        $eventArr = $Scheduler->readFromId();
+        if ($eventArr['userid'] != $_SESSION['userid']) {
             echo json_encode(array(
                 'res' => false,
-                'msg' => Tools::error()
+                'msg' => Tools::error(true)
             ));
+        } else {
+            if ($Scheduler->destroy()) {
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('Event deleted successfully')
+                ));
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
         }
     }
 

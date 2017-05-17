@@ -108,12 +108,17 @@ $(document).ready(function() {
             // delete by clicking it
             eventClick: function(calEvent) {
                 if (confirm('Delete this event?')) {
-                    $('#scheduler').fullCalendar('removeEvents', calEvent.id);
                     $.post('app/controllers/SchedulerController.php', {
                         destroy: true,
                         id: calEvent.id
-                    }).done(function() {
-                        notif('Deleted', 'ok');
+                    }).done(function(data) {
+                        var json = JSON.parse(data);
+                        if (json.res) {
+                            $('#scheduler').fullCalendar('removeEvents', calEvent.id);
+                            notif(json.msg, 'ok');
+                        } else {
+                            notif(json.msg, 'ko');
+                        }
                     });
                 }
             },

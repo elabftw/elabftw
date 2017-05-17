@@ -37,7 +37,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '20';
+    const REQUIRED_SCHEMA = '21';
 
     /**
      * Init Update with Config and pdo
@@ -164,8 +164,15 @@ class Update
         }
 
         if ($current_schema < 20) {
+            // 20170505
             $this->schema20();
             $this->updateSchema(20);
+        }
+
+        if ($current_schema < 21) {
+            // 20170517
+            $this->schema21();
+            $this->updateSchema(21);
         }
         // place new schema functions above this comment
 
@@ -509,7 +516,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
           `x509` text NOT NULL,
           PRIMARY KEY (`id`));";
         if (!$this->pdo->q($sql)) {
-            throw new Exception('Error updating to schema19');
+            throw new Exception('Error updating to schema20');
         }
 
         // add more config options for saml auth
@@ -526,7 +533,19 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             ('saml_x509', NULL),
             ('saml_privatekey', NULL)";
         if (!$this->pdo->q($sql)) {
-            throw new Exception('Error updating to schema19');
+            throw new Exception('Error updating to schema20');
+        }
+    }
+
+    /**
+     * Remove the display option from users table because it's useless
+     *
+     */
+    private function schema21()
+    {
+        $sql = "ALTER TABLE `users` DROP `display`;";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema21');
         }
     }
 }

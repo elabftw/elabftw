@@ -477,12 +477,6 @@ class Users extends Auth
      */
     public function updatePreferences($params)
     {
-        // DISPLAY
-        $new_display = 'default';
-        if ($params['display'] === 'compact') {
-            $new_display = 'compact';
-        }
-
         // LIMIT
         $filter_options = array(
             'options' => array(
@@ -547,7 +541,6 @@ class Users extends Auth
         }
 
         $sql = "UPDATE users SET
-            display = :new_display,
             limit_nb = :new_limit,
             sc_create = :new_sc_create,
             sc_edit = :new_sc_edit,
@@ -560,7 +553,6 @@ class Users extends Auth
             default_vis = :new_default_vis
             WHERE userid = :userid;";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':new_display', $new_display);
         $req->bindParam(':new_limit', $new_limit);
         $req->bindParam(':new_sc_create', $new_sc_create);
         $req->bindParam(':new_sc_edit', $new_sc_edit);

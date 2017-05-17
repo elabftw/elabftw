@@ -18,7 +18,6 @@ class UsersTest extends \PHPUnit_Framework_TestCase
     public function testUpdatePreferences()
     {
         $prefsArr = array(
-            'display' => 'compact',
             'limit' => 12,
             'sc_create' => 'c',
             'sc_edit' => 'e',

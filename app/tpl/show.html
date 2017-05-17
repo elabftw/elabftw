@@ -30,7 +30,7 @@
                 {% set opacity = '0.7' %}
             {% endif %}
             <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
-            <section class='item {{ Ev.Entity.Users.userData.display }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+            <section class='item' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
                 <a href='{{ page }}.php?mode=view&id={{ item.id }}'>
                 {# show attached if there is a file attached #}
                 {% if item.has_attachment %}

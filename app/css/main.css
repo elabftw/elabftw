@@ -856,11 +856,6 @@ input[type='checkbox']{
     padding: 0 5px;
 }
 
-.compact {
-    margin: 0 0 5px 0;
-    padding: 1px;
-}
-
 .tags {
     line-height: 150%;
     margin-bottom: 10px;

@@ -20,7 +20,7 @@
             <select id='lang' name='lang'>
             {% for lang, text in langsArr %}
                 <option value='{{ lang }}'
-                  {{ Users.userData['lang'] == lang ? ' selected' }}
+                  {{ Users.userData.lang == lang ? ' selected' }}
                   >{{ text }}</option>
             {% endfor %}
             </select>
@@ -32,20 +32,8 @@
             <h3>{{ 'Display'|trans }}</h3>
             <hr>
             <p>
-            <input id='radio_view_default' type='radio' name='display' value='default'
-          {{ Users.userData['display'] == 'default' ? " checked" }}
-             />
-            <label for='radio_view_default'>{{ 'Default'|trans }}</label>
-
-            <input id='radio_view_compact' type='radio' name='display' value='compact'
-          {{ Users.userData['display'] == 'compact' ? " checked" }}
-             />
-            <label for='radio_view_compact'>{{ 'Compact'|trans }}</label>
-            </p>
-
-            <p style='margin-top:20px;'>
             <label for='limit'>{{ 'Items per page:'|trans }}</label>
-            <input id='limit' type='text' size='2' maxlength='2' value='{{ Users.userData['limit_nb'] }}' name='limit'>
+            <input id='limit' type='text' size='2' maxlength='2' value='{{ Users.userData.limit_nb }}' name='limit'>
             </p>
         </section>
 
@@ -59,19 +47,19 @@
                     <th>{{ 'Shortcut'|trans }}</th></tr>
 
                 <tr><td>{{ 'Create'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_create'] }}' name='sc_create' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData.sc_create }}' name='sc_create' />
                     </td></tr>
 
                     <tr><td>{{ 'Edit'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_edit'] }}' name='sc_edit' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData.sc_edit }}' name='sc_edit' />
                     </td></tr>
 
                     <tr><td>{{ 'Submit'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_submit'] }}' name='sc_submit' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData.sc_submit }}' name='sc_submit' />
                     </td></tr>
 
                     <tr><td>{{ 'TODO list'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData['sc_todo'] }}' name='sc_todo' />
+                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ Users.userData.sc_todo }}' name='sc_todo' />
                     </td></tr>
                 </table>
             </p>
@@ -82,17 +70,17 @@
             <hr>
             <p>
             <input id='show_team' type='checkbox' name='show_team'
-              {{ Users.userData['show_team'] == '1' ? " checked='checked'" }}
+              {{ Users.userData.show_team == '1' ? " checked='checked'" }}
             />
             <label for='show_team'>{{ 'Show experiments from the team on the Experiments page?'|trans }}</label>
             <br>
             <input id='close_warning' type='checkbox' name='close_warning'
-              {{ Users.userData['close_warning'] == '1' ? " checked='checked'" }}
+              {{ Users.userData.close_warning == '1' ? " checked='checked'" }}
             />
             <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab?'|trans }}</label>
             <br>
             <input id='chem_editor' type='checkbox' name='chem_editor'
-              {{ Users.userData['chem_editor'] == '1' ? " checked='checked'" }}
+              {{ Users.userData.chem_editor == '1' ? " checked='checked'" }}
             />
             <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode?'|trans }}</label>
             </p>
@@ -101,18 +89,18 @@
             <label for 'default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
             <select name='default_vis'>
                 <option value='organization'
-                  {{ Users.userData['default_vis'] == 'organization' ? " selected='selected'" }}
+                  {{ Users.userData.default_vis == 'organization' ? " selected='selected'" }}
                 >{{ 'Organization'|trans }}</option>
                 <option value='team'
-                  {{ Users.userData['default_vis'] == 'team' ? " selected='selected'" }}
+                  {{ Users.userData.default_vis == 'team' ? " selected='selected'" }}
                 >{{ 'Team'|trans }}</option>
                 <option value='user'
-                  {{ Users.userData['default_vis'] == 'user' ? " selected='selected'" }}
+                  {{ Users.userData.default_vis == 'user' ? " selected='selected'" }}
                 >{{ 'User'|trans }}</option>
                 {% for teamGroup in teamGroupsArr %}
-                    <option value='{{ teamGroup['id'] }}'
-                      {{ teamGroup['id'] == Users.userData['default_vis'] ? " selected='selected'" }}
-                    >{{ 'Group'|trans }} - {{ teamGroup['name'] }}
+                    <option value='{{ teamGroup.id }}'
+                      {{ teamGroup.id == Users.userData.default_vis ? " selected='selected'" }}
+                    >{{ 'Group'|trans }} - {{ teamGroup.name }}
                     </option>
                 {% endfor %}
             </select>
@@ -154,18 +142,18 @@
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='firstname'>{{ 'Firstname'|trans }}</label>
-                <input name="firstname" value='{{ Users.userData['firstname'] }}' cols='20' rows='1' />
+                <input name="firstname" value='{{ Users.userData.firstname }}' cols='20' rows='1' />
             </div>
         </div>
 
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='lastname'>{{ 'Lastname'|trans }}</label>
-                <input name="lastname" value='{{ Users.userData['lastname'] }}' cols='20' rows='1' />
+                <input name="lastname" value='{{ Users.userData.lastname }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='email'>{{ 'Email'|trans }}</label>
-                <input name="email" type="email" value='{{ Users.userData['email'] }}' cols='20' rows='1' />
+                <input name="email" type="email" value='{{ Users.userData.email }}' cols='20' rows='1' />
             </div>
         </div>
 
@@ -174,21 +162,21 @@
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='phone'>{{ 'Phone'|trans }} </label>
-                <input name="phone" value='{{ Users.userData['phone'] }}' cols='20' rows='1' />
+                <input name="phone" value='{{ Users.userData.phone }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='cellphone'>{{ 'Mobile'|trans }}</label>
-                <input name="cellphone" value='{{ Users.userData['cellphone'] }}' cols='20' rows='1' />
+                <input name="cellphone" value='{{ Users.userData.cellphone }}' cols='20' rows='1' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='skype'>{{ 'Skype'|trans }}</label>
-                <input name="skype" value='{{ Users.userData['skype'] }}' cols='20' rows='1' />
+                <input name="skype" value='{{ Users.userData.skype }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='website'>{{ 'Website'|trans }}</label>
-                <input name="website" type="url" value='{{ Users.userData['website'] }}' cols='20' rows='1' />
+                <input name="website" type="url" value='{{ Users.userData.website }}' cols='20' rows='1' />
             </div>
         </div>
 
@@ -207,7 +195,7 @@
     <ul class='nav nav-pills' role='tablist'>
         <li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>{{ 'Create New'|trans }}</li>
         {% for template in templatesArr %}
-            <li class='sortable subtabhandle badge badgetab' id='subtab_{{ template['id'] }}'>{{ template['name'] }}</li>
+            <li class='sortable subtabhandle badge badgetab' id='subtab_{{ template.id }}'>{{ template.name }}</li>
         {% endfor %}
     </ul>
 
@@ -228,15 +216,15 @@
     </div>
 
     {% for template in templatesArr %}
-        <div class='subdivhandle' id='subtab_{{ template['id'] }}div'>
-            <img class='align_right' src='app/img/download.png' title='Export Template' alt='Export' onClick="exportTpl('{{ template['name'] }}', '{{ template['id'] }}')" />
-            <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' onClick="templatesDestroy({{ template['id'] }})" />
+        <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+            <img class='align_right' src='app/img/download.png' title='Export Template' alt='Export' onClick="exportTpl('{{ template.name }}', '{{ template.id }}')" />
+            <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' onClick="templatesDestroy({{ template.id }})" />
             <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />
-                <input type='hidden' name='tpl_id[]' value='{{ template['id'] }}' />
-                <input name='tpl_name[]' value='{{ template['name'] }}' style='width:90%' /><br />
+                <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
+                <input name='tpl_name[]' value='{{ template.name }}' style='width:90%' /><br />
                 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-                <textarea id='e{{ template['id'] }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template['body'] }}</textarea><br />
+                <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
                 <div class='center'>
                     <button type='submit' name='Submit' class='button'>{{ 'Edit template'|trans }}</button>
                 </div>
@@ -318,7 +306,7 @@ $(document).ready(function() {
         plugins : "table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link",
         toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
         removed_menuitems : "newdocument",
-        language : '{{ Users.userData['lang'] }}'
+        language : '{{ Users.userData.lang }}'
     });
 });
 </script>

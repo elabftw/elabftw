@@ -777,6 +777,12 @@ input[type='checkbox']{
     border-color:#017079;
 }
 
+/* fix the white space when columned items don't have the same height */
+@media (min-width: 1200px) {
+    .row-fix > .col-lg-4:nth-child(3n+1) {
+        clear: left;
+}
+
 /* fix for bootstrap's thumbnail class */
 .thumbnail {
     overflow:hidden;

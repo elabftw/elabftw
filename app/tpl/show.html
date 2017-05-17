@@ -20,7 +20,7 @@
         {% set page = 'database' %}
         {% endif %}
 
-    <div class='row'>
+    <div class='row row-fix'>
     {% for item in Ev.itemsArr %}
         {% set permissions = Ev.Entity.getPermissions(item) %}
         {% if permissions.read %}

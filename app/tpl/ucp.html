@@ -201,7 +201,7 @@
 
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
-    <p onClick="$('#import_tpl').toggle()" style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' />{{ 'Import from File'|trans }}</p>
+    <p id='import-from-file' style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' />{{ 'Import from File'|trans }}</p>
         <form action='app/controllers/UcpController.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.tpl' id='import_tpl'>
@@ -217,8 +217,8 @@
 
     {% for template in templatesArr %}
         <div class='subdivhandle' id='subtab_{{ template.id }}div'>
-            <img class='align_right' src='app/img/download.png' title='Export Template' alt='Export' onClick="exportTpl('{{ template.name }}', '{{ template.id }}')" />
-            <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' onClick="templatesDestroy({{ template.id }})" />
+            <img class='align_right save-to-file' src='app/img/download.png' title='Export Template' alt='Export' data-name='{{ template.name }}' data-id='{{ template.id }}' />
+            <img class='align_right destroy-template' src='app/img/small-trash.png' title='Delete' alt='Delete' data-id='{{ template.id }}' />
             <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />
                 <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
@@ -238,75 +238,5 @@
 <!-- to export templates -->
 <script src='app/js/file-saver.min.js'></script>
 <script src='app/js/tabs.min.js'></script>
-<script>
-// READY ? GO !!
-$(document).ready(function() {
-
-    // hide the file input
-    $('#import_tpl').hide();
-    $('#import_tpl').on('change', function(e){
-        var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "");
-        readFile(this.files[0], function(e) {
-            tinyMCE.get('new_tpl_txt').setContent(e.target.result);
-            $('#new_tpl_name').val(title);
-            $('#import_tpl').hide();
-        });
-    });
-
-    $('.nav-pills').sortable({
-        // limit to horizontal dragging
-        axis : 'x',
-        helper : 'clone',
-        // we don't want the Create new pill to be sortable
-        cancel: "#subtab_1",
-        // do ajax request to update db with new order
-        update: function(event, ui) {
-            // send the orders as an array
-            var ordering = $(".nav-pills").sortable("toArray");
-
-            $.post("app/controllers/AdminController.php", {
-                'updateOrdering': true,
-                'table': 'experiments_templates',
-                'ordering': ordering
-            }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
-                } else {
-                    notif(json.msg, 'ko');
-                }
-            });
-        }
-    });
-
-    // SUB TABS
-    var tab = 1;
-    var initdiv = '#subtab_' + tab + 'div';
-    var inittab = '#subtab_' + tab;
-    // init
-    $(".subdivhandle").hide();
-    $(initdiv).show();
-    $(inittab).addClass('selected');
-
-    $(".subtabhandle" ).click(function(event) {
-        var tabhandle = '#' + event.target.id;
-        var divhandle = '#' + event.target.id + 'div';
-        $(".subdivhandle").hide();
-        $(divhandle).show();
-        $(".subtabhandle").removeClass('badgetabactive');
-        $(tabhandle).addClass('badgetabactive');
-    });
-    // END SUB TABS
-
-    // TinyMCE
-    tinymce.init({
-        mode : "specific_textareas",
-        editor_selector : "mceditable",
-        content_css : "app/css/tinymce.css",
-        plugins : "table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link",
-        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
-        removed_menuitems : "newdocument",
-        language : '{{ Users.userData.lang }}'
-    });
-});
-</script>
+<div id='language' data-lang='{{ Users.userData.lang }}'></div>
+<script src='app/js/ucp.min.js'></script>

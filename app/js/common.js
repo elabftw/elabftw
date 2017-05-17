@@ -393,27 +393,6 @@ function insertParamAndReload(key, value) {
 
 // UCP
 
-// TEMPLATES DESTROY
-function templatesDestroy(id) {
-    var youSure = confirm('Delete this ?');
-    if (youSure === true) {
-        $.post('app/controllers/UcpController.php', {
-            templatesDestroy: true,
-            id: id
-        }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
-                window.location.replace('ucp.php?tab=3');
-            } else {
-                notif(json.msg, 'ko');
-            }
-        });
-    } else {
-        return false;
-    }
-}
-
 // for importing user template
 function readFile(file, onLoadCallback){
     // check for the various File API support
@@ -424,15 +403,6 @@ function readFile(file, onLoadCallback){
     var reader = new FileReader();
     reader.onload = onLoadCallback;
     reader.readAsText(file);
-}
-
-function exportTpl(name, id) {
-    // we have the name of the template used for filename
-    // and we have the id of the editor to get the content from
-    // we don't use activeEditor because it requires a click inside the editing area
-    var content = tinyMCE.get(id).getContent();
-    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, name + ".elabftw.tpl");
 }
 
 // parse the query from url

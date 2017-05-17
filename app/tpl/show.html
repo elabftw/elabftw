@@ -61,7 +61,7 @@
                 <span class='tags'><img src='app/img/tags.png' alt='tags' />
                     {% set tagsArr = item.tags|split('|') %}
                     {% for tag in tagsArr %}
-                        <a href='{{ page }}.php?mode=show&tag={{ tag }}'>{{ tag }}</a>
+                        <a href='{{ page }}.php?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
                     {% endfor %}
                 {% endif %}
                 <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='display:none; margin: 10px 0 0 20px'></div>

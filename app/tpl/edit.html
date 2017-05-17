@@ -29,7 +29,7 @@
                     {# the key allows to get the id stored in tagsIdArr #}
                     <span class='tag'>
                         <a onclick="destroyTag('{{ Ev.Entity.type }}', {{ Ev.Entity.id }}, {{ tagsIdArr[key] }})">
-                            {{ tag }}
+                            {{ tag|raw }}
                         </a>
                     </span>
                 {% endfor %}

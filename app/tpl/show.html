@@ -20,50 +20,54 @@
         {% set page = 'database' %}
         {% endif %}
 
+    <div class='row'>
     {% for item in Ev.itemsArr %}
         {% set permissions = Ev.Entity.getPermissions(item) %}
-        {% if permissions['read'] %}
+        {% if permissions.read %}
             {# dim the experiment a bit if it's not yours #}
             {% set opacity = '1' %}
-            {% if (Ev.Entity.Users.userid != item['userid']) and Ev.Entity.type == 'experiments' %}
+            {% if (Ev.Entity.Users.userid != item.userid) and Ev.Entity.type == 'experiments' %}
                 {% set opacity = '0.7' %}
             {% endif %}
-            <section class='item {{ Ev.Entity.Users.userData.display }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item['color'] }}'>
-                <a href='{{ page }}.php?mode=view&id={{ item['id'] }}'>
+            <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
+            <section class='item {{ Ev.Entity.Users.userData.display }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+                <a href='{{ page }}.php?mode=view&id={{ item.id }}'>
                 {# show attached if there is a file attached #}
-                {% if item['has_attachment'] %}
+                {% if item.has_attachment %}
                     <img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />
                 {% endif %}
 
                 {% if Ev.Entity.type == 'items' %}
-                    {{ Ev.showStars(item['rating'])|raw }}
+                    {{ Ev.showStars(item.rating)|raw }}
                 {% endif %}
 
-                <a href='{{ page }}.php?mode=view&id={{ item['id'] }}'>
+                <a href='{{ page }}.php?mode=view&id={{ item.id }}'>
                 <p class='title'>
-                {% if item['timestamped'] %}
+                {% if item.timestamped %}
                     <img class='align_right' src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
                 {% endif %}
 
-                {% if item['locked'] %}
+                {% if item.locked %}
                 <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
                 {% endif %}
 
-                {{ item['title']|raw }}</p></a>
-                <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item['color'] }}'>
-                    <img id='bodyToggleImg_{{ item['id'] }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item['category'] }}</span>
-                <span class='date'><img class='image' src='app/img/calendar.png' />{{ item['date']|kdate }}</span>
-                {% if item['tags'] is not null %}
+                {{ item.title|raw }}</p></a>
+                <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
+                    <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item.category }}</span>
+                <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
+                {% if item.tags is not null %}
                 <span class='tags'><img src='app/img/tags.png' alt='tags' />
-                    {% set tagsArr = item['tags']|split('|') %}
+                    {% set tagsArr = item.tags|split('|') %}
                     {% for tag in tagsArr %}
                         <a href='{{ page }}.php?mode=show&tag={{ tag }}'>{{ tag }}</a>
                     {% endfor %}
                 {% endif %}
-                <div class='bodyToggle' id='bodyToggle_{{ item['id'] }}' style='display:none; margin: 10px 0 0 20px'></div>
+                <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='display:none; margin: 10px 0 0 20px'></div>
             </section>
+            </div>
         {% endif %}
     {% endfor %}
+    </div>
 
     {% if count > Ev.limit %}
         {# show load more button if there are more results than the default display number #}

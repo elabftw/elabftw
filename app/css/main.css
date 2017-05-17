@@ -651,7 +651,7 @@ tr:nth-child(odd) {
 .item {
     border:  1px solid #dcdddc;
     border-radius: 5px;
-    margin: 10px auto;
+    margin: 5px auto;
     padding: 5px 10px 10px 5px;
     overflow:hidden;
 }

@@ -506,31 +506,26 @@ class Users extends Auth
         }
 
         // SHOW TEAM
+        $new_show_team = 0;
         if (isset($params['show_team']) && $params['show_team'] === 'on') {
             $new_show_team = 1;
-        } else {
-            $new_show_team = 0;
         }
 
         // CLOSE WARNING
+        $new_close_warning = 0;
         if (isset($params['close_warning']) && $params['close_warning'] === 'on') {
             $new_close_warning = 1;
-        } else {
-            $new_close_warning = 0;
         }
         // CHEM EDITOR
+        $new_chem_editor = 0;
         if (isset($params['chem_editor']) && $params['chem_editor'] === 'on') {
             $new_chem_editor = 1;
-        } else {
-            $new_chem_editor = 0;
         }
 
         // LANG
-        $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pl_PL', 'pt_BR', 'pt_PT', 'ru_RU', 'sl_SI', 'zh_CN');
-        if (isset($params['lang']) && in_array($params['lang'], $lang_array)) {
+        $new_lang = 'en_GB';
+        if (isset($params['lang']) && in_array($params['lang'], array_keys(Tools::getLangsArr()))) {
             $new_lang = $params['lang'];
-        } else {
-            $new_lang = 'en_GB';
         }
 
         // DEFAULT VIS

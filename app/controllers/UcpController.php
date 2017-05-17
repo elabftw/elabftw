@@ -23,7 +23,7 @@ try {
     $redirect = false;
 
     // TAB 1 : PREFERENCES
-    if (isset($_POST['display'])) {
+    if (isset($_POST['lang'])) {
         $redirect = true;
         if ($Users->updatePreferences($_POST)) {
             $_SESSION['ok'][] = _('Preferences updated.');

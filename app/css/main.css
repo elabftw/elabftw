@@ -1,4 +1,3 @@
-/* CSS Document */
 /**
  * css/main.css
  *
@@ -65,6 +64,7 @@ a {
     color: #29AEB9;
     text-decoration:none;
 }
+
 a:hover {
     color:#29AEB9;
     text-decoration:none;
@@ -83,18 +83,9 @@ ul, li {
     padding: 0;
     margin: 0;
 }
+
 .group-list {
     margin: 0;
-}
-
-.tip:before {
-    content: "☺ ";
-    font-size:120%;
-    color: #29AEB9;
-}
-
-.tip::before a, .tip::before a:hover {
-    color: #343434;
 }
 
 li.inline {
@@ -210,17 +201,29 @@ label {
 }
 
 /* HEAD */
+
+/* BEGIN HELP CONTAINER */
+.tip:before {
+    content: "☺ ";
+    font-size:120%;
+    color: #29AEB9;
+}
+.tip::before a, .tip::before a:hover {
+    color: #343434;
+}
 .help-container {
     display:none;
     padding: 5px;
     margin: 15px 0;
 }
-
 #help {
     cursor: pointer;
     color: #797979;
 }
 
+/* END HELP CONTAINER /*
+
+/* BEGIN NAV */
 .navbar {
     background-color:#343434;
     padding: 0 5%;
@@ -228,24 +231,20 @@ label {
     border: 0;
     margin-bottom: 5px;
 }
-
 .navbar-brand {
     padding: 5px 5px 5px 0;
 }
-
 nav a {
     font-size:90%;
     text-transform:uppercase;
     color: #888;
     text-decoration: none;
 }
-
 /* blue on hover */
 nav a:hover {
     color:#29AEB9 !important;
     transition-duration: 500ms;
 }
-
 /* we want the border bottom to be same width as the text */
 ul.nav li a {
     padding-left: 0;
@@ -253,7 +252,6 @@ ul.nav li a {
     margin-left: 15px;
     margin-right: 15px;
 }
-
 /* selected nav entry */
 ul.nav li.active a {
     border-bottom:6px #29AEB9 solid;
@@ -280,6 +278,8 @@ ul.nav li.active a {
     width:100%;
 }
 
+/* END NAV */
+
 /*  MENU is below main nav */
 menu {
     line-height:200%;
@@ -302,7 +302,7 @@ menu ul li.selected {
     padding-bottom:0;
 }
 
-/* USER PROFIL */
+/* USER MENU (settings, help, logout) */
 .user-nav {
     text-align: right;
 }
@@ -372,7 +372,6 @@ a.elab-tooltip:hover span{
     text-align: center;
     white-space: nowrap;
 }
-
 a.elab-tooltip span:after {
     bottom: 100%;
     left: 50%;
@@ -657,12 +656,6 @@ tr:nth-child(odd) {
     color: #000;
 }
 /* END OVERLAY */
-
-/* save and go back button */
-#saveButton {
-    margin:20px 0;
-    text-align:right;
-}
 
 /* ITEMS */
 .item {

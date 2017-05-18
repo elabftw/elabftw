@@ -5,7 +5,6 @@
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
- *
 -->
 <html>
 
@@ -16,9 +15,10 @@
     <meta name='referrer' content='origin'>
     <link rel="icon" type="image/ico" href="app/img/favicon.ico" />
     <title>{{ pageTitle }}</title>
+    <!-- see Gruntfile.js to see what gets inside these files -->
     <!-- CSS -->
     <link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
-    <!-- see Gruntfile.js to see what gets inside this -->
+    <!-- JS -->
     <script src="app/js/elabftw.min.js"></script>
 </head>
 
@@ -27,6 +27,7 @@
 <!-- container-fluid is from bootstrap -->
 <section id="container" class='container-fluid'>
 
+<!-- begin main menu -->
 <nav class='navbar navbar-default'>
     <div class='container-fluid'>
 
@@ -62,7 +63,7 @@
                 </li>
 
                 <li>
-                    <a href='{{ teamConfigArr['link_href'] }}' target='_blank'>{{ teamConfigArr['link_name'] }}</a>
+                    <a href='{{ teamConfigArr.link_href }}' target='_blank'>{{ teamConfigArr.link_name }}</a>
                 </li>
             {% endif %}
         </ul>
@@ -81,7 +82,7 @@
 <div id='real_container'>
     {% if session.auth %}
     <div class="user-nav">
-        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>My Profile</span> {{ session['firstname'] }}</a><br>
+        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>My Profile</span> {{ session.firstname }}</a><br>
         <a class="elab-tooltip" href='ucp.php'><span>{{ 'Settings'|trans }}</span><img src='app/img/settings.png' alt='{{ 'Settings'|trans }}' /></a> |
         <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>{{ 'Help'|trans }}</span>?</strong></a> |
         <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><img src='app/img/logout.png' alt='{{ 'Logout'|trans }}' /></a>

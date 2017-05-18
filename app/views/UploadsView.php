@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 /**
  * Experiments View
+ * @deprecated should be a twig template
  */
 class UploadsView extends EntityView
 {
@@ -182,8 +183,8 @@ class UploadsView extends EntityView
 
             // now display the name + comment with icons
             $html .= "<div class='caption'><img src='app/img/attached.png' alt='attached' /> ";
-            $html .= "<a href='app/download.php?f=" . $upload['long_name'] .
-                "&name=" . $upload['real_name'] . "' target='_blank'>" . $upload['real_name'] . "</a>";
+            $linkUrl = "app/download.php?f=" . $upload['long_name'] . "&name=" . $upload['real_name'];
+            $html .= "<a href='" . $linkUrl . "' target='_blank'>" . $upload['real_name'] . "</a>";
             $html .= "<span class='smallgray' style='display:inline'> " .
                 Tools::formatBytes(filesize('uploads/' . $upload['long_name'])) . "</span><br>";
             // if we are in view mode, we don't show the comment if it's the default text
@@ -195,6 +196,10 @@ class UploadsView extends EntityView
                             <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
                 stripslashes($upload['comment']) . "</p>";
                 $html .= $comment;
+            }
+
+            if ($mode === 'edit') {
+                $html .= "<div class='inserter' data-link='" . $upload['long_name'] . "'><img src='app/img/show-more.png' /> <p class='inline'>Insert in text at cursor position</p></div>";
             }
             $html .= "</div></div></div>";
         } // end foreach
@@ -210,6 +215,10 @@ class UploadsView extends EntityView
         if ($mode === 'edit') {
             $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
                     makeEditableFileComment('" . $this->Uploads->Entity->type . "', " . $this->Uploads->Entity->id . ");
+                });";
+            $html .= "$(document).on('click', '.inserter',  function() {
+                var imgLink = \"<img src='app/download.php?f=\" + $(this).data('link') + \"' />\";
+                tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
                 });";
         }
         $html .= "});</script>";

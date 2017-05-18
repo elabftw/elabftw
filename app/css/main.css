@@ -1082,3 +1082,7 @@ code {
 .bodyToggle {
     display: none;
 }
+
+.inserter {
+    cursor: pointer;
+}

@@ -230,6 +230,7 @@ CREATE TABLE `status` (
   `team` int(10) unsigned NOT NULL,
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
+  `allow_timestamp` tinyint(1) NOT NULL DEFAULT 1,
   `is_default` tinyint(1) DEFAULT NULL,
   `ordering` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -391,11 +392,11 @@ INSERT INTO `items_types` (`team`, `id`, `name`, `color`, `template`) VALUES
 (1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');
 
 /* the default status */
-INSERT INTO `status` (`team`, `id`, `name`, `color`, `is_default`) VALUES
-(1, 1, 'Running', '29AEB9', 1),
-(1, 2, 'Success', '54aa08', 0),
-(1, 3, 'Need to be redone', 'c0c0c0', 0),
-(1, 4, 'Fail', 'c24f3d', 0);
+INSERT INTO `status` (`team`, `id`, `name`, `color`, `allow_timestamp`, `is_default`) VALUES
+(1, 1, 'Running', '29AEB9', 0, 1),
+(1, 2, 'Success', '54aa08', 1, 0),
+(1, 3, 'Need to be redone', 'c0c0c0', 1, 0),
+(1, 4, 'Fail', 'c24f3d', 1, 0);
 
 /* the default experiment template */
 INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES

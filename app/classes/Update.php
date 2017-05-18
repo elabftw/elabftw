@@ -310,7 +310,6 @@ class Update
         if (!$this->pdo->q($sql5)) {
             throw new Exception('Error setting hash algorithm for existing entries!');
         }
-
     }
 
     /**
@@ -539,11 +538,17 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 
     /**
      * Remove the display option from users table because it's useless
+     * Add field to store if a status may be timestamped
+     * Already existing statuses may be timestamped by default
      *
      */
     private function schema21()
     {
         $sql = "ALTER TABLE `users` DROP `display`;";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema21');
+        }
+        $sql = "ALTER TABLE `status` ADD `allow_timestamp` TINYINT(1) NOT NULL DEFAULT 1;";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema21');
         }

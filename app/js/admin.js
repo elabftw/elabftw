@@ -65,12 +65,15 @@ $(document).ready(function() {
         create: function() {
             var name = $('#statusName').val();
             var color = $('#statusColor').val();
+            var allowTimestamp = $('#statusTimestamp').is(':checked');
 
             $.post(this.controller, {
                 statusCreate: true,
                 name: name,
-                color: color
+                color: color,
+                allowTimestamp: allowTimestamp
             }).done(function(data) {
+                console.log(data);
                 var json = JSON.parse(data);
                 if (json.res) {
                     notif(json.msg, 'ok');
@@ -83,6 +86,7 @@ $(document).ready(function() {
         update: function(id) {
             var name = $('#statusName_' + id).val();
             var color = $('#statusColor_' + id).val();
+            var allowTimestamp = $('#statusTimestamp_'+ id).is(':checked');
             var isDefault = $('#statusDefault_' + id).is(':checked');
 
             $.post(this.controller, {
@@ -90,6 +94,7 @@ $(document).ready(function() {
                 id: id,
                 name: name,
                 color: color,
+                allowTimestamp: allowTimestamp,
                 isDefault: isDefault
             }).done(function(data) {
                 var json = JSON.parse(data);

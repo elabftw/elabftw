@@ -51,7 +51,6 @@ class Experiments extends Entity
 
         $this->Links = new Links($this);
         $this->Comments = new Comments($this);
-
     }
 
     /**
@@ -69,9 +68,7 @@ class Experiments extends Entity
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
-
         } else {
-
             $templatesArr = $Templates->readCommon();
             $title = _('Untitled');
         }
@@ -179,6 +176,48 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
+    }
+
+    /**
+    * Returns if this experiment can be timestamped
+    *
+    * @return bool
+    */
+    public function isTimestampable()
+    {
+        $current_status = $this->getCurrentStatus();
+        $sql = "SELECT allow_timestamp FROM status WHERE id = :status LIMIT 1;";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':status', $current_status);
+        $req->execute();
+        $allowTimestamp = $req->fetchColumn();
+        if ($allowTimestamp === '1') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get current experiment status ID
+     *
+     * @return int The status ID
+     */
+    private function getCurrentStatus()
+    {
+        $sql = "SELECT status FROM experiments WHERE userid = :userid AND id = :id;";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->execute();
+        $status = $req->fetchColumn();
+
+        // if no status is returned, this is a new experiment. To handle gracefully, return the default
+        // status ID instead.
+        if (!$status) {
+            $status = $this->getStatus();
+        }
+        return $status;
     }
 
     /**

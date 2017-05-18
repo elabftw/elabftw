@@ -353,6 +353,7 @@ CREATE TABLE `status` (
   `team` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
+  `allow_timestamp` tinyint(1) NOT NULL DEFAULT 1,
   `is_default` tinyint(1) DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -361,11 +362,11 @@ CREATE TABLE `status` (
 -- Dumping data for table `status`
 --
 
-INSERT INTO `status` (`id`, `team`, `name`, `color`, `is_default`, `ordering`) VALUES
-(1, 1, 'Running', '0096ff', 1, NULL),
-(2, 1, 'Success', '00ac00', 0, NULL),
-(3, 1, 'Need to be redone', 'c0c0c0', 0, NULL),
-(4, 1, 'Fail', 'ff0000', 0, NULL);
+INSERT INTO `status` (`id`, `team`, `name`, `color`, `allow_timestamp`, `is_default`, `ordering`) VALUES
+(1, 1, 'Running', '0096ff', 0, 1, NULL),
+(2, 1, 'Success', '00ac00', 1, 0, NULL),
+(3, 1, 'Need to be redone', 'c0c0c0', 1, 0, NULL),
+(4, 1, 'Fail', 'ff0000', 1, 0, NULL);
 
 -- --------------------------------------------------------
 

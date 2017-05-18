@@ -23,46 +23,63 @@
 </head>
 
 <body>
+
 <!-- container-fluid is from bootstrap -->
 <section id="container" class='container-fluid'>
 
-<nav>
-    {% if session['auth'] == 1 %}
-    <form id='big_search' method='get' action='{{ actionTarget }}'>
-        <input id='big_search_input' type='search' name='q' size='50' value='{{ getQ }}' />
-    </form>
-    <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
-    <a href='experiments.php?mode=show'
-         {% if selectedMenu == 'Experiments' %}
-            class='selected'
-         {% endif %}
-         >{{ 'Experiments'|trans }}</a>
-    <a href='database.php?mode=show'
-         {% if selectedMenu == 'Database' %}
-            class='selected'
-         {% endif %}
-         >{{ 'Database'|trans }}</a>
+<nav class='navbar navbar-default'>
+    <div class='container-fluid'>
 
-    <a href='team.php'
-         {% if selectedMenu == 'Team' %}
-            class='selected'
-         {% endif %}
-         >{{ 'Team'|trans }}</a>
+    <div class="navbar-header">
+        <!-- hamburger menu -->
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <!-- logo -->
+        <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
+    </div>
 
-    <a href='search.php'
-         {% if selectedMenu == 'Search' %}
-            class='selected'
-         {% endif %}
-     >{{ 'Search'|trans }}</a>
+    <!-- everything in there will be part of the burger -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            {% if session.auth %}
+                <li {{ selectedMenu == 'Experiments' ? "class='active'" }}>
+                    <a href='experiments.php?mode=show'>{{ 'Experiments'|trans }}</a>
+                </li>
+                <li {{ selectedMenu == 'Database' ? "class='active'" }}>
+                    <a href='database.php?mode=show'>{{ 'Database'|trans }}</a>
+                </li>
 
-    <a href='{{ teamConfigArr['link_href'] }}' target='_blank'>{{ teamConfigArr['link_name'] }}</a>
-    {% else %}
-        <span id='logonav' class='navleft'>elab<strong>FTW</strong></span>
-    {% endif %}
+                <li {{ selectedMenu == 'Team' ? "class='active'" }}>
+                    <a href='team.php'>{{ 'Team'|trans }}</a>
+                </li>
+
+                <li {{ selectedMenu == 'Search' ? "class='active'" }}>
+                    <a href='search.php'>{{ 'Search'|trans }}</a>
+                </li>
+
+                <li>
+                    <a href='{{ teamConfigArr['link_href'] }}' target='_blank'>{{ teamConfigArr['link_name'] }}</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        {% if session.auth %}
+            <form class="navbar-form navbar-right" id='big_search' method='get' action='{{ actionTarget }}'>
+                <div class="form-group">
+                    <input id='big_search_input' class="form-control" type='search' name='q' size='50' value='{{ getQ }}' />
+                </div>
+            </form>
+        {% endif %}
+        </div>
+    </div>
 </nav>
 
 <div id='real_container'>
-    {% if session['auth'] == 1 %}
+    {% if session.auth %}
     <div class="user-nav">
         {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>My Profile</span> {{ session['firstname'] }}</a><br>
         <a class="elab-tooltip" href='ucp.php'><span>{{ 'Settings'|trans }}</span><img src='app/img/settings.png' alt='{{ 'Settings'|trans }}' /></a> |

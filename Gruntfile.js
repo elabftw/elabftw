@@ -20,6 +20,7 @@ module.exports = function(grunt) {
               'bower_components/jquery-ui/jquery-ui.js',
               'bower_components/bootstrap/js/alert.js',
               'bower_components/bootstrap/js/button.js',
+              'bower_components/bootstrap/js/collapse.js',
               'bower_components/bootstrap/js/dropdown.js',
               'bower_components/colorpicker/jquery.colorpicker.js',
               'bower_components/keymaster/keymaster.js',

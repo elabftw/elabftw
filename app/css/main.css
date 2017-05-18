@@ -57,7 +57,7 @@ body:before {
 }
 
 #real_container {
-    padding: 10px 5%;
+    padding: 0 5%;
 }
 
 /* LINKS */
@@ -221,42 +221,51 @@ label {
     color: #797979;
 }
 
-nav {
+.navbar {
     background-color:#343434;
-    line-height: 3;
+    padding: 0 5%;
+    border-radius: 0;
+    border: 0;
+    margin-bottom: 5px;
+}
+
+.navbar-brand {
+    padding: 5px 5px 5px 0;
 }
 
 nav a {
     font-size:90%;
     text-transform:uppercase;
-    padding-bottom:10px;
-    margin:1%;
     color: #888;
     text-decoration: none;
 }
 
-#logonav {
-    font-size:130%;
-    color:white;
-    margin-left: 5%;
-}
-
-nav a.selected {
-    border-bottom:6px #29AEB9 solid;
-    color:white;
-}
-
+/* blue on hover */
 nav a:hover {
-    color:#29AEB9;
+    color:#29AEB9 !important;
     transition-duration: 500ms;
+}
+
+/* we want the border bottom to be same width as the text */
+ul.nav li a {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+/* selected nav entry */
+ul.nav li.active a {
+    border-bottom:6px #29AEB9 solid;
+    background-color:#343434 !important;
+    color: white !important;
 }
 
 /* search bar in head.php ; nav */
 #big_search {
-    width:25%;
-    float:right;
-    margin-right: 5%;
+    width:30%;
     text-align:right;
+    margin-right: -45px;
 }
 #big_search input {
     background:#555 url(images/search.png) no-repeat scroll right 10px center;
@@ -264,7 +273,6 @@ nav a:hover {
     border-radius: 20px;
     width:50%;
     height:2em;
-    margin: 13px 0 0 0;
     color: white;
     transition:width 1s;
 }

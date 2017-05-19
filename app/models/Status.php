@@ -139,7 +139,7 @@ class Status
          $req->bindParam(':id', $status, PDO::PARAM_INT);
          $req->execute();
 
-         return $req->fetchColumn();
+         return (bool) $req->fetchColumn();
      }
 
     /**

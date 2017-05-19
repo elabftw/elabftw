@@ -151,7 +151,10 @@ try {
                 ));
                 }
             } else {
-                throw new Exception(_('This experiment cannot be timestamped!'));
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => _('This experiment cannot be timestamped!')
+                ));
             }
         } catch (Exception $e) {
             $Logs = new Logs();

@@ -73,7 +73,6 @@ $(document).ready(function() {
                 color: color,
                 allowTimestamp: allowTimestamp
             }).done(function(data) {
-                console.log(data);
                 var json = JSON.parse(data);
                 if (json.res) {
                     notif(json.msg, 'ok');

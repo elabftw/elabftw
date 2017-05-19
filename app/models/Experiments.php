@@ -185,39 +185,12 @@ class Experiments extends Entity
     */
     public function isTimestampable()
     {
-        $current_status = $this->getCurrentStatus();
+        $currentStatus = (int) $this->entityData['category_id'];
         $sql = "SELECT allow_timestamp FROM status WHERE id = :status LIMIT 1;";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':status', $current_status);
+        $req->bindParam(':status', $currentStatus);
         $req->execute();
-        $allowTimestamp = $req->fetchColumn();
-        if ($allowTimestamp === '1') {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Get current experiment status ID
-     *
-     * @return int The status ID
-     */
-    private function getCurrentStatus()
-    {
-        $sql = "SELECT status FROM experiments WHERE userid = :userid AND id = :id;";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
-        $status = $req->fetchColumn();
-
-        // if no status is returned, this is a new experiment. To handle gracefully, return the default
-        // status ID instead.
-        if (!$status) {
-            $status = $this->getStatus();
-        }
-        return $status;
+        return (bool) $req->fetchColumn();
     }
 
     /**

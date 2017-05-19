@@ -111,7 +111,6 @@ $(document).ready(function() {
     // TIMESTAMP
     $(document).on('click', '#confirmTimestamp', function() {
         expId = $(this).data('expid');
-        console.log(expId);
         $('#confirmTimestampDiv').dialog({
             resizable: false,
             height: 'auto',

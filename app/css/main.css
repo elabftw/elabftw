@@ -436,11 +436,6 @@ section.item {
     overflow:visible;
 }
 
-/* subtab are templates names in ucp */
-.subtabhandle {
-    cursor: pointer;
-}
-
 /* BADGE */
 .badge {
     margin-right: 5px;
@@ -1068,6 +1063,9 @@ code {
 }
 
 /* doodle canvas */
+h3.togglable-next {
+    display: inline;
+}
 .doodle {
     border: 1px solid #dcdddc;
     border-radius: 5px;
@@ -1081,8 +1079,4 @@ code {
 
 .bodyToggle {
     display: none;
-}
-
-.inserter {
-    cursor: pointer;
 }

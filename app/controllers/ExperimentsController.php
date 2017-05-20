@@ -138,6 +138,11 @@ try {
         }
     }
 
+    // GET LINK LIST
+    if (isset($_GET['term'])) {
+        echo json_encode($Entity->getList($_GET['term']));
+    }
+
     // TIMESTAMP
     if (isset($_POST['timestamp'])) {
         try {

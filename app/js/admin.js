@@ -224,11 +224,6 @@ $(document).ready(function() {
     });
 
     // COMMON
-    $('.togglable-next').click(function() {
-        $(this).next().toggle();
-    });
-    $('.togglable-hidden').hide();
-
     $('.item-selector').on('change', function() {
         document.cookie = 'itemType=' + this.value;
         $('.import_block').show();

@@ -347,6 +347,56 @@ class Entity
         return $permissions;
     }
 
+    public function getExpList($term, $userFilter = false)
+    {
+        $Experiments = new Experiments($this->Users);
+        $Experiments->titleFilter = " AND title LIKE '%$term%'";
+        if ($userFilter) {
+            $Experiments->setUseridFilter();
+        }
+        return $Experiments->read();
+    }
+
+    public function getDbList($term)
+    {
+        $Database = new Database($this->Users);
+        $Database->titleFilter = " AND title LIKE '%$term%'";
+        return $Database->read();
+    }
+
+    public function getLinkList($term)
+    {
+        $linkArr = array();
+        $itemsArr = $this->getDbList($term);
+
+        foreach ($itemsArr as $item) {
+            $linkArr[] = $item['id'] . " - " . $item['category'] . " - " . substr($item['title'], 0, 60);
+        }
+
+        return $linkArr;
+    }
+
+    public function getMentionList($term, $userFilter = false)
+    {
+        $mentionArr = array();
+        $itemsArr = $this->getDbList($term);
+        $experimentsArr = $this->getExpList($term, $userFilter);
+        $fullArr = array_merge($itemsArr, $experimentsArr);
+
+        // add items from database
+        foreach ($itemsArr as $item) {
+            $mentionArr[] = array("name" => "<a href='database.php?mode=view&id=" . $item['id'] . "'>" . substr($item['title'], 0, 60) . "</a>");
+        }
+
+        // complete the list with experiments
+        // fix #191
+        foreach ($experimentsArr as $item) {
+            $mentionArr[] = array("name" => "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>" . substr($item['title'], 0, 60) . "</a>");
+        }
+
+        return $mentionArr;
+    }
+
     /**
      * Generate a JS list of DB + XP items to use for links or # autocomplete
      *
@@ -356,7 +406,6 @@ class Entity
      */
     public function getEntityList($format = 'default')
     {
-        $link_list = "";
         $tinymce_list = "";
 
         $Users = new Users($_SESSION['userid']);
@@ -367,12 +416,12 @@ class Entity
 
             // html_entity_decode is needed to convert the quotes
             // str_replace to remove ' because it messes everything up
-            $link_name = str_replace(array("'", "\""), "", html_entity_decode(substr($item['title'], 0, 60), ENT_QUOTES));
+            //$link_name = str_replace(array("'", "\""), "", html_entity_decode(substr($item['title'], 0, 60), ENT_QUOTES));
             // remove also the % (see issue #62)
-            $link_name = str_replace("%", "", $link_name);
+            //$link_name = str_replace("%", "", $link_name);
 
             // now build the list in both formats
-            $link_list .= "'" . $item['id'] . " - " . $item['category'] . " - " . $link_name . "',";
+            //$link_list .= "'" . $item['id'] . " - " . $item['category'] . " - " . $link_name . "',";
             $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $item['id'] . "'>" . $link_name . "</a>\"},";
         }
 
@@ -382,7 +431,7 @@ class Entity
 
         // complete the list with experiments (only for tinymce)
         // fix #191
-        $Experiments = new Experiments($Users);
+        $Experiments = new Experiments($this->Users);
         if ($format === 'mention-user') {
             $Experiments->setUseridFilter();
         }

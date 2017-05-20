@@ -62,19 +62,27 @@ class Tags
     /**
      * Read all the tags from team
      *
+     * @param $term string|null The beginning of the input for tag autocomplete
      * @return array
      */
-    public function readAll()
+    public function readAll($term = null)
     {
+        $tagFilter = "";
+        if (!is_null($term)) {
+            $tagFilter = " AND experiments_tags.tag LIKE '$term%'";
+        }
         if ($this->Entity->type === 'experiments') {
             $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
                 FROM experiments_tags
                 INNER JOIN users ON (experiments_tags.userid = users.userid)
-                WHERE users.team = :team GROUP BY tag ORDER BY tag ASC";
+                WHERE users.team = :team
+                $tagFilter
+                GROUP BY tag ORDER BY tag ASC";
         } else {
             $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
                 FROM items_tags
                 WHERE team_id = :team
+                $tagFilter
                 GROUP BY tag ORDER BY tag ASC";
         }
         $req = $this->pdo->prepare($sql);
@@ -119,28 +127,34 @@ class Tags
 
 
     /**
-     * Generate a JS list for tags autocomplete
+     * Generate a JSON list for tags autocomplete
      *
-     * @param string $mode autocomplete or options
-     * @param array|null $selected the selected tag for options mode
-     * @return string
+     * @param string $term the beginning of the tag
+     * @return array the tag list filtered by the term
      */
-    public function generateTagList($mode, $selected = null)
+    public function getList($term)
+    {
+        $tagListArr = array();
+        $tagsArr = $this->readAll($term);
+
+        foreach ($tagsArr as $tag) {
+            $tagListArr[] = $tag['tag'];
+        }
+        return $tagListArr;
+    }
+
+    public function generateTagList($selected)
     {
         $tagsArr = $this->readAll();
 
         $tagList = "";
 
         foreach ($tagsArr as $tag) {
-            if ($mode === 'autocomplete') {
-                $tagList .= "'" . addslashes(html_entity_decode($tag['tag'], ENT_QUOTES)) . "',";
-            } else {
-                $tagList .= "<option value='" . $tag['tag'] . "'";
-                if (in_array($tag['tag'], $selected)) {
-                    $tagList .= " selected='selected'";
-                }
-                $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";
+            $tagList .= "<option value='" . $tag['tag'] . "'";
+            if (in_array($tag['tag'], $selected)) {
+                $tagList .= " selected='selected'";
             }
+            $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";
         }
 
         return $tagList;

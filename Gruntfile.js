@@ -41,7 +41,7 @@ module.exports = function(grunt) {
               'bower_components/fullcalendar/dist/fullcalendar.js',
               'bower_components/fullcalendar/dist/locale-all.js'],
 
-          'app/js/edit.min.js': [
+          'app/js/tinymce-dropzone.min.js': [
               'bower_components/tinymce/tinymce.js',
               'app/js/tinymce-langs/*',
               'bower_components/dropzone/dist/dropzone.js'],
@@ -62,6 +62,7 @@ module.exports = function(grunt) {
               'app/js/register.js' ],
           'app/js/change-pass.min.js': 'app/js/change-pass.js',
           'app/js/show.min.js': 'app/js/show.js',
+          'app/js/edit.min.js': 'app/js/edit.js',
           'app/js/ucp.min.js': 'app/js/ucp.js'
 
         }

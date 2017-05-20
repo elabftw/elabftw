@@ -67,14 +67,14 @@
 {% endif %}
 <a class='elab-tooltip' href='#'>
     <span>{{ alt }}</span>
-    <img id='lock' data-type='{{ Ev.Entity.type }}' data-id='{{ Ev.Entity.id }}' src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
+    <img id='lock' src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
 </a>
 
 <!-- show timestamp button if not timestamped already -->
 {% if not Ev.Entity.entityData.timestamped and Ev.Entity.type == 'experiments' %}
     <a class='elab-tooltip'>
         <span>{{ 'Timestamp Experiment' }}</span>
-        <img id='confirmTimestamp' data-expid='{{ Ev.Entity.id }}' src='app/img/stamp.png' alt='Timestamp' />
+        <img id='confirmTimestamp' src='app/img/stamp.png' alt='Timestamp' />
     </a>
     <div id='confirmTimestampDiv' data-wait='{{ 'Please wait…' }}' title='{{ 'Timestamp this experiment?'|trans }}'>
         <p>
@@ -97,11 +97,11 @@
 
 <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
 {% if not Ev.ro and not Ev.Entity.entityData.locked %}
-    {% set click2Edit = 'click2Edit' %}
+    {% set click2Edit = 'click2Edit clickable' %}
 {% else %}
     {% set click2Edit = '' %}
 {% endif %}
-<div data-page='{{ page }}' data-id='{{ Ev.Entity.entityData.id }}' class='{{ click2Edit }} title_view'>
+<div data-page='{{ page }}' class='{{ click2Edit }} title_view'>
     {% if Ev.Entity.type == 'items' %}
         <span style='color:#{{ Ev.Entity.entityData['color'] }}'>{{ Ev.Entity.entityData.category }}</span>
     {% endif %}
@@ -147,7 +147,7 @@
                         <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Ev.Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
                         <span>On {{ comment.datetime }} {{ comment.fullname }} wrote :</span>
                         <!-- .editable uses the id of the element to send to the controller -->
-                        <p class='editable' id='{{ comment.id }}' data-expid='{{ Ev.Entity.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
+                        <p class='editable' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -161,11 +161,16 @@
 
 {% endif %}
 
-<div id='entityInfos' data-title='{{ cleanTitle }}'></div>
+<div id='entityInfos'
+    data-title='{{ cleanTitle }}'
+    data-type='{{ Ev.Entity.type }}'
+    data-id='{{ Ev.Entity.id }}'
+    data-controller='{{ controller }}'
+    data-confirm="{{ 'Delete this?'|trans }}"
+    data-page='{{ page }}'>
+</div>
 <div id='shortcuts'
     data-create='{{ Ev.Entity.Users.userData.sc_create }}'
-    data-edit='{{ Ev.Entity.Users.userData.sc_edit }}'
-    data-controller='{{ controller }}'
-    data-page='{{ page }}'
-    data-id='{{ Ev.Entity.id }}'></div>
-<script src='app/js/view.js'></script>
+    data-edit='{{ Ev.Entity.Users.userData.sc_edit }}'>
+</div>
+<script src='app/js/view.min.js'></script>

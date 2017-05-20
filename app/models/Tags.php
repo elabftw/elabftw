@@ -127,7 +127,7 @@ class Tags
 
 
     /**
-     * Generate a JSON list for tags autocomplete
+     * Get an array of tags starting with the query ($term)
      *
      * @param string $term the beginning of the tag
      * @return array the tag list filtered by the term
@@ -143,12 +143,20 @@ class Tags
         return $tagListArr;
     }
 
+    /**
+     * Get the tag list as option html tag for the search page. Will disappear in search.html once it exists...
+     *
+     * @deprecated
+     * @param string $selected the selected tag(s)
+     * @return string html for include in a select input
+     */
     public function generateTagList($selected)
     {
         $tagsArr = $this->readAll();
 
         $tagList = "";
 
+        var_dump($selected);
         foreach ($tagsArr as $tag) {
             $tagList .= "<option value='" . $tag['tag'] . "'";
             if (in_array($tag['tag'], $selected)) {

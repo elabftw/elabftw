@@ -55,9 +55,6 @@ class EntityView
     public function initViewEdit()
     {
         $this->Entity->populate();
-        // add the title in the page name (see #324)
-        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->Entity->entityData['title']) . "';</script>";
-
         // get the UploadsView object
         $this->UploadsView = new UploadsView(new Uploads($this->Entity));
     }
@@ -290,7 +287,7 @@ class EntityView
      * @param $title string
      * @return string
      */
-    protected function getCleanTitle($title)
+    public function getCleanTitle($title)
     {
         return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
     }

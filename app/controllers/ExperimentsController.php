@@ -64,13 +64,13 @@ try {
         $Entity->canOrExplode('write');
 
 
-        if ($Entity->updateStatus($_POST['status'])) {
+        if ($Entity->updateStatus($_POST['statusId'])) {
             // get the color of the status for updating the css
             $Status = new Status($Users);
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved'),
-                'color' => $Status->readColor($_POST['status'])
+                'color' => $Status->readColor($_POST['statusId'])
             ));
         } else {
             echo json_encode(array(

@@ -137,48 +137,6 @@ function quickSave(type, id) {
 }
 
 
-// EXPERIMENTS
-// ===========
-
-// VISIBILITY
-function updateVisibility(item, visibility) {
-    $.post("app/controllers/ExperimentsController.php", {
-        updateVisibility: true,
-        id: item,
-        visibility: visibility
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-// STATUS
-function updateStatus(item, status) {
-    $.post("app/controllers/ExperimentsController.php", {
-        updateStatus: true,
-        id: item,
-        status : status
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            // change the color of the item border
-            // we first remove any status class
-            $("#main_section").css('border', null);
-            // and we add our new border color
-            // first : get what is the color of the new status
-            css = '6px solid #' + json.color;
-            $("#main_section").css('border-left', css);
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
 // EDIT COMMENT ON UPLOAD
 function makeEditableFileComment(type, itemId) {
     $('.thumbnail p.editable').editable(function(value, settings) {

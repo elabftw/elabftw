@@ -109,7 +109,8 @@ try {
             'Status' => $Status,
             'Tags' => $Tags,
             'commentsArr' => $commentsArr,
-            'ownerName' => $ownerName
+            'ownerName' => $ownerName,
+            'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
         ));
         echo $EntityView->view();
 
@@ -132,7 +133,8 @@ try {
             'Ev' => $EntityView,
             'Revisions' => $Revisions,
             'Status' => $Status,
-            'Tags' => $Tags
+            'Tags' => $Tags,
+            'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
         ));
         echo $EntityView->buildUploadsHtml();
     }

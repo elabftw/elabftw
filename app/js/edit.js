@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    // add the title in the page name (see #324)
+    document.title = $('#entityInfos').data('title');
+
     var type = $('#entityInfos').data('type');
     var id = $('#entityInfos').data('id');
     var confirmText = $('#entityInfos').data('confirm');
@@ -130,6 +133,45 @@ $(document).ready(function() {
     });
     $(document).on('click', '.linkDestroy', function() {
         Link.destroy($(this).data('linkid'));
+    });
+    // VISIBILITY SELECT
+    $(document).on('change', '#visibility_select', function() {
+        var visibility = $(this).val();
+        $.post("app/controllers/ExperimentsController.php", {
+            updateVisibility: true,
+            id: id,
+            visibility: visibility
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+    });
+
+    // STATUS SELECT
+    $(document).on('change', '#status_select', function() {
+        $.post("app/controllers/ExperimentsController.php", {
+            updateStatus: true,
+            id: id,
+            statusId : statusId
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+                // change the color of the item border
+                // we first remove any status class
+                $("#main_section").css('border', null);
+                // and we add our new border color
+                // first : get what is the color of the new status
+                css = '6px solid #' + json.color;
+                $("#main_section").css('border-left', css);
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
     });
 
     // AUTOSAVE

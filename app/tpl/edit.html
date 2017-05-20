@@ -66,7 +66,7 @@
                 <div class='col-md-4'>
                     <img src='app/img/eye.png' alt='visibility' />
                     <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
-                    <select id='visibility_select' onchange='updateVisibility({{ Ev.Entity.id }}, this.value)'>
+                    <select id='visibility_select'>
                         {% for key, value in Ev.TeamGroups.readFull %}
                             <option value='{{ key }}'
                             {{ Ev.Entity.entityData['visibility'] == key ? ' selected' }}
@@ -79,7 +79,7 @@
                 <div class='col-md-4'>
                     <img src='app/img/status.png' alt='status' />
                     <label for='status_select'>{{ 'Status'|trans }}</label>
-                    <select id='status_select' name='status' onchange='updateStatus({{ Ev.Entity.id }}, this.value)'>
+                    <select id='status_select'>
                         {% for status in Status.readAll() %}
                             <option value='{{ status['category_id'] }}'
                             {{ Ev.Entity.entityData['category_id'] == status['category_id'] ? ' selected' }}>{{ status['category'] }}</option>
@@ -165,6 +165,7 @@
 <div id='entityInfos'
     data-type='{{ Ev.Entity.type }}'
     data-id='{{ Ev.Entity.id }}'
+    data-title='{{ cleanTitle }}'
     data-confirm="{{ 'Delete this?'|trans }}"
     data-untitled="{{ 'Untitled'|trans }}"
     data-lang="{{ Ev.Entity.Users.userData.lang }}">

@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    // add the title in the page name (see #324)
+    document.title = $('#entityInfos').data('title');
+
     // TOGGLE LOCK
     $(document).on('click', '#lock', function() {
         $.post("app/controllers/EntityController.php", {

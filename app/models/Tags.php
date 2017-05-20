@@ -62,7 +62,7 @@ class Tags
     /**
      * Read all the tags from team
      *
-     * @param $term string|null The beginning of the input for tag autocomplete
+     * @param string|null $term The beginning of the input for tag autocomplete
      * @return array
      */
     public function readAll($term = null)
@@ -146,7 +146,6 @@ class Tags
     /**
      * Get the tag list as option html tag for the search page. Will disappear in search.html once it exists...
      *
-     * @deprecated
      * @param string $selected the selected tag(s)
      * @return string html for include in a select input
      */
@@ -156,7 +155,6 @@ class Tags
 
         $tagList = "";
 
-        var_dump($selected);
         foreach ($tagsArr as $tag) {
             $tagList .= "<option value='" . $tag['tag'] . "'";
             if (in_array($tag['tag'], $selected)) {

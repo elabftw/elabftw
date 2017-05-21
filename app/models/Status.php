@@ -79,9 +79,9 @@ class Status
     public function createDefault($team)
     {
         return $this->create('Running', '29AEB9', 0, 1, $team) &&
-            $this->create('Success', '54AA08', 0, $team) &&
-            $this->create('Need to be redone', 'C0C0C0', 0, $team) &&
-            $this->create('Fail', 'C24F3D', 0, $team);
+            $this->create('Success', '54AA08', 1, 0, $team) &&
+            $this->create('Need to be redone', 'C0C0C0', 1, 0, $team) &&
+            $this->create('Fail', 'C24F3D', 1, 0, $team);
     }
 
     /**

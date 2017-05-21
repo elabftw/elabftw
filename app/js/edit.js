@@ -153,6 +153,7 @@ $(document).ready(function() {
 
     // STATUS SELECT
     $(document).on('change', '#status_select', function() {
+        var statusId = $(this).val();
         $.post("app/controllers/ExperimentsController.php", {
             updateStatus: true,
             id: id,

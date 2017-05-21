@@ -186,7 +186,7 @@ class Experiments extends Entity
     public function isTimestampable()
     {
         $currentStatus = (int) $this->entityData['category_id'];
-        $sql = "SELECT allow_timestamp FROM status WHERE id = :status LIMIT 1;";
+        $sql = "SELECT is_timestampable FROM status WHERE id = :status;";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':status', $currentStatus);
         $req->execute();

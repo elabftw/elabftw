@@ -548,7 +548,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema21');
         }
-        $sql = "ALTER TABLE `status` ADD `allow_timestamp` TINYINT(1) NOT NULL DEFAULT 1;";
+        $sql = "ALTER TABLE `status` ADD `is_timestampable` TINYINT(1) NOT NULL DEFAULT 1;";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema21');
         }

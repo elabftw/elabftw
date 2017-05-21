@@ -199,7 +199,7 @@ class UploadsView extends EntityView
             }
 
             if ($mode === 'edit') {
-                $html .= "<div class='clickable' data-link='" . $upload['long_name'] . "'><img src='app/img/show-more.png' /> <p class='inline'>Insert in text at cursor position</p></div>";
+                $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] . "'><img src='app/img/show-more.png' /> <p class='inline'>Insert in text at cursor position</p></div>";
             }
             $html .= "</div></div></div>";
         } // end foreach
@@ -207,8 +207,8 @@ class UploadsView extends EntityView
 
         $html .= "<script>$(document).ready(function() {";
         if ($mode === 'view') {
-                // we use fancybox to display thumbnails only in view mode
-            $html .= "$('a.fancybox').fancybox();";
+            // we use fancybox to display thumbnails only in view mode
+            $html .= "$('[data-fancybox]').fancybox();";
         }
 
         // add editable comments in edit mode

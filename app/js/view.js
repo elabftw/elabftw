@@ -148,6 +148,6 @@ $(document).ready(function() {
         location.href = $('#entityInfos').data('controller') + '?create=true';
     });
     key($('#shortcuts').data('edit'), function(){
-        location.href = $('#entityInfos').data('page') + '?mode=edit&id=' + $('#shortcuts').data('id');
+        location.href = $('#entityInfos').data('page') + '?mode=edit&id=' + $('#entityInfos').data('id');
     });
 });

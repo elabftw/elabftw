@@ -79,7 +79,7 @@ class Api
     }
 
     /**
-     * Read an entity
+     * Read an entity in full
      *
      * @return array<string,array>
      */

@@ -70,22 +70,26 @@ class Uploads extends Entity
     /**
      * Called from ImportZip class
      *
-     * @param string $file The string of the local file path stored in .elabftw.json of the zip archive
+     * @param string $filePath absolute path to the file
+     * @param string $comment
      * @return bool
      */
-    public function createFromLocalFile($file)
+    public function createFromLocalFile($filePath, $comment)
     {
-        if (!is_readable($file)) {
-            throw new Exception('No file here!');
+        $realName = basename($filePath);
+        $ext = Tools::getExt($realName);
+
+        // disallow upload of php files
+        if ($ext === 'php') {
+            throw new Exception('PHP files are forbidden!');
         }
 
-        $realName = basename($file);
-        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
-        $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+        $longName = $this->getCleanName() . "." . $ext;
+        $finalPath = ELAB_ROOT . 'uploads/' . $longName;
 
-        $this->moveFile($file, $fullPath);
+        $this->moveFile($filePath, $finalPath);
 
-        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        return $this->dbInsert($realName, $longName, $this->getHash($finalPath), $comment);
     }
 
     /**
@@ -190,11 +194,16 @@ class Uploads extends Entity
      * @param string $realName The clean name of the file
      * @param string $longName The sha512 name
      * @param string $hash The hash string of our file
+     * @param string|null $comment
      * @throws Exception if request fail
      * @return bool
      */
-    private function dbInsert($realName, $longName, $hash)
+    private function dbInsert($realName, $longName, $hash, $comment = null)
     {
+        if (is_null($comment)) {
+            $comment = 'Click to add a comment';
+        }
+
         $sql = "INSERT INTO uploads(
             real_name,
             long_name,
@@ -220,7 +229,7 @@ class Uploads extends Entity
         $req->bindParam(':long_name', $longName);
         // comment can be edited after upload
         // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
-        $req->bindValue(':comment', 'Click to add a comment');
+        $req->bindValue(':comment', $comment);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindParam(':type', $this->Entity->type);

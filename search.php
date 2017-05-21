@@ -123,10 +123,10 @@ foreach ($itemsTypesArr as $items_types) {
             <!-- SEARCH WITH TAG -->
 <?php
 $tagsArr = array();
-if ($_GET['type'] === 'experiments' && isset($_GET['tag_exp'])) {
+if (isset($_GET['type']) && $_GET['type'] === 'experiments' && isset($_GET['tag_exp'])) {
     $tagsArr = $_GET['tag_exp'];
 }
-if ($_GET['type'] === 'database' && isset($_GET['tag_db'])) {
+if (isset($_GET['type']) && $_GET['type'] === 'database' && isset($_GET['tag_db'])) {
     $tagsArr = $_GET['tag_db'];
 }
 
@@ -423,8 +423,6 @@ if (isset($_GET)) {
             }
         }
 
-        // adjust display
-        $EntityView->display = $Users->userData['display'];
         // we are on the search page, so we don't want any "click here to create your first..."
         $EntityView->searchType = 'something';
 

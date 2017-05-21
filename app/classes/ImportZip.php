@@ -21,6 +21,15 @@ use FileSystemIterator;
  */
 class ImportZip extends Import
 {
+    /** instance of Entity */
+    private $Entity;
+
+    /** instance of Uploads */
+    private $Uploads;
+
+    /** instance of Tags */
+    private $Tags;
+
     /** pdo object */
     private $pdo;
 
@@ -39,7 +48,7 @@ class ImportZip extends Import
     private $body;
 
     /** experiments or items */
-    private $type;
+    private $type = 'items';
 
     /** date of the item we import */
     private $date;
@@ -97,7 +106,9 @@ class ImportZip extends Import
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
-        $this->type = $this->json[0]['type'];
+        if (isset($this->json[0]['elabid'])) {
+            $this->type = 'experiments';
+        }
     }
 
     /**
@@ -150,24 +161,28 @@ class ImportZip extends Import
         }
         // needed in importFile()
         $this->newItemId = $this->pdo->lastInsertId();
+
+        // create necessary objects
+        $Users = new Users($_SESSION['userid']);
+        if ($this->type === 'experiments') {
+            $this->Entity = new Experiments($Users, $this->newItemId);
+        } else {
+            $this->Entity = new Database($Users, $this->newItemId);
+        }
+        $this->Uploads = new Uploads($this->Entity);
+        $this->Tags = new Tags($this->Entity);
     }
 
     /**
-     * If files are attached we want them!
+     * Loop over the tags and insert them for the new entity
      *
-     * @throws Exception in case of error
-     * @param string $file The path of the file in the archive
      */
-    private function importFile($file)
+    private function tagsDbInsert()
     {
-        $Users = new Users($_SESSION['userid']);
-        if ($this->type === 'experiments') {
-            $Entity = new Experiments($Users, $this->newItemId);
-        } else {
-            $Entity = new Database($Users, $this->newItemId);
+        $tagsArr = explode('|', $this->tags);
+        foreach ($tagsArr as $tag) {
+            $this->Tags->create($tag);
         }
-        $Upload = new Uploads($Entity);
-        $Upload->createFromLocalFile($this->tmpPath . '/' . $file);
     }
 
     /**
@@ -181,11 +196,33 @@ class ImportZip extends Import
             $this->title = $item['title'];
             $this->body = $item['body'];
             $this->date = $item['date'];
-            $this->elabid = $item['elabid'];
+            if ($this->type === 'experiments') {
+                $this->elabid = $item['elabid'];
+            }
+            $this->tags = $item['tags'];
             $this->dbInsert();
-            if (is_array($item['files'])) {
-                foreach ($item['files'] as $file) {
-                    $this->importFile(array_keys($file)[0]);
+            $this->tagsDbInsert();
+
+            // upload the attached files
+            if (is_array($item['uploads'])) {
+                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->title));
+                foreach ($item['uploads'] as $file) {
+                    if ($this->type === 'experiments') {
+                        $filePath = $this->tmpPath . '/' .
+                            $this->date . '-' . $titlePath . '/' . $file['real_name'];
+                    } else {
+                        $filePath = $this->tmpPath . '/' .
+                            $item['category'] . ' - ' . $titlePath . '/' . $file['real_name'];
+                    }
+
+                    /**
+                     * Ok so right now if you have several files with the same name, the real_name in the json will be
+                     * the same, but the extracted file will have a 1_ in front of the name. So here we will skip the import
+                     * but this should be handled. One day. Maybe.
+                     */
+                    if (is_readable($filePath)) {
+                        $this->Uploads->createFromLocalFile($filePath, $file['comment']);
+                    }
                 }
             }
             $this->inserted += 1;

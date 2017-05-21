@@ -39,8 +39,6 @@ class MakeZip extends Make
     public $filePath;
     /** name of folder */
     private $folder;
-    /** the path to attached files in the zip */
-    private $fileArr = array();
     /** array that will be converted to json */
     private $jsonArr = array();
 
@@ -59,7 +57,9 @@ class MakeZip extends Make
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
-            throw new Exception(_("You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file."));
+            throw new Exception(
+                _("You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file.")
+            );
         }
 
         $this->idList = $idList;
@@ -125,7 +125,10 @@ class MakeZip extends Make
             $req->execute();
             $token = $req->fetch();
             // add it to the .zip
-            $this->zip->addFile(ELAB_ROOT . 'uploads/' . $token['long_name'], $this->folder . "/" . $token['real_name']);
+            $this->zip->addFile(
+                ELAB_ROOT . 'uploads/' . $token['long_name'],
+                $this->folder . "/" . $token['real_name']
+            );
         }
     }
 
@@ -143,47 +146,25 @@ class MakeZip extends Make
     }
 
     /**
-     * Add attached files (if any)
+     * Add attached files
      *
-     * @param int $id The id of the item we are zipping
+     * @param array $filesArr the files array
      */
-    private function addAttachedFiles($id)
+    private function addAttachedFiles($filesArr)
     {
-        $real_name = array();
-        $long_name = array();
-
-        // SQL to get filesattached (of the right type)
-        if ($this->Entity->type === 'experiments') {
-            $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
-        } else {
-            $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        }
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':type', $this->Entity->type);
-        $req->execute();
-        while ($uploads = $req->fetch()) {
-            $real_name[] = $uploads['real_name'];
-            $long_name[] = $uploads['long_name'];
-        }
-
-        // files attached ?
-        $fileNb = count($real_name);
         $real_names_so_far = array();
-        if ($fileNb > 0) {
-            for ($i = 0; $i < $fileNb; $i++) {
-                $realName = $real_name[$i];
-
-                // if we have a file with the same name, it shouldn't overwrite the previous one
-                if (in_array($realName, $real_names_so_far)) {
-                    $realName = $i . '_' . $real_name[$i];
-                }
-                $real_names_so_far[] = $realName;
-                // add files to archive
-                $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $realName);
-                // reference them in the json file
-                $this->fileArr[] = array($this->folder . "/" . $real_name[$i] => $long_name[$i]);
+        $i = 0;
+        foreach ($filesArr as $file) {
+            $i = $i + 1;
+            $realName = $file['real_name'];
+            // if we have a file with the same name, it shouldn't overwrite the previous one
+            if (in_array($realName, $real_names_so_far)) {
+                $realName = $i . '_' . $realName;
             }
+            $real_names_so_far[] = $realName;
+
+            // add files to archive
+            $this->zip->addFile(ELAB_ROOT . 'uploads/' . $file['long_name'], $this->folder . "/" . $realName);
         }
     }
 
@@ -237,9 +218,16 @@ class MakeZip extends Make
         $this->setCleanTitle();
         $permissions = $this->Entity->getPermissions();
         if ($permissions['read']) {
+            $Uploads = new Uploads($this->Entity);
+            $uploadedFilesArr = $Uploads->readAll();
+            $entityArr = $this->Entity->read();
+            $entityArr['uploads'] = $uploadedFilesArr;
+
             $this->nameFolder();
             $this->addAsn1Token($id);
-            $this->addAttachedFiles($id);
+            if (is_array($entityArr)) {
+                $this->addAttachedFiles($entityArr['uploads']);
+            }
             $this->addCsv($id);
             $this->addPdf();
             // add an entry to the json file
@@ -247,18 +235,8 @@ class MakeZip extends Make
             if ($this->Entity->type === 'experiments') {
                 $elabid = $this->Entity->entityData['elabid'];
             }
-            $this->jsonArr[] = array(
-                'type' => $this->Entity->type,
-                'id' => $this->Entity->id,
-                'title' => stripslashes($this->Entity->entityData['title']),
-                'body' => stripslashes($this->Entity->entityData['body']),
-                'date' => $this->Entity->entityData['date'],
-                'elabid' => $elabid,
-                'category' => $this->Entity->entityData['category'],
-                'color' => $this->Entity->entityData['color'],
-                'files' => $this->fileArr
-            );
-            unset($this->fileArr);
+
+            $this->jsonArr[] = $entityArr;
         }
     }
 

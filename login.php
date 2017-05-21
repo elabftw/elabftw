@@ -19,13 +19,13 @@ use Exception;
 try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Login');
-    require_once 'app/head.inc.php';
-
     // Check if already logged in
     if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
         header('Location: experiments.php');
         throw new Exception('Already logged in');
     }
+
+    require_once 'app/head.inc.php';
 
     $Config = new Config();
     $Idps = new Idps();

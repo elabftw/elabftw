@@ -217,8 +217,8 @@ class ImportZip extends Import
 
                     /**
                      * Ok so right now if you have several files with the same name, the real_name in the json will be
-                     * the same, but the extracted file will have a 1_ in front of the name. So here we will skip the import
-                     * but this should be handled. One day. Maybe.
+                     * the same, but the extracted file will have a 1_ in front of the name. So here we will skip the
+                     * import but this should be handled. One day. Maybe.
                      */
                     if (is_readable($filePath)) {
                         $this->Uploads->createFromLocalFile($filePath, $file['comment']);

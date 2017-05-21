@@ -29,7 +29,7 @@ try {
         if ($Status->create(
             $_POST['name'],
             $_POST['color'],
-            $_POST['allowTimestamp']
+            $_POST['isTimestampable']
         )) {
             echo json_encode(array(
                 'res' => true,
@@ -49,7 +49,7 @@ try {
             $_POST['id'],
             $_POST['name'],
             $_POST['color'],
-            $_POST['allowTimestamp'],
+            $_POST['isTimestampable'],
             $_POST['isDefault']
         )) {
             echo json_encode(array(

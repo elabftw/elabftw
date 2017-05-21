@@ -65,7 +65,7 @@ $(document).ready(function() {
         create: function() {
             var name = $('#statusName').val();
             var color = $('#statusColor').val();
-            var isTimestampable = $('#statusTimestamp').is(':checked');
+            var isTimestampable = +$('#statusTimestamp').is(':checked');
 
             $.post(this.controller, {
                 statusCreate: true,
@@ -85,7 +85,7 @@ $(document).ready(function() {
         update: function(id) {
             var name = $('#statusName_' + id).val();
             var color = $('#statusColor_' + id).val();
-            var isTimestampable = $('#statusTimestamp_'+ id).is(':checked');
+            var isTimestampable = +$('#statusTimestamp_'+ id).is(':checked');
             var isDefault = $('#statusDefault_' + id).is(':checked');
 
             $.post(this.controller, {

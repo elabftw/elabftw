@@ -36,7 +36,8 @@ try {
     if (!Tools::usingSsl()) {
         // get the url to display a link to click (without the port)
         $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
-        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";
+        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
+            $url . "'>$url</a>";
         throw new Exception($message);
     }
 
@@ -48,7 +49,8 @@ try {
     // show message if there is a failed_attempt
     if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < $Config->configArr['login_tries']) {
         $number_of_tries_left = $Config->configArr['login_tries'] - $_SESSION['failed_attempt'];
-        $message = _('Number of login attempt left before being banned for') . ' ' . $Config->configArr['ban_time'] . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
+        $message = _('Number of login attempt left before being banned for') . ' ' .
+            $Config->configArr['ban_time'] . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
         echo Tools::displayMessage($message, 'ko');
     }
 

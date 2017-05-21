@@ -25,7 +25,8 @@ try {
         $id = $_GET['id'];
     }
 
-    if ($_POST['type'] === 'experiments' || $_GET['type'] === 'experiments') {
+    if ((isset($_POST['type']) && $_POST['type'] === 'experiments') ||
+        (isset($_GET['type']) && ($_GET['type'] === 'experiments'))) {
         $Entity = new Experiments($Users, $id);
     } else {
         $Entity = new Database($Users, $id);

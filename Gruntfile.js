@@ -78,14 +78,13 @@ module.exports = function(grunt) {
           'app/css/elabftw.min.css': [
               'app/css/tagcloud.css',
               'app/css/jquery.rating.css',
-              'app/css/autocomplete.css',
               'app/css/prism.css',
               'node_modules/dropzone/dist/dropzone.css',
               'node_modules/fullcalendar/dist/fullcalendar.css',
               'node_modules/bootstrap/dist/css/bootstrap.css',
               'node_modules/vanderlee-colorpicker/jquery.colorpicker.css',
               'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
-              'node_modules/jquery-ui-dist/jquery-ui.theme.css',
+              'node_modules/jquery-ui-dist/jquery-ui.css',
               'app/css/main.css'],
 
           'app/css/pdf.min.css': 'app/css/pdf.css'

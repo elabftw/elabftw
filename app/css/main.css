@@ -1080,3 +1080,7 @@ h3.togglable-next {
 .bodyToggle {
     display: none;
 }
+
+.itemsTypesEditor {
+    margin-top:10px;
+}

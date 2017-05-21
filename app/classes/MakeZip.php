@@ -155,7 +155,7 @@ class MakeZip extends Make
         $real_names_so_far = array();
         $i = 0;
         foreach ($filesArr as $file) {
-            $i = $i + 1;
+            $i++;
             $realName = $file['real_name'];
             // if we have a file with the same name, it shouldn't overwrite the previous one
             if (in_array($realName, $real_names_so_far)) {
@@ -231,11 +231,6 @@ class MakeZip extends Make
             $this->addCsv($id);
             $this->addPdf();
             // add an entry to the json file
-            $elabid = 'None';
-            if ($this->Entity->type === 'experiments') {
-                $elabid = $this->Entity->entityData['elabid'];
-            }
-
             $this->jsonArr[] = $entityArr;
         }
     }

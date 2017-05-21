@@ -42,24 +42,11 @@ class ImportZip extends Import
 
     /** the target item type */
     private $target;
-    /** title of new item */
-    private $title;
-    /** body of new item */
-    private $body;
 
     /** experiments or items */
     private $type = 'items';
 
-    /** date of the item we import */
-    private $date;
-
-    /** unique identifier of the experiment */
-    private $elabid;
-
-    /**
-     * the newly created id of the imported item
-     * we need it for linking attached file(s) to the the new item
-     */
+    /** the newly created id of the imported item */
     private $newItemId;
 
     /**
@@ -68,7 +55,6 @@ class ImportZip extends Import
      */
     public function __construct()
     {
-
         $this->pdo = Db::getConnection();
 
         $this->checkFileReadable();
@@ -129,9 +115,10 @@ class ImportZip extends Import
     /**
      * The main SQL to create a new item with the title and body we have
      *
+     * @param array $item the item to insert
      * @throws Exception if SQL request failed
      */
-    private function dbInsert()
+    private function dbInsert($item)
     {
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
@@ -141,18 +128,18 @@ class ImportZip extends Import
                 VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
-        $req->bindParam(':title', $this->title);
-        $req->bindParam(':date', $this->date);
-        $req->bindParam(':body', $this->body);
+        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':title', $item['title']);
+        $req->bindParam(':date', $item['date']);
+        $req->bindParam(':body', $item['body']);
         if ($this->type === 'items') {
-            $req->bindParam(':userid', $_SESSION['userid'], \PDO::PARAM_INT);
+            $req->bindParam(':userid', $_SESSION['userid']);
             $req->bindParam(':type', $this->target);
         } else {
             $req->bindValue(':visibility', 'team');
             $req->bindValue(':status', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, \PDO::PARAM_INT);
-            $req->bindParam(':elabid', $this->elabid);
+            $req->bindParam(':elabid', $item['elabid']);
         }
 
 
@@ -171,15 +158,20 @@ class ImportZip extends Import
         }
         $this->Uploads = new Uploads($this->Entity);
         $this->Tags = new Tags($this->Entity);
+
+        if (strlen($item['tags']) > 1) {
+            $this->tagsDbInsert($item['tags']);
+        }
     }
 
     /**
      * Loop over the tags and insert them for the new entity
      *
+     * @param string $tags the tags string separated by '|'
      */
-    private function tagsDbInsert()
+    private function tagsDbInsert($tags)
     {
-        $tagsArr = explode('|', $this->tags);
+        $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
             $this->Tags->create($tag);
         }
@@ -193,15 +185,7 @@ class ImportZip extends Import
     {
         foreach ($this->json as $item) {
 
-            $this->title = $item['title'];
-            $this->body = $item['body'];
-            $this->date = $item['date'];
-            if ($this->type === 'experiments') {
-                $this->elabid = $item['elabid'];
-            }
-            $this->tags = $item['tags'];
-            $this->dbInsert();
-            $this->tagsDbInsert();
+            $this->dbInsert($item);
 
             // upload the attached files
             if (is_array($item['uploads'])) {

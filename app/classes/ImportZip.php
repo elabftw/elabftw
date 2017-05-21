@@ -189,11 +189,11 @@ class ImportZip extends Import
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->title));
+                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($item['title']));
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .
-                            $this->date . '-' . $titlePath . '/' . $file['real_name'];
+                            $item['date'] . '-' . $titlePath . '/' . $file['real_name'];
                     } else {
                         $filePath = $this->tmpPath . '/' .
                             $item['category'] . ' - ' . $titlePath . '/' . $file['real_name'];

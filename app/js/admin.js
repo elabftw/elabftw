@@ -306,6 +306,12 @@ $(document).ready(function() {
         okOnEnter: true,
         rgb: false
     });
+
+    // randomize the input of the color picker so even if user doesn't change the color it's a different one!
+    // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
+    var colorInput = Math.floor(Math.random()*16777215).toString(16);
+    $('#itemsTypesColor').val(colorInput);
+
     // EDITOR
     tinymce.init({
         mode : "specific_textareas",

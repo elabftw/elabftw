@@ -1,4 +1,4 @@
-<script src="app/js/edit.min.js"></script>
+<script src="app/js/tinymce-dropzone.min.js"></script>
 
 <menu>
     <ul>
@@ -193,9 +193,9 @@
 <div class='box new-tpl-box'>
     <h3>{{ 'Experiments Templates'|trans }}</h3>
     <ul class='nav nav-pills' role='tablist'>
-        <li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>{{ 'Create New'|trans }}</li>
+        <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create New'|trans }}</li>
         {% for template in templatesArr %}
-            <li class='sortable subtabhandle badge badgetab' id='subtab_{{ template.id }}'>{{ template.name }}</li>
+            <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name }}</li>
         {% endfor %}
     </ul>
 
@@ -217,7 +217,7 @@
 
     {% for template in templatesArr %}
         <div class='subdivhandle' id='subtab_{{ template.id }}div'>
-            <img class='align_right save-to-file' src='app/img/download.png' title='Export Template' alt='Export' data-name='{{ template.name }}' data-id='{{ template.id }}' />
+            <img class='align_right save-to-file' src='app/img/download.png' title='Export Template' alt='Export' data-name='{{ template.name }}' data-id='e{{ template.id }}' />
             <img class='align_right destroy-template' src='app/img/small-trash.png' title='Delete' alt='Delete' data-id='{{ template.id }}' />
             <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />

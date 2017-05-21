@@ -290,7 +290,7 @@
 
                 <!--/li -->
                 <li class='itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
-                    <textarea class='mceditable' style='height:50px' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
+                    <textarea class='mceditable' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
                 </li>
             </ul>
             {% endfor %}
@@ -392,6 +392,6 @@
     </div>
 </div>
 
-<script src='app/js/edit.min.js'></script>
+<script src='app/js/tinymce-dropzone.min.js'></script>
 <script src='app/js/admin.min.js'></script>
 <script src='app/js/tabs.min.js'></script>

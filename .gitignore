@@ -2,7 +2,6 @@
 .scannerwork/*
 *.bak
 _api/
-bower_components
 config.php
 config.php.*
 node_modules/*

@@ -21,6 +21,15 @@ use FileSystemIterator;
  */
 class ImportZip extends Import
 {
+    /** instance of Entity */
+    private $Entity;
+
+    /** instance of Uploads */
+    private $Uploads;
+
+    /** instance of Tags */
+    private $Tags;
+
     /** pdo object */
     private $pdo;
 
@@ -33,24 +42,11 @@ class ImportZip extends Import
 
     /** the target item type */
     private $target;
-    /** title of new item */
-    private $title;
-    /** body of new item */
-    private $body;
 
     /** experiments or items */
-    private $type;
+    private $type = 'items';
 
-    /** date of the item we import */
-    private $date;
-
-    /** unique identifier of the experiment */
-    private $elabid;
-
-    /**
-     * the newly created id of the imported item
-     * we need it for linking attached file(s) to the the new item
-     */
+    /** the newly created id of the imported item */
     private $newItemId;
 
     /**
@@ -59,7 +55,6 @@ class ImportZip extends Import
      */
     public function __construct()
     {
-
         $this->pdo = Db::getConnection();
 
         $this->checkFileReadable();
@@ -97,7 +92,9 @@ class ImportZip extends Import
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
-        $this->type = $this->json[0]['type'];
+        if (isset($this->json[0]['elabid'])) {
+            $this->type = 'experiments';
+        }
     }
 
     /**
@@ -118,9 +115,10 @@ class ImportZip extends Import
     /**
      * The main SQL to create a new item with the title and body we have
      *
+     * @param array $item the item to insert
      * @throws Exception if SQL request failed
      */
-    private function dbInsert()
+    private function dbInsert($item)
     {
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
@@ -130,18 +128,18 @@ class ImportZip extends Import
                 VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
-        $req->bindParam(':title', $this->title);
-        $req->bindParam(':date', $this->date);
-        $req->bindParam(':body', $this->body);
+        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':title', $item['title']);
+        $req->bindParam(':date', $item['date']);
+        $req->bindParam(':body', $item['body']);
         if ($this->type === 'items') {
-            $req->bindParam(':userid', $_SESSION['userid'], \PDO::PARAM_INT);
+            $req->bindParam(':userid', $_SESSION['userid']);
             $req->bindParam(':type', $this->target);
         } else {
             $req->bindValue(':visibility', 'team');
             $req->bindValue(':status', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, \PDO::PARAM_INT);
-            $req->bindParam(':elabid', $this->elabid);
+            $req->bindParam(':elabid', $item['elabid']);
         }
 
 
@@ -150,24 +148,33 @@ class ImportZip extends Import
         }
         // needed in importFile()
         $this->newItemId = $this->pdo->lastInsertId();
+
+        // create necessary objects
+        $Users = new Users($_SESSION['userid']);
+        if ($this->type === 'experiments') {
+            $this->Entity = new Experiments($Users, $this->newItemId);
+        } else {
+            $this->Entity = new Database($Users, $this->newItemId);
+        }
+        $this->Uploads = new Uploads($this->Entity);
+        $this->Tags = new Tags($this->Entity);
+
+        if (strlen($item['tags']) > 1) {
+            $this->tagsDbInsert($item['tags']);
+        }
     }
 
     /**
-     * If files are attached we want them!
+     * Loop over the tags and insert them for the new entity
      *
-     * @throws Exception in case of error
-     * @param string $file The path of the file in the archive
+     * @param string $tags the tags string separated by '|'
      */
-    private function importFile($file)
+    private function tagsDbInsert($tags)
     {
-        $Users = new Users($_SESSION['userid']);
-        if ($this->type === 'experiments') {
-            $Entity = new Experiments($Users, $this->newItemId);
-        } else {
-            $Entity = new Database($Users, $this->newItemId);
+        $tagsArr = explode('|', $tags);
+        foreach ($tagsArr as $tag) {
+            $this->Tags->create($tag);
         }
-        $Upload = new Uploads($Entity);
-        $Upload->createFromLocalFile($this->tmpPath . '/' . $file);
     }
 
     /**
@@ -178,14 +185,28 @@ class ImportZip extends Import
     {
         foreach ($this->json as $item) {
 
-            $this->title = $item['title'];
-            $this->body = $item['body'];
-            $this->date = $item['date'];
-            $this->elabid = $item['elabid'];
-            $this->dbInsert();
-            if (is_array($item['files'])) {
-                foreach ($item['files'] as $file) {
-                    $this->importFile(array_keys($file)[0]);
+            $this->dbInsert($item);
+
+            // upload the attached files
+            if (is_array($item['uploads'])) {
+                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($item['title']));
+                foreach ($item['uploads'] as $file) {
+                    if ($this->type === 'experiments') {
+                        $filePath = $this->tmpPath . '/' .
+                            $item['date'] . '-' . $titlePath . '/' . $file['real_name'];
+                    } else {
+                        $filePath = $this->tmpPath . '/' .
+                            $item['category'] . ' - ' . $titlePath . '/' . $file['real_name'];
+                    }
+
+                    /**
+                     * Ok so right now if you have several files with the same name, the real_name in the json will be
+                     * the same, but the extracted file will have a 1_ in front of the name. So here we will skip the
+                     * import but this should be handled. One day. Maybe.
+                     */
+                    if (is_readable($filePath)) {
+                        $this->Uploads->createFromLocalFile($filePath, $file['comment']);
+                    }
                 }
             }
             $this->inserted += 1;

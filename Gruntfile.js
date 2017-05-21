@@ -16,14 +16,14 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'app/js/elabftw.min.js': [
-              'bower_components/jquery/dist/jquery.js',
-              'bower_components/jquery-ui/jquery-ui.js',
-              'bower_components/bootstrap/js/alert.js',
-              'bower_components/bootstrap/js/button.js',
-              'bower_components/bootstrap/js/collapse.js',
-              'bower_components/bootstrap/js/dropdown.js',
-              'bower_components/colorpicker/jquery.colorpicker.js',
-              'bower_components/keymaster/keymaster.js',
+              'node_modules/jquery/dist/jquery.js',
+              'node_modules/jquery-ui-dist/jquery-ui.js',
+              'node_modules/bootstrap/js/alert.js',
+              'node_modules/bootstrap/js/button.js',
+              'node_modules/bootstrap/js/collapse.js',
+              'node_modules/bootstrap/js/dropdown.js',
+              'node_modules/vanderlee-colorpicker/jquery.colorpicker.js',
+              'node_modules/keymaster/keymaster.js',
               'app/js/common.js',
               'app/js/cornify.js',
               'app/js/jquery.jeditable.js',
@@ -37,31 +37,32 @@ module.exports = function(grunt) {
               'app/js/chemdoodle/chemdoodle-uis-unpacked.js'],
 
           'app/js/scheduler.min.js': [
-              'bower_components/moment/moment.js',
-              'bower_components/fullcalendar/dist/fullcalendar.js',
-              'bower_components/fullcalendar/dist/locale-all.js'],
+              'node_modules/moment/moment.js',
+              'node_modules/fullcalendar/dist/fullcalendar.js',
+              'node_modules/fullcalendar/dist/locale-all.js'],
 
-          'app/js/edit.min.js': [
-              'bower_components/tinymce/tinymce.js',
+          'app/js/tinymce-dropzone.min.js': [
+              'node_modules/tinymce/tinymce.js',
               'app/js/tinymce-langs/*',
-              'bower_components/dropzone/dist/dropzone.js'],
+              'node_modules/dropzone/dist/dropzone.js'],
 
-          'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js',
+          'app/js/file-saver.min.js': 'node_modules/file-saver/FileSaver.js',
           'app/js/admin.min.js': 'app/js/admin.js',
           'app/js/view.min.js': [
               'app/js/view.js',
-              'bower_components/fancybox/dist/jquery.fancybox.js'],
+              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js'],
           'app/js/tabs.min.js': 'app/js/tabs.js',
           'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
           'app/js/footer.min.js': 'app/js/footer.js',
           'app/js/todolist.min.js': 'app/js/todolist.js',
           'app/js/login.min.js': 'app/js/login.js',
           'app/js/register.min.js': [
-              'bower_components/jquery.complexify/jquery.complexify.js',
-              'bower_components/jquery.complexify/jquery.complexify.banlist.js',
+              'node_modules/jquery.complexify/jquery.complexify.js',
+              'node_modules/jquery.complexify/jquery.complexify.banlist.js',
               'app/js/register.js' ],
           'app/js/change-pass.min.js': 'app/js/change-pass.js',
           'app/js/show.min.js': 'app/js/show.js',
+          'app/js/edit.min.js': 'app/js/edit.js',
           'app/js/ucp.min.js': 'app/js/ucp.js'
 
         }
@@ -77,14 +78,13 @@ module.exports = function(grunt) {
           'app/css/elabftw.min.css': [
               'app/css/tagcloud.css',
               'app/css/jquery.rating.css',
-              'app/css/autocomplete.css',
               'app/css/prism.css',
-              'bower_components/dropzone/dist/dropzone.css',
-              'bower_components/fullcalendar/dist/fullcalendar.css',
-              'bower_components/bootstrap/dist/css/bootstrap.css',
-              'bower_components/colorpicker/jquery.colorpicker.css',
-              'bower_components/fancybox/dist/jquery.fancybox.css',
-              'bower_components/jquery-ui/themes/smoothness/jquery-ui.css',
+              'node_modules/dropzone/dist/dropzone.css',
+              'node_modules/fullcalendar/dist/fullcalendar.css',
+              'node_modules/bootstrap/dist/css/bootstrap.css',
+              'node_modules/vanderlee-colorpicker/jquery.colorpicker.css',
+              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
+              'node_modules/jquery-ui-dist/jquery-ui.css',
               'app/css/main.css'],
 
           'app/css/pdf.min.css': 'app/css/pdf.css'

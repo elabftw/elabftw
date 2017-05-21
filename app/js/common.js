@@ -2,6 +2,13 @@
  * Common functions used by eLabFTW
  * https://www.elabftw.net
  */
+$(document).ready(function() {
+    $(document).on('click', '.togglable-next', function() {
+        $(this).next().toggle();
+    });
+    $('.togglable-hidden').hide();
+});
+
 // for editXP/DB, ctrl-shift-D will add the date
 function addDateOnCursor() {
     var todayDate = new Date();
@@ -130,173 +137,6 @@ function quickSave(type, id) {
 }
 
 
-// EXPERIMENTS
-// ===========
-
-// VISIBILITY
-function updateVisibility(item, visibility) {
-    $.post("app/controllers/ExperimentsController.php", {
-        updateVisibility: true,
-        id: item,
-        visibility: visibility
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-// STATUS
-function updateStatus(item, status) {
-    $.post("app/controllers/ExperimentsController.php", {
-        updateStatus: true,
-        id: item,
-        status : status
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            // change the color of the item border
-            // we first remove any status class
-            $("#main_section").css('border', null);
-            // and we add our new border color
-            // first : get what is the color of the new status
-            css = '6px solid #' + json.color;
-            $("#main_section").css('border-left', css);
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
-// CREATE TAG
-function createTag(e, type, item) { // the argument here is the event (needed to detect which key is pressed)
-    var keynum;
-    if (e.which) {
-        keynum = e.which;
-    }
-    if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-        // get tag
-        tag = $('#createTagInput').val();
-        // POST request
-        $.post('app/controllers/EntityController.php', {
-            createTag: true,
-            tag: tag,
-            id: item,
-            type: type
-        }).done(function () {
-            if (type === 'items') {
-                type = 'database';
-            }
-            $('#tags_div').load(type + '.php?mode=edit&id=' + item + ' #tags_div');
-            // clear input field
-            $('#createTagInput').val('');
-        });
-    } // end if key is enter
-}
-// DESTROY TAG
-function destroyTag(type, item, tag){
-    var youSure = confirm('Delete this?');
-    if (youSure) {
-        $.post('app/controllers/EntityController.php', {
-            destroyTag: true,
-            type:type,
-            id:item,
-            tag_id:tag,
-        }).done(function() {
-            if (type === 'items') {
-                type = 'database';
-            }
-            $('#tags_div').load(type + '.php?mode=edit&id=' + item + ' #tags_div');
-        });
-    }
-    return false;
-}
-
-// CREATE LINK
-function experimentsCreateLink(e, item) { // the argument here is the event (needed to detect which key is pressed)
-    var keynum;
-    if (e.which) {
-        keynum = e.which;
-    }
-    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-        // get link
-        link = decodeURIComponent($('#linkinput').val());
-        // fix for user pressing enter with no input
-        if (link.length > 0) {
-            // parseint will get the id, and not the rest (in case there is number in title)
-            link = parseInt(link, 10);
-            if (!isNaN(link)) {
-
-                $.post('app/controllers/ExperimentsController.php', {
-                    createLink: true,
-                    id: item,
-                    linkId: link
-                })
-                // reload the link list
-                .done(function () {
-                    $("#links_div").load("experiments.php?mode=edit&id=" + item + " #links_div");
-                    // clear input field
-                    $("#linkinput").val("");
-                    return false;
-                });
-            } // end if input is bad
-        } // end if input < 0
-    } // end if key is enter
-}
-
-// DESTROY LINK
-function experimentsDestroyLink(link, item, confirmText) {
-    var youSure = confirm(confirmText);
-    if (youSure === true) {
-        $.post('app/controllers/ExperimentsController.php', {
-            destroyLink: true,
-            id: item,
-            linkId: link
-        }).done(function (data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
-                $("#links_div").load("experiments.php?mode=edit&id=" + item + " #links_div");
-            } else {
-                notif(json.msg, 'ko');
-            }
-        });
-    }
-    return false;
-}
-
-// ENTITY DESTROY
-function entityDestroy(type, id, confirmText) {
-    var youSure = confirm(confirmText);
-    if (youSure !== true) {
-        return false;
-    }
-    if (type === 'experiments') {
-        controller = 'app/controllers/ExperimentsController.php';
-        location = 'experiments.php';
-    } else {
-        controller = 'app/controllers/DatabaseController.php';
-        location = 'database.php';
-    }
-
-    $.post(controller, {
-        destroy: true,
-        id: id
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-            window.location.replace(location);
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
-}
-
 // EDIT COMMENT ON UPLOAD
 function makeEditableFileComment(type, itemId) {
     $('.thumbnail p.editable').editable(function(value, settings) {
@@ -348,21 +188,6 @@ function uploadsDestroy(id, type, itemId, confirmText) {
             }
         });
     }
-}
-
-// STAR RATINGS
-function updateRating(rating, id) {
-    $.post('app/controllers/DatabaseController.php', {
-        rating: rating,
-        id: id
-    }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
-        } else {
-            notif(json.msg, 'ko');
-        }
-    });
 }
 
 // SEARCH PAGE

@@ -28,7 +28,8 @@ try {
     if (isset($_POST['statusCreate'])) {
         if ($Status->create(
             $_POST['name'],
-            $_POST['color']
+            $_POST['color'],
+            $_POST['isTimestampable']
         )) {
             echo json_encode(array(
                 'res' => true,
@@ -48,6 +49,7 @@ try {
             $_POST['id'],
             $_POST['name'],
             $_POST['color'],
+            $_POST['isTimestampable'],
             $_POST['isDefault']
         )) {
             echo json_encode(array(
@@ -70,7 +72,6 @@ try {
                 'res' => true,
                 'msg' => _('Status deleted successfully')
             ));
-
         } catch (Exception $e) {
             echo json_encode(array(
                 'res' => false,
@@ -78,7 +79,6 @@ try {
             ));
         }
     }
-
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());

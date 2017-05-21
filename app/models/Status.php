@@ -41,9 +41,10 @@ class Status
      * @param string $color
      * @param int $default
      * @param int|null $team
+     * @param int $isTimestampable
      * @return int id of the new item
      */
-    public function create($name, $color, $default = 0, $team = null)
+    public function create($name, $color, $isTimestampable = 1, $default = 0, $team = null)
     {
         if (is_null($team)) {
             $team = $this->Users->userData['team'];
@@ -56,11 +57,12 @@ class Status
             $name = 'Unnamed';
         }
 
-        $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
+        $sql = "INSERT INTO status(name, color, team, is_timestampable, is_default) VALUES(:name, :color, :team, :is_timestampable, :is_default)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $team);
+        $req->bindParam(':is_timestampable', $isTimestampable);
         $req->bindValue(':is_default', $default);
 
         $req->execute();
@@ -76,10 +78,10 @@ class Status
      */
     public function createDefault($team)
     {
-        return $this->create('Running', '29AEB9', 1, $team) &&
-            $this->create('Success', '54AA08', 0, $team) &&
-            $this->create('Need to be redone', 'C0C0C0', 0, $team) &&
-            $this->create('Fail', 'C24F3D', 0, $team);
+        return $this->create('Running', '29AEB9', 0, 1, $team) &&
+            $this->create('Success', '54AA08', 1, 0, $team) &&
+            $this->create('Need to be redone', 'C0C0C0', 1, 0, $team) &&
+            $this->create('Fail', 'C24F3D', 1, 0, $team);
     }
 
     /**
@@ -92,6 +94,7 @@ class Status
         $sql = "SELECT status.id AS category_id,
             status.name AS category,
             status.color,
+            status.is_timestampable,
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
@@ -118,6 +121,22 @@ class Status
     }
 
     /**
+     * Returns if a status may be timestamped
+     *
+     * @param int $status ID of the status
+     * @return bool true if status may be timestamped
+     */
+     public function isTimestampable($status)
+     {
+         $sql = "SELECT is_timestampable FROM status WHERE id = :id";
+         $req = $this->pdo->prepare($sql);
+         $req->bindParam(':id', $status, PDO::PARAM_INT);
+         $req->execute();
+
+         return (bool) $req->fetchColumn();
+     }
+
+    /**
      * Remove all the default status for a team.
      * If we set true to is_default somewhere, it's best to remove all other default
      * in the team so we won't have two default status
@@ -139,10 +158,11 @@ class Status
      * @param int $id ID of the status
      * @param string $name New name
      * @param string $color New color
+     * @param int $isTimestampable May this status be timestamped
      * @param bool $isDefault
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $isDefault)
+    public function update($id, $name, $color, $isTimestampable, $isDefault)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -156,12 +176,14 @@ class Status
         $sql = "UPDATE status SET
             name = :name,
             color = :color,
+            is_timestampable = :is_timestampable,
             is_default = :is_default
             WHERE id = :id AND team = :team";
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
+        $req->bindParam(':is_timestampable', $isTimestampable);
         $req->bindParam(':is_default', $default);
         $req->bindParam(':id', $id);
         $req->bindParam(':team', $this->Users->userData['team']);

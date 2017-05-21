@@ -212,6 +212,7 @@
                 <ul class='list-inline'>
                     <li>{{ 'Name'|trans }} <input type='text' id='statusName' /></li>
                     <li>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>
+                    <li>{{ 'Allow timestamp'|trans }} <input type='checkbox' id='statusTimestamp' /></li>
                     <li><button class='button' id='statusCreate'>{{ 'Save'|trans }}</button></li>
                 </ul>
             </li>
@@ -228,7 +229,8 @@
                     <li>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
                     <li style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
                     </li>
-                    <li><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }}>
+                    <li>{{ 'Allow timestamp'|trans }} <input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /></li>
+                    <li><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} />
                         {{ 'Default status'|trans }}</li>
 
 

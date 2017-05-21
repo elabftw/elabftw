@@ -12,7 +12,7 @@ class StatusTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $new = $this->Status->create('', 'fffccc');
+        $new = $this->Status->create('', 'fffccc', 1);
         $this->assertTrue((bool) Tools::checkId($new));
     }
 
@@ -24,7 +24,7 @@ class StatusTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa'), 'New name', 'fffccc', 'on'));
-        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa'), 'New name', 'fffccc', false));
+        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa', 1), 'New name', 'fffccc', 0, 'on'));
+        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa', 1), 'New name', 'fffccc', 1, false));
     }
 }

@@ -71,7 +71,7 @@
 </a>
 
 <!-- show timestamp button if not timestamped already -->
-{% if not Ev.Entity.entityData.timestamped and Ev.Entity.type == 'experiments' %}
+{% if not Ev.Entity.entityData.timestamped and Ev.Entity.isTimestampable() and Ev.Entity.type == 'experiments' %}
     <a class='elab-tooltip'>
         <span>{{ 'Timestamp Experiment' }}</span>
         <img id='confirmTimestamp' src='app/img/stamp.png' alt='Timestamp' />

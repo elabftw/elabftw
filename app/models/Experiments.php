@@ -51,7 +51,6 @@ class Experiments extends Entity
 
         $this->Links = new Links($this);
         $this->Comments = new Comments($this);
-
     }
 
     /**
@@ -69,9 +68,7 @@ class Experiments extends Entity
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
-
         } else {
-
             $templatesArr = $Templates->readCommon();
             $title = _('Untitled');
         }
@@ -179,6 +176,21 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
+    }
+
+    /**
+    * Returns if this experiment can be timestamped
+    *
+    * @return bool
+    */
+    public function isTimestampable()
+    {
+        $currentStatus = (int) $this->entityData['category_id'];
+        $sql = "SELECT is_timestampable FROM status WHERE id = :status;";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':status', $currentStatus);
+        $req->execute();
+        return (bool) $req->fetchColumn();
     }
 
     /**

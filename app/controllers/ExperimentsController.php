@@ -148,10 +148,17 @@ try {
         try {
             $Entity->setId($_POST['id']);
             $Entity->canOrExplode('write');
-            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
-            if ($ts->timeStamp()) {
-                echo json_encode(array(
+            if ($Entity->isTimestampable()) {
+                $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
+                if ($ts->timeStamp()) {
+                    echo json_encode(array(
                     'res' => true
+                ));
+                }
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => _('This experiment cannot be timestamped!')
                 ));
             }
         } catch (Exception $e) {
@@ -162,7 +169,6 @@ try {
                 'msg' => $e->getMessage()
             ));
         }
-
     }
 
     // DESTROY
@@ -202,7 +208,6 @@ try {
             'msg' => $TrustedTimestamps->decodeAsn1($_POST['asn1'])
         ));
     }
-
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());

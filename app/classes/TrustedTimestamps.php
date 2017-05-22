@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use DateTime;
 use Exception;
-use Elabftw\Elabftw\Update;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 

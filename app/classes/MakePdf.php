@@ -54,7 +54,7 @@ class MakePdf extends Make
      *
      * @param Entity $entity Experiments or Database
      * @param bool|null $toFile Do we want to write it to a file ?
-     * @param bool|unll $timestamp Is it a timestamp pdf we are doing ? If yes save it in normal path, not tmp
+     * @param bool $timestamp Is it a timestamp pdf we are doing ? If yes save it in normal path, not tmp
      */
     public function __construct(Entity $entity, $toFile = false, $timestamp = false)
     {

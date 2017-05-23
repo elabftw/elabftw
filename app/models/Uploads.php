@@ -151,6 +151,12 @@ class Uploads extends Entity
      */
     private function moveFile($orig, $dest)
     {
+        // fix for FreeBSD and rename across different filesystems
+        // see http://php.net/manual/en/function.rename.php#117590
+        if (PHP_OS === 'FreeBSD') {
+            return copy($orig, $dest) && unlink($orig);
+        }
+
         if (!rename($orig, $dest)) {
             throw new Exception('Error while moving the file. Check folder permissons!');
         }

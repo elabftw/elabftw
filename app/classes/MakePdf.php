@@ -236,56 +236,39 @@ class MakePdf extends Make
      */
     private function addAttachedFiles()
     {
-        // SQL to get attached files
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
-        $req->bindParam(':type', $this->Entity->type);
-        $req->execute();
-
-        $real_name = array();
-        $long_name = array();
-        $comment = array();
-        $hash = array();
-        $hash_algorithm = array();
-
-        while ($uploads = $req->fetch()) {
-            $real_name[] = $uploads['real_name'];
-            $long_name[] = $uploads['long_name'];
-            $comment[] = $uploads['comment'];
-            $hash[] = $uploads['hash'];
-            $hash_algorithm[] = $uploads['hash_algorithm'];
-        }
-        // do we have files attached ?
-        if ($req->rowCount() > 0) {
+        $Uploads = new Uploads($this->Entity);
+        $uploadsArr = $Uploads->readAll();
+        $fileNb = count($uploadsArr);
+        if ($fileNb > 0) {
             $this->content .= "<section class='no-break'>";
-            if ($req->rowCount() === 1) {
+            if ($fileNb === 1) {
                 $this->content .= "<h3>Attached file :</h3>";
             } else {
                 $this->content .= "<h3>Attached files :</h3>";
             }
-            $real_name_cnt = $req->rowCount();
-            for ($i = 0; $i < $real_name_cnt; $i++) {
-                $this->content .= "<p class='pdf-ul'>" . $real_name[$i];
+
+            foreach ($uploadsArr as $upload) {
+                // the name of the file
+                $this->content .= "<p class='pdf-ul'>" . $upload['real_name'];
                 // add a comment ? don't add if it's the default text
-                if ($comment[$i] != 'Click to add a comment') {
-                    $this->content .= " (" . stripslashes(htmlspecialchars_decode($comment[$i])) . ")";
+                if ($upload['comment'] != 'Click to add a comment') {
+                    $this->content .= " (" . stripslashes(htmlspecialchars_decode($upload['comment'])) . ")";
                 }
                 // add hash ? don't add if we don't have it
                 // length must be greater (sha2 hashes) or equal (md5) 32 bits
-                if (strlen($hash[$i]) >= 32) { // we have hash
-                    $this->content .= "<br>" . $hash_algorithm[$i] . " : " . $hash[$i];
+                if (strlen($upload['hash']) >= 32) { // we have hash
+                    $this->content .= "<br>" . $upload['hash_algorithm'] . " : " . $upload['hash'];
                 }
                 // if this is an image file, add the thumbnail picture
-                $ext = filter_var(Tools::getExt($real_name[$i]), FILTER_SANITIZE_STRING);
-                $filepath = 'uploads/' . $long_name[$i];
-
-                if (file_exists($filepath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
-                    $this->content .= "<br /><img class='attached_image' src='" . $filepath . "' alt='attached image' />";
+                $ext = filter_var(Tools::getExt($upload['real_name']), FILTER_SANITIZE_STRING);
+                $filePath = 'uploads/' . $upload['long_name'];
+                if (file_exists($filePath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+                    $this->content .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
                 }
+
                 $this->content .= "</p>";
             }
-            $this->content .= "</ul></section>";
+            $this->content .= "</section>";
         }
     }
 

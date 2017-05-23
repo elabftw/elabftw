@@ -88,8 +88,7 @@ try {
     define('DB_USER', '" . $db_user . "');
     define('DB_PASSWORD', '" . $db_password . "');
     define('ELAB_ROOT', '" . $elab_root . "');
-    define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
-    ";
+    define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');";
 
     // we try to write content to file and propose the file for download if we can't write to it
     if (file_put_contents($config_file, $config)) {

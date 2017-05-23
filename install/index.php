@@ -31,31 +31,6 @@ use Exception;
 session_start();
 require_once '../vendor/autoload.php';
 $errflag = false;
-?>
-
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="author" content="Nicolas CARPi" />
-<meta name='referrer' content='origin'>
-<link rel="icon" type="image/ico" href="../app/img/favicon.ico" />
-<title>eLabFTW - INSTALL</title>
-<!-- CSS -->
-<link rel="stylesheet" media="all" href="../app/css/elabftw.min.css" />
-<!-- JAVASCRIPT -->
-<script src="../app/js/elabftw.min.js"></script>
-</head>
-
-<body>
-<section id="container" class='container'>
-<section id='real_container'>
-<center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
-<h2>Welcome to the install of eLabFTW</h2>
-
-<?php
 try {
     // Check if there is already a config file
 
@@ -119,7 +94,28 @@ try {
             throw new Exception($message);
         }
     }
-    ?>
+?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Nicolas CARPi" />
+<meta name='referrer' content='origin'>
+<link rel="icon" type="image/ico" href="../app/img/favicon.ico" />
+<title>eLabFTW - INSTALL</title>
+<!-- CSS -->
+<link rel="stylesheet" media="all" href="../app/css/elabftw.min.css" />
+<!-- JAVASCRIPT -->
+<script src="../app/js/elabftw.min.js"></script>
+</head>
+
+<body>
+<section id="container" class='container'>
+<section id='real_container'>
+<center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
+<h2>Welcome to the install of eLabFTW</h2>
 
     <h3>Preliminary checks</h3>
     <?php

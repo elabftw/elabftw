@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * Entity View to show/view/edit experiments or DB items
  */
@@ -55,6 +57,11 @@ class EntityView
     public function initViewEdit()
     {
         $this->Entity->populate();
+        // throw error if the id is empty (non existing id)
+        if (empty($this->Entity->entityData['userid'])) {
+            throw new Exception(Tools::error(true));
+        }
+
         // get the UploadsView object
         $this->UploadsView = new UploadsView(new Uploads($this->Entity));
     }

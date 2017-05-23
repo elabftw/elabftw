@@ -121,7 +121,6 @@ try {
         $EntityView->initViewEdit();
         // check permissions
         $EntityView->Entity->canOrExplode('write');
-
         // a locked experiment cannot be edited
         if ($EntityView->Entity->entityData['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));

@@ -86,7 +86,7 @@
             </p>
             <br>
             <p>
-            <label for 'default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
+            <label for='default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
             <select name='default_vis'>
                 <option value='organization'
                   {{ Users.userData.default_vis == 'organization' ? " selected='selected'" }}
@@ -180,7 +180,6 @@
             </div>
         </div>
 
-    </div>
         <div class='submitButtonDiv'>
             <button type="submit" name="Submit" class='button'>{{ 'Update profile'|trans }}</button>
         </div>

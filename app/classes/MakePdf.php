@@ -242,9 +242,9 @@ class MakePdf extends Make
         if ($fileNb > 0) {
             $this->content .= "<section class='no-break'>";
             if ($fileNb === 1) {
-                $this->content .= "<h3>Attached file :</h3>";
+                $this->content .= "<h3>Attached file:</h3>";
             } else {
-                $this->content .= "<h3>Attached files :</h3>";
+                $this->content .= "<h3>Attached files:</h3>";
             }
 
             foreach ($uploadsArr as $upload) {
@@ -316,48 +316,27 @@ class MakePdf extends Make
     private function addLinkedItems()
     {
         if ($this->Entity->type === 'experiments') {
-            // SQL to get linked items
-            $sql = "SELECT experiments_links.*,
-                experiments_links.link_id AS item_id,
-                items.title AS title,
-                items_types.name AS type
-                FROM experiments_links
-                LEFT JOIN items ON (experiments_links.link_id = items.id)
-                LEFT JOIN items_types ON (items.type = items_types.id)
-                WHERE item_id = :item_id";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':item_id', $this->Entity->id);
-            $req->execute();
-            $links_id_arr = array();
-            $links_title_arr = array();
-            $links_type_arr = array();
-            // we put what we need in arrays
-            while ($links = $req->fetch()) {
-                $links_id_arr[] = $links['item_id'];
-                $links_title_arr[] = $links['title'];
-                $links_type_arr[] = $links['type'];
-            }
-            // only display this section if there is something to display
-            if ($req->rowCount() > 0) {
-                $this->content .= '<section>';
-                if ($req->rowCount() === 1) {
-                    $this->content .= "<h3>Linked item :</h3>";
-                } else {
-                    $this->content .= "<h3>Linked items :</h3>";
-                }
-                $this->content .= "<ul>";
-                $row_cnt = $req->rowCount();
+            $Links = new Links($this->Entity);
+            $linksArr = $Links->read();
+            $linkNb = count($linksArr);
 
+            if ($linkNb > 0) {
+                $this->content .= "<section class='no-break'>";
+                if ($linkNb === 1) {
+                    $this->content .= "<h3>Linked item:</h3>";
+                } else {
+                    $this->content .= "<h3>Linked items:</h3>";
+                }
                 // add the item with a link
                 $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
-                for ($i = 0; $i < $row_cnt; $i++) {
+                $itemUrl = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);
 
-                    $item_url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);
-                    $full_item_url = $item_url . "?mode=view&id=" . $links_id_arr[$i];
-
-                    $this->content .= "<li>[" . $links_type_arr[$i] . "] - <a href='" . $full_item_url . "'>" . $links_title_arr[$i] . "</a></li>";
+                foreach ($linksArr as $link) {
+                    $fullItemUrl = $itemUrl . "?mode=view&id=" . $link['link_id'];
+                    $this->content .= "<p class='pdf-ul'>";
+                    $this->content .= "<span style='color:#" . $link['color'] . "'>" . $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
                 }
-                $this->content .= "</ul></section>";
+                $this->content .= "</section>";
             }
         }
     }

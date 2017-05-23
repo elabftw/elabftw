@@ -12,32 +12,24 @@
                 <ul class='list-inline'>
 
                     <li>
-                        <label class='block' for='usersUpdateFirstname'>{{ 'Firstname'|trans }}</label>
-                        <input class='clean-form' id='usersUpdateFirstname' type='text' value='{{ user.firstname }}' name='firstname' />
+                        {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
+                        <label class='block' for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
+                        <input class='clean-form' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname }}' name='firstname' />
                     </li>
 
                     <li>
-                        <label class='block' for='usersUpdateLastname'>{{ 'Lastname'|trans }}</label>
-                        <input class='clean-form' id='usersUpdateLastname' type='text' value='{{ user.lastname }}' name='lastname' />
+                        <label class='block' for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
+                        <input class='clean-form' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname }}' name='lastname' />
                     </li>
 
                     <li>
-                        <label class='block' for='usersUpdateEmail'>{{ 'Email'|trans }}</label>
-                        <input class='clean-form' id='usersUpdateEmail' type='email' value='{{ user.email }}' name='email' />
+                        <label class='block' for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
+                        <input class='clean-form' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
                     </li>
 
                     <li>
-                        <label class='block' for='usersUpdateValidated'>{{ 'Has an active account?'|trans }}</label>
-                        <select class='clean-form' name='validated' id='usersUpdateValidated'>
-                            <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                            <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-
-                        </select>
-                    </li>
-
-                    <li>
-                        <label class='block' for='usersUpdateUsergroup'>{{ 'Group'|trans }}</label>
-                        <select class='clean-form' name='usergroup' id='usersUpdateUsergroup'>
+                        <label class='block' for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
+                        <select class='clean-form' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
                             {% if session.is_sysadmin %}
                                 <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
                             {% endif %}
@@ -49,17 +41,29 @@
                     </li>
 
                     <li>
-                        <label class='block' for='usersUpdatePassword'>{{ 'Reset user password'|trans }}</label>
+                        <label class='block' for='usersUpdatePassword'>{{ 'Reset user password'|trans }}
+                            <span class='smallgray'>({{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }})</span>
+                        </label>
                         {# add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox #}
                         <input type='text' style='display:none'>
                         <input type='password' style='display:none'>
                         {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', Auth) ~ ',}' %}
                         <input autocomplete='new-password' class='clean-form' id='usersUpdatePassword' type='password' pattern='{{ pattern }}' value='' name='password' />
-                        <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
                     </li>
 
+                    <li>
+                        <label class='block' for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
+                        <select class='clean-form' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
+                            <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                            <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+
+                        </select>
+                    </li>
+
+                    <li>
+                        <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+                    </li>
                 </ul>
-                <button type='submit' class='button'>{{ 'Save'|trans }}</button>
             </form>
         </li>
         <hr>

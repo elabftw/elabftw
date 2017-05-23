@@ -71,7 +71,7 @@
                     <br>
                     <label class='block' for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
                     <input class='clean-form col-3-form' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
-                    <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>") }}</span>
+                    <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</span>
                 </p>
 
                 <p>

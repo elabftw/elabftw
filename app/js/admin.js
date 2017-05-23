@@ -315,6 +315,7 @@ $(document).ready(function() {
     // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
     var colorInput = Math.floor(Math.random()*16777215).toString(16);
     $('#itemsTypesColor').val(colorInput);
+    $('#statusColor').val(colorInput);
 
     // EDITOR
     tinymce.init({

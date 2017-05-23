@@ -91,8 +91,15 @@ tr:nth-child(odd) {
         background-color: #f2f2f2;
 }
 
-.no_break {
+.no-break {
     page-break-inside: avoid;
+}
+
+.pdf-ul {
+    border: 1px solid #343434;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 7px;
 }
 
 .elabid {

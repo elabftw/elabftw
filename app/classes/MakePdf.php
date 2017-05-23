@@ -258,16 +258,15 @@ class MakePdf extends Make
         }
         // do we have files attached ?
         if ($req->rowCount() > 0) {
-            $this->content .= "<section class='no_break'>";
+            $this->content .= "<section class='no-break'>";
             if ($req->rowCount() === 1) {
                 $this->content .= "<h3>Attached file :</h3>";
             } else {
                 $this->content .= "<h3>Attached files :</h3>";
             }
-            $this->content .= "<ul>";
             $real_name_cnt = $req->rowCount();
             for ($i = 0; $i < $real_name_cnt; $i++) {
-                $this->content .= "<li>" . $real_name[$i];
+                $this->content .= "<p class='pdf-ul'>" . $real_name[$i];
                 // add a comment ? don't add if it's the default text
                 if ($comment[$i] != 'Click to add a comment') {
                     $this->content .= " (" . stripslashes(htmlspecialchars_decode($comment[$i])) . ")";
@@ -284,7 +283,7 @@ class MakePdf extends Make
                 if (file_exists($filepath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
                     $this->content .= "<br /><img class='attached_image' src='" . $filepath . "' alt='attached image' />";
                 }
-                $this->content .= "</li>";
+                $this->content .= "</p>";
             }
             $this->content .= "</ul></section>";
         }

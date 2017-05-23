@@ -192,32 +192,25 @@ class MakePdf extends Make
      */
     private function addComments()
     {
-        // check if there is something to display first
-        // get all comments, and infos on the commenter associated with this experiment
-        $sql = "SELECT * FROM experiments_comments
-            LEFT JOIN users ON (experiments_comments.userid = users.userid)
-            WHERE exp_id = :id
-            ORDER BY experiments_comments.datetime DESC";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
-        $req->execute();
-        // if we have comments
-        if ($req->rowCount() > 0) {
-            $this->content .= "<section>";
-            if ($req->rowCount() === 1) {
-                $this->content .= "<h3>Comment :</h3>";
-            } else {
-                $this->content .= "<h3>Comments :</h3>";
-            }
-            // there is comments to display
-            while ($comments = $req->fetch()) {
-                if (empty($comments['firstname'])) {
-                    $comments['firstname'] = '[deleted]';
-                }
-                $this->content .= "<p>On " . $comments['datetime'] . " " . $comments['firstname'] . " " . $comments['lastname'] . " wrote :<br />";
-                $this->content .= "<p>" . $comments['comment'] . "</p>";
+        $Comments = new Comments($this->Entity);
+        $commentsArr = $Comments->read();
+        $commentNb = count($commentsArr);
 
+        if ($commentNb > 0) {
+
+            $this->content .= "<section class='no-break'>";
+
+            if ($commentNb === 1) {
+                $this->content .= "<h3>Comment:</h3>";
+            } else {
+                $this->content .= "<h3>Comments:</h3>";
             }
+
+            foreach ($commentsArr as $comment) {
+                $this->content .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
+                $this->content .= $comment['comment'] . "</p>";
+            }
+
             $this->content .= "</section>";
         }
     }

@@ -62,7 +62,7 @@ try {
         }
 
     }
-header('Location: experiments.php');
+    header('Location: experiments.php');
 
 } catch (Exception $e) {
     echo $e->getMessage();

@@ -44,7 +44,8 @@ class Revisions
      */
     public function create($body)
     {
-        $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+        $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid)
+            VALUES(:item_id, :body, :userid)";
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
@@ -82,7 +83,8 @@ class Revisions
         if ($count > 0) {
             $html .= "<span class='align_right'>";
             $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
-            $html .= " <a href='revisions.php?type=" . $this->Entity->type . "&item_id=" . $this->Entity->id . "'>" . _('Show history') . "</a>";
+            $html .= " <a href='revisions.php?type=" . $this->Entity->type . "&item_id=" .
+                $this->Entity->id . "'>" . _('Show history') . "</a>";
             $html .= "</span>";
         }
 
@@ -96,7 +98,8 @@ class Revisions
      */
     public function read()
     {
-        $sql = "SELECT * FROM " . $this->Entity->type . "_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+        $sql = "SELECT * FROM " . $this->Entity->type . "_revisions
+            WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userid', $this->Entity->Users->userid);

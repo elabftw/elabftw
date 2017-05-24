@@ -1,6 +1,16 @@
 <?php
 /**
- *  SAML Metadata view
+ * metadata.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/**
+ *  This page displays an XML file with all the infos of the Service Provider
  */
 namespace Elabftw\Elabftw;
 
@@ -13,6 +23,9 @@ try {
 
     $Saml = new Saml(new Config, new Idps);
     $settingsArr = $Saml->getSettings();
+    if (empty($settingsArr['entityId'])) {
+        throw new Exception('No Service Provider configured. Aborting.');
+    }
 
     // Now we only validate SP settings
     $Settings = new OneLogin_Saml2_Settings($settingsArr, true);

@@ -27,7 +27,12 @@ try {
     if (isset($_POST['mysql'])) {
         $pdo_options = array();
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        $pdo = new PDO('mysql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'], $_POST['db_user'], $_POST['db_password'], $pdo_options);
+        $pdo = new PDO(
+            'mysql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'],
+            $_POST['db_user'],
+            $_POST['db_password'],
+            $pdo_options
+        );
         echo 1;
     }
 

@@ -1,44 +1,26 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   https://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * install/install.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * This file reads infos from POST and creates the config.php file (unless it exists)
+ *
+ */
 namespace Elabftw\Elabftw;
 
 use Exception;
 use Defuse\Crypto\Key as Key;
 
 try {
-    /* install/index.php to get an installation up and running */
     session_start();
     require_once '../vendor/autoload.php';
-
-    /* install/install.php to get an installation up and running */
-    /* this script will :
-     * 1. read the sql infos given through POST
-     * 2. import the SQL structure (+ default values)
-     * 3. write the config file (or propose to download it)
-     */
 
     // we disable errors to avoid having notice and warning polluting our file
     error_reporting(E_ERROR);
@@ -77,7 +59,7 @@ try {
 
     // the new file to write to
     $config_file = '../config.php';
-    $elab_root = substr(realpath(__FILE__), 0, -20) . '/';
+    $elab_root = dirname(dirname(__FILE__)) . '/';
     // make a new secret key
     $new_key = Key::createNewRandomKey();
 
@@ -110,5 +92,5 @@ try {
         echo $config;
     }
 } catch (Exception $e) {
-    echo displayMessage('Error: ' . $e->getMessage(), 'ko');
+    echo Tools::displayMessage('Error: ' . $e->getMessage(), 'ko', false);
 }

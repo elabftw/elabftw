@@ -123,6 +123,7 @@ try {
             setcookie('redirect', $url, time() + 300, '/', null, true, true);
 
             header('location: app/logout.php');
+            exit;
         }
     }
 } catch (Exception $e) {

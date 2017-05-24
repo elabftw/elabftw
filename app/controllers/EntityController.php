@@ -19,6 +19,8 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    $id = 1;
+
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
     } elseif (isset($GET['id'])) {

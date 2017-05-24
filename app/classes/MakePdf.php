@@ -193,26 +193,25 @@ class MakePdf extends Make
     private function addComments()
     {
         $Comments = new Comments($this->Entity);
+        // will return false if empty
         $commentsArr = $Comments->read();
-        $commentNb = count($commentsArr);
-
-        if ($commentNb > 0) {
-
-            $this->content .= "<section class='no-break'>";
-
-            if ($commentNb === 1) {
-                $this->content .= "<h3>Comment:</h3>";
-            } else {
-                $this->content .= "<h3>Comments:</h3>";
-            }
-
-            foreach ($commentsArr as $comment) {
-                $this->content .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
-                $this->content .= $comment['comment'] . "</p>";
-            }
-
-            $this->content .= "</section>";
+        if ($commentsArr === false) {
+            return true;
         }
+        $this->content .= "<section class='no-break'>";
+
+        if (count($commentsArr) === 1) {
+            $this->content .= "<h3>Comment:</h3>";
+        } else {
+            $this->content .= "<h3>Comments:</h3>";
+        }
+
+        foreach ($commentsArr as $comment) {
+            $this->content .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
+            $this->content .= $comment['comment'] . "</p>";
+        }
+
+        $this->content .= "</section>";
     }
 
     /**

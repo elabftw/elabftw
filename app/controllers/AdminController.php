@@ -19,11 +19,11 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    $redirect = false;
+
     if (!$_SESSION['is_admin']) {
         throw new Exception('Non admin user tried to access admin panel.');
     }
-
-    $redirect = false;
 
     // UPDATE ORDERING
     if (isset($_POST['updateOrdering'])) {
@@ -76,11 +76,11 @@ try {
         $Templates->updateCommon($_POST['commonTplUpdate']);
     }
 
-} catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-} finally {
     if ($redirect) {
         header('Location: ../../admin.php?tab=1');
     }
+
+} catch (Exception $e) {
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 }

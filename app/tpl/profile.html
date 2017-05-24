@@ -75,7 +75,7 @@
             {% endtrans %}
         {% else %}
         {% for tag, class in TagCloud.cloudArr %}
-            <a href='experiments.php?mode=show&tag={{ tag }}' class='{{ class }}'>{{ tag }}</a>
+            <a href='experiments.php?mode=show&tag={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
         {% endfor %}
 
         {% endif %}

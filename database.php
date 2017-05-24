@@ -46,7 +46,10 @@ try {
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
             $EntityView->query = $query;
-            $EntityView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            $EntityView->Entity->queryFilter = "AND (
+                title LIKE '%$query%' OR
+                date LIKE '%$query%' OR
+                body LIKE '%$query%')";
             $EntityView->searchType = 'query';
         }
         // ORDER

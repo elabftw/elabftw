@@ -58,13 +58,10 @@ try {
             'Make' => $Make,
             'filesize' => $filesize
         ));
+        require_once 'app/footer.inc.php';
     }
 
 } catch (Exception $e) {
     require_once 'app/head.inc.php';
     echo Tools::displayMessage($e->getMessage(), 'ko');
-
-} finally {
-    // this won't show up if it's a pdf
-    require_once 'app/footer.inc.php';
 }

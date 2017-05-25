@@ -20,10 +20,10 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($this->Api->getEntity()));
         $request = 'items/1';
         $this->Api= new Api($this->key, 'GET', $request);
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $request = 'database/1';
         $this->Api= new Api($this->key, 'GET', $request);
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $request = 'items/1';
         $this->Api= new Api($this->key, 'PUT', $request);
     }
@@ -32,7 +32,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     {
         $request = 'experiments';
         $this->Api= new Api($this->key, 'POST', $request);
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->Api->updateEntity();
     }
 }

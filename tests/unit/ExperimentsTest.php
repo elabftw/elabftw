@@ -27,7 +27,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 
     public function testSetId()
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->Experiments->setId('alpha');
     }
 
@@ -39,7 +39,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
         $this->assertEquals('20160729', $experiment['date']);
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->Experiments->setId('a9999999999');
     }
 

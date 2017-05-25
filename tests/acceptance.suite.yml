@@ -18,4 +18,4 @@ modules:
             dump: 'tests/_data/phpunit.sql'
             populate: true
             cleanup: true
-            reconnect: true
+            #reconnect: true

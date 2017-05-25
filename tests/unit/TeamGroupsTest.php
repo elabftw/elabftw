@@ -29,7 +29,7 @@ class TeamGroupsTest extends \PHPUnit_Framework_TestCase
     public function testUpdate()
     {
         $this->assertEquals('New Name', $this->TeamGroups->update('New Name', 'teamgroup_1'));
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->TeamGroups->update('yep', 1);
     }
     public function testUpdateMember()
@@ -38,7 +38,7 @@ class TeamGroupsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->TeamGroups->isInTeamGroup(1, 1));
         $this->assertTrue($this->TeamGroups->updateMember(1, 1, 'rm'));
         $this->assertFalse($this->TeamGroups->isInTeamGroup(1, 1));
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->TeamGroups->updateMember(1, 1, 'yep');
     }
     public function testDestroy()

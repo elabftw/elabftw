@@ -131,7 +131,23 @@ class UploadsView extends EntityView
             $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 
             // list of extensions understood by 3Dmol.js
-            $molExtensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
+            // see http://3dmol.csb.pitt.edu/doc/types.html
+            $molExtensions = array(
+                'cdjson',
+                'cif',
+                'cube',
+                'gro',
+                'json',
+                'mcif',
+                'mmtf',
+                'mol2',
+                'pdb',
+                'pqr',
+                'prmtop',
+                'sdf',
+                'vasp',
+                'xyz'
+            );
 
             // Make thumbnail only if it isn't done already
             if (!file_exists($thumbpath)) {

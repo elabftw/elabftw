@@ -13,7 +13,7 @@
         "ext-zip": "*",
         "defuse/php-encryption": "2.0.*",
         "mpdf/mpdf": "^6.1",
-        "swiftmailer/swiftmailer":"@stable",
+        "swiftmailer/swiftmailer":"^5.4",
         "twig/extensions": "^1.4",
         "onelogin/php-saml": "^2.10"
 

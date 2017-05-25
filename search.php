@@ -357,7 +357,8 @@ if (isset($_GET)) {
     if (!empty($tagsArr)) {
         foreach ($tagsArr as $tag) {
             $tag = filter_var($tag, FILTER_SANITIZE_STRING);
-            $sqlTag .= " AND EXISTS (SELECT 1 FROM " . $tagTable . " tagt WHERE tagt.item_id = " . $table . ".id AND tagt.tag LIKE '%" . $tag . "%') ";
+            $sqlTag .= " AND EXISTS (SELECT 1 FROM " . $tagTable . " tagt WHERE tagt.item_id = " .
+                $table . ".id AND tagt.tag LIKE '%" . $tag . "%') ";
         }
     }
 

@@ -214,7 +214,7 @@ class UploadsView extends EntityView
                 $html .= $comment;
             }
 
-            if ($mode === 'edit') {
+            if ($mode === 'edit' && preg_match('/(jpg|jpeg|png|gif|tif|tiff|svg)$/i', $ext)) {
                 $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] . "'><img src='app/img/show-more.png' /> <p class='inline'>Insert in text at cursor position</p></div>";
             }
             $html .= "</div></div></div>";

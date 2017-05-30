@@ -602,9 +602,7 @@ class Users extends Auth
         $params['skype'] = filter_var($params['skype'], FILTER_SANITIZE_STRING);
 
         // Check website
-        if (!filter_var($params['website'], FILTER_VALIDATE_URL)) {
-            throw new Exception(_('A mandatory field is missing!'));
-        }
+        $params['website'] = filter_var($params['website'], FILTER_VALIDATE_URL);
 
         $sql = "UPDATE users SET
             email = :email,

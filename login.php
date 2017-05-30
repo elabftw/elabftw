@@ -65,6 +65,13 @@ try {
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 
+    // don't show the local login form if it's disabled
+    $showLocal = true;
+    // if there is a ?letmein in the url, we still show it.
+    if (!$Config->configArr['local_login'] && !isset($_GET['letmein'])) {
+        $showLocal = false;
+    }
+
     $idpsArr = $Idps->readAll();
 
     echo $twig->render('login.html', array(
@@ -72,7 +79,8 @@ try {
         'Config' => $Config,
         'FormKey' => $FormKey,
         'SESSION' => $_SESSION,
-        'idpsArr' => $idpsArr
+        'idpsArr' => $idpsArr,
+        'showLocal' => $showLocal
     ));
 
 } catch (Exception $e) {

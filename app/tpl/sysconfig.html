@@ -94,11 +94,25 @@
             {% for lang, text in langsArr %}
             <option {{ Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
             {% endfor %}
-        </select><br>
+        </select>
 
         <label class='block' for='proxy'>{{ 'Address of the Proxy:'|trans }}</label>
         <input class='clean-form col-3-form' type='text' value='{{ Config.configArr.proxy }}' name='proxy' id='proxy' />
         <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
+
+        <h3>Registration and authentication configuration</h3>
+        <label for='local_register' class='block'>{{ 'Enable local account creation:'|trans }}</label>
+        <select id='local_register' name="local_register" class="clean-form col-3-form">
+            <option {{ Config.configArr.local_register == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+            <option {{ Config.configArr.local_register == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
+
+        <label for='local_login' class='block'>{{ 'Show local login form:'|trans }}</label>
+        <select id='local_login' name="local_login" class="clean-form col-3-form">
+            <option {{ Config.configArr.local_login == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+            <option {{ Config.configArr.local_login == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
+        <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
 
         <div class='submitButtonDiv'>
             <button type='submit' class='button'>{{ 'Save'|trans }}</button>

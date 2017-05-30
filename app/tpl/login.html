@@ -1,6 +1,7 @@
 <menu class='border' style='color:#29AEB9'>{{ 'Note: You need cookies enabled to log in.'|trans }}</menu>
 
 <section class='center'>
+    {% if showLocal %}
     <!-- Login form , the id is for an acceptance test -->
     <form method="post" id='login' action="app/controllers/LoginController.php" autocomplete="off">
         <h2>{{ 'Sign in to your account'|trans }}</h2>
@@ -19,6 +20,15 @@
             <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
         </div>
     </form>
+    <p>
+        {{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(
+            "<a href='register.php'>",
+            "</a>",
+            "<a href='#' class='trigger'>",
+            "</a>")|raw }}
+    </p>
+    {% endif %}
+
     {% if idpsArr|length > 0 %}
 
         <h2>{{ 'Login through your institution'|trans }}</h2>
@@ -33,13 +43,6 @@
         </form>
     {% endif %}
 
-    <p>
-        {{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(
-            "<a href='register.php'>",
-            "</a>",
-            "<a href='#' class='trigger'>",
-            "</a>")|raw }}
-    </p>
     <div class='toggle_container'>
     <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
         <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />

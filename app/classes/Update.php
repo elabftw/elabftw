@@ -37,7 +37,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '21';
+    const REQUIRED_SCHEMA = '22';
 
     /**
      * Init Update with Config and pdo
@@ -173,6 +173,12 @@ class Update
             // 20170517
             $this->schema21();
             $this->updateSchema(21);
+        }
+
+        if ($current_schema < 22) {
+            // 20170517
+            $this->schema22();
+            $this->updateSchema(22);
         }
         // place new schema functions above this comment
 
@@ -551,6 +557,20 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "ALTER TABLE `status` ADD `is_timestampable` TINYINT(1) NOT NULL DEFAULT 1;";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema21');
+        }
+    }
+
+    /**
+     * Add local_register and local_login to config
+     *
+     */
+    private function schema22()
+    {
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
+            ('local_register', '1'),
+            ('local_login', '1')";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema22');
         }
     }
 }

@@ -436,7 +436,6 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '21'),
 ('saml_debug', '0'),
 ('saml_strict', '1'),
 ('saml_baseurl', NULL),
@@ -447,4 +446,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_slo_binding', NULL),
 ('saml_nameidformat', NULL),
 ('saml_x509', NULL),
-('saml_privatekey', NULL);
+('saml_privatekey', NULL),
+('local_login', '1'),
+('local_register', '1'),
+('schema', '22');

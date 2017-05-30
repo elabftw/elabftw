@@ -30,10 +30,17 @@ try {
         ));
     }
 
+    $Config = new Config();
+    // local register might be disabled
+    if ($Config->configArr['local_register'] === '0') {
+        throw new Exception(_('No local account creation is allowed!'));
+    }
+
     $Teams = new Teams();
     $teamsArr = $Teams->readAll();
     echo $twig->render('register.html', array(
-        'teamsArr' => $teamsArr
+        'teamsArr' => $teamsArr,
+        'showLocal' => $showLocal
     ));
 
 } catch (Exception $e) {

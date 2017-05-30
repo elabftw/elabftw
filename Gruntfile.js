@@ -29,7 +29,7 @@ module.exports = function(grunt) {
               'app/js/jquery.jeditable.js',
               'app/js/jquery.rating.js',
               'app/js/3Dmol-nojquery.js',
-              'app/js/3dmol_helpers.js',
+              'app/js/3Dmol-helpers.js',
               'app/js/prism.js'],
 
           'app/js/chemdoodle/chemdoodle.min.js': [

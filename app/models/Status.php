@@ -39,9 +39,9 @@ class Status
      *
      * @param string $name
      * @param string $color
+     * @param int $isTimestampable
      * @param int $default
      * @param int|null $team
-     * @param int $isTimestampable
      * @return int id of the new item
      */
     public function create($name, $color, $isTimestampable = 1, $default = 0, $team = null)
@@ -57,7 +57,8 @@ class Status
             $name = 'Unnamed';
         }
 
-        $sql = "INSERT INTO status(name, color, team, is_timestampable, is_default) VALUES(:name, :color, :team, :is_timestampable, :is_default)";
+        $sql = "INSERT INTO status(name, color, team, is_timestampable, is_default)
+            VALUES(:name, :color, :team, :is_timestampable, :is_default)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
@@ -126,15 +127,15 @@ class Status
      * @param int $status ID of the status
      * @return bool true if status may be timestamped
      */
-     public function isTimestampable($status)
-     {
+    public function isTimestampable($status)
+    {
          $sql = "SELECT is_timestampable FROM status WHERE id = :id";
          $req = $this->pdo->prepare($sql);
          $req->bindParam(':id', $status, PDO::PARAM_INT);
          $req->execute();
 
          return (bool) $req->fetchColumn();
-     }
+    }
 
     /**
      * Remove all the default status for a team.

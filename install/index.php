@@ -1,39 +1,28 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   https://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * install/index.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
 use Exception;
 
-/* install/index.php to get an installation up and running */
-session_start();
-require_once '../vendor/autoload.php';
-$errflag = false;
+/**
+ * The default path in Docker is to automatically install the database schema
+ * because the config file is already here. Otherwise, ask infos for creating it.
+ *
+ */
 try {
-    // Check if there is already a config file
+    session_start();
+    require_once '../vendor/autoload.php';
+    $errflag = false;
 
+    // Check if there is already a config file
     if (file_exists('../config.php')) {
         // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
         // check that the config file is here and readable
@@ -49,7 +38,8 @@ try {
         // ok so we are connected, now count the number of tables before trying to count the users
         // if we are in docker, the number of tables might be 0
         // so we will need to import the structure before going further
-        $sql = "SELECT COUNT(DISTINCT `table_name`) AS tablesCount FROM `information_schema`.`columns` WHERE `table_schema` = :db_name";
+        $sql = "SELECT COUNT(DISTINCT `table_name`) AS tablesCount
+            FROM `information_schema`.`columns` WHERE `table_schema` = :db_name";
         $req = $pdo->prepare($sql);
         $req->bindValue(':db_name', DB_NAME);
         $req->execute();
@@ -94,28 +84,28 @@ try {
             throw new Exception($message);
         }
     }
-?>
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="author" content="Nicolas CARPi" />
-<meta name='referrer' content='origin'>
-<link rel="icon" type="image/ico" href="../app/img/favicon.ico" />
-<title>eLabFTW - INSTALL</title>
-<!-- CSS -->
-<link rel="stylesheet" media="all" href="../app/css/elabftw.min.css" />
-<!-- JAVASCRIPT -->
-<script src="../app/js/elabftw.min.js"></script>
-</head>
+    ?>
+    <!DOCTYPE HTML>
+    <html>
+    <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Nicolas CARPi" />
+    <meta name='referrer' content='origin'>
+    <link rel="icon" type="image/ico" href="../app/img/favicon.ico" />
+    <title>eLabFTW - INSTALL</title>
+    <!-- CSS -->
+    <link rel="stylesheet" media="all" href="../app/css/elabftw.min.css" />
+    <!-- JAVASCRIPT -->
+    <script src="../app/js/elabftw.min.js"></script>
+    </head>
 
-<body>
-<section id="container" class='container'>
-<section id='real_container'>
-<center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
-<h2>Welcome to the install of eLabFTW</h2>
+    <body>
+    <section id="container" class='container'>
+    <section id='real_container'>
+    <center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
+    <h2>Welcome to the install of eLabFTW</h2>
 
     <h3>Preliminary checks</h3>
     <?php

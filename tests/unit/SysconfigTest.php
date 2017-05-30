@@ -13,7 +13,7 @@ class SysconfigTest extends \PHPUnit_Framework_TestCase
     public function testTestEmailSend()
     {
         //$this->assertTrue($this->Sysconfig->testEmailSend('phpunitelabftw@yopmail.com'));
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->Sysconfig->testEmailSend('bad email');
     }
 

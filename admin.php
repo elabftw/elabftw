@@ -17,7 +17,6 @@ use Exception;
  *
  */
 try {
-//header("Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval' https://www.google.com/; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://ajax.googleapis.com/ https://www.google.com/; font-src 'self'; object-src 'self';");
 
     require_once 'app/init.inc.php';
     $pageTitle = _('Admin panel');

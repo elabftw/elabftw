@@ -152,8 +152,8 @@ try {
                 $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
                 if ($ts->timeStamp()) {
                     echo json_encode(array(
-                    'res' => true
-                ));
+                        'res' => true
+                    ));
                 }
             } else {
                 echo json_encode(array(

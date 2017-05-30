@@ -276,17 +276,23 @@ $(document).ready(function() {
         toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | image link | save',
         removed_menuitems : 'newdocument',
         codesample_languages: [
-            {text: 'HTML/XML', value: 'markup'},
-            {text: 'JavaScript', value: 'javascript'},
-            {text: 'CSS', value: 'css'},
-            {text: 'PHP', value: 'php'},
-            {text: 'Ruby', value: 'ruby'},
-            {text: 'R', value: 'r'},
-            {text: 'Python', value: 'python'},
-            {text: 'Java', value: 'java'},
+            {text: 'Bash', value: 'bash'},
             {text: 'C', value: 'c'},
-            {text: 'C#', value: 'csharp'},
-            {text: 'C++', value: 'cpp'}
+            {text: 'C++', value: 'cpp'},
+            {text: 'CSS', value: 'css'},
+            {text: 'Fortran', value: 'fortran'},
+            {text: 'Go', value: 'go'},
+            {text: 'HTML/XML', value: 'markup'},
+            {text: 'Java', value: 'java'},
+            {text: 'JavaScript', value: 'javascript'},
+            {text: 'Julia', value: 'julia'},
+            {text: 'Latex', value: 'latex'},
+            {text: 'Makefile', value: 'makefile'},
+            {text: 'Matlab', value: 'matlab'},
+            {text: 'Perl', value: 'perl'},
+            {text: 'Python', value: 'python'},
+            {text: 'R', value: 'r'},
+            {text: 'Ruby', value: 'ruby'}
             ],
         // save button :
         save_onsavecallback: function() {

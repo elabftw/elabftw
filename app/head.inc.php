@@ -35,6 +35,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     }
 }
 
+//header("Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval' https://www.google.com/; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://ajax.googleapis.com/ https://www.google.com/; font-src 'self'; object-src 'self';");
 echo $twig->render('head.html', array(
     'session' => $_SESSION,
     'pageTitle' => $pageTitle,

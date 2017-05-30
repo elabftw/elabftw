@@ -48,7 +48,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->Teams->update($post));
 
         // trigger Exception with bad file path
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $post = array(
             'teamsUpdateFull' => 'true',
             'deletable_xp' => 1,

@@ -317,11 +317,9 @@ class Uploads extends Entity
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $src);
 
-        // check if gmagick extension is loaded
         if (!extension_loaded('gmagick')) {
-            // if not, throw exception; thumbnails won't be generated, but no need to crash here;
-            // there may be valid reasons to (temporarily) disable this particular extension (e.g. security reasons)
-            throw new Exception('Thumbnail creation failed: gmagick extension not loaded!');
+            // we need gmagick for thumb generation
+            return false;
         }
 
         // do some sane white-listing; in theory, gmagick handles almost all image formats,

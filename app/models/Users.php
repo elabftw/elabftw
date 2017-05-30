@@ -167,7 +167,8 @@ class Users extends Auth
      */
     private function getValidated($group)
     {
-        if ($this->Config->configArr['admin_validate'] === "1" && $group === 4) { // validation is required for normal user
+        // validation is required for normal user
+        if ($this->Config->configArr['admin_validate'] === "1" && $group === 4) {
             return 0; // so new user will need validation
         }
         return 1;

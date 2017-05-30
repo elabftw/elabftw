@@ -19,6 +19,8 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    $id = 1;
+
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
     } elseif (isset($GET['id'])) {
@@ -125,16 +127,18 @@ try {
     // GET TAG LIST
     if (isset($_GET['term']) && isset($_GET['tag'])) {
         $Tags = new Tags($Entity);
-        echo json_encode($Tags->getList($_GET['term']));
+        $term = filter_var($_GET['term'], FILTER_SANITIZE_STRING);
+        echo json_encode($Tags->getList($term));
     }
 
     // GET MENTION LIST
     if (isset($_GET['term']) && isset($_GET['mention'])) {
         $userFilter = false;
+        $term = filter_var($_GET['term'], FILTER_SANITIZE_STRING);
         if (isset($_GET['userFilter'])) {
             $userFilter = true;
         }
-        echo json_encode($Entity->getMentionList($_GET['term'], $userFilter));
+        echo json_encode($Entity->getMentionList($term, $userFilter));
     }
 
     // UPDATE FILE COMMENT

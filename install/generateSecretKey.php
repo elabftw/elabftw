@@ -1,8 +1,19 @@
 <?php
+/**
+ * generateSecretKey.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
 use Defuse\Crypto\Key as Key;
 
-// generate a secret key
-$root = str_replace('install', '', dirname(__FILE__));
-require_once $root . 'vendor/autoload.php';
-$new_key = Key::createNewRandomKey();
-echo $new_key->saveToAsciiSafeString();
+/**
+ * Generate a secret key for the config file
+ *
+ */
+require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+echo Key::createNewRandomKey()->saveToAsciiSafeString();

@@ -19,7 +19,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
 
     public function testSetId()
     {
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->Database->setId('alpha');
     }
 
@@ -31,7 +31,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($this->Database->entityData));
         $this->assertEquals('Untitled', $this->Database->entityData['title']);
         $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
-        $this->setExpectedException('Exception');
+        $this->expectException(\Exception::class);
         $this->Database = new Database($this->Users, 'yep');
     }
 

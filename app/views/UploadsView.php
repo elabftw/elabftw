@@ -131,7 +131,23 @@ class UploadsView extends EntityView
             $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 
             // list of extensions understood by 3Dmol.js
-            $molExtensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
+            // see http://3dmol.csb.pitt.edu/doc/types.html
+            $molExtensions = array(
+                'cdjson',
+                'cif',
+                'cube',
+                'gro',
+                'json',
+                'mcif',
+                'mmtf',
+                'mol2',
+                'pdb',
+                'pqr',
+                'prmtop',
+                'sdf',
+                'vasp',
+                'xyz'
+            );
 
             // Make thumbnail only if it isn't done already
             if (!file_exists($thumbpath)) {
@@ -198,7 +214,7 @@ class UploadsView extends EntityView
                 $html .= $comment;
             }
 
-            if ($mode === 'edit') {
+            if ($mode === 'edit' && preg_match('/(jpg|jpeg|png|gif|tif|tiff|svg)$/i', $ext)) {
                 $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] . "'><img src='app/img/show-more.png' /> <p class='inline'>Insert in text at cursor position</p></div>";
             }
             $html .= "</div></div></div>";

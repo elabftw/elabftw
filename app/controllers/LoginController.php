@@ -31,6 +31,10 @@ try {
 
     } else {
 
+        if ($Saml->Config->configArr['local_login'] === '0') {
+            throw new Exception("Local login is disabled");
+        }
+
         // FORMKEY
         if (!isset($_POST['formkey']) || !$formKey->validate()) {
             throw new Exception(_("Your session expired. Please retry."));

@@ -20,6 +20,11 @@ try {
     // default location to redirect to
     $location = '../../login.php';
 
+    // check for disabled local register
+    if ($Users->Config->configArr['local_register'] === '0') {
+        throw new Exception('Registration is disabled.');
+    }
+
     // Stop bot registration by checking if the (invisible to humans) bot input is filled
     if (isset($_POST['bot']) && !empty($_POST['bot'])) {
         throw new Exception('Only humans can register an account!');

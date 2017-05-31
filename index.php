@@ -47,16 +47,44 @@ try {
 
         $Auth = new Auth();
         $_SESSION['samlUserdata'] = $SamlAuth->getAttributes();
-        if (!$Auth->loginWithSaml($_SESSION['samlUserdata']['User.email'][0])) {
+
+        // GET EMAIL
+        $emailAttribute = $Saml->Config->configArr['saml_email'];
+        $email = $_SESSION['samlUserdata'][$emailAttribute];
+        if (is_array($email)) {
+            $email = $email[0];
+        }
+
+        if (!$Auth->loginWithSaml($email)) {
             // the user doesn't exist yet in the db
             // check if the team exists
             $Teams = new Teams();
             $Users = new Users(null, $Saml->Config);
 
-            $team = $_SESSION['samlUserdata']['memberOf'][0];
+            // GET TEAM
+            $teamAttribute = $Saml->Config->configArr['saml_team'];
+            $team = $_SESSION['samlUserdata'][$teamAttribute];
+            if (is_array($team)) {
+                $team = $team[0];
+            }
             $teamId = $Teams->initializeIfNeeded($team);
-            $Users->create($_SESSION['samlUserdata']['User.email'][0], $teamId, $_SESSION['samlUserdata']['User.FirstName'][0], $_SESSION['samlUserdata']['User.LastName'][0]);
-            if (!$Auth->loginWithSaml($_SESSION['samlUserdata']['User.email'][0])) {
+
+            // GET FIRSTNAME AND LASTNAME
+            $firstnameAttribute = $Saml->Config->configArr['saml_firstname'];
+            $firstname = $_SESSION['samlUserdata'][$firstnameAttribute];
+            if (is_array($firstname)) {
+                $firstname = $firstname[0];
+            }
+            $lastnameAttribute = $Saml->Config->configArr['saml_lastname'];
+            $lastname = $_SESSION['samlUserdata'][$lastnameAttribute];
+            if (is_array($lastname)) {
+                $lastname = $lastname[0];
+            }
+
+            // CREATE USER
+            $Users->create($email, $teamId, $firstname, $lastname);
+            // ok now the user is created, try logging in again
+            if (!$Auth->loginWithSaml($email)) {
                 throw new Exception("Not authenticated!");
             }
         }

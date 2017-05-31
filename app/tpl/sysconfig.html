@@ -7,7 +7,7 @@
         <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
         <li class='tabhandle' id='tab7'>{{ 'Logs'|trans }}</li>
-        <li class='tabhandle' id='tab8'>{{ 'Authentication'|trans }}</li><span class='beta'>alpha</span>
+        <li class='tabhandle' id='tab8'>{{ 'SAML'|trans }}</li><span class='beta'>alpha</span>
     </ul>
 </menu>
 
@@ -290,41 +290,49 @@
     </div>
 </div>
 
-<!-- TAB 8 AUTHENTICATION -->
+<!-- TAB 8 SAML -->
 <div class='divhandle' id='tab8div'>
     <div class='box'>
         <form method='post' action='app/controllers/SysconfigController.php'>
             <h3>Service provider (this instance of eLabFTW)</h3>
             <input type='hidden' name='updateConfig' value='true' />
-            <p>Debug mode:</p>
-            <select class="clean-form col-3-form" name='saml_debug'>
+            <label class='block' for='saml-debug'>Debug mode:</label>
+            <select class="clean-form col-3-form" id='saml-debug' name='saml_debug'>
                 <option value='1'{{ Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
                 <option value='0'{{ Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
             </select>
-            <p>Strict mode:</p>
-            <select class="clean-form col-3-form" name='saml_strict'>
+            <label class='block' for='saml-strict'>Strict mode:</label>
+            <select class="clean-form col-3-form" id='saml-strict' name='saml_strict'>
                 <option value='1'{{ Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
                 <option value='0'{{ Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
             </select>
-            <p>Base url:</p>
-            <input type='url' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_baseurl }}' />
-            <p>entityId:</p>
-            <input type='url' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_entityid }}' />
-            <p>Assertion consumer service URL: (add /index.php?acs to baseurl)</p>
-            <input type='url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ Config.configArr.saml_acs_url }}' />
-            <p>SAML protocol binding to be used when returning the <Response> message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
-            <input type='text' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_acs_binding}}' />
+            <label class='block' for='saml-base'>Base url:</label>
+            <input type='url' id='saml-base' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_baseurl }}' />
+            <label class='block' for='saml-entityid'>EntityId:</label>
+            <input type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_entityid }}' />
+            <label class='block' for='saml-acs-url'>Assertion consumer service URL: (add /index.php?acs to baseurl)</label>
+            <input type='url' id='saml-acs-url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ Config.configArr.saml_acs_url }}' />
+            <label class='block' for='saml-acs-binding'>SAML protocol binding to be used when returning the Response message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
+            <input type='text' id='saml-acs-binding' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_acs_binding}}' />
 
-            <p>Single Logout Service</p>
-            <input type='url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_slo_url }}' />
-            <p>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
-            <input type='text' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_slo_binding }}' />
-            <p>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</p>
-            <input type='text' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ Config.configArr.saml_nameidformat }}' />
+            <label class='block' for='saml-slo-url'>Single Logout Service</label>
+            <input type='url' id='saml-slo-url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ Config.configArr.saml_slo_url }}' />
+            <label class='block' for='saml-slo-binding'>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
+            <input type='text' id='saml-slo-binding' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ Config.configArr.saml_slo_binding }}' />
+            <label class='block' for='saml-nameidformat'>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</label>
+            <input type='text' id='saml-nameidformat' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ Config.configArr.saml_nameidformat }}' />
             <label class='block' for='x509'>x509 Certificate</label>
             <textarea id='x509' name='saml_x509' />{{ Config.configArr.saml_x509 }}</textarea>
             <label class='block' for='x509'>Private key</label>
             <textarea id='x509' name='saml_privatekey' />{{ Config.configArr.saml_privatekey }}</textarea>
+            <label class='block' for='saml-team'>What attribute to look for the team name:</label>
+            <input type='text' id='saml-team' name='saml_team' value='{{ Config.configArr.saml_team }}' />
+            <label class='block' for='saml-email'>What attribute to look for the email:</label>
+            <input type='text' id='saml-email' name='saml_email' value='{{ Config.configArr.saml_email }}' />
+            <label class='block' for='saml-firstname'>What attribute to look for the firstname:</label>
+            <input type='text' id='saml-firstname' name='saml_firstname' value='{{ Config.configArr.saml_firstname }}' />
+            <label class='block' for='saml-lastname'>What attribute to look for the lastname:</label>
+            <input type='text' id='saml-lastname' name='saml_lastname' value='{{ Config.configArr.saml_lastname }}' />
             <div class='submitButtonDiv'>
                 <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
             </div>

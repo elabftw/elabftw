@@ -94,6 +94,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_nameidformat', NULL),
 ('saml_x509', NULL),
 ('saml_privatekey', NULL),
+('saml_team', NULL),
 ('local_login', '1'),
 ('local_register', '1');
 

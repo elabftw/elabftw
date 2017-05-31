@@ -568,7 +568,11 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     {
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('local_register', '1'),
-            ('local_login', '1')";
+            ('local_login', '1'),
+            ('saml_team', NULL),
+            ('saml_email', NULL),
+            ('saml_firstname', NULL),
+            ('saml_lastname', NULL)";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema22');
         }

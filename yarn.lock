@@ -172,9 +172,9 @@ depd@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.0.tgz#e1bd82c6aab6ced965b97b88b17ed3e528ca18c3"
 
-dropzone@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-4.3.0.tgz#48b0b8f2ad092872e4b535b672a7c3f1a1d67c91"
+dropzone@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.0.1.tgz#c3651f3b8e890cd693e86f0a1f4d0681f3a015ab"
 
 duplexer@^0.1.1:
   version "0.1.1"

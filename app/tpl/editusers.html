@@ -8,6 +8,9 @@
         <li>
             <form method='post' action='app/controllers/UsersController.php'>
                 <input type='hidden' value='true' name='usersUpdate' />
+                {% if fromSysconfig %}
+                    <input type='hidden' value='1' name='fromSysconfig' />
+                {% endif %}
                 <input type='hidden' value='{{ user.userid }}' name='userid' />
                 <ul class='list-inline'>
 

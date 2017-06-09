@@ -49,6 +49,7 @@ try {
         'Auth' => $Auth,
         'Config' => $Config,
         'FormKey' => $FormKey,
+        'fromSysconfig' => false,
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
         'session' => $_SESSION,

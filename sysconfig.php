@@ -106,6 +106,7 @@ try {
         'disable_sendmail' => $disable_sendmail,
         'disable_smtp' => $disable_smtp,
         'disable_php' => $disable_php,
+        'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
         'phpInfos' => $phpInfos,
         'logsArr' => $logsArr,

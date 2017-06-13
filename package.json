@@ -19,7 +19,7 @@
     "keymaster": "^1.6.2",
     "tinymce": "^4.6.1",
     "tinymce-mention": "^4.0.2",
-    "vanderlee-colorpicker": "^1.2.9"
+    "vanderlee-colorpicker": "^1.2.13"
   },
   "devDependencies": {
     "grunt": "^1.0.1",

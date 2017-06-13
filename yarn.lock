@@ -925,9 +925,9 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
 
-vanderlee-colorpicker@^1.2.9:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/vanderlee-colorpicker/-/vanderlee-colorpicker-1.2.9.tgz#d913a9ba447c6ab3fb3c89bc55c6243196f32195"
+vanderlee-colorpicker@^1.2.13:
+  version "1.2.13"
+  resolved "https://registry.yarnpkg.com/vanderlee-colorpicker/-/vanderlee-colorpicker-1.2.13.tgz#fd20d8917e7394be84948ad1fb87fe1d81b5b72b"
   dependencies:
     jquery ">=1.5"
     jquery-ui ">=1.7"

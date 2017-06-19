@@ -23,7 +23,7 @@ try {
 
     $Saml = new Saml(new Config, new Idps);
     $settingsArr = $Saml->getSettings();
-    if (empty($settingsArr['entityId'])) {
+    if (empty($settingsArr['sp']['entityId'])) {
         throw new Exception('No Service Provider configured. Aborting.');
     }
 

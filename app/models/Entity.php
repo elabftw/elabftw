@@ -218,8 +218,7 @@ class Entity
                 title = :title,
                 date = :date,
                 body = :body
-                WHERE userid = :userid
-                AND id = :id";
+                WHERE id = :id";
         } else {
             $sql = "UPDATE items SET
                 title = :title,
@@ -233,7 +232,9 @@ class Entity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userid);
+        if ($this->type != 'experiments') {
+            $req->bindParam(':userid', $this->Users->userid);
+        }
         $req->bindParam(':id', $this->id);
 
         // add a revision

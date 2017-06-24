@@ -21,6 +21,10 @@ if (isset($_SESSION['auth'])) {
         'Users' => $Users,
         'todoItems' => $todoItems
     ));
+
+    echo $twig->render('experimentsteps.html', array(
+        'Users' => $Users
+    ));
 }
 
 // show some stats about generation time and number of SQL queries

@@ -37,7 +37,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '22';
+    const REQUIRED_SCHEMA = '23';
 
     /**
      * Init Update with Config and pdo
@@ -179,6 +179,12 @@ class Update
             // 20170517
             $this->schema22();
             $this->updateSchema(22);
+        }
+
+        if ($current_schema < 23) {
+            // 20170624
+            $this->schema23();
+            $this->updateSchema(23);
         }
         // place new schema functions above this comment
 
@@ -575,6 +581,26 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             ('saml_lastname', NULL)";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error updating to schema22');
+        }
+    }
+
+    /**
+     * Add todolist table per experiment
+     *
+     */
+    private function schema23()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `experiments_steps` (
+            `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `experiment_id` int(10) UNSIGNED NOT NULL,
+            `body` text NOT NULL,
+            `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `ordering` int(10) UNSIGNED DEFAULT NULL,
+            `userid` int(10) UNSIGNED NOT NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema23');
         }
     }
 }

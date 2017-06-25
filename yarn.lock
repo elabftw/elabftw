@@ -326,13 +326,13 @@ grunt-contrib-cssmin@^2.2.0:
     clean-css "~4.1.1"
     maxmin "^2.1.0"
 
-grunt-contrib-uglify@^3.0.1:
+grunt-contrib-uglify@gruntjs/grunt-contrib-uglify#harmony:
   version "3.0.1"
-  resolved "https://registry.yarnpkg.com/grunt-contrib-uglify/-/grunt-contrib-uglify-3.0.1.tgz#fdeb5f938a4c8042f8e86ae46f63554e8e9511cb"
+  resolved "https://codeload.github.com/gruntjs/grunt-contrib-uglify/tar.gz/c2ccee1b61a585c5f4fca00da8f79cc1db37048b"
   dependencies:
     chalk "^1.0.0"
     maxmin "^1.1.0"
-    uglify-js "~3.0.4"
+    uglify-es "~3.0.5"
     uri-path "^1.0.0"
 
 grunt-contrib-watch@^1.0.0:
@@ -895,9 +895,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-uglify-js@~3.0.4:
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.0.10.tgz#e220e7dbc05ce1f9bb08268b221aa0cf152fb4e2"
+uglify-es@~3.0.5:
+  version "3.0.19"
+  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.0.19.tgz#53d448ddf59770c1eafbe2e257a27e2f4851d0e5"
   dependencies:
     commander "~2.9.0"
     source-map "~0.5.1"

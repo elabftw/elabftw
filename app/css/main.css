@@ -1012,6 +1012,7 @@ code {
     border-radius: 4px;
     margin:10px;
     border: 1px solid #fff;
+    z-index: 1;
 }
 
 #experimentSteps ul li, #todoList ul li {

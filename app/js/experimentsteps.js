@@ -27,9 +27,9 @@ class ExperimentSteps extends Todolist {
             if (json.res && json.todoItems != null) {
                 for (var i = 0; i < json.todoItems.length; i++) {
                     var experimentStep = json.todoItems[i];
-                    $('#experimentStep-list').prepend("<li class='todoItem' id='experimentStep_" +
+                    $('#experimentStep-list').append("<li class='todoItem' id='experimentStep_" +
                         experimentStep.id +
-                        "'><a href='#' class='destroyTodoItem' data-id='" + experimentStep.id + "'>X</a><span style='font-size:60%;display:block;'>" +
+                        "'><a href='#' class='experimentStepDestroyTodoItem' data-id='" + experimentStep.id + "'>X</a><span style='font-size:60%;display:block;'>" +
                         experimentStep.creation_time + "</span><span id='experimentStep_" + experimentStep.id + "' class='editable'>" + experimentStep.body +
                         '</li>');
                 }
@@ -63,7 +63,7 @@ class ExperimentSteps extends Todolist {
                     // add the todoitem
                     $('#experimentStep-list').prepend("<li class='todoItem' id='experimentStep_" +
                         json.id +
-                        "'><a href='#' class='destroyTodoItem' data-id='" + json.id + "'>X</a><span style='font-size:60%;display:block;'>" +
+                        "'><a href='#' class='experimentStepDestroyTodoItem' data-id='" + json.id + "'>X</a><span style='font-size:60%;display:block;'>" +
                         datetime + "</span><span id='experimentStep_" + json.id + "' class='editable'>" + body +
                         '</li>');
                     // make it editable right away
@@ -158,7 +158,7 @@ $(document).on('click', '.experimentStepsDestroyAll', function () {
     es.destroyAll();
 });
 
-$(document).on('click', '.destroyTodoItem', function () {
+$(document).on('click', '.experimentStepDestroyTodoItem', function () {
     es.destroy($(this).data('id'));
 });
 
@@ -182,6 +182,7 @@ $('#experimentStep-list').sortable({
         var ordering = $("#experimentStep-list").sortable("toArray");
 
         $.post(es.controller, {
+            'experimentid': es.experimentId,
             'updateOrdering': true,
             'ordering': ordering
         }).done(function (data) {

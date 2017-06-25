@@ -26,7 +26,7 @@ class Todolist {
         var self=this;
         var body = $('#todo').val();
         var currentdate = new Date();
-        var datetime = this.getCurrentTimestamp;
+        var datetime = this.getCurrentTimestamp();
 
         if (body !== "") {
             $.post(this.controller, {

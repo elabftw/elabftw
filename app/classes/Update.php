@@ -33,11 +33,10 @@ class Update
      * /////////////////////////////////////////////////////
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
-     * AND REFLECT THE CHANGE IN INSTALL/ELABFTW.SQL
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '22';
+    const REQUIRED_SCHEMA = '23';
 
     /**
      * Init Update with Config and pdo
@@ -179,6 +178,12 @@ class Update
             // 20170517
             $this->schema22();
             $this->updateSchema(22);
+        }
+
+        if ($current_schema < 23) {
+            // 20170517
+            $this->schema23();
+            $this->updateSchema(23);
         }
         // place new schema functions above this comment
 
@@ -577,4 +582,24 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             throw new Exception('Error updating to schema22');
         }
     }
+
+    /**
+     * Change column type of body in 'items_revisions' and 'experiments_revisions' to 'mediumtext'
+     * See elabftw/elabftw#429
+     *
+     * @throws Exception
+     */
+    private function schema23()
+    {
+        $sql = "ALTER TABLE experiments_revisions MODIFY body MEDIUMTEXT";
+        $sql2 = "ALTER TABLE items_revisions MODIFY body MEDIUMTEXT";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot change type of column "body" in table "experiments_revisions"!');
+        }
+        if (!$this->pdo->q($sql2)) {
+            throw new Exception('Cannot change type of column "body" in table "items_revisions"!');
+        }
+    }
+
 }

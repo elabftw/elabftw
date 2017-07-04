@@ -97,7 +97,7 @@ DROP TABLE IF EXISTS `experiments_revisions`;
 CREATE TABLE `experiments_revisions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item_id` int(10) unsigned NOT NULL,
-  `body` text NOT NULL,
+  `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
@@ -111,7 +111,7 @@ DROP TABLE IF EXISTS `items_revisions`;
 CREATE TABLE `items_revisions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item_id` int(10) unsigned NOT NULL,
-  `body` text NOT NULL,
+  `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
@@ -450,4 +450,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_team', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '22');
+('schema', '23');

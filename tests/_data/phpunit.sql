@@ -70,7 +70,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '22'),
+('schema', '24'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -399,7 +399,8 @@ CREATE TABLE `teams` (
   `stamppass` text,
   `stampprovider` text,
   `stampcert` text,
-  `stamphash` varchar(10) DEFAULT 'sha256'
+  `stamphash` varchar(10) DEFAULT 'sha256',
+  `team_orgid` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

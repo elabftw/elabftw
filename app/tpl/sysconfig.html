@@ -32,6 +32,7 @@
             <h3>{{ 'Add a New Team'|trans }}</h3>
             <hr>
             <input class='clean-form col-3-form' required type='text' placeholder='Pasteur lab' id='teamsName' />
+            <input class='clean-form col-3-form' type='text' id='teamsOrgid' />
             <button id='teamsCreateButton' class='button'>{{ 'Save'|trans }}</button>
         </div>
 
@@ -42,7 +43,10 @@
 
             {% for team in teamsArr %}
             {% set count = TeamsView.Teams.getStats(team.team_id) %}
+            <label for='teamName_{{ team.team_id }}'>Team Name</label>
             <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.team_id }}' type='text' value='{{ team.team_name }}' />
+            <label for='teamOrgid_{{ team.team_id }}'>Team Organisation ID</label>
+            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamOrgid_{{ team.team_id }}' type='text' value='{{ team.team_orgid }}' />
             <button data-id='{{ team.team_id }}' disabled id='teamsUpdateButton_{{ team.team_id }}' class='button teamsUpdateButton'>
                 {{ 'Save'|trans }}
             </button>

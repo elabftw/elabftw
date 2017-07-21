@@ -205,7 +205,7 @@ class Teams
      * @param string $orgid The id of the team in the organisation (from IDP for instance)
      * @return bool
      */
-    public function updateName($id, $name, $orgid)
+    public function updateName($id, $name, $orgid = "")
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams

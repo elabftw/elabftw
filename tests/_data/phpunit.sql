@@ -195,7 +195,7 @@ CREATE TABLE `experiments_links` (
 CREATE TABLE `experiments_revisions` (
   `id` int(10) UNSIGNED NOT NULL,
   `item_id` int(10) UNSIGNED NOT NULL,
-  `body` text NOT NULL,
+  `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -301,7 +301,7 @@ INSERT INTO `items` (`id`, `team`, `title`, `date`, `body`, `rating`, `type`, `l
 CREATE TABLE `items_revisions` (
   `id` int(10) UNSIGNED NOT NULL,
   `item_id` int(10) UNSIGNED NOT NULL,
-  `body` text NOT NULL,
+  `body` mediumtext NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

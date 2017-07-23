@@ -8,7 +8,7 @@
         "ext-curl":"*",
         "ext-gettext":"*",
         "ext-openssl":"*",
-        "ext-gmagick":"*",
+        "ext-gd":"*",
         "ext-pdo": "*",
         "ext-zip": "*",
         "defuse/php-encryption": "2.0.*",

@@ -33,7 +33,6 @@ class Update
      * /////////////////////////////////////////////////////
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
-     * AND REFLECT THE CHANGE IN INSTALL/ELABFTW.SQL
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
@@ -182,9 +181,14 @@ class Update
         }
 
         if ($current_schema < 23) {
-            // 20170624
+            // 20170517
             $this->schema23();
             $this->updateSchema(23);
+        }
+        if ($current_schema < 24) {
+            // 20170624
+            $this->schema24();
+            $this->updateSchema(24);
         }
         // place new schema functions above this comment
 
@@ -585,10 +589,29 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     }
 
     /**
+     * Change column type of body in 'items_revisions' and 'experiments_revisions' to 'mediumtext'
+     * See elabftw/elabftw#429
+     *
+     * @throws Exception
+     */
+    private function schema23()
+    {
+        $sql = "ALTER TABLE experiments_revisions MODIFY body MEDIUMTEXT";
+        $sql2 = "ALTER TABLE items_revisions MODIFY body MEDIUMTEXT";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot change type of column "body" in table "experiments_revisions"!');
+        }
+        if (!$this->pdo->q($sql2)) {
+            throw new Exception('Cannot change type of column "body" in table "items_revisions"!');
+        }
+    }
+  
+    /**
      * Add todolist table per experiment
      *
      */
-    private function schema23()
+    private function schema24()
     {
         $sql = "CREATE TABLE IF NOT EXISTS `experiments_steps` (
             `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -597,10 +620,9 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `ordering` int(10) UNSIGNED DEFAULT NULL,
             `userid` int(10) UNSIGNED NOT NULL,
-            PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            PRIMARY KEY (`id`));";
         if (!$this->pdo->q($sql)) {
-            throw new Exception('Error updating to schema23');
+            throw new Exception('Error updating to schema24');
         }
     }
 }

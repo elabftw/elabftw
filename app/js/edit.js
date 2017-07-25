@@ -191,6 +191,12 @@ $(document).ready(function() {
         document.forms.main_form.submit();
     });
 
+    // INSERT IMAGE AT CURSOR POSITION IN TEXT
+    $(document).on('click', '.inserter',  function() {
+        var imgLink = "<img src='app/download.php?f=" + $(this).data('link') + "' />";
+        tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
+    });
+
 
     // CREATE TAG
     // listen keypress, add tag when it's enter

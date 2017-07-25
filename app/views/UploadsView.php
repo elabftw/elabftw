@@ -232,10 +232,6 @@ class UploadsView extends EntityView
             $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
                     makeEditableFileComment('" . $this->Uploads->Entity->type . "', " . $this->Uploads->Entity->id . ");
                 });";
-            $html .= "$(document).on('click', '.inserter',  function() {
-                var imgLink = \"<img src='app/download.php?f=\" + $(this).data('link') + \"' />\";
-                tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
-                });";
         }
         $html .= "});</script>";
         return $html;

@@ -22,7 +22,7 @@ class Api
     public $method;
 
     /** the model (experiments/items) */
-    private $endpoint;
+    public $endpoint;
 
     /** optional arguments, like the id */
     public $args = array();
@@ -76,6 +76,18 @@ class Api
         } else {
             throw new Exception('Bad endpoint.');
         }
+    }
+
+    /**
+     * Create an experiment
+     *
+     * @return array
+     */
+    public function createExperiment()
+    {
+        $id = $this->Entity->create();
+
+        return array('id' => $id);
     }
 
     /**

@@ -37,8 +37,15 @@ try {
         if (count($_FILES) >= 1) {
             $output = $Api->uploadFile();
         // title date body update
-        } else {
+        } elseif (isset($_POST['title'])) {
             $output = $Api->updateEntity();
+        } else {
+            // create an experiment
+            if ($Api->endpoint === 'experiments') {
+                $output = $Api->createExperiment();
+            } else {
+                throw new Exception("Creating database items is not supported.");
+            }
         }
     }
 

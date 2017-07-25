@@ -47,12 +47,12 @@ class Teams
      */
     public function initializeIfNeeded($name)
     {
-        $sql = 'SELECT team_id, team_name FROM teams';
+        $sql = 'SELECT team_id, team_name, team_orgid FROM teams';
         $req = $this->pdo->prepare($sql);
         $req->execute();
         $teamsArr = $req->fetchAll();
         foreach ($teamsArr as $team) {
-            if ($team['team_name'] === $name) {
+            if (($team['team_name'] === $name) || ($team['team_orgid'] === $name)) {
                 return $team['team_id'];
             }
         }
@@ -202,16 +202,19 @@ class Teams
      *
      * @param int $id The id of the team
      * @param string $name The new name we want
+     * @param string $orgid The id of the team in the organisation (from IDP for instance)
      * @return bool
      */
-    public function updateName($id, $name)
+    public function updateName($id, $name, $orgid = "")
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams
-            SET team_name = :name
+            SET team_name = :name,
+                team_orgid = :orgid
             WHERE team_id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
+        $req->bindParam(':orgid', $orgid);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();

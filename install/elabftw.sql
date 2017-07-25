@@ -253,6 +253,7 @@ CREATE TABLE `teams` (
   `stampprovider` text DEFAULT NULL,
   `stampcert` text DEFAULT NULL,
   `stamphash` varchar(10) DEFAULT 'sha256',
+  `team_orgid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -450,4 +451,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_team', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '23');
+('schema', '24');

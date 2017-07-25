@@ -60,9 +60,13 @@ try {
         }
     }
 
-    // UPDATE TEAM NAME
+    // UPDATE TEAM
     if (isset($_POST['teamsUpdate'])) {
-        if ($Teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
+        $orgid = "";
+        if (isset($_POST['teamsUpdateOrgid'])) {
+            $orgid = $_POST['teamsUpdateOrgid'];
+        }
+        if ($Teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'], $orgid)) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')

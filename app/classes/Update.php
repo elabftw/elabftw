@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '23';
+    const REQUIRED_SCHEMA = '24';
 
     /**
      * Init Update with Config and pdo
@@ -184,6 +184,12 @@ class Update
             // 20170517
             $this->schema23();
             $this->updateSchema(23);
+        }
+
+        if ($current_schema < 24) {
+            // 20170720
+            $this->schema24();
+            $this->updateSchema(24);
         }
         // place new schema functions above this comment
 
@@ -602,4 +608,17 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         }
     }
 
+    /**
+     * Add a column for team_orgid which is the ID of the team given by SAML auth
+     *
+     * @throws Exception
+     */
+    private function schema24()
+    {
+        $sql = "ALTER TABLE `teams` ADD `team_orgid` VARCHAR(255) NULL DEFAULT NULL;";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot add team_orgid to teams table!');
+        }
+    }
 }

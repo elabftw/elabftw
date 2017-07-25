@@ -15,10 +15,12 @@ $(document).ready(function() {
         update: function(id) {
             document.getElementById('teamsUpdateButton_' + id).disabled = true;
             var name = $('#teamName_' + id).val();
+            var orgid = $('#teamOrgid_' + id).val();
             $.post(this.controller, {
                 teamsUpdate: true,
                 teamsUpdateId : id,
-                teamsUpdateName : name
+                teamsUpdateName : name,
+                teamsUpdateOrgid : orgid
             }).done(function(data) {
                 Teams.destructor(data);
             });

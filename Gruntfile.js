@@ -55,6 +55,7 @@ module.exports = function(grunt) {
           'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
           'app/js/footer.min.js': 'app/js/footer.js',
           'app/js/todolist.min.js': 'app/js/todolist.js',
+          'app/js/experimentsteps.min.js': 'app/js/experimentsteps.js',
           'app/js/login.min.js': 'app/js/login.js',
           'app/js/register.min.js': [
               'node_modules/jquery.complexify/jquery.complexify.js',

@@ -24,7 +24,7 @@
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-cssmin": "^2.2.0",
-    "grunt-contrib-uglify": "^3.0.1",
+    "grunt-contrib-uglify": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-shell": "^2.1.0"
   },

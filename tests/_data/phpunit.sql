@@ -35,6 +35,20 @@ CREATE TABLE `todolist` (
   `userid` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+--
+-- Table structure for table `todolist`
+--
+
+CREATE TABLE `experiments_steps` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `experiment_id` int(10) UNSIGNED NOT NULL,
+  `body` text NOT NULL,
+  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Table structure for table `banned_users`
@@ -746,6 +760,15 @@ ALTER TABLE `todolist`
   ADD PRIMARY KEY (`id`);
 ALTER TABLE `todolist`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Indexes for table `experiments_steps`
+--
+ALTER TABLE `experiments_steps`
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `experiments_steps`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

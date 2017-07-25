@@ -57,6 +57,7 @@
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
                     <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item.category }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
+                <span class="experimentstepicon" onclick='es.open( {{ item['id']}} )'><img class='image' src='app/img/status.png' /></span>
                 {% if item.tags is not null %}
                 <span class='tags'><img src='app/img/tags.png' alt='tags' />
                     {% set tagsArr = item.tags|split('|') %}

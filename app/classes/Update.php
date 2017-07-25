@@ -185,6 +185,11 @@ class Update
             $this->schema23();
             $this->updateSchema(23);
         }
+        if ($current_schema < 24) {
+            // 20170624
+            $this->schema24();
+            $this->updateSchema(24);
+        }
         // place new schema functions above this comment
 
         // remove files in uploads/tmp
@@ -601,5 +606,23 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             throw new Exception('Cannot change type of column "body" in table "items_revisions"!');
         }
     }
-
+  
+    /**
+     * Add todolist table per experiment
+     *
+     */
+    private function schema24()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `experiments_steps` (
+            `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `experiment_id` int(10) UNSIGNED NOT NULL,
+            `body` text NOT NULL,
+            `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `ordering` int(10) UNSIGNED DEFAULT NULL,
+            `userid` int(10) UNSIGNED NOT NULL,
+            PRIMARY KEY (`id`));";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema24');
+        }
+    }
 }

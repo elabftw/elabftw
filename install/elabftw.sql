@@ -367,6 +367,19 @@ CREATE TABLE IF NOT EXISTS `todolist` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- todolist per experiment
+--
+
+CREATE TABLE IF NOT EXISTS `experiments_steps` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `experiment_id` int(10) UNSIGNED NOT NULL,
+  `body` text NOT NULL,
+  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- idps

@@ -143,6 +143,9 @@ $(document).ready(function() {
     });
     $('#confirmTimestampDiv').hide();
 
+    // ACTIVATE FANCYBOX
+    $('[data-fancybox]').fancybox();
+
     // KEYBOARD SHORTCUTS
     key($('#shortcuts').data('create'), function(){
         location.href = $('#entityInfos').data('controller') + '?create=true';

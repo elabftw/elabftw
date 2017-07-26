@@ -197,6 +197,11 @@ $(document).ready(function() {
         tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
     });
 
+    // MAKE THE FILE COMMENT FIELD EDITABLE
+    $('.thumbnail').on('mouseover', '.editable', function(){
+        makeEditableFileComment($(this).data('type'), $(this).data('id'));
+    });
+
 
     // CREATE TAG
     // listen keypress, add tag when it's enter

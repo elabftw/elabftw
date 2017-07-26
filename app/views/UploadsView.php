@@ -114,7 +114,8 @@ class UploadsView extends EntityView
         $html .= "<div class='row'>";
         foreach ($uploadsArr as $upload) {
             $html .= "<div class='col-md-4 col-sm-6'>";
-            $html .= "<div class='thumbnail'>";
+            $html .= "<div class='thumbnail' data-type='" . $this->Uploads->Entity->type .
+                "' data-id='" . $this->Uploads->Entity->id . "'>";
             // show the delete button only in edit mode, not in view mode
             if ($mode === 'edit') {
                 $html .= "<a class='align_right' onClick=\"uploadsDestroy(" . $upload['id'] . "
@@ -221,19 +222,6 @@ class UploadsView extends EntityView
         } // end foreach
         $html .= "</div></div></div>";
 
-        $html .= "<script>$(document).ready(function() {";
-        if ($mode === 'view') {
-            // we use fancybox to display thumbnails only in view mode
-            $html .= "$('[data-fancybox]').fancybox();";
-        }
-
-        // add editable comments in edit mode
-        if ($mode === 'edit') {
-            $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
-                    makeEditableFileComment('" . $this->Uploads->Entity->type . "', " . $this->Uploads->Entity->id . ");
-                });";
-        }
-        $html .= "});</script>";
         return $html;
     }
 }

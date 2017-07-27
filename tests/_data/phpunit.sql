@@ -408,7 +408,7 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`team_id`, `team_name`, `deletable_xp`, `link_name`, `link_href`, `datetime`, `stamplogin`, `stamppass`, `stampprovider`, `stampcert`, `stamphash`) VALUES
-(1, 'Editme', 1, 'Documentation', 'https://elabftw.readthedocs.io', '2016-07-28 19:23:15', NULL, NULL, NULL, NULL, 'sha256');
+(1, 'Editme', 1, 'Documentation', 'https://doc.elabftw.net', '2016-07-28 19:23:15', NULL, NULL, NULL, NULL, 'sha256');
 
 -- --------------------------------------------------------
 

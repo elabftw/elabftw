@@ -54,7 +54,7 @@ try {
         // if we don't have the latest version, show button redirecting to doc
         if ($ReleaseCheck->updateIsAvailable()) {
             $message = $ReleaseCheck->getReleaseDate() . " - " .
-                _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/latest/how-to-update.html'>
+                _('A new version is available!') . " <a href='https://doc.elabftw.net/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>
                 <a href='" . $ReleaseCheck->getChangelogLink() . "'><button class='button'>Read changelog</button></a>";
             echo Tools::displayMessage($message, 'warning');
@@ -64,7 +64,7 @@ try {
     }
 
     if ($Config->configArr['mail_from'] === 'notconfigured@example.com') {
-        $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://elabftw.readthedocs.io/en/latest/postinstall.html#setting-up-email'>", "</a>");
+        $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://doc.elabftw.net/postinstall.html#setting-up-email'>", "</a>");
         echo Tools::displayMessage($message, 'ko');
     }
 

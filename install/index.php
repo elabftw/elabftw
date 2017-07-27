@@ -141,7 +141,7 @@ try {
             echo Tools::displayMessage($message, 'ok', false);
         } else { // failed at creating the folder
             $message = "Failed creating <em>uploads/</em> directory. You need to do it manually. 
-                <a href='https://elabftw.readthedocs.io/en/stable/faq.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
+                <a href='https://doc.elabftw.net/faq.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
             $errflag = true;
         }
     }
@@ -151,7 +151,7 @@ try {
     foreach ($extensionArr as $ext) {
         if (!extension_loaded($ext)) {
             $message = "The <em>" . $ext . "</em> extension is <strong>NOT</strong> loaded.
-                    <a href='https://elabftw.readthedocs.io/en/stable/faq.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
+                    <a href='https://doc.elabftw.net/faq.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
             $errflag = true;
         }
     }

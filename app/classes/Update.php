@@ -473,7 +473,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 
         // update the links. Use % because we might have index.html at the end
         $sql = "UPDATE teams
-            SET link_href = 'https://elabftw.readthedocs.io'
+            SET link_href = 'https://doc.elabftw.net'
             WHERE link_href LIKE 'doc/_build/html%'";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Problem updating to schema 13!');

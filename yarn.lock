@@ -318,9 +318,9 @@ grunt-cli@~1.2.0:
     nopt "~3.0.6"
     resolve "~1.1.0"
 
-grunt-contrib-cssmin@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/grunt-contrib-cssmin/-/grunt-contrib-cssmin-2.2.0.tgz#72def40628ee8e213ad9a76804d131db66604a41"
+grunt-contrib-cssmin@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/grunt-contrib-cssmin/-/grunt-contrib-cssmin-2.2.1.tgz#64cbebe60134bc1270ca4154514ec4007cc16f7f"
   dependencies:
     chalk "^1.0.0"
     clean-css "~4.1.1"

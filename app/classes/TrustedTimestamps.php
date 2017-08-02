@@ -318,31 +318,31 @@ class TrustedTimestamps extends Entity
     {
         $client = new \GuzzleHttp\Client();
 
-        $authOption = array();
+        $options = array(
+            // add user agent
+            // http://developer.github.com/v3/#user-agent-required
+            'headers' => [
+                'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
+                'Content-Type' => 'application/timestamp-query',
+                'Content-Transfer-Encoding' => 'base64'
+            ],
+            // add proxy if there is one
+            'proxy' => $this->Config->configArr['proxy'],
+            // add a timeout, because if you need proxy, but don't have it, it will mess up things
+            // in seconds
+            'timeout' => 5,
+            'body' => file_get_contents($this->requestfilePath)
+        );
+
         if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
-            $authOption = array('auth' => array(
+            $options['auth'] = [
                 $this->stampParams['stamplogin'],
                 $this->stampParams['stamppassword']
-            ));
+                ];
         }
 
         try {
-            return $client->request('POST', $this->stampParams['stampprovider'], [
-                // add user agent
-                // http://developer.github.com/v3/#user-agent-required
-                'headers' => [
-                    'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
-                    'Content-Type' => 'application/timestamp-query',
-                    'Content-Transfer-Encoding' => 'base64'
-                ],
-                // add proxy if there is one
-                ['proxy' => $this->Config->configArr['proxy']],
-                // add a timeout, because if you need proxy, but don't have it, it will mess up things
-                // in seconds
-                ['timeout' => 5],
-                'body' => file_get_contents($this->requestfilePath),
-                $authOption
-            ]);
+            return $client->request('POST', $this->stampParams['stampprovider'], $options);
 
         } catch (RequestException $e) {
             throw new Exception($e->getMessage());
@@ -417,13 +417,17 @@ class TrustedTimestamps extends Entity
          * every other case (Certificate not found / invalid / openssl is not installed / ts command not known)
          * are being handled the same way -> retcode 1 + any retarray NOT containing "message imprint mismatch"
          */
-
-        if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok") {
-            return true;
-        }
-
         if (!is_array($retarray)) {
             throw new Exception('$retarray must be an array.');
+        }
+
+        if ($retcode === 0) {
+            // because the first return line could be "Using configuration from /usr/local/ssl/openssl.cnf"
+            // so we check the two first lines
+            if (strtolower(trim($retarray[0])) == "verification: ok" ||
+                strtolower(trim($retarray[1])) == "verification: ok") {
+                return true;
+            }
         }
 
         foreach ($retarray as $retline) {

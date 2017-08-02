@@ -11,6 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Use this to check for latest version
@@ -53,39 +55,29 @@ class ReleaseCheck
     }
 
     /**
-     * Make a get request with cURL, using proxy setting if any
+     * Make a GET request with Guzzle
      *
      * @param string $url URL to hit
-     * @return string|boolean Return true if the download succeeded, else false
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return \GuzzleHttp\Psr7\Response
      */
     private function get($url)
     {
-        if (!extension_loaded('curl')) {
-            throw new Exception('Error: cURL PHP extension not loaded! Please install the PHP cURL extension.');
-        }
+        $client = new \GuzzleHttp\Client();
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        // this is to get content
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // add proxy if there is one
-        if (strlen($this->Config->configArr['proxy']) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->Config->configArr['proxy']);
-        }
+        return $client->request('GET', $url, [
+            // add user agent
+            // http://developer.github.com/v3/#user-agent-required
+            'headers' => [
+                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION
+            ],
+            // add proxy if there is one
+            ['proxy' => $this->Config->configArr['proxy']],
+            // add a timeout, because if you need proxy, but don't have it, it will mess up things
+            // in seconds
+            ['timeout' => 5]
 
-        // add user agent
-        // http://developer.github.com/v3/#user-agent-required
-        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . self::INSTALLED_VERSION);
-
-        // add a timeout, because if you need proxy, but don't have it, it will mess up things
-        // 5 seconds
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-
-        // we don't want the header
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-
-        // DO IT!
-        return curl_exec($ch);
+        ]);
     }
 
     /**
@@ -96,16 +88,19 @@ class ReleaseCheck
      */
     public function getUpdatesIni()
     {
-        $ini = $this->get(self::URL);
-        // try with http if https failed (see #176)
-        if (!$ini) {
-            $ini = $this->get(self::URL_HTTP);
+        try {
+            $response = $this->get(self::URL);
+        } catch (RequestException $e) {
+            // try with http if https failed (see #176)
+            try {
+                $response = $this->get(self::URL_HTTP);
+            } catch (RequestException $e) {
+                return false;
+            }
         }
-        if (!$ini) {
-            return false;
-        }
-        // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
-        $versions = parse_ini_string($ini, true);
+
+        // read the response
+        $versions = parse_ini_string($response->getBody(), true);
         // get the latest version
         $this->version = array_keys($versions)[0];
         $this->releaseDate = $versions[$this->version]['date'];

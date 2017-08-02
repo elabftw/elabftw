@@ -15,7 +15,8 @@
         "mpdf/mpdf": "^6.1",
         "swiftmailer/swiftmailer":"^5.4",
         "twig/extensions": "^1.4",
-        "onelogin/php-saml": "^2.10"
+        "onelogin/php-saml": "^2.10",
+        "guzzlehttp/guzzle": "^6.3"
 
     },
     "require-dev": {

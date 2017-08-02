@@ -16,6 +16,8 @@ use DateTime;
 use Exception;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -309,39 +311,42 @@ class TrustedTimestamps extends Entity
     /**
      * Contact the TSA and receive a token after successful timestamp
      *
+     * @throws Exception
+     * @return \GuzzleHttp\Psr7\Response
      */
     private function postData()
     {
-        $ch = curl_init();
-        // set url of TSA
-        curl_setopt($ch, CURLOPT_URL, $this->stampParams['stampprovider']);
-        // if login and password are set, pass them to curl
+        $client = new \GuzzleHttp\Client();
+
+        $authOption = array();
         if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
-            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->stampParams['stamplogin'] . ":" . $this->stampParams['stamppassword']);
-        }
-        // add proxy if there is one
-        if (strlen($this->Config->configArr['proxy']) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->Config->configArr['proxy']);
-        }
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($this->requestfilePath));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . ReleaseCheck::INSTALLED_VERSION);
-        $binaryResponseString = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($status != 200 || !strlen($binaryResponseString)) {
-            // check if we got something bad
-            throw new Exception('Bad answer from TSA (' . $status . ')<br>' . $binaryResponseString);
+            $authOption = array('auth' => array(
+                $this->stampParams['stamplogin'],
+                $this->stampParams['stamppassword']
+            ));
         }
 
-        // populate variable
-        $this->binaryResponseString = $binaryResponseString;
+        try {
+            return $client->request('POST', $this->stampParams['stampprovider'], [
+                // add user agent
+                // http://developer.github.com/v3/#user-agent-required
+                'headers' => [
+                    'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
+                    'Content-Type' => 'application/timestamp-query',
+                    'Content-Transfer-Encoding' => 'base64'
+                ],
+                // add proxy if there is one
+                ['proxy' => $this->Config->configArr['proxy']],
+                // add a timeout, because if you need proxy, but don't have it, it will mess up things
+                // in seconds
+                ['timeout' => 5],
+                'body' => file_get_contents($this->requestfilePath),
+                $authOption
+            ]);
+
+        } catch (RequestException $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**
@@ -617,8 +622,8 @@ class TrustedTimestamps extends Entity
         // first we create the request file
         $this->createRequestfile();
 
-        // make the request to the TSA
-        $this->postData();
+        // get an answer from the TSA
+        $this->binaryResponseString = $this->postData()->getBody();
 
         // we need the name of the pdf (elabid-timestamped.pdf)
         // for saving the token correctly

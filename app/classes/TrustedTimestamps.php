@@ -335,10 +335,10 @@ class TrustedTimestamps extends Entity
         );
 
         if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
-            $options['auth'] = [
+            $options['auth'] = array(
                 $this->stampParams['stamplogin'],
                 $this->stampParams['stamppassword']
-                ];
+            );
         }
 
         try {
@@ -476,32 +476,6 @@ class TrustedTimestamps extends Entity
             return true;
         }
         throw new Exception('Could not validate the timestamp with java failsafe method. Please report this bug on Github.');
-    }
-
-    /**
-     * Update SQL
-     *
-     */
-    private function sqlUpdateExperiment()
-    {
-        $sql = "UPDATE experiments SET
-            locked = 1,
-            lockedby = :userid,
-            lockedwhen = :when,
-            timestamped = 1,
-            timestampedby = :userid,
-            timestampedwhen = :when,
-            timestamptoken = :longname
-            WHERE id = :id;";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':when', $this->responseTime);
-        // the date recorded in the db has to match the creation time of the timestamp token
-        $req->bindParam(':longname', $this->responsefilePath);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
-        $req->bindParam(':id', $this->Entity->id);
-        if (!$req->execute()) {
-            throw new Exception('Cannot update SQL!');
-        }
     }
 
     /**
@@ -643,7 +617,9 @@ class TrustedTimestamps extends Entity
         $this->validate();
 
         // SQL
-        $this->sqlUpdateExperiment();
+        if (!$this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath)) {
+            throw new Exception('Cannot update SQL!');
+        }
         $this->sqlInsertPdf();
 
         return true;

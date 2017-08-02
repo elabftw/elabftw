@@ -194,6 +194,34 @@ class Experiments extends Entity
     }
 
     /**
+     * Set the experiment as timestamped with a path to the token
+     *
+     * @param string $responseTime the date of the timestamp
+     * @param string responsefilePath the file path to the timestamp token
+     * @return bool
+     */
+    public function updateTimestamp($responseTime, $responsefilePath)
+    {
+        $sql = "UPDATE experiments SET
+            locked = 1,
+            lockedby = :userid,
+            lockedwhen = :when,
+            timestamped = 1,
+            timestampedby = :userid,
+            timestampedwhen = :when,
+            timestamptoken = :longname
+            WHERE id = :id;";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':when', $responseTime);
+        // the date recorded in the db has to match the creation time of the timestamp token
+        $req->bindParam(':longname', $responsefilePath);
+        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
+
+    /**
      * Select what will be the status for the experiment
      *
      * @return int The status ID

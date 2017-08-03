@@ -16,7 +16,7 @@
     "jquery-ui-dist": "^1.12.1",
     "jquery.complexify": "^0.5.2",
     "keymaster": "^1.6.2",
-    "tinymce": "^4.6.4",
+    "tinymce": "^4.6.5",
     "tinymce-mention": "^4.0.2",
     "vanderlee-colorpicker": "^1.2.13"
   },

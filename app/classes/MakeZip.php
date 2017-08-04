@@ -111,24 +111,28 @@ class MakeZip extends Make
     }
 
     /**
-     * Add the .asn1 token to the zip archive if the experiment is timestamped
+     * Add the .asn1 token and the timestamped pdf to the zip archive
      *
      * @param int $id The id of current item we are zipping
      */
-    private function addAsn1Token($id)
+    private function addTimestampFiles($id)
     {
         if ($this->Entity->type === 'experiments' && $this->Entity->entityData['timestamped'] === '1') {
             // SQL to get the path of the token
-            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
+            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
+                type = 'timestamp-token'
+                OR type = 'exp-pdf-timestamp') LIMIT 2";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':id', $id);
             $req->execute();
-            $token = $req->fetch();
-            // add it to the .zip
-            $this->zip->addFile(
-                ELAB_ROOT . 'uploads/' . $token['long_name'],
-                $this->folder . "/" . $token['real_name']
-            );
+            $uploads = $req->fetchAll();
+            foreach ($uploads as $upload) {
+                // add it to the .zip
+                $this->zip->addFile(
+                    ELAB_ROOT . 'uploads/' . $upload['long_name'],
+                    $this->folder . "/" . $upload['real_name']
+                );
+            }
         }
     }
 
@@ -224,7 +228,7 @@ class MakeZip extends Make
             $entityArr['uploads'] = $uploadedFilesArr;
 
             $this->nameFolder();
-            $this->addAsn1Token($id);
+            $this->addTimestampFiles($id);
             if (is_array($entityArr)) {
                 $this->addAttachedFiles($entityArr['uploads']);
             }

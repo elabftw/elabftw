@@ -494,6 +494,12 @@ class Users extends Auth
             $new_orderby = $params['orderby'];
         }
 
+        // SORT
+        $new_sort = 'desc';
+        if (isset($params['sort']) && ($params['sort'] === 'asc' || $params['sort'] === 'desc')) {
+            $new_sort = $params['sort'];
+        }
+
         // LAYOUT
         $new_layout = 0;
         if (isset($params['single_column_layout']) && $params['single_column_layout'] === 'on') {
@@ -558,6 +564,7 @@ class Users extends Auth
         $sql = "UPDATE users SET
             limit_nb = :new_limit,
             orderby = :new_orderby,
+            sort = :new_sort,
             sc_create = :new_sc_create,
             sc_edit = :new_sc_edit,
             sc_submit = :new_sc_submit,
@@ -573,6 +580,7 @@ class Users extends Auth
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
         $req->bindParam(':new_orderby', $new_orderby);
+        $req->bindParam(':new_sort', $new_sort);
         $req->bindParam(':new_sc_create', $new_sc_create);
         $req->bindParam(':new_sc_edit', $new_sc_edit);
         $req->bindParam(':new_sc_submit', $new_sc_submit);

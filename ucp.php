@@ -26,6 +26,7 @@ try {
 
     $Templates = new Templates($Users);
     $templatesArr = $Templates->readFromUserid();
+    echo Tools::printArr($Users->userData);
 
     echo $twig->render('ucp.html', array(
         'Users' => $Users,

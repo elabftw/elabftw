@@ -481,6 +481,7 @@ CREATE TABLE `users` (
   `token` varchar(255) DEFAULT NULL,
   `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
   `orderby` varchar(255) NULL DEFAULT NULL,
+  `sort` varchar(255) NULL DEFAULT NULL,
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',

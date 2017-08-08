@@ -676,9 +676,13 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     private function schema27()
     {
         $sql = "ALTER TABLE `users` ADD `orderby` VARCHAR(255) NULL DEFAULT NULL;";
+        $sql2 = "ALTER TABLE `users` ADD `sort` VARCHAR(255) NULL DEFAULT NULL;";
 
         if (!$this->pdo->q($sql)) {
             throw new Exception('Cannot add orderby to users table!');
+        }
+        if (!$this->pdo->q($sql2)) {
+            throw new Exception('Cannot add sort to users table!');
         }
     }
 }

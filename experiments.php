@@ -83,10 +83,20 @@ try {
         }
 
         // SORT
-        if (isset($_GET['sort'])) {
-            if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {
-                $EntityView->Entity->sort = $_GET['sort'];
-            }
+        $sort = 'desc';
+
+        // load the pref from the user
+        if (isset($EntityView->Entity->Users->userData['sort'])) {
+            $sort = $EntityView->Entity->Users->userData['sort'];
+        }
+
+        // now GET pref from the filter-order-sort menu
+        if (isset($_GET['sort']) && strlen($_GET['sort']) > 1) {
+            $sort = $_GET['sort'];
+        }
+
+        if ($sort === 'asc' || $sort === 'desc') {
+            $EntityView->Entity->sort = $sort;
         }
 
         echo $EntityView->buildShowMenu('experiments');

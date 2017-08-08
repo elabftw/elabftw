@@ -46,6 +46,14 @@
                 </select>
             </p>
             <p>
+                <label for='sort'>{{ 'Sort:'|trans }}</label>
+                <select id='sort' name='sort'>
+                    <option value='default' {{ Users.userData.sort == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
+                    <option value='asc' {{ Users.userData.sort == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
+                    <option value='desc' {{ Users.userData.sort == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
+                </select>
+            </p>
+            <p>
                 <label for='layout'>{{ 'Use single column layout:'|trans }}</label>
                 <input id='layout' type='checkbox' name='single_column_layout'
                     {{ Users.userData.single_column_layout == '1' ? " checked='checked'" }}

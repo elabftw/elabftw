@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '24';
+    const REQUIRED_SCHEMA = '25';
 
     /**
      * Init Update with Config and pdo
@@ -190,6 +190,12 @@ class Update
             // 20170720
             $this->schema24();
             $this->updateSchema(24);
+        }
+
+        if ($current_schema < 25) {
+            // 20170808
+            $this->schema25();
+            $this->updateSchema(25);
         }
         // place new schema functions above this comment
 
@@ -619,6 +625,20 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 
         if (!$this->pdo->q($sql)) {
             throw new Exception('Cannot add team_orgid to teams table!');
+        }
+    }
+
+    /**
+     * Add a column for single user layout pref. See #410
+     *
+     * @throws Exception
+     */
+    private function schema25()
+    {
+        $sql = "ALTER TABLE `users` ADD `single_column_layout` TINYINT(1) NOT NULL DEFAULT 0;";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot add single_column_layout to users table!');
         }
     }
 }

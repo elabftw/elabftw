@@ -487,6 +487,12 @@ class Users extends Auth
             ));
         $new_limit = filter_var($params['limit'], FILTER_VALIDATE_INT, $filter_options);
 
+        // LAYOUT
+        $new_layout = 0;
+        if (isset($params['single_column_layout']) && $params['single_column_layout'] === 'on') {
+            $new_layout = 1;
+        }
+
         // KEYBOARD SHORTCUTS
         // only take first letter
         $new_sc_create = $params['sc_create'][0];
@@ -546,7 +552,8 @@ class Users extends Auth
             close_warning = :new_close_warning,
             chem_editor = :new_chem_editor,
             lang = :new_lang,
-            default_vis = :new_default_vis
+            default_vis = :new_default_vis,
+            single_column_layout = :new_layout
             WHERE userid = :userid;";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
@@ -559,6 +566,7 @@ class Users extends Auth
         $req->bindParam(':new_chem_editor', $new_chem_editor);
         $req->bindParam(':new_lang', $new_lang);
         $req->bindParam(':new_default_vis', $new_default_vis);
+        $req->bindParam(':new_layout', $new_layout);
         $req->bindParam(':userid', $this->userid);
 
         return $req->execute();

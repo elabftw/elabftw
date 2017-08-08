@@ -89,8 +89,13 @@
               {{ Users.userData.chem_editor == '1' ? " checked='checked'" }}
             />
             <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode?'|trans }}</label>
-            </p>
             <br>
+            <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
+              {{ Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
+            />
+            <label for='cjk_fonts'>{{ 'Enable Chinese, Japonese and Korean fonts in PDF generation. WARNING: enabling CJK fonts will make the PDF size very big!'|trans }}</label>
+            </p>
+
             <p>
             <label for='default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
             <select name='default_vis'>
@@ -110,6 +115,8 @@
                     </option>
                 {% endfor %}
             </select>
+            </p>
+
         </section>
 
         <div style='margin-top:30px;' class='center'>

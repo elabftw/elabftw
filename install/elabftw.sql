@@ -310,6 +310,7 @@ CREATE TABLE `users` (
   `api_key` varchar(255) NULL DEFAULT NULL,
   `default_vis` varchar(255) NULL DEFAULT 'team',
   `single_column_layout` tinyint(1) NOT NULL DEFAULT 0,
+  `cjk_fonts` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -452,4 +453,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_team', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '25');
+('schema', '26');

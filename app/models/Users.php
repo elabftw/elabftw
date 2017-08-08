@@ -523,6 +523,12 @@ class Users extends Auth
         if (isset($params['close_warning']) && $params['close_warning'] === 'on') {
             $new_close_warning = 1;
         }
+
+        // CJK FONTS
+        $new_cjk_fonts = 0;
+        if (isset($params['cjk_fonts']) && $params['cjk_fonts'] === 'on') {
+            $new_cjk_fonts = 1;
+        }
         // CHEM EDITOR
         $new_chem_editor = 0;
         if (isset($params['chem_editor']) && $params['chem_editor'] === 'on') {
@@ -553,7 +559,8 @@ class Users extends Auth
             chem_editor = :new_chem_editor,
             lang = :new_lang,
             default_vis = :new_default_vis,
-            single_column_layout = :new_layout
+            single_column_layout = :new_layout,
+            cjk_fonts = :new_cjk_fonts
             WHERE userid = :userid;";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
@@ -567,6 +574,7 @@ class Users extends Auth
         $req->bindParam(':new_lang', $new_lang);
         $req->bindParam(':new_default_vis', $new_default_vis);
         $req->bindParam(':new_layout', $new_layout);
+        $req->bindParam(':new_cjk_fonts', $new_cjk_fonts);
         $req->bindParam(':userid', $this->userid);
 
         return $req->execute();

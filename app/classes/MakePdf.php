@@ -360,12 +360,19 @@ class MakePdf extends Make
 
         $date = date_create($this->Entity->entityData['date']);
         $date_str = date_format($date, 'Y-m-d');
+
+        // add a CJK font for the body if we want CJK fonts
+        $cjkFlag = "";
+        if ($this->Entity->Users->userData['cjk_fonts']) {
+            $cjkFlag = " style='font-family:sun-extA;'";
+        }
+
         $header = '
                 <html>
                     <head>
                         <style>' . $this->addCss() . '</style>
                     </head>
-                <body>
+                <body' . $cjkFlag . '>
                 <htmlpageheader name="header">
                     <div id="header">
                         <h1>' . $this->Entity->entityData['title'] . '</h1>

@@ -101,7 +101,7 @@ try {
 
         echo $EntityView->buildShowMenu('experiments');
         echo $EntityView->buildShow();
-        echo $twig->render('show.html', array(
+        echo $Twig->render('show.html', array(
             'Ev' => $EntityView
         ));
 
@@ -124,7 +124,7 @@ try {
             echo $EntityView->showTimestamp();
         }
 
-        echo $twig->render('view.html', array(
+        echo $Twig->render('view.html', array(
             'Ev' => $EntityView,
             'Status' => $Status,
             'Tags' => $Tags,
@@ -148,7 +148,7 @@ try {
 
         $Revisions = new Revisions($EntityView->Entity);
 
-        echo $twig->render('edit.html', array(
+        echo $Twig->render('edit.html', array(
             'Ev' => $EntityView,
             'Revisions' => $Revisions,
             'Status' => $Status,

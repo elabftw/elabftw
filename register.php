@@ -38,7 +38,7 @@ try {
 
     $Teams = new Teams();
     $teamsArr = $Teams->readAll();
-    echo $twig->render('register.html', array(
+    echo $Twig->render('register.html', array(
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal
     ));

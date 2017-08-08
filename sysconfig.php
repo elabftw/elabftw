@@ -98,7 +98,7 @@ try {
 
     $idpsArr = $Idps->readAll();
 
-    echo $twig->render('sysconfig.html', array(
+    echo $Twig->render('sysconfig.html', array(
         'Auth' => $Auth,
         'Config' => $Config,
         'TeamsView' => $TeamsView,

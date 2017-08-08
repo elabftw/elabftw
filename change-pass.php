@@ -40,7 +40,7 @@ try {
     if ($deadline < time()) {
         throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));
     }
-    echo $twig->render('change-pass.html', array(
+    echo $Twig->render('change-pass.html', array(
         'Auth' => $Auth,
         'key' => filter_var($_GET['key'], FILTER_SANITIZE_STRING),
         'deadline' => filter_var($_GET['deadline'], FILTER_SANITIZE_STRING),

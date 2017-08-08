@@ -40,7 +40,7 @@ try {
         }
     }
 
-    echo $twig->render('team.html', array(
+    echo $Twig->render('team.html', array(
         'Users' => $Users,
         'TeamsView' => $TeamsView,
         'Scheduler' => $Scheduler,

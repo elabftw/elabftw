@@ -64,7 +64,6 @@ try {
 
     // TWIG
     $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
-    $twig = new \Twig_Environment($loader);
     $cache = ELAB_ROOT . 'uploads/tmp';
     $options = array();
 
@@ -72,17 +71,17 @@ try {
     if (!$Update->Config->configArr['debug']) {
         $options = array('cache' => $cache);
     }
-    $twig = new \Twig_Environment($loader, $options);
+    $Twig = new \Twig_Environment($loader, $options);
 
     // custom twig filters |msg and |kdate
     $filterOptions = array('is_safe' => array('html'));
     $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
     $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-    $twig->addFilter($msgFilter);
-    $twig->addFilter($dateFilter);
+    $Twig->addFilter($msgFilter);
+    $Twig->addFilter($dateFilter);
 
     // i18n for twig
-    $twig->addExtension(new \Twig_Extensions_Extension_I18n());
+    $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
     // run the update script if we have the wrong schema version
     if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {

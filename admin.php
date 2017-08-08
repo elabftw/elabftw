@@ -45,7 +45,7 @@ try {
     $unvalidatedUsersArr = $Users->readAllFromTeam($_SESSION['team_id'], 0);
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
 
-    echo $twig->render('admin.html', array(
+    echo $Twig->render('admin.html', array(
         'Auth' => $Auth,
         'Config' => $Config,
         'FormKey' => $FormKey,

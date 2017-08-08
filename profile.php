@@ -29,7 +29,7 @@ try {
     $UserStats = new UserStats($Users, $count);
     $TagCloud = new TagCloud($Users->userid);
 
-    echo $twig->render('profile.html', array(
+    echo $Twig->render('profile.html', array(
         'Users' => $Users,
         'UserStats' => $UserStats,
         'TagCloud' => $TagCloud,

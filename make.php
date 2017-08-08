@@ -53,7 +53,7 @@ try {
         $filesize = Tools::formatBytes(filesize($Make->filePath));
         require_once 'app/head.inc.php';
 
-        echo $twig->render('make.html', array(
+        echo $Twig->render('make.html', array(
             'what' => $_GET['what'],
             'Make' => $Make,
             'filesize' => $filesize

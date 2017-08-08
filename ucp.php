@@ -27,7 +27,7 @@ try {
     $Templates = new Templates($Users);
     $templatesArr = $Templates->readFromUserid();
 
-    echo $twig->render('ucp.html', array(
+    echo $Twig->render('ucp.html', array(
         'Users' => $Users,
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,

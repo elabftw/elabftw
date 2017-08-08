@@ -74,7 +74,7 @@ try {
 
     $idpsArr = $Idps->readAll();
 
-    echo $twig->render('login.html', array(
+    echo $Twig->render('login.html', array(
         'BannedUsers' => $BannedUsers,
         'Config' => $Config,
         'FormKey' => $FormKey,

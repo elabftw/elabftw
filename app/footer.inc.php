@@ -17,7 +17,7 @@ if (isset($_SESSION['auth'])) {
     $Users = new Users($_SESSION['userid']);
     $todoItems = $Todolist->readAll();
 
-    echo $twig->render('todolist.html', array(
+    echo $Twig->render('todolist.html', array(
         'Users' => $Users,
         'todoItems' => $todoItems
     ));
@@ -28,7 +28,7 @@ $pdo = Db::getConnection();
 $sqlNb = $pdo->getNumberOfQueries();
 $generationTime = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5);
 
-echo $twig->render('footer.html', array(
+echo $Twig->render('footer.html', array(
     'SESSION' => $_SESSION,
     'Users' => $Users,
     'sqlNb' => $sqlNb,

@@ -21,17 +21,17 @@ class TeamGroups
     /** The PDO object */
     private $pdo;
 
-    /** our team */
-    private $team;
+    /** instance of Users */
+    private $Users;
 
     /**
      * Constructor
      *
      * @param int $team
      */
-    public function __construct($team)
+    public function __construct(Users $users)
     {
-        $this->team = $team;
+        $this->Users = $users;
         $this->pdo = Db::getConnection();
     }
 
@@ -46,7 +46,7 @@ class TeamGroups
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
 
         return $req->execute();
     }
@@ -62,7 +62,7 @@ class TeamGroups
 
         $sql = "SELECT id, name FROM team_groups WHERE team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         $groups = $req->fetchAll();
@@ -91,7 +91,7 @@ class TeamGroups
      *
      * @return array
      */
-    public function readFull()
+    public function getVisibilityList()
     {
         $idArr = array();
         $nameArr = array();
@@ -99,8 +99,13 @@ class TeamGroups
         $groups = $this->readAll();
 
         foreach ($groups as $group) {
-            $idArr[] = $group['id'];
-            $nameArr[] = $group['name'];
+            // only add the teamGroup to the list if user is part of it
+            foreach ($group['users'] as $userInGroup) {
+                if (in_array($this->Users->userData['fullname'], $userInGroup)) {
+                    $idArr[] = $group['id'];
+                    $nameArr[] = $group['name'];
+                }
+            }
         }
         $tgArr = array_combine($idArr, $nameArr);
 
@@ -145,7 +150,7 @@ class TeamGroups
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':name', $name);
-            $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
 
             if ($req->execute()) {

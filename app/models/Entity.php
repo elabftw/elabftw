@@ -333,8 +333,8 @@ class Entity
 
                 // if the vis. setting is a team group, check we are in the group
                 if (Tools::checkId($item['visibility'])) {
-                    $TeamGroups = new TeamGroups($this->Users->userData['team']);
-                    if ($TeamGroups->isInTeamGroup($item['userid'], $item['visibility'])) {
+                    $TeamGroups = new TeamGroups($this->Users);
+                    if ($TeamGroups->isInTeamGroup($this->userid, $item['visibility'])) {
                         $permissions['read'] = true;
                     }
                 }

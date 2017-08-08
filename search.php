@@ -159,7 +159,7 @@ $tag_db_options = $Tags->generateTagList($tagsArr);
                     <option value='team'><?= _('Team') ?></option>
                     <option value='user'><?= _('Only me') ?></option>
 <?php
-$TeamGroups = new TeamGroups($Users->userData['team']);
+$TeamGroups = new TeamGroups($Users);
 $teamGroupsArr = $TeamGroups->readAll();
 foreach ($teamGroupsArr as $teamGroup) {
     echo "<option value='" . $teamGroup['id'] . "' ";

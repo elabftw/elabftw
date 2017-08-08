@@ -67,7 +67,7 @@
                     <img src='app/img/eye.png' alt='visibility' />
                     <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
                     <select id='visibility_select'>
-                        {% for key, value in Ev.TeamGroups.readFull %}
+                        {% for key, value in Ev.TeamGroups.getVisibilityList %}
                             <option value='{{ key }}'
                             {{ Ev.Entity.entityData['visibility'] == key ? ' selected' }}
                             >{{ value|trans }}</option>

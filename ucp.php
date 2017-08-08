@@ -21,7 +21,7 @@ try {
     $pageTitle = _('User Control Panel');
     require_once 'app/head.inc.php';
 
-    $TeamGroups = new TeamGroups($Users->userData['team']);
+    $TeamGroups = new TeamGroups($Users);
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($Users);

@@ -33,7 +33,7 @@ try {
     $Users = new Users($_SESSION['userid'], $Config);
     $ItemsTypes = new ItemsTypes($Users);
     $Status = new Status($Users);
-    $TeamGroups = new TeamGroups($_SESSION['team_id']);
+    $TeamGroups = new TeamGroups($Users);
     $Templates = new Templates($Users);
     $Teams = new Teams($_SESSION['team_id']);
 

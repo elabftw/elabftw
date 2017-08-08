@@ -19,6 +19,7 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    // id of the item (experiment or database item)
     $id = 1;
 
     if (isset($_POST['id'])) {
@@ -220,15 +221,31 @@ try {
     // DESTROY UPLOAD
     if (isset($_POST['uploadsDestroy'])) {
         $Uploads = new Uploads($Entity);
-        if ($Uploads->destroy($_POST['upload_id'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('File deleted successfully')
-            ));
+        $upload = $Uploads->readFromId($_POST['upload_id']);
+        $permissions = $Entity->getPermissions();
+        if ($permissions['write']) {
+            if ($Uploads->destroy($_POST['upload_id'])) {
+                // check that the filename is not in the body. see #432
+                $msg = "";
+                if (strpos($Entity->entityData['body'], $upload['long_name'])) {
+                    $msg = ". ";
+                    $msg .= _("Please make sure to remove any reference to this file in the body!");
+                }
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('File deleted successfully' . $msg)
+                ));
+            } else {
+
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
         } else {
             echo json_encode(array(
                 'res' => false,
-                'msg' => Tools::error()
+                'msg' => Tools::error(true)
             ));
         }
     }

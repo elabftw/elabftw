@@ -105,6 +105,10 @@ module.exports = function(grunt) {
       // xdebug must be ENABLED
       runcoverage: {
         command: 'php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html'
+      },
+      // run yarn install
+      yarninstall: {
+        command: 'yarn install'
       }
     }
   });
@@ -114,7 +118,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('default', ['uglify', 'cssmin']);
+  // before minifying js it is preferable to do 'yarn install' to update the dependencies
+  grunt.registerTask('yarn', 'shell:yarninstall');
+  grunt.registerTask('default', ['yarn', 'uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
   grunt.registerTask('api', 'shell:buildapi');
   grunt.registerTask('test', 'shell:runtests');

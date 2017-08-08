@@ -70,7 +70,7 @@ try {
         }
 
         // now GET pref from the filter-order-sort menu
-        if (isset($_GET['order'])) {
+        if (isset($_GET['order']) && strlen($_GET['order']) > 1) {
             $order = $_GET['order'];
         }
 

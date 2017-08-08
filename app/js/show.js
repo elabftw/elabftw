@@ -1,5 +1,10 @@
 $(document).ready(function(){
 
+    // validate the form upon change. fix #451
+    $('.form-control').on('change', function() {
+        $('#filter-order-sort').submit();
+    });
+
     // bodyToggleImg is the little +/- image
     $('.bodyToggleImg').click(function() {
         // transform the + in - and vice versa

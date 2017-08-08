@@ -220,7 +220,7 @@ class EntityView
         $html .= "<div class='col-md-10 hidden-xs'>";
 
         // FILTERS
-        $html .= "<form class='form-inline align_right'>";
+        $html .= "<form id='filter-order-sort' class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='tag' value='" . $this->tag . "' />";
         $html .= "<input type='hidden' name='q' value='" . $this->query . "' />";

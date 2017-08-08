@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '26';
+    const REQUIRED_SCHEMA = '27';
 
     /**
      * Init Update with Config and pdo
@@ -202,6 +202,12 @@ class Update
             // 20170808
             $this->schema26();
             $this->updateSchema(26);
+        }
+
+        if ($current_schema < 27) {
+            // 20170808
+            $this->schema27();
+            $this->updateSchema(27);
         }
         // place new schema functions above this comment
 
@@ -659,6 +665,20 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 
         if (!$this->pdo->q($sql)) {
             throw new Exception('Cannot add cjk_fonts to users table!');
+        }
+    }
+
+    /**
+     * Add a user preference for orderby
+     *
+     * @throws Exception
+     */
+    private function schema27()
+    {
+        $sql = "ALTER TABLE `users` ADD `orderby` VARCHAR(255) NULL DEFAULT NULL;";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot add orderby to users table!');
         }
     }
 }

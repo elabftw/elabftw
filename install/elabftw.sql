@@ -298,6 +298,7 @@ CREATE TABLE `users` (
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
   `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
+  `orderby` varchar(255) NULL DEFAULT NULL,
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
@@ -453,4 +454,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_team', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '26');
+('schema', '27');

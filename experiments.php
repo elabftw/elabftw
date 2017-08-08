@@ -62,16 +62,26 @@ try {
         }
         // ORDER
         // default by date
-        $EntityView->Entity->order = 'experiments.date';
-        if (isset($_GET['order'])) {
-            if ($_GET['order'] === 'cat') {
-                $EntityView->Entity->order = 'status.name';
-            } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
-                $EntityView->Entity->order = 'experiments.' . $_GET['order'];
-            } elseif ($_GET['order'] === 'comment') {
-                $EntityView->Entity->order = 'experiments_comments.recentComment';
-            }
+        $order = 'date';
+
+        // load the pref from the user
+        if (isset($EntityView->Entity->Users->userData['orderby'])) {
+            $order = $EntityView->Entity->Users->userData['orderby'];
         }
+
+        // now GET pref from the filter-order-sort menu
+        if (isset($_GET['order'])) {
+            $order = $_GET['order'];
+        }
+
+        if ($order === 'cat') {
+            $EntityView->Entity->order = 'status.name';
+        } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
+            $EntityView->Entity->order = 'experiments.' . $order;
+        } elseif ($order === 'comment') {
+            $EntityView->Entity->order = 'experiments_comments.recentComment';
+        }
+
         // SORT
         if (isset($_GET['sort'])) {
             if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {

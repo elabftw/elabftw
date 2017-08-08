@@ -36,6 +36,16 @@
                 <input id='limit' type='text' size='2' maxlength='2' value='{{ Users.userData.limit_nb }}' name='limit'>
             </p>
             <p>
+                <label for='orderby'>{{ 'Order by:'|trans }}</label>
+                <select id='orderby' name='orderby'>
+                    <option value='default' {{ Users.userData.orderby == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
+                    <option value='cat' {{ Users.userData.orderby == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
+                    <option value='date' {{ Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
+                    <option value='title' {{ Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
+                    <option value='comment' {{ Users.userData.orderby == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
+                </select>
+            </p>
+            <p>
                 <label for='layout'>{{ 'Use single column layout:'|trans }}</label>
                 <input id='layout' type='checkbox' name='single_column_layout'
                     {{ Users.userData.single_column_layout == '1' ? " checked='checked'" }}

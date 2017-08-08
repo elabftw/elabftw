@@ -487,6 +487,13 @@ class Users extends Auth
             ));
         $new_limit = filter_var($params['limit'], FILTER_VALIDATE_INT, $filter_options);
 
+        // ORDER BY
+        $new_orderby = null;
+        $whitelistOrderby = array(null, 'cat', 'date', 'title', 'comment');
+        if (isset($params['orderby']) && in_array($params['orderby'], $whitelistOrderby)) {
+            $new_orderby = $params['orderby'];
+        }
+
         // LAYOUT
         $new_layout = 0;
         if (isset($params['single_column_layout']) && $params['single_column_layout'] === 'on') {
@@ -550,6 +557,7 @@ class Users extends Auth
 
         $sql = "UPDATE users SET
             limit_nb = :new_limit,
+            orderby = :new_orderby,
             sc_create = :new_sc_create,
             sc_edit = :new_sc_edit,
             sc_submit = :new_sc_submit,
@@ -564,6 +572,7 @@ class Users extends Auth
             WHERE userid = :userid;";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
+        $req->bindParam(':new_orderby', $new_orderby);
         $req->bindParam(':new_sc_create', $new_sc_create);
         $req->bindParam(':new_sc_edit', $new_sc_edit);
         $req->bindParam(':new_sc_submit', $new_sc_submit);

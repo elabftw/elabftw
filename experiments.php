@@ -75,7 +75,7 @@ try {
         }
 
         if ($order === 'cat') {
-            $EntityView->Entity->order = 'status.name';
+            $EntityView->Entity->order = 'status.ordering';
         } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
             $EntityView->Entity->order = 'experiments.' . $order;
         } elseif ($order === 'comment') {

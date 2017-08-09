@@ -59,7 +59,7 @@
 
                 {{ item.title|raw }}</p></a>
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
-                    <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {{ item.category }}</span>
+                    <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {% if not item.locked %}<a href='?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>{% endif %} {{ item.category }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
                 {% if item.tags is not null %}
                 <span class='tags'><img src='app/img/tags.png' alt='tags' />

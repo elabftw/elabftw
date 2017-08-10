@@ -52,15 +52,6 @@
                 <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
             {% endif %}
             <section class='item' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
-                {# show attached if there is a file attached #}
-                {% if item.has_attachment %}
-                    <img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />
-                {% endif %}
-
-                {% if Ev.Entity.type == 'items' %}
-                    {{ Ev.showStars(item.rating)|raw }}
-                {% endif %}
-
                 <p class='title'>
                 <a href='?mode=view&id={{ item.id }}'>
 
@@ -72,11 +63,20 @@
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
                 </p>
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
-                    <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Ev.Entity.type }}' style='vertical-align:-3px;' />
+                    <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Ev.Entity.type }}' style='width:0%;vertical-align:-3px;' />
                      {% if not item.locked %}<a href='?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>{% endif %} {{ item.category }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
                 {% if item.timestamped %}
                     <img src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
+                {% endif %}
+
+                {# show attached if there is a file attached #}
+                {% if item.has_attachment %}
+                    <img src='app/img/attached.png' alt='file attached' />
+                {% endif %}
+
+                {% if Ev.Entity.type == 'items' %}
+                    {{ Ev.showStars(item.rating)|raw }}
                 {% endif %}
 
                 {% if item.tags is not null %}

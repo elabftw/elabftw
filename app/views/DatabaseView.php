@@ -47,15 +47,13 @@ class DatabaseView extends EntityView
      */
     public function showStars($rating)
     {
-        $html = "<span class='align_right'>";
+        $html = "";
 
         $green = "<img src='app/img/star-green.png' alt='☻' />";
         $gray = "<img src='app/img/star-gray.png' alt='☺' />";
 
         $html .= str_repeat($green, $rating);
         $html .= str_repeat($gray, (5 - $rating));
-
-        $html .= "</span>";
 
         return $html;
     }

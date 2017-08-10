@@ -167,7 +167,7 @@ class Experiments extends Entity
      * @param int $status Id of the status
      * @return bool
      */
-    public function updateStatus($status)
+    public function updateCategory($status)
     {
         $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);

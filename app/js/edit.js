@@ -153,11 +153,11 @@ $(document).ready(function() {
 
     // STATUS SELECT
     $(document).on('change', '#status_select', function() {
-        var statusId = $(this).val();
+        var categoryId = $(this).val();
         $.post("app/controllers/ExperimentsController.php", {
-            updateStatus: true,
+            updateCategory: true,
             id: id,
-            statusId : statusId
+            categoryId : categoryId
         }).done(function(data) {
             var json = JSON.parse(data);
             if (json.res) {

@@ -59,18 +59,18 @@ try {
     }
 
     // UPDATE STATUS
-    if (isset($_POST['updateStatus'])) {
+    if (isset($_POST['updateCategory'])) {
         $Entity->setId($_POST['id']);
         $Entity->canOrExplode('write');
 
 
-        if ($Entity->updateStatus($_POST['statusId'])) {
+        if ($Entity->updateCategory($_POST['categoryId'])) {
             // get the color of the status for updating the css
             $Status = new Status($Users);
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved'),
-                'color' => $Status->readColor($_POST['statusId'])
+                'color' => $Status->readColor($_POST['categoryId'])
             ));
         } else {
             echo json_encode(array(

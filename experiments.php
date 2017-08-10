@@ -102,7 +102,8 @@ try {
         echo $EntityView->buildShowMenu('experiments');
         echo $EntityView->buildShow();
         echo $Twig->render('show.html', array(
-            'Ev' => $EntityView
+            'Ev' => $EntityView,
+            'Category' => $Status
         ));
 
     // VIEW

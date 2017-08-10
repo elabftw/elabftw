@@ -115,32 +115,6 @@ class EntityView
     }
 
     /**
-     * Generate html for zip/csv export buttons
-     *
-     * @param array $itemArr a whole bunch of items
-     * @return string
-     */
-    public function buildExportMenu($itemArr)
-    {
-        $idArr = array();
-
-        foreach ($itemArr as $item) {
-            $idArr[] = $item['id'];
-        }
-        $html = "<div class='align_right'>";
-        $html .= "<a name='anchor'></a>";
-        $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-        $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" .
-            Tools::buildStringFromArray($idArr) . "&type=" . $this->Entity->type . "'>";
-        $html .= " <span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>";
-        $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" .
-            Tools::buildStringFromArray($idArr) . "&type=" . $this->Entity->type . "'>";
-        $html .= " <span>Export in CSV</span><img src='app/img/spreadsheet.png' alt='Export CSV' /></a></div>";
-
-        return $html;
-    }
-
-    /**
      * The menu on top
      *
      * @param string $type experiments or items

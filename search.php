@@ -438,7 +438,8 @@ if (isset($_GET)) {
         echo "<section style='margin-top:20px'>";
         echo $EntityView->buildShow();
         echo $Twig->render('show.html', array(
-            'Ev' => $EntityView
+            'Ev' => $EntityView,
+            'searchPage' => true
         ));
         echo "</section>";
     }

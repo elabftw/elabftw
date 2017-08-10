@@ -63,6 +63,24 @@ try {
         $redirect = true;
     }
 
+    // UPDATE CATEGORY (ITEM TYPE)
+    if (isset($_POST['updateCategory'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->updateCategory($_POST['categoryId'])) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
     // UPDATE RATING
     if (isset($_POST['rating'])) {
         $Entity->setId($_POST['id']);

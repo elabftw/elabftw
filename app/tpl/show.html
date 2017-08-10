@@ -5,7 +5,6 @@
 {% elseif count == 0 and Ev.searchType == '' %}
     {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
 {% else %}
-    {{ Ev.buildExportMenu(Ev.itemsArr)|raw }}
     <p class='smallgray' style='display:inline'>
         {{ count }}
         {% trans %}
@@ -13,15 +12,36 @@
         {% plural count %}
             results found
         {% endtrans %}
+        <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
+        <span id='advancedSelectOptions'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> - 
+            <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
     </p>
 
-        {% set page = 'experiments' %}
-        {% if Ev.Entity.type == 'items' %}
+    {% set page = 'experiments' %}
+    {% if Ev.Entity.type == 'items' %}
         {% set page = 'database' %}
-        {% endif %}
+    {% endif %}
 
-<style>
-</style>
+    <p id='withSelected'>With selected:
+    {% if not searchPage %}
+        <select id='catChecked'>
+            <option selected disabled>
+            {% if page == 'experiments' %}
+                {{ 'Change status'|trans }}
+            {% else %}
+                {{ 'Change item type'|trans }}
+            {% endif %}
+            </option>
+
+            {% for category in Category.readAll() %}
+                <option value='{{ category['category_id'] }}'>{{ category['category'] }}</option>
+            {% endfor %}
+        </select>
+    {% endif %}
+        <button data-what = 'zip' class='button csvzip'>{{ 'Make Zip'|trans }}</button>
+        <button data-what='csv' class='button csvzip'>{{ 'Make Csv'|trans }}</button>
+        <button id='deleteChecked' class='button button-delete'>{{ 'Delete'|trans }}</button>
+    </p>
     <div class='row display-flex'>
     {% for item in Ev.itemsArr %}
         {% set permissions = Ev.Entity.getPermissions(item) %}
@@ -57,7 +77,7 @@
                 <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
                 {% endif %}
 
-                {{ item.title|raw }}</p></a>
+                {{ item.title|raw }}</p></a><input type='checkbox' data-id='{{ item.id }}' data-type='{{ Ev.Entity.type }}' style='float:right;width:0%;margin:4px;' />
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
                     <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' /> {% if not item.locked %}<a href='?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>{% endif %} {{ item.category }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>

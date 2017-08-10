@@ -82,6 +82,24 @@ class Database extends Entity
     }
 
     /**
+     * Update the item type
+     *
+     * @param int $category Id of the item type
+     * @return bool
+     */
+    public function updateCategory($category)
+    {
+        $sql = "UPDATE items SET type = :type WHERE userid = :userid AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':type', $category);
+        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $req->execute();
+    }
+
+
+    /**
      * Duplicate an item
      *
      * @return int $newId The id of the newly created item

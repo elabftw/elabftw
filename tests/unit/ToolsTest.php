@@ -52,14 +52,6 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('unknown', Tools::getExt('/path/to/myfilegif'));
     }
 
-    public function testBuildStringFromArray()
-    {
-        $array = array(1, 2, 42);
-        $this->assertEquals('1+2+42', Tools::buildStringFromArray($array));
-        $this->assertEquals('1-2-42', Tools::buildStringFromArray($array, '-'));
-        $this->assertFalse(Tools::buildStringFromArray('pwet'));
-    }
-
     public function testCheckId()
     {
         $this->assertFalse(Tools::checkId('yep'));

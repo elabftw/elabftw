@@ -245,28 +245,6 @@ class Tools
     }
 
     /**
-     * Return a string 5+3+6 when fed an array
-     *
-     * @param array $array
-     * @param string $delim An optionnal delimiter
-     * @return false|string
-     */
-    public static function buildStringFromArray($array, $delim = '+')
-    {
-        $str = "";
-
-        if (!is_array($array)) {
-            return false;
-        }
-
-        foreach ($array as $i) {
-            $str .= $i . $delim;
-        }
-        // remove last delimiter
-        return rtrim($str, $delim);
-    }
-
-    /**
      * Check ID is valid (pos int)
      *
      * @param int $id

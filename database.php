@@ -74,9 +74,12 @@ try {
         if (!isset($_GET['q']) && !isset($_GET['tag']) && !isset($_GET['filter'])) {
             $EntityView->Entity->setLimit(50);
         }
+
+        $ItemsTypes = new ItemsTypes($Users);
         echo $EntityView->buildShow();
         echo $Twig->render('show.html', array(
-            'Ev' => $EntityView
+            'Ev' => $EntityView,
+            'Category' => $ItemsTypes
         ));
 
     // VIEW

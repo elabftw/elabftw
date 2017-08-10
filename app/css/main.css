@@ -1081,7 +1081,11 @@ h3.togglable-next {
 
 .bodyToggleImg {
     float: right;
-    margin-top: 10px;
+    margin-top: 3px;
+}
+
+p.title {
+    cursor: pointer;
 }
 
 .itemsTypesEditor {

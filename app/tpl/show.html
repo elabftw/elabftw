@@ -52,16 +52,15 @@
                 <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
             {% endif %}
             <section class='item' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
-                <p class='title'>
-                <a href='?mode=view&id={{ item.id }}'>
 
+                <p class='title' data-id='{{ item.id }}'>
                 {% if item.locked %}
-                <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
+                    <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
                 {% endif %}
 
-                {{ item.title|raw }}</a>
-<img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
+                {{ item.title|raw }}
                 </p>
+<img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Ev.Entity.type }}' style='width:0%;vertical-align:-3px;' />
                      {% if not item.locked %}<a href='?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>{% endif %} {{ item.category }}</span>
@@ -105,4 +104,4 @@
 
 <div id='shortcuts' data-create='{{ Ev.Entity.Users.userData.sc_create }}'></div>
 <div id='limit' data-limit='{{ Ev.limit }}'></div>
-<script src='app/js/show.min.js'></script>
+<script src='app/js/show.js'></script>

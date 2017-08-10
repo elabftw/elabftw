@@ -1079,6 +1079,11 @@ h3.togglable-next {
     display: none;
 }
 
+.bodyToggleImg {
+    float: right;
+    margin-top: 10px;
+}
+
 .itemsTypesEditor {
     margin-top:10px;
 }

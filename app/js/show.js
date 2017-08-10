@@ -69,19 +69,36 @@ $(document).ready(function(){
         return checkedBoxes;
     }
 
+    var bgColor = '#c4f9ff';
+
+    $('input[type=checkbox]').on('click', function() {
+        if ($(this).prop('checked')) {
+            $(this).parent().parent().css('background-color', bgColor);
+        } else {
+            $(this).parent().parent().css('background-color', '');
+        }
+    });
+
     $('#selectAllBoxes').click(function() {
         $('input[type=checkbox]').prop('checked', true);
+        $('input[type=checkbox]').parent().parent().css('background-color', bgColor);
         $('#advancedSelectOptions').show();
         $('#withSelected').show();
     });
 
     $('#unselectAllBoxes').click(function() {
         $('input:checkbox').prop('checked', false);
+        $('input[type=checkbox]').parent().parent().css('background-color', '');
     });
 
     $('#invertSelection').click(function() {
         $('input[type=checkbox]').each(function () {
             this.checked = !this.checked;
+            if ($(this).prop('checked')) {
+                $(this).parent().parent().css('background-color', bgColor);
+            } else {
+                $(this).parent().parent().css('background-color', '');
+            }
         });
     });
 

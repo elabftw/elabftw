@@ -72,11 +72,11 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->Experiments->updateVisibility(1));
     }
 
-    public function testUpdateStatus()
+    public function testUpdateCategory()
     {
         $this->Experiments->setId(1);
         $this->Experiments->populate();
-        $this->assertTrue($this->Experiments->updateStatus(3));
+        $this->assertTrue($this->Experiments->updateCategory(3));
     }
 
     public function testDuplicate()

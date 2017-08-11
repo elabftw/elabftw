@@ -94,6 +94,7 @@ class Entity
     /**
      * Read all from the entity
      * Optionally with filters
+     * Here be dragons!
      *
      * @return array
      */
@@ -111,14 +112,14 @@ class Entity
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id";
-        $stepsSelect = ", experiments_steps.body as next_step";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
                 status.color, status.name AS category, status.id AS category_id,
-                    uploads.up_item_id, uploads.has_attachment, stepst.next_step";
+                uploads.up_item_id, uploads.has_attachment,
+                stepst.next_step,
+                experiments_comments.recent_comment";
 
-            $expCommentsSelect = ", experiments_comments.recent_comment";
             $from = "FROM experiments";
 
             $stepsJoin = "LEFT JOIN (
@@ -139,7 +140,6 @@ class Entity
 
             $sql = $select . ' ' .
                 $tagsSelect . ' ' .
-                $expCommentsSelect . ' ' .
                 $from . ' ' .
                 $stepsJoin . ' ' .
                 $tagsJoin . ' ' .

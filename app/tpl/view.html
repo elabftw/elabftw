@@ -1,9 +1,7 @@
 {% if Ev.Entity.type == 'experiments' %}
     {% set controller = 'app/controllers/ExperimentsController.php' %}
-    {% set page = 'experiments.php' %}
 {% else %}
     {% set controller = 'app/controllers/DatabaseController.php' %}
-    {% set page = 'database.php' %}
 {% endif %}
 
 {% if Ev.Entity.Users.userData['chem_editor'] %}
@@ -32,7 +30,7 @@
     <img src='app/img/calendar.png' title='date' alt='Date :' />{{ Ev.Entity.entityData['date']|kdate }}
 </div>
 <!-- begin action buttons row -->
-<a class='elab-tooltip' href='{{ page }}?mode=edit&id={{ Ev.Entity.id }}'>
+<a class='elab-tooltip' href='?mode=edit&id={{ Ev.Entity.id }}'>
     <span>{{ 'Edit'|trans }}</span>
     <img src='app/img/pen-blue.png' alt={{ 'Edit'|trans }} />
 </a>
@@ -91,7 +89,7 @@
     {% set tagsValueArr = Ev.Entity.entityData.tags|split('|') %}
     {% for key, tag in tagsValueArr %}
         {# the key allows to get the id stored in tagsIdArr #}
-        <a href='{{ page }}?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
+        <a href='?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
     {% endfor %}
 {% endif %}
 
@@ -101,7 +99,7 @@
 {% else %}
     {% set click2Edit = '' %}
 {% endif %}
-<div data-page='{{ page }}' class='{{ click2Edit }} title_view'>
+<div class='{{ click2Edit }} title_view'>
     {% if Ev.Entity.type == 'items' %}
         <span style='color:#{{ Ev.Entity.entityData['color'] }}'>{{ Ev.Entity.entityData.category }}</span>
     {% endif %}
@@ -166,8 +164,7 @@
     data-type='{{ Ev.Entity.type }}'
     data-id='{{ Ev.Entity.id }}'
     data-controller='{{ controller }}'
-    data-confirm="{{ 'Delete this?'|trans }}"
-    data-page='{{ page }}'>
+    data-confirm="{{ 'Delete this?'|trans }}">
 </div>
 <div id='shortcuts'
     data-create='{{ Ev.Entity.Users.userData.sc_create }}'

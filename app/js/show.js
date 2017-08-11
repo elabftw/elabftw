@@ -38,7 +38,7 @@ $(document).ready(function(){
 
         // KEYBOARD SHORTCUT
         key($('#shortcuts').data('create'), function(){
-            location.href = controller + '?create=true';
+            window.location.href = controller + '?create=true';
         });
     }
 
@@ -62,7 +62,7 @@ $(document).ready(function(){
 
     // TITLE CLICK
     $('.title').on('click', function() {
-        location.assign('?mode=view&id=' + $(this).data('id'));
+        window.location.href = '?mode=view&id=' + $(this).data('id');
     });
 
     // THE CHECKBOXES
@@ -144,7 +144,7 @@ $(document).ready(function(){
         }
         var checked = getCheckedBoxes();
         var what = $(this).data('what');
-        location.assign('make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+'));
+        window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+');
     });
 
     // THE DELETE BUTTON FOR CHECKED BOXES

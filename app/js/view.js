@@ -31,8 +31,7 @@ $(document).ready(function() {
 
     // CLICK TITLE TO GO IN EDIT MODE
     $(document).on('click', '.click2Edit', function() {
-        var page = $(this).data('page');
-        document.location = page + '?mode=edit&id=' + id;
+        window.location.href = '?mode=edit&id=' + id;
     });
 
     // COMMENTS
@@ -148,9 +147,9 @@ $(document).ready(function() {
 
     // KEYBOARD SHORTCUTS
     key($('#shortcuts').data('create'), function(){
-        location.href = $('#entityInfos').data('controller') + '?create=true';
+        window.location.href = $('#entityInfos').data('controller') + '?create=true';
     });
     key($('#shortcuts').data('edit'), function(){
-        location.href = $('#entityInfos').data('page') + '?mode=edit&id=' + $('#entityInfos').data('id');
+        window.location.href = '?mode=edit&id=' + id;
     });
 });

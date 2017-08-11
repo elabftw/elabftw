@@ -76,6 +76,7 @@ $(document).ready(function(){
 
     var bgColor = '#c4f9ff';
 
+    // CHECK A BOX
     $('input[type=checkbox]').on('click', function() {
         if ($(this).prop('checked')) {
             $(this).parent().parent().css('background-color', bgColor);
@@ -84,18 +85,25 @@ $(document).ready(function(){
         }
     });
 
+    // SELECT ALL
     $('#selectAllBoxes').click(function() {
         $('input[type=checkbox]').prop('checked', true);
         $('input[type=checkbox]').parent().parent().css('background-color', bgColor);
         $('#advancedSelectOptions').show();
         $('#withSelected').show();
+        // also disable pagination because this will select all even the hidden ones
+        $('section.item:hidden').show();
+        $('#loadAllButton').hide(); // hide load button when there is nothing more to show
+        $('#loadButton').hide(); // hide load button when there is nothing more to show
     });
 
+    // UNSELECT ALL
     $('#unselectAllBoxes').click(function() {
         $('input:checkbox').prop('checked', false);
         $('input[type=checkbox]').parent().parent().css('background-color', '');
     });
 
+    // INVERT SELECTION
     $('#invertSelection').click(function() {
         $('input[type=checkbox]').each(function () {
             this.checked = !this.checked;

@@ -128,7 +128,7 @@ class Entity
                 SELECT experiments_steps.item_id AS steps_item_id,
                 experiments_steps.body AS next_step,
                 experiments_steps.finished
-                FROM experiments_steps GROUP BY experiments_steps.id, experiments_steps.body)
+                FROM experiments_steps GROUP BY steps_item_id, next_step)
                 AS stepst ON (
                 experiments.id = steps_item_id
                 AND stepst.finished = 0)";
@@ -182,6 +182,7 @@ class Entity
             $this->visibilityFilter . ' ' .
             " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
+        //var_dump($sql);die;
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();

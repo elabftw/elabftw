@@ -37,6 +37,20 @@ CREATE TABLE `config` (
   PRIMARY KEY (`conf_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+--
+-- Table structure for table `experiments_steps`
+--
+DROP TABLE IF EXISTS `experiments_steps`;
+CREATE TABLE `experiments_steps` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+            `item_id` INT UNSIGNED NOT NULL ,
+            `body` TEXT NOT NULL ,
+            `ordering` INT UNSIGNED NULL DEFAULT NULL ,
+            `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `finish_time` DATETIME NULL DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Table structure for table `experiments`
 --
@@ -455,4 +469,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_team', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '27');
+('schema', '28');

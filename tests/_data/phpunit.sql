@@ -24,6 +24,18 @@ USE `phpunit`;
 
 -- --------------------------------------------------------
 --
+-- Table structure for table `experiments_steps`
+--
+CREATE TABLE `experiments_steps` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+            `item_id` INT UNSIGNED NOT NULL ,
+            `body` TEXT NOT NULL ,
+            `ordering` INT UNSIGNED NULL DEFAULT NULL ,
+            `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `finish_time` DATETIME NULL DEFAULT NULL,
+            PRIMARY KEY (`id`));
+-- --------------------------------------------------------
+--
 -- Table structure for table `todolist`
 --
 
@@ -70,7 +82,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '27'),
+('schema', '28'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),

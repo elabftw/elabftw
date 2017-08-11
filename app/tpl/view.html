@@ -105,6 +105,15 @@
     {% endif %}
     {{ Ev.Entity.entityData.title|raw }}
 </div>
+
+<!-- SHOW NEXT STEP -->
+{% set nextStep = Ev.Entity.Steps.readNext(Ev.Entity.entityData.id) %}
+{% if nextStep|length > 0 %}
+    <p>
+    {{ 'Next step'|trans }}: <span style='color:black'>{{ nextStep }}</span>
+    </p>
+{% endif %}
+
 <!--  BODY (show only if not empty -->
 {% if Ev.Entity.entityData.body != '' %}
 <div id='body_view' class='txt'>{{ Ev.Entity.entityData.body|raw }}</div>

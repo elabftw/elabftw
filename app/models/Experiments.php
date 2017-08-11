@@ -26,6 +26,9 @@ class Experiments extends Entity
     /** our team */
     public $team;
 
+    /** instance of Steps */
+    public $Steps;
+
     /** instance of Links */
     public $Links;
 
@@ -49,6 +52,7 @@ class Experiments extends Entity
             $this->setId($id);
         }
 
+        $this->Steps = new Steps($this);
         $this->Links = new Links($this);
         $this->Comments = new Comments($this);
     }
@@ -292,6 +296,7 @@ class Experiments extends Entity
         $tags = new Tags($this);
         $tags->copyTags($newId);
 
+        $this->Steps->duplicate($this->id, $newId);
         $this->Links->duplicate($this->id, $newId);
 
         return (int) $newId;
@@ -316,6 +321,7 @@ class Experiments extends Entity
         $uploads = new Uploads($this);
         $uploads->destroyAll();
 
+        $this->Steps->destroyAll();
         $this->Links->destroyAll();
 
         $this->Comments->destroyAll();

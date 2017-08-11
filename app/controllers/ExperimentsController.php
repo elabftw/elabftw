@@ -102,6 +102,60 @@ try {
         }
     }
 
+    // CREATE STEP
+    if (isset($_POST['createStep'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Steps->create($_POST['body'])) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+    // FINISH STEP
+    if (isset($_POST['finishStep'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Steps->finish($_POST['stepId'])) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+    // DESTROY STEP
+    if (isset($_POST['destroyStep'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Steps->destroy($_POST['stepId'])) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Link deleted successfully')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
     // CREATE LINK
     if (isset($_POST['createLink'])) {
         $Entity->setId($_POST['id']);

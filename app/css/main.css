@@ -687,6 +687,18 @@ input[type='checkbox']{
     position: relative;
 }
 
+/* EXPERIMENT STEPS */
+/* more space for the steps / links */
+.list {
+    margin-top: 10px;
+}
+
+.finished {
+    border-color: #58FA58;
+}
+
+/* END EXPERIMENT STEPS */
+
 .col-md-6 input{
     width: 95%;
     margin: 0 0 15px;

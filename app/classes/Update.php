@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '27';
+    const REQUIRED_SCHEMA = '28';
 
     /**
      * Init Update with Config and pdo
@@ -208,6 +208,12 @@ class Update
             // 20170808
             $this->schema27();
             $this->updateSchema(27);
+        }
+
+        if ($current_schema < 28) {
+            // 20170811
+            $this->schema28();
+            $this->updateSchema(28);
         }
         // place new schema functions above this comment
 
@@ -683,6 +689,27 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         }
         if (!$this->pdo->q($sql2)) {
             throw new Exception('Cannot add sort to users table!');
+        }
+    }
+
+    /**
+     * Add experiments steps
+     *
+     * @throws Exception
+     */
+    private function schema28()
+    {
+        $sql = "CREATE TABLE `experiments_steps` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+            `item_id` INT UNSIGNED NOT NULL ,
+            `body` TEXT NOT NULL ,
+            `ordering` INT UNSIGNED NULL DEFAULT NULL ,
+            `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `finish_time` DATETIME NULL DEFAULT NULL,
+            PRIMARY KEY (`id`));";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot add experiments_steps table!');
         }
     }
 }

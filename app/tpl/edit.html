@@ -111,11 +111,32 @@
     {{ Revisions.showCount|raw }}
 
     {% if Ev.Entity.type == 'experiments' %}
+        <!-- STEPS -->
+        <section>
+            <img src='app/img/step.png' alt='steps' /> <h4 style='display:inline'>{{ 'Experiments steps'|trans }}</h4>
+            <br>
+            <div class='list' id='steps_div'>
+                {% set stepsArr = Ev.Entity.Steps.read %}
+                {% if stepsArr|length > 0 %}
+                <ul class='list-group'>
+                    {% for step in stepsArr %}
+                    <li class='list-group-item {{ step.finished ? 'finished' }}'>
+                        <input type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' /> {{ step['body']|raw }}
+                        <a class='stepDestroy' data-stepid='{{ step.id }}'>
+                        <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' /></a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <p class='inline'>{{ 'Add a step'|trans }}</p>
+            <input id='stepinput' size='60' type='text' name='step' />
+        </section>
         <!-- LINKS -->
         <section>
             <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
             <br>
-            <span id='links_div'>
+            <div class='list' id='links_div'>
                 {% set linksArr = Ev.Entity.Links.read %}
                 {% if linksArr|length > 0 %}
                 <ul class='list-group'>
@@ -128,7 +149,7 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
-            </span>
+            </div>
             <p class='inline'>{{ 'Add a link'|trans }}</p>
             <input id='linkinput' size='60' type='text' name='link' placeholder='{{ 'from the database'|trans }}' />
         </section>
@@ -172,4 +193,4 @@
     data-create='{{ Ev.Entity.Users.userData.sc_create }}'
     data-submit='{{ Ev.Entity.Users.userData.sc_submit }}'>
 </div>
-<script src='app/js/edit.min.js'></script>
+<script src='app/js/edit.js'></script>

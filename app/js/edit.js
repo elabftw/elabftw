@@ -75,6 +75,67 @@ $(document).ready(function() {
         }
     };
 
+    var Step = {
+        controller: 'app/controllers/ExperimentsController.php',
+        // the argument here is the event (needed to detect which key is pressed)
+        create: function(e) {
+            var keynum;
+            if (e.which) {
+                keynum = e.which;
+            }
+            if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+                // get body
+                body = decodeURIComponent($('#stepinput').val());
+                // fix for user pressing enter with no input
+                if (body.length > 0) {
+                    $.post(this.controller, {
+                        createStep: true,
+                        id: id,
+                        body: body
+                    })
+                    // reload the step list
+                    .done(function () {
+                        $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                        // clear input field
+                        $("#stepinput").val("");
+                    });
+                } // end if input < 0
+            } // end if key is enter
+        },
+
+        finish: function(stepId) {
+            $.post(this.controller, {
+                finishStep: true,
+                id: id,
+                stepId: stepId
+            })
+            // reload the step list
+            .done(function () {
+                $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                // clear input field
+                $("#stepinput").val("");
+            });
+        },
+
+        destroy: function(stepId) {
+            if (confirm(confirmText)) {
+                $.post(this.controller, {
+                    destroyStep: true,
+                    id: id,
+                    stepId: stepId
+                }).done(function (data) {
+                    var json = JSON.parse(data);
+                    if (json.res) {
+                        notif(json.msg, 'ok');
+                        $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                    } else {
+                        notif(json.msg, 'ko');
+                    }
+                });
+            }
+        }
+    };
+
     var Link = {
         controller: 'app/controllers/ExperimentsController.php',
         // the argument here is the event (needed to detect which key is pressed)
@@ -130,6 +191,9 @@ $(document).ready(function() {
     });
     $(document).on('click', '.tagDestroy', function() {
         Tag.destroy($(this).data('tagid'));
+    });
+    $(document).on('click', '.stepDestroy', function() {
+        Step.destroy($(this).data('stepid'));
     });
     $(document).on('click', '.linkDestroy', function() {
         Link.destroy($(this).data('linkid'));
@@ -225,6 +289,17 @@ $(document).ready(function() {
     });
 
     if (type === 'experiments') {
+        // CREATE STEP
+        $('#stepinput').keypress(function (e) {
+            Step.create(e);
+        });
+
+        // STEP IS DONE
+        $(document).on('click', 'input[type=checkbox]', function() {
+            Step.finish($(this).data('stepid'));
+        });
+
+
         // CREATE LINK
         // listen keypress, add link when it's enter
         $('#linkinput').keypress(function (e) {

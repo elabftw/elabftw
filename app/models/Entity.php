@@ -111,6 +111,7 @@ class Entity
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id";
+        $stepsSelect = ", stepst.body as nextStep";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
@@ -120,6 +121,9 @@ class Entity
             $expCommentsSelect = ", experiments_comments.recentComment";
             $from = "FROM experiments";
 
+            $stepsJoin = "LEFT JOIN experiments_steps AS stepst ON (
+                experiments.id = stepst.item_id
+                AND stepst.finished = 0)";
             $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
             $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
             $commentsJoin = "LEFT JOIN (
@@ -131,8 +135,10 @@ class Entity
 
             $sql = $select . ' ' .
                 $tagsSelect . ' ' .
+                $stepsSelect . ' ' .
                 $expCommentsSelect . ' ' .
                 $from . ' ' .
+                $stepsJoin . ' ' .
                 $tagsJoin . ' ' .
                 $statusJoin . ' ' .
                 $uploadsJoin . ' ' .

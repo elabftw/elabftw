@@ -146,7 +146,7 @@ try {
         if ($Entity->Steps->destroy($_POST['stepId'])) {
             echo json_encode(array(
                 'res' => true,
-                'msg' => _('Link deleted successfully')
+                'msg' => _('Step deleted successfully')
             ));
         } else {
             echo json_encode(array(

@@ -79,7 +79,7 @@ try {
         } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
             $EntityView->Entity->order = 'experiments.' . $order;
         } elseif ($order === 'comment') {
-            $EntityView->Entity->order = 'experiments_comments.recentComment';
+            $EntityView->Entity->order = 'experiments_comments.recent_comment';
         }
 
         // SORT

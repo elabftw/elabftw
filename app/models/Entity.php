@@ -118,7 +118,7 @@ class Entity
                 status.color, status.name AS category, status.id AS category_id,
                     uploads.up_item_id, uploads.has_attachment, stepst.next_step";
 
-            $expCommentsSelect = ", experiments_comments.recentComment";
+            $expCommentsSelect = ", experiments_comments.recent_comment";
             $from = "FROM experiments";
 
             $stepsJoin = "LEFT JOIN (
@@ -131,7 +131,7 @@ class Entity
             $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
             $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
             $commentsJoin = "LEFT JOIN (
-                SELECT MAX(experiments_comments.datetime) AS recentComment,
+                SELECT MAX(experiments_comments.datetime) AS recent_comment,
                     experiments_comments.exp_id FROM experiments_comments GROUP BY experiments_comments.exp_id
                 ) AS experiments_comments
                 ON (experiments_comments.exp_id = experiments.id)";

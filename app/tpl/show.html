@@ -66,9 +66,12 @@
                     </p>
                 {% endif %}
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
-                <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
+                <p style='padding-left:20px'>
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Ev.Entity.type }}' style='width:0%;vertical-align:-3px;' />
-                     {% if not item.locked %}<a href='?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>{% endif %} {{ item.category }}</span>
+                {% if not item.locked %}
+                <a href='?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>
+                {% endif %}
+                <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
                 <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
                 {% if item.timestamped %}
                     <img src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
@@ -90,6 +93,7 @@
                         <a href='?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
                     {% endfor %}
                 {% endif %}
+                </p>
                 <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='display:none; margin: 10px 0 0 20px'></div>
             </section>
             </div>

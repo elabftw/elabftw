@@ -60,9 +60,9 @@
 
                 {{ item.title|raw }}
                 </p>
-                {% if item.nextStep|length > 0 %}
+                {% if item.next_step|length > 0 %}
                     <p style='padding-left:20px'>
-                    {{ 'Next step'|trans }}: <span style='color:black'>{{ item.nextStep|raw }}</span>
+                    {{ 'Next step'|trans }}: <span style='color:black'>{{ item.next_step|raw }}</span>
                     </p>
                 {% endif %}
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />

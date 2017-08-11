@@ -107,10 +107,10 @@
 </div>
 
 <!-- SHOW NEXT STEP -->
-{% set nextStep = Ev.Entity.Steps.readNext(Ev.Entity.entityData.id) %}
-{% if nextStep|length > 0 %}
+{% set next_step = Ev.Entity.Steps.readNext(Ev.Entity.entityData.id) %}
+{% if next_step|length > 0 %}
     <p>
-    {{ 'Next step'|trans }}: <span style='color:black'>{{ nextStep }}</span>
+    {{ 'Next step'|trans }}: <span style='color:black'>{{ next_step }}</span>
     </p>
 {% endif %}
 

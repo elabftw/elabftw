@@ -111,18 +111,22 @@ class Entity
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id";
-        $stepsSelect = ", stepst.body as nextStep";
+        $stepsSelect = ", experiments_steps.body as next_step";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
                 status.color, status.name AS category, status.id AS category_id,
-                    uploads.up_item_id, uploads.has_attachment";
+                    uploads.up_item_id, uploads.has_attachment, stepst.next_step";
 
             $expCommentsSelect = ", experiments_comments.recentComment";
             $from = "FROM experiments";
 
-            $stepsJoin = "LEFT JOIN experiments_steps AS stepst ON (
-                experiments.id = stepst.item_id
+            $stepsJoin = "LEFT JOIN (
+                SELECT experiments_steps.item_id AS steps_item_id,
+                experiments_steps.body AS next_step,
+                experiments_steps.finished FROM experiments_steps )
+                AS stepst ON (
+                experiments.id = steps_item_id
                 AND stepst.finished = 0)";
             $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
             $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
@@ -135,7 +139,6 @@ class Entity
 
             $sql = $select . ' ' .
                 $tagsSelect . ' ' .
-                $stepsSelect . ' ' .
                 $expCommentsSelect . ' ' .
                 $from . ' ' .
                 $stepsJoin . ' ' .

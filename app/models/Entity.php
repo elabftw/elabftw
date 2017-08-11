@@ -125,7 +125,8 @@ class Entity
             $stepsJoin = "LEFT JOIN (
                 SELECT experiments_steps.item_id AS steps_item_id,
                 experiments_steps.body AS next_step,
-                experiments_steps.finished FROM experiments_steps )
+                experiments_steps.finished
+                FROM experiments_steps GROUP BY experiments_steps.id )
                 AS stepst ON (
                 experiments.id = steps_item_id
                 AND stepst.finished = 0)";

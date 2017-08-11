@@ -122,8 +122,9 @@
                     {% for step in stepsArr %}
                     <li class='list-group-item {{ step.finished ? 'finished' }}'>
                         <input type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' /> {{ step['body']|raw }}
+                        <span class='align_right'>{{ step.finished ? step.finished_time }}
                         <a class='stepDestroy' data-stepid='{{ step.id }}'>
-                        <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' /></a>
+                        <img src='app/img/small-trash.png' title='Delete' alt='Delete' /></a></span>
                     </li>
                     {% endfor %}
                 </ul>

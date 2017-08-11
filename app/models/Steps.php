@@ -50,6 +50,12 @@ class Steps
         return $req->execute();
     }
 
+    /**
+     * Toggle the finished column of a step
+     *
+     * @param int $stepid
+     * @return bool
+     */
     public function finish($stepid)
     {
         $sql = "UPDATE experiments_steps SET finished = !finished,
@@ -74,6 +80,23 @@ class Steps
         $req->execute();
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Returns the body of the next step to execute
+     *
+     * @param int $id id of the experiment
+     * @return string
+     */
+    public function readNext($id)
+    {
+        $sql = "SELECT body FROM experiments_steps WHERE finished = 0 AND item_id = :id
+            ORDER BY id ASC";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->execute();
+
+        return $req->fetchColumn();
     }
 
     /**

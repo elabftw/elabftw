@@ -60,6 +60,12 @@
 
                 {{ item.title|raw }}
                 </p>
+                {% set nextStep = Ev.Entity.Steps.readNext(item.id) %}
+                {% if nextStep|length > 0 %}
+                <p style='padding-left: 20px'>
+                {{ 'Next step'|trans }}: <span style='color:black'>{{ nextStep }}</span>
+                </p>
+                {% endif %}
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
                 <span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#{{ item.color }}'>
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Ev.Entity.type }}' style='width:0%;vertical-align:-3px;' />

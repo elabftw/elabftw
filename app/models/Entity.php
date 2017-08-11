@@ -119,16 +119,17 @@ class Entity
             $select = "SELECT DISTINCT " . $this->type . ".*,
                 status.color, status.name AS category, status.id AS category_id,
                 uploads.up_item_id, uploads.has_attachment,
-                stepst.next_step,
+                MIN(stepst.next_step) AS next_step,
                 experiments_comments.recent_comment";
 
             $from = "FROM experiments";
 
+            //experiments_steps.item_id, next_step, experiments_steps.body, experiments_steps.finished
             $stepsJoin = "LEFT JOIN (
                 SELECT experiments_steps.item_id AS steps_item_id,
                 experiments_steps.body AS next_step,
-                experiments_steps.finished
-                FROM experiments_steps GROUP BY steps_item_id, next_step)
+                experiments_steps.finished AS finished
+                FROM experiments_steps)
                 AS stepst ON (
                 experiments.id = steps_item_id
                 AND stepst.finished = 0)";

@@ -705,7 +705,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             `body` TEXT NOT NULL ,
             `ordering` INT UNSIGNED NULL DEFAULT NULL ,
             `finished` TINYINT(1) NOT NULL DEFAULT '0',
-            `finish_time` DATETIME NULL DEFAULT NULL,
+            `finished_time` DATETIME NULL DEFAULT NULL,
             PRIMARY KEY (`id`));";
 
         if (!$this->pdo->q($sql)) {

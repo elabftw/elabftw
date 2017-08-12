@@ -55,11 +55,13 @@ try {
 
         // the actual login
         if ($Auth->login($_POST['email'], $_POST['password'], $rememberme)) {
+            //var_dump($_SERVER);die;
             if (isset($_COOKIE['redirect'])) {
-                $location = $_COOKIE['redirect'];
+                $url = $_COOKIE['redirect'];
             } else {
-                $location = '../../experiments.php';
+                $url = 'https://' . $_SERVER['HTTP_HOST'] . '/experiments.php';
             }
+            //var_dump($url);die;
         } else {
             // log the attempt if the login failed
             $Logs = new Logs();
@@ -78,5 +80,5 @@ try {
     $_SESSION['ko'][] = $e->getMessage();
 
 } finally {
-    header("location: $location");
+    header("location: $url");
 }

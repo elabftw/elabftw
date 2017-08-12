@@ -115,7 +115,7 @@ try {
             $host = $_SERVER['HTTP_HOST'];
             $script = $_SERVER['SCRIPT_NAME'];
             $params = '?' . $_SERVER['QUERY_STRING'];
-            $url = 'https://' . $host . Tools::getServerPort() . $script . $params;
+            $url = 'https://' . $host . $script . $params;
             // remove trailing ? if there was no query string
             $url = rtrim($url, '?');
 

@@ -83,23 +83,6 @@ class Steps
     }
 
     /**
-     * Returns the body of the next step to execute
-     *
-     * @param int $id id of the experiment
-     * @return string
-     */
-    public function readNext($id)
-    {
-        $sql = "SELECT body FROM experiments_steps WHERE finished = 0 AND item_id = :id
-            ORDER BY id ASC";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->execute();
-
-        return $req->fetchColumn();
-    }
-
-    /**
      * Copy the steps from one experiment to an other.
      *
      * @param int $id The id of the original experiment
@@ -108,7 +91,6 @@ class Steps
      */
     public function duplicate($id, $newId)
     {
-        // LINKS
         $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
         $stepreq = $this->pdo->prepare($stepsql);
         $stepreq->bindParam(':id', $id);
@@ -146,7 +128,7 @@ class Steps
      */
     public function destroyAll()
     {
-        $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
+        $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);
 

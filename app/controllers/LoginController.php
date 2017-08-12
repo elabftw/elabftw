@@ -59,7 +59,7 @@ try {
             if (isset($_COOKIE['redirect'])) {
                 $url = $_COOKIE['redirect'];
             } else {
-                $url = 'https://' . $_SERVER['HTTP_HOST'] . '/experiments.php';
+                $url = '../../experiments.php';
             }
             //var_dump($url);die;
         } else {

@@ -21,7 +21,8 @@
     },
     "require-dev": {
         "codeception/codeception": "*",
-        "phpdocumentor/phpdocumentor": "2.*"
+        "phpdocumentor/phpdocumentor": "2.*",
+        "pyrech/composer-changelogs": "^1.5"
     },
     "autoload": {
         "psr-4": {

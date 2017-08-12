@@ -317,48 +317,83 @@ class Uploads extends Entity
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $src);
 
-        if (!extension_loaded('gmagick')) {
-            // we need gmagick for thumb generation
-            return false;
-        }
+        if (extension_loaded('gmagick')) {
+            // try first with gmagick lib
 
-        // do some sane white-listing; in theory, gmagick handles almost all image formats,
-        // but the processing of rarely used formats may be less tested/stable or may have security issues;
-        // when adding new mime types take care of
-        // ambiguities: e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
-        // image/x-ms-bmp
-        $allowed_mime = array('image/png',
-                            'image/jpeg',
-                            'image/gif',
-                            'image/tiff',
-                            'image/x-eps',
-                            'image/svg+xml',
-                            'application/pdf',
-                            'application/postscript');
+            // do some sane white-listing; in theory, gmagick handles almost all image formats,
+            // but the processing of rarely used formats may be less tested/stable or may have security issues;
+            // when adding new mime types take care of
+            // ambiguities: e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
+            // image/x-ms-bmp
+            $allowed_mime = array('image/png',
+                                'image/jpeg',
+                                'image/gif',
+                                'image/tiff',
+                                'image/x-eps',
+                                'image/svg+xml',
+                                'application/pdf',
+                                'application/postscript');
 
-        if (in_array($mime, $allowed_mime)) {
-            // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files;
-            // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
-            // works in those cases
-            if ($mime === 'application/pdf' || $mime === 'application/postscript') {
-                $src = $src . '[0]';
-            }
-            // fail silently if thumbnail generation does not work to keep file upload field functional;
-            // originally introduced due to issue #415.
-            try {
-                $image = new Gmagick($src);
-            } catch (Exception $e) {
+            if (in_array($mime, $allowed_mime)) {
+                // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files;
+                // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
+                // works in those cases
+                if ($mime === 'application/pdf' || $mime === 'application/postscript') {
+                    $src = $src . '[0]';
+                }
+                // fail silently if thumbnail generation does not work to keep file upload field functional;
+                // originally introduced due to issue #415.
+                try {
+                    $image = new Gmagick($src);
+                } catch (Exception $e) {
+                    return false;
+                }
+            } else {
                 return false;
             }
+            // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
+            $image->thumbnailimage($desiredWidth, 0);
+            // create the physical thumbnail image to its destination (85% quality)
+            $image->setCompressionQuality(85);
+            $image->write($dest);
+            $image->clear();
+
+        // if we don't have gmagick, try with gd
+        } elseif (extension_loaded('gd')) {
+            // the used fonction is different depending on extension
+            if ($mime === 'image/jpeg') {
+                $sourceImage = imagecreatefromjpeg($src);
+            } elseif ($mime === 'image/png') {
+                $sourceImage = imagecreatefrompng($src);
+            } elseif ($mime === 'image/gif') {
+                $sourceImage = imagecreatefromgif($src);
+            } else {
+                return false;
+            }
+
+            if ($sourceImage === false) {
+                return false;
+            }
+
+            $width = imagesx($sourceImage);
+            $height = imagesy($sourceImage);
+
+            // find the "desired height" of this thumbnail, relative to the desired width
+            $desiredHeight = floor($height * ($desiredWidth / $width));
+
+            // create a new, "virtual" image
+            $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
+
+            // copy source image at a resized size
+            imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
+
+            // create the physical thumbnail image to its destination (85% quality)
+            imagejpeg($virtualImage, $dest, 85);
+
+        // and if we have no gmagick and no gd, well there's nothing I can do for you boy!
         } else {
             return false;
         }
-        // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
-        $image->thumbnailimage(100, 0);
-        // create the physical thumbnail image to its destination (85% quality)
-        $image->setCompressionQuality(85);
-        $image->write($dest);
-        $image->clear();
     }
 
     /**

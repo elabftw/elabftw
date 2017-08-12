@@ -42,6 +42,8 @@ class Steps
      */
     public function create($body)
     {
+        // remove any | as they are used in the group_concat
+        $body = strtr($body, '|', ' ');
         $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);

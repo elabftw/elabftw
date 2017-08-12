@@ -61,8 +61,10 @@
                 {{ item.title|raw }}
                 </p>
                 {% if item.next_step|length > 0 %}
+                    {% set stepsArr = item.next_step|split('|') %}
+                    {% set next = stepsArr|first %}
                     <p style='padding-left:20px'>
-                    {{ 'Next step'|trans }}: <span style='color:black'>{{ item.next_step|raw }}</span>
+                    {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
                     </p>
                 {% endif %}
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Ev.Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />

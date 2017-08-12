@@ -109,8 +109,10 @@
 <!-- SHOW NEXT STEP -->
 {% set next_step = Ev.Entity.entityData.next_step %}
 {% if next_step|length > 0 %}
+    {% set stepsArr = next_step|split('|') %}
+    {% set next = stepsArr|first %}
     <p>
-    {{ 'Next step'|trans }}: <span style='color:black'>{{ next_step }}</span>
+    {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
     </p>
 {% endif %}
 

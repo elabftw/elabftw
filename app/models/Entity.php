@@ -116,15 +116,10 @@ class Entity
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
-            // we use MIN on next_step to aggregate it and prevent the following error for MySQL 5.7.5+
-            // Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column
-            // 'phpunit.experiments_steps.finished' which is not functionally dependent on columns in
-            // GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
-
             $select = "SELECT DISTINCT " . $this->type . ".*,
                 status.color, status.name AS category, status.id AS category_id,
                 uploads.up_item_id, uploads.has_attachment,
-                MIN(stepst.next_step) AS next_step,
+                GROUP_CONCAT(stepst.next_step SEPARATOR '|') AS next_step,
                 experiments_comments.recent_comment";
 
             $from = "FROM experiments";

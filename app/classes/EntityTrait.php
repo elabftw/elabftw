@@ -53,6 +53,17 @@ trait EntityTrait {
     {
         $success = array();
 
+        // whitelist the tables
+        $whitelist = array(
+            'status',
+            'experiments_templates',
+            'items_types'
+        );
+
+        if (!in_array($post['table'], $whitelist)) {
+            throw new Exception('Wrong table.');
+        }
+
         foreach ($post['ordering'] as $ordering => $id) {
             $id = explode('_', $id);
             $id = $id[1];

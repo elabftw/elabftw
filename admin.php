@@ -41,7 +41,7 @@ try {
     $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->read();
     $teamGroupsArr = $TeamGroups->readAll();
-    $templatesArr = $Templates->readCommon();
+    $commonTplBody = $Templates->readCommonBody();
     $unvalidatedUsersArr = $Users->readAllFromTeam($_SESSION['team_id'], 0);
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
 
@@ -55,7 +55,7 @@ try {
         'session' => $_SESSION,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
-        'templatesArr' => $templatesArr,
+        'commonTplBody' => $commonTplBody,
         'Users' => $Users,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr

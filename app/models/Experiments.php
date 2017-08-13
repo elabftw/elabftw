@@ -72,9 +72,10 @@ class Experiments extends Entity
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
+            $body = $templatesArr['body'];
         } else {
-            $templatesArr = $Templates->readCommon();
             $title = _('Untitled');
+            $body = $Templates->readCommonBody();
         }
 
         $visibility = 'team';
@@ -90,7 +91,7 @@ class Experiments extends Entity
             'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Tools::kdate(),
-            'body' => $templatesArr['body'],
+            'body' => $body,
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $visibility,

@@ -119,14 +119,19 @@ class Templates
      *
      * @return string body of the common template
      */
-    public function readCommon()
+    public function readCommonBody()
     {
-        $sql = "SELECT * FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
+        // don't load the common template if you are using markdown because it's probably in html
+        if ($this->Users->userData['use_markdown']) {
+            return "";
+        }
+
+        $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
-        return $req->fetch();
+        return $req->fetchColumn();
     }
 
     /**

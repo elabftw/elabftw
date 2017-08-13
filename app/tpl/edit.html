@@ -4,7 +4,7 @@
     {% set controller = 'app/controllers/DatabaseController.php' %}
 {% endif %}
 
-{% if Ev.Entity.Users.userData['chem_editor'] %}
+{% if Ev.Entity.Users.userData.chem_editor %}
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
 {% endif %}
@@ -98,9 +98,7 @@
                 <h4>{{ 'Infos'|trans }}</h4>
             {% endif %}
 
-            <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>
-                {{ Ev.Entity.entityData['body']|raw }}
-            </textarea>
+            <textarea id='body_area' class='{{ not Ev.Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Ev.Entity.entityData['body']|raw }}</textarea>
 
             <div class='submitButtonDiv'>
                 <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>

@@ -16,7 +16,8 @@
         "swiftmailer/swiftmailer":"^5.4",
         "twig/extensions": "^1.4",
         "onelogin/php-saml": "^2.10",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "michelf/php-markdown": "^1.7"
 
     },
     "require-dev": {

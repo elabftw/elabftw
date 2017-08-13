@@ -110,6 +110,17 @@ class Tools
     }
 
     /**
+     * Convert markdown to html
+     *
+     * @param string $md Markdown code
+     * @return string HTML code
+     */
+    public static function md2html($md)
+    {
+        return \Michelf\Markdown::defaultTransform($md);
+    }
+
+    /**
      * Converts the php.ini upload size setting to a numeric value in MB
      * Returns 2 if no value is found (using the default setting that was in there previously)
      * It also checks for the post_max_size value and return the lowest value

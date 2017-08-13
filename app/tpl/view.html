@@ -117,9 +117,13 @@
 {% endif %}
 
 <!--  BODY (show only if not empty -->
-{% if Ev.Entity.entityData.body != '' %}
-<div id='body_view' class='txt'>{{ Ev.Entity.entityData.body|raw }}</div>
-<br>
+{% set body = Ev.Entity.entityData.body %}
+{% if body != '' %}
+    {% if Ev.Entity.Users.userData.use_markdown %}
+        {% set body = Ev.Entity.entityData.body|md2html %}
+    {% endif %}
+    <div id='body_view' class='txt'>{{ body|raw }}</div>
+    <br>
 {% endif %}
 
 {% if Ev.Entity.type == 'experiments' %}

@@ -334,11 +334,18 @@ class MakePdf extends Make
     }
 
     /**
-     * We need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
+     * Add the body
      */
     private function buildBody()
     {
-        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $this->Entity->entityData['body']);
+        $body = $this->Entity->entityData['body'];
+
+        // convert to html if we have markdown
+        if ($this->Entity->Users->userData['use_markdown']) {
+            $body = Tools::md2html($body);
+        }
+        // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
+        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $body);
     }
 
     /**

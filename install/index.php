@@ -263,7 +263,7 @@ try {
     </script>
     <?php
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
+    echo Tools::displayMessage($e->getMessage(), 'ko', false);
     echo "</section></section>";
 } finally {
     echo "</body></html>";

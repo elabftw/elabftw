@@ -82,7 +82,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '28'),
+('schema', '29'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -506,7 +506,8 @@ CREATE TABLE `users` (
   `api_key` varchar(255) NULL DEFAULT NULL,
   `default_vis` varchar(255) NULL DEFAULT NULL,
   `single_column_layout` tinyint(1) NOT NULL DEFAULT 0,
-  `cjk_fonts` tinyint(1) NOT NULL DEFAULT 0
+  `cjk_fonts` tinyint(1) NOT NULL DEFAULT 0,
+  `use_markdown` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

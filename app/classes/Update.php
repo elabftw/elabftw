@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '28';
+    const REQUIRED_SCHEMA = '29';
 
     /**
      * Init Update with Config and pdo
@@ -214,6 +214,12 @@ class Update
             // 20170811
             $this->schema28();
             $this->updateSchema(28);
+        }
+
+        if ($current_schema < 29) {
+            // 20170813
+            $this->schema29();
+            $this->updateSchema(29);
         }
         // place new schema functions above this comment
 
@@ -712,4 +718,19 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             throw new Exception('Cannot add experiments_steps table!');
         }
     }
+
+    /**
+     * Add a user preference for disabling TinyMCE and using markdown
+     *
+     * @throws Exception
+     */
+    private function schema29()
+    {
+        $sql = "ALTER TABLE `users` ADD `use_markdown` TINYINT(1) NOT NULL DEFAULT 0;";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot add use_markdown to users table!');
+        }
+    }
+
 }

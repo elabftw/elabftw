@@ -225,6 +225,10 @@ class Entity
 
         $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
+        // convert directly the markdown in html before storing it in db
+        if ($this->Users->userData['use_markdown']) {
+            $body = \Michelf\Markdown::defaultTransform($body);
+        }
         $body = Tools::checkBody($body);
 
         if ($this->type === 'experiments') {

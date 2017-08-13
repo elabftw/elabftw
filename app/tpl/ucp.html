@@ -243,7 +243,7 @@
             <input type='file' accept='.tpl' id='import_tpl'>
             <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='{{ 'Name of the Template'|trans }}' />
             <br>
-            <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
+            <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
             <div class='center'>
                 <button type="submit" name="Submit" class='button'>{{ 'Add template'|trans }}</button>

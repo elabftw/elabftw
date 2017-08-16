@@ -22,13 +22,7 @@ class MakePdf extends Make
     protected $pdo;
 
     /** Entity instance */
-    private $Entity;
-
-    /** 'experiments' or 'items' */
-    protected $type;
-
-    /** a formatted title for our pdf */
-    private $cleanTitle;
+    protected $Entity;
 
     /** a sha512 sum */
     public $fileName;
@@ -85,7 +79,7 @@ class MakePdf extends Make
         $mpdf->setAutoBottomMargin = 'stretch';
         // set meta data
         $mpdf->SetAuthor($this->author);
-        $mpdf->SetTitle($this->title);
+        $mpdf->SetTitle($this->Entity->entityData['title']);
         $mpdf->SetSubject('eLabFTW pdf');
         $mpdf->SetKeywords($this->tags);
         $mpdf->SetCreator('www.elabftw.net');
@@ -94,7 +88,7 @@ class MakePdf extends Make
 
         // output
         if ($toFile) {
-            $this->fileName = $this->getFileName() . '.pdf';
+            $this->fileName = $this->getUniqueString() . '.pdf';
 
             if ($timestamp) {
                 $this->filePath = $this->getFilePath($this->fileName, false);
@@ -114,7 +108,8 @@ class MakePdf extends Make
      */
     public function getCleanName()
     {
-        return $this->cleanTitle . '.pdf';
+        return $this->Entity->entityData['date'] . "-" .
+            preg_replace('/[^A-Za-z0-9]/', '_', $this->Entity->entityData['title'] . '.pdf');
     }
 
     /**
@@ -130,15 +125,6 @@ class MakePdf extends Make
         $data = $req->fetch();
 
         $this->author = $data['firstname'] . ' ' . $data['lastname'];
-    }
-
-    /**
-     * We want a title without weird characters
-     */
-    private function setCleanTitle()
-    {
-        $this->title = stripslashes($this->Entity->entityData['title']);
-        $this->cleanTitle = $this->Entity->entityData['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->Entity->entityData['title']));
     }
 
     /**
@@ -262,35 +248,6 @@ class MakePdf extends Make
             }
             $this->content .= "</section>";
         }
-    }
-
-    /**
-     * Return the url of the item or experiment
-     *
-     * @return string url to the item/experiment
-     */
-    private function getUrl()
-    {
-        // This is a workaround for PHP sometimes returning "localhost" in a LAN
-        // environment. In that case, try to get the IP address to generate the correct
-        // links.
-        if ($_SERVER['SERVER_NAME'] === 'localhost') {
-            $server_address = $_SERVER['SERVER_ADDR'];
-        } else {
-            $server_address = $_SERVER['SERVER_NAME'];
-        }
-
-        $url = 'https://' . $server_address . Tools::getServerPort() . $_SERVER['PHP_SELF'];
-        if ($this->Entity->type === 'experiments') {
-            $target = $this->Entity->type . '.php';
-        } else {
-            $target = 'database.php';
-        }
-
-        $url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), $target, $url);
-        $full_url = $url . "?mode=view&id=" . $this->Entity->id;
-
-        return $full_url;
     }
 
     /**

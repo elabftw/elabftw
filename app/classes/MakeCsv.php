@@ -30,7 +30,7 @@ class MakeCsv extends Make
     /** the input ids but in an array */
     private $idArr = array();
     /** Entity instance */
-    private $Entity;
+    protected $Entity;
 
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
@@ -43,7 +43,7 @@ class MakeCsv extends Make
         $this->pdo = Db::getConnection();
         $this->Entity = $entity;
 
-        $this->fileName = $this->getFileName();
+        $this->fileName = $this->getUniqueString();
         $this->filePath = $this->getFilePath($this->fileName, true);
 
         $this->idList = $idList;
@@ -95,25 +95,6 @@ class MakeCsv extends Make
     }
 
     /**
-     * Construct URL
-     *
-     * @param int $id The id of the current item
-     * @return string URL
-     */
-    private function getUrl($id)
-    {
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
-        $needle = array('make.php', 'app/controllers/ExperimentsController.php');
-
-        if ($this->Entity->type === 'experiments') {
-            $url = str_replace($needle, 'experiments.php', $url);
-        } else { //item
-            $url = str_replace($needle, 'database.php', $url);
-        }
-        return $url . "?mode=view&id=" . $id;
-    }
-
-    /**
      * The column names will be different depending on type
      */
     private function addLine()
@@ -131,7 +112,7 @@ class MakeCsv extends Make
             html_entity_decode(strip_tags(htmlspecialchars_decode($this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
             htmlspecialchars_decode($this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
             $elabidOrRating,
-            $this->getUrl($this->Entity->entityData['id'])
+            $this->getUrl()
         );
     }
 

@@ -10,30 +10,25 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * Mother class of MakeCsv, MakePdf and MakeZip
+ *
  */
 abstract class Make
 {
-    /** pdo object */
-    protected $pdo;
-    /** type can be experiments or items */
-    protected $type;
-
-    /** child classes need to implement that
+    /**
+     * The filename for what we are making
      *
      * @return string
      */
     abstract protected function getCleanName();
 
     /**
-     * Generate a long and unique filename
+     * Generate a long and unique string
      *
      * @return string a sha512 hash of uniqid()
      */
-    protected function getFileName()
+    protected function getUniqueString()
     {
         return hash("sha512", uniqid(rand(), true));
     }
@@ -54,18 +49,22 @@ abstract class Make
         }
         return ELAB_ROOT . 'uploads/' . $tempPath . $fileName;
     }
+
     /**
-     * Validate the type we have.
+     * Return the url of the item or experiment
      *
-     * @param string $type The type (experiments or items)
-     * @return string The valid type
+     * @return string url to the item/experiment
      */
-    protected function checkType($type)
+    protected function getUrl()
     {
-        $correctValuesArr = array('experiments', 'items');
-        if (!in_array($type, $correctValuesArr)) {
-            throw new Exception('Bad type!');
+        $url = $_SERVER['HTTP_REFERER'];
+
+        if ($this->Entity->type === 'experiments') {
+            $url .= 'experiments.php';
+        } else {
+            $url .= 'database.php';
         }
-        return $type;
+
+        return $url . "?mode=view&id=" . $this->Entity->id;
     }
 }

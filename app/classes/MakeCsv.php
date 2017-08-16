@@ -29,8 +29,6 @@ class MakeCsv extends Make
     private $idList;
     /** the input ids but in an array */
     private $idArr = array();
-    /** Entity instance */
-    protected $Entity;
 
     /**
      * Give me a list of id+id+id and a type, I make good csv for you

@@ -21,9 +21,6 @@ class MakePdf extends Make
     /** our favorite pdo object */
     protected $pdo;
 
-    /** Entity instance */
-    protected $Entity;
-
     /** a sha512 sum */
     public $fileName;
 

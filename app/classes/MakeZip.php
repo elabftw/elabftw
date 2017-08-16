@@ -20,28 +20,33 @@ class MakeZip extends Make
 {
     /** our pdo object */
     protected $pdo;
-    /** the zip object */
-    private $zip;
-    /** Entity instance */
-    private $Entity;
+
+    /** the Zip object */
+    private $Zip;
 
     /** the input ids */
     private $idList;
+
     /** the input ids but in an array */
     private $idArr = array();
+
     /** files to be deleted by destructor */
     private $filesToDelete = array();
+
     /** a formatted title */
     private $cleanTitle;
+
     /** a sha512 sum */
     public $fileName;
+
     /** full path of file */
     public $filePath;
+
     /** name of folder */
     private $folder;
+
     /** array that will be converted to json */
     private $jsonArr = array();
-
 
     /**
      * Give me an id list and a type, I make good zip for you
@@ -93,9 +98,9 @@ class MakeZip extends Make
      */
     private function createZipArchive()
     {
-        $this->zip = new \ZipArchive;
+        $this->Zip = new \ZipArchive;
 
-        if (!$this->zip->open($this->filePath, ZipArchive::CREATE)) {
+        if (!$this->Zip->open($this->filePath, ZipArchive::CREATE)) {
             throw new Exception('Could not open zip file!');
         }
     }
@@ -128,7 +133,7 @@ class MakeZip extends Make
             $uploads = $req->fetchAll();
             foreach ($uploads as $upload) {
                 // add it to the .zip
-                $this->zip->addFile(
+                $this->Zip->addFile(
                     ELAB_ROOT . 'uploads/' . $upload['long_name'],
                     $this->folder . "/" . $upload['real_name']
                 );
@@ -168,7 +173,7 @@ class MakeZip extends Make
             $real_names_so_far[] = $realName;
 
             // add files to archive
-            $this->zip->addFile(ELAB_ROOT . 'uploads/' . $file['long_name'], $this->folder . "/" . $realName);
+            $this->Zip->addFile(ELAB_ROOT . 'uploads/' . $file['long_name'], $this->folder . "/" . $realName);
         }
     }
 
@@ -179,7 +184,7 @@ class MakeZip extends Make
     private function addPdf()
     {
         $pdf = new MakePdf($this->Entity, true);
-        $this->zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());
+        $this->Zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());
         $this->filesToDelete[] = $pdf->filePath;
     }
 
@@ -191,7 +196,7 @@ class MakeZip extends Make
     private function addCsv($id)
     {
         $csv = new MakeCsv($this->Entity, $id);
-        $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
+        $this->Zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;
     }
 
@@ -206,7 +211,7 @@ class MakeZip extends Make
         $tf = fopen($jsonPath, 'w+');
         fwrite($tf, $json);
         fclose($tf);
-        $this->zip->addFile($jsonPath, ".elabftw.json");
+        $this->Zip->addFile($jsonPath, ".elabftw.json");
         $this->filesToDelete[] = $jsonPath;
     }
 
@@ -252,7 +257,7 @@ class MakeZip extends Make
             $this->addToZip($id);
         }
         $this->addJson();
-        $this->zip->close();
+        $this->Zip->close();
         // check if it failed for some reason
         if (!is_file($this->filePath)) {
             throw new Exception(_('Error making the zip archive!'));

@@ -58,7 +58,6 @@ class MakePdf extends Make
 
         // build the pdf content
         $this->setAuthor();
-        $this->setCleanTitle();
         $this->setTags();
         $this->buildContent();
 

@@ -16,6 +16,9 @@ namespace Elabftw\Elabftw;
  */
 abstract class Make
 {
+    /** instance of Experiments or Database */
+    protected $Entity;
+
     /**
      * The filename for what we are making
      *

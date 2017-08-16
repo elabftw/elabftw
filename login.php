@@ -68,7 +68,7 @@ try {
     // don't show the local login form if it's disabled
     $showLocal = true;
     // if there is a ?letmein in the url, we still show it.
-    if (!$Config->configArr['local_login'] && !isset($_GET['letmein'])) {
+    if (!$Config->configArr['local_login'] && !$Request->query->has('letmein')) {
         $showLocal = false;
     }
 

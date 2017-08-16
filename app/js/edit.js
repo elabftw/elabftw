@@ -19,12 +19,11 @@ $(document).ready(function() {
                     destroy: true,
                     id: id
                 }).done(function(data) {
-                    var json = JSON.parse(data);
-                    if (json.res) {
-                        notif(json.msg, 'ok');
+                    if (data.res) {
+                        notif(data.msg, 'ok');
                         window.location.replace(location);
                     } else {
-                        notif(json.msg, 'ko');
+                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -66,12 +65,6 @@ $(document).ready(function() {
                     $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
                 });
             }
-        },
-        getList: function() {
-            $.post(this.controller, {
-            }).done(function (tagList) {
-                return tagList;
-            });
         }
     };
 
@@ -124,12 +117,11 @@ $(document).ready(function() {
                     id: id,
                     stepId: stepId
                 }).done(function (data) {
-                    var json = JSON.parse(data);
-                    if (json.res) {
-                        notif(json.msg, 'ok');
+                    if (data.res) {
+                        notif(data.msg, 'ok');
                         $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
                     } else {
-                        notif(json.msg, 'ko');
+                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -335,11 +327,10 @@ $(document).ready(function() {
                 rating: rating,
                 id: id
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }

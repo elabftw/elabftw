@@ -12,6 +12,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Database
@@ -21,78 +23,28 @@ try {
     require_once '../../app/init.inc.php';
 
     $Entity = new Database($Users);
-
-    $mode = 'show';
-    $id = '';
-    $redirect = false;
-
+    if ($Request->request->has('id')) {
+        $Entity->setId($Request->request->get('id'));
+    }
 
     // CREATE
-    if (isset($_GET['databaseCreateId'])) {
-        $redirect = true;
-        // can raise an exception
-        $id = $Entity->create($_GET['databaseCreateId']);
-        $mode = 'edit';
-    }
-
-    // UPDATE
-    if (isset($_POST['update'])) {
-        $Entity->setId($_POST['id']);
-        $Entity->canOrExplode('write');
-
-        if ($Entity->update(
-            $_POST['title'],
-            $_POST['date'],
-            $_POST['body']
-        )) {
-            $id = $Entity->id;
-            $mode = 'view';
-            $redirect = true;
-        } else {
-            throw new Exception('Error');
-        }
-    }
-
-    // DUPLICATE
-    if (isset($_GET['duplicateId'])) {
-        $Entity->setId($_GET['duplicateId']);
-        $Entity->canOrExplode('read');
-
-        $id = $Entity->duplicate();
-        $mode = 'edit';
-        $redirect = true;
-    }
-
-    // UPDATE CATEGORY (ITEM TYPE)
-    if (isset($_POST['updateCategory'])) {
-        $Entity->setId($_POST['id']);
-        $Entity->canOrExplode('write');
-
-        if ($Entity->updateCategory($_POST['categoryId'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
+    if ($Request->query->has('create')) {
+        $id = $Entity->create($Request->query->get('create'));
+        $Response = new RedirectResponse("../../database.php?mode=edit&id=" . $id);
     }
 
     // UPDATE RATING
-    if (isset($_POST['rating'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('rating')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if ($Entity->updateRating($_POST['rating'])) {
-            echo json_encode(array(
+        if ($Entity->updateRating($Request->request->get('rating'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -100,28 +52,27 @@ try {
     }
 
     // DESTROY
-    if (isset($_POST['destroy'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('destroy')) {
+        $Response = new JsonResponse();
         if ($Entity->destroy()) {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Item deleted successfully')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
         }
     }
 
+
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = Tools::error();
-
+    $Response = new RedirectResponse("../../database.php");
 } finally {
-    if ($redirect) {
-        header("location: ../../database.php?mode=" . $mode . "&id=" . $id);
-    }
+    $Response->send();
 }

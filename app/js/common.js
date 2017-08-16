@@ -127,11 +127,10 @@ function quickSave(type, id) {
         date : document.getElementById('datepicker').value,
         body : tinymce.activeEditor.getContent()
     }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
+        if (data.res) {
+            notif(data.msg, 'ok');
         } else {
-            notif(json.msg, 'ko');
+            notif(data.msg, 'ko');
         }
     });
 }

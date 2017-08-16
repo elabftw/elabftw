@@ -20,6 +20,8 @@ class Experiments extends Entity
 {
     use EntityTrait;
 
+    const PAGE = 'experiments';
+
     /** pdo object */
     protected $pdo;
 
@@ -34,6 +36,7 @@ class Experiments extends Entity
 
     /** instance of Comments */
     public $Comments;
+
 
     /**
      * Constructor

@@ -37,51 +37,6 @@ try {
         $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
     }
 
-    // UPDATE
-    if ($Request->request->has('update')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->update(
-            $Request->request->get('title'),
-            $Request->request->get('date'),
-            $Request->request->get('body')
-        )) {
-            $Response = new RedirectResponse("../../experiments.php?mode=view&id=" . $Request->request->get('id'));
-        } else {
-            throw new Exception('Error updating experiment');
-        }
-    }
-
-    // DUPLICATE
-    if ($Request->query->has('duplicateId')) {
-        $Entity->setId($Request->query->get('duplicateId'));
-        $Entity->canOrExplode('read');
-
-        $id = $Entity->duplicate();
-        $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
-    }
-
-    // UPDATE STATUS
-    if ($Request->request->has('updateCategory')) {
-        $Response = new JsonResponse();
-        $Entity->canOrExplode('write');
-
-        if ($Entity->updateCategory($Request->request->get('categoryId'))) {
-            // get the color of the status for updating the css
-            $Status = new Status($Users);
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-                'color' => $Status->readColor($Request->request->get('categoryId'))
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
-
     // UPDATE VISIBILITY
     if ($Request->request->has('updateVisibility')) {
         $Response = new JsonResponse();

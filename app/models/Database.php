@@ -20,6 +20,8 @@ class Database extends Entity
 {
     use EntityTrait;
 
+    const PAGE = 'database';
+
     /**
      * Constructor
      *
@@ -29,6 +31,7 @@ class Database extends Entity
     public function __construct(Users $users, $id = null)
     {
         $this->pdo = Db::getConnection();
+
 
         $this->type = 'items';
         $this->Users = $users;

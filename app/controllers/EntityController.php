@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -24,69 +25,63 @@ try {
     // id of the item (experiment or database item)
     $id = 1;
 
-    if (isset($_POST['id'])) {
-        $id = $_POST['id'];
-    } elseif (isset($GET['id'])) {
-        $id = $_GET['id'];
+    if ($Request->request->has('id')) {
+        $id = $Request->request->get('id');
+    } elseif ($Request->query->has('id')) {
+        $id = $Request->query->get('id');
     }
 
-    if ((isset($_POST['type']) && $_POST['type'] === 'experiments') ||
-        (isset($_GET['type']) && ($_GET['type'] === 'experiments'))) {
+    if ($Request->request->get('type')  === 'experiments' ||
+        $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($Users, $id);
     } else {
         $Entity = new Database($Users, $id);
     }
-    // GET BODY
-    if (isset($_POST['getBody'])) {
-        $permissions = $Entity->getPermissions();
 
-        if ($permissions['read'] === false) {
-            throw new Exception(Tools::error(true));
-        }
+    /**
+     * GET REQUESTS
+     *
+     */
 
-        $Response->setData(array('body' => $Entity->entityData['body']));
+    // GET TAG LIST
+    if ($Request->query->has('term') && $Request->query->has('tag')) {
+        $Tags = new Tags($Entity);
+        $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
+        $Response->setData($Tags->getList($term));
     }
 
-    // LOCK
-    if (isset($_POST['lock'])) {
-
-        $permissions = $Entity->getPermissions();
-
-        // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if (!$Users->userData['can_lock'] && !$permissions['write']) {
-            throw new Exception(_("You don't have the rights to lock/unlock this."));
+    // GET MENTION LIST
+    if ($Request->query->has('term') && $Request->query->has('mention')) {
+        $userFilter = false;
+        $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
+        if ($Request->query->has('userFilter')) {
+            $userFilter = true;
         }
-
-        $errMsg = Tools::error();
-        $res = null;
-        try {
-            $res = $Entity->toggleLock();
-        } catch (Exception $e) {
-            $errMsg = $e->getMessage();
-        }
-
-        if ($res) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => $errMsg
-            ));
-        }
+        $Response->setData($Entity->getMentionList($term, $userFilter));
     }
+
+    // DUPLICATE
+    if ($Request->query->has('duplicateId')) {
+        $Entity->setId($Request->query->get('duplicateId'));
+        $Entity->canOrExplode('read');
+
+        $id = $Entity->duplicate();
+        $Response = new RedirectResponse("../../" . $Entity::PAGE . ".php?mode=edit&id=" . $id);
+    }
+
+
+    /**
+     * POST REQUESTS
+     *
+     */
 
     // QUICKSAVE
-    if (isset($_POST['quickSave'])) {
-        $title = Tools::checkTitle($_POST['title']);
-
-        $body = Tools::checkBody($_POST['body']);
-
-        $date = Tools::kdate($_POST['date']);
-
-        if ($Entity->update($title, $date, $body)) {
+    if ($Request->request->has('quickSave')) {
+        if ($Entity->update(
+            $Request->request->get('title'),
+            $Request->request->get('date'),
+            $Request->request->get('body')
+        )) {
             $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -99,59 +94,67 @@ try {
         }
     }
 
+    // UPDATE CATEGORY (item type or status)
+    if ($Request->request->has('updateCategory')) {
+        $Response = new JsonResponse();
+        $Entity->canOrExplode('write');
+
+        if ($Entity->updateCategory($Request->request->get('categoryId'))) {
+            // get the color of the status/item type for updating the css
+            if ($Entity->type === 'experiments') {
+                $Category = new Status($Users);
+            } else {
+                $Category = new ItemsTypes($Users);
+            }
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'color' => $Category->readColor($Request->request->get('categoryId'))
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
     // CREATE TAG
-    if (isset($_POST['createTag'])) {
+    if ($Request->request->has('createTag')) {
+        $Entity->canOrExplode('write');
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        $tag = strtr(filter_var($_POST['tag'], FILTER_SANITIZE_STRING), '\\', '');
+        $tag = strtr($Request->request->filter('tag', null, FILTER_SANITIZE_STRING), '\\', '');
         // also remove | because we use this as separator for tags in SQL
         $tag = strtr($tag, '|', ' ');
         // check for string length and if user owns the experiment
         if (strlen($tag) < 1) {
             throw new Exception(_('Tag is too short!'));
         }
-        $Entity->canOrExplode('write');
 
         $Tags = new Tags($Entity);
         $Tags->create($tag);
     }
 
     // DELETE TAG
-    if (isset($_POST['destroyTag'])) {
-        if (Tools::checkId($_POST['tag_id']) === false) {
+    if ($Request->request->has('destroyTag')) {
+        if (Tools::checkId($Request->request->get('tag_id')) === false) {
             throw new Exception('Bad id value');
         }
         $Entity->canOrExplode('write');
         $Tags = new Tags($Entity);
-        $Tags->destroy($_POST['tag_id']);
-    }
-
-    // GET TAG LIST
-    if (isset($_GET['term']) && isset($_GET['tag'])) {
-        $Tags = new Tags($Entity);
-        $term = filter_var($_GET['term'], FILTER_SANITIZE_STRING);
-        $Response->setData($Tags->getList($term));
-    }
-
-    // GET MENTION LIST
-    if (isset($_GET['term']) && isset($_GET['mention'])) {
-        $userFilter = false;
-        $term = filter_var($_GET['term'], FILTER_SANITIZE_STRING);
-        if (isset($_GET['userFilter'])) {
-            $userFilter = true;
-        }
-        $Response->setData($Entity->getMentionList($term, $userFilter));
+        $Tags->destroy($Request->request->get('tag_id'));
     }
 
     // UPDATE FILE COMMENT
-    if (isset($_POST['updateFileComment'])) {
+    if ($Request->request->has('updateFileComment')) {
         try {
-            $comment = filter_var($_POST['comment'], FILTER_SANITIZE_STRING);
+            $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
 
             if (strlen($comment) === 0 || $comment === ' ') {
                 throw new Exception(_('Comment is too short'));
             }
 
-            $id_arr = explode('_', $_POST['comment_id']);
+            $id_arr = explode('_', $Request->request->get('comment_id'));
             if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }
@@ -178,7 +181,7 @@ try {
     }
 
     // CREATE UPLOAD
-    if (isset($_POST['upload'])) {
+    if ($Request->request->has('upload')) {
         try {
             $Uploads = new Uploads($Entity);
             if ($Uploads->create($Request)) {

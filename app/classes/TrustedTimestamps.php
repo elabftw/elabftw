@@ -185,9 +185,6 @@ class TrustedTimestamps extends Make
      */
     private function createRequestfile()
     {
-        if (!is_readable($this->pdfPath)) {
-            throw new Exception('Pdf not found! This is a bug!');
-        }
         $this->requestfilePath = $this->getFilePath($this->getUniqueString(), true);
         // we don't keep this file around
         $this->tmpfiles[] = $this->requestfilePath;

@@ -86,6 +86,7 @@ class MakePdf extends Make
         if ($toFile) {
             $this->fileName = $this->getUniqueString() . '.pdf';
 
+            // output in tmp folder if it's not a timestamp pdf
             if ($timestamp) {
                 $this->filePath = $this->getFilePath($this->fileName, false);
             } else {

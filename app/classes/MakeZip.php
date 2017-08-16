@@ -206,13 +206,7 @@ class MakeZip extends Make
      */
     private function addJson()
     {
-        $json = json_encode($this->jsonArr);
-        $jsonPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.json';
-        $tf = fopen($jsonPath, 'w+');
-        fwrite($tf, $json);
-        fclose($tf);
-        $this->Zip->addFile($jsonPath, ".elabftw.json");
-        $this->filesToDelete[] = $jsonPath;
+        $this->Zip->addFromString(".elabftw.json", json_encode($this->jsonArr));
     }
 
     /**

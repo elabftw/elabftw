@@ -175,8 +175,7 @@ class Api
 
         $Uploads = new Uploads($this->Entity);
 
-        // TODO
-        if ($Uploads->create($_FILES)) {
+        if ($Uploads->create($this->Request)) {
             return array('Result', 'Success');
         }
 

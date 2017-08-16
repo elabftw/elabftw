@@ -181,7 +181,7 @@ try {
     if (isset($_POST['upload'])) {
         try {
             $Uploads = new Uploads($Entity);
-            if ($Uploads->create($_FILES)) {
+            if ($Uploads->create($Request)) {
                 echo json_encode(array(
                     'res' => true,
                     'msg' => _('Saved')
@@ -201,10 +201,10 @@ try {
     }
 
     // ADD MOL FILE OR PNG
-    if (isset($_POST['addFromString'])) {
+    if ($Request->request->has('addFromString')) {
         $Uploads = new Uploads($Entity);
         $Entity->canOrExplode('write');
-        if ($Uploads->createFromString($_POST['fileType'], $_POST['string'])) {
+        if ($Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -219,12 +219,12 @@ try {
 
 
     // DESTROY UPLOAD
-    if (isset($_POST['uploadsDestroy'])) {
+    if ($Request->request->has('uploadsDestroy')) {
         $Uploads = new Uploads($Entity);
-        $upload = $Uploads->readFromId($_POST['upload_id']);
+        $upload = $Uploads->readFromId($Request->request->get('upload_id'));
         $permissions = $Entity->getPermissions();
         if ($permissions['write']) {
-            if ($Uploads->destroy($_POST['upload_id'])) {
+            if ($Uploads->destroy($Request->request->get('upload_id'))) {
                 // check that the filename is not in the body. see #432
                 $msg = "";
                 if (strpos($Entity->entityData['body'], $upload['long_name'])) {
@@ -236,7 +236,6 @@ try {
                     'msg' => _('File deleted successfully' . $msg)
                 ));
             } else {
-
                 echo json_encode(array(
                     'res' => false,
                     'msg' => Tools::error()

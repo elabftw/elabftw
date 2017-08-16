@@ -249,10 +249,9 @@ function getQueryParams(qs) {
 function decodeAsn1(path, expId) {
     $.post('app/controllers/ExperimentsController.php', {
         asn1: path,
-        exp_id: expId
+        id: expId
     }).done(function(data) {
-        var json = JSON.parse(data);
-        $('#decodedDiv').html(json.msg);
+        $('#decodedDiv').html(data.msg);
     });
 }
 

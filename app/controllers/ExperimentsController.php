@@ -12,6 +12,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Experiments
@@ -21,59 +23,59 @@ try {
     require_once '../../app/init.inc.php';
 
     $Entity = new Experiments($Users);
+    if ($Request->request->has('id')) {
+        $Entity->setId($Request->request->get('id'));
+    }
 
     // CREATE
-    if (isset($_GET['create'])) {
-        if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
-            $id = $Entity->create($_GET['tpl']);
+    if ($Request->query->has('create')) {
+        if ($Request->query->has('tpl')) {
+            $id = $Entity->create($Request->query->get('tpl'));
         } else {
             $id = $Entity->create();
         }
-        header("location: ../../experiments.php?mode=edit&id=" . $id);
+        $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
     }
 
     // UPDATE
-    if (isset($_POST['update'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('update')) {
         $Entity->canOrExplode('write');
 
         if ($Entity->update(
-            $_POST['title'],
-            $_POST['date'],
-            $_POST['body']
+            $Request->request->get('title'),
+            $Request->request->get('date'),
+            $Request->request->get('body')
         )) {
-            header("location: ../../experiments.php?mode=view&id=" . $_POST['id']);
+            $Response = new RedirectResponse("../../experiments.php?mode=view&id=" . $Request->request->get('id'));
         } else {
             throw new Exception('Error updating experiment');
         }
     }
 
     // DUPLICATE
-    if (isset($_GET['duplicateId'])) {
-        $Entity->setId($_GET['duplicateId']);
+    if ($Request->query->has('duplicateId')) {
+        $Entity->setId($Request->query->get('duplicateId'));
         $Entity->canOrExplode('read');
 
         $id = $Entity->duplicate();
-        $mode = 'edit';
-        header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
+        $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
     }
 
     // UPDATE STATUS
-    if (isset($_POST['updateCategory'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('updateCategory')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-
-        if ($Entity->updateCategory($_POST['categoryId'])) {
+        if ($Entity->updateCategory($Request->request->get('categoryId'))) {
             // get the color of the status for updating the css
             $Status = new Status($Users);
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved'),
-                'color' => $Status->readColor($_POST['categoryId'])
+                'color' => $Status->readColor($Request->request->get('categoryId'))
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -81,21 +83,21 @@ try {
     }
 
     // UPDATE VISIBILITY
-    if (isset($_POST['updateVisibility'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('updateVisibility')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if (!$Entity->checkVisibility($_POST['visibility'])) {
+        if (!$Entity->checkVisibility($Request->request->get('visibility'))) {
             throw new Exception('Bad visibility argument');
         }
 
-        if ($Entity->updateVisibility($_POST['visibility'])) {
-            echo json_encode(array(
+        if ($Entity->updateVisibility($Request->request->get('visibility'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -103,17 +105,17 @@ try {
     }
 
     // CREATE STEP
-    if (isset($_POST['createStep'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('createStep')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if ($Entity->Steps->create($_POST['body'])) {
-            echo json_encode(array(
+        if ($Entity->Steps->create($Request->request->get('body'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -121,17 +123,17 @@ try {
     }
 
     // FINISH STEP
-    if (isset($_POST['finishStep'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('finishStep')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if ($Entity->Steps->finish($_POST['stepId'])) {
-            echo json_encode(array(
+        if ($Entity->Steps->finish($Request->request->get('stepId'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -139,17 +141,17 @@ try {
     }
 
     // DESTROY STEP
-    if (isset($_POST['destroyStep'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('destroyStep')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if ($Entity->Steps->destroy($_POST['stepId'])) {
-            echo json_encode(array(
+        if ($Entity->Steps->destroy($Request->request->get('stepId'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Step deleted successfully')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -157,17 +159,17 @@ try {
     }
 
     // CREATE LINK
-    if (isset($_POST['createLink'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('createLink')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if ($Entity->Links->create($_POST['linkId'])) {
-            echo json_encode(array(
+        if ($Entity->Links->create($Request->request->get('linkId'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -175,17 +177,17 @@ try {
     }
 
     // DESTROY LINK
-    if (isset($_POST['destroyLink'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('destroyLink')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        if ($Entity->Links->destroy($_POST['linkId'])) {
-            echo json_encode(array(
+        if ($Entity->Links->destroy($Request->request->get('linkId'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Link deleted successfully')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -193,24 +195,25 @@ try {
     }
 
     // GET LINK LIST
-    if (isset($_GET['term'])) {
-        echo json_encode($Entity->getLinkList($_GET['term']));
+    if ($Request->query->has('term')) {
+        $Response = new JsonResponse();
+        $Response->setData($Entity->getLinkList($Request->query->get('term')));
     }
 
     // TIMESTAMP
-    if (isset($_POST['timestamp'])) {
+    if ($Request->request->has('timestamp')) {
         try {
-            $Entity->setId($_POST['id']);
+            $Response = new JsonResponse();
             $Entity->canOrExplode('write');
             if ($Entity->isTimestampable()) {
                 $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
                 if ($ts->timeStamp()) {
-                    echo json_encode(array(
+                    $Response->setData(array(
                         'res' => true
                     ));
                 }
             } else {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => false,
                     'msg' => _('This experiment cannot be timestamped!')
                 ));
@@ -218,7 +221,7 @@ try {
         } catch (Exception $e) {
             $Logs = new Logs();
             $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
             ));
@@ -226,25 +229,25 @@ try {
     }
 
     // DESTROY
-    if (isset($_POST['destroy'])) {
-        $Entity->setId($_POST['id']);
+    if ($Request->request->has('destroy')) {
+        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
         $Teams = new Teams($Entity->team);
 
         if (($Teams->read('deletable_xp') == '0') && !$_SESSION['is_admin']) {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => _("You don't have the rights to delete this experiment.")
             ));
         } else {
             if ($Entity->destroy()) {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => true,
                     'msg' => _('Experiment successfully deleted')
                 ));
             } else {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => false,
                     'msg' => Tools::error()
                 ));
@@ -253,15 +256,18 @@ try {
     }
 
     // DECODE ASN1 TOKEN
-    if (isset($_POST['asn1']) && is_readable(ELAB_ROOT . "uploads/" . $_POST['asn1'])) {
-        $Entity->setId($_POST['exp_id']);
+    if ($Request->request->has('asn1') && is_readable(ELAB_ROOT . "uploads/" . $Request->request->get('asn1'))) {
+        $Response = new JsonResponse();
         $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
 
-        echo json_encode(array(
+        $Response->setData(array(
             'res' => true,
             'msg' => $TrustedTimestamps->decodeAsn1($_POST['asn1'])
         ));
     }
+
+    $Response->send();
+
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());

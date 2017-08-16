@@ -176,15 +176,14 @@ function uploadsDestroy(id, type, itemId, confirmText) {
             id: itemId,
             type: type
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
                 if (type === 'items') {
                     type = 'database';
                 }
                 $("#filesdiv").load(type + ".php?mode=edit&id=" + itemId + " #filesdiv");
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     }

@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with things common to experiments and items like tags, uploads, quicksave and lock
@@ -19,6 +20,7 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    $Response = new JsonResponse();
     // id of the item (experiment or database item)
     $id = 1;
 
@@ -42,7 +44,7 @@ try {
             throw new Exception(Tools::error(true));
         }
 
-        echo $Entity->entityData['body'];
+        $Response->setData(array('body' => $Entity->entityData['body']));
     }
 
     // LOCK
@@ -64,12 +66,12 @@ try {
         }
 
         if ($res) {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => $errMsg
             ));
@@ -84,15 +86,13 @@ try {
 
         $date = Tools::kdate($_POST['date']);
 
-        $result = $Entity->update($title, $date, $body);
-
-        if ($result) {
-            echo json_encode(array(
+        if ($Entity->update($title, $date, $body)) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -129,7 +129,7 @@ try {
     if (isset($_GET['term']) && isset($_GET['tag'])) {
         $Tags = new Tags($Entity);
         $term = filter_var($_GET['term'], FILTER_SANITIZE_STRING);
-        echo json_encode($Tags->getList($term));
+        $Response->setData($Tags->getList($term));
     }
 
     // GET MENTION LIST
@@ -139,7 +139,7 @@ try {
         if (isset($_GET['userFilter'])) {
             $userFilter = true;
         }
-        echo json_encode($Entity->getMentionList($term, $userFilter));
+        $Response->setData($Entity->getMentionList($term, $userFilter));
     }
 
     // UPDATE FILE COMMENT
@@ -159,18 +159,18 @@ try {
 
             $Upload = new Uploads($Entity);
             if ($Upload->updateComment($id, $comment)) {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => true,
                     'msg' => _('Saved')
                 ));
             } else {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => false,
                     'msg' => Tools::error()
                 ));
             }
         } catch (Exception $e) {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
             ));
@@ -182,18 +182,18 @@ try {
         try {
             $Uploads = new Uploads($Entity);
             if ($Uploads->create($Request)) {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => true,
                     'msg' => _('Saved')
                 ));
             } else {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => false,
                     'msg' => Tools::error()
                 ));
             }
         } catch (Exception $e) {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
             ));
@@ -205,12 +205,12 @@ try {
         $Uploads = new Uploads($Entity);
         $Entity->canOrExplode('write');
         if ($Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -231,23 +231,26 @@ try {
                     $msg = ". ";
                     $msg .= _("Please make sure to remove any reference to this file in the body!");
                 }
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => true,
-                    'msg' => _('File deleted successfully' . $msg)
+                    'msg' => _('File deleted successfully') . $msg
                 ));
             } else {
-                echo json_encode(array(
+                $Response->setData(array(
                     'res' => false,
                     'msg' => Tools::error()
                 ));
             }
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error(true)
             ));
         }
     }
+
+    $Response->send();
+
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());

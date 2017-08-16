@@ -23,8 +23,8 @@ $(document).ready(function(){
             'id' : id,
             'type' : $(this).data('type')
         // and put it in the div and show the div
-        }).done(function(body) {
-            $('#bodyToggle_' + id).html(body);
+        }).done(function(data) {
+            $('#bodyToggle_' + id).html(data.body);
             $('#bodyToggle_' + id).toggle();
 
         });

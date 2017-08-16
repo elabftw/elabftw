@@ -190,6 +190,7 @@ class Auth
     /**
      * We are not auth, but maybe we have a cookie, try to login with that
      *
+     * @param Request $Request
      * @return bool True if we have a valid cookie and it is the same token as in the DB
      */
     public function loginWithCookie($Request)

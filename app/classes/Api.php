@@ -34,16 +34,14 @@ class Api
     /**
      * Get data for user from the API key
      *
-     * @param string $key API key
-     * @param string $method GET/POST
-     * @param string $request experiments/12
+     * @param Request $request
      */
-    public function __construct(Request $Request)
+    public function __construct(Request $request)
     {
-        $this->Request = $Request;
+        $this->Request = $request;
 
         // do we have an API key?
-        if (!$Request->server->has('HTTP_AUTHORIZATION')) {
+        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             throw new Exception('No API key received.');
         }
         // verify the key and load user infos

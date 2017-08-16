@@ -17,10 +17,10 @@ use PDO;
  */
 class BannedUsers
 {
-    /** db connection */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** instance of Config */
+    /** @var Config $Config Master configuration */
     public $Config;
 
     /**

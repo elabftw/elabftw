@@ -14,22 +14,22 @@ use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * An API for elab
+ * The REST API for eLabFTW
  *
  */
 class Api
 {
-    /** the Request object */
-    private $Request;
-
-    /** the id of the entity */
-    public $id = null;
-
-    /** our entity object */
+    /** @var Entity $Entity Experiments or Database */
     private $Entity;
 
-    /** the output */
+    /** @var Request $Request The request */
+    private $Request;
+
+    /** @var array $content the output */
     private $content;
+
+    /** @var int $id the id of the entity */
+    private $id = null;
 
     /**
      * Get data for user from the API key
@@ -98,7 +98,6 @@ class Api
         }
     }
 
-
     /**
      * Return the response
      *
@@ -108,6 +107,7 @@ class Api
     {
         return $this->content;
     }
+
     /**
      * Create an experiment
      *

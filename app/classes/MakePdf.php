@@ -226,7 +226,7 @@ class MakePdf extends Make
                 $this->content .= "<p class='pdf-ul'>" . $upload['real_name'];
                 // add a comment ? don't add if it's the default text
                 if ($upload['comment'] != 'Click to add a comment') {
-                    $this->content .= " (" . stripslashes(htmlspecialchars_decode($upload['comment'])) . ")";
+                    $this->content .= " (" . $upload['comment'] . ")";
                 }
                 // add hash ? don't add if we don't have it
                 // length must be greater (sha2 hashes) or equal (md5) 32 bits

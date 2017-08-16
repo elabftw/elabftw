@@ -211,7 +211,7 @@ class UploadsView extends EntityView
             if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
                 $comment = "<img src='app/img/comment.png' alt='comment' />
                             <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
-                stripslashes($upload['comment']) . "</p>";
+                $upload['comment'] . "</p>";
                 $html .= $comment;
             }
 

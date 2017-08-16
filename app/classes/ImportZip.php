@@ -189,7 +189,7 @@ class ImportZip extends Import
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($item['title']));
+                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', $item['title']);
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .

@@ -201,15 +201,6 @@ class MakeZip extends Make
     }
 
     /**
-     * Add the (hidden) .elabftw.json file useful for reimport
-     *
-     */
-    private function addJson()
-    {
-        $this->Zip->addFromString(".elabftw.json", json_encode($this->jsonArr));
-    }
-
-    /**
      * This is where the magic happens
      *
      * @param int $id The id of the item we are zipping
@@ -250,7 +241,10 @@ class MakeZip extends Make
         foreach ($this->idArr as $id) {
             $this->addToZip($id);
         }
-        $this->addJson();
+
+        // add the (hidden) .elabftw.json file useful for reimport
+        $this->Zip->addFromString(".elabftw.json", json_encode($this->jsonArr));
+
         $this->Zip->close();
         // check if it failed for some reason
         if (!is_file($this->filePath)) {

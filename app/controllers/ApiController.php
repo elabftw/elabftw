@@ -11,46 +11,26 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This file is called without any auth, so we don't load init.inc.php but only what we need
  */
-require_once '../../config.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
-
 try {
-    // do we have an API key?
-    if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
-        throw new Exception('No API key received.');
-    }
-    $Api = new Api(
-        $_SERVER['HTTP_AUTHORIZATION'],
-        $_SERVER['REQUEST_METHOD'],
-        $_REQUEST['req']
-    );
+    require_once '../../config.php';
+    require_once ELAB_ROOT . 'vendor/autoload.php';
 
-    if ($Api->method === 'GET') {
-        $output = $Api->getEntity();
-    } else {
-
-        // file upload
-        if (count($_FILES) >= 1) {
-            $output = $Api->uploadFile();
-        // title date body update
-        } elseif (isset($_POST['title'])) {
-            $output = $Api->updateEntity();
-        } else {
-            // create an experiment
-            if ($Api->endpoint === 'experiments') {
-                $output = $Api->createExperiment();
-            } else {
-                throw new Exception("Creating database items is not supported.");
-            }
-        }
-    }
-
-    echo json_encode($output);
+    // create Request object
+    $Request = Request::createFromGlobals();
+    // send to API
+    $Api = new Api($Request);
+    // create response
+    $Response = new JsonResponse($Api->getContent());
 
 } catch (Exception $e) {
-    echo json_encode(array('error', $e->getMessage()));
+    $Response = new JsonResponse(array('error', $e->getMessage()));
+
+} finally {
+    $Response->send();
 }

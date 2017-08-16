@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * An API for elab
@@ -18,20 +19,17 @@ use Exception;
  */
 class Api
 {
-    /** http method GET POST PUT DELETE */
-    public $method;
-
-    /** the model (experiments/items) */
-    public $endpoint;
-
-    /** optional arguments, like the id */
-    public $args = array();
+    /** the Request object */
+    private $Request;
 
     /** the id of the entity */
     public $id = null;
 
     /** our entity object */
     private $Entity;
+
+    /** the output */
+    private $content;
 
     /**
      * Get data for user from the API key
@@ -40,44 +38,78 @@ class Api
      * @param string $method GET/POST
      * @param string $request experiments/12
      */
-    public function __construct($key, $method, $request)
+    public function __construct(Request $Request)
     {
-        $availMethods = array('GET', 'POST', 'PUT');
-        if (!in_array($method, $availMethods)) {
-            throw new Exception('Incorrect HTTP verb!');
-        }
-        $this->method = $method;
+        $this->Request = $Request;
 
-        // reply in JSON
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: *");
-        header("Content-Type: application/json");
+        // do we have an API key?
+        if (!$Request->server->has('HTTP_AUTHORIZATION')) {
+            throw new Exception('No API key received.');
+        }
+        // verify the key and load user infos
+        $Users = new Users();
+        $Users->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
+
+
+        $availMethods = array('GET', 'POST');
+        if (!in_array($this->Request->server->get('REQUEST_METHOD'), $availMethods)) {
+            throw new Exception('Incorrect HTTP verb! Available verbs are: ' . implode($availMethods, ', '));
+        }
 
         // parse args
-        $this->args = explode('/', rtrim($request, '/'));
+        $args = explode('/', rtrim($this->Request->query->get('req'), '/'));
 
         // assign the id if there is one
-        if (Tools::checkId(end($this->args))) {
-            $this->id = end($this->args);
+        if (Tools::checkId(end($args))) {
+            $this->id = end($args);
         }
 
         // assign the endpoint
-        $this->endpoint = array_shift($this->args);
-
-        // get info about user
-        $Users = new Users();
-        $Users->readFromApiKey($key);
+        $endpoint = array_shift($args);
 
         // load Entity
-        if ($this->endpoint === 'experiments') {
+        if ($endpoint === 'experiments') {
             $this->Entity = new Experiments($Users, $this->id);
-        } elseif ($this->endpoint === 'items') {
+        } elseif ($endpoint === 'items') {
             $this->Entity = new Database($Users, $this->id);
         } else {
             throw new Exception('Bad endpoint.');
         }
+
+        // a simple GET
+        if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
+            $this->content = $this->getEntity();
+
+        // POST request
+        } else {
+
+            // file upload
+            if ($this->Request->files->count() > 0) {
+                $this->content = $this->uploadFile();
+            // title date body update
+            } elseif ($this->Request->request->has('title')) {
+                $this->content = $this->updateEntity();
+            } else {
+                // create an experiment
+                if ($endpoint === 'experiments') {
+                    $this->content = $this->createExperiment();
+                } else {
+                    throw new Exception("Creating database items is not supported.");
+                }
+            }
+        }
     }
 
+
+    /**
+     * Return the response
+     *
+     * @return array
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
     /**
      * Create an experiment
      *
@@ -117,15 +149,21 @@ class Api
 
         $this->Entity->canOrExplode('write');
 
-        if (empty($_POST['title']) || empty($_POST['date']) || empty($_POST['body'])) {
+        if (!$this->Request->request->has('title') ||
+            !$this->Request->request->has('date') ||
+            !$this->Request->request->has('body')) {
             throw new Exception('Empty title, date or body sent.');
         }
 
-        if ($this->Entity->update($_POST['title'], $_POST['date'], $_POST['body'])) {
+        if ($this->Entity->update(
+            $this->Request->request->get('title'),
+            $this->Request->request->get('date'),
+            $this->Request->request->get('body')
+        )) {
             return array('Result', 'Success');
         }
 
-        return array('Result', Tools::error());
+        return array('error', Tools::error());
     }
 
     /**
@@ -139,6 +177,7 @@ class Api
 
         $Uploads = new Uploads($this->Entity);
 
+        // TODO
         if ($Uploads->create($_FILES)) {
             return array('Result', 'Success');
         }

@@ -29,87 +29,11 @@ try {
 
     $EntityView = new ExperimentsView(new Experiments($Users));
     $Status = new Status($EntityView->Entity->Users);
-    $Tags = new Tags($EntityView->Entity);
-
-    if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        // CATEGORY FILTER
-        if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
-            $EntityView->Entity->categoryFilter = " AND status.id = " . $_GET['cat'];
-            $EntityView->searchType = 'filter';
-        }
-        // TAG FILTER
-        if (isset($_GET['tag']) && $_GET['tag'] != '') {
-            $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $EntityView->Entity->tagFilter = " AND tagt.tag LIKE '" . $tag . "'";
-            $EntityView->searchType = 'tag';
-        }
-        // QUERY FILTER
-        if (isset($_GET['q']) && !empty($_GET['q'])) {
-            $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-            $EntityView->query = $query;
-            $EntityView->Entity->queryFilter = " AND (
-                title LIKE '%$query%' OR
-                date LIKE '%$query%' OR
-                body LIKE '%$query%' OR
-                elabid LIKE '%$query%'
-            )";
-            $EntityView->searchType = 'query';
-        }
-        // RELATED FILTER
-        if (isset($_GET['related']) && Tools::checkId($_GET['related'])) {
-            $EntityView->related = $_GET['related'];
-            $EntityView->searchType = 'related';
-        }
-        // ORDER
-        // default by date
-        $order = 'date';
-
-        // load the pref from the user
-        if (isset($EntityView->Entity->Users->userData['orderby'])) {
-            $order = $EntityView->Entity->Users->userData['orderby'];
-        }
-
-        // now GET pref from the filter-order-sort menu
-        if (isset($_GET['order']) && strlen($_GET['order']) > 1) {
-            $order = $_GET['order'];
-        }
-
-        if ($order === 'cat') {
-            $EntityView->Entity->order = 'status.ordering';
-        } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
-            $EntityView->Entity->order = 'experiments.' . $order;
-        } elseif ($order === 'comment') {
-            $EntityView->Entity->order = 'experiments_comments.recent_comment';
-        }
-
-        // SORT
-        $sort = 'desc';
-
-        // load the pref from the user
-        if (isset($EntityView->Entity->Users->userData['sort'])) {
-            $sort = $EntityView->Entity->Users->userData['sort'];
-        }
-
-        // now GET pref from the filter-order-sort menu
-        if (isset($_GET['sort']) && strlen($_GET['sort']) > 1) {
-            $sort = $_GET['sort'];
-        }
-
-        if ($sort === 'asc' || $sort === 'desc') {
-            $EntityView->Entity->sort = $sort;
-        }
-
-        echo $EntityView->buildShowMenu('experiments');
-        echo $EntityView->buildShow();
-        echo $Twig->render('show.html', array(
-            'Ev' => $EntityView,
-            'Category' => $Status
-        ));
 
     // VIEW
-    } elseif ($_GET['mode'] === 'view') {
+    if ($Request->query->get('mode') === 'view') {
 
-        $EntityView->Entity->setId($_GET['id']);
+        $EntityView->Entity->setId($Request->query->get('id'));
         $Comments = new Comments($EntityView->Entity);
         $EntityView->initViewEdit();
 
@@ -128,7 +52,6 @@ try {
         echo $Twig->render('view.html', array(
             'Ev' => $EntityView,
             'Status' => $Status,
-            'Tags' => $Tags,
             'commentsArr' => $commentsArr,
             'ownerName' => $ownerName,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
@@ -136,9 +59,9 @@ try {
         echo $EntityView->view();
 
     // EDIT
-    } elseif ($_GET['mode'] === 'edit') {
+    } elseif ($Request->query->get('mode') === 'edit') {
 
-        $EntityView->Entity->setId($_GET['id']);
+        $EntityView->Entity->setId($Request->query->get('id'));
         $EntityView->initViewEdit();
         // check permissions
         $EntityView->Entity->canOrExplode('write');
@@ -153,10 +76,84 @@ try {
             'Ev' => $EntityView,
             'Revisions' => $Revisions,
             'Status' => $Status,
-            'Tags' => $Tags,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
         ));
         echo $EntityView->buildUploadsHtml();
+
+    // DEFAULT MODE IS SHOW
+    } else {
+        // CATEGORY FILTER
+        if (Tools::checkId($Request->query->get('cat'))) {
+            $EntityView->Entity->categoryFilter = " AND status.id = " . $Request->query->get('cat');
+            $EntityView->searchType = 'filter';
+        }
+        // TAG FILTER
+        if ($Request->query->get('tag') != '') {
+            $tag = filter_var($Request->query->get('tag'), FILTER_SANITIZE_STRING);
+            $EntityView->Entity->tagFilter = " AND tagt.tag LIKE '" . $tag . "'";
+            $EntityView->searchType = 'tag';
+        }
+        // QUERY FILTER
+        if ($Request->query->get('q') != '') {
+            $query = filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING);
+            $EntityView->query = $query;
+            $EntityView->Entity->queryFilter = " AND (
+                title LIKE '%$query%' OR
+                date LIKE '%$query%' OR
+                body LIKE '%$query%' OR
+                elabid LIKE '%$query%'
+            )";
+            $EntityView->searchType = 'query';
+        }
+        // RELATED FILTER
+        if (Tools::checkId($Request->query->get('related'))) {
+            $EntityView->related = $Request->query->get('related');
+            $EntityView->searchType = 'related';
+        }
+        // ORDER
+        $order = '';
+
+        // load the pref from the user
+        if (isset($EntityView->Entity->Users->userData['orderby'])) {
+            $order = $EntityView->Entity->Users->userData['orderby'];
+        }
+
+        // now get pref from the filter-order-sort menu
+        if ($Request->query->has('order')) {
+            $order = $Request->query->get('order');
+        }
+
+        if ($order === 'cat') {
+            $EntityView->Entity->order = 'status.ordering';
+        } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
+            $EntityView->Entity->order = 'experiments.' . $order;
+        } elseif ($order === 'comment') {
+            $EntityView->Entity->order = 'experiments_comments.recent_comment';
+        }
+
+        // SORT
+        $sort = '';
+
+        // load the pref from the user
+        if (isset($EntityView->Entity->Users->userData['sort'])) {
+            $sort = $EntityView->Entity->Users->userData['sort'];
+        }
+
+        // now get pref from the filter-order-sort menu
+        if ($Request->query->has('sort')) {
+            $sort = $Request->query->get('sort');
+        }
+
+        if ($sort === 'asc' || $sort === 'desc') {
+            $EntityView->Entity->sort = $sort;
+        }
+
+        echo $EntityView->buildShowMenu('experiments');
+        echo $EntityView->buildShow();
+        echo $Twig->render('show.html', array(
+            'Ev' => $EntityView,
+            'Category' => $Status
+        ));
     }
 
 } catch (Exception $e) {

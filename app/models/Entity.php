@@ -69,7 +69,7 @@ class Entity
     public $queryFilter = '';
 
     /** inserted in sql */
-    public $order = 'id';
+    public $order = 'date';
 
     /** inserted in sql */
     public $sort = 'DESC';

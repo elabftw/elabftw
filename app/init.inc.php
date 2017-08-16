@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This must be included on top of every page.
@@ -38,6 +39,9 @@ try {
     require_once $configFilePath;
 
     require_once ELAB_ROOT . 'vendor/autoload.php';
+
+    // create Request object
+    $Request = Request::createFromGlobals();
 
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder

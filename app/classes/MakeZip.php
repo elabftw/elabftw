@@ -112,7 +112,11 @@ class MakeZip extends Make
      */
     private function setCleanTitle()
     {
-        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->Entity->entityData['title']));
+        $this->cleanTitle = preg_replace(
+            '/[^A-Za-z0-9]/',
+            '_',
+            htmlspecialchars_decode($this->Entity->entityData['title'], ENT_QUOTES)
+        );
     }
 
     /**

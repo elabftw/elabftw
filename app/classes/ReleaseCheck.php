@@ -19,20 +19,21 @@ use GuzzleHttp\Exception\RequestException;
  */
 class ReleaseCheck
 {
-    /** instance of Config */
+    /** @var Config $Config instance of Config */
     private $Config;
 
-    /** the latest version from ini file (1.1.4) */
+    /** @var string $version the latest version from ini file (1.1.4) */
     private $version;
 
-    /** release date of the version */
+    /** @var string $releaseDate release date of the version */
     private $releaseDate;
 
-    /** this is used to check if we managed to get a version or not */
+    /** @var bool $success this is used to check if we managed to get a version or not */
     public $success = false;
 
     /** where to get info from */
     const URL = 'https://get.elabftw.net/updates.ini';
+
     /** if we can't connect in https for some reason, use http */
     const URL_HTTP = 'http://get.elabftw.net/updates.ini';
 

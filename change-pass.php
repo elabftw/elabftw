@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Form to reset the password
@@ -26,27 +27,30 @@ try {
     $Auth = new Auth();
 
     // check URL parameters
-    if (!isset($_GET['key']) ||
-        !isset($_GET['userid']) ||
-        !isset($_GET['deadline']) ||
-        Tools::checkId($_GET['userid']) === false) {
+    if (!$Request->query->has('key') ||
+        !$Request->query->has('deadLine') ||
+        Tools::checkId($Request->query->get('userid')) === false) {
 
         throw new Exception('Bad parameters in url.');
     }
 
     // check deadline (fix #297)
-    $deadline = Crypto::decrypt($_GET['deadline'], Key::loadFromAsciiSafeString(SECRET_KEY));
+    $deadline = Crypto::decrypt($Request->query->get('deadLine'), Key::loadFromAsciiSafeString(SECRET_KEY));
 
     if ($deadline < time()) {
         throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));
     }
-    echo $Twig->render('change-pass.html', array(
-        'Auth' => $Auth,
-        'key' => filter_var($_GET['key'], FILTER_SANITIZE_STRING),
-        'deadline' => filter_var($_GET['deadline'], FILTER_SANITIZE_STRING),
-        'userid' => filter_var($_GET['userid'], FILTER_SANITIZE_STRING)
 
+    $Response = new Response();
+    $html = $Twig->render('change-pass.html', array(
+        'Auth' => $Auth,
+        'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
+        'deadline' => $Request->query->filter('deadLine', null, FILTER_SANITIZE_STRING),
+        'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING)
     ));
+    $Response->setContent($html);
+    $Response->prepare($Request);
+    $Response->send();
 
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');

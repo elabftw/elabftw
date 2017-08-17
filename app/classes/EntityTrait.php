@@ -19,14 +19,14 @@ use Exception;
  */
 trait EntityTrait {
 
-    /** a positive int */
-    public $id;
-
-    /** the PDO object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** instance of Users */
+    /** @var Users $Users our user */
     public $Users;
+
+    /** @var int $id Id of the entity */
+    public $id;
 
     /**
      * Check and set id

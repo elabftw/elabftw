@@ -20,19 +20,22 @@ class Experiments extends Entity
 {
     use EntityTrait;
 
-    /** pdo object */
+    /** the page.php */
+    const PAGE = 'experiments';
+
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** our team */
+    /** @var int $team our team */
     public $team;
 
-    /** instance of Steps */
+    /** @var Steps $Steps instance of Steps */
     public $Steps;
 
-    /** instance of Links */
+    /** @var Links $Links instance of Links */
     public $Links;
 
-    /** instance of Comments */
+    /** @var Comments $Comments instance of Comments */
     public $Comments;
 
     /**

@@ -15,13 +15,13 @@ namespace Elabftw\Elabftw;
  */
 class Saml
 {
-    /** instance of Config */
+    /** @var Config $Config instance of Config */
     public $Config;
 
-    /** instance of Idps */
+    /** @var Idps $Idps instance of Idps */
     private $Idps;
 
-    /** the settings array */
+    /** @var array $settings the saml settings array */
     private $settings = array();
 
     /**

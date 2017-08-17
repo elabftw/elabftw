@@ -17,10 +17,10 @@ use Exception;
  */
 class Links
 {
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** instance of Experiments */
+    /** @var Experiments $Experiments instance of Experiments */
     public $Experiments;
 
     /**

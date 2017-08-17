@@ -23,8 +23,8 @@ $(document).ready(function(){
             'id' : id,
             'type' : $(this).data('type')
         // and put it in the div and show the div
-        }).done(function(body) {
-            $('#bodyToggle_' + id).html(body);
+        }).done(function(data) {
+            $('#bodyToggle_' + id).html(data.body);
             $('#bodyToggle_' + id).toggle();
 
         });
@@ -130,7 +130,7 @@ $(document).ready(function(){
         var checked = getCheckedBoxes();
         // loop on it and update the status/item type
         $.each(checked, function(index, value) {
-            $.post(controller, {
+            $.post('app/controllers/EntityController.php', {
                 updateCategory : true,
                 id : value,
                 categoryId : $('#catChecked').val()

@@ -11,71 +11,44 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * An API for elab
+ * The REST API for eLabFTW
  *
  */
 class Api
 {
-    /** http method GET POST PUT DELETE */
-    public $method;
-
-    /** the model (experiments/items) */
-    public $endpoint;
-
-    /** optional arguments, like the id */
-    public $args = array();
-
-    /** the id of the entity */
-    public $id = null;
-
-    /** our entity object */
+    /** @var Entity $Entity Experiments or Database */
     private $Entity;
+
+    /** @var Request $Request The request */
+    private $Request;
+
+    /** @var array $content the output */
+    private $content;
+
+    /** @var int $id the id of the entity */
+    private $id = null;
 
     /**
      * Get data for user from the API key
      *
-     * @param string $key API key
-     * @param string $method GET/POST
-     * @param string $request experiments/12
+     * @param Request $request
      */
-    public function __construct($key, $method, $request)
+    public function __construct(Entity $entity)
     {
-        $availMethods = array('GET', 'POST', 'PUT');
-        if (!in_array($method, $availMethods)) {
-            throw new Exception('Incorrect HTTP verb!');
-        }
-        $this->method = $method;
+        $this->Entity = $entity;
+    }
 
-        // reply in JSON
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: *");
-        header("Content-Type: application/json");
-
-        // parse args
-        $this->args = explode('/', rtrim($request, '/'));
-
-        // assign the id if there is one
-        if (Tools::checkId(end($this->args))) {
-            $this->id = end($this->args);
-        }
-
-        // assign the endpoint
-        $this->endpoint = array_shift($this->args);
-
-        // get info about user
-        $Users = new Users();
-        $Users->readFromApiKey($key);
-
-        // load Entity
-        if ($this->endpoint === 'experiments') {
-            $this->Entity = new Experiments($Users, $this->id);
-        } elseif ($this->endpoint === 'items') {
-            $this->Entity = new Database($Users, $this->id);
-        } else {
-            throw new Exception('Bad endpoint.');
-        }
+    /**
+     * Return the response
+     *
+     * @return array
+     *
+    public function getContent()
+    {
+        return $this->content;
     }
 
     /**
@@ -101,6 +74,7 @@ class Api
         $uploadedFilesArr = $Uploads->readAll();
         $entityArr = $this->Entity->read();
         $entityArr['uploads'] = $uploadedFilesArr;
+
         return $entityArr;
     }
 
@@ -109,23 +83,15 @@ class Api
      *
      * @return string[]
      */
-    public function updateEntity()
+    public function updateEntity($title, $date, $body)
     {
-        if (is_null($this->id)) {
-            throw new Exception('You need an id to update something!');
-        }
-
         $this->Entity->canOrExplode('write');
 
-        if (empty($_POST['title']) || empty($_POST['date']) || empty($_POST['body'])) {
-            throw new Exception('Empty title, date or body sent.');
-        }
-
-        if ($this->Entity->update($_POST['title'], $_POST['date'], $_POST['body'])) {
+        if ($this->Entity->update($title, $date, $body)) {
             return array('Result', 'Success');
         }
 
-        return array('Result', Tools::error());
+        return array('error', Tools::error());
     }
 
     /**
@@ -133,13 +99,13 @@ class Api
      *
      * @return string[]
      */
-    public function uploadFile()
+    public function uploadFile(Request $request)
     {
         $this->Entity->canOrExplode('write');
 
         $Uploads = new Uploads($this->Entity);
 
-        if ($Uploads->create($_FILES)) {
+        if ($Uploads->create($request)) {
             return array('Result', 'Success');
         }
 

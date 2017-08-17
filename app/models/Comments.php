@@ -18,11 +18,11 @@ use Swift_Message;
  */
 class Comments
 {
-    /** instance of Entity */
-    public $Entity;
-
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
+
+    /** @var Entity $Entity instance of Entity */
+    public $Entity;
 
     /**
      * Constructor

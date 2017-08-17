@@ -20,10 +20,10 @@ class ItemsTypes
 {
     use EntityTrait;
 
-    /** The PDO object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** instance of Users */
+    /** @var Users $Users instance of Users */
     public $Users;
 
     /**
@@ -115,6 +115,22 @@ class ItemsTypes
         $req->execute();
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Get the color of an item type
+     *
+     * @param int $id ID of the category
+     * @return string
+     */
+    public function readColor($id)
+    {
+        $sql = "SELECT color FROM items_types WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $status, PDO::PARAM_INT);
+        $req->execute();
+
+        return $req->fetchColumn();
     }
 
     /**

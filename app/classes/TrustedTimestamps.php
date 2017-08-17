@@ -29,40 +29,40 @@ class TrustedTimestamps extends Make
     /** default hash algo for file */
     const HASH_ALGORITHM = 'sha256';
 
-    /** instance of Entity */
+    /** @var Entity $Entity instance of Entity */
     protected $Entity;
 
-    /** our database connection */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** instance of Config*/
+    /** @var Config $Config instance of Config*/
     private $Config;
 
-    /** array with config of the team */
+    /** @var array $teamConfigArr array with config of the team */
     private $teamConfigArr;
 
-    /** ELAB_ROOT . uploads/ . $pdfFileName */
+    /** @var string $pdfPath full path to pdf (ELAB_ROOT . uploads/ . $pdfFileName) */
     private $pdfPath;
 
-    /** elabid-timestamped.pdf */
+    /** @var string $pdfRealName name of the pdf (elabid-timestamped.pdf) */
     private $pdfRealName;
 
-    /** a hash */
+    /** @var string $pdfLongName a hash */
     private $pdfLongName;
 
-    /** config (url, login, password, cert) */
+    /** @var array $stampParams config (url, login, password, cert) */
     private $stampParams = array();
 
-    /** things that get deleted with destruct method */
-    private $tmpfiles = array();
+    /** @var array $trash things that get deleted with destruct method */
+    private $trash = array();
 
-    /** where we store the request file */
+    /** @var string $requestfilePath where we store the request file */
     private $requestfilePath;
 
-    /** where we store the asn1 token */
+    /** @var string $responsefilePath where we store the asn1 token */
     private $responsefilePath;
 
-    /** the time of the timestamp */
+    /** @var string $responseTime the time of the timestamp */
     private $responseTime;
 
     /**
@@ -187,7 +187,7 @@ class TrustedTimestamps extends Make
     {
         $this->requestfilePath = $this->getFilePath($this->getUniqueString(), true);
         // we don't keep this file around
-        $this->tmpfiles[] = $this->requestfilePath;
+        $this->trash[] = $this->requestfilePath;
 
         $cmd = "ts -query -data " . escapeshellarg($this->pdfPath) . " -cert -" .
             $this->stampParams['hash'] . " -no_nonce -out " . escapeshellarg($this->requestfilePath);
@@ -591,7 +591,7 @@ class TrustedTimestamps extends Make
      */
     public function __destruct()
     {
-        foreach ($this->tmpfiles as $file) {
+        foreach ($this->trash as $file) {
             unlink($file);
         }
     }

@@ -11,46 +11,88 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This file is called without any auth, so we don't load init.inc.php but only what we need
  */
-require_once '../../config.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
-
 try {
+    require_once '../../config.php';
+    require_once ELAB_ROOT . 'vendor/autoload.php';
+
+    // create Request object
+    $Request = Request::createFromGlobals();
+
     // do we have an API key?
-    if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
+    if (!$Request->server->has('HTTP_AUTHORIZATION')) {
         throw new Exception('No API key received.');
     }
-    $Api = new Api(
-        $_SERVER['HTTP_AUTHORIZATION'],
-        $_SERVER['REQUEST_METHOD'],
-        $_REQUEST['req']
-    );
 
-    if ($Api->method === 'GET') {
-        $output = $Api->getEntity();
+    // verify the key and load user infos
+    $Users = new Users();
+    $Users->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
+
+    $availMethods = array('GET', 'POST');
+    if (!in_array($Request->server->get('REQUEST_METHOD'), $availMethods)) {
+        throw new Exception('Incorrect HTTP verb! Available verbs are: ' . implode($availMethods, ', '));
+    }
+
+    // parse args
+    $args = explode('/', rtrim($Request->query->get('req'), '/'));
+
+    // assign the id if there is one
+    $id = null;
+    if (Tools::checkId(end($args))) {
+        $id = end($args);
+    }
+
+    // assign the endpoint
+    $endpoint = array_shift($args);
+
+    // load Entity
+    if ($endpoint === 'experiments') {
+        $Entity = new Experiments($Users, $id);
+    } elseif ($endpoint === 'items') {
+        $Entity = new Database($Users, $id);
+    } else {
+        throw new Exception('Bad endpoint.');
+    }
+
+    $Api = new Api($Entity);
+
+    // a simple GET
+    if ($Request->server->get('REQUEST_METHOD') === 'GET') {
+        $content = $Api->getEntity();
+
+    // POST request
     } else {
 
         // file upload
-        if (count($_FILES) >= 1) {
-            $output = $Api->uploadFile();
+        if ($Request->files->count() > 0) {
+            $content = $Api->uploadFile($Request);
         // title date body update
-        } elseif (isset($_POST['title'])) {
-            $output = $Api->updateEntity();
+        } elseif ($Request->request->has('title')) {
+            $content = $Api->updateEntity(
+                $Request->request->get('title'),
+                $Request->request->get('date'),
+                $Request->request->get('body')
+            );
         } else {
             // create an experiment
-            if ($Api->endpoint === 'experiments') {
-                $output = $Api->createExperiment();
+            if ($endpoint === 'experiments') {
+                $content = $Api->createExperiment();
             } else {
                 throw new Exception("Creating database items is not supported.");
             }
         }
     }
-
-    echo json_encode($output);
+    // create response
+    $Response = new JsonResponse($content);
 
 } catch (Exception $e) {
-    echo json_encode(array('error', $e->getMessage()));
+    $Response = new JsonResponse(array('error', $e->getMessage()));
+
+} finally {
+    $Response->send();
 }

@@ -18,27 +18,26 @@ use Exception;
  */
 class MakePdf extends Make
 {
-    /** our favorite pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** a sha512 sum */
+    /** @var string $fileName a sha512 sum */
     public $fileName;
 
-    /** full path of file */
+    /** @var string $filePath the full path of the file */
     public $filePath;
 
-    /** who */
+    /** @var string $author firstname + lastname */
     public $author;
 
-    /** raw title */
+    /** @var string $title raw title */
     public $title;
 
-    /** list of tags */
+    /** @var string $tags list of tags */
     public $tags = '';
 
-    /** the whole html string to write */
+    /** @var string $content the whole html string to write */
     public $content;
-
 
     /**
      * Everything is done in the constructor

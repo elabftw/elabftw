@@ -29,63 +29,10 @@ try {
 
     $EntityView = new DatabaseView(new Database($Users));
 
-    if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        // CATEGORY FILTER
-        if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
-            $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['cat'];
-            $EntityView->searchType = 'category';
-        }
-        // TAG FILTER
-        if (isset($_GET['tag']) && $_GET['tag'] != '') {
-            $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $EntityView->tag = $tag;
-            $EntityView->Entity->tagFilter = "AND tagt.tag LIKE '" . $tag . "'";
-            $EntityView->searchType = 'tag';
-        }
-        // QUERY FILTER
-        if (isset($_GET['q']) && !empty($_GET['q'])) {
-            $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-            $EntityView->query = $query;
-            $EntityView->Entity->queryFilter = "AND (
-                title LIKE '%$query%' OR
-                date LIKE '%$query%' OR
-                body LIKE '%$query%')";
-            $EntityView->searchType = 'query';
-        }
-        // ORDER
-        if (isset($_GET['order'])) {
-            if ($_GET['order'] === 'cat') {
-                $EntityView->Entity->order = 'items_types.name';
-            } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
-                $EntityView->Entity->order = 'items.' . $_GET['order'];
-            }
-        }
-        // SORT
-        if (isset($_GET['sort'])) {
-            if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {
-                $EntityView->Entity->sort = $_GET['sort'];
-            }
-        }
-
-        echo $EntityView->buildShowMenu('database');
-
-        // limit the number of items to show if there is no search parameters
-        // because with a big database this can be expensive
-        if (!isset($_GET['q']) && !isset($_GET['tag']) && !isset($_GET['filter'])) {
-            $EntityView->Entity->setLimit(50);
-        }
-
-        $ItemsTypes = new ItemsTypes($Users);
-        echo $EntityView->buildShow();
-        echo $Twig->render('show.html', array(
-            'Ev' => $EntityView,
-            'Category' => $ItemsTypes
-        ));
-
     // VIEW
-    } elseif ($_GET['mode'] === 'view') {
+    if ($Request->query->get('mode') === 'view') {
 
-        $EntityView->Entity->setId($_GET['id']);
+        $EntityView->Entity->setId($Request->query->get('id'));
         $EntityView->initViewEdit();
         echo $Twig->render('view.html', array(
             'Ev' => $EntityView
@@ -93,9 +40,9 @@ try {
         echo $EntityView->view();
 
     // EDIT
-    } elseif ($_GET['mode'] === 'edit') {
+    } elseif ($Request->query->get('mode') === 'edit') {
 
-        $EntityView->Entity->setId($_GET['id']);
+        $EntityView->Entity->setId($Request->query->get('id'));
         $EntityView->initViewEdit();
         // check permissions
         $EntityView->Entity->canOrExplode('write');
@@ -111,6 +58,83 @@ try {
             'Tags' => $Tags
         ));
         echo $EntityView->buildUploadsHtml();
+
+    // DEFAULT MODE IS SHOW
+    } else {
+        // CATEGORY FILTER
+        if (Tools::checkId($Request->query->get('cat'))) {
+            $EntityView->Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('cat');
+            $EntityView->searchType = 'category';
+        }
+        // TAG FILTER
+        if ($Request->query->get('tag') != '') {
+            $tag = filter_var($Request->query->get('tag'), FILTER_SANITIZE_STRING);
+            $EntityView->tag = $tag;
+            $EntityView->Entity->tagFilter = "AND tagt.tag LIKE '" . $tag . "'";
+            $EntityView->searchType = 'tag';
+        }
+        // QUERY FILTER
+        if ($Request->query->get('q') != '') {
+            $query = filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING);
+            $EntityView->query = $query;
+            $EntityView->Entity->queryFilter = "AND (
+                title LIKE '%$query%' OR
+                date LIKE '%$query%' OR
+                body LIKE '%$query%')";
+            $EntityView->searchType = 'query';
+        }
+        // ORDER
+        $order = '';
+
+        // load the pref from the user
+        if (isset($EntityView->Entity->Users->userData['orderby'])) {
+            $order = $EntityView->Entity->Users->userData['orderby'];
+        }
+
+        // now get pref from the filter-order-sort menu
+        if ($Request->query->has('order')) {
+            $order = $Request->query->get('order');
+        }
+
+        if ($order === 'cat') {
+            $EntityView->Entity->order = 'items_types.ordering';
+        } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
+            $EntityView->Entity->order = 'items.' . $order;
+        }
+
+        // SORT
+        $sort = '';
+
+        // load the pref from the user
+        if (isset($EntityView->Entity->Users->userData['sort'])) {
+            $sort = $EntityView->Entity->Users->userData['sort'];
+        }
+
+        // now get pref from the filter-order-sort menu
+        if ($Request->query->has('sort')) {
+            $sort = $Request->query->get('sort');
+        }
+
+        if ($sort === 'asc' || $sort === 'desc') {
+            $EntityView->Entity->sort = $sort;
+        }
+
+        echo $EntityView->buildShowMenu('database');
+
+        // limit the number of items to show if there is no search parameters
+        // because with a big database this can be expensive
+        if (!$Request->query->has('q') &&
+            !$Request->query->has('tag') &&
+            !$Request->query->has('filter')) {
+            $EntityView->Entity->setLimit(50);
+        }
+
+        $ItemsTypes = new ItemsTypes($Users);
+        echo $EntityView->buildShow();
+        echo $Twig->render('show.html', array(
+            'Ev' => $EntityView,
+            'Category' => $ItemsTypes
+        ));
     }
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');

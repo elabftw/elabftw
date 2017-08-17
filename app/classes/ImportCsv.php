@@ -17,16 +17,16 @@ use Exception;
  */
 class ImportCsv extends Import
 {
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     private $pdo;
 
-    /** the category in which we do the import */
+    /** @var int $itemType the category in which we do the import */
     private $itemType;
 
-    /** number of items we got into the database */
+    /** @var int $inserted number of items we got into the database */
     public $inserted = 0;
 
-    /** our file handle */
+    /** @var resource $handle our file handle */
     private $handle;
 
     /**

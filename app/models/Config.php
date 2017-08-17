@@ -20,10 +20,10 @@ use Defuse\Crypto\Key as Key;
  */
 class Config
 {
-    /** db connection */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** the array with all config */
+    /** @var array $configArr the array with all config */
     public $configArr;
 
     /**

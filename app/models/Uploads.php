@@ -42,16 +42,12 @@ class Uploads extends Entity
     /**
      * Main method for normal file upload
      *
-     * @param array $file $_FILES
+     * @param Request $Request
      * @return bool
      */
-    public function create($file)
+    public function create($Request)
     {
-        if (!is_array($file) || count($file) === 0) {
-            throw new Exception('No files received');
-        }
-
-        $realName = $this->getSanitizedName($file['file']['name']);
+        $realName = $this->getSanitizedName($Request->files->get('file')->getClientOriginalName());
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
@@ -61,7 +57,7 @@ class Uploads extends Entity
         }
 
         // Try to move the file to its final place
-        $this->moveFile($file['file']['tmp_name'], $fullPath);
+        $this->moveFile($Request->files->get('file')->getPathName(), $fullPath);
 
         // final sql
         return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
@@ -413,7 +409,9 @@ class Uploads extends Entity
         }
         // now delete file from filesystem
         $filePath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'];
-        unlink($filePath);
+        if (file_exists($thumbPath)) {
+            unlink($filePath);
+        }
 
         // Delete SQL entry (and verify the type)
         // to avoid someone deleting files saying it's DB whereas it's exp

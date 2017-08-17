@@ -1,9 +1,3 @@
-{% if Ev.Entity.type == 'experiments' %}
-    {% set controller = 'app/controllers/ExperimentsController.php' %}
-{% else %}
-    {% set controller = 'app/controllers/DatabaseController.php' %}
-{% endif %}
-
 {% if Ev.Entity.Users.userData.chem_editor %}
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
@@ -37,9 +31,10 @@
     </div>
 
     <!--  MAIN FORM -->
-    <form id='main_form' method='post' action='{{ controller }}' enctype='multipart/form-data'>
+    <form id='main_form' method='post' action='app/controllers/EntityController.php' enctype='multipart/form-data'>
         <input name='update' type='hidden' value='true' />
         <input name='id' type='hidden' value='{{ Ev.Entity.id }}' />
+        <input name='type' type='hidden' value='{{ Ev.Entity.type }}' />
 
         <!-- DATE -->
             <div class='row'>

@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Symfony\Component\HttpFoundation\Cookie;
+
 /**
  * Provide methods to login a user
  */
@@ -18,13 +20,13 @@ class Auth
     /** the minimum password length */
     const MIN_PASSWORD_LENGTH = 8;
 
-    /** Used to store the PDO object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** Everything about the user */
+    /** @var array $userData All the user data for a user */
     private $userData;
 
-    /** Token that will be in the cookie + db */
+    /** @var string $token Token that will be in the cookie + db */
     private $token;
 
     /**
@@ -188,16 +190,17 @@ class Auth
     /**
      * We are not auth, but maybe we have a cookie, try to login with that
      *
+     * @param Request $Request
      * @return bool True if we have a valid cookie and it is the same token as in the DB
      */
-    public function loginWithCookie()
+    public function loginWithCookie($Request)
     {
         // the token is a md5 sum
-        if (!isset($_COOKIE['token']) || strlen($_COOKIE['token']) != 32) {
+        if (!$Request->cookies->has('token') || strlen($Request->cookies->get('token')) != 32) {
             return false;
         }
         // If user has a cookie; check cookie is valid
-        $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
+        $token = $Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
         // Get token from SQL
         $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
         $req = $this->pdo->prepare($sql);

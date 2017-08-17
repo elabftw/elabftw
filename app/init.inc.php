@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This must be included on top of every page.
@@ -38,6 +39,9 @@ try {
     require_once $configFilePath;
 
     require_once ELAB_ROOT . 'vendor/autoload.php';
+
+    // create Request object
+    $Request = Request::createFromGlobals();
 
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
@@ -112,7 +116,7 @@ try {
     if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologinArr)) {
         // try to login with the cookie
         $Auth = new Auth();
-        if (!$Auth->loginWithCookie()) {
+        if (!$Auth->loginWithCookie($Request)) {
             // maybe we clicked an email link and we want to be redirected to the page upon successful login
             // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
             $script = $_SERVER['SCRIPT_NAME'];

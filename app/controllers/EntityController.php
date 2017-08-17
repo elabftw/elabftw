@@ -75,6 +75,21 @@ try {
      *
      */
 
+    // UPDATE
+    if ($Request->request->has('update')) {
+        $Entity->canOrExplode('write');
+
+        if ($Entity->update(
+            $Request->request->get('title'),
+            $Request->request->get('date'),
+            $Request->request->get('body')
+        )) {
+            $Response = new RedirectResponse("../../" . $Entity::PAGE . ".php?mode=view&id=" . $Request->request->get('id'));
+        } else {
+            throw new Exception('Error during save.');
+        }
+    }
+
     // QUICKSAVE
     if ($Request->request->has('quickSave')) {
         if ($Entity->update(

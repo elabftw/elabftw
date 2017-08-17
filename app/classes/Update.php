@@ -732,5 +732,4 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             throw new Exception('Cannot add use_markdown to users table!');
         }
     }
-
 }

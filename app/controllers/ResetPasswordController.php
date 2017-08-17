@@ -58,13 +58,9 @@ try {
         $deadline = Crypto::encrypt(time() + 3600, Key::loadFromAsciiSafeString(SECRET_KEY));
 
         // Get info to build the URL
-        $protocol = 'https://';
-        $reset_url = $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['REQUEST_URI'];
-        $reset_link = $protocol .
-            str_replace('app/controllers/ResetPasswordController', 'change-pass', $reset_url) .
-            '?key=' . $key .
-            '&deadline=' . $deadline .
-            '&userid=' . $user['userid'];
+        $Request = Request::createFromGlobals();
+        $resetLink = 'https://' . $Request->getHttpHost() . '/change-pass.php';
+        $resetLink .='?key=' . $key . '&deadline=' . $deadline . '&userid=' . $user['userid'];
 
         // Send an email with the reset link
         // Create the message
@@ -77,7 +73,7 @@ try {
         // Set the To addresses with an associative array
         ->setTo(array($email => $user['fullname']))
         // Give it a body
-        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
+        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $resetLink) . $footer);
         // generate Swift_Mailer instance
         $mailer = $Email->getMailer();
         // now we try to send the email

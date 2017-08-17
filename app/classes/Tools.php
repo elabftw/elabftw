@@ -243,19 +243,6 @@ class Tools
     }
 
     /**
-     * This is needed in the case you run an http server but people are connecting
-     * through haproxy with ssl, with a http_x_forwarded_proto header.
-     *
-     * @return bool
-     */
-    public static function usingSsl()
-    {
-        return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
-            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
-            && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'));
-    }
-
-    /**
      * Check ID is valid (pos int)
      *
      * @param int $id
@@ -417,25 +404,5 @@ class Tools
         if ($getParam === $value) {
             return " selected";
         }
-    }
-
-    /**
-     * When you want to know the server port used
-     * We cannot rely on SERVER_PORT because it'll always be 443 inside Docker
-     * See issue #362
-     * If the port is standard (443), it will not appear in HTTP_HOST, but otherwise it'll be there
-     * so we can get the custom port from here
-     *
-     * @return string empty if standard port or ":444"
-     */
-    public static function getServerPort()
-    {
-        $port = '';
-        if (strpos($_SERVER['HTTP_HOST'], ':')) {
-            $hostArr = explode(':', $_SERVER['HTTP_HOST']);
-            $port = ':' . $hostArr[1];
-        }
-
-        return $port;
     }
 }

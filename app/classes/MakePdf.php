@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use mPDF;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Create a pdf given an id and a type
@@ -273,11 +274,13 @@ class MakePdf extends Make
                     $this->content .= "<h3>Linked items:</h3>";
                 }
                 // add the item with a link
-                $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
-                $itemUrl = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);
+
+                // create Request object
+                $Request = Request::createFromGlobals();
+                $url = 'https://' . $Request->getHttpHost() . '/database.php';
 
                 foreach ($linksArr as $link) {
-                    $fullItemUrl = $itemUrl . "?mode=view&id=" . $link['link_id'];
+                    $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];
                     $this->content .= "<p class='pdf-ul'>";
                     $this->content .= "<span style='color:#" . $link['color'] . "'>" . $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
                 }

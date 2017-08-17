@@ -91,9 +91,8 @@ class Comments
         }
 
         // Create the message
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
-        $url = str_replace('app/controllers/CommentsController.php', 'experiments.php', $url);
-        $full_url = $url . "?mode=view&id=" . $this->Entity->id;
+        $url = 'https://' . $Request->getHttpHost() . '/experiments.php';
+        $$url .= "?mode=view&id=" . $this->Entity->id;
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 
@@ -108,7 +107,7 @@ class Comments
         ->setBody(sprintf(
             _('Hi. %s left a comment on your experiment. Have a look: %s'),
             $commenter['fullname'],
-            $full_url
+            $url
         ) . $footer);
         $Email = new Email(new Config);
         $mailer = $Email->getMailer();

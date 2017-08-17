@@ -109,11 +109,12 @@ try {
 
     <h3>Preliminary checks</h3>
     <?php
-    // CHECK WE ARE WITH HTTPS
-    if (!Tools::usingSsl()) {
+    // if we are not in https, die saying we work only in https
+    if (!$Request->isSecure()) {
         // get the url to display a link to click (without the port)
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
-        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";
+        $url = 'https://' . $Request->getHttpHost();
+        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
+            $url . "'>$url</a>";
         throw new Exception($message);
     }
 

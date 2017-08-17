@@ -753,8 +753,7 @@ class Users extends Auth
         $Email = new Email($this->Config);
 
         // now let's get the URL so we can have a nice link in the email
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . Tools::getServerPort() . $_SERVER['PHP_SELF'];
-        $url = str_replace('app/controllers/UsersController.php', 'login.php', $url);
+        $url = 'https://' . $Request->getHttpHost() . '/login.php';
         // we send an email to each validated new user
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         // Create the message

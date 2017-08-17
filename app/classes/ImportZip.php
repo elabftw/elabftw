@@ -21,32 +21,34 @@ use FileSystemIterator;
  */
 class ImportZip extends Import
 {
-    /** instance of Entity */
+    /** @var Entity $Entity instance of Entity */
     private $Entity;
 
-    /** instance of Uploads */
+    /** @var Uploads $Uploads instance of Uploads */
     private $Uploads;
 
-    /** instance of Tags */
+    /** @var Tags $Tags instance of Tags */
     private $Tags;
 
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     private $pdo;
 
-    /** number of item we have inserted */
+    /** @var int $inserted number of item we have inserted */
     public $inserted = 0;
-    /** the folder where we extract the zip */
+
+    /** @var string $tmpPath the folder where we extract the zip */
     private $tmpPath;
-    /** an array with the data we want to import */
+
+    /** @var array $json an array with the data we want to import */
     private $json;
 
-    /** the target item type */
+    /** @var int $target the target item type */
     private $target;
 
-    /** experiments or items */
+    /** @var string $type experiments or items */
     private $type = 'items';
 
-    /** the newly created id of the imported item */
+    /** @var int $newItemId the newly created id of the imported item */
     private $newItemId;
 
     /**

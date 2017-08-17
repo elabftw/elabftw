@@ -22,7 +22,7 @@ use Defuse\Crypto\Key as Key;
  */
 class Email
 {
-    /** instance of Config */
+    /** @var Config $Config instance of Config */
     public $Config;
 
     /**

@@ -15,25 +15,25 @@ namespace Elabftw\Elabftw;
  */
 class UserStats
 {
-    /** instance of Users */
+    /** @var Users $Users instance of Users */
     private $Users;
 
-    /** count of experiments */
+    /** @var int $count count of experiments */
     private $count = 0;
 
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     private $pdo;
 
-    /** array with status id and count */
+    /** @var array $countArr status id and count */
     private $countArr = array();
 
-    /** array with status id and name */
+    /** @var array $statusArr status id and name */
     private $statusArr = array();
 
-    /** array with colors for status */
+    /** @var array $colorsArr colors for status */
     public $colorsArr = array();
 
-    /** array with percentage and status name */
+    /** @var array $percentArr percentage and status name */
     public $percentArr = array();
 
     /**

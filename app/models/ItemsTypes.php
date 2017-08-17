@@ -20,10 +20,10 @@ class ItemsTypes
 {
     use EntityTrait;
 
-    /** The PDO object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** instance of Users */
+    /** @var Users $Users instance of Users */
     public $Users;
 
     /**

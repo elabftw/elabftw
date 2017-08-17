@@ -20,64 +20,64 @@ class Entity
 {
     use EntityTrait;
 
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** experiments or items */
+    /** @var string $type experiments or items */
     public $type;
 
-    /** instance of Users */
+    /** @var Users $Users instance of Users */
     public $Users;
 
-    /** id of our entity */
+    /** @var int $id id of our entity */
     public $id;
 
-    /** inserted in sql */
+    /** @var string $idFilter inserted in sql */
     public $idFilter = '';
 
-    /** inserted in sql */
+    /** @var string $useridFilter inserted in sql */
     public $useridFilter = '';
 
-    /** inserted in sql */
+    /** @var string $bookableFilter inserted in sql */
     public $bookableFilter = '';
 
-    /** inserted in sql */
+    /** @var string $ratingFilter inserted in sql */
     public $ratingFilter = '';
 
-    /** inserted in sql */
+    /** @var string $teamFilter inserted in sql */
     public $teamFilter = '';
 
-    /** inserted in sql */
+    /** @var string $visibilityFilter inserted in sql */
     public $visibilityFilter = '';
 
-    /** inserted in sql */
+    /** @var string $titleFilter inserted in sql */
     public $titleFilter = '';
 
-    /** inserted in sql */
+    /** @var string $dateFilter inserted in sql */
     public $dateFilter = '';
 
-    /** inserted in sql */
+    /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
 
-    /** inserted in sql */
+    /** @var string $categoryFilter inserted in sql */
     public $categoryFilter = '';
 
-    /** inserted in sql */
+    /** @var string $tagFilter inserted in sql */
     public $tagFilter = '';
 
-    /** inserted in sql */
+    /** @var string $queryFilter inserted in sql */
     public $queryFilter = '';
 
-    /** inserted in sql */
+    /** @var string $order inserted in sql */
     public $order = 'date';
 
-    /** inserted in sql */
+    /** @var string $sort inserted in sql */
     public $sort = 'DESC';
 
-    /** limit for sql */
+    /** @var string $limit limit for sql */
     public $limit = '';
 
-    /** what you get after you ->read() */
+    /** @var array $entityData what you get after you ->read() */
     public $entityData;
 
     /**

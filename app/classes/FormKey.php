@@ -16,10 +16,10 @@ namespace Elabftw\Elabftw;
  */
 class Formkey
 {
-    /** here we store the generated form key */
+    /** @var string $formkey here we store the generated form key */
     private $formkey;
 
-    /** here we store the old form key */
+    /** @var string $oldFormkey here we store the old form key */
     private $oldFormkey;
 
     /**

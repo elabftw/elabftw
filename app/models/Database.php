@@ -20,6 +20,7 @@ class Database extends Entity
 {
     use EntityTrait;
 
+    /** the page.php */
     const PAGE = 'database';
 
     /**

@@ -18,13 +18,13 @@ use Exception;
  */
 final class Db
 {
-    /** our connection */
+    /** @var PDO $connection Connection to PDO */
     private $connection = null;
 
-    /** store the single instance of the class */
+    /** @var Db $instance store the single instance of the class */
     private static $instance = null;
 
-    /** total number of queries */
+    /** @var int $nq total number of queries */
     private $nq = 0;
 
     /**

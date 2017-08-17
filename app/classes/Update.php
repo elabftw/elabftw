@@ -23,10 +23,10 @@ use Defuse\Crypto\Key as Key;
  */
 class Update
 {
-    /** our favorite pdo object */
+    /** @var Db $pdo SQL Database */
     private $pdo;
 
-    /** instance of Config */
+    /** @var Config $Config instance of Config */
     public $Config;
 
     /**

@@ -17,7 +17,7 @@ use Exception;
  */
 class Logs
 {
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
     /**

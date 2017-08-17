@@ -15,13 +15,13 @@ namespace Elabftw\Elabftw;
  */
 class TagCloud
 {
-    /** id of our user */
+    /** @var int $userid id of our user */
     private $userid;
 
-    /** pdo object */
+    /** @var Db $pdo SQL Database */
     private $pdo;
 
-    /** tag + class */
+    /** @var array $cloudArr tag + class */
     public $cloudArr = array();
 
     /**

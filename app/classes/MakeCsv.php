@@ -15,20 +15,20 @@ namespace Elabftw\Elabftw;
  */
 class MakeCsv extends Make
 {
-    /** our pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** a sha512 sum */
+    /** @var string $fileName a sha512 sum */
     public $fileName;
-    /** the full path of the file */
+
+    /** @var string $filePath the full path of the file */
     public $filePath;
 
-    /** the lines in the csv file */
+    /** @var array $list the lines in the csv file */
     private $list = array();
-    /** the input ids */
+
+    /** @var string $idList the input ids */
     private $idList;
-    /** the input ids but in an array */
-    private $idArr = array();
 
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
@@ -80,8 +80,8 @@ class MakeCsv extends Make
      */
     private function loopIdArr()
     {
-        $this->idArr = explode(" ", $this->idList);
-        foreach ($this->idArr as $id) {
+        $idArr = explode(" ", $this->idList);
+        foreach ($idArr as $id) {
             $this->Entity->setId($id);
             $this->Entity->populate();
             $permissions = $this->Entity->getPermissions();

@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
  */
 class Idps
 {
-    /** db connection */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
     /**

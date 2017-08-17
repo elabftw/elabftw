@@ -18,34 +18,34 @@ use Exception;
  */
 class MakeZip extends Make
 {
-    /** our pdo object */
+    /** @var Db $pdo SQL Database */
     protected $pdo;
 
-    /** the Zip object */
+    /** @var ZipArchive $Zip the Zip object */
     private $Zip;
 
-    /** the input ids */
+    /** @var string $idList the input ids */
     private $idList;
 
-    /** the input ids but in an array */
+    /** @var array $idArr the input ids but in an array */
     private $idArr = array();
 
-    /** files to be deleted by destructor */
-    private $filesToDelete = array();
+    /** @var array $trash files to be deleted by destructor */
+    private $trash = array();
 
-    /** a formatted title */
+    /** @var string $cleanTitle a formatted title */
     private $cleanTitle;
 
-    /** a sha512 sum */
+    /** @var string $fileName a sha512 sum */
     public $fileName;
 
-    /** full path of file */
+    /** @var string $filePath full path of file */
     public $filePath;
 
-    /** name of folder */
+    /** @var string $folder name of folder */
     private $folder;
 
-    /** array that will be converted to json */
+    /** @var array $jsonArr array that will be converted to json */
     private $jsonArr = array();
 
     /**
@@ -189,7 +189,7 @@ class MakeZip extends Make
     {
         $pdf = new MakePdf($this->Entity, true);
         $this->Zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());
-        $this->filesToDelete[] = $pdf->filePath;
+        $this->trash[] = $pdf->filePath;
     }
 
     /**
@@ -201,7 +201,7 @@ class MakeZip extends Make
     {
         $csv = new MakeCsv($this->Entity, $id);
         $this->Zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
-        $this->filesToDelete[] = $csv->filePath;
+        $this->trash[] = $csv->filePath;
     }
 
     /**
@@ -262,7 +262,7 @@ class MakeZip extends Make
      */
     public function __destruct()
     {
-        foreach ($this->filesToDelete as $file) {
+        foreach ($this->trash as $file) {
             unlink($file);
         }
     }

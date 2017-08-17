@@ -24,7 +24,7 @@ class MolViewer
     /** @var bool $isPdb if true, $id is handled as a PDB ID */
     private $isPdb;
 
-    /** @var int $divId the generated <div> will have this id */
+    /** @var string $divId the generated <div> will have this id */
     private $divId;
 
     /** @var string $dataStyle style of the molecule */
@@ -58,7 +58,7 @@ class MolViewer
         if ($filePath === "" && !$isPdb) {
             throw new Exception('If $id is not a PDB ID ($isPdb=false) then a valid file path must be passed!');
         }
-        $this->id = $id;
+        $this->id = (int) $id;
         $this->isPdb = $isPdb;
         $this->divId = '3Dmol_' . $this->id;
         $this->dataStyle = $dataStyle;

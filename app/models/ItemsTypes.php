@@ -77,9 +77,9 @@ class ItemsTypes
     }
 
     /**
-     * Read from an id
+     * Read the body (template) of the item_type from an id
      *
-     * @return array
+     * @return string
      */
     public function read()
     {
@@ -127,7 +127,7 @@ class ItemsTypes
     {
         $sql = "SELECT color FROM items_types WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $status, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchColumn();

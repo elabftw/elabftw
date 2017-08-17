@@ -102,7 +102,7 @@ class ImportZip extends Import
     /**
      * Select a status for our experiments.
      *
-     * @return int The default status of the team
+     * @return string The default status ID of the team
      */
     private function getDefaultStatus()
     {
@@ -149,7 +149,7 @@ class ImportZip extends Import
             throw new Exception('Cannot import in database!');
         }
         // needed in importFile()
-        $this->newItemId = $this->pdo->lastInsertId();
+        $this->newItemId = (int) $this->pdo->lastInsertId();
 
         // create necessary objects
         $Users = new Users($_SESSION['userid']);

@@ -63,7 +63,7 @@ class Teams
      * Add a new team
      *
      * @param string $name The new name of the team
-     * @return bool|int false on error, new team id otherwise
+     * @return string|false false on error, new team id otherwise
      */
     public function create($name)
     {

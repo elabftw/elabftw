@@ -54,7 +54,7 @@ final class Db
     /**
      * Return the instance of the class
      *
-     * @return object $instance The instance of the class
+     * @return Db $instance The instance of the class
      */
     public static function getConnection()
     {

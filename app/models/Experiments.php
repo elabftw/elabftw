@@ -64,7 +64,7 @@ class Experiments extends Entity
      * Create an experiment
      *
      * @param int|null $tpl the template on which to base the experiment
-     * @return int the new id of the experiment
+     * @return string the new id of the experiment
      */
     public function create($tpl = null)
     {
@@ -232,7 +232,7 @@ class Experiments extends Entity
     /**
      * Select what will be the status for the experiment
      *
-     * @return int The status ID
+     * @return string The status ID
      */
     private function getStatus()
     {

@@ -350,6 +350,7 @@ class TrustedTimestamps extends Make
         $this->responsefilePath = $filePath;
 
         $realName = $this->pdfRealName . '.asn1';
+        $hash = $this->getHash($this->responsefilePath);
 
         // keep a trace of where we put the token
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
@@ -361,7 +362,7 @@ class TrustedTimestamps extends Make
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindValue(':type', 'timestamp-token');
-        $req->bindParam(':hash', $this->getHash($this->responsefilePath));
+        $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
         if (!$req->execute()) {
             throw new Exception('Cannot insert into SQL!');
@@ -473,6 +474,8 @@ class TrustedTimestamps extends Make
      */
     private function sqlInsertPdf()
     {
+        $hash = $this->getHash($this->pdfPath);
+
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', $this->pdfRealName);
@@ -481,7 +484,7 @@ class TrustedTimestamps extends Make
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindValue(':type', 'exp-pdf-timestamp');
-        $req->bindParam(':hash', $this->getHash($this->pdfPath));
+        $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
 
         if (!$req->execute()) {

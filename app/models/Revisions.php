@@ -112,7 +112,7 @@ class Revisions
      * Get the body of a revision
      *
      * @param int $revId The id of the revision
-     * @return array
+     * @return string
      */
     private function readRev($revId)
     {

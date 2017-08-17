@@ -42,7 +42,7 @@ class Status
      * @param int $isTimestampable
      * @param int $default
      * @param int|null $team
-     * @return int id of the new item
+     * @return string id of the new item
      */
     public function create($name, $color, $isTimestampable = 1, $default = 0, $team = null)
     {

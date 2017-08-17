@@ -22,19 +22,10 @@ class Api
     /** @var Entity $Entity Experiments or Database */
     private $Entity;
 
-    /** @var Request $Request The request */
-    private $Request;
-
-    /** @var array $content the output */
-    private $content;
-
-    /** @var int $id the id of the entity */
-    private $id = null;
-
     /**
      * Get data for user from the API key
      *
-     * @param Request $request
+     * @param Entity $entity
      */
     public function __construct(Entity $entity)
     {

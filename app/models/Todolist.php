@@ -39,7 +39,7 @@ class Todolist
      * Create a todoitem
      *
      * @param string $body
-     * @return int the id of the created todoitem
+     * @return string the id of the created todoitem
      */
     public function create($body)
     {

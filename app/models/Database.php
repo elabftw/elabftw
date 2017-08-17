@@ -47,7 +47,7 @@ class Database extends Entity
      * Create an item
      *
      * @param int $itemType What kind of item we want to create.
-     * @return int the new id of the item
+     * @return string the new id of the item
      */
     public function create($itemType)
     {
@@ -106,7 +106,7 @@ class Database extends Entity
     /**
      * Duplicate an item
      *
-     * @return int $newId The id of the newly created item
+     * @return string $newId The id of the newly created item
      */
     public function duplicate()
     {

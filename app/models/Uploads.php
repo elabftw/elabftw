@@ -42,12 +42,12 @@ class Uploads extends Entity
     /**
      * Main method for normal file upload
      *
-     * @param Request $Request
+     * @param Request $request
      * @return bool
      */
-    public function create($Request)
+    public function create($request)
     {
-        $realName = $this->getSanitizedName($Request->files->get('file')->getClientOriginalName());
+        $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
@@ -57,7 +57,7 @@ class Uploads extends Entity
         }
 
         // Try to move the file to its final place
-        $this->moveFile($Request->files->get('file')->getPathName(), $fullPath);
+        $this->moveFile($request->files->get('file')->getPathName(), $fullPath);
 
         // final sql
         return $this->dbInsert($realName, $longName, $this->getHash($fullPath));

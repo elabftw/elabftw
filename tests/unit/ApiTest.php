@@ -7,37 +7,35 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $Users = new Users(1);
-        $Users->generateApiKey();
-        $Users->populate();
-        $this->key = $Users->userData['api_key'];
-        $request = 'experiments/1';
-        // TODO
-        //$this->Api= new Api($this->key, 'GET', $request);
+        $this->Users = new Users(1);
+        $this->Users->generateApiKey();
+        $this->Users->populate();
+    }
+
+    public function testCreateExperiment()
+    {
+        $Api = new Api(new Experiments($this->Users, null));
+        $content = $Api->createExperiment();
+        $this->assertTrue((bool) \Elabftw\Elabftw\Tools::checkId($content['id']));
     }
 
     public function testGetEntity()
     {
-        /*
-        $this->assertTrue(is_array($this->Api->getEntity()));
-        $request = 'items/1';
-        $this->Api= new Api($this->key, 'GET', $request);
-        $this->expectException(\Exception::class);
-        $request = 'database/1';
-        $this->Api= new Api($this->key, 'GET', $request);
-        $this->expectException(\Exception::class);
-        $request = 'items/1';
-        $this->Api= new Api($this->key, 'PUT', $request);
-         */
+        $Entity = new Experiments($this->Users);
+        $id = $Entity->create();
+        $Entity->setId($id);
+        $Api = new Api($Entity);
+        $content = $Api->getEntity();
+        $this->assertEquals('Untitled', $content['title']);
     }
 
     public function testUpdateEntity()
     {
-        /*
-        $request = 'experiments';
-        $this->Api= new Api($this->key, 'POST', $request);
-        $this->expectException(\Exception::class);
-        $this->Api->updateEntity();
-         */
+        $Entity = new Experiments($this->Users);
+        $id = $Entity->create();
+        $Entity->setId($id);
+        $Api = new Api($Entity);
+        $content = $Api->updateEntity('New title', '20170817', 'New body');
+        $this->assertEquals('Success', $content[1]);
     }
 }

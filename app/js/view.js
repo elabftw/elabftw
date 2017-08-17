@@ -147,7 +147,7 @@ $(document).ready(function() {
 
     // KEYBOARD SHORTCUTS
     key($('#shortcuts').data('create'), function(){
-        window.location.href = $('#entityInfos').data('controller') + '?create=true';
+        window.location.href = 'app/controllers/EntityController.php?create=true';
     });
     key($('#shortcuts').data('edit'), function(){
         window.location.href = '?mode=edit&id=' + id;

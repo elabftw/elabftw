@@ -86,6 +86,10 @@ class Entity
      */
     public function populate()
     {
+        if (is_null($this->id)) {
+            throw new Exception('No id provided.');
+        }
+
         if ($this instanceof Experiments || $this instanceof Database) {
             $this->entityData = $this->read();
         }

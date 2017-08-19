@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Create an account
@@ -40,11 +39,9 @@ try {
     $Teams = new Teams();
     $teamsArr = $Teams->readAll();
 
-    $Response = new Response();
-    $Response->setContent($Twig->render('register.html', array(
+    echo $Twig->render('register.html', array(
         'teamsArr' => $teamsArr
-    )));
-    $Response->send();
+    ));
 
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko', false);

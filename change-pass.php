@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 use Exception;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Form to reset the password
@@ -41,16 +40,12 @@ try {
         throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));
     }
 
-    $Response = new Response();
-    $html = $Twig->render('change-pass.html', array(
+    echo $Twig->render('change-pass.html', array(
         'Auth' => $Auth,
         'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
         'deadline' => $Request->query->filter('deadline', null, FILTER_SANITIZE_STRING),
         'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING)
     ));
-    $Response->setContent($html);
-    $Response->prepare($Request);
-    $Response->send();
 
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko');

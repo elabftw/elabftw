@@ -35,12 +35,11 @@ $(document).ready(function() {
             });
         },
         destructor: function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
                 $('#teamsDiv').load('sysconfig.php #teamsDiv');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         }
     };
@@ -70,12 +69,11 @@ $(document).ready(function() {
             promoteSysadmin: true,
             email: email
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
                 $('#teamsDiv').load('sysconfig.php #teamsDiv');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     });
@@ -115,11 +113,10 @@ $(document).ready(function() {
             subject: $('#massSubject').val(),
             body: $('#massBody').val()
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
                 $('#massSend').prop('disabled', false);
                 $('#massSend').css('background-color', '#e6614c');
                 $('#massSend').text('Error');
@@ -136,12 +133,11 @@ $(document).ready(function() {
             testemailSend: true,
             testemailEmail: email
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
                 document.getElementById('testemailButton').disabled = false;
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
                 $('#testemailButton').text('Error');
                 $('#testemailButton').css('background-color', '#e6614c');
             }
@@ -154,12 +150,11 @@ $(document).ready(function() {
         $.post('app/controllers/SysconfigController.php', {
             logsDestroy: true
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
                 $('#logsDiv').load('sysconfig.php #logsDiv');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     });

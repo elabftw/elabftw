@@ -52,7 +52,7 @@ try {
         }
 
         // loop the array
-        foreach ($_POST['usersValidateIdArr'] as $userid) {
+        foreach ($Request->request->get('usersValidateIdArr') as $userid) {
             $Session->getFlashBag()->add('ok', $Users->validate($userid));
         }
     }
@@ -63,7 +63,7 @@ try {
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
-        if (isset($_POST['fromSysconfig'])) {
+        if ($Request->request->has('fromSysconfig')) {
             $location = "../../sysconfig.php?tab=$tab";
         } else {
             $location = "../../admin.php?tab=$tab";

@@ -30,7 +30,7 @@ try {
     }
 
     // CREATE ITEMS TYPES
-    if (isset($_POST['itemsTypesCreate'])) {
+    if ($Request->request->has('itemsTypesCreate')) {
         if ($ItemsTypes->create(
             $Request->request->get('name'),
             $Request->request->get('color'),
@@ -43,7 +43,7 @@ try {
     }
 
     // UPDATE ITEM TYPE
-    if (isset($_POST['itemsTypesUpdate'])) {
+    if ($Request->request->has('itemsTypesUpdate')) {
         if ($ItemsTypes->update(
             $Request->request->get('id'),
             $Request->request->get('name'),

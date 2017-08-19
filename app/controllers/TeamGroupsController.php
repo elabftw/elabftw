@@ -40,7 +40,11 @@ try {
 
     // ADD OR REMOVE USER TO/FROM TEAM GROUP
     if ($Request->request->has('teamGroupUser')) {
-        $TeamGroups->updateMember($_POST['teamGroupUser'], $_POST['teamGroupGroup'], $_POST['action']);
+        $TeamGroups->updateMember(
+            $Request->request->get('teamGroupUser'),
+            $Request->request->get('teamGroupGroup'),
+            $Request->request->get('action')
+        );
     }
 
     // DESTROY TEAM GROUP

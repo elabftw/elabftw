@@ -11,6 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with ajax requests sent from the user control panel
@@ -25,7 +27,7 @@ try {
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
         $redirect = true;
-        if ($Users->updatePreferences($_POST)) {
+        if ($Users->updatePreferences($Request->request->all())) {
             $Session->getFlashBag()->add('ok', _('Preferences updated.'));
         } else {
             $Session->getFlashBag()->add('ko', Tools::error());
@@ -38,7 +40,7 @@ try {
         $tab = '2';
         $redirect = true;
 
-        if ($Users->updateAccount($_POST)) {
+        if ($Users->updateAccount($Request->request->all())) {
             $Session->getFlashBag()->add('ok', _('Profile updated.'));
         } else {
             $Session->getFlashBag()->add('ko', Tools::error());
@@ -54,16 +56,16 @@ try {
         $redirect = true;
 
         // do nothing if the template name is empty
-        if (empty($_POST['new_tpl_name'])) {
+        if (empty($Request->request->get('new_tpl_name'))) {
             throw new Exception(_('You must specify a name for the template!'));
         }
         // template name must be 3 chars at least
-        if (strlen($_POST['new_tpl_name']) < 3) {
+        if (strlen($Request->request->get('new_tpl_name')) < 3) {
             throw new Exception(_('The template name must be 3 characters long.'));
         }
 
-        $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
-        $tpl_body = Tools::checkBody($_POST['new_tpl_body']);
+        $tpl_name = $Request->request->filter('new_tpl_name', null, FILTER_SANITIZE_STRING);
+        $tpl_body = Tools::checkBody($Request->request->get('new_tpl_body'));
 
         $Templates = new Templates($Users);
         if (!$Templates->create($tpl_name, $tpl_body, $Session->get('userid'))) {
@@ -77,43 +79,31 @@ try {
         $tab = '3';
         $redirect = true;
 
-        $tpl_id = array();
-        foreach ($_POST['tpl_id'] as $id) {
-            $tpl_id[] = $id;
-        }
-        $new_tpl_body = array();
-        foreach ($_POST['tpl_body'] as $body) {
-            $new_tpl_body[] = $body;
-        }
-        $new_tpl_name = array();
-        foreach ($_POST['tpl_name'] as $name) {
-            $new_tpl_name[] = $name;
-        }
-
         $Templates = new Templates($Users);
-
-        $cnt = count($_POST['tpl_body']);
-        for ($i = 0; $i < $cnt; $i++) {
-            $Templates->update($tpl_id[$i], $new_tpl_name[$i], $new_tpl_body[$i]);
-        }
+        $Templates->update(
+            $Request->request->get('tpl_id')[0],
+            $Request->request->get('tpl_name')[0],
+            $Request->request->get('tpl_body')[0]
+        );
         $Session->getFlashBag()->add('ok', _('Template successfully edited.'));
     }
 
     // TEMPLATES DESTROY
     if ($Request->request->has('templatesDestroy')) {
-        if (Tools::checkId($_POST['id']) === false) {
+        if (Tools::checkId($Request->request->get('id')) === false) {
             throw new Exception('The id parameter is invalid!');
         }
 
         $Templates = new Templates($Users);
+        $Response = new JsonResponse();
 
-        if ($Templates->destroy($_POST['id'], $Session->get('userid'))) {
-            echo json_encode(array(
+        if ($Templates->destroy($Request->request->get('id'), $Session->get('userid'))) {
+            $Response->setData(array(
                 'res' => true,
                 'msg' => _('Template deleted successfully')
             ));
         } else {
-            echo json_encode(array(
+            $Response->setData(array(
                 'res' => false,
                 'msg' => Tools::error()
             ));
@@ -126,6 +116,7 @@ try {
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     if ($redirect) {
-        header('Location: ../../ucp.php?tab=' . $tab);
+        $Response = new RedirectResponse("../../ucp.php?tab=" . $tab);
     }
+    $Response->send();
 }

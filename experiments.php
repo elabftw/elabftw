@@ -24,7 +24,7 @@ try {
     require_once 'app/head.inc.php';
 
     if (!isset($Users)) {
-        $Users = new Users($_SESSION['userid']);
+        $Users = new Users($Session->get('userid'));
     }
 
     $EntityView = new ExperimentsView(new Experiments($Users));
@@ -35,9 +35,9 @@ try {
 
         $EntityView->Entity->setId($Request->query->get('id'));
         $Comments = new Comments($EntityView->Entity);
+        $commentsArr = $Comments->read();
         $EntityView->initViewEdit();
 
-        $commentsArr = $Comments->read();
         $ownerName = '';
         if ($EntityView->isReadOnly()) {
             // we need to get the fullname of the user who owns the experiment to display the RO message

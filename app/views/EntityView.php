@@ -59,7 +59,7 @@ class EntityView
         $this->Entity->populate();
         // throw error if the id is empty (non existing id)
         if (empty($this->Entity->entityData['userid'])) {
-            throw new Exception(Tools::error(true));
+            throw new Exception(Tools::error());
         }
 
         // get the UploadsView object
@@ -155,6 +155,8 @@ class EntityView
             } else { //user has no templates
                 $templates .= "<li class='dropdown-item disabled'><a href='#'>" . _('No templates found') . "</a></li>";
             }
+            $templates .= "<li role='separator' class='divider'></li>";
+            $templates .= "<li class='dropdown-item'><a href='ucp.php?tab=3'>" . _('Add template') . "</a></li>";
 
             // FILTER BY
             $filterTitle = _('Filter status');

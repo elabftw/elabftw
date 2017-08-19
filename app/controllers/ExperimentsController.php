@@ -161,8 +161,8 @@ try {
             $Response = new JsonResponse();
             $Entity->canOrExplode('write');
             if ($Entity->isTimestampable()) {
-                $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
-                if ($ts->timeStamp()) {
+                $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Session->get('team')), $Entity);
+                if ($TrustedTimestamps->timeStamp()) {
                     $Response->setData(array(
                         'res' => true
                     ));
@@ -175,7 +175,7 @@ try {
             }
         } catch (Exception $e) {
             $Logs = new Logs();
-            $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+            $Logs->create('Error', $Session->get('userid'), $e->getMessage());
             $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
@@ -190,7 +190,7 @@ try {
 
         $Teams = new Teams($Entity->team);
 
-        if (($Teams->read('deletable_xp') == '0') && !$_SESSION['is_admin']) {
+        if (($Teams->read('deletable_xp') == '0') && !$Session->get('is_admin')) {
             $Response->setData(array(
                 'res' => false,
                 'msg' => _("You don't have the rights to delete this experiment.")
@@ -213,7 +213,7 @@ try {
     // DECODE ASN1 TOKEN
     if ($Request->request->has('asn1') && is_readable(ELAB_ROOT . "uploads/" . $Request->request->get('asn1'))) {
         $Response = new JsonResponse();
-        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
+        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Session->get('team')), $Entity);
 
         $Response->setData(array(
             'res' => true,
@@ -225,7 +225,7 @@ try {
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = Tools::error();
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', Tools::error());
     header('Location: ../../experiments.php');
 }

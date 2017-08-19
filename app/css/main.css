@@ -874,6 +874,16 @@ input[type='checkbox']{
     padding-left: 20px;
 }
 
+/* TITLE */
+.title a {
+    color: #888;
+}
+
+.title a:hover {
+    color:#29AEB9 !important;
+    transition-duration: 500ms;
+}
+
 .title_view {
     font-size:  160%;
 }

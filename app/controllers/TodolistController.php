@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  *
@@ -18,114 +19,76 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
-    $Todolist = new Todolist($_SESSION['userid']);
+    $Todolist = new Todolist($Session->get('userid'));
+    $Response = new JsonResponse();
 
-    if (isset($_POST['create'])) {
-        $id = $Todolist->create($_POST['body']);
+    $res = false;
+    $msg = Tools::error();
+
+    // CREATE
+    if ($Request->request->has('create')) {
+        $id = $Todolist->create($Request->request->get('body'));
         if ($id) {
-            echo json_encode(array(
-                'res' => true,
-                'id' => $id,
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+            $res = true;
+            $msg = $id;
         }
     }
 
-    if (isset($_POST['read'])) {
-        $todoItems = $Todolist->readAll();
-        if (is_array($todoItems)) {
-            echo json_encode(array(
-                'res' => true,
-                'todoItems' => $todoItems
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
-
-
-    if (isset($_POST['update'])) {
+    // UPDATE
+    if ($Request->request->has('update')) {
         try {
-            $body = filter_var($_POST['body'], FILTER_SANITIZE_STRING);
+            $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
 
             if (strlen($body) === 0 || $body === ' ') {
-                throw new Exception(_('Comment is too short'));
+                throw new Exception('Body is too short');
             }
 
-            $id_arr = explode('_', $_POST['id']);
+            $id_arr = explode('_', $Request->request->get('id'));
             if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }
             $id = $id_arr[1];
 
             if ($Todolist->update($id, $body)) {
-                echo json_encode(array(
-                    'res' => true,
-                    'msg' => _('Saved')
-                ));
-            } else {
-                echo json_encode(array(
-                    'res' => false,
-                    'msg' => Tools::error()
-                ));
+                $res = true;
+                $msg = _('Saved');
             }
         } catch (Exception $e) {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => $e->getMessage()
-            ));
+            $msg = $e->getMessage();
         }
     }
 
-    if (isset($_POST['updateOrdering'])) {
-        if ($Todolist->updateOrdering($_POST)) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    // UPDATE ORDERING
+    if ($Request->request->has('updateOrdering')) {
+        if ($Todolist->updateOrdering($Request->request->all())) {
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
-    if (isset($_POST['destroy'])) {
-        if ($Todolist->destroy($_POST['id'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Item deleted successfully')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    // DESTROY
+    if ($Request->request->has('destroy')) {
+        if ($Todolist->destroy($Request->request->get('id'))) {
+            $res = true;
+            $msg = _('Item deleted successfully');
         }
     }
 
-    if (isset($_POST['destroyAll'])) {
+    // DESTROY ALL
+    if ($Request->request->has('destroyAll')) {
         if ($Todolist->destroyAll()) {
-            echo json_encode(array(
-                'res' => true
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+            $res = true;
+            $msg = _('Item deleted successfully');
         }
     }
+
+    $Response->setData(array(
+        'res' => $res,
+        'msg' => $msg
+    ));
+    $Response->send();
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

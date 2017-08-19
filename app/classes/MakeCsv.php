@@ -71,7 +71,7 @@ class MakeCsv extends Make
         if ($this->Entity->type === 'experiments') {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
-        return  array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
+        return  array('id', 'date', 'title', 'description', 'category', 'rating', 'url');
     }
 
     /**

@@ -21,22 +21,22 @@ try {
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     set_time_limit(0);
 
-    if ($_POST['type'] === 'csv') {
-        $Import = new ImportCsv();
-    } elseif ($_POST['type'] === 'zip') {
-        $Import = new ImportZip();
+    if ($Request->request->get('type') === 'csv') {
+        $Import = new ImportCsv($Users);
+    } elseif ($Request->request->get('type') === 'zip') {
+        $Import = new ImportZip($Users);
     } else {
         throw new Exception('Invalid argument');
     }
 
     $msg = $Import->inserted . ' ' .
         ngettext('item imported successfully.', 'items imported successfully.', $Import->inserted);
-    $_SESSION['ok'][] = $msg;
+    $Session->getFlashBag()->add('ok', $msg);
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = Tools::error();
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', Tools::error());
 } finally {
     header('Location: ../../admin.php');
 }

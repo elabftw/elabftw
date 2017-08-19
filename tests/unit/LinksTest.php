@@ -7,12 +7,9 @@ class LinksTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $_SESSION['userid'] = '1';
-        $_SESSION['team_id'] = '1';
-        $_SESSION['is_admin'] = '0';
         $this->Users = new Users(1);
         $this->Experiments = new Experiments($this->Users, '1');
-        $this->Links= new Links($this->Experiments);
+        $this->Links = new Links($this->Experiments);
     }
 
     public function testCreateReadDestroy()

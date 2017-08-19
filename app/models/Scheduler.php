@@ -70,9 +70,9 @@ class Scheduler extends Entity
     }
 
     /**
-     * Return a JSON string with events for this item
+     * Return an array with events for this item
      *
-     * @return string JSON
+     * @return array
      */
     public function read()
     {
@@ -87,7 +87,7 @@ class Scheduler extends Entity
         $req->bindParam(':item', $this->Database->id);
         $req->execute();
 
-        return json_encode($req->fetchall());
+        return $req->fetchall();
     }
 
     /**
@@ -106,16 +106,18 @@ class Scheduler extends Entity
     }
 
     /**
-     * Update the start of an event (when you drag and drop it)
+     * Update the start (and end) of an event (when you drag and drop it)
      *
      * @param string $start 2016-07-22T13:37:00
+     * @param string $end 2016-07-22T13:37:00
      * @return bool
      */
-    public function updateStart($start)
+    public function updateStart($start, $end)
     {
-        $sql = "UPDATE team_events SET start = :start WHERE team = :team AND id = :id";
+        $sql = "UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         $req->bindParam(':team', $this->Database->Users->userData['team']);
         $req->bindParam(':id', $this->id);
 

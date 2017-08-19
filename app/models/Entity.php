@@ -315,11 +315,6 @@ class Entity
             $item = $this->entityData;
         }
 
-        $isAdmin = false;
-        if (isset($_SESSION['is_admin']) && ($_SESSION['is_admin'] === '1')) {
-            $isAdmin = true;
-        }
-
         if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
             if ($item['userid'] == $this->Users->userid) {
@@ -327,12 +322,12 @@ class Entity
                 $permissions['write'] = true;
 
             // admin can view and write any experiment
-            } elseif (($item['userid'] != $this->Users->userid) && $isAdmin) {
+            } elseif (($item['userid'] != $this->Users->userid) && $this->Users->userData['is_admin']) {
                 $permissions['read'] = true;
                 $permissions['write'] = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($item['userid'] != $this->Users->userid) && !$isAdmin) {
+            } elseif (($item['userid'] != $this->Users->userid) && !$this->Users->userData['is_admin']) {
                 $validArr = array(
                     'public',
                     'organization'

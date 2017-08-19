@@ -70,8 +70,8 @@ try {
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = Tools::error();
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', Tools::error());
     $Response = new RedirectResponse("../../database.php");
 } finally {
     $Response->send();

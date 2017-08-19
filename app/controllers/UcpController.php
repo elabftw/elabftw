@@ -23,25 +23,25 @@ try {
     $redirect = false;
 
     // TAB 1 : PREFERENCES
-    if (isset($_POST['lang'])) {
+    if ($Request->request->has('lang')) {
         $redirect = true;
         if ($Users->updatePreferences($_POST)) {
-            $_SESSION['ok'][] = _('Preferences updated.');
+            $Session->getFlashBag()->add('ok', _('Preferences updated.'));
         } else {
-            $_SESSION['ko'][] = Tools::error();
+            $Session->getFlashBag()->add('ko', Tools::error());
         }
     }
     // END TAB 1
 
     // TAB 2 : ACCOUNT
-    if (isset($_POST['currpass'])) {
+    if ($Request->request->has('currpass')) {
         $tab = '2';
         $redirect = true;
 
         if ($Users->updateAccount($_POST)) {
-            $_SESSION['ok'][] = _('Profile updated.');
+            $Session->getFlashBag()->add('ok', _('Profile updated.'));
         } else {
-            $_SESSION['ko'][] = Tools::error();
+            $Session->getFlashBag()->add('ko', Tools::error());
         }
     }
     // END TAB 2
@@ -49,7 +49,7 @@ try {
     // TAB 3 : EXPERIMENTS TEMPLATES
 
     // ADD NEW TPL
-    if (isset($_POST['new_tpl_form'])) {
+    if ($Request->request->has('new_tpl_form')) {
         $tab = '3';
         $redirect = true;
 
@@ -66,14 +66,14 @@ try {
         $tpl_body = Tools::checkBody($_POST['new_tpl_body']);
 
         $Templates = new Templates($Users);
-        if (!$Templates->create($tpl_name, $tpl_body, $_SESSION['userid'])) {
+        if (!$Templates->create($tpl_name, $tpl_body, $Session->get('userid'))) {
             throw new Exception(Tools::error());
         }
-        $_SESSION['ok'][] = _('Experiment template successfully added.');
+        $Session->getFlashBag()->add('ok', _('Experiment template successfully added.'));
     }
 
     // EDIT TEMPLATES
-    if (isset($_POST['tpl_form'])) {
+    if ($Request->request->has('tpl_form')) {
         $tab = '3';
         $redirect = true;
 
@@ -96,18 +96,18 @@ try {
         for ($i = 0; $i < $cnt; $i++) {
             $Templates->update($tpl_id[$i], $new_tpl_name[$i], $new_tpl_body[$i]);
         }
-        $_SESSION['ok'][] = _('Template successfully edited.');
+        $Session->getFlashBag()->add('ok', _('Template successfully edited.'));
     }
 
     // TEMPLATES DESTROY
-    if (isset($_POST['templatesDestroy'])) {
+    if ($Request->request->has('templatesDestroy')) {
         if (Tools::checkId($_POST['id']) === false) {
             throw new Exception('The id parameter is invalid!');
         }
 
         $Templates = new Templates($Users);
 
-        if ($Templates->destroy($_POST['id'], $_SESSION['userid'])) {
+        if ($Templates->destroy($_POST['id'], $Session->get('userid'))) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Template deleted successfully')
@@ -122,8 +122,8 @@ try {
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = $e->getMessage();
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     if ($redirect) {
         header('Location: ../../ucp.php?tab=' . $tab);

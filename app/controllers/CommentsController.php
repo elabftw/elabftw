@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller for the experiments comments
@@ -20,54 +21,43 @@ try {
     require_once '../../app/init.inc.php';
 
     $Comments = new Comments(new Experiments($Users));
+    $Response = new JsonResponse();
+
+    $res = false;
+    $msg = Tools::error();
 
     // CREATE
-    if (isset($_POST['commentsCreate'])) {
-        $Comments->Entity->setId($_POST['id']);
-        if ($Comments->create($_POST['comment'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    if ($Request->request->has('create')) {
+        $Comments->Entity->setId($Request->request->get('id'));
+        if ($Comments->create($Request->request->get('comment'))) {
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
     // UPDATE
-    if (isset($_POST['commentsUpdate'])) {
-        if ($Comments->update($_POST['commentsUpdate'], $_POST['id'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    if ($Request->request->has('update')) {
+        if ($Comments->update($Request->request->get('commentsUpdate'), $Request->request->get('id'))) {
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
     // DESTROY
-    if (isset($_POST['destroy'])) {
-        if ($Comments->destroy($_POST['id'], $_SESSION['userid'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Comment successfully deleted')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    if ($Request->request->has('destroy')) {
+        if ($Comments->destroy($Request->request->get('id'), $Session->get('userid'))) {
+            $res = true;
+            $msg = _('Comment successfully deleted');
         }
     }
 
+    $Response->setData(array(
+        'res' => $res,
+        'msg' => $msg
+    ));
+    $Response->send();
+
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

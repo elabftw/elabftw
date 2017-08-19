@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Mother class of MakeCsv, MakePdf and MakeZip
  *
@@ -60,13 +62,8 @@ abstract class Make
      */
     protected function getUrl()
     {
-        $url = $_SERVER['HTTP_REFERER'];
-
-        if ($this->Entity->type === 'experiments') {
-            $url .= 'experiments.php';
-        } else {
-            $url .= 'database.php';
-        }
+        $Request = Request::createFromGlobals();
+        $url = 'https://' . $Request->getHttpHost() . '/' . $this->Entity::PAGE . '.php';
 
         return $url . "?mode=view&id=" . $this->Entity->id;
     }

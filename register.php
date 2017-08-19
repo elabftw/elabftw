@@ -23,7 +23,7 @@ try {
     require_once 'app/head.inc.php';
 
     // Check if we're logged in
-    if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
+    if ($Session->has('auth')) {
         throw new Exception(sprintf(
             _('Please %slogout%s before you register another account.'),
             "<a style='alert-link' href='app/logout.php'>",
@@ -42,8 +42,7 @@ try {
 
     $Response = new Response();
     $Response->setContent($Twig->render('register.html', array(
-        'teamsArr' => $teamsArr,
-        'showLocal' => $showLocal
+        'teamsArr' => $teamsArr
     )));
     $Response->send();
 

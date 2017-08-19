@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Users infos from admin page
@@ -20,46 +21,46 @@ $redirect = true;
 try {
     require_once '../../app/init.inc.php';
 
-    $FormKey = new FormKey();
-    $Users = new Users(null, new Config);
-
-    // (RE)GENERATE AN API KEY (from profile)
-    if (isset($_POST['generateApiKey'])) {
-        $redirect = false;
-        $Users->setId($_SESSION['userid']);
-        if ($Users->generateApiKey()) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
+    $FormKey = new FormKey($Session);
 
     $tab = 1;
     $location = '../../admin.php?tab=' . $tab;
 
+    // (RE)GENERATE AN API KEY (from profile)
+    if ($Request->request->has('generateApiKey')) {
+        $Response = new JsonResponse();
+        $redirect = false;
+        if ($Users->generateApiKey()) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+        $Response->send();
+    }
+
     // VALIDATE
-    if (isset($_POST['usersValidate'])) {
+    if ($Request->request->has('usersValidate')) {
         $tab = 2;
-        if (!$_SESSION['is_admin']) {
+        if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
 
         // loop the array
         foreach ($_POST['usersValidateIdArr'] as $userid) {
-            $_SESSION['ok'][] = $Users->validate($userid);
+            $Session->getFlashBag()->add('ok', $Users->validate($userid));
         }
     }
 
     // UPDATE USERS
-    if (isset($_POST['usersUpdate'])) {
+    if ($Request->request->has('usersUpdate')) {
         $tab = 2;
-        if (!$_SESSION['is_admin']) {
+        if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
         if (isset($_POST['fromSysconfig'])) {
@@ -68,33 +69,32 @@ try {
             $location = "../../admin.php?tab=$tab";
         }
 
-        if ($Users->update($_POST)) {
-            $_SESSION['ok'][] = _('Configuration updated successfully.');
+        if ($Users->update($Request->request->all())) {
+            $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
         }
     }
 
     // DESTROY
-    if (isset($_POST['formkey'])
-        && $FormKey->validate()
-        && isset($_POST['usersDestroy'])) {
+    if ($FormKey->validate($Request->request->get('formkey'))
+        && $Request->request->has('usersDestroy')) {
 
         $tab = 2;
-        if (!$_SESSION['is_admin']) {
+        if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
 
         if ($Users->destroy(
-            $_POST['usersDestroyEmail'],
-            $_POST['usersDestroyPassword']
+            $Request->request->get('usersDestroyEmail'),
+            $Request->request->get('usersDestroyPassword')
         )) {
-            $_SESSION['ok'][] = _('Everything was purged successfully.');
+            $Session->getFlashBag()->add('ok', _('Everything was purged successfully.'));
         }
     }
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = Tools::error();
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', Tools::error());
 
 } finally {
     if ($redirect) {

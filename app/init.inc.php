@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * This must be included on top of every page.
@@ -18,8 +19,14 @@ use Symfony\Component\HttpFoundation\Request;
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
 try {
-    if (!isset($_SESSION)) {
-        session_start();
+    require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+
+    // create Request object
+    $Request = Request::createFromGlobals();
+
+    $Session = new Session();
+    if (!$Request->hasPreviousSession()) {
+        $Session->start();
     }
 
     // add check for php version here also
@@ -38,11 +45,6 @@ try {
 
     require_once $configFilePath;
 
-    require_once ELAB_ROOT . 'vendor/autoload.php';
-
-    // create Request object
-    $Request = Request::createFromGlobals();
-
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
@@ -53,8 +55,8 @@ try {
     }
 
     // i18n (gettext)
-    if (isset($_SESSION['auth'])) {
-        $Users = new Users($_SESSION['userid']);
+    if ($Session->has('auth')) {
+        $Users = new Users($Session->get('userid'), new Config());
         $locale = $Users->userData['lang'] . '.utf8';
     } else {
         $locale = $Update->Config->configArr['lang'] . '.utf8';
@@ -93,9 +95,11 @@ try {
     // run the update script if we have the wrong schema version
     if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
         try {
-            $_SESSION['ok'] = $Update->runUpdateScript();
+            foreach ($Update->runUpdateScript() as $msg) {
+                $Session->getFlashBag()->add('ok', $msg);
+            }
         } catch (Exception $e) {
-            $_SESSION['ko'][] = 'Error updating: ' . $e->getMessage();
+            $Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
         }
     }
 
@@ -109,23 +113,16 @@ try {
         'metadata.php',
         'register.php',
         'RegisterController.php',
-        'reset.php',
         'ResetPasswordController.php'
     );
 
-    if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologinArr)) {
+    if (!$Session->has('auth') && !in_array(basename($Request->getScriptName()), $nologinArr)) {
         // try to login with the cookie
         $Auth = new Auth();
         if (!$Auth->loginWithCookie($Request)) {
             // maybe we clicked an email link and we want to be redirected to the page upon successful login
             // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-            $script = $_SERVER['SCRIPT_NAME'];
-            $params = '?' . $_SERVER['QUERY_STRING'];
-            $url = $script . $params;
-            // remove trailing ? if there was no query string
-            $url = rtrim($url, '?');
-
-            setcookie('redirect', $url, time() + 300, '/', null, true, true);
+            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
             header('location: app/logout.php');
             exit;

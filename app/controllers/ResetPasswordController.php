@@ -14,6 +14,7 @@ use Swift_Message;
 use Exception;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 try {
     require_once '../../app/init.inc.php';
@@ -22,13 +23,14 @@ try {
     $Users = new Users(null, $Config);
     $Logs = new Logs();
 
-    if (isset($_POST['email'])) {
+    if ($Request->request->has('email')) {
+
+        $email = $Request->request->get('email');
+
         // check email is valid. Input field is of type email so browsers should not let users send invalid email.
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new Exception('Email provided is invalid.');
         }
-
-        $email = $_POST['email'];
 
         // Get data from user
         $user = $Users->readFromEmail($email);
@@ -38,18 +40,14 @@ try {
             throw new Exception(_('Email not found in database!'));
         }
 
-        // Get infos about the requester (will be sent in the mail afterwards)
         // Get IP
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        if ($Request->server->has('HTTP_CLIENT_IP')) {
+            $ip = $Request->server->get('HTTP_CLIENT_IP');
+        } elseif ($Request->server->has('HTTP_X_FORWARDED_FOR')) {
+            $ip = $Request->server->get('HTTP_X_FORWARDED_FOR');
         } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
+            $ip = $Request->server->get('REMOTE_ADDR');
         }
-
-        // Get user agent
-        $u_agent = $_SERVER['HTTP_USER_AGENT'];
 
         // the key (token) is the encrypted user's mail address
         $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(SECRET_KEY));
@@ -57,8 +55,7 @@ try {
         // the deadline is the encrypted epoch of now +1 hour
         $deadline = Crypto::encrypt(time() + 3600, Key::loadFromAsciiSafeString(SECRET_KEY));
 
-        // Get info to build the URL
-        $Request = Request::createFromGlobals();
+        // build the reset link
         $resetLink = 'https://' . $Request->getHttpHost() . '/change-pass.php';
         $resetLink .='?key=' . $key . '&deadline=' . $deadline . '&userid=' . $user['userid'];
 
@@ -73,7 +70,7 @@ try {
         // Set the To addresses with an associative array
         ->setTo(array($email => $user['fullname']))
         // Give it a body
-        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $resetLink) . $footer);
+        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $Request->server->get('HTTP_USER_AGENT'), $resetLink) . $footer);
         // generate Swift_Mailer instance
         $mailer = $Email->getMailer();
         // now we try to send the email
@@ -81,48 +78,42 @@ try {
             throw new Exception(_('There was a problem sending the email! Error was logged.'));
         }
 
-        $_SESSION['ok'][] = _('Email sent. Check your INBOX.');
+        $Session->getFlashBag()->add('ok', _('Email sent. Check your INBOX.'));
     }
 
     // second part, update the password
-    if (isset($_POST['password']) &&
-        isset($_POST['cpassword']) &&
-        isset($_POST['key']) &&
-        isset($_POST['userid']) &&
-        $_POST['password'] === $_POST['cpassword']) {
+    if ($Request->request->has('password') &&
+        $Request->request->get('password') === $Request->request->get('cpassword')) {
 
-        if (Tools::checkId($_POST['userid']) === false) {
-            throw new Exception('The id parameter is invalid');
-        }
-
-        $userArr = $Users->read($_POST['userid']);
+        $Users->setId($Request->request->get('userid'));
 
         // Validate key
-        if ($userArr['email'] != Crypto::decrypt($_POST['key'], Key::loadFromAsciiSafeString(SECRET_KEY))) {
+        if ($Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(SECRET_KEY))) {
             throw new Exception('Wrong key for resetting password');
         }
 
         // check deadline here too (fix #297)
-        $deadline = Crypto::decrypt($_POST['deadline'], Key::loadFromAsciiSafeString(SECRET_KEY));
+        $deadline = Crypto::decrypt($Request->request->get('deadline'), Key::loadFromAsciiSafeString(SECRET_KEY));
 
         if ($deadline < time()) {
             throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));
         }
 
         // Replace new password in database
-        if (!$Users->updatePassword($_POST['password'], $_POST['userid'])) {
+        if (!$Users->updatePassword($Request->request->get('password'), $Request->request->get('userid'))) {
             throw new Exception('Error updating password');
         }
 
-        $Logs->create('Info', $_POST['userid'], 'Password was changed for this user.');
-        $_SESSION['ok'][] = _('New password inserted. You can now login.');
+        $Logs->create('Info', $Users->userData['email'], 'Password was changed for this user.');
+        $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 
 } catch (Exception $e) {
     // log the error
     $Logs = new Logs();
-    $Logs->create('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
-    $_SESSION['ko'][] = $e->getMessage();
+    $Logs->create('Error', $Request->server->get('REMOTE_ADDR'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
-    header("location: ../../login.php");
+    $Response = new RedirectResponse("../../login.php");
+    $Response->send();
 }

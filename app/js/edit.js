@@ -208,9 +208,10 @@ $(document).ready(function() {
     // STATUS SELECT
     $(document).on('change', '#status_select', function() {
         var categoryId = $(this).val();
-        $.post("app/controllers/ExperimentsController.php", {
+        $.post("app/controllers/EntityController.php", {
             updateCategory: true,
             id: id,
+            type: 'experiments',
             categoryId : categoryId
         }).done(function(data) {
             if (data.res) {

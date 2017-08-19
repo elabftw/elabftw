@@ -17,10 +17,15 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Defuse\Crypto\Key as Key;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 try {
-    session_start();
     require_once '../vendor/autoload.php';
+
+    $Session = new Session();
+    if (!$Request->hasPreviousSession()) {
+        $Session->start();
+    }
 
     // we disable errors to avoid having notice and warning polluting our file
     error_reporting(E_ERROR);
@@ -79,10 +84,9 @@ try {
         if (is_writable($config_file)) {
             chmod($config_file, 0400);
         }
-        $infos_arr = array();
-        $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, 
+        $msg = 'Congratulations, you successfully installed eLabFTW, 
         now you need to <strong>register</strong> your account (you will have full admin rights).';
-        $_SESSION['ok'] = $infos_arr;
+        $Session->getFlashBag()->add('ok', $msg);
         // redirect to install/index.php to import SQL structure
         header('Location: index.php');
 

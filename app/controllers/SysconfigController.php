@@ -19,7 +19,7 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
-    if (!$_SESSION['is_sysadmin']) {
+    if (!$Session->get('is_sysadmin')) {
         throw new Exception('Non sysadmin user tried to access sysadmin panel.');
     }
 
@@ -30,7 +30,7 @@ try {
     $Config = new Config();
 
     // PROMOTE SYSADMIN
-    if (isset($_POST['promoteSysadmin'])) {
+    if ($Request->request->has('promoteSysadmin')) {
         $Users = new Users();
         if ($Users->promoteSysadmin($_POST['email'])) {
             echo json_encode(array(
@@ -46,7 +46,7 @@ try {
     }
 
     // CREATE TEAM
-    if (isset($_POST['teamsCreate'])) {
+    if ($Request->request->has('teamsCreate')) {
         if ($Teams->create($_POST['teamsName'])) {
             echo json_encode(array(
                 'res' => true,
@@ -61,7 +61,7 @@ try {
     }
 
     // UPDATE TEAM
-    if (isset($_POST['teamsUpdate'])) {
+    if ($Request->request->has('teamsUpdate')) {
         $orgid = "";
         if (isset($_POST['teamsUpdateOrgid'])) {
             $orgid = $_POST['teamsUpdateOrgid'];
@@ -80,7 +80,7 @@ try {
     }
 
     // DESTROY TEAM
-    if (isset($_POST['teamsDestroy'])) {
+    if ($Request->request->has('teamsDestroy')) {
         if ($Teams->destroy($_POST['teamsDestroyId'])) {
             echo json_encode(array(
                 'res' => true,
@@ -95,7 +95,7 @@ try {
     }
 
     // SEND TEST EMAIL
-    if (isset($_POST['testemailSend'])) {
+    if ($Request->request->has('testemailSend')) {
         $Sysconfig = new Sysconfig(new Email($Config));
         if ($Sysconfig->testemailSend($_POST['testemailEmail'])) {
             echo json_encode(array(
@@ -111,7 +111,7 @@ try {
     }
 
     // SEND MASS EMAIL
-    if (isset($_POST['massEmail'])) {
+    if ($Request->request->has('massEmail')) {
         $Sysconfig = new Sysconfig(new Email($Config));
         if ($Sysconfig->massEmail($_POST['subject'], $_POST['body'])) {
             echo json_encode(array(
@@ -127,7 +127,7 @@ try {
     }
 
     // DESTROY LOGS
-    if (isset($_POST['logsDestroy'])) {
+    if ($Request->request->has('logsDestroy')) {
         $Logs = new Logs();
         if ($Logs->destroy()) {
             echo json_encode(array(
@@ -143,7 +143,7 @@ try {
     }
 
     // TAB 3 to 6 + 8
-    if (isset($_POST['updateConfig'])) {
+    if ($Request->request->has('updateConfig')) {
         $redirect = true;
 
         if (isset($_POST['lang'])) {
@@ -181,13 +181,13 @@ try {
         }
     }
 
-    $_SESSION['ok'][] = _('Configuration updated successfully.');
+    $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
     // we can show error message to sysadmin
-    $_SESSION['ko'][] = $e->getMessage();
+    $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     if ($redirect) {
         header('Location: ../../sysconfig.php?tab=' . $tab);

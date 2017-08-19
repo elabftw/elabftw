@@ -13,22 +13,23 @@ namespace Elabftw\Elabftw;
 use PDO;
 use Exception;
 use Swift_Message;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Users
  */
 class Users extends Auth
 {
-    /** instance of Config */
+    /** @var Config $Config instance of Config */
     public $Config;
 
-    /** flag to check if we need validation or not */
+    /** @var bool $needValidation flag to check if we need validation or not */
     public $needValidation = false;
 
-    /** what you get when you read() */
+    /** @var array $userData what you get when you read() */
     public $userData;
 
-    /** our userid */
+    /** @var string $userid our userid */
     public $userid;
 
     /**
@@ -203,6 +204,9 @@ class Users extends Auth
     {
         $Email = new Email($this->Config);
 
+        $Request = Request::createFromGlobals();
+        $url = 'https://' . $Request->getHttpHost() . '/admin.php';
+
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
@@ -213,7 +217,7 @@ class Users extends Auth
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
         // generate Swift_Mailer instance
         $mailer = $Email->getMailer();
         // SEND EMAIL
@@ -310,7 +314,8 @@ class Users extends Auth
      */
     public function read($userid)
     {
-        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname, groups.can_lock FROM users
+        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
             LEFT JOIN groups ON groups.group_id = users.usergroup
             WHERE users.userid = :userid";
         $req = $this->pdo->prepare($sql);
@@ -444,7 +449,7 @@ class Users extends Auth
         }
 
         // a non sysadmin cannot put someone sysadmin
-        if ($usergroup == 1 && $_SESSION['is_sysadmin'] != 1) {
+        if ($usergroup == 1 && $this->userData['is_sysadmin'] != 1) {
             throw new Exception(_('Only a sysadmin can put someone sysadmin.'));
         }
 
@@ -682,7 +687,7 @@ class Users extends Auth
     {
 
         if (is_null($userid)) {
-            $userid = $_SESSION['userid'];
+            $userid = $this->userid;
         }
 
         if (!$this->checkPasswordLength($password)) {
@@ -730,22 +735,19 @@ class Users extends Auth
      */
     public function validate($userid)
     {
-        $userid = Tools::checkId($userid);
-        if ($userid === false) {
-            throw new Exception('The id parameter is not valid!');
-        }
+        $this->setId($userid);
 
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-
-        // we read to get email of user
-        $userArr = $this->read($userid);
-
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid);
 
         // validate the user
         if ($req->execute()) {
-            $msg = _('Validated user with ID :') . ' ' . $userid;
+            $msg = sprintf(
+                _('User %s (%s) now has an active account.'),
+                $this->userData['fullname'],
+                $this->userData['email']
+            );
         } else {
             $msg = Tools::error();
         }
@@ -753,6 +755,7 @@ class Users extends Auth
         $Email = new Email($this->Config);
 
         // now let's get the URL so we can have a nice link in the email
+        $Request = Request::createFromGlobals();
         $url = 'https://' . $Request->getHttpHost() . '/login.php';
         // we send an email to each validated new user
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
@@ -764,9 +767,9 @@ class Users extends Auth
         // Set the From address with an associative array
         ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
-        ->setTo(array($userArr['email'] => 'eLabFTW'))
+        ->setTo(array($this->userData['email'] => 'eLabFTW'))
         // Give it a body
-        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
+        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ' . $url . $footer);
         // generate Swift_Mailer instance
         $mailer = $Email->getMailer();
         // now we try to send the email
@@ -789,15 +792,13 @@ class Users extends Auth
     public function destroy($email, $password)
     {
         // check that we got the good password
-        $me = $this->read($_SESSION['userid']);
-        if (!$this->checkCredentials($me['email'], $password)) {
+        if (!$this->checkCredentials($this->userData['email'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
         // check the user is in our team and also get the userid
-        $useridArr = $this->emailInTeam($email, $_SESSION['team_id']);
-        $userid = $useridArr['userid'];
+        $useridToDelete = $this->emailInTeam($email, $this->userData['team']);
 
-        if (!$userid) {
+        if (Tools::checkId($useridToDelete) === false) {
             throw new Exception(_('No user with this email or user not in your team'));
         }
 
@@ -805,24 +806,24 @@ class Users extends Auth
 
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         // get all filenames
         $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'userid' => $userid,
+            'userid' => $useridToDelete,
             'type' => 'experiments'
         ));
         while ($uploads = $req->fetch()) {
@@ -833,7 +834,7 @@ class Users extends Auth
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         return !in_array(0, $result);
@@ -844,17 +845,17 @@ class Users extends Auth
      *
      * @param string $email
      * @param int $team
-     * @return int|bool
+     * @return string|null
      */
     private function emailInTeam($email, $team)
     {
-        $sql = "SELECT userid FROM users WHERE email LIKE :email AND team = :team";
+        $sql = "SELECT userid FROM users WHERE email = :email AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':team', $team);
         $req->execute();
 
-        return $req->fetch();
+        return $req->fetchColumn();
     }
 
     /**
@@ -865,11 +866,6 @@ class Users extends Auth
      */
     public function promoteSysadmin($email)
     {
-        // only sysadmin can do that
-        if (!$_SESSION['is_sysadmin']) {
-            throw new Exception(Tools::error(true));
-        }
-
         // check we have a valid email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new Exception('Email malformed');

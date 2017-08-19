@@ -73,12 +73,11 @@ $(document).ready(function() {
                 color: color,
                 isTimestampable: isTimestampable
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                     window.location.replace('admin.php?tab=4');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         },
@@ -96,11 +95,10 @@ $(document).ready(function() {
                 isTimestampable: isTimestampable,
                 isDefault: isDefault
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         },
@@ -109,12 +107,11 @@ $(document).ready(function() {
                 statusDestroy: true,
                 id: id
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                     $('#status_' + id).hide();
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }
@@ -150,12 +147,11 @@ $(document).ready(function() {
                 bookable: bookable,
                 template: template
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                     window.location.replace('admin.php?tab=5');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         },
@@ -180,11 +176,10 @@ $(document).ready(function() {
                 bookable: bookable,
                 template: template
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         },
@@ -193,12 +188,11 @@ $(document).ready(function() {
                 itemsTypesDestroy: true,
                 id: id
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                     $('#itemstypes_' + id).hide();
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }
@@ -222,8 +216,12 @@ $(document).ready(function() {
         var template = tinymce.get('commonTplTemplate').getContent();
         $.post('app/controllers/AdminController.php', {
             commonTplUpdate: template
-        }).done(function() {
-            notif('Saved', 'ok');
+        }).done(function(data) {
+            if (data.res) {
+                notif(data.msg, 'ok');
+            } else {
+                notif(data.msg, 'ko');
+            }
         });
     });
 
@@ -267,11 +265,10 @@ $(document).ready(function() {
                 'table': 'status',
                 'ordering': ordering
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }
@@ -292,11 +289,10 @@ $(document).ready(function() {
                 'table': 'items_types',
                 'ordering': ordering
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }

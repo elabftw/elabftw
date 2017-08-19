@@ -21,8 +21,8 @@ use FileSystemIterator;
  */
 class ImportZip extends Import
 {
-    /** @var Entity $Entity instance of Entity */
-    private $Entity;
+    /** @var Users $Users instance of Users */
+    private $Users;
 
     /** @var Uploads $Uploads instance of Uploads */
     private $Uploads;
@@ -55,9 +55,10 @@ class ImportZip extends Import
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct(Users $users)
     {
         $this->pdo = Db::getConnection();
+        $this->Users = $users;
 
         $this->checkFileReadable();
         $this->checkMimeType();
@@ -81,8 +82,8 @@ class ImportZip extends Import
      */
     protected function openFile()
     {
-        $zip = new ZipArchive;
-        return $zip->open($this->getFilePath()) && $zip->extractTo($this->tmpPath);
+        $Zip = new ZipArchive;
+        return $Zip->open($this->getFilePath()) && $Zip->extractTo($this->tmpPath);
     }
 
     /**
@@ -108,7 +109,7 @@ class ImportZip extends Import
     {
         $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
         return $req->fetchColumn();
     }
@@ -130,17 +131,17 @@ class ImportZip extends Import
                 VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         if ($this->type === 'items') {
-            $req->bindParam(':userid', $_SESSION['userid']);
+            $req->bindParam(':userid', $this->Users->userid);
             $req->bindParam(':type', $this->target);
         } else {
             $req->bindValue(':visibility', 'team');
             $req->bindValue(':status', $this->getDefaultStatus());
-            $req->bindParam(':userid', $this->target, \PDO::PARAM_INT);
+            $req->bindParam(':userid', $this->target);
             $req->bindParam(':elabid', $item['elabid']);
         }
 
@@ -152,14 +153,13 @@ class ImportZip extends Import
         $this->newItemId = (int) $this->pdo->lastInsertId();
 
         // create necessary objects
-        $Users = new Users($_SESSION['userid']);
         if ($this->type === 'experiments') {
-            $this->Entity = new Experiments($Users, $this->newItemId);
+            $Entity = new Experiments($this->Users, $this->newItemId);
         } else {
-            $this->Entity = new Database($Users, $this->newItemId);
+            $Entity = new Database($this->Users, $this->newItemId);
         }
-        $this->Uploads = new Uploads($this->Entity);
-        $this->Tags = new Tags($this->Entity);
+        $this->Uploads = new Uploads($Entity);
+        $this->Tags = new Tags($Entity);
 
         if (strlen($item['tags']) > 1) {
             $this->tagsDbInsert($item['tags']);

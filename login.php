@@ -20,7 +20,7 @@ try {
     require_once 'app/init.inc.php';
     $pageTitle = _('Login');
     // Check if already logged in
-    if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+    if ($Session->has('auth')) {
         header('Location: experiments.php');
         throw new Exception('Already logged in');
     }
@@ -29,7 +29,7 @@ try {
 
     $Config = new Config();
     $Idps = new Idps();
-    $FormKey = new FormKey();
+    $FormKey = new FormKey($Session);
     $BannedUsers = new BannedUsers($Config);
 
     // if we are not in https, die saying we work only in https
@@ -47,21 +47,21 @@ try {
     }
 
     // show message if there is a failed_attempt
-    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < $Config->configArr['login_tries']) {
-        $number_of_tries_left = $Config->configArr['login_tries'] - $_SESSION['failed_attempt'];
+    if ($Session->has('failed_attempt') && $Session->get('failed_attempt') < $Config->configArr['login_tries']) {
+        $number_of_tries_left = $Config->configArr['login_tries'] - $Session->get('failed_attempt');
         $message = _('Number of login attempt left before being banned for') . ' ' .
             $Config->configArr['ban_time'] . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
         echo Tools::displayMessage($message, 'ko');
     }
 
     // disable login if too much failed_attempts
-    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= $Config->configArr['login_tries']) {
+    if ($Session->has('failed_attempt') && $Session->get('failed_attempt') >= $Config->configArr['login_tries']) {
         // get user infos
         $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list
         $BannedUsers->create($fingerprint);
 
-        unset($_SESSION['failed_attempt']);
+        $Session->remove('failed_attempt');
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 
@@ -78,7 +78,7 @@ try {
         'BannedUsers' => $BannedUsers,
         'Config' => $Config,
         'FormKey' => $FormKey,
-        'SESSION' => $_SESSION,
+        'Session' => $Session,
         'idpsArr' => $idpsArr,
         'showLocal' => $showLocal
     ));

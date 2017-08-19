@@ -20,8 +20,8 @@ if (!isset($selectedMenu)) {
 $actionTarget = 'experiments.php';
 $teamConfigArr = array();
 
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    $Teams = new Teams($_SESSION['team_id']);
+if ($Session->has('auth')) {
+    $Teams = new Teams($Session->get('team'));
     $teamConfigArr = $Teams->read();
 
     // to redirect to the right page
@@ -30,14 +30,14 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     }
 
     $getQ = '';
-    if (isset($_GET['q'])) {
-        $getQ = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+    if ($Request->query->has('q')) {
+        $getQ = $Request->query->filter('q', null, FILTER_SANITIZE_STRING);
     }
 }
 
 //header("Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval' https://www.google.com/; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://ajax.googleapis.com/ https://www.google.com/; font-src 'self'; object-src 'self';");
 echo $Twig->render('head.html', array(
-    'session' => $_SESSION,
+    'Session' => $Session,
     'pageTitle' => $pageTitle,
     'selectedMenu' => $selectedMenu,
     'actionTarget' => $actionTarget,
@@ -45,16 +45,9 @@ echo $Twig->render('head.html', array(
 ));
 
 // INFO BOX
-if (isset($_SESSION['ko']) && is_array($_SESSION['ko']) && count($_SESSION['ko']) > 0) {
-    foreach ($_SESSION['ko'] as $msg) {
-        echo Tools::displayMessage($msg, 'ko');
-    }
-    unset($_SESSION['ko']);
-}
-
-if (isset($_SESSION['ok']) && is_array($_SESSION['ok']) && count($_SESSION['ok']) > 0) {
-    foreach ($_SESSION['ok'] as $msg) {
+foreach ($Session->getFlashBag()->get('ok', array()) as $msg) {
         echo Tools::displayMessage($msg, 'ok');
-    }
-    unset($_SESSION['ok']);
+}
+foreach ($Session->getFlashBag()->get('ko', array()) as $msg) {
+        echo Tools::displayMessage($msg, 'ko');
 }

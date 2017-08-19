@@ -13,9 +13,8 @@ $(document).ready(function() {
             type: type,
             id: id
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
                 // change the lock icon
                 current = $('#lock').attr('src');
                 if (current === 'app/img/lock-gray.png') {
@@ -24,7 +23,7 @@ $(document).ready(function() {
                     $('#lock').attr('src', 'app/img/lock-gray.png');
                 }
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     });
@@ -48,16 +47,15 @@ $(document).ready(function() {
             }
 
             $.post(this.controller, {
-                commentsCreate: true,
+                create: true,
                 comment: comment,
                 id: id
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                     $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         },
@@ -67,12 +65,11 @@ $(document).ready(function() {
                 destroy: true,
                 id: comment
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                      $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
             } else {
@@ -94,7 +91,7 @@ $(document).ready(function() {
     // UPDATE COMMENTS
     $(document).on('mouseover', '.editable', function(){
         $('div#expcomment p.editable').editable(Comments.controller, {
-            name: 'commentsUpdate',
+            name: 'update',
             tooltip : 'Click to edit',
             indicator : $(this).data('indicator'),
             submit : $(this).data('submit'),
@@ -126,11 +123,10 @@ $(document).ready(function() {
                         timestamp: true,
                         id: id
                     }).done(function (data) {
-                        var json = JSON.parse(data);
-                        if (json.res) {
+                        if (data.res) {
                             window.location.replace("experiments.php?mode=view&id=" + id);
                         } else {
-                            notif(json.msg, 'ko');
+                            notif(data.msg, 'ko');
                         }
                     });
                 },

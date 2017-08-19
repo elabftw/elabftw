@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with ajax requests sent from the admin page
@@ -19,70 +20,60 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
     $ItemsTypes = new ItemsTypes($Users);
+    $Response = new JsonResponse();
 
-    if (!$_SESSION['is_admin']) {
+    $res = false;
+    $msg = Tools::error();
+
+    if (!$Session->get('is_admin')) {
         throw new Exception('Non admin user tried to access admin panel.');
     }
 
     // CREATE ITEMS TYPES
     if (isset($_POST['itemsTypesCreate'])) {
         if ($ItemsTypes->create(
-            $_POST['name'],
-            $_POST['color'],
-            $_POST['bookable'],
-            $_POST['template']
+            $Request->request->get('name'),
+            $Request->request->get('color'),
+            $Request->request->get('bookable'),
+            $Request->request->get('template')
         )) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
     // UPDATE ITEM TYPE
     if (isset($_POST['itemsTypesUpdate'])) {
         if ($ItemsTypes->update(
-            $_POST['id'],
-            $_POST['name'],
-            $_POST['color'],
-            $_POST['bookable'],
-            $_POST['template']
+            $Request->request->get('id'),
+            $Request->request->get('name'),
+            $Request->request->get('color'),
+            $Request->request->get('bookable'),
+            $Request->request->get('template')
         )) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
     // DESTROY ITEM TYPE
-    if (isset($_POST['itemsTypesDestroy'])) {
+    if ($Request->request->has('itemsTypesDestroy')) {
         try {
-            $ItemsTypes->destroy($_POST['id']);
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Item type deleted successfully')
-            ));
-
+            $ItemsTypes->destroy($Request->request->get('id'));
+            $res = true;
+            $msg = _('Item type deleted successfully');
         } catch (Exception $e) {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => $e->getMessage()
-            ));
+            $msg = $e->getMessage();
         }
     }
 
+    $Response->setData(array(
+        'res' => $res,
+        'msg' => $msg
+    ));
+    $Response->send();
+
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

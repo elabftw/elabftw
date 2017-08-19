@@ -22,28 +22,28 @@ try {
     $pageTitle = _('Admin panel');
     require_once 'app/head.inc.php';
 
-    if (!$_SESSION['is_admin']) {
+    if (!$Session->get('is_admin')) {
         throw new Exception(Tools::error(true));
     }
 
     $Auth = new Auth();
     $Config = new Config();
-    $FormKey = new FormKey();
+    $FormKey = new FormKey($Session);
 
-    $Users = new Users($_SESSION['userid'], $Config);
+    $Users = new Users($Session->get('userid'), $Config);
     $ItemsTypes = new ItemsTypes($Users);
     $Status = new Status($Users);
     $TeamGroups = new TeamGroups($Users);
     $Templates = new Templates($Users);
-    $Teams = new Teams($_SESSION['team_id']);
+    $Teams = new Teams($Session->get('team'));
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->read();
     $teamGroupsArr = $TeamGroups->readAll();
     $commonTplBody = $Templates->readCommonBody();
-    $unvalidatedUsersArr = $Users->readAllFromTeam($_SESSION['team_id'], 0);
-    $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
+    $unvalidatedUsersArr = $Users->readAllFromTeam($Session->get('team'), 0);
+    $usersArr = $Users->readAllFromTeam($Session->get('team'));
 
     echo $Twig->render('admin.html', array(
         'Auth' => $Auth,
@@ -52,7 +52,7 @@ try {
         'fromSysconfig' => false,
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
-        'session' => $_SESSION,
+        'Session' => $Session,
         'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
         'commonTplBody' => $commonTplBody,

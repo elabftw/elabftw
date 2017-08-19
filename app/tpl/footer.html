@@ -10,15 +10,15 @@
             <img src='app/img/github.png' alt='github' />
         </a>
         <span>
-            {% if SESSION['auth'] and SESSION['is_sysadmin'] %}
+            {% if Session.has('auth') and (Session.get('is_sysadmin') == 1) %}
                 <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
             {% endif %}
 
-            {% if SESSION['auth'] and SESSION['is_admin'] %}
+            {% if Session.has('auth') and (Session.get('is_admin') == 1) %}
                 <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-                    {% if Users.readAllFromTeam(SESSION['team_id'], 0)|length > 0 %}
-                        <span class='badge'>{{ Users.readAllFromTeam(SESSION['team_id'], 0)|length }}</span>
+                    {% if Users.readAllFromTeam(Session.get('team_id'), 0)|length > 0 %}
+                        <span class='badge'>{{ Users.readAllFromTeam(Session.get('team_id'), 0)|length }}</span>
                     {% endif %}
                 </a>
             {% endif %}

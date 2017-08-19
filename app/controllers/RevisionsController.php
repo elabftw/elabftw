@@ -18,33 +18,32 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
-    $Users = new Users($_SESSION['userid']);
-    if ($_GET['type'] === 'experiments') {
-        $Entity = new Experiments($Users, $_GET['item_id']);
-        $location = '../../experiments';
+    if ($Request->query->get('type') === 'experiments') {
+        $Entity = new Experiments($Users);
 
     } elseif ($_GET['type'] === 'items') {
 
-        $Entity = new Database($Users, $_GET['item_id']);
-        $location = '../../database';
+        $Entity = new Database($Users);
 
     } else {
         throw new Exception('Bad type!');
     }
 
+    $Entity->setId($Request->query->get('item_id'));
     $Entity->canOrExplode('write');
     $Revisions = new Revisions($Entity);
 
-    if (isset($_GET['action']) && $_GET['action'] === 'restore') {
-        $revId = Tools::checkId($_GET['rev_id']);
+    if ($Request->query->get('action') === 'restore') {
+        $revId = Tools::checkId($Request->query->get('rev_id'));
         if ($revId === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
 
         $Revisions->restore($revId);
 
-        header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id']);
+        header("Location: ../../" . $Entity::PAGE . ".php?mode=view&id=" . $Request->query->get('item_id'));
     }
 } catch (Exception $e) {
-    echo json_encode(array('error', $e->getMessage()));
+    $Logs = new Logs();
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

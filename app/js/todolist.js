@@ -17,20 +17,19 @@ var Todolist = {
                 create: true,
                 body: body
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
+                if (data.res) {
                     // add the todoitem
                     $('#todoItems-list').prepend("<li class='todoItem' id='todoItem_" +
-                        json.id +
-                        "'><a href='#' class='destroyTodoItem' data-id='" + json.id + "'>X</a><span style='font-size:60%;display:block;'>" +
-                        datetime + "</span><span id='todoItem_" + json.id + "' class='editable'>" + body +
+                        data.msg +
+                        "'><a href='#' class='destroyTodoItem' data-id='" + data.msg + "'>X</a><span style='font-size:60%;display:block;'>" +
+                        datetime + "</span><span id='todoItem_" + data.msg + "' class='editable'>" + body +
                         '</li>');
                     // make it editable right away
                     makeEditableTodoitem();
                     // and clear the input
                     $('#todo').val("");
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }
@@ -41,13 +40,12 @@ var Todolist = {
             destroy: true,
             id: id
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
+            if (data.res) {
                 // hide item
                 $('#todoItem_' + id).css('background', '#29AEB9');
                 $('#todoItem_' + id).toggle('blind');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     },
@@ -56,12 +54,11 @@ var Todolist = {
         $.post(this.controller, {
             destroyAll: true
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
+            if (data.res) {
                 // hide all items
                 $('#todoItems-list').children().toggle('blind');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     },
@@ -112,11 +109,10 @@ $('#todoItems-list').sortable({
             'updateOrdering': true,
             'ordering': ordering
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
     }
@@ -130,11 +126,10 @@ function makeEditableTodoitem() {
             body: value,
             id: $(this).attr('id')
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
 
@@ -149,4 +144,3 @@ function makeEditableTodoitem() {
     });
 }
 // END TODOLIST
-

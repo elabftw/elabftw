@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '29';
+    const REQUIRED_SCHEMA = '30';
 
     /**
      * Init Update with Config and pdo
@@ -220,6 +220,12 @@ class Update
             // 20170813
             $this->schema29();
             $this->updateSchema(29);
+        }
+
+        if ($current_schema < 30) {
+            // 20170818
+            $this->schema30();
+            $this->updateSchema(30);
         }
         // place new schema functions above this comment
 
@@ -730,6 +736,32 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 
         if (!$this->pdo->q($sql)) {
             throw new Exception('Cannot add use_markdown to users table!');
+        }
+    }
+
+    /**
+     * Some saml config entries were not added to the elabftw.sql install file
+     * So this is to fix that
+     */
+    private function schema30()
+    {
+        if (!in_array('saml_email', array_keys($this->Config->configArr))) {
+            $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('saml_email', NULL)";
+            if (!$this->pdo->q($sql)) {
+                throw new Exception('Cannot add saml_email to config!');
+            }
+        }
+        if (!in_array('saml_firstname', array_keys($this->Config->configArr))) {
+            $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('saml_firstname', NULL)";
+            if (!$this->pdo->q($sql)) {
+                throw new Exception('Cannot add saml_firstname to config!');
+            }
+        }
+        if (!in_array('saml_lastname', array_keys($this->Config->configArr))) {
+            $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('saml_lastname', NULL)";
+            if (!$this->pdo->q($sql)) {
+                throw new Exception('Cannot add saml_lastname to config!');
+            }
         }
     }
 }

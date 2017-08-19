@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller for the scheduler
@@ -20,78 +21,67 @@ try {
     require_once '../../app/init.inc.php';
     $Database = new Database($Users);
     $Scheduler = new Scheduler($Database);
+    $Response = new JsonResponse();
+
+    $res = false;
+    $msg = Tools::error();
 
     // CREATE
-    if (isset($_POST['create'])) {
-        $Database->setId($_POST['item']);
-        if ($Scheduler->create($_POST['start'], $_POST['end'], $_POST['title'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    if ($Request->request->has('create')) {
+        $Database->setId($Request->request->get('item'));
+        if ($Scheduler->create(
+            $Request->request->get('start'),
+            $Request->request->get('end'),
+            $Request->request->get('title')
+        )) {
+            $res = true;
+            $msg = _('Saved');
         }
+    }
+
+    // READ
+    if ($Request->request->has('read')) {
+        $Database->setId($Request->request->get('item'));
+        $Response->setData($Scheduler->read());
+        $Response->send();
+        exit;
     }
 
     // UPDATE START
-    if (isset($_POST['updateStart'])) {
-        $Scheduler->setId($_POST['id']);
-        if ($Scheduler->updateStart($_POST['start'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    if ($Request->request->has('updateStart')) {
+        $Scheduler->setId($Request->request->get('id'));
+        if ($Scheduler->updateStart($Request->request->get('start'), $Request->request->get('end'))) {
+            $res = true;
+            $msg = _('Saved');
         }
     }
     // UPDATE END
-    if (isset($_POST['updateEnd'])) {
-        $Scheduler->setId($_POST['id']);
-        if ($Scheduler->updateEnd($_POST['end'])) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+    if ($Request->request->has('updateEnd')) {
+        $Scheduler->setId($Request->request->get('id'));
+        if ($Scheduler->updateEnd($Request->request->get('end'))) {
+            $res = true;
+            $msg = _('Saved');
         }
     }
     // DESTROY
-    if (isset($_POST['destroy'])) {
-        $Scheduler->setId($_POST['id']);
+    if ($Request->request->has('destroy')) {
+        $Scheduler->setId($Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
-        if ($eventArr['userid'] != $_SESSION['userid']) {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error(true)
-            ));
-        } else {
+        if ($eventArr['userid'] == $Session->get('userid')) {
             if ($Scheduler->destroy()) {
-                echo json_encode(array(
-                    'res' => true,
-                    'msg' => _('Event deleted successfully')
-                ));
-            } else {
-                echo json_encode(array(
-                    'res' => false,
-                    'msg' => Tools::error()
-                ));
+                $res = true;
+                $msg = _('Event deleted successfully');
             }
         }
     }
 
+    $Response->setData(array(
+        'res' => $res,
+        'msg' => $msg
+    ));
+    $Response->send();
+
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

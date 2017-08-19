@@ -24,7 +24,7 @@ $(document).ready(function(){
             'type' : $(this).data('type')
         // and put it in the div and show the div
         }).done(function(data) {
-            $('#bodyToggle_' + id).html(data.body);
+            $('#bodyToggle_' + id).html(data.msg);
             $('#bodyToggle_' + id).toggle();
 
         });
@@ -61,9 +61,11 @@ $(document).ready(function(){
     });
 
     // TITLE CLICK
+    /*
     $('.title').on('click', function() {
         window.location.href = '?mode=view&id=' + $(this).data('id');
     });
+    */
 
     // THE CHECKBOXES
     function getCheckedBoxes() {

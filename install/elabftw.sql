@@ -468,6 +468,9 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_x509', NULL),
 ('saml_privatekey', NULL),
 ('saml_team', NULL),
+('saml_email', NULL),
+('saml_firstname', NULL),
+('saml_lastname', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '29');
+('schema', '30');

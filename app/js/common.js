@@ -100,9 +100,8 @@ function toggleLock(type, id) {
         type: type,
         id: id
     }).done(function(data) {
-        var json = JSON.parse(data);
-        if (json.res) {
-            notif(json.msg, 'ok');
+        if (data.res) {
+            notif(data.msg, 'ok');
             // change the lock icon
             current = $('#lock').attr('src');
             if (current === 'app/img/lock-gray.png') {
@@ -111,7 +110,7 @@ function toggleLock(type, id) {
                 $('#lock').attr('src', 'app/img/lock-gray.png');
             }
         } else {
-            notif(json.msg, 'ko');
+            notif(data.msg, 'ko');
         }
     });
 }
@@ -146,11 +145,10 @@ function makeEditableFileComment(type, itemId) {
             comment_id : $(this).attr('id'),
             id: itemId
         }).done(function(data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                notif(json.msg, 'ok');
+            if (data.res) {
+                notif(data.msg, 'ok');
             } else {
-                notif(json.msg, 'ko');
+                notif(data.msg, 'ko');
             }
         });
 
@@ -257,8 +255,7 @@ function decodeAsn1(path, expId) {
 function generateApiKey() {
     $.post('app/controllers/UsersController.php', {
         generateApiKey: true
-    }).done(function(data) {
-        var json = JSON.parse(data);
+    }).done(function() {
         $("#api_div").load("profile.php #api_div");
     });
 }

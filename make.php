@@ -21,8 +21,6 @@ require_once 'app/init.inc.php';
 $pageTitle = _('Export');
 
 try {
-    $Users = new Users($_SESSION['userid']);
-
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($Users);
     } else {

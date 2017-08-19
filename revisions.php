@@ -22,25 +22,23 @@ try {
     $errflag = false;
     require_once 'app/head.inc.php';
 
-    $Users = new Users($_SESSION['userid']);
-    if ($_GET['type'] === 'experiments') {
-        $Entity = new Experiments($Users, $_GET['item_id']);
-        $location = 'experiments';
+    if ($Request->query->get('type') === 'experiments') {
+        $Entity = new Experiments($Users);
 
     } elseif ($_GET['type'] === 'items') {
 
-        $Entity = new Database($Users, $_GET['item_id']);
-        $location = 'database';
+        $Entity = new Database($Users);
 
     } else {
         throw new Exception('Bad type!');
     }
 
+    $Entity->setId($Request->query->get('item_id'));
     $Entity->canOrExplode('write');
     $Revisions = new Revisions($Entity);
 
     // BEGIN PAGE
-    echo "<a href='" . $location . ".php?mode=view&id=" . $_GET['item_id'] .
+    echo "<a href='" . $Entity::PAGE . ".php?mode=view&id=" . $_GET['item_id'] .
         "'><h4><img src='app/img/undo.png' alt='<--' /> " . _('Go back') . "</h4></a>";
     $revisionArr = $Revisions->read();
     foreach ($revisionArr as $revision) {

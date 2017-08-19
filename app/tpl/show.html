@@ -53,12 +53,12 @@
             {% endif %}
             <section class='item' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
 
-                <p class='title' data-id='{{ item.id }}'>
+                <p class='title'>
                 {% if item.locked %}
                     <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
                 {% endif %}
 
-                {{ item.title|raw }}
+                <a href='?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
                 </p>
                 {% if item.next_step|length > 0 %}
                     {% set stepsArr = item.next_step|split('|') %}
@@ -115,5 +115,4 @@
 
 <div id='shortcuts' data-create='{{ Ev.Entity.Users.userData.sc_create }}'></div>
 <div id='limit' data-limit='{{ Ev.limit }}'></div>
-<!-- TODO don't forget -->
-<script src='app/js/show.js'></script>
+<script src='app/js/show.min.js'></script>

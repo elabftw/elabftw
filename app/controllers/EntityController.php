@@ -75,6 +75,45 @@ try {
      *
      */
 
+    // GET BODY
+    if ($Request->request->has('getBody')) {
+        $permissions = $Entity->getPermissions();
+        if ($permissions['read'] === false) {
+            throw new Exception(Tools::error(true));
+        }
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $Entity->entityData['body']
+        ));
+    }
+
+    // LOCK
+    if ($Request->request->has('lock')) {
+        $permissions = $Entity->getPermissions();
+        // We don't have can_lock, but maybe it's our XP, so we can lock it
+        if (!$Users->userData['can_lock'] && !$permissions['write']) {
+            throw new Exception(_("You don't have the rights to lock/unlock this."));
+        }
+        $errMsg = Tools::error();
+        $res = null;
+        try {
+            $res = $Entity->toggleLock();
+        } catch (Exception $e) {
+            $errMsg = $e->getMessage();
+        }
+        if ($res) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => $errMsg
+            ));
+        }
+    }
+
     // UPDATE
     if ($Request->request->has('update')) {
         $Entity->canOrExplode('write');
@@ -84,7 +123,9 @@ try {
             $Request->request->get('date'),
             $Request->request->get('body')
         )) {
-            $Response = new RedirectResponse("../../" . $Entity::PAGE . ".php?mode=view&id=" . $Request->request->get('id'));
+            $Response = new RedirectResponse(
+                "../../" . $Entity::PAGE . ".php?mode=view&id=" . $Request->request->get('id')
+            );
         } else {
             throw new Exception('Error during save.');
         }
@@ -271,5 +312,5 @@ try {
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

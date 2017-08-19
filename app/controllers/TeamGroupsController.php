@@ -20,35 +20,35 @@ try {
     require_once '../../app/init.inc.php';
     $TeamGroups = new TeamGroups($Users);
 
-    if (!$_SESSION['is_admin']) {
+    if (!$Session->get('is_admin')) {
         throw new Exception('Non admin user tried to access admin panel.');
     }
 
     // CREATE TEAM GROUP
-    if (isset($_POST['teamGroupCreate'])) {
-        $TeamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING));
+    if ($Request->request->has('teamGroupCreate')) {
+        $TeamGroups->create($Request->request->filter('teamGroupCreate', null, FILTER_SANITIZE_STRING));
     }
 
     // EDIT TEAM GROUP NAME FROM JEDITABLE
-    if (isset($_POST['teamGroupUpdateName'])) {
+    if ($Request->request->has('teamGroupUpdateName')) {
         // the output is echoed so it gets back into jeditable input field
         echo $TeamGroups->update(
-            filter_var($_POST['teamGroupUpdateName'], FILTER_SANITIZE_STRING),
-            $_POST['id']
+            $Request->request->filter('teamGroupUpdateName', null, FILTER_SANITIZE_STRING),
+            $Request->request->get('id')
         );
     }
 
     // ADD OR REMOVE USER TO/FROM TEAM GROUP
-    if (isset($_POST['teamGroupUser'])) {
+    if ($Request->request->has('teamGroupUser')) {
         $TeamGroups->updateMember($_POST['teamGroupUser'], $_POST['teamGroupGroup'], $_POST['action']);
     }
 
     // DESTROY TEAM GROUP
-    if (isset($_POST['teamGroupDestroy'])) {
-        $TeamGroups->destroy($_POST['teamGroupGroup']);
+    if ($Request->request->has('teamGroupDestroy')) {
+        $TeamGroups->destroy($Request->request->get('teamGroupGroup'));
     }
 
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

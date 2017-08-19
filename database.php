@@ -23,10 +23,6 @@ try {
     $selectedMenu = 'Database';
     require_once 'app/head.inc.php';
 
-    if (!isset($Users)) {
-        $Users = new Users($_SESSION['userid']);
-    }
-
     $EntityView = new DatabaseView(new Database($Users));
 
     // VIEW

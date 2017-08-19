@@ -17,6 +17,9 @@ use Exception;
  */
 class ImportCsv extends Import
 {
+    /** @var Users $Users the current user */
+    private $Users;
+
     /** @var Db $pdo SQL Database */
     private $pdo;
 
@@ -32,10 +35,12 @@ class ImportCsv extends Import
     /**
      * Assign item type
      *
+     * @param Users $users
      */
-    public function __construct()
+    public function __construct(Users $users)
     {
         $this->pdo = Db::getConnection();
+        $this->Users = $users;
 
         $this->checkFileReadable();
         $this->checkMimeType();
@@ -78,7 +83,7 @@ class ImportCsv extends Import
             }
             $row++;
 
-            $title = $data[0];
+            $title = $data[2];
             if (empty($title)) {
                 $title = _('Untitled');
             }
@@ -96,11 +101,11 @@ class ImportCsv extends Import
                 VALUES(:team, :title, :date, :body, :userid, :type)";
             $req = $this->pdo->prepare($sql);
             $result = $req->execute(array(
-                'team' => $_SESSION['team_id'],
+                'team' => $this->Users->userData['team'],
                 'title' => $title,
                 'date' => Tools::kdate(),
                 'body' => $body,
-                'userid' => $_SESSION['userid'],
+                'userid' => $this->Users->userid,
                 'type' => $this->itemType
             ));
             if (!$result) {

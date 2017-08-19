@@ -28,14 +28,14 @@ try {
 
     // check URL parameters
     if (!$Request->query->has('key') ||
-        !$Request->query->has('deadLine') ||
+        !$Request->query->has('deadline') ||
         Tools::checkId($Request->query->get('userid')) === false) {
 
         throw new Exception('Bad parameters in url.');
     }
 
     // check deadline (fix #297)
-    $deadline = Crypto::decrypt($Request->query->get('deadLine'), Key::loadFromAsciiSafeString(SECRET_KEY));
+    $deadline = Crypto::decrypt($Request->query->get('deadline'), Key::loadFromAsciiSafeString(SECRET_KEY));
 
     if ($deadline < time()) {
         throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));
@@ -45,7 +45,7 @@ try {
     $html = $Twig->render('change-pass.html', array(
         'Auth' => $Auth,
         'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
-        'deadline' => $Request->query->filter('deadLine', null, FILTER_SANITIZE_STRING),
+        'deadline' => $Request->query->filter('deadline', null, FILTER_SANITIZE_STRING),
         'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING)
     ));
     $Response->setContent($html);

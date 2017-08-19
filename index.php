@@ -13,23 +13,21 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use OneLogin_Saml2_Auth;
-
-session_start();
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 try {
-    if (isset($_GET['acs'])) {
+    require_once 'app/init.inc.php';
 
-        require_once 'app/init.inc.php';
+    if ($Request->query->has('acs')) {
 
         $Saml = new Saml(new Config, new Idps);
 
-        $settings = $Saml->getSettings(2);
+        $settings = $Saml->getSettings(1);
         $SamlAuth = new OneLogin_Saml2_Auth($settings);
 
-        if (isset($_SESSION) && isset($_SESSION['AuthNRequestID'])) {
-            $requestID = $_SESSION['AuthNRequestID'];
-        } else {
-            $requestID = null;
+        $requestID = null;
+        if ($Session->has('AuthNRequestID')) {
+            $requestID = $Session->get('AuthNRequestID');
         }
 
         $SamlAuth->processResponse($requestID);
@@ -46,11 +44,11 @@ try {
         }
 
         $Auth = new Auth();
-        $_SESSION['samlUserdata'] = $SamlAuth->getAttributes();
+        $Session->set('samlUserdata', $SamlAuth->getAttributes());
 
         // GET EMAIL
         $emailAttribute = $Saml->Config->configArr['saml_email'];
-        $email = $_SESSION['samlUserdata'][$emailAttribute];
+        $email = $Session->get('samlUserdata')[$emailAttribute];
         if (is_array($email)) {
             $email = $email[0];
         }
@@ -63,7 +61,7 @@ try {
 
             // GET TEAM
             $teamAttribute = $Saml->Config->configArr['saml_team'];
-            $team = $_SESSION['samlUserdata'][$teamAttribute];
+            $team = $Session->get('samlUserdata')[$teamAttribute];
             if (is_array($team)) {
                 $team = $team[0];
             }
@@ -71,12 +69,12 @@ try {
 
             // GET FIRSTNAME AND LASTNAME
             $firstnameAttribute = $Saml->Config->configArr['saml_firstname'];
-            $firstname = $_SESSION['samlUserdata'][$firstnameAttribute];
+            $firstname = $Session->get('samlUserdata')[$firstnameAttribute];
             if (is_array($firstname)) {
                 $firstname = $firstname[0];
             }
             $lastnameAttribute = $Saml->Config->configArr['saml_lastname'];
-            $lastname = $_SESSION['samlUserdata'][$lastnameAttribute];
+            $lastname = $Session->get('samlUserdata')[$lastnameAttribute];
             if (is_array($lastname)) {
                 $lastname = $lastname[0];
             }
@@ -90,7 +88,8 @@ try {
         }
 
     }
-    header('Location: experiments.php');
+    $Response = new RedirectResponse("experiments.php");
+    $Response->send();
 
 } catch (Exception $e) {
     echo $e->getMessage();

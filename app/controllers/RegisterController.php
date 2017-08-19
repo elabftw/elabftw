@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 try {
     require_once '../init.inc.php';
@@ -26,41 +27,43 @@ try {
     }
 
     // Stop bot registration by checking if the (invisible to humans) bot input is filled
-    if (isset($_POST['bot']) && !empty($_POST['bot'])) {
+    if (!empty($Request->request->get('bot'))) {
         throw new Exception('Only humans can register an account!');
     }
 
-    if (!isset($_POST['team']) ||
-        empty($_POST['team']) ||
-        (Tools::checkId($_POST['team']) === false) ||
-        !isset($_POST['firstname']) ||
-        empty($_POST['firstname']) ||
-        !isset($_POST['lastname']) ||
-        empty($_POST['lastname']) ||
-        !isset($_POST['email']) ||
-        empty($_POST['email']) ||
-        !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    if ((Tools::checkId($Request->request->get('team')) === false) ||
+        !$Request->request->get('firstname') ||
+        !$Request->request->get('lastname') ||
+        !$Request->request->get('email') ||
+        !filter_var($Request->request->get('email'), FILTER_VALIDATE_EMAIL)) {
 
         throw new Exception(_('A mandatory field is missing!'));
     }
 
-    //Check whether the query was successful or not
-    if (!$Users->create($_POST['email'], $_POST['team'], $_POST['firstname'], $_POST['lastname'], $_POST['password'])) {
+    // Check whether the query was successful or not
+    if (!$Users->create(
+        $Request->request->get('email'),
+        $Request->request->get('team'),
+        $Request->request->get('firstname'),
+        $Request->request->get('lastname'),
+        $Request->request->get('password')
+    )) {
         throw new Exception('Failed inserting new account in SQL!');
     }
 
     if ($Users->needValidation) {
-        $_SESSION['ok'][] = _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.');
+        $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.'));
     } else {
-        $_SESSION['ok'][] = _('Registration successful :)<br>Welcome to eLabFTW o/');
+        $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Welcome to eLabFTW o/'));
     }
     // store the email here so we can put it in the login field
-    $_SESSION['email'] = $_POST['email'];
+    $Session->set('email', $Request->request->get('email'));
 
 } catch (Exception $e) {
-    $_SESSION['ko'][] = $e->getMessage();
+    $Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '../../register.php';
 
 } finally {
-    header("location: $location");
+    $Response = new RedirectResponse($location);
+    $Response->send();
 }

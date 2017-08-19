@@ -10,41 +10,25 @@
  */
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Key as Key;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 /**
  * Generate and validate keys for input forms.
  * **Note** : for a page with several *form* elements this will work only for 1 *form*!
  */
 class Formkey
 {
-    /** @var string $formkey here we store the generated form key */
-    private $formkey;
-
-    /** @var string $oldFormkey here we store the old form key */
-    private $oldFormkey;
+    /** @var Session $Session the session object */
+    private $Session;
 
     /**
-     * Store the form key that was previously set
+     * We need the Session object
      *
      */
-    public function __construct()
+    public function __construct(Session $session)
     {
-        if (isset($_SESSION['formkey'])) {
-            $this->oldFormkey = $_SESSION['formkey'];
-        }
-    }
-
-    /**
-     * Generate the form key based on IP address
-     *
-     * @return string md5sum of IP address + unique number
-     */
-    private function generateFormkey()
-    {
-        $ip = $_SERVER['REMOTE_ADDR'];
-        // mt_rand() is better than rand()
-        $uniqid = uniqid(mt_rand(), true);
-
-        return md5($ip . $uniqid);
+        $this->Session = $session;
     }
 
     /**
@@ -54,21 +38,21 @@ class Formkey
      */
     public function getFormkey()
     {
-        // generate the key and store it inside the class
-        $this->formkey = $this->generateFormkey();
+        // generate the key
+        $formkey = Key::createNewRandomKey()->saveToAsciiSafeString();
         // store the form key in the session
-        $_SESSION['formkey'] = $this->formkey;
+        $this->Session->set('formkey', $formkey);
         // output the form key
-        return "<input type='hidden' name='formkey' value='" . $this->formkey . "' />";
+        return "<input type='hidden' name='formkey' value='" . $formkey . "' />";
     }
 
     /**
-     * Validate the form key against the one previously set
+     * Validate the form key against the one previously set in Session
      *
      * @return bool True if there is no CSRF going on (hopefully)
      */
-    public function validate()
+    public function validate($formkey)
     {
-        return $_POST['formkey'] === $this->oldFormkey;
+        return $formkey === $this->Session->get('formkey');
     }
 }

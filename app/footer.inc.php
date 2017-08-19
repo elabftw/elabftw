@@ -9,27 +9,26 @@
  */
 namespace Elabftw\Elabftw;
 
-$Users = new Users();
-
-if (isset($_SESSION['auth'])) {
+if ($Session->has('auth')) {
     // todolist
-    $Todolist = new Todolist($_SESSION['userid']);
-    $Users = new Users($_SESSION['userid']);
+    $Todolist = new Todolist($Session->get('userid'));
     $todoItems = $Todolist->readAll();
 
     echo $Twig->render('todolist.html', array(
         'Users' => $Users,
         'todoItems' => $todoItems
     ));
+} else {
+    $Users = null;
 }
 
 // show some stats about generation time and number of SQL queries
 $pdo = Db::getConnection();
 $sqlNb = $pdo->getNumberOfQueries();
-$generationTime = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5);
+$generationTime = round((microtime(true) - $Request->server->get("REQUEST_TIME_FLOAT")), 5);
 
 echo $Twig->render('footer.html', array(
-    'SESSION' => $_SESSION,
+    'Session' => $Session,
     'Users' => $Users,
     'sqlNb' => $sqlNb,
     'generationTime' => ' ' . $generationTime . ' '

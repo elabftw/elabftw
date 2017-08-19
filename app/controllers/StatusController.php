@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with ajax requests sent from the admin page
@@ -19,67 +20,59 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
     $Status = new Status($Users);
+    $Response = new JsonResponse();
 
-    if (!$_SESSION['is_admin']) {
+    $res = false;
+    $msg = Tools::error();
+
+    if (!$Session->get('is_admin')) {
         throw new Exception('Non admin user tried to access admin panel.');
     }
 
     // CREATE STATUS
-    if (isset($_POST['statusCreate'])) {
+    if ($Request->request->has('statusCreate')) {
         if ($Status->create(
-            $_POST['name'],
-            $_POST['color'],
-            $_POST['isTimestampable']
+            $Request->request->get('name'),
+            $Request->request->get('color'),
+            $Request->request->get('isTimestampable')
         )) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
     // UPDATE STATUS
-    if (isset($_POST['statusUpdate'])) {
+    if ($Request->request->has('statusUpdate')) {
         if ($Status->update(
-            $_POST['id'],
-            $_POST['name'],
-            $_POST['color'],
-            $_POST['isTimestampable'],
-            $_POST['isDefault']
+            $Request->request->get('id'),
+            $Request->request->get('name'),
+            $Request->request->get('color'),
+            $Request->request->get('isTimestampable'),
+            $Request->request->get('isDefault')
         )) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
+            $res = true;
+            $msg = _('Saved');
         }
     }
 
     // DESTROY STATUS
-    if (isset($_POST['statusDestroy'])) {
+    if ($Request->request->has('statusDestroy')) {
         try {
-            $Status->destroy($_POST['id']);
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Status deleted successfully')
-            ));
+            $Status->destroy($Request->request->get('id'));
+            $res = true;
+            $msg = _('Status deleted successfully');
         } catch (Exception $e) {
-            echo json_encode(array(
-                'res' => false,
-                'msg' => $e->getMessage()
-            ));
+            $msg = $e->getMessage();
         }
     }
+
+    $Response->setData(array(
+        'res' => $res,
+        'msg' => $msg
+    ));
+    $Response->send();
+
 } catch (Exception $e) {
     $Logs = new Logs();
-    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

@@ -38,6 +38,8 @@ class UploadsView extends EntityView
      */
     public function displayUpload($mode, $upload)
     {
+        $html = '';
+
         // list of extensions with a corresponding app/img/thumb-*.png image
         $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 

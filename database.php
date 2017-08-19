@@ -35,7 +35,6 @@ try {
             'Uv' => $UploadsView,
             'mode' => 'view'
         ));
-        echo $EntityView->view();
 
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {

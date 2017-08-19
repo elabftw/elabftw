@@ -57,16 +57,17 @@ class ExperimentsView extends EntityView
     public function showTimestamp()
     {
         $Users = new Users();
+        $UploadsView = new UploadsView(new Uploads($this->Entity));
         $timestamper = $Users->read($this->Entity->entityData['timestampedby']);
 
-        $this->UploadsView->Uploads->Entity->type = 'exp-pdf-timestamp';
-        $pdf = $this->UploadsView->Uploads->readAll();
+        $UploadsView->Uploads->Entity->type = 'exp-pdf-timestamp';
+        $pdf = $UploadsView->Uploads->readAll();
 
-        $this->UploadsView->Uploads->Entity->type = 'timestamp-token';
-        $token = $this->UploadsView->Uploads->readAll();
+        $UploadsView->Uploads->Entity->type = 'timestamp-token';
+        $token = $UploadsView->Uploads->readAll();
 
         // set correct type back
-        $this->UploadsView->Uploads->Entity->type = 'experiments';
+        $UploadsView->Uploads->Entity->type = 'experiments';
 
         $date = new DateTime($this->Entity->entityData['timestampedwhen']);
 

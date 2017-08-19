@@ -22,6 +22,7 @@ try {
 
         $Saml = new Saml(new Config, new Idps);
 
+        // TODO this is the id of the idp to use to get the settings
         $settings = $Saml->getSettings(1);
         $SamlAuth = new OneLogin_Saml2_Auth($settings);
 

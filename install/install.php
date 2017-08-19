@@ -17,10 +17,16 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Defuse\Crypto\Key as Key;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 try {
     require_once '../vendor/autoload.php';
+
+    // create Request object
+    $Request = Request::createFromGlobals();
 
     $Session = new Session();
     if (!$Request->hasPreviousSession()) {
@@ -78,6 +84,7 @@ try {
     define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');";
 
     // we try to write content to file and propose the file for download if we can't write to it
+    //if (file_put_contents($config_file, $config)) {
     if (file_put_contents($config_file, $config)) {
         // it's cool, we managed to write the config file
         // let's put restricting permissions on it as discussed in #129
@@ -91,9 +98,16 @@ try {
         header('Location: index.php');
 
     } else {
-        header('Content-Type: text/x-delimtext; name="config.php"');
-        header('Content-disposition: attachment; filename=config.php');
-        echo $config;
+        // send the file
+        $Response = new Response($config);
+
+        $disposition = $Response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'config.php'
+        );
+
+        $Response->headers->set('Content-Disposition', $disposition);
+        $Response->send();
     }
 } catch (Exception $e) {
     echo Tools::displayMessage('Error: ' . $e->getMessage(), 'ko', false);

@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The default path in Docker is to automatically install the database schema
@@ -20,6 +21,8 @@ use Exception;
 try {
     session_start();
     require_once '../vendor/autoload.php';
+    // create Request object
+    $Request = Request::createFromGlobals();
     $errflag = false;
 
     // Check if there is already a config file

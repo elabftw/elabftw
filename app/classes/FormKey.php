@@ -25,6 +25,7 @@ class Formkey
     /**
      * We need the Session object
      *
+     * @param Session $session
      */
     public function __construct(Session $session)
     {
@@ -49,6 +50,7 @@ class Formkey
     /**
      * Validate the form key against the one previously set in Session
      *
+     * @param string $formkey
      * @return bool True if there is no CSRF going on (hopefully)
      */
     public function validate($formkey)

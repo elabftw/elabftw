@@ -46,12 +46,17 @@ try {
         if ($EntityView->Entity->entityData['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
+
         $Revisions = new Revisions($EntityView->Entity);
+        $Uploads = new Uploads($EntityView->Entity);
         $Tags = new Tags($EntityView->Entity);
+
         echo $Twig->render('edit.html', array(
             'Ev' => $EntityView,
             'Revisions' => $Revisions,
-            'Tags' => $Tags
+            'Tags' => $Tags,
+            'Uploads' => $Uploads,
+            'maxUploadSize' => Tools::returnMaxUploadSize()
         ));
         echo $EntityView->buildUploadsHtml();
 

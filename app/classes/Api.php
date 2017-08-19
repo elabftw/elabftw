@@ -33,16 +33,6 @@ class Api
     }
 
     /**
-     * Return the response
-     *
-     * @return array
-     *
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
      * Create an experiment
      *
      * @return array
@@ -72,6 +62,9 @@ class Api
     /**
      * Update an entity
      *
+     * @param string $title
+     * @param string $date
+     * @param string $body
      * @return string[]
      */
     public function updateEntity($title, $date, $body)
@@ -88,6 +81,7 @@ class Api
     /**
      * Add a file to an entity
      *
+     * @param Request $request
      * @return string[]
      */
     public function uploadFile(Request $request)

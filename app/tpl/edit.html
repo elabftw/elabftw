@@ -150,6 +150,49 @@
     {% endif %}
 </section>
 
+<!-- UPLOAD FORM -->
+<section class='box'>
+    <img src='app/img/attached.png' />
+    <h3 style='display:inline'>{{ 'Attach a file'|trans }}</h3>
+    <form action='app/controllers/EntityController.php' class='dropzone' id='elabftw-dropzone'></form>
+</section>
+
+<script>
+// config for dropzone, id is camelCased.
+Dropzone.options.elabftwDropzone = {
+    // i18n message to user
+    dictDefaultMessage: '{{ 'Drop files here to upload'|trans }}',
+    maxFilesize: '{{ maxUploadSize }}', // MB
+    init: function() {
+
+        // add additionnal parameters (id and type)
+        this.on('sending', function(file, xhr, formData) {
+            formData.append('upload', true);
+            formData.append('id', '{{ Uploads.Entity.id }}');
+            formData.append('type', '{{ Uploads.Entity.type }}');
+        });
+
+        // once it is done
+        this.on('complete', function(answer) {
+            // check the answer we get back from app/controllers/EntityController.php
+            var json = JSON.parse(answer.xhr.responseText);
+            if (json.res) {
+                notif(json.msg, 'ok');
+            } else {
+                notif(json.msg, 'ko');
+            }
+            // reload the #filesdiv once the file is uploaded
+            if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                $('#filesdiv').load('?mode=edit&id={{ Uploads.Entity.id }} #filesdiv', function() {
+                    // make the comment zone editable (fix issue #54)
+                    makeEditableFileComment('{{ Uploads.Entity.type }}', {{ Uploads.Entity.id }});
+                });
+            }
+        });
+    }
+}
+</script>
+
 <!-- DOODLE -->
 <section class='box'>
     <img src='app/img/pencil.png' />
@@ -162,7 +205,7 @@
 </section>
 <script src='app/js/doodle.js'></script>
 
-
+<!-- CHEM EDITOR -->
 {% if Ev.Entity.Users.userData['chem_editor'] %}
     <div class='box chemdoodle'>
         <h3>{{ 'Molecule drawer'|trans }}</h3>

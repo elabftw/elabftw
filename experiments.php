@@ -71,12 +71,16 @@ try {
         }
 
         $Revisions = new Revisions($EntityView->Entity);
+        $Uploads = new Uploads($EntityView->Entity);
 
+        // Uploads
         echo $Twig->render('edit.html', array(
             'Ev' => $EntityView,
             'Revisions' => $Revisions,
             'Status' => $Status,
-            'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
+            'Uploads' => $Uploads,
+            'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
+            'maxUploadSize' => Tools::returnMaxUploadSize()
         ));
         echo $EntityView->buildUploadsHtml();
 

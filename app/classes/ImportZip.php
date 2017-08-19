@@ -54,6 +54,7 @@ class ImportZip extends Import
     /**
      * Constructor
      *
+     * @param Users $users
      */
     public function __construct(Users $users)
     {

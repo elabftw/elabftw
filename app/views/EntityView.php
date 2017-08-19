@@ -108,7 +108,7 @@ class EntityView
      */
     public function buildUploadsHtml()
     {
-        $this->html .= $this->UploadsView->buildUploadForm();
+        //$this->html .= $this->UploadsView->buildUploadForm();
         $this->html .= $this->UploadsView->buildUploads('edit');
 
         return $this->html;

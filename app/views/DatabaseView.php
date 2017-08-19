@@ -16,6 +16,17 @@ namespace Elabftw\Elabftw;
 class DatabaseView extends EntityView
 {
     /**
+     * Constructor
+     *
+     * @param Entity $entity
+     */
+    public function __construct(Entity $entity)
+    {
+        $this->Entity = $entity;
+        $this->limit = $this->Entity->Users->userData['limit_nb'];
+    }
+
+    /**
      * Display the stars rating for a DB item
      *
      * @param int $rating The number of stars to display

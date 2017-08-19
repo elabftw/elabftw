@@ -619,9 +619,8 @@ class Users extends Auth
      */
     public function updateAccount($params)
     {
-        $Auth = new Auth();
         // check that we got the good password
-        if (!$Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
+        if (!$this->checkCredentials($this->userData['email'], $params['currpass'])) {
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE

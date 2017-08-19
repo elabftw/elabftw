@@ -168,8 +168,8 @@ Dropzone.options.elabftwDropzone = {
         // add additionnal parameters (id and type)
         this.on('sending', function(file, xhr, formData) {
             formData.append('upload', true);
-            formData.append('id', '{{ Uploads.Entity.id }}');
-            formData.append('type', '{{ Uploads.Entity.type }}');
+            formData.append('id', '{{ Uv.Uploads.Entity.id }}');
+            formData.append('type', '{{ Uv.Uploads.Entity.type }}');
         });
 
         // once it is done
@@ -183,15 +183,17 @@ Dropzone.options.elabftwDropzone = {
             }
             // reload the #filesdiv once the file is uploaded
             if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                $('#filesdiv').load('?mode=edit&id={{ Uploads.Entity.id }} #filesdiv', function() {
+                $('#filesdiv').load('?mode=edit&id={{ Uv.Uploads.Entity.id }} #filesdiv', function() {
                     // make the comment zone editable (fix issue #54)
-                    makeEditableFileComment('{{ Uploads.Entity.type }}', {{ Uploads.Entity.id }});
+                    makeEditableFileComment('{{ Uv.Uploads.Entity.type }}', {{ Uv.Uploads.Entity.id }});
                 });
             }
         });
     }
 }
 </script>
+
+{{ include('uploads.html') }}
 
 <!-- DOODLE -->
 <section class='box'>

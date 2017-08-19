@@ -37,18 +37,6 @@ class ExperimentsView extends EntityView
     }
 
     /**
-     * View experiment
-     *
-     * @return string HTML for viewXP
-     */
-    public function view()
-    {
-        $this->html .= $this->UploadsView->buildUploads('view');
-
-        return $this->html;
-    }
-
-    /**
      * If int, get the name of the team group instead of a number
      *
      * @return string

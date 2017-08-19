@@ -1,0 +1,20 @@
+<!-- UPLOADED FILES -->
+<div id='filesdiv'>
+{% set uploadsArr = Uv.Uploads.readAll %}
+{% if uploadsArr|length > 0 %}
+    <div class='box'>
+        <img src='app/img/attached.png' /> <h3 style='display:inline'>
+            {% trans %}Attached file
+            {% plural uploadsArr|length %}
+            Attached files
+            {% endtrans %}
+        </h3>
+
+        <div class='row'>
+        {% for upload in uploadsArr %}
+            {{ Uv.displayUpload(mode, upload)|raw }}
+        {% endfor %}
+        </div>
+    </div>
+{% endif %}
+</div>

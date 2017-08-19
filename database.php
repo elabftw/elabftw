@@ -29,9 +29,11 @@ try {
     if ($Request->query->get('mode') === 'view') {
 
         $EntityView->Entity->setId($Request->query->get('id'));
-        $EntityView->initViewEdit();
+        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
         echo $Twig->render('view.html', array(
-            'Ev' => $EntityView
+            'Ev' => $EntityView,
+            'Uv' => $UploadsView,
+            'mode' => 'view'
         ));
         echo $EntityView->view();
 
@@ -39,7 +41,6 @@ try {
     } elseif ($Request->query->get('mode') === 'edit') {
 
         $EntityView->Entity->setId($Request->query->get('id'));
-        $EntityView->initViewEdit();
         // check permissions
         $EntityView->Entity->canOrExplode('write');
         // a locked item cannot be edited
@@ -48,17 +49,17 @@ try {
         }
 
         $Revisions = new Revisions($EntityView->Entity);
-        $Uploads = new Uploads($EntityView->Entity);
+        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
         $Tags = new Tags($EntityView->Entity);
 
         echo $Twig->render('edit.html', array(
             'Ev' => $EntityView,
+            'Uv' => $UploadsView,
+            'mode' => 'edit',
             'Revisions' => $Revisions,
             'Tags' => $Tags,
-            'Uploads' => $Uploads,
             'maxUploadSize' => Tools::returnMaxUploadSize()
         ));
-        echo $EntityView->buildUploadsHtml();
 
     // DEFAULT MODE IS SHOW
     } else {

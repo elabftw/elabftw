@@ -47,25 +47,6 @@ class EntityView
     /** our html output */
     protected $html = '';
 
-    /** instance of UploadsView */
-    protected $UploadsView;
-
-    /**
-     * Common stuff for view and edit (but not show)
-     *
-     */
-    public function initViewEdit()
-    {
-        $this->Entity->populate();
-        // throw error if the id is empty (non existing id)
-        if (empty($this->Entity->entityData['userid'])) {
-            throw new Exception(Tools::error());
-        }
-
-        // get the UploadsView object
-        $this->UploadsView = new UploadsView(new Uploads($this->Entity));
-    }
-
     /**
      * Check if the entity is read only
      *
@@ -99,19 +80,6 @@ class EntityView
             }
             $this->itemsArr = $this->Entity->read();
         }
-    }
-
-    /**
-     * Generate html for upload form and display of uploads in edit mode
-     *
-     * @return string HTML uploads
-     */
-    public function buildUploadsHtml()
-    {
-        //$this->html .= $this->UploadsView->buildUploadForm();
-        $this->html .= $this->UploadsView->buildUploads('edit');
-
-        return $this->html;
     }
 
     /**

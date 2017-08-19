@@ -36,7 +36,6 @@ try {
         $EntityView->Entity->setId($Request->query->get('id'));
         $Comments = new Comments($EntityView->Entity);
         $commentsArr = $Comments->read();
-        $EntityView->initViewEdit();
 
         $ownerName = '';
         if ($EntityView->isReadOnly()) {
@@ -48,21 +47,23 @@ try {
         if ($EntityView->Entity->entityData['timestamped']) {
             echo $EntityView->showTimestamp();
         }
+        // Uploads
+        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
 
         echo $Twig->render('view.html', array(
             'Ev' => $EntityView,
+            'Uv' => $UploadsView,
+            'mode' => 'view',
             'Status' => $Status,
             'commentsArr' => $commentsArr,
             'ownerName' => $ownerName,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
         ));
-        echo $EntityView->view();
 
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {
 
         $EntityView->Entity->setId($Request->query->get('id'));
-        $EntityView->initViewEdit();
         // check permissions
         $EntityView->Entity->canOrExplode('write');
         // a locked experiment cannot be edited
@@ -71,18 +72,18 @@ try {
         }
 
         $Revisions = new Revisions($EntityView->Entity);
-        $Uploads = new Uploads($EntityView->Entity);
-
         // Uploads
+        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
+
         echo $Twig->render('edit.html', array(
             'Ev' => $EntityView,
+            'Uv' => $UploadsView,
+            'mode' => 'edit',
             'Revisions' => $Revisions,
             'Status' => $Status,
-            'Uploads' => $Uploads,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
             'maxUploadSize' => Tools::returnMaxUploadSize()
         ));
-        echo $EntityView->buildUploadsHtml();
 
     // DEFAULT MODE IS SHOW
     } else {

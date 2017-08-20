@@ -206,12 +206,12 @@ $(document).ready(function() {
     });
 
     // STATUS SELECT
-    $(document).on('change', '#status_select', function() {
+    $(document).on('change', '#category_select', function() {
         var categoryId = $(this).val();
         $.post("app/controllers/EntityController.php", {
             updateCategory: true,
             id: id,
-            type: 'experiments',
+            type: type,
             categoryId : categoryId
         }).done(function(data) {
             if (data.res) {

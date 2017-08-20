@@ -52,16 +52,18 @@ try {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
 
+        $ItemsTypes = new ItemsTypes($Entity->Users);
         $Revisions = new Revisions($Entity);
         $UploadsView = new UploadsView(new Uploads($Entity));
         $Tags = new Tags($Entity);
 
         echo $Twig->render('edit.html', array(
             'Entity' => $Entity,
-            'Uv' => $UploadsView,
-            'mode' => 'edit',
+            'Categories' => $ItemsTypes,
             'Revisions' => $Revisions,
+            'Uv' => $UploadsView,
             'Tags' => $Tags,
+            'mode' => 'edit',
             'maxUploadSize' => Tools::returnMaxUploadSize()
         ));
 

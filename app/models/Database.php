@@ -93,10 +93,9 @@ class Database extends Entity
      */
     public function updateCategory($category)
     {
-        $sql = "UPDATE items SET type = :type WHERE userid = :userid AND id = :id";
+        $sql = "UPDATE items SET type = :type WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':type', $category);
-        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();

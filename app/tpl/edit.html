@@ -9,7 +9,7 @@
     <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
 </a>
 
-<section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData['color'] }}'>
+<section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
     <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
 
     <!-- TAGS -->
@@ -48,14 +48,6 @@
                     <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
                     <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData['date'] }}' />
                 </div>
-                {% if Entity.type == 'items' %}
-                    <!-- STAR RATING -->
-                    <div class='align_right'>
-                        {% for i in range(1, 5) %}
-                        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData['rating'] == i ? ' checked=checked' }} />
-                        {% endfor %}
-                    </div>
-                {% endif %}
 
             {% if Entity.type == 'experiments' %}
                 <!-- VISIBILITY -->
@@ -70,21 +62,29 @@
                         {% endfor %}
                     </select>
                 </div>
+            {% endif %}
 
-                <!-- STATUS -->
+                <!-- CATEGORIES (status for exp and itemstypes for items) -->
                 <div class='col-md-4'>
-                    <img src='app/img/status.png' alt='status' />
-                    <label for='status_select'>{{ 'Status'|trans }}</label>
-                    <select id='status_select'>
-                        {% for status in Status.readAll %}
-                            <option value='{{ status.category_id }}'
-                            {{ Entity.entityData.category_id == status.category_id ? ' selected' }}>{{ status.category }}</option>
+                    <img src='app/img/status.png' alt='category' />
+                    <label for='category_select'>{{ 'Category'|trans }}</label>
+                    <select id='category_select'>
+                        {% for category in Categories.readAll %}
+                            <option value='{{ category.category_id }}'
+                            {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
                         {% endfor %}
                     </select>
                 </div>
-            {% endif %}
-            </div>
+                {% if Entity.type == 'items' %}
+                    <!-- STAR RATING -->
+                    <div class='col-md-4' style='margin-top:15px'>
+                        {% for i in range(1, 5) %}
+                        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
+            </div>
             <!-- TITLE -->
             <h4>{{ 'Title'|trans }}</h4>
             <input id='title_input' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
@@ -235,4 +235,4 @@ Dropzone.options.elabftwDropzone = {
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
-<script src='app/js/edit.min.js'></script>
+<script src='app/js/edit.js'></script>

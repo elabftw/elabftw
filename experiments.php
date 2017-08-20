@@ -94,7 +94,7 @@ try {
             'Uv' => $UploadsView,
             'mode' => 'edit',
             'Revisions' => $Revisions,
-            'Status' => $Status,
+            'Categories' => $Status,
             'TeamGroups' => $TeamGroups,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
             'maxUploadSize' => Tools::returnMaxUploadSize()

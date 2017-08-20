@@ -188,6 +188,7 @@ class Experiments extends Entity
 
     /**
     * Returns if this experiment can be timestamped
+    * It checks if the status is timestampable but also if we own the experiment
     *
     * @return bool
     */
@@ -198,7 +199,7 @@ class Experiments extends Entity
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':status', $currentStatus);
         $req->execute();
-        return (bool) $req->fetchColumn();
+        return $req->fetchColumn() && $this->isOwned;
     }
 
     /**

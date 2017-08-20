@@ -28,12 +28,10 @@ try {
     }
 
     $Auth = new Auth();
-    $Config = new Config();
     $Idps = new Idps();
     $Logs = new Logs();
     $TeamsView = new TeamsView(new Teams());
     $teamsArr = $TeamsView->Teams->readAll();
-    $Users = new Users();
     $usersArr = $Users->readAll();
     $ReleaseCheck = new ReleaseCheck($Config);
     if (!$ReleaseCheck->getUpdatesIni()) {

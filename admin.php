@@ -27,10 +27,8 @@ try {
     }
 
     $Auth = new Auth();
-    $Config = new Config();
     $FormKey = new FormKey($Session);
 
-    $Users = new Users($Session->get('userid'), $Config);
     $ItemsTypes = new ItemsTypes($Users);
     $Status = new Status($Users);
     $TeamGroups = new TeamGroups($Users);

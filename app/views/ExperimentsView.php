@@ -18,16 +18,16 @@ use Datetime;
  */
 class ExperimentsView extends EntityView
 {
-    /** instance of TeamGroups */
+    /** @var TeamGroups $TeamGroups instance of TeamGroups */
     public $TeamGroups;
 
     /**
      * Need an instance of Experiments
      *
-     * @param Entity $entity
+     * @param Experiments $entity
      * @throws Exception
      */
-    public function __construct(Entity $entity)
+    public function __construct(Experiments $entity)
     {
         $this->Entity = $entity;
         $this->limit = $this->Entity->Users->userData['limit_nb'];

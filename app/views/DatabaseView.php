@@ -15,15 +15,12 @@ namespace Elabftw\Elabftw;
  */
 class DatabaseView extends EntityView
 {
-    /** @var Database $Entity the database entity */
-    public $Entity;
-
     /**
      * Constructor
      *
-     * @param Entity $entity
+     * @param Database $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(Database $entity)
     {
         $this->Entity = $entity;
     }

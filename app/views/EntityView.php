@@ -210,28 +210,6 @@ class EntityView
     }
 
     /**
-     * HTML for back to something link
-     *
-     * @param string $type experiments or database
-     * @return string
-     */
-    protected function backToLink($type)
-    {
-        if ($type === 'experiments') {
-            $text = _('Back to Experiments Listing');
-        } elseif ($type === 'items') {
-            $text = _('Back to Database Listing');
-        } else {
-            return "";
-        }
-
-        $html = "<a href='" . $type . ".php?mode=show'>";
-        $html .= "<img src='app/img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
-
-        return $html;
-    }
-
-    /**
      * This is used to include the title in the page name (see #324)
      * It removes #, ' and " and appends "- eLabFTW"
      *

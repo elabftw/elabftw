@@ -26,7 +26,7 @@ $(document).ready(function() {
                         item: $('#infos').data('item')
                     },
                     error: function() {
-                        alert('there was an error while fetching events!');
+                        notif('There was an error while fetching events!', 'ko');
                     }
                 }
             ],

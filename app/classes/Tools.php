@@ -414,14 +414,9 @@ class Tools
      */
     public static function showStars($rating)
     {
-        $html = "";
-
         $green = "<img src='app/img/star-green.png' alt='☻' />";
         $gray = "<img src='app/img/star-gray.png' alt='☺' />";
 
-        $html .= str_repeat($green, $rating);
-        $html .= str_repeat($gray, (5 - $rating));
-
-        return $html;
+        return str_repeat($green, $rating) . str_repeat($gray, (5 - $rating));
     }
 }

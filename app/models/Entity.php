@@ -80,6 +80,15 @@ class Entity
     /** @var array $entityData what you get after you ->read() */
     public $entityData;
 
+    /** @var bool isReadOnly if we can read but not write to it */
+    public $isReadOnly = false;
+
+    /** @var bool isOwned true if we own the entity */
+    public $isOwned = true;
+
+    /** @var string $ownerName the name of the owner of the entity */
+    public $ownerName = '';
+
     /**
      * Now that we have an id, we can read the data and set the permissions
      *
@@ -92,6 +101,20 @@ class Entity
 
         if ($this instanceof Experiments || $this instanceof Database) {
             $this->entityData = $this->read();
+            $permissions = $this->getPermissions();
+
+            // READ ONLY?
+            if ($permissions['read'] && !$permissions['write']) {
+                $this->isReadOnly = true;
+            }
+
+            // OWNED?
+            if ($this->entityData['userid'] != $this->Users->userid) {
+                // we need to get the fullname of the user who owns the experiment to display the RO message
+                $Owner = new Users($this->entityData['userid']);
+                $this->ownerName = $Owner->userData['fullname'];
+                $this->isOwned = false;
+            }
         }
     }
 

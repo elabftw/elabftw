@@ -9,8 +9,8 @@
     <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
 </a>
 
-{% if not isOwned %}
-    {{ 'Experiment of %s'|trans|format(ownerName)|msg('ok', false) }}
+{% if not Entity.isOwned and Entity.type == 'experiments' %}
+    {{ 'Experiment of %s'|trans|format(Entity.ownerName)|msg('ok', false) }}
 {% endif %}
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>

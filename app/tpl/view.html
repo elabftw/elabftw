@@ -8,8 +8,8 @@
     <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
 </a>
 
-{% if not isOwned %}
-    {{ 'Experiment of %s'|trans|format(ownerName)|msg('ok', false) }}
+{% if not Entity.isOwned and Entity.type == 'experiments' %}
+    {{ 'Experiment of %s'|trans|format(Entity.ownerName)|msg('ok', false) }}
 {% endif %}
 
 {% if Entity.type == 'experiments' %}
@@ -27,10 +27,12 @@
     <img src='app/img/calendar.png' title='date' alt='Date :' />{{ Entity.entityData.date|kdate }}
 </div>
 <!-- begin action buttons row -->
-<a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
-    <span>{{ 'Edit'|trans }}</span>
-    <img src='app/img/pen-blue.png' alt={{ 'Edit'|trans }} />
-</a>
+{% if not Entity.isReadOnly %}
+    <a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
+        <span>{{ 'Edit'|trans }}</span>
+        <img src='app/img/pen-blue.png' alt={{ 'Edit'|trans }} />
+    </a>
+{% endif %}
 
 <a class='elab-tooltip' href='app/controllers/EntityController.php?duplicateId={{ Entity.id }}&type={{ Entity.type }}'>
     <span>{{ 'Duplicate'|trans }}</span>
@@ -55,15 +57,17 @@
 {% endif %}
 
 <!-- LOCK -->
-{% set imgSrc = 'unlock.png' %}
-{% set alt = 'Lock/Unlock item'|trans %}
-{% if Entity.entityData['locked'] != 0 %}
-    {% set imgSrc = 'lock-gray.png' %}
+{% if not Entity.isReadOnly %}
+    {% set imgSrc = 'unlock.png' %}
+    {% set alt = 'Lock/Unlock item'|trans %}
+    {% if Entity.entityData['locked'] != 0 %}
+        {% set imgSrc = 'lock-gray.png' %}
+    {% endif %}
+    <a class='elab-tooltip' href='#'>
+        <span>{{ alt }}</span>
+        <img id='lock' src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
+    </a>
 {% endif %}
-<a class='elab-tooltip' href='#'>
-    <span>{{ alt }}</span>
-    <img id='lock' src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
-</a>
 
 <!-- show timestamp button if not timestamped already -->
 {% if not Entity.entityData.timestamped and Entity.isTimestampable() and Entity.type == 'experiments' %}

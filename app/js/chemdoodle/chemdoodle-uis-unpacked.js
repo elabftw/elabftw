@@ -1,9 +1,9 @@
 //
-// ChemDoodle Web Components 7.0.2
+// ChemDoodle Web Components 8.0.0
 //
 // http://web.chemdoodle.com
 //
-// Copyright 2009-2015 iChemLabs, LLC.  All rights reserved.
+// Copyright 2009-2017 iChemLabs, LLC.  All rights reserved.
 //
 // The ChemDoodle Web Components library is licensed under version 3
 // of the GNU GENERAL PUBLIC LICENSE.
@@ -23,21 +23,39 @@
 // Please contact iChemLabs <http://www.ichemlabs.com/contact-us> for
 // alternate licensing options.
 //
-/*! jQuery UI - v1.10.3 - 2014-01-01
+/*
 * http://jqueryui.com
-* Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.resizable.js, jquery.ui.selectable.js, jquery.ui.sortable.js, jquery.ui.button.js, jquery.ui.dialog.js, jquery.ui.menu.js, jquery.ui.progressbar.js, jquery.ui.slider.js, jquery.ui.spinner.js, jquery.ui.tabs.js, jquery.ui.tooltip.js
-* Copyright 2014 jQuery Foundation and other contributors; Licensed MIT */
+* Includes: core.js, widget.js, mouse.js, position.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, accordion.js, autocomplete.js, button.js, datepicker.js, dialog.js, menu.js, progressbar.js, selectmenu.js, slider.js, spinner.js, tabs.js, tooltip.js
+* Copyright jQuery Foundation and other contributors; Licensed MIT */
 (function(jQuery) {
-(function( $, undefined ) {
+(function( factory ) {
+	if ( typeof define === "function" && define.amd ) {
 
-var uuid = 0,
-	runiqueId = /^ui-id-\d+$/;
+		// AMD. Register as an anonymous module.
+		define([ "jquery" ], factory );
+	} else {
+
+		// Browser globals
+		factory( jQuery );
+	}
+}(function( $ ) {
+/*
+ * jQuery UI Core 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/category/ui-core/
+ */
+
 
 // $.ui might exist from components with no dependencies, e.g., $.ui.position
 $.ui = $.ui || {};
 
 $.extend( $.ui, {
-	version: "1.10.3",
+	version: "1.11.4",
 
 	keyCode: {
 		BACKSPACE: 8,
@@ -49,12 +67,6 @@ $.extend( $.ui, {
 		ESCAPE: 27,
 		HOME: 36,
 		LEFT: 37,
-		NUMPAD_ADD: 107,
-		NUMPAD_DECIMAL: 110,
-		NUMPAD_DIVIDE: 111,
-		NUMPAD_ENTER: 108,
-		NUMPAD_MULTIPLY: 106,
-		NUMPAD_SUBTRACT: 109,
 		PAGE_DOWN: 34,
 		PAGE_UP: 33,
 		PERIOD: 190,
@@ -67,77 +79,36 @@ $.extend( $.ui, {
 
 // plugins
 $.fn.extend({
-	focus: (function( orig ) {
-		return function( delay, fn ) {
-			return typeof delay === "number" ?
-				this.each(function() {
-					var elem = this;
-					setTimeout(function() {
-						$( elem ).focus();
-						if ( fn ) {
-							fn.call( elem );
-						}
-					}, delay );
-				}) :
-				orig.apply( this, arguments );
-		};
-	})( $.fn.focus ),
-
-	scrollParent: function() {
-		var scrollParent;
-		if (($.ui.ie && (/(static|relative)/).test(this.css("position"))) || (/absolute/).test(this.css("position"))) {
-			scrollParent = this.parents().filter(function() {
-				return (/(relative|absolute|fixed)/).test($.css(this,"position")) && (/(auto|scroll)/).test($.css(this,"overflow")+$.css(this,"overflow-y")+$.css(this,"overflow-x"));
-			}).eq(0);
-		} else {
-			scrollParent = this.parents().filter(function() {
-				return (/(auto|scroll)/).test($.css(this,"overflow")+$.css(this,"overflow-y")+$.css(this,"overflow-x"));
-			}).eq(0);
-		}
-
-		return (/fixed/).test(this.css("position")) || !scrollParent.length ? $(document) : scrollParent;
-	},
-
-	zIndex: function( zIndex ) {
-		if ( zIndex !== undefined ) {
-			return this.css( "zIndex", zIndex );
-		}
-
-		if ( this.length ) {
-			var elem = $( this[ 0 ] ), position, value;
-			while ( elem.length && elem[ 0 ] !== document ) {
-				// Ignore z-index if position is set to a value where z-index is ignored by the browser
-				// This makes behavior of this function consistent across browsers
-				// WebKit always returns auto if the element is positioned
-				position = elem.css( "position" );
-				if ( position === "absolute" || position === "relative" || position === "fixed" ) {
-					// IE returns 0 when zIndex is not specified
-					// other browsers return a string
-					// we ignore the case of nested elements with an explicit value of 0
-					// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-					value = parseInt( elem.css( "zIndex" ), 10 );
-					if ( !isNaN( value ) && value !== 0 ) {
-						return value;
-					}
+	scrollParent: function( includeHidden ) {
+		var position = this.css( "position" ),
+			excludeStaticParent = position === "absolute",
+			overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/,
+			scrollParent = this.parents().filter( function() {
+				var parent = $( this );
+				if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+					return false;
 				}
-				elem = elem.parent();
-			}
-		}
+				return overflowRegex.test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
+			}).eq( 0 );
 
-		return 0;
+		return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
 	},
 
-	uniqueId: function() {
-		return this.each(function() {
-			if ( !this.id ) {
-				this.id = "ui-id-" + (++uuid);
-			}
-		});
-	},
+	uniqueId: (function() {
+		var uuid = 0;
+
+		return function() {
+			return this.each(function() {
+				if ( !this.id ) {
+					this.id = "ui-id-" + ( ++uuid );
+				}
+			});
+		};
+	})(),
 
 	removeUniqueId: function() {
 		return this.each(function() {
-			if ( runiqueId.test( this.id ) ) {
+			if ( /^ui-id-\d+$/.test( this.id ) ) {
 				$( this ).removeAttr( "id" );
 			}
 		});
@@ -154,10 +125,10 @@ function focusable( element, isTabIndexNotNaN ) {
 		if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
 			return false;
 		}
-		img = $( "img[usemap=#" + mapName + "]" )[0];
+		img = $( "img[usemap='#" + mapName + "']" )[ 0 ];
 		return !!img && visible( img );
 	}
-	return ( /input|select|textarea|button|object/.test( nodeName ) ?
+	return ( /^(input|select|textarea|button|object)$/.test( nodeName ) ?
 		!element.disabled :
 		"a" === nodeName ?
 			element.href || isTabIndexNotNaN :
@@ -265,93 +236,136 @@ if ( $( "<a>" ).data( "a-b", "a" ).removeData( "a-b" ).data( "a-b" ) ) {
 	})( $.fn.removeData );
 }
 
-
-
-
-
 // deprecated
 $.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
 
-$.support.selectstart = "onselectstart" in document.createElement( "div" );
 $.fn.extend({
-	disableSelection: function() {
-		return this.bind( ( $.support.selectstart ? "selectstart" : "mousedown" ) +
-			".ui-disableSelection", function( event ) {
+	focus: (function( orig ) {
+		return function( delay, fn ) {
+			return typeof delay === "number" ?
+				this.each(function() {
+					var elem = this;
+					setTimeout(function() {
+						$( elem ).focus();
+						if ( fn ) {
+							fn.call( elem );
+						}
+					}, delay );
+				}) :
+				orig.apply( this, arguments );
+		};
+	})( $.fn.focus ),
+
+	disableSelection: (function() {
+		var eventType = "onselectstart" in document.createElement( "div" ) ?
+			"selectstart" :
+			"mousedown";
+
+		return function() {
+			return this.bind( eventType + ".ui-disableSelection", function( event ) {
 				event.preventDefault();
 			});
-	},
+		};
+	})(),
 
 	enableSelection: function() {
 		return this.unbind( ".ui-disableSelection" );
-	}
-});
-
-$.extend( $.ui, {
-	// $.ui.plugin is deprecated. Use $.widget() extensions instead.
-	plugin: {
-		add: function( module, option, set ) {
-			var i,
-				proto = $.ui[ module ].prototype;
-			for ( i in set ) {
-				proto.plugins[ i ] = proto.plugins[ i ] || [];
-				proto.plugins[ i ].push( [ option, set[ i ] ] );
-			}
-		},
-		call: function( instance, name, args ) {
-			var i,
-				set = instance.plugins[ name ];
-			if ( !set || !instance.element[ 0 ].parentNode || instance.element[ 0 ].parentNode.nodeType === 11 ) {
-				return;
-			}
-
-			for ( i = 0; i < set.length; i++ ) {
-				if ( instance.options[ set[ i ][ 0 ] ] ) {
-					set[ i ][ 1 ].apply( instance.element, args );
-				}
-			}
-		}
 	},
 
-	// only used by resizable
-	hasScroll: function( el, a ) {
-
-		//If overflow is hidden, the element might have extra content, but the user wants to hide it
-		if ( $( el ).css( "overflow" ) === "hidden") {
-			return false;
+	zIndex: function( zIndex ) {
+		if ( zIndex !== undefined ) {
+			return this.css( "zIndex", zIndex );
 		}
 
-		var scroll = ( a && a === "left" ) ? "scrollLeft" : "scrollTop",
-			has = false;
-
-		if ( el[ scroll ] > 0 ) {
-			return true;
+		if ( this.length ) {
+			var elem = $( this[ 0 ] ), position, value;
+			while ( elem.length && elem[ 0 ] !== document ) {
+				// Ignore z-index if position is set to a value where z-index is ignored by the browser
+				// This makes behavior of this function consistent across browsers
+				// WebKit always returns auto if the element is positioned
+				position = elem.css( "position" );
+				if ( position === "absolute" || position === "relative" || position === "fixed" ) {
+					// IE returns 0 when zIndex is not specified
+					// other browsers return a string
+					// we ignore the case of nested elements with an explicit value of 0
+					// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
+					value = parseInt( elem.css( "zIndex" ), 10 );
+					if ( !isNaN( value ) && value !== 0 ) {
+						return value;
+					}
+				}
+				elem = elem.parent();
+			}
 		}
 
-		// TODO: determine which cases actually cause this to happen
-		// if the element doesn't have the scroll set, see if it's possible to
-		// set the scroll
-		el[ scroll ] = 1;
-		has = ( el[ scroll ] > 0 );
-		el[ scroll ] = 0;
-		return has;
+		return 0;
 	}
 });
 
-})( jQuery );
-(function( $, undefined ) {
+// $.ui.plugin is deprecated. Use $.widget() extensions instead.
+$.ui.plugin = {
+	add: function( module, option, set ) {
+		var i,
+			proto = $.ui[ module ].prototype;
+		for ( i in set ) {
+			proto.plugins[ i ] = proto.plugins[ i ] || [];
+			proto.plugins[ i ].push( [ option, set[ i ] ] );
+		}
+	},
+	call: function( instance, name, args, allowDisconnected ) {
+		var i,
+			set = instance.plugins[ name ];
 
-var uuid = 0,
-	slice = Array.prototype.slice,
-	_cleanData = $.cleanData;
-$.cleanData = function( elems ) {
-	for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
-		try {
-			$( elem ).triggerHandler( "remove" );
-		// http://bugs.jquery.com/ticket/8235
-		} catch( e ) {}
+		if ( !set ) {
+			return;
+		}
+
+		if ( !allowDisconnected && ( !instance.element[ 0 ].parentNode || instance.element[ 0 ].parentNode.nodeType === 11 ) ) {
+			return;
+		}
+
+		for ( i = 0; i < set.length; i++ ) {
+			if ( instance.options[ set[ i ][ 0 ] ] ) {
+				set[ i ][ 1 ].apply( instance.element, args );
+			}
+		}
 	}
-	_cleanData( elems );
 };
+
+
+/*
+ * jQuery UI Widget 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/jQuery.widget/
+ */
+
+
+var widget_uuid = 0,
+	widget_slice = Array.prototype.slice;
+
+$.cleanData = (function( orig ) {
+	return function( elems ) {
+		var events, elem, i;
+		for ( i = 0; (elem = elems[i]) != null; i++ ) {
+			try {
+
+				// Only trigger remove when necessary to save time
+				events = $._data( elem, "events" );
+				if ( events && events.remove ) {
+					$( elem ).triggerHandler( "remove" );
+				}
+
+			// http://bugs.jquery.com/ticket/8235
+			} catch ( e ) {}
+		}
+		orig( elems );
+	};
+})( $.cleanData );
 
 $.widget = function( name, base, prototype ) {
 	var fullName, existingConstructor, constructor, basePrototype,
@@ -436,7 +450,7 @@ $.widget = function( name, base, prototype ) {
 		// TODO: remove support for widgetEventPrefix
 		// always use the name + a colon as the prefix, e.g., draggable:start
 		// don't prefix for widgets that aren't DOM-based
-		widgetEventPrefix: existingConstructor ? basePrototype.widgetEventPrefix : name
+		widgetEventPrefix: existingConstructor ? (basePrototype.widgetEventPrefix || name) : name
 	}, proxiedPrototype, {
 		constructor: constructor,
 		namespace: namespace,
@@ -464,10 +478,12 @@ $.widget = function( name, base, prototype ) {
 	}
 
 	$.widget.bridge( name, constructor );
+
+	return constructor;
 };
 
 $.widget.extend = function( target ) {
-	var input = slice.call( arguments, 1 ),
+	var input = widget_slice.call( arguments, 1 ),
 		inputIndex = 0,
 		inputLength = input.length,
 		key,
@@ -496,18 +512,17 @@ $.widget.bridge = function( name, object ) {
 	var fullName = object.prototype.widgetFullName || name;
 	$.fn[ name ] = function( options ) {
 		var isMethodCall = typeof options === "string",
-			args = slice.call( arguments, 1 ),
+			args = widget_slice.call( arguments, 1 ),
 			returnValue = this;
-
-		// allow multiple hashes to be passed on init
-		options = !isMethodCall && args.length ?
-			$.widget.extend.apply( null, [ options ].concat(args) ) :
-			options;
 
 		if ( isMethodCall ) {
 			this.each(function() {
 				var methodValue,
 					instance = $.data( this, fullName );
+				if ( options === "instance" ) {
+					returnValue = instance;
+					return false;
+				}
 				if ( !instance ) {
 					return $.error( "cannot call methods on " + name + " prior to initialization; " +
 						"attempted to call method '" + options + "'" );
@@ -524,10 +539,19 @@ $.widget.bridge = function( name, object ) {
 				}
 			});
 		} else {
+
+			// Allow multiple hashes to be passed on init
+			if ( args.length ) {
+				options = $.widget.extend.apply( null, [ options ].concat(args) );
+			}
+
 			this.each(function() {
 				var instance = $.data( this, fullName );
 				if ( instance ) {
-					instance.option( options || {} )._init();
+					instance.option( options || {} );
+					if ( instance._init ) {
+						instance._init();
+					}
 				} else {
 					$.data( this, fullName, new object( options, this ) );
 				}
@@ -554,12 +578,8 @@ $.Widget.prototype = {
 	_createWidget: function( options, element ) {
 		element = $( element || this.defaultElement || this )[ 0 ];
 		this.element = $( element );
-		this.uuid = uuid++;
+		this.uuid = widget_uuid++;
 		this.eventNamespace = "." + this.widgetName + this.uuid;
-		this.options = $.widget.extend( {},
-			this.options,
-			this._getCreateOptions(),
-			options );
 
 		this.bindings = $();
 		this.hoverable = $();
@@ -582,6 +602,11 @@ $.Widget.prototype = {
 			this.window = $( this.document[0].defaultView || this.document[0].parentWindow );
 		}
 
+		this.options = $.widget.extend( {},
+			this.options,
+			this._getCreateOptions(),
+			options );
+
 		this._create();
 		this._trigger( "create", null, this._getCreateEventData() );
 		this._init();
@@ -597,9 +622,6 @@ $.Widget.prototype = {
 		// all event bindings should go through this._on()
 		this.element
 			.unbind( this.eventNamespace )
-			// 1.9 BC for #7810
-			// TODO remove dual storage
-			.removeData( this.widgetName )
 			.removeData( this.widgetFullName )
 			// support: jquery <1.6.3
 			// http://bugs.jquery.com/ticket/9413
@@ -645,12 +667,12 @@ $.Widget.prototype = {
 					curOption = curOption[ parts[ i ] ];
 				}
 				key = parts.pop();
-				if ( value === undefined ) {
+				if ( arguments.length === 1 ) {
 					return curOption[ key ] === undefined ? null : curOption[ key ];
 				}
 				curOption[ key ] = value;
 			} else {
-				if ( value === undefined ) {
+				if ( arguments.length === 1 ) {
 					return this.options[ key ] === undefined ? null : this.options[ key ];
 				}
 				options[ key ] = value;
@@ -675,20 +697,23 @@ $.Widget.prototype = {
 
 		if ( key === "disabled" ) {
 			this.widget()
-				.toggleClass( this.widgetFullName + "-disabled ui-state-disabled", !!value )
-				.attr( "aria-disabled", value );
-			this.hoverable.removeClass( "ui-state-hover" );
-			this.focusable.removeClass( "ui-state-focus" );
+				.toggleClass( this.widgetFullName + "-disabled", !!value );
+
+			// If the widget is becoming disabled, then nothing is interactive
+			if ( value ) {
+				this.hoverable.removeClass( "ui-state-hover" );
+				this.focusable.removeClass( "ui-state-focus" );
+			}
 		}
 
 		return this;
 	},
 
 	enable: function() {
-		return this._setOption( "disabled", false );
+		return this._setOptions({ disabled: false });
 	},
 	disable: function() {
-		return this._setOption( "disabled", true );
+		return this._setOptions({ disabled: true });
 	},
 
 	_on: function( suppressDisabledCheck, element, handlers ) {
@@ -708,7 +733,6 @@ $.Widget.prototype = {
 			element = this.element;
 			delegateElement = this.widget();
 		} else {
-			// accept selectors, DOM elements
 			element = delegateElement = $( element );
 			this.bindings = this.bindings.add( element );
 		}
@@ -733,7 +757,7 @@ $.Widget.prototype = {
 					handler.guid || handlerProxy.guid || $.guid++;
 			}
 
-			var match = event.match( /^(\w+)\s*(.*)$/ ),
+			var match = event.match( /^([\w:-]*)\s*(.*)$/ ),
 				eventName = match[1] + instance.eventNamespace,
 				selector = match[2];
 			if ( selector ) {
@@ -745,8 +769,14 @@ $.Widget.prototype = {
 	},
 
 	_off: function( element, eventName ) {
-		eventName = (eventName || "").split( " " ).join( this.eventNamespace + " " ) + this.eventNamespace;
+		eventName = (eventName || "").split( " " ).join( this.eventNamespace + " " ) +
+			this.eventNamespace;
 		element.unbind( eventName ).undelegate( eventName );
+
+		// Clear the stack to avoid memory leaks (#10056)
+		this.bindings = $( this.bindings.not( element ).get() );
+		this.focusable = $( this.focusable.not( element ).get() );
+		this.hoverable = $( this.hoverable.not( element ).get() );
 	},
 
 	_delay: function( handler, delay ) {
@@ -848,16 +878,28 @@ $.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
 	};
 });
 
-})( jQuery );
-(function( $, undefined ) {
+var widget = $.widget;
+
+
+/*
+ * jQuery UI Mouse 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/mouse/
+ */
+
 
 var mouseHandled = false;
 $( document ).mouseup( function() {
 	mouseHandled = false;
 });
 
-$.widget("ui.mouse", {
-	version: "1.10.3",
+var mouse = $.widget("ui.mouse", {
+	version: "1.11.4",
 	options: {
 		cancel: "input,textarea,button,select,option",
 		distance: 1,
@@ -867,10 +909,10 @@ $.widget("ui.mouse", {
 		var that = this;
 
 		this.element
-			.bind("mousedown."+this.widgetName, function(event) {
+			.bind("mousedown." + this.widgetName, function(event) {
 				return that._mouseDown(event);
 			})
-			.bind("click."+this.widgetName, function(event) {
+			.bind("click." + this.widgetName, function(event) {
 				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
 					$.removeData(event.target, that.widgetName + ".preventClickEvent");
 					event.stopImmediatePropagation();
@@ -884,17 +926,21 @@ $.widget("ui.mouse", {
 	// TODO: make sure destroying one instance of mouse doesn't mess with
 	// other instances of mouse
 	_mouseDestroy: function() {
-		this.element.unbind("."+this.widgetName);
+		this.element.unbind("." + this.widgetName);
 		if ( this._mouseMoveDelegate ) {
-			$(document)
-				.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
-				.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+			this.document
+				.unbind("mousemove." + this.widgetName, this._mouseMoveDelegate)
+				.unbind("mouseup." + this.widgetName, this._mouseUpDelegate);
 		}
 	},
 
 	_mouseDown: function(event) {
 		// don't let more than one widget handle mouseStart
-		if( mouseHandled ) { return; }
+		if ( mouseHandled ) {
+			return;
+		}
+
+		this._mouseMoved = false;
 
 		// we may have missed mouseup (out of window)
 		(this._mouseStarted && this._mouseUp(event));
@@ -937,9 +983,10 @@ $.widget("ui.mouse", {
 		this._mouseUpDelegate = function(event) {
 			return that._mouseUp(event);
 		};
-		$(document)
-			.bind("mousemove."+this.widgetName, this._mouseMoveDelegate)
-			.bind("mouseup."+this.widgetName, this._mouseUpDelegate);
+
+		this.document
+			.bind( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+			.bind( "mouseup." + this.widgetName, this._mouseUpDelegate );
 
 		event.preventDefault();
 
@@ -948,9 +995,23 @@ $.widget("ui.mouse", {
 	},
 
 	_mouseMove: function(event) {
-		// IE mouseup check - mouseup happened when mouse was out of window
-		if ($.ui.ie && ( !document.documentMode || document.documentMode < 9 ) && !event.button) {
-			return this._mouseUp(event);
+		// Only check for mouseups outside the document if you've moved inside the document
+		// at least once. This prevents the firing of mouseup in the case of IE<9, which will
+		// fire a mousemove event if content is placed under the cursor. See #7778
+		// Support: IE <9
+		if ( this._mouseMoved ) {
+			// IE mouseup check - mouseup happened when mouse was out of window
+			if ($.ui.ie && ( !document.documentMode || document.documentMode < 9 ) && !event.button) {
+				return this._mouseUp(event);
+
+			// Iframe mouseup check - mouseup occurred in another document
+			} else if ( !event.which ) {
+				return this._mouseUp( event );
+			}
+		}
+
+		if ( event.which || event.button ) {
+			this._mouseMoved = true;
 		}
 
 		if (this._mouseStarted) {
@@ -968,9 +1029,9 @@ $.widget("ui.mouse", {
 	},
 
 	_mouseUp: function(event) {
-		$(document)
-			.unbind("mousemove."+this.widgetName, this._mouseMoveDelegate)
-			.unbind("mouseup."+this.widgetName, this._mouseUpDelegate);
+		this.document
+			.unbind( "mousemove." + this.widgetName, this._mouseMoveDelegate )
+			.unbind( "mouseup." + this.widgetName, this._mouseUpDelegate );
 
 		if (this._mouseStarted) {
 			this._mouseStarted = false;
@@ -982,6 +1043,7 @@ $.widget("ui.mouse", {
 			this._mouseStop(event);
 		}
 
+		mouseHandled = false;
 		return false;
 	},
 
@@ -1004,12 +1066,23 @@ $.widget("ui.mouse", {
 	_mouseCapture: function(/* event */) { return true; }
 });
 
-})(jQuery);
-(function( $, undefined ) {
+
+/*
+ * jQuery UI Position 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/position/
+ */
+
+(function() {
 
 $.ui = $.ui || {};
 
-var cachedScrollbarWidth,
+var cachedScrollbarWidth, supportsOffsetFractions,
 	max = Math.max,
 	abs = Math.abs,
 	round = Math.round,
@@ -1067,7 +1140,7 @@ $.position = {
 			return cachedScrollbarWidth;
 		}
 		var w1, w2,
-			div = $( "<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+			div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
 			innerDiv = div.children()[0];
 
 		$( "body" ).append( div );
@@ -1085,8 +1158,10 @@ $.position = {
 		return (cachedScrollbarWidth = w1 - w2);
 	},
 	getScrollInfo: function( within ) {
-		var overflowX = within.isWindow ? "" : within.element.css( "overflow-x" ),
-			overflowY = within.isWindow ? "" : within.element.css( "overflow-y" ),
+		var overflowX = within.isWindow || within.isDocument ? "" :
+				within.element.css( "overflow-x" ),
+			overflowY = within.isWindow || within.isDocument ? "" :
+				within.element.css( "overflow-y" ),
 			hasOverflowX = overflowX === "scroll" ||
 				( overflowX === "auto" && within.width < within.element[0].scrollWidth ),
 			hasOverflowY = overflowY === "scroll" ||
@@ -1098,15 +1173,20 @@ $.position = {
 	},
 	getWithinInfo: function( element ) {
 		var withinElement = $( element || window ),
-			isWindow = $.isWindow( withinElement[0] );
+			isWindow = $.isWindow( withinElement[0] ),
+			isDocument = !!withinElement[ 0 ] && withinElement[ 0 ].nodeType === 9;
 		return {
 			element: withinElement,
 			isWindow: isWindow,
+			isDocument: isDocument,
 			offset: withinElement.offset() || { left: 0, top: 0 },
 			scrollLeft: withinElement.scrollLeft(),
 			scrollTop: withinElement.scrollTop(),
-			width: isWindow ? withinElement.width() : withinElement.outerWidth(),
-			height: isWindow ? withinElement.height() : withinElement.outerHeight()
+
+			// support: jQuery 1.6.x
+			// jQuery 1.6 doesn't support .outerWidth/Height() on documents or windows
+			width: isWindow || isDocument ? withinElement.width() : withinElement.outerWidth(),
+			height: isWindow || isDocument ? withinElement.height() : withinElement.outerHeight()
 		};
 	}
 };
@@ -1218,7 +1298,7 @@ $.fn.position = function( options ) {
 		position.top += myOffset[ 1 ];
 
 		// if the browser doesn't support fractions, then round for consistent results
-		if ( !$.support.offsetFractions ) {
+		if ( !supportsOffsetFractions ) {
 			position.left = round( position.left );
 			position.top = round( position.top );
 		}
@@ -1242,7 +1322,7 @@ $.fn.position = function( options ) {
 					my: options.my,
 					at: options.at,
 					within: within,
-					elem : elem
+					elem: elem
 				});
 			}
 		});
@@ -1396,8 +1476,7 @@ $.ui.position = {
 				if ( newOverRight < 0 || newOverRight < abs( overLeft ) ) {
 					position.left += myOffset + atOffset + offset;
 				}
-			}
-			else if ( overRight > 0 ) {
+			} else if ( overRight > 0 ) {
 				newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
 				if ( newOverLeft > 0 || abs( newOverLeft ) < overRight ) {
 					position.left += myOffset + atOffset + offset;
@@ -1428,13 +1507,12 @@ $.ui.position = {
 				newOverBottom;
 			if ( overTop < 0 ) {
 				newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
-				if ( ( position.top + myOffset + atOffset + offset) > overTop && ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) ) {
+				if ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) {
 					position.top += myOffset + atOffset + offset;
 				}
-			}
-			else if ( overBottom > 0 ) {
-				newOverTop = position.top -  data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
-				if ( ( position.top + myOffset + atOffset + offset) > overBottom && ( newOverTop > 0 || abs( newOverTop ) < overBottom ) ) {
+			} else if ( overBottom > 0 ) {
+				newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+				if ( newOverTop > 0 || abs( newOverTop ) < overBottom ) {
 					position.top += myOffset + atOffset + offset;
 				}
 			}
@@ -1453,7 +1531,7 @@ $.ui.position = {
 };
 
 // fraction support test
-(function () {
+(function() {
 	var testElement, testElementParent, testElementStyle, offsetLeft, i,
 		body = document.getElementsByTagName( "body" )[ 0 ],
 		div = document.createElement( "div" );
@@ -1485,17 +1563,31 @@ $.ui.position = {
 	div.style.cssText = "position: absolute; left: 10.7432222px;";
 
 	offsetLeft = $( div ).offset().left;
-	$.support.offsetFractions = offsetLeft > 10 && offsetLeft < 11;
+	supportsOffsetFractions = offsetLeft > 10 && offsetLeft < 11;
 
 	testElement.innerHTML = "";
 	testElementParent.removeChild( testElement );
 })();
 
-}( jQuery ) );
-(function( $, undefined ) {
+})();
+
+var position = $.ui.position;
+
+
+/*
+ * jQuery UI Draggable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/draggable/
+ */
+
 
 $.widget("ui.draggable", $.ui.mouse, {
-	version: "1.10.3",
+	version: "1.11.4",
 	widgetEventPrefix: "drag",
 	options: {
 		addClasses: true,
@@ -1530,8 +1622,8 @@ $.widget("ui.draggable", $.ui.mouse, {
 	},
 	_create: function() {
 
-		if (this.options.helper === "original" && !(/^(?:r|a|f)/).test(this.element.css("position"))) {
-			this.element[0].style.position = "relative";
+		if ( this.options.helper === "original" ) {
+			this._setPositionRelative();
 		}
 		if (this.options.addClasses){
 			this.element.addClass("ui-draggable");
@@ -1539,19 +1631,33 @@ $.widget("ui.draggable", $.ui.mouse, {
 		if (this.options.disabled){
 			this.element.addClass("ui-draggable-disabled");
 		}
+		this._setHandleClassName();
 
 		this._mouseInit();
+	},
 
+	_setOption: function( key, value ) {
+		this._super( key, value );
+		if ( key === "handle" ) {
+			this._removeHandleClassName();
+			this._setHandleClassName();
+		}
 	},
 
 	_destroy: function() {
+		if ( ( this.helper || this.element ).is( ".ui-draggable-dragging" ) ) {
+			this.destroyOnClear = true;
+			return;
+		}
 		this.element.removeClass( "ui-draggable ui-draggable-dragging ui-draggable-disabled" );
+		this._removeHandleClassName();
 		this._mouseDestroy();
 	},
 
 	_mouseCapture: function(event) {
-
 		var o = this.options;
+
+		this._blurActiveElement( event );
 
 		// among others, prevent a drag on a resizable-handle
 		if (this.helper || o.disabled || $(event.target).closest(".ui-resizable-handle").length > 0) {
@@ -1564,18 +1670,52 @@ $.widget("ui.draggable", $.ui.mouse, {
 			return false;
 		}
 
-		$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
-			$("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
-			.css({
-				width: this.offsetWidth+"px", height: this.offsetHeight+"px",
-				position: "absolute", opacity: "0.001", zIndex: 1000
-			})
-			.css($(this).offset())
-			.appendTo("body");
-		});
+		this._blockFrames( o.iframeFix === true ? "iframe" : o.iframeFix );
 
 		return true;
 
+	},
+
+	_blockFrames: function( selector ) {
+		this.iframeBlocks = this.document.find( selector ).map(function() {
+			var iframe = $( this );
+
+			return $( "<div>" )
+				.css( "position", "absolute" )
+				.appendTo( iframe.parent() )
+				.outerWidth( iframe.outerWidth() )
+				.outerHeight( iframe.outerHeight() )
+				.offset( iframe.offset() )[ 0 ];
+		});
+	},
+
+	_unblockFrames: function() {
+		if ( this.iframeBlocks ) {
+			this.iframeBlocks.remove();
+			delete this.iframeBlocks;
+		}
+	},
+
+	_blurActiveElement: function( event ) {
+		var document = this.document[ 0 ];
+
+		// Only need to blur if the event occurred on the draggable itself, see #10527
+		if ( !this.handleElement.is( event.target ) ) {
+			return;
+		}
+
+		// support: IE9
+		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+		try {
+
+			// Support: IE9, IE10
+			// If the <body> is blurred, IE will switch windows, see #9520
+			if ( document.activeElement && document.activeElement.nodeName.toLowerCase() !== "body" ) {
+
+				// Blur any element that currently has focus, see #4261
+				$( document.activeElement ).blur();
+			}
+		} catch ( error ) {}
 	},
 
 	_mouseStart: function(event) {
@@ -1591,7 +1731,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		this._cacheHelperProportions();
 
 		//If ddmanager is used for droppables, set the global draggable
-		if($.ui.ddmanager) {
+		if ($.ui.ddmanager) {
 			$.ui.ddmanager.current = this;
 		}
 
@@ -1605,31 +1745,18 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 		//Store the helper's css position
 		this.cssPosition = this.helper.css( "position" );
-		this.scrollParent = this.helper.scrollParent();
+		this.scrollParent = this.helper.scrollParent( true );
 		this.offsetParent = this.helper.offsetParent();
-		this.offsetParentCssPosition = this.offsetParent.css( "position" );
+		this.hasFixedAncestor = this.helper.parents().filter(function() {
+				return $( this ).css( "position" ) === "fixed";
+			}).length > 0;
 
 		//The element's absolute position on the page minus margins
-		this.offset = this.positionAbs = this.element.offset();
-		this.offset = {
-			top: this.offset.top - this.margins.top,
-			left: this.offset.left - this.margins.left
-		};
-
-		//Reset scroll cache
-		this.offset.scroll = false;
-
-		$.extend(this.offset, {
-			click: { //Where the click happened, relative to the element
-				left: event.pageX - this.offset.left,
-				top: event.pageY - this.offset.top
-			},
-			parent: this._getParentOffset(),
-			relative: this._getRelativeOffset() //This is a relative to absolute position minus the actual position calculation - only used for relative positioned helper
-		});
+		this.positionAbs = this.element.offset();
+		this._refreshOffsets( event );
 
 		//Generate the original position
-		this.originalPosition = this.position = this._generatePosition(event);
+		this.originalPosition = this.position = this._generatePosition( event, false );
 		this.originalPageX = event.pageX;
 		this.originalPageY = event.pageY;
 
@@ -1640,7 +1767,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		this._setContainment();
 
 		//Trigger event + callbacks
-		if(this._trigger("start", event) === false) {
+		if (this._trigger("start", event) === false) {
 			this._clear();
 			return false;
 		}
@@ -1653,6 +1780,9 @@ $.widget("ui.draggable", $.ui.mouse, {
 			$.ui.ddmanager.prepareOffsets(this, event);
 		}
 
+		// Reset helper's right/bottom css if they're set and set explicit width/height instead
+		// as this prevents resizing of elements with right/bottom set (see #7772)
+		this._normalizeRightBottom();
 
 		this._mouseDrag(event, true); //Execute the drag once - this causes the helper not to be visible before getting its correct position
 
@@ -1664,33 +1794,45 @@ $.widget("ui.draggable", $.ui.mouse, {
 		return true;
 	},
 
+	_refreshOffsets: function( event ) {
+		this.offset = {
+			top: this.positionAbs.top - this.margins.top,
+			left: this.positionAbs.left - this.margins.left,
+			scroll: false,
+			parent: this._getParentOffset(),
+			relative: this._getRelativeOffset()
+		};
+
+		this.offset.click = {
+			left: event.pageX - this.offset.left,
+			top: event.pageY - this.offset.top
+		};
+	},
+
 	_mouseDrag: function(event, noPropagation) {
 		// reset any necessary cached properties (see #5009)
-		if ( this.offsetParentCssPosition === "fixed" ) {
+		if ( this.hasFixedAncestor ) {
 			this.offset.parent = this._getParentOffset();
 		}
 
 		//Compute the helpers position
-		this.position = this._generatePosition(event);
+		this.position = this._generatePosition( event, true );
 		this.positionAbs = this._convertPositionTo("absolute");
 
 		//Call plugins and callbacks and use the resulting position if something is returned
 		if (!noPropagation) {
 			var ui = this._uiHash();
-			if(this._trigger("drag", event, ui) === false) {
+			if (this._trigger("drag", event, ui) === false) {
 				this._mouseUp({});
 				return false;
 			}
 			this.position = ui.position;
 		}
 
-		if(!this.options.axis || this.options.axis !== "y") {
-			this.helper[0].style.left = this.position.left+"px";
-		}
-		if(!this.options.axis || this.options.axis !== "x") {
-			this.helper[0].style.top = this.position.top+"px";
-		}
-		if($.ui.ddmanager) {
+		this.helper[ 0 ].style.left = this.position.left + "px";
+		this.helper[ 0 ].style.top = this.position.top + "px";
+
+		if ($.ui.ddmanager) {
 			$.ui.ddmanager.drag(this, event);
 		}
 
@@ -1707,24 +1849,19 @@ $.widget("ui.draggable", $.ui.mouse, {
 		}
 
 		//if a drop comes from outside (a sortable)
-		if(this.dropped) {
+		if (this.dropped) {
 			dropped = this.dropped;
 			this.dropped = false;
 		}
 
-		//if the original element is no longer in the DOM don't bother to continue (see #8269)
-		if ( this.options.helper === "original" && !$.contains( this.element[ 0 ].ownerDocument, this.element[ 0 ] ) ) {
-			return false;
-		}
-
-		if((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
+		if ((this.options.revert === "invalid" && !dropped) || (this.options.revert === "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
 			$(this.helper).animate(this.originalPosition, parseInt(this.options.revertDuration, 10), function() {
-				if(that._trigger("stop", event) !== false) {
+				if (that._trigger("stop", event) !== false) {
 					that._clear();
 				}
 			});
 		} else {
-			if(this._trigger("stop", event) !== false) {
+			if (this._trigger("stop", event) !== false) {
 				this._clear();
 			}
 		}
@@ -1732,15 +1869,18 @@ $.widget("ui.draggable", $.ui.mouse, {
 		return false;
 	},
 
-	_mouseUp: function(event) {
-		//Remove frame helpers
-		$("div.ui-draggable-iframeFix").each(function() {
-			this.parentNode.removeChild(this);
-		});
+	_mouseUp: function( event ) {
+		this._unblockFrames();
 
 		//If the ddmanager is used for droppables, inform the manager that dragging has stopped (see #5003)
-		if( $.ui.ddmanager ) {
+		if ( $.ui.ddmanager ) {
 			$.ui.ddmanager.dragStop(this, event);
+		}
+
+		// Only need to focus if the event occurred on the draggable itself, see #10527
+		if ( this.handleElement.is( event.target ) ) {
+			// The interaction is over; whether or not the click resulted in a drag, focus the element
+			this.element.focus();
 		}
 
 		return $.ui.mouse.prototype._mouseUp.call(this, event);
@@ -1748,7 +1888,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 	cancel: function() {
 
-		if(this.helper.is(".ui-draggable-dragging")) {
+		if (this.helper.is(".ui-draggable-dragging")) {
 			this._mouseUp({});
 		} else {
 			this._clear();
@@ -1764,16 +1904,38 @@ $.widget("ui.draggable", $.ui.mouse, {
 			true;
 	},
 
+	_setHandleClassName: function() {
+		this.handleElement = this.options.handle ?
+			this.element.find( this.options.handle ) : this.element;
+		this.handleElement.addClass( "ui-draggable-handle" );
+	},
+
+	_removeHandleClassName: function() {
+		this.handleElement.removeClass( "ui-draggable-handle" );
+	},
+
 	_createHelper: function(event) {
 
 		var o = this.options,
-			helper = $.isFunction(o.helper) ? $(o.helper.apply(this.element[0], [event])) : (o.helper === "clone" ? this.element.clone().removeAttr("id") : this.element);
+			helperIsFunction = $.isFunction( o.helper ),
+			helper = helperIsFunction ?
+				$( o.helper.apply( this.element[ 0 ], [ event ] ) ) :
+				( o.helper === "clone" ?
+					this.element.clone().removeAttr( "id" ) :
+					this.element );
 
-		if(!helper.parents("body").length) {
+		if (!helper.parents("body").length) {
 			helper.appendTo((o.appendTo === "parent" ? this.element[0].parentNode : o.appendTo));
 		}
 
-		if(helper[0] !== this.element[0] && !(/(fixed|absolute)/).test(helper.css("position"))) {
+		// http://bugs.jqueryui.com/ticket/9446
+		// a helper function can return the original element
+		// which wouldn't have been set to relative in _create
+		if ( helperIsFunction && helper[ 0 ] === this.element[ 0 ] ) {
+			this._setPositionRelative();
+		}
+
+		if (helper[0] !== this.element[0] && !(/(fixed|absolute)/).test(helper.css("position"))) {
 			helper.css("position", "absolute");
 		}
 
@@ -1781,12 +1943,18 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 	},
 
+	_setPositionRelative: function() {
+		if ( !( /^(?:r|a|f)/ ).test( this.element.css( "position" ) ) ) {
+			this.element[ 0 ].style.position = "relative";
+		}
+	},
+
 	_adjustOffsetFromHelper: function(obj) {
 		if (typeof obj === "string") {
 			obj = obj.split(" ");
 		}
 		if ($.isArray(obj)) {
-			obj = {left: +obj[0], top: +obj[1] || 0};
+			obj = { left: +obj[0], top: +obj[1] || 0 };
 		}
 		if ("left" in obj) {
 			this.offset.click.left = obj.left + this.margins.left;
@@ -1802,54 +1970,57 @@ $.widget("ui.draggable", $.ui.mouse, {
 		}
 	},
 
+	_isRootNode: function( element ) {
+		return ( /(html|body)/i ).test( element.tagName ) || element === this.document[ 0 ];
+	},
+
 	_getParentOffset: function() {
 
 		//Get the offsetParent and cache its position
-		var po = this.offsetParent.offset();
+		var po = this.offsetParent.offset(),
+			document = this.document[ 0 ];
 
 		// This is a special case where we need to modify a offset calculated on start, since the following happened:
 		// 1. The position of the helper is absolute, so it's position is calculated based on the next positioned parent
 		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't the document, which means that
 		//    the scroll is included in the initial calculation of the offset of the parent, and never recalculated upon drag
-		if(this.cssPosition === "absolute" && this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) {
+		if (this.cssPosition === "absolute" && this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) {
 			po.left += this.scrollParent.scrollLeft();
 			po.top += this.scrollParent.scrollTop();
 		}
 
-		//This needs to be actually done for all browsers, since pageX/pageY includes this information
-		//Ugly IE fix
-		if((this.offsetParent[0] === document.body) ||
-			(this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() === "html" && $.ui.ie)) {
+		if ( this._isRootNode( this.offsetParent[ 0 ] ) ) {
 			po = { top: 0, left: 0 };
 		}
 
 		return {
-			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"),10) || 0),
-			left: po.left + (parseInt(this.offsetParent.css("borderLeftWidth"),10) || 0)
+			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"), 10) || 0),
+			left: po.left + (parseInt(this.offsetParent.css("borderLeftWidth"), 10) || 0)
 		};
 
 	},
 
 	_getRelativeOffset: function() {
-
-		if(this.cssPosition === "relative") {
-			var p = this.element.position();
-			return {
-				top: p.top - (parseInt(this.helper.css("top"),10) || 0) + this.scrollParent.scrollTop(),
-				left: p.left - (parseInt(this.helper.css("left"),10) || 0) + this.scrollParent.scrollLeft()
-			};
-		} else {
+		if ( this.cssPosition !== "relative" ) {
 			return { top: 0, left: 0 };
 		}
+
+		var p = this.element.position(),
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] );
+
+		return {
+			top: p.top - ( parseInt(this.helper.css( "top" ), 10) || 0 ) + ( !scrollIsRootNode ? this.scrollParent.scrollTop() : 0 ),
+			left: p.left - ( parseInt(this.helper.css( "left" ), 10) || 0 ) + ( !scrollIsRootNode ? this.scrollParent.scrollLeft() : 0 )
+		};
 
 	},
 
 	_cacheMargins: function() {
 		this.margins = {
-			left: (parseInt(this.element.css("marginLeft"),10) || 0),
-			top: (parseInt(this.element.css("marginTop"),10) || 0),
-			right: (parseInt(this.element.css("marginRight"),10) || 0),
-			bottom: (parseInt(this.element.css("marginBottom"),10) || 0)
+			left: (parseInt(this.element.css("marginLeft"), 10) || 0),
+			top: (parseInt(this.element.css("marginTop"), 10) || 0),
+			right: (parseInt(this.element.css("marginRight"), 10) || 0),
+			bottom: (parseInt(this.element.css("marginBottom"), 10) || 0)
 		};
 	},
 
@@ -1862,8 +2033,11 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 	_setContainment: function() {
 
-		var over, c, ce,
-			o = this.options;
+		var isUserScrollable, c, ce,
+			o = this.options,
+			document = this.document[ 0 ];
+
+		this.relativeContainer = null;
 
 		if ( !o.containment ) {
 			this.containment = null;
@@ -1902,63 +2076,71 @@ $.widget("ui.draggable", $.ui.mouse, {
 		c = $( o.containment );
 		ce = c[ 0 ];
 
-		if( !ce ) {
+		if ( !ce ) {
 			return;
 		}
 
-		over = c.css( "overflow" ) !== "hidden";
+		isUserScrollable = /(scroll|auto)/.test( c.css( "overflow" ) );
 
 		this.containment = [
 			( parseInt( c.css( "borderLeftWidth" ), 10 ) || 0 ) + ( parseInt( c.css( "paddingLeft" ), 10 ) || 0 ),
-			( parseInt( c.css( "borderTopWidth" ), 10 ) || 0 ) + ( parseInt( c.css( "paddingTop" ), 10 ) || 0 ) ,
-			( over ? Math.max( ce.scrollWidth, ce.offsetWidth ) : ce.offsetWidth ) - ( parseInt( c.css( "borderRightWidth" ), 10 ) || 0 ) - ( parseInt( c.css( "paddingRight" ), 10 ) || 0 ) - this.helperProportions.width - this.margins.left - this.margins.right,
-			( over ? Math.max( ce.scrollHeight, ce.offsetHeight ) : ce.offsetHeight ) - ( parseInt( c.css( "borderBottomWidth" ), 10 ) || 0 ) - ( parseInt( c.css( "paddingBottom" ), 10 ) || 0 ) - this.helperProportions.height - this.margins.top  - this.margins.bottom
+			( parseInt( c.css( "borderTopWidth" ), 10 ) || 0 ) + ( parseInt( c.css( "paddingTop" ), 10 ) || 0 ),
+			( isUserScrollable ? Math.max( ce.scrollWidth, ce.offsetWidth ) : ce.offsetWidth ) -
+				( parseInt( c.css( "borderRightWidth" ), 10 ) || 0 ) -
+				( parseInt( c.css( "paddingRight" ), 10 ) || 0 ) -
+				this.helperProportions.width -
+				this.margins.left -
+				this.margins.right,
+			( isUserScrollable ? Math.max( ce.scrollHeight, ce.offsetHeight ) : ce.offsetHeight ) -
+				( parseInt( c.css( "borderBottomWidth" ), 10 ) || 0 ) -
+				( parseInt( c.css( "paddingBottom" ), 10 ) || 0 ) -
+				this.helperProportions.height -
+				this.margins.top -
+				this.margins.bottom
 		];
-		this.relative_container = c;
+		this.relativeContainer = c;
 	},
 
 	_convertPositionTo: function(d, pos) {
 
-		if(!pos) {
+		if (!pos) {
 			pos = this.position;
 		}
 
 		var mod = d === "absolute" ? 1 : -1,
-			scroll = this.cssPosition === "absolute" && !( this.scrollParent[ 0 ] !== document && $.contains( this.scrollParent[ 0 ], this.offsetParent[ 0 ] ) ) ? this.offsetParent : this.scrollParent;
-
-		//Cache the scroll
-		if (!this.offset.scroll) {
-			this.offset.scroll = {top : scroll.scrollTop(), left : scroll.scrollLeft()};
-		}
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] );
 
 		return {
 			top: (
 				pos.top	+																// The absolute mouse position
 				this.offset.relative.top * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
 				this.offset.parent.top * mod -										// The offsetParent's offset without borders (offset + border)
-				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollTop() : this.offset.scroll.top ) * mod )
+				( ( this.cssPosition === "fixed" ? -this.offset.scroll.top : ( scrollIsRootNode ? 0 : this.offset.scroll.top ) ) * mod)
 			),
 			left: (
 				pos.left +																// The absolute mouse position
 				this.offset.relative.left * mod +										// Only for relative positioned nodes: Relative offset from element to offset parent
 				this.offset.parent.left * mod	-										// The offsetParent's offset without borders (offset + border)
-				( ( this.cssPosition === "fixed" ? -this.scrollParent.scrollLeft() : this.offset.scroll.left ) * mod )
+				( ( this.cssPosition === "fixed" ? -this.offset.scroll.left : ( scrollIsRootNode ? 0 : this.offset.scroll.left ) ) * mod)
 			)
 		};
 
 	},
 
-	_generatePosition: function(event) {
+	_generatePosition: function( event, constrainPosition ) {
 
 		var containment, co, top, left,
 			o = this.options,
-			scroll = this.cssPosition === "absolute" && !( this.scrollParent[ 0 ] !== document && $.contains( this.scrollParent[ 0 ], this.offsetParent[ 0 ] ) ) ? this.offsetParent : this.scrollParent,
+			scrollIsRootNode = this._isRootNode( this.scrollParent[ 0 ] ),
 			pageX = event.pageX,
 			pageY = event.pageY;
 
-		//Cache the scroll
-		if (!this.offset.scroll) {
-			this.offset.scroll = {top : scroll.scrollTop(), left : scroll.scrollLeft()};
+		// Cache the scroll
+		if ( !scrollIsRootNode || !this.offset.scroll ) {
+			this.offset.scroll = {
+				top: this.scrollParent.scrollTop(),
+				left: this.scrollParent.scrollLeft()
+			};
 		}
 
 		/*
@@ -1967,36 +2149,35 @@ $.widget("ui.draggable", $.ui.mouse, {
 		 */
 
 		// If we are not dragging yet, we won't check for options
-		if ( this.originalPosition ) {
+		if ( constrainPosition ) {
 			if ( this.containment ) {
-				if ( this.relative_container ){
-					co = this.relative_container.offset();
+				if ( this.relativeContainer ){
+					co = this.relativeContainer.offset();
 					containment = [
 						this.containment[ 0 ] + co.left,
 						this.containment[ 1 ] + co.top,
 						this.containment[ 2 ] + co.left,
 						this.containment[ 3 ] + co.top
 					];
-				}
-				else {
+				} else {
 					containment = this.containment;
 				}
 
-				if(event.pageX - this.offset.click.left < containment[0]) {
+				if (event.pageX - this.offset.click.left < containment[0]) {
 					pageX = containment[0] + this.offset.click.left;
 				}
-				if(event.pageY - this.offset.click.top < containment[1]) {
+				if (event.pageY - this.offset.click.top < containment[1]) {
 					pageY = containment[1] + this.offset.click.top;
 				}
-				if(event.pageX - this.offset.click.left > containment[2]) {
+				if (event.pageX - this.offset.click.left > containment[2]) {
 					pageX = containment[2] + this.offset.click.left;
 				}
-				if(event.pageY - this.offset.click.top > containment[3]) {
+				if (event.pageY - this.offset.click.top > containment[3]) {
 					pageY = containment[3] + this.offset.click.top;
 				}
 			}
 
-			if(o.grid) {
+			if (o.grid) {
 				//Check for grid elements set to 0 to prevent divide by 0 error causing invalid argument errors in IE (see ticket #6950)
 				top = o.grid[1] ? this.originalPageY + Math.round((pageY - this.originalPageY) / o.grid[1]) * o.grid[1] : this.originalPageY;
 				pageY = containment ? ((top - this.offset.click.top >= containment[1] || top - this.offset.click.top > containment[3]) ? top : ((top - this.offset.click.top >= containment[1]) ? top - o.grid[1] : top + o.grid[1])) : top;
@@ -2005,6 +2186,13 @@ $.widget("ui.draggable", $.ui.mouse, {
 				pageX = containment ? ((left - this.offset.click.left >= containment[0] || left - this.offset.click.left > containment[2]) ? left : ((left - this.offset.click.left >= containment[0]) ? left - o.grid[0] : left + o.grid[0])) : left;
 			}
 
+			if ( o.axis === "y" ) {
+				pageX = this.originalPageX;
+			}
+
+			if ( o.axis === "x" ) {
+				pageY = this.originalPageY;
+			}
 		}
 
 		return {
@@ -2013,14 +2201,14 @@ $.widget("ui.draggable", $.ui.mouse, {
 				this.offset.click.top	-												// Click offset (relative to the element)
 				this.offset.relative.top -												// Only for relative positioned nodes: Relative offset from element to offset parent
 				this.offset.parent.top +												// The offsetParent's offset without borders (offset + border)
-				( this.cssPosition === "fixed" ? -this.scrollParent.scrollTop() : this.offset.scroll.top )
+				( this.cssPosition === "fixed" ? -this.offset.scroll.top : ( scrollIsRootNode ? 0 : this.offset.scroll.top ) )
 			),
 			left: (
 				pageX -																	// The absolute mouse position
 				this.offset.click.left -												// Click offset (relative to the element)
 				this.offset.relative.left -												// Only for relative positioned nodes: Relative offset from element to offset parent
 				this.offset.parent.left +												// The offsetParent's offset without borders (offset + border)
-				( this.cssPosition === "fixed" ? -this.scrollParent.scrollLeft() : this.offset.scroll.left )
+				( this.cssPosition === "fixed" ? -this.offset.scroll.left : ( scrollIsRootNode ? 0 : this.offset.scroll.left ) )
 			)
 		};
 
@@ -2028,23 +2216,39 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 	_clear: function() {
 		this.helper.removeClass("ui-draggable-dragging");
-		if(this.helper[0] !== this.element[0] && !this.cancelHelperRemoval) {
+		if (this.helper[0] !== this.element[0] && !this.cancelHelperRemoval) {
 			this.helper.remove();
 		}
 		this.helper = null;
 		this.cancelHelperRemoval = false;
+		if ( this.destroyOnClear ) {
+			this.destroy();
+		}
+	},
+
+	_normalizeRightBottom: function() {
+		if ( this.options.axis !== "y" && this.helper.css( "right" ) !== "auto" ) {
+			this.helper.width( this.helper.width() );
+			this.helper.css( "right", "auto" );
+		}
+		if ( this.options.axis !== "x" && this.helper.css( "bottom" ) !== "auto" ) {
+			this.helper.height( this.helper.height() );
+			this.helper.css( "bottom", "auto" );
+		}
 	},
 
 	// From now on bulk stuff - mainly helpers
 
-	_trigger: function(type, event, ui) {
+	_trigger: function( type, event, ui ) {
 		ui = ui || this._uiHash();
-		$.ui.plugin.call(this, type, [event, ui]);
-		//The absolute position has to be recalculated after plugins
-		if(type === "drag") {
-			this.positionAbs = this._convertPositionTo("absolute");
+		$.ui.plugin.call( this, type, [ event, ui, this ], true );
+
+		// Absolute position and offset (see #6884 ) have to be recalculated after plugins
+		if ( /^(drag|start|stop)/.test( type ) ) {
+			this.positionAbs = this._convertPositionTo( "absolute" );
+			ui.offset = this.positionAbs;
 		}
-		return $.Widget.prototype._trigger.call(this, type, event, ui);
+		return $.Widget.prototype._trigger.call( this, type, event, ui );
 	},
 
 	plugins: {},
@@ -2060,173 +2264,216 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 });
 
-$.ui.plugin.add("draggable", "connectToSortable", {
-	start: function(event, ui) {
+$.ui.plugin.add( "draggable", "connectToSortable", {
+	start: function( event, ui, draggable ) {
+		var uiSortable = $.extend( {}, ui, {
+			item: draggable.element
+		});
 
-		var inst = $(this).data("ui-draggable"), o = inst.options,
-			uiSortable = $.extend({}, ui, { item: inst.element });
-		inst.sortables = [];
-		$(o.connectToSortable).each(function() {
-			var sortable = $.data(this, "ui-sortable");
-			if (sortable && !sortable.options.disabled) {
-				inst.sortables.push({
-					instance: sortable,
-					shouldRevert: sortable.options.revert
-				});
-				sortable.refreshPositions();	// Call the sortable's refreshPositions at drag start to refresh the containerCache since the sortable container cache is used in drag and needs to be up to date (this will ensure it's initialised as well as being kept in step with any changes that might have happened on the page).
+		draggable.sortables = [];
+		$( draggable.options.connectToSortable ).each(function() {
+			var sortable = $( this ).sortable( "instance" );
+
+			if ( sortable && !sortable.options.disabled ) {
+				draggable.sortables.push( sortable );
+
+				// refreshPositions is called at drag start to refresh the containerCache
+				// which is used in drag. This ensures it's initialized and synchronized
+				// with any changes that might have happened on the page since initialization.
+				sortable.refreshPositions();
 				sortable._trigger("activate", event, uiSortable);
 			}
 		});
-
 	},
-	stop: function(event, ui) {
-
-		//If we are still over the sortable, we fake the stop event of the sortable, but also remove helper
-		var inst = $(this).data("ui-draggable"),
-			uiSortable = $.extend({}, ui, { item: inst.element });
-
-		$.each(inst.sortables, function() {
-			if(this.instance.isOver) {
-
-				this.instance.isOver = 0;
-
-				inst.cancelHelperRemoval = true; //Don't remove the helper in the draggable instance
-				this.instance.cancelHelperRemoval = false; //Remove it in the sortable instance (so sortable plugins like revert still work)
-
-				//The sortable revert is supported, and we have to set a temporary dropped variable on the draggable to support revert: "valid/invalid"
-				if(this.shouldRevert) {
-					this.instance.options.revert = this.shouldRevert;
-				}
-
-				//Trigger the stop of the sortable
-				this.instance._mouseStop(event);
-
-				this.instance.options.helper = this.instance.options._helper;
-
-				//If the helper has been the original item, restore properties in the sortable
-				if(inst.options.helper === "original") {
-					this.instance.currentItem.css({ top: "auto", left: "auto" });
-				}
-
-			} else {
-				this.instance.cancelHelperRemoval = false; //Remove the helper in the sortable instance
-				this.instance._trigger("deactivate", event, uiSortable);
-			}
-
+	stop: function( event, ui, draggable ) {
+		var uiSortable = $.extend( {}, ui, {
+			item: draggable.element
 		});
 
+		draggable.cancelHelperRemoval = false;
+
+		$.each( draggable.sortables, function() {
+			var sortable = this;
+
+			if ( sortable.isOver ) {
+				sortable.isOver = 0;
+
+				// Allow this sortable to handle removing the helper
+				draggable.cancelHelperRemoval = true;
+				sortable.cancelHelperRemoval = false;
+
+				// Use _storedCSS To restore properties in the sortable,
+				// as this also handles revert (#9675) since the draggable
+				// may have modified them in unexpected ways (#8809)
+				sortable._storedCSS = {
+					position: sortable.placeholder.css( "position" ),
+					top: sortable.placeholder.css( "top" ),
+					left: sortable.placeholder.css( "left" )
+				};
+
+				sortable._mouseStop(event);
+
+				// Once drag has ended, the sortable should return to using
+				// its original helper, not the shared helper from draggable
+				sortable.options.helper = sortable.options._helper;
+			} else {
+				// Prevent this Sortable from removing the helper.
+				// However, don't set the draggable to remove the helper
+				// either as another connected Sortable may yet handle the removal.
+				sortable.cancelHelperRemoval = true;
+
+				sortable._trigger( "deactivate", event, uiSortable );
+			}
+		});
 	},
-	drag: function(event, ui) {
-
-		var inst = $(this).data("ui-draggable"), that = this;
-
-		$.each(inst.sortables, function() {
-
+	drag: function( event, ui, draggable ) {
+		$.each( draggable.sortables, function() {
 			var innermostIntersecting = false,
-				thisSortable = this;
+				sortable = this;
 
-			//Copy over some variables to allow calling the sortable's native _intersectsWith
-			this.instance.positionAbs = inst.positionAbs;
-			this.instance.helperProportions = inst.helperProportions;
-			this.instance.offset.click = inst.offset.click;
+			// Copy over variables that sortable's _intersectsWith uses
+			sortable.positionAbs = draggable.positionAbs;
+			sortable.helperProportions = draggable.helperProportions;
+			sortable.offset.click = draggable.offset.click;
 
-			if(this.instance._intersectsWith(this.instance.containerCache)) {
+			if ( sortable._intersectsWith( sortable.containerCache ) ) {
 				innermostIntersecting = true;
-				$.each(inst.sortables, function () {
-					this.instance.positionAbs = inst.positionAbs;
-					this.instance.helperProportions = inst.helperProportions;
-					this.instance.offset.click = inst.offset.click;
-					if (this !== thisSortable &&
-						this.instance._intersectsWith(this.instance.containerCache) &&
-						$.contains(thisSortable.instance.element[0], this.instance.element[0])
-					) {
+
+				$.each( draggable.sortables, function() {
+					// Copy over variables that sortable's _intersectsWith uses
+					this.positionAbs = draggable.positionAbs;
+					this.helperProportions = draggable.helperProportions;
+					this.offset.click = draggable.offset.click;
+
+					if ( this !== sortable &&
+							this._intersectsWith( this.containerCache ) &&
+							$.contains( sortable.element[ 0 ], this.element[ 0 ] ) ) {
 						innermostIntersecting = false;
 					}
+
 					return innermostIntersecting;
 				});
 			}
 
+			if ( innermostIntersecting ) {
+				// If it intersects, we use a little isOver variable and set it once,
+				// so that the move-in stuff gets fired only once.
+				if ( !sortable.isOver ) {
+					sortable.isOver = 1;
 
-			if(innermostIntersecting) {
-				//If it intersects, we use a little isOver variable and set it once, so our move-in stuff gets fired only once
-				if(!this.instance.isOver) {
+					// Store draggable's parent in case we need to reappend to it later.
+					draggable._parent = ui.helper.parent();
 
-					this.instance.isOver = 1;
-					//Now we fake the start of dragging for the sortable instance,
-					//by cloning the list group item, appending it to the sortable and using it as inst.currentItem
-					//We can then fire the start event of the sortable with our passed browser event, and our own helper (so it doesn't create a new one)
-					this.instance.currentItem = $(that).clone().removeAttr("id").appendTo(this.instance.element).data("ui-sortable-item", true);
-					this.instance.options._helper = this.instance.options.helper; //Store helper option to later restore it
-					this.instance.options.helper = function() { return ui.helper[0]; };
+					sortable.currentItem = ui.helper
+						.appendTo( sortable.element )
+						.data( "ui-sortable-item", true );
 
-					event.target = this.instance.currentItem[0];
-					this.instance._mouseCapture(event, true);
-					this.instance._mouseStart(event, true, true);
+					// Store helper option to later restore it
+					sortable.options._helper = sortable.options.helper;
 
-					//Because the browser event is way off the new appended portlet, we modify a couple of variables to reflect the changes
-					this.instance.offset.click.top = inst.offset.click.top;
-					this.instance.offset.click.left = inst.offset.click.left;
-					this.instance.offset.parent.left -= inst.offset.parent.left - this.instance.offset.parent.left;
-					this.instance.offset.parent.top -= inst.offset.parent.top - this.instance.offset.parent.top;
+					sortable.options.helper = function() {
+						return ui.helper[ 0 ];
+					};
 
-					inst._trigger("toSortable", event);
-					inst.dropped = this.instance.element; //draggable revert needs that
-					//hack so receive/update callbacks work (mostly)
-					inst.currentItem = inst.element;
-					this.instance.fromOutside = inst;
+					// Fire the start events of the sortable with our passed browser event,
+					// and our own helper (so it doesn't create a new one)
+					event.target = sortable.currentItem[ 0 ];
+					sortable._mouseCapture( event, true );
+					sortable._mouseStart( event, true, true );
 
+					// Because the browser event is way off the new appended portlet,
+					// modify necessary variables to reflect the changes
+					sortable.offset.click.top = draggable.offset.click.top;
+					sortable.offset.click.left = draggable.offset.click.left;
+					sortable.offset.parent.left -= draggable.offset.parent.left -
+						sortable.offset.parent.left;
+					sortable.offset.parent.top -= draggable.offset.parent.top -
+						sortable.offset.parent.top;
+
+					draggable._trigger( "toSortable", event );
+
+					// Inform draggable that the helper is in a valid drop zone,
+					// used solely in the revert option to handle "valid/invalid".
+					draggable.dropped = sortable.element;
+
+					// Need to refreshPositions of all sortables in the case that
+					// adding to one sortable changes the location of the other sortables (#9675)
+					$.each( draggable.sortables, function() {
+						this.refreshPositions();
+					});
+
+					// hack so receive/update callbacks work (mostly)
+					draggable.currentItem = draggable.element;
+					sortable.fromOutside = draggable;
 				}
 
-				//Provided we did all the previous steps, we can fire the drag event of the sortable on every draggable drag, when it intersects with the sortable
-				if(this.instance.currentItem) {
-					this.instance._mouseDrag(event);
+				if ( sortable.currentItem ) {
+					sortable._mouseDrag( event );
+					// Copy the sortable's position because the draggable's can potentially reflect
+					// a relative position, while sortable is always absolute, which the dragged
+					// element has now become. (#8809)
+					ui.position = sortable.position;
 				}
-
 			} else {
+				// If it doesn't intersect with the sortable, and it intersected before,
+				// we fake the drag stop of the sortable, but make sure it doesn't remove
+				// the helper by using cancelHelperRemoval.
+				if ( sortable.isOver ) {
 
-				//If it doesn't intersect with the sortable, and it intersected before,
-				//we fake the drag stop of the sortable, but make sure it doesn't remove the helper by using cancelHelperRemoval
-				if(this.instance.isOver) {
+					sortable.isOver = 0;
+					sortable.cancelHelperRemoval = true;
 
-					this.instance.isOver = 0;
-					this.instance.cancelHelperRemoval = true;
+					// Calling sortable's mouseStop would trigger a revert,
+					// so revert must be temporarily false until after mouseStop is called.
+					sortable.options._revert = sortable.options.revert;
+					sortable.options.revert = false;
 
-					//Prevent reverting on this forced stop
-					this.instance.options.revert = false;
+					sortable._trigger( "out", event, sortable._uiHash( sortable ) );
+					sortable._mouseStop( event, true );
 
-					// The out event needs to be triggered independently
-					this.instance._trigger("out", event, this.instance._uiHash(this.instance));
+					// restore sortable behaviors that were modfied
+					// when the draggable entered the sortable area (#9481)
+					sortable.options.revert = sortable.options._revert;
+					sortable.options.helper = sortable.options._helper;
 
-					this.instance._mouseStop(event, true);
-					this.instance.options.helper = this.instance.options._helper;
-
-					//Now we remove our currentItem, the list group clone again, and the placeholder, and animate the helper back to it's original size
-					this.instance.currentItem.remove();
-					if(this.instance.placeholder) {
-						this.instance.placeholder.remove();
+					if ( sortable.placeholder ) {
+						sortable.placeholder.remove();
 					}
 
-					inst._trigger("fromSortable", event);
-					inst.dropped = false; //draggable revert needs that
+					// Restore and recalculate the draggable's offset considering the sortable
+					// may have modified them in unexpected ways. (#8809, #10669)
+					ui.helper.appendTo( draggable._parent );
+					draggable._refreshOffsets( event );
+					ui.position = draggable._generatePosition( event, true );
+
+					draggable._trigger( "fromSortable", event );
+
+					// Inform draggable that the helper is no longer in a valid drop zone
+					draggable.dropped = false;
+
+					// Need to refreshPositions of all sortables just in case removing
+					// from one sortable changes the location of other sortables (#9675)
+					$.each( draggable.sortables, function() {
+						this.refreshPositions();
+					});
 				}
-
 			}
-
 		});
-
 	}
 });
 
 $.ui.plugin.add("draggable", "cursor", {
-	start: function() {
-		var t = $("body"), o = $(this).data("ui-draggable").options;
+	start: function( event, ui, instance ) {
+		var t = $( "body" ),
+			o = instance.options;
+
 		if (t.css("cursor")) {
 			o._cursor = t.css("cursor");
 		}
 		t.css("cursor", o.cursor);
 	},
-	stop: function() {
-		var o = $(this).data("ui-draggable").options;
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
 		if (o._cursor) {
 			$("body").css("cursor", o._cursor);
 		}
@@ -2234,71 +2481,77 @@ $.ui.plugin.add("draggable", "cursor", {
 });
 
 $.ui.plugin.add("draggable", "opacity", {
-	start: function(event, ui) {
-		var t = $(ui.helper), o = $(this).data("ui-draggable").options;
-		if(t.css("opacity")) {
+	start: function( event, ui, instance ) {
+		var t = $( ui.helper ),
+			o = instance.options;
+		if (t.css("opacity")) {
 			o._opacity = t.css("opacity");
 		}
 		t.css("opacity", o.opacity);
 	},
-	stop: function(event, ui) {
-		var o = $(this).data("ui-draggable").options;
-		if(o._opacity) {
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+		if (o._opacity) {
 			$(ui.helper).css("opacity", o._opacity);
 		}
 	}
 });
 
 $.ui.plugin.add("draggable", "scroll", {
-	start: function() {
-		var i = $(this).data("ui-draggable");
-		if(i.scrollParent[0] !== document && i.scrollParent[0].tagName !== "HTML") {
-			i.overflowOffset = i.scrollParent.offset();
+	start: function( event, ui, i ) {
+		if ( !i.scrollParentNotHidden ) {
+			i.scrollParentNotHidden = i.helper.scrollParent( false );
+		}
+
+		if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
+			i.overflowOffset = i.scrollParentNotHidden.offset();
 		}
 	},
-	drag: function( event ) {
+	drag: function( event, ui, i  ) {
 
-		var i = $(this).data("ui-draggable"), o = i.options, scrolled = false;
+		var o = i.options,
+			scrolled = false,
+			scrollParent = i.scrollParentNotHidden[ 0 ],
+			document = i.document[ 0 ];
 
-		if(i.scrollParent[0] !== document && i.scrollParent[0].tagName !== "HTML") {
-
-			if(!o.axis || o.axis !== "x") {
-				if((i.overflowOffset.top + i.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity) {
-					i.scrollParent[0].scrollTop = scrolled = i.scrollParent[0].scrollTop + o.scrollSpeed;
-				} else if(event.pageY - i.overflowOffset.top < o.scrollSensitivity) {
-					i.scrollParent[0].scrollTop = scrolled = i.scrollParent[0].scrollTop - o.scrollSpeed;
+		if ( scrollParent !== document && scrollParent.tagName !== "HTML" ) {
+			if ( !o.axis || o.axis !== "x" ) {
+				if ( ( i.overflowOffset.top + scrollParent.offsetHeight ) - event.pageY < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop + o.scrollSpeed;
+				} else if ( event.pageY - i.overflowOffset.top < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop - o.scrollSpeed;
 				}
 			}
 
-			if(!o.axis || o.axis !== "y") {
-				if((i.overflowOffset.left + i.scrollParent[0].offsetWidth) - event.pageX < o.scrollSensitivity) {
-					i.scrollParent[0].scrollLeft = scrolled = i.scrollParent[0].scrollLeft + o.scrollSpeed;
-				} else if(event.pageX - i.overflowOffset.left < o.scrollSensitivity) {
-					i.scrollParent[0].scrollLeft = scrolled = i.scrollParent[0].scrollLeft - o.scrollSpeed;
+			if ( !o.axis || o.axis !== "y" ) {
+				if ( ( i.overflowOffset.left + scrollParent.offsetWidth ) - event.pageX < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft + o.scrollSpeed;
+				} else if ( event.pageX - i.overflowOffset.left < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft - o.scrollSpeed;
 				}
 			}
 
 		} else {
 
-			if(!o.axis || o.axis !== "x") {
-				if(event.pageY - $(document).scrollTop() < o.scrollSensitivity) {
+			if (!o.axis || o.axis !== "x") {
+				if (event.pageY - $(document).scrollTop() < o.scrollSensitivity) {
 					scrolled = $(document).scrollTop($(document).scrollTop() - o.scrollSpeed);
-				} else if($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity) {
+				} else if ($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity) {
 					scrolled = $(document).scrollTop($(document).scrollTop() + o.scrollSpeed);
 				}
 			}
 
-			if(!o.axis || o.axis !== "y") {
-				if(event.pageX - $(document).scrollLeft() < o.scrollSensitivity) {
+			if (!o.axis || o.axis !== "y") {
+				if (event.pageX - $(document).scrollLeft() < o.scrollSensitivity) {
 					scrolled = $(document).scrollLeft($(document).scrollLeft() - o.scrollSpeed);
-				} else if($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity) {
+				} else if ($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity) {
 					scrolled = $(document).scrollLeft($(document).scrollLeft() + o.scrollSpeed);
 				}
 			}
 
 		}
 
-		if(scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
+		if (scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
 			$.ui.ddmanager.prepareOffsets(i, event);
 		}
 
@@ -2306,17 +2559,16 @@ $.ui.plugin.add("draggable", "scroll", {
 });
 
 $.ui.plugin.add("draggable", "snap", {
-	start: function() {
+	start: function( event, ui, i ) {
 
-		var i = $(this).data("ui-draggable"),
-			o = i.options;
+		var o = i.options;
 
 		i.snapElements = [];
 
 		$(o.snap.constructor !== String ? ( o.snap.items || ":data(ui-draggable)" ) : o.snap).each(function() {
 			var $t = $(this),
 				$o = $t.offset();
-			if(this !== i.element[0]) {
+			if (this !== i.element[0]) {
 				i.snapElements.push({
 					item: this,
 					width: $t.outerWidth(), height: $t.outerHeight(),
@@ -2326,10 +2578,9 @@ $.ui.plugin.add("draggable", "snap", {
 		});
 
 	},
-	drag: function(event, ui) {
+	drag: function( event, ui, inst ) {
 
 		var ts, bs, ls, rs, l, r, t, b, i, first,
-			inst = $(this).data("ui-draggable"),
 			o = inst.options,
 			d = o.snapTolerance,
 			x1 = ui.offset.left, x2 = x1 + inst.helperProportions.width,
@@ -2337,60 +2588,60 @@ $.ui.plugin.add("draggable", "snap", {
 
 		for (i = inst.snapElements.length - 1; i >= 0; i--){
 
-			l = inst.snapElements[i].left;
+			l = inst.snapElements[i].left - inst.margins.left;
 			r = l + inst.snapElements[i].width;
-			t = inst.snapElements[i].top;
+			t = inst.snapElements[i].top - inst.margins.top;
 			b = t + inst.snapElements[i].height;
 
 			if ( x2 < l - d || x1 > r + d || y2 < t - d || y1 > b + d || !$.contains( inst.snapElements[ i ].item.ownerDocument, inst.snapElements[ i ].item ) ) {
-				if(inst.snapElements[i].snapping) {
+				if (inst.snapElements[i].snapping) {
 					(inst.options.snap.release && inst.options.snap.release.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
 				}
 				inst.snapElements[i].snapping = false;
 				continue;
 			}
 
-			if(o.snapMode !== "inner") {
+			if (o.snapMode !== "inner") {
 				ts = Math.abs(t - y2) <= d;
 				bs = Math.abs(b - y1) <= d;
 				ls = Math.abs(l - x2) <= d;
 				rs = Math.abs(r - x1) <= d;
-				if(ts) {
-					ui.position.top = inst._convertPositionTo("relative", { top: t - inst.helperProportions.height, left: 0 }).top - inst.margins.top;
+				if (ts) {
+					ui.position.top = inst._convertPositionTo("relative", { top: t - inst.helperProportions.height, left: 0 }).top;
 				}
-				if(bs) {
-					ui.position.top = inst._convertPositionTo("relative", { top: b, left: 0 }).top - inst.margins.top;
+				if (bs) {
+					ui.position.top = inst._convertPositionTo("relative", { top: b, left: 0 }).top;
 				}
-				if(ls) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l - inst.helperProportions.width }).left - inst.margins.left;
+				if (ls) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l - inst.helperProportions.width }).left;
 				}
-				if(rs) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r }).left - inst.margins.left;
+				if (rs) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r }).left;
 				}
 			}
 
 			first = (ts || bs || ls || rs);
 
-			if(o.snapMode !== "outer") {
+			if (o.snapMode !== "outer") {
 				ts = Math.abs(t - y1) <= d;
 				bs = Math.abs(b - y2) <= d;
 				ls = Math.abs(l - x1) <= d;
 				rs = Math.abs(r - x2) <= d;
-				if(ts) {
-					ui.position.top = inst._convertPositionTo("relative", { top: t, left: 0 }).top - inst.margins.top;
+				if (ts) {
+					ui.position.top = inst._convertPositionTo("relative", { top: t, left: 0 }).top;
 				}
-				if(bs) {
-					ui.position.top = inst._convertPositionTo("relative", { top: b - inst.helperProportions.height, left: 0 }).top - inst.margins.top;
+				if (bs) {
+					ui.position.top = inst._convertPositionTo("relative", { top: b - inst.helperProportions.height, left: 0 }).top;
 				}
-				if(ls) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l }).left - inst.margins.left;
+				if (ls) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: l }).left;
 				}
-				if(rs) {
-					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r - inst.helperProportions.width }).left - inst.margins.left;
+				if (rs) {
+					ui.position.left = inst._convertPositionTo("relative", { top: 0, left: r - inst.helperProportions.width }).left;
 				}
 			}
 
-			if(!inst.snapElements[i].snapping && (ts || bs || ls || rs || first)) {
+			if (!inst.snapElements[i].snapping && (ts || bs || ls || rs || first)) {
 				(inst.options.snap.snap && inst.options.snap.snap.call(inst.element, event, $.extend(inst._uiHash(), { snapItem: inst.snapElements[i].item })));
 			}
 			inst.snapElements[i].snapping = (ts || bs || ls || rs || first);
@@ -2401,11 +2652,11 @@ $.ui.plugin.add("draggable", "snap", {
 });
 
 $.ui.plugin.add("draggable", "stack", {
-	start: function() {
+	start: function( event, ui, instance ) {
 		var min,
-			o = this.data("ui-draggable").options,
-			group = $.makeArray($(o.stack)).sort(function(a,b) {
-				return (parseInt($(a).css("zIndex"),10) || 0) - (parseInt($(b).css("zIndex"),10) || 0);
+			o = instance.options,
+			group = $.makeArray($(o.stack)).sort(function(a, b) {
+				return (parseInt($(a).css("zIndex"), 10) || 0) - (parseInt($(b).css("zIndex"), 10) || 0);
 			});
 
 		if (!group.length) { return; }
@@ -2419,30 +2670,41 @@ $.ui.plugin.add("draggable", "stack", {
 });
 
 $.ui.plugin.add("draggable", "zIndex", {
-	start: function(event, ui) {
-		var t = $(ui.helper), o = $(this).data("ui-draggable").options;
-		if(t.css("zIndex")) {
+	start: function( event, ui, instance ) {
+		var t = $( ui.helper ),
+			o = instance.options;
+
+		if (t.css("zIndex")) {
 			o._zIndex = t.css("zIndex");
 		}
 		t.css("zIndex", o.zIndex);
 	},
-	stop: function(event, ui) {
-		var o = $(this).data("ui-draggable").options;
-		if(o._zIndex) {
+	stop: function( event, ui, instance ) {
+		var o = instance.options;
+
+		if (o._zIndex) {
 			$(ui.helper).css("zIndex", o._zIndex);
 		}
 	}
 });
 
-})(jQuery);
-(function( $, undefined ) {
+var draggable = $.ui.draggable;
 
-function isOverAxis( x, reference, size ) {
-	return ( x > reference ) && ( x < ( reference + size ) );
-}
 
-$.widget("ui.droppable", {
-	version: "1.10.3",
+/*
+ * jQuery UI Droppable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/droppable/
+ */
+
+
+$.widget( "ui.droppable", {
+	version: "1.11.4",
 	widgetEventPrefix: "drop",
 	options: {
 		accept: "*",
@@ -2462,138 +2724,165 @@ $.widget("ui.droppable", {
 	},
 	_create: function() {
 
-		var o = this.options,
+		var proportions,
+			o = this.options,
 			accept = o.accept;
 
 		this.isover = false;
 		this.isout = true;
 
-		this.accept = $.isFunction(accept) ? accept : function(d) {
-			return d.is(accept);
+		this.accept = $.isFunction( accept ) ? accept : function( d ) {
+			return d.is( accept );
 		};
 
-		//Store the droppable's proportions
-		this.proportions = { width: this.element[0].offsetWidth, height: this.element[0].offsetHeight };
+		this.proportions = function( /* valueToWrite */ ) {
+			if ( arguments.length ) {
+				// Store the droppable's proportions
+				proportions = arguments[ 0 ];
+			} else {
+				// Retrieve or derive the droppable's proportions
+				return proportions ?
+					proportions :
+					proportions = {
+						width: this.element[ 0 ].offsetWidth,
+						height: this.element[ 0 ].offsetHeight
+					};
+			}
+		};
 
+		this._addToManager( o.scope );
+
+		o.addClasses && this.element.addClass( "ui-droppable" );
+
+	},
+
+	_addToManager: function( scope ) {
 		// Add the reference and positions to the manager
-		$.ui.ddmanager.droppables[o.scope] = $.ui.ddmanager.droppables[o.scope] || [];
-		$.ui.ddmanager.droppables[o.scope].push(this);
+		$.ui.ddmanager.droppables[ scope ] = $.ui.ddmanager.droppables[ scope ] || [];
+		$.ui.ddmanager.droppables[ scope ].push( this );
+	},
 
-		(o.addClasses && this.element.addClass("ui-droppable"));
-
+	_splice: function( drop ) {
+		var i = 0;
+		for ( ; i < drop.length; i++ ) {
+			if ( drop[ i ] === this ) {
+				drop.splice( i, 1 );
+			}
+		}
 	},
 
 	_destroy: function() {
-		var i = 0,
-			drop = $.ui.ddmanager.droppables[this.options.scope];
+		var drop = $.ui.ddmanager.droppables[ this.options.scope ];
 
-		for ( ; i < drop.length; i++ ) {
-			if ( drop[i] === this ) {
-				drop.splice(i, 1);
-			}
-		}
+		this._splice( drop );
 
-		this.element.removeClass("ui-droppable ui-droppable-disabled");
+		this.element.removeClass( "ui-droppable ui-droppable-disabled" );
 	},
 
-	_setOption: function(key, value) {
+	_setOption: function( key, value ) {
 
-		if(key === "accept") {
-			this.accept = $.isFunction(value) ? value : function(d) {
-				return d.is(value);
+		if ( key === "accept" ) {
+			this.accept = $.isFunction( value ) ? value : function( d ) {
+				return d.is( value );
 			};
+		} else if ( key === "scope" ) {
+			var drop = $.ui.ddmanager.droppables[ this.options.scope ];
+
+			this._splice( drop );
+			this._addToManager( value );
 		}
-		$.Widget.prototype._setOption.apply(this, arguments);
+
+		this._super( key, value );
 	},
 
-	_activate: function(event) {
+	_activate: function( event ) {
 		var draggable = $.ui.ddmanager.current;
-		if(this.options.activeClass) {
-			this.element.addClass(this.options.activeClass);
+		if ( this.options.activeClass ) {
+			this.element.addClass( this.options.activeClass );
 		}
-		if(draggable){
-			this._trigger("activate", event, this.ui(draggable));
+		if ( draggable ){
+			this._trigger( "activate", event, this.ui( draggable ) );
 		}
 	},
 
-	_deactivate: function(event) {
+	_deactivate: function( event ) {
 		var draggable = $.ui.ddmanager.current;
-		if(this.options.activeClass) {
-			this.element.removeClass(this.options.activeClass);
+		if ( this.options.activeClass ) {
+			this.element.removeClass( this.options.activeClass );
 		}
-		if(draggable){
-			this._trigger("deactivate", event, this.ui(draggable));
+		if ( draggable ){
+			this._trigger( "deactivate", event, this.ui( draggable ) );
 		}
 	},
 
-	_over: function(event) {
-
-		var draggable = $.ui.ddmanager.current;
-
-		// Bail if draggable and droppable are same element
-		if (!draggable || (draggable.currentItem || draggable.element)[0] === this.element[0]) {
-			return;
-		}
-
-		if (this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-			if(this.options.hoverClass) {
-				this.element.addClass(this.options.hoverClass);
-			}
-			this._trigger("over", event, this.ui(draggable));
-		}
-
-	},
-
-	_out: function(event) {
+	_over: function( event ) {
 
 		var draggable = $.ui.ddmanager.current;
 
 		// Bail if draggable and droppable are same element
-		if (!draggable || (draggable.currentItem || draggable.element)[0] === this.element[0]) {
+		if ( !draggable || ( draggable.currentItem || draggable.element )[ 0 ] === this.element[ 0 ] ) {
 			return;
 		}
 
-		if (this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-			if(this.options.hoverClass) {
-				this.element.removeClass(this.options.hoverClass);
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+			if ( this.options.hoverClass ) {
+				this.element.addClass( this.options.hoverClass );
 			}
-			this._trigger("out", event, this.ui(draggable));
+			this._trigger( "over", event, this.ui( draggable ) );
 		}
 
 	},
 
-	_drop: function(event,custom) {
+	_out: function( event ) {
+
+		var draggable = $.ui.ddmanager.current;
+
+		// Bail if draggable and droppable are same element
+		if ( !draggable || ( draggable.currentItem || draggable.element )[ 0 ] === this.element[ 0 ] ) {
+			return;
+		}
+
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+			if ( this.options.hoverClass ) {
+				this.element.removeClass( this.options.hoverClass );
+			}
+			this._trigger( "out", event, this.ui( draggable ) );
+		}
+
+	},
+
+	_drop: function( event, custom ) {
 
 		var draggable = custom || $.ui.ddmanager.current,
 			childrenIntersection = false;
 
 		// Bail if draggable and droppable are same element
-		if (!draggable || (draggable.currentItem || draggable.element)[0] === this.element[0]) {
+		if ( !draggable || ( draggable.currentItem || draggable.element )[ 0 ] === this.element[ 0 ] ) {
 			return false;
 		}
 
-		this.element.find(":data(ui-droppable)").not(".ui-draggable-dragging").each(function() {
-			var inst = $.data(this, "ui-droppable");
-			if(
+		this.element.find( ":data(ui-droppable)" ).not( ".ui-draggable-dragging" ).each(function() {
+			var inst = $( this ).droppable( "instance" );
+			if (
 				inst.options.greedy &&
 				!inst.options.disabled &&
 				inst.options.scope === draggable.options.scope &&
-				inst.accept.call(inst.element[0], (draggable.currentItem || draggable.element)) &&
-				$.ui.intersect(draggable, $.extend(inst, { offset: inst.element.offset() }), inst.options.tolerance)
+				inst.accept.call( inst.element[ 0 ], ( draggable.currentItem || draggable.element ) ) &&
+				$.ui.intersect( draggable, $.extend( inst, { offset: inst.element.offset() } ), inst.options.tolerance, event )
 			) { childrenIntersection = true; return false; }
 		});
-		if(childrenIntersection) {
+		if ( childrenIntersection ) {
 			return false;
 		}
 
-		if(this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
-			if(this.options.activeClass) {
-				this.element.removeClass(this.options.activeClass);
+		if ( this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
+			if ( this.options.activeClass ) {
+				this.element.removeClass( this.options.activeClass );
 			}
-			if(this.options.hoverClass) {
-				this.element.removeClass(this.options.hoverClass);
+			if ( this.options.hoverClass ) {
+				this.element.removeClass( this.options.hoverClass );
 			}
-			this._trigger("drop", event, this.ui(draggable));
+			this._trigger( "drop", event, this.ui( draggable ) );
 			return this.element;
 		}
 
@@ -2601,9 +2890,9 @@ $.widget("ui.droppable", {
 
 	},
 
-	ui: function(c) {
+	ui: function( c ) {
 		return {
-			draggable: (c.currentItem || c.element),
+			draggable: ( c.currentItem || c.element ),
 			helper: c.helper,
 			position: c.position,
 			offset: c.positionAbs
@@ -2612,45 +2901,51 @@ $.widget("ui.droppable", {
 
 });
 
-$.ui.intersect = function(draggable, droppable, toleranceMode) {
-
-	if (!droppable.offset) {
-		return false;
+$.ui.intersect = (function() {
+	function isOverAxis( x, reference, size ) {
+		return ( x >= reference ) && ( x < ( reference + size ) );
 	}
 
-	var draggableLeft, draggableTop,
-		x1 = (draggable.positionAbs || draggable.position.absolute).left, x2 = x1 + draggable.helperProportions.width,
-		y1 = (draggable.positionAbs || draggable.position.absolute).top, y2 = y1 + draggable.helperProportions.height,
-		l = droppable.offset.left, r = l + droppable.proportions.width,
-		t = droppable.offset.top, b = t + droppable.proportions.height;
+	return function( draggable, droppable, toleranceMode, event ) {
 
-	switch (toleranceMode) {
+		if ( !droppable.offset ) {
+			return false;
+		}
+
+		var x1 = ( draggable.positionAbs || draggable.position.absolute ).left + draggable.margins.left,
+			y1 = ( draggable.positionAbs || draggable.position.absolute ).top + draggable.margins.top,
+			x2 = x1 + draggable.helperProportions.width,
+			y2 = y1 + draggable.helperProportions.height,
+			l = droppable.offset.left,
+			t = droppable.offset.top,
+			r = l + droppable.proportions().width,
+			b = t + droppable.proportions().height;
+
+		switch ( toleranceMode ) {
 		case "fit":
-			return (l <= x1 && x2 <= r && t <= y1 && y2 <= b);
+			return ( l <= x1 && x2 <= r && t <= y1 && y2 <= b );
 		case "intersect":
-			return (l < x1 + (draggable.helperProportions.width / 2) && // Right Half
-				x2 - (draggable.helperProportions.width / 2) < r && // Left Half
-				t < y1 + (draggable.helperProportions.height / 2) && // Bottom Half
-				y2 - (draggable.helperProportions.height / 2) < b ); // Top Half
+			return ( l < x1 + ( draggable.helperProportions.width / 2 ) && // Right Half
+				x2 - ( draggable.helperProportions.width / 2 ) < r && // Left Half
+				t < y1 + ( draggable.helperProportions.height / 2 ) && // Bottom Half
+				y2 - ( draggable.helperProportions.height / 2 ) < b ); // Top Half
 		case "pointer":
-			draggableLeft = ((draggable.positionAbs || draggable.position.absolute).left + (draggable.clickOffset || draggable.offset.click).left);
-			draggableTop = ((draggable.positionAbs || draggable.position.absolute).top + (draggable.clickOffset || draggable.offset.click).top);
-			return isOverAxis( draggableTop, t, droppable.proportions.height ) && isOverAxis( draggableLeft, l, droppable.proportions.width );
+			return isOverAxis( event.pageY, t, droppable.proportions().height ) && isOverAxis( event.pageX, l, droppable.proportions().width );
 		case "touch":
 			return (
-				(y1 >= t && y1 <= b) ||	// Top edge touching
-				(y2 >= t && y2 <= b) ||	// Bottom edge touching
-				(y1 < t && y2 > b)		// Surrounded vertically
+				( y1 >= t && y1 <= b ) || // Top edge touching
+				( y2 >= t && y2 <= b ) || // Bottom edge touching
+				( y1 < t && y2 > b ) // Surrounded vertically
 			) && (
-				(x1 >= l && x1 <= r) ||	// Left edge touching
-				(x2 >= l && x2 <= r) ||	// Right edge touching
-				(x1 < l && x2 > r)		// Surrounded horizontally
+				( x1 >= l && x1 <= r ) || // Left edge touching
+				( x2 >= l && x2 <= r ) || // Right edge touching
+				( x1 < l && x2 > r ) // Surrounded horizontally
 			);
 		default:
 			return false;
 		}
-
-};
+	};
+})();
 
 /*
 	This manager tracks offsets of draggables and droppables
@@ -2658,61 +2953,61 @@ $.ui.intersect = function(draggable, droppable, toleranceMode) {
 $.ui.ddmanager = {
 	current: null,
 	droppables: { "default": [] },
-	prepareOffsets: function(t, event) {
+	prepareOffsets: function( t, event ) {
 
 		var i, j,
-			m = $.ui.ddmanager.droppables[t.options.scope] || [],
+			m = $.ui.ddmanager.droppables[ t.options.scope ] || [],
 			type = event ? event.type : null, // workaround for #2317
-			list = (t.currentItem || t.element).find(":data(ui-droppable)").addBack();
+			list = ( t.currentItem || t.element ).find( ":data(ui-droppable)" ).addBack();
 
-		droppablesLoop: for (i = 0; i < m.length; i++) {
+		droppablesLoop: for ( i = 0; i < m.length; i++ ) {
 
-			//No disabled and non-accepted
-			if(m[i].options.disabled || (t && !m[i].accept.call(m[i].element[0],(t.currentItem || t.element)))) {
+			// No disabled and non-accepted
+			if ( m[ i ].options.disabled || ( t && !m[ i ].accept.call( m[ i ].element[ 0 ], ( t.currentItem || t.element ) ) ) ) {
 				continue;
 			}
 
 			// Filter out elements in the current dragged item
-			for (j=0; j < list.length; j++) {
-				if(list[j] === m[i].element[0]) {
-					m[i].proportions.height = 0;
+			for ( j = 0; j < list.length; j++ ) {
+				if ( list[ j ] === m[ i ].element[ 0 ] ) {
+					m[ i ].proportions().height = 0;
 					continue droppablesLoop;
 				}
 			}
 
-			m[i].visible = m[i].element.css("display") !== "none";
-			if(!m[i].visible) {
+			m[ i ].visible = m[ i ].element.css( "display" ) !== "none";
+			if ( !m[ i ].visible ) {
 				continue;
 			}
 
-			//Activate the droppable if used directly from draggables
-			if(type === "mousedown") {
-				m[i]._activate.call(m[i], event);
+			// Activate the droppable if used directly from draggables
+			if ( type === "mousedown" ) {
+				m[ i ]._activate.call( m[ i ], event );
 			}
 
-			m[i].offset = m[i].element.offset();
-			m[i].proportions = { width: m[i].element[0].offsetWidth, height: m[i].element[0].offsetHeight };
+			m[ i ].offset = m[ i ].element.offset();
+			m[ i ].proportions({ width: m[ i ].element[ 0 ].offsetWidth, height: m[ i ].element[ 0 ].offsetHeight });
 
 		}
 
 	},
-	drop: function(draggable, event) {
+	drop: function( draggable, event ) {
 
 		var dropped = false;
 		// Create a copy of the droppables in case the list changes during the drop (#9116)
-		$.each(($.ui.ddmanager.droppables[draggable.options.scope] || []).slice(), function() {
+		$.each( ( $.ui.ddmanager.droppables[ draggable.options.scope ] || [] ).slice(), function() {
 
-			if(!this.options) {
+			if ( !this.options ) {
 				return;
 			}
-			if (!this.options.disabled && this.visible && $.ui.intersect(draggable, this, this.options.tolerance)) {
-				dropped = this._drop.call(this, event) || dropped;
+			if ( !this.options.disabled && this.visible && $.ui.intersect( draggable, this, this.options.tolerance, event ) ) {
+				dropped = this._drop.call( this, event ) || dropped;
 			}
 
-			if (!this.options.disabled && this.visible && this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
+			if ( !this.options.disabled && this.visible && this.accept.call( this.element[ 0 ], ( draggable.currentItem || draggable.element ) ) ) {
 				this.isout = true;
 				this.isover = false;
-				this._deactivate.call(this, event);
+				this._deactivate.call( this, event );
 			}
 
 		});
@@ -2720,89 +3015,93 @@ $.ui.ddmanager = {
 
 	},
 	dragStart: function( draggable, event ) {
-		//Listen for scrolling so that if the dragging causes scrolling the position of the droppables can be recalculated (see #5003)
+		// Listen for scrolling so that if the dragging causes scrolling the position of the droppables can be recalculated (see #5003)
 		draggable.element.parentsUntil( "body" ).bind( "scroll.droppable", function() {
-			if( !draggable.options.refreshPositions ) {
+			if ( !draggable.options.refreshPositions ) {
 				$.ui.ddmanager.prepareOffsets( draggable, event );
 			}
 		});
 	},
-	drag: function(draggable, event) {
+	drag: function( draggable, event ) {
 
-		//If you have a highly dynamic page, you might try this option. It renders positions every time you move the mouse.
-		if(draggable.options.refreshPositions) {
-			$.ui.ddmanager.prepareOffsets(draggable, event);
+		// If you have a highly dynamic page, you might try this option. It renders positions every time you move the mouse.
+		if ( draggable.options.refreshPositions ) {
+			$.ui.ddmanager.prepareOffsets( draggable, event );
 		}
 
-		//Run through all droppables and check their positions based on specific tolerance options
-		$.each($.ui.ddmanager.droppables[draggable.options.scope] || [], function() {
+		// Run through all droppables and check their positions based on specific tolerance options
+		$.each( $.ui.ddmanager.droppables[ draggable.options.scope ] || [], function() {
 
-			if(this.options.disabled || this.greedyChild || !this.visible) {
+			if ( this.options.disabled || this.greedyChild || !this.visible ) {
 				return;
 			}
 
 			var parentInstance, scope, parent,
-				intersects = $.ui.intersect(draggable, this, this.options.tolerance),
-				c = !intersects && this.isover ? "isout" : (intersects && !this.isover ? "isover" : null);
-			if(!c) {
+				intersects = $.ui.intersect( draggable, this, this.options.tolerance, event ),
+				c = !intersects && this.isover ? "isout" : ( intersects && !this.isover ? "isover" : null );
+			if ( !c ) {
 				return;
 			}
 
-			if (this.options.greedy) {
+			if ( this.options.greedy ) {
 				// find droppable parents with same scope
 				scope = this.options.scope;
-				parent = this.element.parents(":data(ui-droppable)").filter(function () {
-					return $.data(this, "ui-droppable").options.scope === scope;
+				parent = this.element.parents( ":data(ui-droppable)" ).filter(function() {
+					return $( this ).droppable( "instance" ).options.scope === scope;
 				});
 
-				if (parent.length) {
-					parentInstance = $.data(parent[0], "ui-droppable");
-					parentInstance.greedyChild = (c === "isover");
+				if ( parent.length ) {
+					parentInstance = $( parent[ 0 ] ).droppable( "instance" );
+					parentInstance.greedyChild = ( c === "isover" );
 				}
 			}
 
 			// we just moved into a greedy child
-			if (parentInstance && c === "isover") {
+			if ( parentInstance && c === "isover" ) {
 				parentInstance.isover = false;
 				parentInstance.isout = true;
-				parentInstance._out.call(parentInstance, event);
+				parentInstance._out.call( parentInstance, event );
 			}
 
-			this[c] = true;
+			this[ c ] = true;
 			this[c === "isout" ? "isover" : "isout"] = false;
-			this[c === "isover" ? "_over" : "_out"].call(this, event);
+			this[c === "isover" ? "_over" : "_out"].call( this, event );
 
 			// we just moved out of a greedy child
-			if (parentInstance && c === "isout") {
+			if ( parentInstance && c === "isout" ) {
 				parentInstance.isout = false;
 				parentInstance.isover = true;
-				parentInstance._over.call(parentInstance, event);
+				parentInstance._over.call( parentInstance, event );
 			}
 		});
 
 	},
 	dragStop: function( draggable, event ) {
 		draggable.element.parentsUntil( "body" ).unbind( "scroll.droppable" );
-		//Call prepareOffsets one final time since IE does not fire return scroll events when overflow was caused by drag (see #5003)
-		if( !draggable.options.refreshPositions ) {
+		// Call prepareOffsets one final time since IE does not fire return scroll events when overflow was caused by drag (see #5003)
+		if ( !draggable.options.refreshPositions ) {
 			$.ui.ddmanager.prepareOffsets( draggable, event );
 		}
 	}
 };
 
-})(jQuery);
-(function( $, undefined ) {
+var droppable = $.ui.droppable;
 
-function num(v) {
-	return parseInt(v, 10) || 0;
-}
 
-function isNumber(value) {
-	return !isNaN(parseInt(value, 10));
-}
+/*
+ * jQuery UI Resizable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/resizable/
+ */
+
 
 $.widget("ui.resizable", $.ui.mouse, {
-	version: "1.10.3",
+	version: "1.11.4",
 	widgetEventPrefix: "resize",
 	options: {
 		alsoResize: false,
@@ -2828,6 +3127,37 @@ $.widget("ui.resizable", $.ui.mouse, {
 		start: null,
 		stop: null
 	},
+
+	_num: function( value ) {
+		return parseInt( value, 10 ) || 0;
+	},
+
+	_isNumber: function( value ) {
+		return !isNaN( parseInt( value, 10 ) );
+	},
+
+	_hasScroll: function( el, a ) {
+
+		if ( $( el ).css( "overflow" ) === "hidden") {
+			return false;
+		}
+
+		var scroll = ( a && a === "left" ) ? "scrollLeft" : "scrollTop",
+			has = false;
+
+		if ( el[ scroll ] > 0 ) {
+			return true;
+		}
+
+		// TODO: determine which cases actually cause this to happen
+		// if the element doesn't have the scroll set, see if it's possible to
+		// set the scroll
+		el[ scroll ] = 1;
+		has = ( el[ scroll ] > 0 );
+		el[ scroll ] = 0;
+		return has;
+	},
+
 	_create: function() {
 
 		var n, i, handle, axis, hname,
@@ -2843,10 +3173,9 @@ $.widget("ui.resizable", $.ui.mouse, {
 			_helper: o.helper || o.ghost || o.animate ? o.helper || "ui-resizable-helper" : null
 		});
 
-		//Wrap the element if it cannot hold child nodes
-		if(this.element[0].nodeName.match(/canvas|textarea|input|select|button|img/i)) {
+		// Wrap the element if it cannot hold child nodes
+		if (this.element[0].nodeName.match(/^(canvas|textarea|input|select|button|img)$/i)) {
 
-			//Create a wrapper element and set the wrapper to the new current internal element
 			this.element.wrap(
 				$("<div class='ui-wrapper' style='overflow: hidden;'></div>").css({
 					position: this.element.css("position"),
@@ -2857,34 +3186,57 @@ $.widget("ui.resizable", $.ui.mouse, {
 				})
 			);
 
-			//Overwrite the original this.element
 			this.element = this.element.parent().data(
-				"ui-resizable", this.element.data("ui-resizable")
+				"ui-resizable", this.element.resizable( "instance" )
 			);
 
 			this.elementIsWrapper = true;
 
-			//Move margins to the wrapper
-			this.element.css({ marginLeft: this.originalElement.css("marginLeft"), marginTop: this.originalElement.css("marginTop"), marginRight: this.originalElement.css("marginRight"), marginBottom: this.originalElement.css("marginBottom") });
-			this.originalElement.css({ marginLeft: 0, marginTop: 0, marginRight: 0, marginBottom: 0});
-
-			//Prevent Safari textarea resize
+			this.element.css({
+				marginLeft: this.originalElement.css("marginLeft"),
+				marginTop: this.originalElement.css("marginTop"),
+				marginRight: this.originalElement.css("marginRight"),
+				marginBottom: this.originalElement.css("marginBottom")
+			});
+			this.originalElement.css({
+				marginLeft: 0,
+				marginTop: 0,
+				marginRight: 0,
+				marginBottom: 0
+			});
+			// support: Safari
+			// Prevent Safari textarea resize
 			this.originalResizeStyle = this.originalElement.css("resize");
 			this.originalElement.css("resize", "none");
 
-			//Push the actual element to our proportionallyResize internal array
-			this._proportionallyResizeElements.push(this.originalElement.css({ position: "static", zoom: 1, display: "block" }));
+			this._proportionallyResizeElements.push( this.originalElement.css({
+				position: "static",
+				zoom: 1,
+				display: "block"
+			}) );
 
+			// support: IE9
 			// avoid IE jump (hard set the margin)
 			this.originalElement.css({ margin: this.originalElement.css("margin") });
 
-			// fix handlers offset
 			this._proportionallyResize();
-
 		}
 
-		this.handles = o.handles || (!$(".ui-resizable-handle", this.element).length ? "e,s,se" : { n: ".ui-resizable-n", e: ".ui-resizable-e", s: ".ui-resizable-s", w: ".ui-resizable-w", se: ".ui-resizable-se", sw: ".ui-resizable-sw", ne: ".ui-resizable-ne", nw: ".ui-resizable-nw" });
-		if(this.handles.constructor === String) {
+		this.handles = o.handles ||
+			( !$(".ui-resizable-handle", this.element).length ?
+				"e,s,se" : {
+					n: ".ui-resizable-n",
+					e: ".ui-resizable-e",
+					s: ".ui-resizable-s",
+					w: ".ui-resizable-w",
+					se: ".ui-resizable-se",
+					sw: ".ui-resizable-sw",
+					ne: ".ui-resizable-ne",
+					nw: ".ui-resizable-nw"
+				} );
+
+		this._handles = $();
+		if ( this.handles.constructor === String ) {
 
 			if ( this.handles === "all") {
 				this.handles = "n,e,s,w,se,sw,ne,nw";
@@ -2893,22 +3245,20 @@ $.widget("ui.resizable", $.ui.mouse, {
 			n = this.handles.split(",");
 			this.handles = {};
 
-			for(i = 0; i < n.length; i++) {
+			for (i = 0; i < n.length; i++) {
 
 				handle = $.trim(n[i]);
-				hname = "ui-resizable-"+handle;
+				hname = "ui-resizable-" + handle;
 				axis = $("<div class='ui-resizable-handle " + hname + "'></div>");
 
-				// Apply zIndex to all handles - see #7960
 				axis.css({ zIndex: o.zIndex });
 
-				//TODO : What's going on here?
+				// TODO : What's going on here?
 				if ("se" === handle) {
 					axis.addClass("ui-icon ui-icon-gripsmall-diagonal-se");
 				}
 
-				//Insert into internal handles object and append to element
-				this.handles[handle] = ".ui-resizable-"+handle;
+				this.handles[handle] = ".ui-resizable-" + handle;
 				this.element.append(axis);
 			}
 
@@ -2920,21 +3270,21 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 			target = target || this.element;
 
-			for(i in this.handles) {
+			for (i in this.handles) {
 
-				if(this.handles[i].constructor === String) {
-					this.handles[i] = $(this.handles[i], this.element).show();
+				if (this.handles[i].constructor === String) {
+					this.handles[i] = this.element.children( this.handles[ i ] ).first().show();
+				} else if ( this.handles[ i ].jquery || this.handles[ i ].nodeType ) {
+					this.handles[ i ] = $( this.handles[ i ] );
+					this._on( this.handles[ i ], { "mousedown": that._mouseDown });
 				}
 
-				//Apply pad to wrapper element, needed to fix axis position (textarea, inputs, scrolls)
-				if (this.elementIsWrapper && this.originalElement[0].nodeName.match(/textarea|input|select|button/i)) {
+				if (this.elementIsWrapper && this.originalElement[0].nodeName.match(/^(textarea|input|select|button)$/i)) {
 
 					axis = $(this.handles[i], this.element);
 
-					//Checking the correct pad and border
 					padWrapper = /sw|ne|nw|se|n|s/.test(i) ? axis.outerHeight() : axis.outerWidth();
 
-					//The padding type i have to apply...
 					padPos = [ "padding",
 						/ne|nw|n/.test(i) ? "Top" :
 						/se|sw|s/.test(i) ? "Bottom" :
@@ -2943,34 +3293,27 @@ $.widget("ui.resizable", $.ui.mouse, {
 					target.css(padPos, padWrapper);
 
 					this._proportionallyResize();
-
 				}
 
-				//TODO: What's that good for? There's not anything to be executed left
-				if(!$(this.handles[i]).length) {
-					continue;
-				}
+				this._handles = this._handles.add( this.handles[ i ] );
 			}
 		};
 
-		//TODO: make renderAxis a prototype function
+		// TODO: make renderAxis a prototype function
 		this._renderAxis(this.element);
 
-		this._handles = $(".ui-resizable-handle", this.element)
-			.disableSelection();
+		this._handles = this._handles.add( this.element.find( ".ui-resizable-handle" ) );
+		this._handles.disableSelection();
 
-		//Matching axis name
 		this._handles.mouseover(function() {
 			if (!that.resizing) {
 				if (this.className) {
 					axis = this.className.match(/ui-resizable-(se|sw|ne|nw|n|e|s|w)/i);
 				}
-				//Axis, default = se
 				that.axis = axis && axis[1] ? axis[1] : "se";
 			}
 		});
 
-		//If we want to auto hide the elements
 		if (o.autoHide) {
 			this._handles.hide();
 			$(this.element)
@@ -2982,7 +3325,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 					$(this).removeClass("ui-resizable-autohide");
 					that._handles.show();
 				})
-				.mouseleave(function(){
+				.mouseleave(function() {
 					if (o.disabled) {
 						return;
 					}
@@ -2993,9 +3336,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 				});
 		}
 
-		//Initialize the mouse interaction
 		this._mouseInit();
-
 	},
 
 	_destroy: function() {
@@ -3004,11 +3345,16 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 		var wrapper,
 			_destroy = function(exp) {
-				$(exp).removeClass("ui-resizable ui-resizable-disabled ui-resizable-resizing")
-					.removeData("resizable").removeData("ui-resizable").unbind(".resizable").find(".ui-resizable-handle").remove();
+				$(exp)
+					.removeClass("ui-resizable ui-resizable-disabled ui-resizable-resizing")
+					.removeData("resizable")
+					.removeData("ui-resizable")
+					.unbind(".resizable")
+					.find(".ui-resizable-handle")
+						.remove();
 			};
 
-		//TODO: Unwrap at same DOM position
+		// TODO: Unwrap at same DOM position
 		if (this.elementIsWrapper) {
 			_destroy(this.element);
 			wrapper = this.element;
@@ -3046,39 +3392,50 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 		var curleft, curtop, cursor,
 			o = this.options,
-			iniPos = this.element.position(),
 			el = this.element;
 
 		this.resizing = true;
 
-		// bugfix for http://dev.jquery.com/ticket/1749
-		if ( (/absolute/).test( el.css("position") ) ) {
-			el.css({ position: "absolute", top: el.css("top"), left: el.css("left") });
-		} else if (el.is(".ui-draggable")) {
-			el.css({ position: "absolute", top: iniPos.top, left: iniPos.left });
-		}
-
 		this._renderProxy();
 
-		curleft = num(this.helper.css("left"));
-		curtop = num(this.helper.css("top"));
+		curleft = this._num(this.helper.css("left"));
+		curtop = this._num(this.helper.css("top"));
 
 		if (o.containment) {
 			curleft += $(o.containment).scrollLeft() || 0;
 			curtop += $(o.containment).scrollTop() || 0;
 		}
 
-		//Store needed variables
 		this.offset = this.helper.offset();
 		this.position = { left: curleft, top: curtop };
-		this.size = this._helper ? { width: el.outerWidth(), height: el.outerHeight() } : { width: el.width(), height: el.height() };
-		this.originalSize = this._helper ? { width: el.outerWidth(), height: el.outerHeight() } : { width: el.width(), height: el.height() };
+
+		this.size = this._helper ? {
+				width: this.helper.width(),
+				height: this.helper.height()
+			} : {
+				width: el.width(),
+				height: el.height()
+			};
+
+		this.originalSize = this._helper ? {
+				width: el.outerWidth(),
+				height: el.outerHeight()
+			} : {
+				width: el.width(),
+				height: el.height()
+			};
+
+		this.sizeDiff = {
+			width: el.outerWidth() - el.width(),
+			height: el.outerHeight() - el.height()
+		};
+
 		this.originalPosition = { left: curleft, top: curtop };
-		this.sizeDiff = { width: el.outerWidth() - el.width(), height: el.outerHeight() - el.height() };
 		this.originalMousePosition = { left: event.pageX, top: event.pageY };
 
-		//Aspect Ratio
-		this.aspectRatio = (typeof o.aspectRatio === "number") ? o.aspectRatio : ((this.originalSize.width / this.originalSize.height) || 1);
+		this.aspectRatio = (typeof o.aspectRatio === "number") ?
+			o.aspectRatio :
+			((this.originalSize.width / this.originalSize.height) || 1);
 
 		cursor = $(".ui-resizable-" + this.axis).css("cursor");
 		$("body").css("cursor", cursor === "auto" ? this.axis + "-resize" : cursor);
@@ -3090,27 +3447,21 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 	_mouseDrag: function(event) {
 
-		//Increase performance, avoid regex
-		var data,
-			el = this.helper, props = {},
+		var data, props,
 			smp = this.originalMousePosition,
 			a = this.axis,
-			prevTop = this.position.top,
-			prevLeft = this.position.left,
-			prevWidth = this.size.width,
-			prevHeight = this.size.height,
-			dx = (event.pageX-smp.left)||0,
-			dy = (event.pageY-smp.top)||0,
+			dx = (event.pageX - smp.left) || 0,
+			dy = (event.pageY - smp.top) || 0,
 			trigger = this._change[a];
+
+		this._updatePrevProperties();
 
 		if (!trigger) {
 			return false;
 		}
 
-		// Calculate the attrs that will be change
-		data = trigger.apply(this, [event, dx, dy]);
+		data = trigger.apply(this, [ event, dx, dy ]);
 
-		// Put this in the mouseDrag handler since the user can start pressing shift while resizing
 		this._updateVirtualBoundaries(event.shiftKey);
 		if (this._aspectRatio || event.shiftKey) {
 			data = this._updateRatio(data, event);
@@ -3120,30 +3471,18 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 		this._updateCache(data);
 
-		// plugins callbacks need to be called first
 		this._propagate("resize", event);
 
-		if (this.position.top !== prevTop) {
-			props.top = this.position.top + "px";
-		}
-		if (this.position.left !== prevLeft) {
-			props.left = this.position.left + "px";
-		}
-		if (this.size.width !== prevWidth) {
-			props.width = this.size.width + "px";
-		}
-		if (this.size.height !== prevHeight) {
-			props.height = this.size.height + "px";
-		}
-		el.css(props);
+		props = this._applyChanges();
 
-		if (!this._helper && this._proportionallyResizeElements.length) {
+		if ( !this._helper && this._proportionallyResizeElements.length ) {
 			this._proportionallyResize();
 		}
 
-		// Call the user callback if the element was resized
-		if ( ! $.isEmptyObject(props) ) {
-			this._trigger("resize", event, this.ui());
+		if ( !$.isEmptyObject( props ) ) {
+			this._updatePrevProperties();
+			this._trigger( "resize", event, this.ui() );
+			this._applyChanges();
 		}
 
 		return false;
@@ -3155,16 +3494,21 @@ $.widget("ui.resizable", $.ui.mouse, {
 		var pr, ista, soffseth, soffsetw, s, left, top,
 			o = this.options, that = this;
 
-		if(this._helper) {
+		if (this._helper) {
 
 			pr = this._proportionallyResizeElements;
 			ista = pr.length && (/textarea/i).test(pr[0].nodeName);
-			soffseth = ista && $.ui.hasScroll(pr[0], "left") /* TODO - jump height */ ? 0 : that.sizeDiff.height;
+			soffseth = ista && this._hasScroll(pr[0], "left") ? 0 : that.sizeDiff.height;
 			soffsetw = ista ? 0 : that.sizeDiff.width;
 
-			s = { width: (that.helper.width()  - soffsetw), height: (that.helper.height() - soffseth) };
-			left = (parseInt(that.element.css("left"), 10) + (that.position.left - that.originalPosition.left)) || null;
-			top = (parseInt(that.element.css("top"), 10) + (that.position.top - that.originalPosition.top)) || null;
+			s = {
+				width: (that.helper.width()  - soffsetw),
+				height: (that.helper.height() - soffseth)
+			};
+			left = (parseInt(that.element.css("left"), 10) +
+				(that.position.left - that.originalPosition.left)) || null;
+			top = (parseInt(that.element.css("top"), 10) +
+				(that.position.top - that.originalPosition.top)) || null;
 
 			if (!o.animate) {
 				this.element.css($.extend(s, { top: top, left: left }));
@@ -3192,35 +3536,65 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 	},
 
+	_updatePrevProperties: function() {
+		this.prevPosition = {
+			top: this.position.top,
+			left: this.position.left
+		};
+		this.prevSize = {
+			width: this.size.width,
+			height: this.size.height
+		};
+	},
+
+	_applyChanges: function() {
+		var props = {};
+
+		if ( this.position.top !== this.prevPosition.top ) {
+			props.top = this.position.top + "px";
+		}
+		if ( this.position.left !== this.prevPosition.left ) {
+			props.left = this.position.left + "px";
+		}
+		if ( this.size.width !== this.prevSize.width ) {
+			props.width = this.size.width + "px";
+		}
+		if ( this.size.height !== this.prevSize.height ) {
+			props.height = this.size.height + "px";
+		}
+
+		this.helper.css( props );
+
+		return props;
+	},
+
 	_updateVirtualBoundaries: function(forceAspectRatio) {
 		var pMinWidth, pMaxWidth, pMinHeight, pMaxHeight, b,
 			o = this.options;
 
 		b = {
-			minWidth: isNumber(o.minWidth) ? o.minWidth : 0,
-			maxWidth: isNumber(o.maxWidth) ? o.maxWidth : Infinity,
-			minHeight: isNumber(o.minHeight) ? o.minHeight : 0,
-			maxHeight: isNumber(o.maxHeight) ? o.maxHeight : Infinity
+			minWidth: this._isNumber(o.minWidth) ? o.minWidth : 0,
+			maxWidth: this._isNumber(o.maxWidth) ? o.maxWidth : Infinity,
+			minHeight: this._isNumber(o.minHeight) ? o.minHeight : 0,
+			maxHeight: this._isNumber(o.maxHeight) ? o.maxHeight : Infinity
 		};
 
-		if(this._aspectRatio || forceAspectRatio) {
-			// We want to create an enclosing box whose aspect ration is the requested one
-			// First, compute the "projected" size for each dimension based on the aspect ratio and other dimension
+		if (this._aspectRatio || forceAspectRatio) {
 			pMinWidth = b.minHeight * this.aspectRatio;
 			pMinHeight = b.minWidth / this.aspectRatio;
 			pMaxWidth = b.maxHeight * this.aspectRatio;
 			pMaxHeight = b.maxWidth / this.aspectRatio;
 
-			if(pMinWidth > b.minWidth) {
+			if (pMinWidth > b.minWidth) {
 				b.minWidth = pMinWidth;
 			}
-			if(pMinHeight > b.minHeight) {
+			if (pMinHeight > b.minHeight) {
 				b.minHeight = pMinHeight;
 			}
-			if(pMaxWidth < b.maxWidth) {
+			if (pMaxWidth < b.maxWidth) {
 				b.maxWidth = pMaxWidth;
 			}
-			if(pMaxHeight < b.maxHeight) {
+			if (pMaxHeight < b.maxHeight) {
 				b.maxHeight = pMaxHeight;
 			}
 		}
@@ -3229,16 +3603,16 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 	_updateCache: function(data) {
 		this.offset = this.helper.offset();
-		if (isNumber(data.left)) {
+		if (this._isNumber(data.left)) {
 			this.position.left = data.left;
 		}
-		if (isNumber(data.top)) {
+		if (this._isNumber(data.top)) {
 			this.position.top = data.top;
 		}
-		if (isNumber(data.height)) {
+		if (this._isNumber(data.height)) {
 			this.size.height = data.height;
 		}
-		if (isNumber(data.width)) {
+		if (this._isNumber(data.width)) {
 			this.size.width = data.width;
 		}
 	},
@@ -3249,9 +3623,9 @@ $.widget("ui.resizable", $.ui.mouse, {
 			csize = this.size,
 			a = this.axis;
 
-		if (isNumber(data.height)) {
+		if (this._isNumber(data.height)) {
 			data.width = (data.height * this.aspectRatio);
-		} else if (isNumber(data.width)) {
+		} else if (this._isNumber(data.width)) {
 			data.height = (data.width / this.aspectRatio);
 		}
 
@@ -3271,8 +3645,10 @@ $.widget("ui.resizable", $.ui.mouse, {
 
 		var o = this._vBoundaries,
 			a = this.axis,
-			ismaxw = isNumber(data.width) && o.maxWidth && (o.maxWidth < data.width), ismaxh = isNumber(data.height) && o.maxHeight && (o.maxHeight < data.height),
-			isminw = isNumber(data.width) && o.minWidth && (o.minWidth > data.width), isminh = isNumber(data.height) && o.minHeight && (o.minHeight > data.height),
+			ismaxw = this._isNumber(data.width) && o.maxWidth && (o.maxWidth < data.width),
+			ismaxh = this._isNumber(data.height) && o.maxHeight && (o.maxHeight < data.height),
+			isminw = this._isNumber(data.width) && o.minWidth && (o.minWidth > data.width),
+			isminh = this._isNumber(data.height) && o.minHeight && (o.minHeight > data.height),
 			dw = this.originalPosition.left + this.originalSize.width,
 			dh = this.position.top + this.size.height,
 			cw = /sw|nw|w/.test(a), ch = /nw|ne|n/.test(a);
@@ -3302,7 +3678,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 			data.top = dh - o.maxHeight;
 		}
 
-		// fixing jump error on top/left - bug #2330
+		// Fixing jump error on top/left - bug #2330
 		if (!data.width && !data.height && !data.left && data.top) {
 			data.top = null;
 		} else if (!data.width && !data.height && !data.top && data.left) {
@@ -3312,32 +3688,56 @@ $.widget("ui.resizable", $.ui.mouse, {
 		return data;
 	},
 
+	_getPaddingPlusBorderDimensions: function( element ) {
+		var i = 0,
+			widths = [],
+			borders = [
+				element.css( "borderTopWidth" ),
+				element.css( "borderRightWidth" ),
+				element.css( "borderBottomWidth" ),
+				element.css( "borderLeftWidth" )
+			],
+			paddings = [
+				element.css( "paddingTop" ),
+				element.css( "paddingRight" ),
+				element.css( "paddingBottom" ),
+				element.css( "paddingLeft" )
+			];
+
+		for ( ; i < 4; i++ ) {
+			widths[ i ] = ( parseInt( borders[ i ], 10 ) || 0 );
+			widths[ i ] += ( parseInt( paddings[ i ], 10 ) || 0 );
+		}
+
+		return {
+			height: widths[ 0 ] + widths[ 2 ],
+			width: widths[ 1 ] + widths[ 3 ]
+		};
+	},
+
 	_proportionallyResize: function() {
 
 		if (!this._proportionallyResizeElements.length) {
 			return;
 		}
 
-		var i, j, borders, paddings, prel,
+		var prel,
+			i = 0,
 			element = this.helper || this.element;
 
-		for ( i=0; i < this._proportionallyResizeElements.length; i++) {
+		for ( ; i < this._proportionallyResizeElements.length; i++) {
 
 			prel = this._proportionallyResizeElements[i];
 
-			if (!this.borderDif) {
-				this.borderDif = [];
-				borders = [prel.css("borderTopWidth"), prel.css("borderRightWidth"), prel.css("borderBottomWidth"), prel.css("borderLeftWidth")];
-				paddings = [prel.css("paddingTop"), prel.css("paddingRight"), prel.css("paddingBottom"), prel.css("paddingLeft")];
-
-				for ( j = 0; j < borders.length; j++ ) {
-					this.borderDif[ j ] = ( parseInt( borders[ j ], 10 ) || 0 ) + ( parseInt( paddings[ j ], 10 ) || 0 );
-				}
+			// TODO: Seems like a bug to cache this.outerDimensions
+			// considering that we are in a loop.
+			if (!this.outerDimensions) {
+				this.outerDimensions = this._getPaddingPlusBorderDimensions( prel );
 			}
 
 			prel.css({
-				height: (element.height() - this.borderDif[0] - this.borderDif[2]) || 0,
-				width: (element.width() - this.borderDif[1] - this.borderDif[3]) || 0
+				height: (element.height() - this.outerDimensions.height) || 0,
+				width: (element.width() - this.outerDimensions.width) || 0
 			});
 
 		}
@@ -3349,7 +3749,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 		var el = this.element, o = this.options;
 		this.elementOffset = el.offset();
 
-		if(this._helper) {
+		if (this._helper) {
 
 			this.helper = this.helper || $("<div style='overflow:hidden;'></div>");
 
@@ -3357,8 +3757,8 @@ $.widget("ui.resizable", $.ui.mouse, {
 				width: this.element.outerWidth() - 1,
 				height: this.element.outerHeight() - 1,
 				position: "absolute",
-				left: this.elementOffset.left +"px",
-				top: this.elementOffset.top +"px",
+				left: this.elementOffset.left + "px",
+				top: this.elementOffset.top + "px",
 				zIndex: ++o.zIndex //TODO: Don't modify option
 			});
 
@@ -3388,21 +3788,25 @@ $.widget("ui.resizable", $.ui.mouse, {
 			return { height: this.originalSize.height + dy };
 		},
 		se: function(event, dx, dy) {
-			return $.extend(this._change.s.apply(this, arguments), this._change.e.apply(this, [event, dx, dy]));
+			return $.extend(this._change.s.apply(this, arguments),
+				this._change.e.apply(this, [ event, dx, dy ]));
 		},
 		sw: function(event, dx, dy) {
-			return $.extend(this._change.s.apply(this, arguments), this._change.w.apply(this, [event, dx, dy]));
+			return $.extend(this._change.s.apply(this, arguments),
+				this._change.w.apply(this, [ event, dx, dy ]));
 		},
 		ne: function(event, dx, dy) {
-			return $.extend(this._change.n.apply(this, arguments), this._change.e.apply(this, [event, dx, dy]));
+			return $.extend(this._change.n.apply(this, arguments),
+				this._change.e.apply(this, [ event, dx, dy ]));
 		},
 		nw: function(event, dx, dy) {
-			return $.extend(this._change.n.apply(this, arguments), this._change.w.apply(this, [event, dx, dy]));
+			return $.extend(this._change.n.apply(this, arguments),
+				this._change.w.apply(this, [ event, dx, dy ]));
 		}
 	},
 
 	_propagate: function(n, event) {
-		$.ui.plugin.call(this, n, [event, this.ui()]);
+		$.ui.plugin.call(this, n, [ event, this.ui() ]);
 		(n !== "resize" && this._trigger(n, event, this.ui()));
 	},
 
@@ -3429,15 +3833,17 @@ $.widget("ui.resizable", $.ui.mouse, {
 $.ui.plugin.add("resizable", "animate", {
 
 	stop: function( event ) {
-		var that = $(this).data("ui-resizable"),
+		var that = $(this).resizable( "instance" ),
 			o = that.options,
 			pr = that._proportionallyResizeElements,
 			ista = pr.length && (/textarea/i).test(pr[0].nodeName),
-			soffseth = ista && $.ui.hasScroll(pr[0], "left") /* TODO - jump height */ ? 0 : that.sizeDiff.height,
+			soffseth = ista && that._hasScroll(pr[0], "left") ? 0 : that.sizeDiff.height,
 			soffsetw = ista ? 0 : that.sizeDiff.width,
 			style = { width: (that.size.width - soffsetw), height: (that.size.height - soffseth) },
-			left = (parseInt(that.element.css("left"), 10) + (that.position.left - that.originalPosition.left)) || null,
-			top = (parseInt(that.element.css("top"), 10) + (that.position.top - that.originalPosition.top)) || null;
+			left = (parseInt(that.element.css("left"), 10) +
+				(that.position.left - that.originalPosition.left)) || null,
+			top = (parseInt(that.element.css("top"), 10) +
+				(that.position.top - that.originalPosition.top)) || null;
 
 		that.element.animate(
 			$.extend(style, top && left ? { top: top, left: left } : {}), {
@@ -3467,189 +3873,232 @@ $.ui.plugin.add("resizable", "animate", {
 
 });
 
-$.ui.plugin.add("resizable", "containment", {
+$.ui.plugin.add( "resizable", "containment", {
 
 	start: function() {
 		var element, p, co, ch, cw, width, height,
-			that = $(this).data("ui-resizable"),
+			that = $( this ).resizable( "instance" ),
 			o = that.options,
 			el = that.element,
 			oc = o.containment,
-			ce = (oc instanceof $) ? oc.get(0) : (/parent/.test(oc)) ? el.parent().get(0) : oc;
+			ce = ( oc instanceof $ ) ? oc.get( 0 ) : ( /parent/.test( oc ) ) ? el.parent().get( 0 ) : oc;
 
-		if (!ce) {
+		if ( !ce ) {
 			return;
 		}
 
-		that.containerElement = $(ce);
+		that.containerElement = $( ce );
 
-		if (/document/.test(oc) || oc === document) {
-			that.containerOffset = { left: 0, top: 0 };
-			that.containerPosition = { left: 0, top: 0 };
+		if ( /document/.test( oc ) || oc === document ) {
+			that.containerOffset = {
+				left: 0,
+				top: 0
+			};
+			that.containerPosition = {
+				left: 0,
+				top: 0
+			};
 
 			that.parentData = {
-				element: $(document), left: 0, top: 0,
-				width: $(document).width(), height: $(document).height() || document.body.parentNode.scrollHeight
+				element: $( document ),
+				left: 0,
+				top: 0,
+				width: $( document ).width(),
+				height: $( document ).height() || document.body.parentNode.scrollHeight
 			};
-		}
-
-		// i'm a node, so compute top, left, right, bottom
-		else {
-			element = $(ce);
+		} else {
+			element = $( ce );
 			p = [];
-			$([ "Top", "Right", "Left", "Bottom" ]).each(function(i, name) { p[i] = num(element.css("padding" + name)); });
+			$([ "Top", "Right", "Left", "Bottom" ]).each(function( i, name ) {
+				p[ i ] = that._num( element.css( "padding" + name ) );
+			});
 
 			that.containerOffset = element.offset();
 			that.containerPosition = element.position();
-			that.containerSize = { height: (element.innerHeight() - p[3]), width: (element.innerWidth() - p[1]) };
+			that.containerSize = {
+				height: ( element.innerHeight() - p[ 3 ] ),
+				width: ( element.innerWidth() - p[ 1 ] )
+			};
 
 			co = that.containerOffset;
 			ch = that.containerSize.height;
 			cw = that.containerSize.width;
-			width = ($.ui.hasScroll(ce, "left") ? ce.scrollWidth : cw );
-			height = ($.ui.hasScroll(ce) ? ce.scrollHeight : ch);
+			width = ( that._hasScroll ( ce, "left" ) ? ce.scrollWidth : cw );
+			height = ( that._hasScroll ( ce ) ? ce.scrollHeight : ch ) ;
 
 			that.parentData = {
-				element: ce, left: co.left, top: co.top, width: width, height: height
+				element: ce,
+				left: co.left,
+				top: co.top,
+				width: width,
+				height: height
 			};
 		}
 	},
 
 	resize: function( event ) {
 		var woset, hoset, isParent, isOffsetRelative,
-			that = $(this).data("ui-resizable"),
+			that = $( this ).resizable( "instance" ),
 			o = that.options,
-			co = that.containerOffset, cp = that.position,
+			co = that.containerOffset,
+			cp = that.position,
 			pRatio = that._aspectRatio || event.shiftKey,
-			cop = { top:0, left:0 }, ce = that.containerElement;
+			cop = {
+				top: 0,
+				left: 0
+			},
+			ce = that.containerElement,
+			continueResize = true;
 
-		if (ce[0] !== document && (/static/).test(ce.css("position"))) {
+		if ( ce[ 0 ] !== document && ( /static/ ).test( ce.css( "position" ) ) ) {
 			cop = co;
 		}
 
-		if (cp.left < (that._helper ? co.left : 0)) {
-			that.size.width = that.size.width + (that._helper ? (that.position.left - co.left) : (that.position.left - cop.left));
-			if (pRatio) {
+		if ( cp.left < ( that._helper ? co.left : 0 ) ) {
+			that.size.width = that.size.width +
+				( that._helper ?
+					( that.position.left - co.left ) :
+					( that.position.left - cop.left ) );
+
+			if ( pRatio ) {
 				that.size.height = that.size.width / that.aspectRatio;
+				continueResize = false;
 			}
 			that.position.left = o.helper ? co.left : 0;
 		}
 
-		if (cp.top < (that._helper ? co.top : 0)) {
-			that.size.height = that.size.height + (that._helper ? (that.position.top - co.top) : that.position.top);
-			if (pRatio) {
+		if ( cp.top < ( that._helper ? co.top : 0 ) ) {
+			that.size.height = that.size.height +
+				( that._helper ?
+					( that.position.top - co.top ) :
+					that.position.top );
+
+			if ( pRatio ) {
 				that.size.width = that.size.height * that.aspectRatio;
+				continueResize = false;
 			}
 			that.position.top = that._helper ? co.top : 0;
 		}
 
-		that.offset.left = that.parentData.left+that.position.left;
-		that.offset.top = that.parentData.top+that.position.top;
+		isParent = that.containerElement.get( 0 ) === that.element.parent().get( 0 );
+		isOffsetRelative = /relative|absolute/.test( that.containerElement.css( "position" ) );
 
-		woset = Math.abs( (that._helper ? that.offset.left - cop.left : (that.offset.left - cop.left)) + that.sizeDiff.width );
-		hoset = Math.abs( (that._helper ? that.offset.top - cop.top : (that.offset.top - co.top)) + that.sizeDiff.height );
-
-		isParent = that.containerElement.get(0) === that.element.parent().get(0);
-		isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
-
-		if(isParent && isOffsetRelative) {
-			woset -= that.parentData.left;
+		if ( isParent && isOffsetRelative ) {
+			that.offset.left = that.parentData.left + that.position.left;
+			that.offset.top = that.parentData.top + that.position.top;
+		} else {
+			that.offset.left = that.element.offset().left;
+			that.offset.top = that.element.offset().top;
 		}
 
-		if (woset + that.size.width >= that.parentData.width) {
+		woset = Math.abs( that.sizeDiff.width +
+			(that._helper ?
+				that.offset.left - cop.left :
+				(that.offset.left - co.left)) );
+
+		hoset = Math.abs( that.sizeDiff.height +
+			(that._helper ?
+				that.offset.top - cop.top :
+				(that.offset.top - co.top)) );
+
+		if ( woset + that.size.width >= that.parentData.width ) {
 			that.size.width = that.parentData.width - woset;
-			if (pRatio) {
+			if ( pRatio ) {
 				that.size.height = that.size.width / that.aspectRatio;
+				continueResize = false;
 			}
 		}
 
-		if (hoset + that.size.height >= that.parentData.height) {
+		if ( hoset + that.size.height >= that.parentData.height ) {
 			that.size.height = that.parentData.height - hoset;
-			if (pRatio) {
+			if ( pRatio ) {
 				that.size.width = that.size.height * that.aspectRatio;
+				continueResize = false;
 			}
+		}
+
+		if ( !continueResize ) {
+			that.position.left = that.prevPosition.left;
+			that.position.top = that.prevPosition.top;
+			that.size.width = that.prevSize.width;
+			that.size.height = that.prevSize.height;
 		}
 	},
 
-	stop: function(){
-		var that = $(this).data("ui-resizable"),
+	stop: function() {
+		var that = $( this ).resizable( "instance" ),
 			o = that.options,
 			co = that.containerOffset,
 			cop = that.containerPosition,
 			ce = that.containerElement,
-			helper = $(that.helper),
+			helper = $( that.helper ),
 			ho = helper.offset(),
 			w = helper.outerWidth() - that.sizeDiff.width,
 			h = helper.outerHeight() - that.sizeDiff.height;
 
-		if (that._helper && !o.animate && (/relative/).test(ce.css("position"))) {
-			$(this).css({ left: ho.left - cop.left - co.left, width: w, height: h });
+		if ( that._helper && !o.animate && ( /relative/ ).test( ce.css( "position" ) ) ) {
+			$( this ).css({
+				left: ho.left - cop.left - co.left,
+				width: w,
+				height: h
+			});
 		}
 
-		if (that._helper && !o.animate && (/static/).test(ce.css("position"))) {
-			$(this).css({ left: ho.left - cop.left - co.left, width: w, height: h });
+		if ( that._helper && !o.animate && ( /static/ ).test( ce.css( "position" ) ) ) {
+			$( this ).css({
+				left: ho.left - cop.left - co.left,
+				width: w,
+				height: h
+			});
 		}
-
 	}
 });
 
 $.ui.plugin.add("resizable", "alsoResize", {
 
-	start: function () {
-		var that = $(this).data("ui-resizable"),
-			o = that.options,
-			_store = function (exp) {
-				$(exp).each(function() {
-					var el = $(this);
-					el.data("ui-resizable-alsoresize", {
-						width: parseInt(el.width(), 10), height: parseInt(el.height(), 10),
-						left: parseInt(el.css("left"), 10), top: parseInt(el.css("top"), 10)
-					});
-				});
-			};
+	start: function() {
+		var that = $(this).resizable( "instance" ),
+			o = that.options;
 
-		if (typeof(o.alsoResize) === "object" && !o.alsoResize.parentNode) {
-			if (o.alsoResize.length) { o.alsoResize = o.alsoResize[0]; _store(o.alsoResize); }
-			else { $.each(o.alsoResize, function (exp) { _store(exp); }); }
-		}else{
-			_store(o.alsoResize);
-		}
+		$(o.alsoResize).each(function() {
+			var el = $(this);
+			el.data("ui-resizable-alsoresize", {
+				width: parseInt(el.width(), 10), height: parseInt(el.height(), 10),
+				left: parseInt(el.css("left"), 10), top: parseInt(el.css("top"), 10)
+			});
+		});
 	},
 
-	resize: function (event, ui) {
-		var that = $(this).data("ui-resizable"),
+	resize: function(event, ui) {
+		var that = $(this).resizable( "instance" ),
 			o = that.options,
 			os = that.originalSize,
 			op = that.originalPosition,
 			delta = {
-				height: (that.size.height - os.height) || 0, width: (that.size.width - os.width) || 0,
-				top: (that.position.top - op.top) || 0, left: (that.position.left - op.left) || 0
-			},
-
-			_alsoResize = function (exp, c) {
-				$(exp).each(function() {
-					var el = $(this), start = $(this).data("ui-resizable-alsoresize"), style = {},
-						css = c && c.length ? c : el.parents(ui.originalElement[0]).length ? ["width", "height"] : ["width", "height", "top", "left"];
-
-					$.each(css, function (i, prop) {
-						var sum = (start[prop]||0) + (delta[prop]||0);
-						if (sum && sum >= 0) {
-							style[prop] = sum || null;
-						}
-					});
-
-					el.css(style);
-				});
+				height: (that.size.height - os.height) || 0,
+				width: (that.size.width - os.width) || 0,
+				top: (that.position.top - op.top) || 0,
+				left: (that.position.left - op.left) || 0
 			};
 
-		if (typeof(o.alsoResize) === "object" && !o.alsoResize.nodeType) {
-			$.each(o.alsoResize, function (exp, c) { _alsoResize(exp, c); });
-		}else{
-			_alsoResize(o.alsoResize);
-		}
+			$(o.alsoResize).each(function() {
+				var el = $(this), start = $(this).data("ui-resizable-alsoresize"), style = {},
+					css = el.parents(ui.originalElement[0]).length ?
+							[ "width", "height" ] :
+							[ "width", "height", "top", "left" ];
+
+				$.each(css, function(i, prop) {
+					var sum = (start[prop] || 0) + (delta[prop] || 0);
+					if (sum && sum >= 0) {
+						style[prop] = sum || null;
+					}
+				});
+
+				el.css(style);
+			});
 	},
 
-	stop: function () {
+	stop: function() {
 		$(this).removeData("resizable-alsoresize");
 	}
 });
@@ -3658,11 +4107,20 @@ $.ui.plugin.add("resizable", "ghost", {
 
 	start: function() {
 
-		var that = $(this).data("ui-resizable"), o = that.options, cs = that.size;
+		var that = $(this).resizable( "instance" ), o = that.options, cs = that.size;
 
 		that.ghost = that.originalElement.clone();
 		that.ghost
-			.css({ opacity: 0.25, display: "block", position: "relative", height: cs.height, width: cs.width, margin: 0, left: 0, top: 0 })
+			.css({
+				opacity: 0.25,
+				display: "block",
+				position: "relative",
+				height: cs.height,
+				width: cs.width,
+				margin: 0,
+				left: 0,
+				top: 0
+			})
 			.addClass("ui-resizable-ghost")
 			.addClass(typeof o.ghost === "string" ? o.ghost : "");
 
@@ -3670,15 +4128,19 @@ $.ui.plugin.add("resizable", "ghost", {
 
 	},
 
-	resize: function(){
-		var that = $(this).data("ui-resizable");
+	resize: function() {
+		var that = $(this).resizable( "instance" );
 		if (that.ghost) {
-			that.ghost.css({ position: "relative", height: that.size.height, width: that.size.width });
+			that.ghost.css({
+				position: "relative",
+				height: that.size.height,
+				width: that.size.width
+			});
 		}
 	},
 
 	stop: function() {
-		var that = $(this).data("ui-resizable");
+		var that = $(this).resizable( "instance" );
 		if (that.ghost && that.helper) {
 			that.helper.get(0).removeChild(that.ghost.get(0));
 		}
@@ -3689,15 +4151,16 @@ $.ui.plugin.add("resizable", "ghost", {
 $.ui.plugin.add("resizable", "grid", {
 
 	resize: function() {
-		var that = $(this).data("ui-resizable"),
+		var outerDimensions,
+			that = $(this).resizable( "instance" ),
 			o = that.options,
 			cs = that.size,
 			os = that.originalSize,
 			op = that.originalPosition,
 			a = that.axis,
-			grid = typeof o.grid === "number" ? [o.grid, o.grid] : o.grid,
-			gridX = (grid[0]||1),
-			gridY = (grid[1]||1),
+			grid = typeof o.grid === "number" ? [ o.grid, o.grid ] : o.grid,
+			gridX = (grid[0] || 1),
+			gridY = (grid[1] || 1),
 			ox = Math.round((cs.width - os.width) / gridX) * gridX,
 			oy = Math.round((cs.height - os.height) / gridY) * gridY,
 			newWidth = os.width + ox,
@@ -3710,16 +4173,16 @@ $.ui.plugin.add("resizable", "grid", {
 		o.grid = grid;
 
 		if (isMinWidth) {
-			newWidth = newWidth + gridX;
+			newWidth += gridX;
 		}
 		if (isMinHeight) {
-			newHeight = newHeight + gridY;
+			newHeight += gridY;
 		}
 		if (isMaxWidth) {
-			newWidth = newWidth - gridX;
+			newWidth -= gridX;
 		}
 		if (isMaxHeight) {
-			newHeight = newHeight - gridY;
+			newHeight -= gridY;
 		}
 
 		if (/^(se|s|e)$/.test(a)) {
@@ -3734,20 +4197,48 @@ $.ui.plugin.add("resizable", "grid", {
 			that.size.height = newHeight;
 			that.position.left = op.left - ox;
 		} else {
-			that.size.width = newWidth;
-			that.size.height = newHeight;
-			that.position.top = op.top - oy;
-			that.position.left = op.left - ox;
+			if ( newHeight - gridY <= 0 || newWidth - gridX <= 0) {
+				outerDimensions = that._getPaddingPlusBorderDimensions( this );
+			}
+
+			if ( newHeight - gridY > 0 ) {
+				that.size.height = newHeight;
+				that.position.top = op.top - oy;
+			} else {
+				newHeight = gridY - outerDimensions.height;
+				that.size.height = newHeight;
+				that.position.top = op.top + os.height - newHeight;
+			}
+			if ( newWidth - gridX > 0 ) {
+				that.size.width = newWidth;
+				that.position.left = op.left - ox;
+			} else {
+				newWidth = gridX - outerDimensions.width;
+				that.size.width = newWidth;
+				that.position.left = op.left + os.width - newWidth;
+			}
 		}
 	}
 
 });
 
-})(jQuery);
-(function( $, undefined ) {
+var resizable = $.ui.resizable;
 
-$.widget("ui.selectable", $.ui.mouse, {
-	version: "1.10.3",
+
+/*
+ * jQuery UI Selectable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/selectable/
+ */
+
+
+var selectable = $.widget("ui.selectable", $.ui.mouse, {
+	version: "1.11.4",
 	options: {
 		appendTo: "body",
 		autoRefresh: true,
@@ -3814,7 +4305,7 @@ $.widget("ui.selectable", $.ui.mouse, {
 		var that = this,
 			options = this.options;
 
-		this.opos = [event.pageX, event.pageY];
+		this.opos = [ event.pageX, event.pageY ];
 
 		if (this.options.disabled) {
 			return;
@@ -3897,7 +4388,7 @@ $.widget("ui.selectable", $.ui.mouse, {
 
 		if (x1 > x2) { tmp = x2; x2 = x1; x1 = tmp; }
 		if (y1 > y2) { tmp = y2; y2 = y1; y1 = tmp; }
-		this.helper.css({left: x1, top: y1, width: x2-x1, height: y2-y1});
+		this.helper.css({ left: x1, top: y1, width: x2 - x1, height: y2 - y1 });
 
 		this.selectees.each(function() {
 			var selectee = $.data(this, "selectable-item"),
@@ -4005,21 +4496,21 @@ $.widget("ui.selectable", $.ui.mouse, {
 
 });
 
-})(jQuery);
-(function( $, undefined ) {
 
-/*jshint loopfunc: true */
+/*
+ * jQuery UI Sortable 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/sortable/
+ */
 
-function isOverAxis( x, reference, size ) {
-	return ( x > reference ) && ( x < ( reference + size ) );
-}
 
-function isFloating(item) {
-	return (/left|right/).test(item.css("float")) || (/inline|table-cell/).test(item.css("display"));
-}
-
-$.widget("ui.sortable", $.ui.mouse, {
-	version: "1.10.3",
+var sortable = $.widget("ui.sortable", $.ui.mouse, {
+	version: "1.11.4",
 	widgetEventPrefix: "sort",
 	ready: false,
 	options: {
@@ -4060,17 +4551,21 @@ $.widget("ui.sortable", $.ui.mouse, {
 		stop: null,
 		update: null
 	},
-	_create: function() {
 
-		var o = this.options;
+	_isOverAxis: function( x, reference, size ) {
+		return ( x >= reference ) && ( x < ( reference + size ) );
+	},
+
+	_isFloating: function( item ) {
+		return (/left|right/).test(item.css("float")) || (/inline|table-cell/).test(item.css("display"));
+	},
+
+	_create: function() {
 		this.containerCache = {};
 		this.element.addClass("ui-sortable");
 
 		//Get the items
 		this.refresh();
-
-		//Let's determine if the items are being displayed horizontally
-		this.floating = this.items.length ? o.axis === "x" || isFloating(this.items[0].item) : false;
 
 		//Let's determine the parent's offset
 		this.offset = this.element.offset();
@@ -4078,14 +4573,35 @@ $.widget("ui.sortable", $.ui.mouse, {
 		//Initialize mouse events for interaction
 		this._mouseInit();
 
+		this._setHandleClassName();
+
 		//We're ready to go
 		this.ready = true;
 
 	},
 
+	_setOption: function( key, value ) {
+		this._super( key, value );
+
+		if ( key === "handle" ) {
+			this._setHandleClassName();
+		}
+	},
+
+	_setHandleClassName: function() {
+		this.element.find( ".ui-sortable-handle" ).removeClass( "ui-sortable-handle" );
+		$.each( this.items, function() {
+			( this.instance.options.handle ?
+				this.item.find( this.instance.options.handle ) : this.item )
+				.addClass( "ui-sortable-handle" );
+		});
+	},
+
 	_destroy: function() {
 		this.element
-			.removeClass("ui-sortable ui-sortable-disabled");
+			.removeClass( "ui-sortable ui-sortable-disabled" )
+			.find( ".ui-sortable-handle" )
+				.removeClass( "ui-sortable-handle" );
 		this._mouseDestroy();
 
 		for ( var i = this.items.length - 1; i >= 0; i-- ) {
@@ -4093,17 +4609,6 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		return this;
-	},
-
-	_setOption: function(key, value){
-		if ( key === "disabled" ) {
-			this.options[ key ] = value;
-
-			this.widget().toggleClass( "ui-sortable-disabled", !!value );
-		} else {
-			// Don't call widget base _setOption for disable as it adds ui-state-disabled class
-			$.Widget.prototype._setOption.apply(this, arguments);
-		}
 	},
 
 	_mouseCapture: function(event, overrideHandle) {
@@ -4250,7 +4755,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		//Prepare scrolling
-		if(this.scrollParent[0] !== document && this.scrollParent[0].tagName !== "HTML") {
+		if(this.scrollParent[0] !== this.document[0] && this.scrollParent[0].tagName !== "HTML") {
 			this.overflowOffset = this.scrollParent.offset();
 		}
 
@@ -4302,7 +4807,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		//Do scrolling
 		if(this.options.scroll) {
-			if(this.scrollParent[0] !== document && this.scrollParent[0].tagName !== "HTML") {
+			if(this.scrollParent[0] !== this.document[0] && this.scrollParent[0].tagName !== "HTML") {
 
 				if((this.overflowOffset.top + this.scrollParent[0].offsetHeight) - event.pageY < o.scrollSensitivity) {
 					this.scrollParent[0].scrollTop = scrolled = this.scrollParent[0].scrollTop + o.scrollSpeed;
@@ -4318,16 +4823,16 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 			} else {
 
-				if(event.pageY - $(document).scrollTop() < o.scrollSensitivity) {
-					scrolled = $(document).scrollTop($(document).scrollTop() - o.scrollSpeed);
-				} else if($(window).height() - (event.pageY - $(document).scrollTop()) < o.scrollSensitivity) {
-					scrolled = $(document).scrollTop($(document).scrollTop() + o.scrollSpeed);
+				if(event.pageY - this.document.scrollTop() < o.scrollSensitivity) {
+					scrolled = this.document.scrollTop(this.document.scrollTop() - o.scrollSpeed);
+				} else if(this.window.height() - (event.pageY - this.document.scrollTop()) < o.scrollSensitivity) {
+					scrolled = this.document.scrollTop(this.document.scrollTop() + o.scrollSpeed);
 				}
 
-				if(event.pageX - $(document).scrollLeft() < o.scrollSensitivity) {
-					scrolled = $(document).scrollLeft($(document).scrollLeft() - o.scrollSpeed);
-				} else if($(window).width() - (event.pageX - $(document).scrollLeft()) < o.scrollSensitivity) {
-					scrolled = $(document).scrollLeft($(document).scrollLeft() + o.scrollSpeed);
+				if(event.pageX - this.document.scrollLeft() < o.scrollSensitivity) {
+					scrolled = this.document.scrollLeft(this.document.scrollLeft() - o.scrollSpeed);
+				} else if(this.window.width() - (event.pageX - this.document.scrollLeft()) < o.scrollSensitivity) {
+					scrolled = this.document.scrollLeft(this.document.scrollLeft() + o.scrollSpeed);
 				}
 
 			}
@@ -4360,12 +4865,11 @@ $.widget("ui.sortable", $.ui.mouse, {
 			}
 
 			// Only put the placeholder inside the current Container, skip all
-			// items form other containers. This works because when moving
+			// items from other containers. This works because when moving
 			// an item from one container to another the
 			// currentContainer is switched before the placeholder is moved.
-			//
-			// Without this moving items in "sub-sortables" can cause the placeholder to jitter
-			// beetween the outer and inner container.
+			// Without this, moving items in "sub-sortables" can cause
+			// the placeholder to jitter between the outer and inner container.
 			if (item.instance !== this.currentContainer) {
 				continue;
 			}
@@ -4426,10 +4930,10 @@ $.widget("ui.sortable", $.ui.mouse, {
 				animation = {};
 
 			if ( !axis || axis === "x" ) {
-				animation.left = cur.left - this.offset.parent.left - this.margins.left + (this.offsetParent[0] === document.body ? 0 : this.offsetParent[0].scrollLeft);
+				animation.left = cur.left - this.offset.parent.left - this.margins.left + (this.offsetParent[0] === this.document[0].body ? 0 : this.offsetParent[0].scrollLeft);
 			}
 			if ( !axis || axis === "y" ) {
-				animation.top = cur.top - this.offset.parent.top - this.margins.top + (this.offsetParent[0] === document.body ? 0 : this.offsetParent[0].scrollTop);
+				animation.top = cur.top - this.offset.parent.top - this.margins.top + (this.offsetParent[0] === this.document[0].body ? 0 : this.offsetParent[0].scrollTop);
 			}
 			this.reverting = true;
 			$(this.helper).animate( animation, parseInt(this.options.revert, 10) || 500, function() {
@@ -4560,8 +5064,8 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	_intersectsWithPointer: function(item) {
 
-		var isOverElementHeight = (this.options.axis === "x") || isOverAxis(this.positionAbs.top + this.offset.click.top, item.top, item.height),
-			isOverElementWidth = (this.options.axis === "y") || isOverAxis(this.positionAbs.left + this.offset.click.left, item.left, item.width),
+		var isOverElementHeight = (this.options.axis === "x") || this._isOverAxis(this.positionAbs.top + this.offset.click.top, item.top, item.height),
+			isOverElementWidth = (this.options.axis === "y") || this._isOverAxis(this.positionAbs.left + this.offset.click.left, item.left, item.width),
 			isOverElement = isOverElementHeight && isOverElementWidth,
 			verticalDirection = this._getDragVerticalDirection(),
 			horizontalDirection = this._getDragHorizontalDirection();
@@ -4578,8 +5082,8 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	_intersectsWithSides: function(item) {
 
-		var isOverBottomHalf = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height/2), item.height),
-			isOverRightHalf = isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
+		var isOverBottomHalf = this._isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height/2), item.height),
+			isOverRightHalf = this._isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width/2), item.width),
 			verticalDirection = this._getDragVerticalDirection(),
 			horizontalDirection = this._getDragHorizontalDirection();
 
@@ -4603,6 +5107,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	refresh: function(event) {
 		this._refreshItems(event);
+		this._setHandleClassName();
 		this.refreshPositions();
 		return this;
 	},
@@ -4621,7 +5126,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		if(connectWith && connected) {
 			for (i = connectWith.length - 1; i >= 0; i--){
-				cur = $(connectWith[i]);
+				cur = $(connectWith[i], this.document[0]);
 				for ( j = cur.length - 1; j >= 0; j--){
 					inst = $.data(cur[j], this.widgetFullName);
 					if(inst && inst !== this && !inst.options.disabled) {
@@ -4633,10 +5138,11 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
 
+		function addItems() {
+			items.push( this );
+		}
 		for (i = queries.length - 1; i >= 0; i--){
-			queries[i][0].each(function() {
-				items.push(this);
-			});
+			queries[i][0].each( addItems );
 		}
 
 		return $(items);
@@ -4670,7 +5176,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		if(connectWith && this.ready) { //Shouldn't be run the first time through due to massive slow-down
 			for (i = connectWith.length - 1; i >= 0; i--){
-				cur = $(connectWith[i]);
+				cur = $(connectWith[i], this.document[0]);
 				for (j = cur.length - 1; j >= 0; j--){
 					inst = $.data(cur[j], this.widgetFullName);
 					if(inst && inst !== this && !inst.options.disabled) {
@@ -4702,6 +5208,11 @@ $.widget("ui.sortable", $.ui.mouse, {
 	},
 
 	refreshPositions: function(fast) {
+
+		// Determine whether items are being displayed horizontally
+		this.floating = this.items.length ?
+			this.options.axis === "x" || this._isFloating( this.items[ 0 ].item ) :
+			false;
 
 		//This has to be redone because due to the item being moved out/into the offsetParent, the offsetParent's position will change
 		if(this.offsetParent && this.helper) {
@@ -4737,7 +5248,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 				p = this.containers[i].element.offset();
 				this.containers[i].containerCache.left = p.left;
 				this.containers[i].containerCache.top = p.top;
-				this.containers[i].containerCache.width	= this.containers[i].element.outerWidth();
+				this.containers[i].containerCache.width = this.containers[i].element.outerWidth();
 				this.containers[i].containerCache.height = this.containers[i].element.outerHeight();
 			}
 		}
@@ -4760,12 +5271,13 @@ $.widget("ui.sortable", $.ui.mouse, {
 							.addClass(className || that.currentItem[0].className+" ui-sortable-placeholder")
 							.removeClass("ui-sortable-helper");
 
-					if ( nodeName === "tr" ) {
-						that.currentItem.children().each(function() {
-							$( "<td>&#160;</td>", that.document[0] )
-								.attr( "colspan", $( this ).attr( "colspan" ) || 1 )
-								.appendTo( element );
-						});
+					if ( nodeName === "tbody" ) {
+						that._createTrPlaceholder(
+							that.currentItem.find( "tr" ).eq( 0 ),
+							$( "<tr>", that.document[ 0 ] ).appendTo( element )
+						);
+					} else if ( nodeName === "tr" ) {
+						that._createTrPlaceholder( that.currentItem, element );
 					} else if ( nodeName === "img" ) {
 						element.attr( "src", that.currentItem.attr( "src" ) );
 					}
@@ -4802,8 +5314,18 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 	},
 
+	_createTrPlaceholder: function( sourceTr, targetTr ) {
+		var that = this;
+
+		sourceTr.children().each(function() {
+			$( "<td>&#160;</td>", that.document[ 0 ] )
+				.attr( "colspan", $( this ).attr( "colspan" ) || 1 )
+				.appendTo( targetTr );
+		});
+	},
+
 	_contactContainers: function(event) {
-		var i, j, dist, itemWithLeastDistance, posProperty, sizeProperty, base, cur, nearBottom, floating,
+		var i, j, dist, itemWithLeastDistance, posProperty, sizeProperty, cur, nearBottom, floating, axis,
 			innermostContainer = null,
 			innermostIndex = null;
 
@@ -4851,10 +5373,11 @@ $.widget("ui.sortable", $.ui.mouse, {
 			//When entering a new container, we will find the item with the least distance and append our item near it
 			dist = 10000;
 			itemWithLeastDistance = null;
-			floating = innermostContainer.floating || isFloating(this.currentItem);
+			floating = innermostContainer.floating || this._isFloating(this.currentItem);
 			posProperty = floating ? "left" : "top";
 			sizeProperty = floating ? "width" : "height";
-			base = this.positionAbs[posProperty] + this.offset.click[posProperty];
+			axis = floating ? "clientX" : "clientY";
+
 			for (j = this.items.length - 1; j >= 0; j--) {
 				if(!$.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) {
 					continue;
@@ -4862,18 +5385,16 @@ $.widget("ui.sortable", $.ui.mouse, {
 				if(this.items[j].item[0] === this.currentItem[0]) {
 					continue;
 				}
-				if (floating && !isOverAxis(this.positionAbs.top + this.offset.click.top, this.items[j].top, this.items[j].height)) {
-					continue;
-				}
+
 				cur = this.items[j].item.offset()[posProperty];
 				nearBottom = false;
-				if(Math.abs(cur - base) > Math.abs(cur + this.items[j][sizeProperty] - base)){
+				if ( event[ axis ] - cur > this.items[ j ][ sizeProperty ] / 2 ) {
 					nearBottom = true;
-					cur += this.items[j][sizeProperty];
 				}
 
-				if(Math.abs(cur - base) < dist) {
-					dist = Math.abs(cur - base); itemWithLeastDistance = this.items[j];
+				if ( Math.abs( event[ axis ] - cur ) < dist ) {
+					dist = Math.abs( event[ axis ] - cur );
+					itemWithLeastDistance = this.items[ j ];
 					this.direction = nearBottom ? "up": "down";
 				}
 			}
@@ -4884,6 +5405,10 @@ $.widget("ui.sortable", $.ui.mouse, {
 			}
 
 			if(this.currentContainer === this.containers[innermostIndex]) {
+				if ( !this.currentContainer.containerCache.over ) {
+					this.containers[ innermostIndex ]._trigger( "over", event, this._uiHash() );
+					this.currentContainer.containerCache.over = 1;
+				}
 				return;
 			}
 
@@ -4959,14 +5484,14 @@ $.widget("ui.sortable", $.ui.mouse, {
 		// 1. The position of the helper is absolute, so it's position is calculated based on the next positioned parent
 		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't the document, which means that
 		//    the scroll is included in the initial calculation of the offset of the parent, and never recalculated upon drag
-		if(this.cssPosition === "absolute" && this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) {
+		if(this.cssPosition === "absolute" && this.scrollParent[0] !== this.document[0] && $.contains(this.scrollParent[0], this.offsetParent[0])) {
 			po.left += this.scrollParent.scrollLeft();
 			po.top += this.scrollParent.scrollTop();
 		}
 
 		// This needs to be actually done for all browsers, since pageX/pageY includes this information
 		// with an ugly IE fix
-		if( this.offsetParent[0] === document.body || (this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() === "html" && $.ui.ie)) {
+		if( this.offsetParent[0] === this.document[0].body || (this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() === "html" && $.ui.ie)) {
 			po = { top: 0, left: 0 };
 		}
 
@@ -5016,8 +5541,8 @@ $.widget("ui.sortable", $.ui.mouse, {
 			this.containment = [
 				0 - this.offset.relative.left - this.offset.parent.left,
 				0 - this.offset.relative.top - this.offset.parent.top,
-				$(o.containment === "document" ? document : window).width() - this.helperProportions.width - this.margins.left,
-				($(o.containment === "document" ? document : window).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
+				o.containment === "document" ? this.document.width() : this.window.width() - this.helperProportions.width - this.margins.left,
+				(o.containment === "document" ? this.document.width() : this.window.height() || this.document[0].body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
 			];
 		}
 
@@ -5042,7 +5567,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 			pos = this.position;
 		}
 		var mod = d === "absolute" ? 1 : -1,
-			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent,
+			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== this.document[0] && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent,
 			scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
 
 		return {
@@ -5068,13 +5593,13 @@ $.widget("ui.sortable", $.ui.mouse, {
 			o = this.options,
 			pageX = event.pageX,
 			pageY = event.pageY,
-			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== document && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent, scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
+			scroll = this.cssPosition === "absolute" && !(this.scrollParent[0] !== this.document[0] && $.contains(this.scrollParent[0], this.offsetParent[0])) ? this.offsetParent : this.scrollParent, scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
 
 		// This is another very weird special case that only happens for relative elements:
 		// 1. If the css position is relative
 		// 2. and the scroll parent is the document or similar to the offset parent
 		// we have to refresh the relative offset during the scroll so there are no jumps
-		if(this.cssPosition === "relative" && !(this.scrollParent[0] !== document && this.scrollParent[0] !== this.offsetParent[0])) {
+		if(this.cssPosition === "relative" && !(this.scrollParent[0] !== this.document[0] && this.scrollParent[0] !== this.offsetParent[0])) {
 			this.offset.relative = this._getRelativeOffset();
 		}
 
@@ -5194,12 +5719,17 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 
 		//Post events to containers
+		function delayEvent( type, instance, container ) {
+			return function( event ) {
+				container._trigger( type, event, instance._uiHash( instance ) );
+			};
+		}
 		for (i = this.containers.length - 1; i >= 0; i--){
-			if(!noPropagation) {
-				delayedTriggers.push((function(c) { return function(event) { c._trigger("deactivate", event, this._uiHash(this)); };  }).call(this, this.containers[i]));
+			if (!noPropagation) {
+				delayedTriggers.push( delayEvent( "deactivate", this, this.containers[ i ] ) );
 			}
 			if(this.containers[i].containerCache.over) {
-				delayedTriggers.push((function(c) { return function(event) { c._trigger("out", event, this._uiHash(this)); };  }).call(this, this.containers[i]));
+				delayedTriggers.push( delayEvent( "out", this, this.containers[ i ] ) );
 				this.containers[i].containerCache.over = 0;
 			}
 		}
@@ -5217,18 +5747,6 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		this.dragging = false;
-		if(this.cancelHelperRemoval) {
-			if(!noPropagation) {
-				this._trigger("beforeStop", event, this._uiHash());
-				for (i=0; i < delayedTriggers.length; i++) {
-					delayedTriggers[i].call(this, event);
-				} //Trigger all delayed events
-				this._trigger("stop", event, this._uiHash());
-			}
-
-			this.fromOutside = false;
-			return false;
-		}
 
 		if(!noPropagation) {
 			this._trigger("beforeStop", event, this._uiHash());
@@ -5237,10 +5755,12 @@ $.widget("ui.sortable", $.ui.mouse, {
 		//$(this.placeholder[0]).remove(); would have been the jQuery way - unfortunately, it unbinds ALL events from the original node!
 		this.placeholder[0].parentNode.removeChild(this.placeholder[0]);
 
-		if(this.helper[0] !== this.currentItem[0]) {
-			this.helper.remove();
+		if ( !this.cancelHelperRemoval ) {
+			if ( this.helper[ 0 ] !== this.currentItem[ 0 ] ) {
+				this.helper.remove();
+			}
+			this.helper = null;
 		}
-		this.helper = null;
 
 		if(!noPropagation) {
 			for (i=0; i < delayedTriggers.length; i++) {
@@ -5250,7 +5770,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		this.fromOutside = false;
-		return true;
+		return !this.cancelHelperRemoval;
 
 	},
 
@@ -5275,12 +5795,1840 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 });
 
-})(jQuery);
-(function( $, undefined ) {
 
-var lastActive, startXPos, startYPos, clickDragged,
+/*
+ * jQuery UI Accordion 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/accordion/
+ */
+
+
+var accordion = $.widget( "ui.accordion", {
+	version: "1.11.4",
+	options: {
+		active: 0,
+		animate: {},
+		collapsible: false,
+		event: "click",
+		header: "> li > :first-child,> :not(li):even",
+		heightStyle: "auto",
+		icons: {
+			activeHeader: "ui-icon-triangle-1-s",
+			header: "ui-icon-triangle-1-e"
+		},
+
+		// callbacks
+		activate: null,
+		beforeActivate: null
+	},
+
+	hideProps: {
+		borderTopWidth: "hide",
+		borderBottomWidth: "hide",
+		paddingTop: "hide",
+		paddingBottom: "hide",
+		height: "hide"
+	},
+
+	showProps: {
+		borderTopWidth: "show",
+		borderBottomWidth: "show",
+		paddingTop: "show",
+		paddingBottom: "show",
+		height: "show"
+	},
+
+	_create: function() {
+		var options = this.options;
+		this.prevShow = this.prevHide = $();
+		this.element.addClass( "ui-accordion ui-widget ui-helper-reset" )
+			// ARIA
+			.attr( "role", "tablist" );
+
+		// don't allow collapsible: false and active: false / null
+		if ( !options.collapsible && (options.active === false || options.active == null) ) {
+			options.active = 0;
+		}
+
+		this._processPanels();
+		// handle negative values
+		if ( options.active < 0 ) {
+			options.active += this.headers.length;
+		}
+		this._refresh();
+	},
+
+	_getCreateEventData: function() {
+		return {
+			header: this.active,
+			panel: !this.active.length ? $() : this.active.next()
+		};
+	},
+
+	_createIcons: function() {
+		var icons = this.options.icons;
+		if ( icons ) {
+			$( "<span>" )
+				.addClass( "ui-accordion-header-icon ui-icon " + icons.header )
+				.prependTo( this.headers );
+			this.active.children( ".ui-accordion-header-icon" )
+				.removeClass( icons.header )
+				.addClass( icons.activeHeader );
+			this.headers.addClass( "ui-accordion-icons" );
+		}
+	},
+
+	_destroyIcons: function() {
+		this.headers
+			.removeClass( "ui-accordion-icons" )
+			.children( ".ui-accordion-header-icon" )
+				.remove();
+	},
+
+	_destroy: function() {
+		var contents;
+
+		// clean up main element
+		this.element
+			.removeClass( "ui-accordion ui-widget ui-helper-reset" )
+			.removeAttr( "role" );
+
+		// clean up headers
+		this.headers
+			.removeClass( "ui-accordion-header ui-accordion-header-active ui-state-default " +
+				"ui-corner-all ui-state-active ui-state-disabled ui-corner-top" )
+			.removeAttr( "role" )
+			.removeAttr( "aria-expanded" )
+			.removeAttr( "aria-selected" )
+			.removeAttr( "aria-controls" )
+			.removeAttr( "tabIndex" )
+			.removeUniqueId();
+
+		this._destroyIcons();
+
+		// clean up content panels
+		contents = this.headers.next()
+			.removeClass( "ui-helper-reset ui-widget-content ui-corner-bottom " +
+				"ui-accordion-content ui-accordion-content-active ui-state-disabled" )
+			.css( "display", "" )
+			.removeAttr( "role" )
+			.removeAttr( "aria-hidden" )
+			.removeAttr( "aria-labelledby" )
+			.removeUniqueId();
+
+		if ( this.options.heightStyle !== "content" ) {
+			contents.css( "height", "" );
+		}
+	},
+
+	_setOption: function( key, value ) {
+		if ( key === "active" ) {
+			// _activate() will handle invalid values and update this.options
+			this._activate( value );
+			return;
+		}
+
+		if ( key === "event" ) {
+			if ( this.options.event ) {
+				this._off( this.headers, this.options.event );
+			}
+			this._setupEvents( value );
+		}
+
+		this._super( key, value );
+
+		// setting collapsible: false while collapsed; open first panel
+		if ( key === "collapsible" && !value && this.options.active === false ) {
+			this._activate( 0 );
+		}
+
+		if ( key === "icons" ) {
+			this._destroyIcons();
+			if ( value ) {
+				this._createIcons();
+			}
+		}
+
+		// #5332 - opacity doesn't cascade to positioned elements in IE
+		// so we need to add the disabled class to the headers and panels
+		if ( key === "disabled" ) {
+			this.element
+				.toggleClass( "ui-state-disabled", !!value )
+				.attr( "aria-disabled", value );
+			this.headers.add( this.headers.next() )
+				.toggleClass( "ui-state-disabled", !!value );
+		}
+	},
+
+	_keydown: function( event ) {
+		if ( event.altKey || event.ctrlKey ) {
+			return;
+		}
+
+		var keyCode = $.ui.keyCode,
+			length = this.headers.length,
+			currentIndex = this.headers.index( event.target ),
+			toFocus = false;
+
+		switch ( event.keyCode ) {
+			case keyCode.RIGHT:
+			case keyCode.DOWN:
+				toFocus = this.headers[ ( currentIndex + 1 ) % length ];
+				break;
+			case keyCode.LEFT:
+			case keyCode.UP:
+				toFocus = this.headers[ ( currentIndex - 1 + length ) % length ];
+				break;
+			case keyCode.SPACE:
+			case keyCode.ENTER:
+				this._eventHandler( event );
+				break;
+			case keyCode.HOME:
+				toFocus = this.headers[ 0 ];
+				break;
+			case keyCode.END:
+				toFocus = this.headers[ length - 1 ];
+				break;
+		}
+
+		if ( toFocus ) {
+			$( event.target ).attr( "tabIndex", -1 );
+			$( toFocus ).attr( "tabIndex", 0 );
+			toFocus.focus();
+			event.preventDefault();
+		}
+	},
+
+	_panelKeyDown: function( event ) {
+		if ( event.keyCode === $.ui.keyCode.UP && event.ctrlKey ) {
+			$( event.currentTarget ).prev().focus();
+		}
+	},
+
+	refresh: function() {
+		var options = this.options;
+		this._processPanels();
+
+		// was collapsed or no panel
+		if ( ( options.active === false && options.collapsible === true ) || !this.headers.length ) {
+			options.active = false;
+			this.active = $();
+		// active false only when collapsible is true
+		} else if ( options.active === false ) {
+			this._activate( 0 );
+		// was active, but active panel is gone
+		} else if ( this.active.length && !$.contains( this.element[ 0 ], this.active[ 0 ] ) ) {
+			// all remaining panel are disabled
+			if ( this.headers.length === this.headers.find(".ui-state-disabled").length ) {
+				options.active = false;
+				this.active = $();
+			// activate previous panel
+			} else {
+				this._activate( Math.max( 0, options.active - 1 ) );
+			}
+		// was active, active panel still exists
+		} else {
+			// make sure active index is correct
+			options.active = this.headers.index( this.active );
+		}
+
+		this._destroyIcons();
+
+		this._refresh();
+	},
+
+	_processPanels: function() {
+		var prevHeaders = this.headers,
+			prevPanels = this.panels;
+
+		this.headers = this.element.find( this.options.header )
+			.addClass( "ui-accordion-header ui-state-default ui-corner-all" );
+
+		this.panels = this.headers.next()
+			.addClass( "ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom" )
+			.filter( ":not(.ui-accordion-content-active)" )
+			.hide();
+
+		// Avoid memory leaks (#10056)
+		if ( prevPanels ) {
+			this._off( prevHeaders.not( this.headers ) );
+			this._off( prevPanels.not( this.panels ) );
+		}
+	},
+
+	_refresh: function() {
+		var maxHeight,
+			options = this.options,
+			heightStyle = options.heightStyle,
+			parent = this.element.parent();
+
+		this.active = this._findActive( options.active )
+			.addClass( "ui-accordion-header-active ui-state-active ui-corner-top" )
+			.removeClass( "ui-corner-all" );
+		this.active.next()
+			.addClass( "ui-accordion-content-active" )
+			.show();
+
+		this.headers
+			.attr( "role", "tab" )
+			.each(function() {
+				var header = $( this ),
+					headerId = header.uniqueId().attr( "id" ),
+					panel = header.next(),
+					panelId = panel.uniqueId().attr( "id" );
+				header.attr( "aria-controls", panelId );
+				panel.attr( "aria-labelledby", headerId );
+			})
+			.next()
+				.attr( "role", "tabpanel" );
+
+		this.headers
+			.not( this.active )
+			.attr({
+				"aria-selected": "false",
+				"aria-expanded": "false",
+				tabIndex: -1
+			})
+			.next()
+				.attr({
+					"aria-hidden": "true"
+				})
+				.hide();
+
+		// make sure at least one header is in the tab order
+		if ( !this.active.length ) {
+			this.headers.eq( 0 ).attr( "tabIndex", 0 );
+		} else {
+			this.active.attr({
+				"aria-selected": "true",
+				"aria-expanded": "true",
+				tabIndex: 0
+			})
+			.next()
+				.attr({
+					"aria-hidden": "false"
+				});
+		}
+
+		this._createIcons();
+
+		this._setupEvents( options.event );
+
+		if ( heightStyle === "fill" ) {
+			maxHeight = parent.height();
+			this.element.siblings( ":visible" ).each(function() {
+				var elem = $( this ),
+					position = elem.css( "position" );
+
+				if ( position === "absolute" || position === "fixed" ) {
+					return;
+				}
+				maxHeight -= elem.outerHeight( true );
+			});
+
+			this.headers.each(function() {
+				maxHeight -= $( this ).outerHeight( true );
+			});
+
+			this.headers.next()
+				.each(function() {
+					$( this ).height( Math.max( 0, maxHeight -
+						$( this ).innerHeight() + $( this ).height() ) );
+				})
+				.css( "overflow", "auto" );
+		} else if ( heightStyle === "auto" ) {
+			maxHeight = 0;
+			this.headers.next()
+				.each(function() {
+					maxHeight = Math.max( maxHeight, $( this ).css( "height", "" ).height() );
+				})
+				.height( maxHeight );
+		}
+	},
+
+	_activate: function( index ) {
+		var active = this._findActive( index )[ 0 ];
+
+		// trying to activate the already active panel
+		if ( active === this.active[ 0 ] ) {
+			return;
+		}
+
+		// trying to collapse, simulate a click on the currently active header
+		active = active || this.active[ 0 ];
+
+		this._eventHandler({
+			target: active,
+			currentTarget: active,
+			preventDefault: $.noop
+		});
+	},
+
+	_findActive: function( selector ) {
+		return typeof selector === "number" ? this.headers.eq( selector ) : $();
+	},
+
+	_setupEvents: function( event ) {
+		var events = {
+			keydown: "_keydown"
+		};
+		if ( event ) {
+			$.each( event.split( " " ), function( index, eventName ) {
+				events[ eventName ] = "_eventHandler";
+			});
+		}
+
+		this._off( this.headers.add( this.headers.next() ) );
+		this._on( this.headers, events );
+		this._on( this.headers.next(), { keydown: "_panelKeyDown" });
+		this._hoverable( this.headers );
+		this._focusable( this.headers );
+	},
+
+	_eventHandler: function( event ) {
+		var options = this.options,
+			active = this.active,
+			clicked = $( event.currentTarget ),
+			clickedIsActive = clicked[ 0 ] === active[ 0 ],
+			collapsing = clickedIsActive && options.collapsible,
+			toShow = collapsing ? $() : clicked.next(),
+			toHide = active.next(),
+			eventData = {
+				oldHeader: active,
+				oldPanel: toHide,
+				newHeader: collapsing ? $() : clicked,
+				newPanel: toShow
+			};
+
+		event.preventDefault();
+
+		if (
+				// click on active header, but not collapsible
+				( clickedIsActive && !options.collapsible ) ||
+				// allow canceling activation
+				( this._trigger( "beforeActivate", event, eventData ) === false ) ) {
+			return;
+		}
+
+		options.active = collapsing ? false : this.headers.index( clicked );
+
+		// when the call to ._toggle() comes after the class changes
+		// it causes a very odd bug in IE 8 (see #6720)
+		this.active = clickedIsActive ? $() : clicked;
+		this._toggle( eventData );
+
+		// switch classes
+		// corner classes on the previously active header stay after the animation
+		active.removeClass( "ui-accordion-header-active ui-state-active" );
+		if ( options.icons ) {
+			active.children( ".ui-accordion-header-icon" )
+				.removeClass( options.icons.activeHeader )
+				.addClass( options.icons.header );
+		}
+
+		if ( !clickedIsActive ) {
+			clicked
+				.removeClass( "ui-corner-all" )
+				.addClass( "ui-accordion-header-active ui-state-active ui-corner-top" );
+			if ( options.icons ) {
+				clicked.children( ".ui-accordion-header-icon" )
+					.removeClass( options.icons.header )
+					.addClass( options.icons.activeHeader );
+			}
+
+			clicked
+				.next()
+				.addClass( "ui-accordion-content-active" );
+		}
+	},
+
+	_toggle: function( data ) {
+		var toShow = data.newPanel,
+			toHide = this.prevShow.length ? this.prevShow : data.oldPanel;
+
+		// handle activating a panel during the animation for another activation
+		this.prevShow.add( this.prevHide ).stop( true, true );
+		this.prevShow = toShow;
+		this.prevHide = toHide;
+
+		if ( this.options.animate ) {
+			this._animate( toShow, toHide, data );
+		} else {
+			toHide.hide();
+			toShow.show();
+			this._toggleComplete( data );
+		}
+
+		toHide.attr({
+			"aria-hidden": "true"
+		});
+		toHide.prev().attr({
+			"aria-selected": "false",
+			"aria-expanded": "false"
+		});
+		// if we're switching panels, remove the old header from the tab order
+		// if we're opening from collapsed state, remove the previous header from the tab order
+		// if we're collapsing, then keep the collapsing header in the tab order
+		if ( toShow.length && toHide.length ) {
+			toHide.prev().attr({
+				"tabIndex": -1,
+				"aria-expanded": "false"
+			});
+		} else if ( toShow.length ) {
+			this.headers.filter(function() {
+				return parseInt( $( this ).attr( "tabIndex" ), 10 ) === 0;
+			})
+			.attr( "tabIndex", -1 );
+		}
+
+		toShow
+			.attr( "aria-hidden", "false" )
+			.prev()
+				.attr({
+					"aria-selected": "true",
+					"aria-expanded": "true",
+					tabIndex: 0
+				});
+	},
+
+	_animate: function( toShow, toHide, data ) {
+		var total, easing, duration,
+			that = this,
+			adjust = 0,
+			boxSizing = toShow.css( "box-sizing" ),
+			down = toShow.length &&
+				( !toHide.length || ( toShow.index() < toHide.index() ) ),
+			animate = this.options.animate || {},
+			options = down && animate.down || animate,
+			complete = function() {
+				that._toggleComplete( data );
+			};
+
+		if ( typeof options === "number" ) {
+			duration = options;
+		}
+		if ( typeof options === "string" ) {
+			easing = options;
+		}
+		// fall back from options to animation in case of partial down settings
+		easing = easing || options.easing || animate.easing;
+		duration = duration || options.duration || animate.duration;
+
+		if ( !toHide.length ) {
+			return toShow.animate( this.showProps, duration, easing, complete );
+		}
+		if ( !toShow.length ) {
+			return toHide.animate( this.hideProps, duration, easing, complete );
+		}
+
+		total = toShow.show().outerHeight();
+		toHide.animate( this.hideProps, {
+			duration: duration,
+			easing: easing,
+			step: function( now, fx ) {
+				fx.now = Math.round( now );
+			}
+		});
+		toShow
+			.hide()
+			.animate( this.showProps, {
+				duration: duration,
+				easing: easing,
+				complete: complete,
+				step: function( now, fx ) {
+					fx.now = Math.round( now );
+					if ( fx.prop !== "height" ) {
+						if ( boxSizing === "content-box" ) {
+							adjust += fx.now;
+						}
+					} else if ( that.options.heightStyle !== "content" ) {
+						fx.now = Math.round( total - toHide.outerHeight() - adjust );
+						adjust = 0;
+					}
+				}
+			});
+	},
+
+	_toggleComplete: function( data ) {
+		var toHide = data.oldPanel;
+
+		toHide
+			.removeClass( "ui-accordion-content-active" )
+			.prev()
+				.removeClass( "ui-corner-top" )
+				.addClass( "ui-corner-all" );
+
+		// Work around for rendering bug in IE (#5421)
+		if ( toHide.length ) {
+			toHide.parent()[ 0 ].className = toHide.parent()[ 0 ].className;
+		}
+		this._trigger( "activate", null, data );
+	}
+});
+
+
+/*
+ * jQuery UI Menu 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/menu/
+ */
+
+
+var menu = $.widget( "ui.menu", {
+	version: "1.11.4",
+	defaultElement: "<ul>",
+	delay: 300,
+	options: {
+		icons: {
+			submenu: "ui-icon-carat-1-e"
+		},
+		items: "> *",
+		menus: "ul",
+		position: {
+			my: "left-1 top",
+			at: "right top"
+		},
+		role: "menu",
+
+		// callbacks
+		blur: null,
+		focus: null,
+		select: null
+	},
+
+	_create: function() {
+		this.activeMenu = this.element;
+
+		// Flag used to prevent firing of the click handler
+		// as the event bubbles up through nested menus
+		this.mouseHandled = false;
+		this.element
+			.uniqueId()
+			.addClass( "ui-menu ui-widget ui-widget-content" )
+			.toggleClass( "ui-menu-icons", !!this.element.find( ".ui-icon" ).length )
+			.attr({
+				role: this.options.role,
+				tabIndex: 0
+			});
+
+		if ( this.options.disabled ) {
+			this.element
+				.addClass( "ui-state-disabled" )
+				.attr( "aria-disabled", "true" );
+		}
+
+		this._on({
+			// Prevent focus from sticking to links inside menu after clicking
+			// them (focus should always stay on UL during navigation).
+			"mousedown .ui-menu-item": function( event ) {
+				event.preventDefault();
+			},
+			"click .ui-menu-item": function( event ) {
+				var target = $( event.target );
+				if ( !this.mouseHandled && target.not( ".ui-state-disabled" ).length ) {
+					this.select( event );
+
+					// Only set the mouseHandled flag if the event will bubble, see #9469.
+					if ( !event.isPropagationStopped() ) {
+						this.mouseHandled = true;
+					}
+
+					// Open submenu on click
+					if ( target.has( ".ui-menu" ).length ) {
+						this.expand( event );
+					} else if ( !this.element.is( ":focus" ) && $( this.document[ 0 ].activeElement ).closest( ".ui-menu" ).length ) {
+
+						// Redirect focus to the menu
+						this.element.trigger( "focus", [ true ] );
+
+						// If the active item is on the top level, let it stay active.
+						// Otherwise, blur the active item since it is no longer visible.
+						if ( this.active && this.active.parents( ".ui-menu" ).length === 1 ) {
+							clearTimeout( this.timer );
+						}
+					}
+				}
+			},
+			"mouseenter .ui-menu-item": function( event ) {
+				// Ignore mouse events while typeahead is active, see #10458.
+				// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
+				// is over an item in the menu
+				if ( this.previousFilter ) {
+					return;
+				}
+				var target = $( event.currentTarget );
+				// Remove ui-state-active class from siblings of the newly focused menu item
+				// to avoid a jump caused by adjacent elements both having a class with a border
+				target.siblings( ".ui-state-active" ).removeClass( "ui-state-active" );
+				this.focus( event, target );
+			},
+			mouseleave: "collapseAll",
+			"mouseleave .ui-menu": "collapseAll",
+			focus: function( event, keepActiveItem ) {
+				// If there's already an active item, keep it active
+				// If not, activate the first item
+				var item = this.active || this.element.find( this.options.items ).eq( 0 );
+
+				if ( !keepActiveItem ) {
+					this.focus( event, item );
+				}
+			},
+			blur: function( event ) {
+				this._delay(function() {
+					if ( !$.contains( this.element[0], this.document[0].activeElement ) ) {
+						this.collapseAll( event );
+					}
+				});
+			},
+			keydown: "_keydown"
+		});
+
+		this.refresh();
+
+		// Clicks outside of a menu collapse any open menus
+		this._on( this.document, {
+			click: function( event ) {
+				if ( this._closeOnDocumentClick( event ) ) {
+					this.collapseAll( event );
+				}
+
+				// Reset the mouseHandled flag
+				this.mouseHandled = false;
+			}
+		});
+	},
+
+	_destroy: function() {
+		// Destroy (sub)menus
+		this.element
+			.removeAttr( "aria-activedescendant" )
+			.find( ".ui-menu" ).addBack()
+				.removeClass( "ui-menu ui-widget ui-widget-content ui-menu-icons ui-front" )
+				.removeAttr( "role" )
+				.removeAttr( "tabIndex" )
+				.removeAttr( "aria-labelledby" )
+				.removeAttr( "aria-expanded" )
+				.removeAttr( "aria-hidden" )
+				.removeAttr( "aria-disabled" )
+				.removeUniqueId()
+				.show();
+
+		// Destroy menu items
+		this.element.find( ".ui-menu-item" )
+			.removeClass( "ui-menu-item" )
+			.removeAttr( "role" )
+			.removeAttr( "aria-disabled" )
+			.removeUniqueId()
+			.removeClass( "ui-state-hover" )
+			.removeAttr( "tabIndex" )
+			.removeAttr( "role" )
+			.removeAttr( "aria-haspopup" )
+			.children().each( function() {
+				var elem = $( this );
+				if ( elem.data( "ui-menu-submenu-carat" ) ) {
+					elem.remove();
+				}
+			});
+
+		// Destroy menu dividers
+		this.element.find( ".ui-menu-divider" ).removeClass( "ui-menu-divider ui-widget-content" );
+	},
+
+	_keydown: function( event ) {
+		var match, prev, character, skip,
+			preventDefault = true;
+
+		switch ( event.keyCode ) {
+		case $.ui.keyCode.PAGE_UP:
+			this.previousPage( event );
+			break;
+		case $.ui.keyCode.PAGE_DOWN:
+			this.nextPage( event );
+			break;
+		case $.ui.keyCode.HOME:
+			this._move( "first", "first", event );
+			break;
+		case $.ui.keyCode.END:
+			this._move( "last", "last", event );
+			break;
+		case $.ui.keyCode.UP:
+			this.previous( event );
+			break;
+		case $.ui.keyCode.DOWN:
+			this.next( event );
+			break;
+		case $.ui.keyCode.LEFT:
+			this.collapse( event );
+			break;
+		case $.ui.keyCode.RIGHT:
+			if ( this.active && !this.active.is( ".ui-state-disabled" ) ) {
+				this.expand( event );
+			}
+			break;
+		case $.ui.keyCode.ENTER:
+		case $.ui.keyCode.SPACE:
+			this._activate( event );
+			break;
+		case $.ui.keyCode.ESCAPE:
+			this.collapse( event );
+			break;
+		default:
+			preventDefault = false;
+			prev = this.previousFilter || "";
+			character = String.fromCharCode( event.keyCode );
+			skip = false;
+
+			clearTimeout( this.filterTimer );
+
+			if ( character === prev ) {
+				skip = true;
+			} else {
+				character = prev + character;
+			}
+
+			match = this._filterMenuItems( character );
+			match = skip && match.index( this.active.next() ) !== -1 ?
+				this.active.nextAll( ".ui-menu-item" ) :
+				match;
+
+			// If no matches on the current filter, reset to the last character pressed
+			// to move down the menu to the first item that starts with that character
+			if ( !match.length ) {
+				character = String.fromCharCode( event.keyCode );
+				match = this._filterMenuItems( character );
+			}
+
+			if ( match.length ) {
+				this.focus( event, match );
+				this.previousFilter = character;
+				this.filterTimer = this._delay(function() {
+					delete this.previousFilter;
+				}, 1000 );
+			} else {
+				delete this.previousFilter;
+			}
+		}
+
+		if ( preventDefault ) {
+			event.preventDefault();
+		}
+	},
+
+	_activate: function( event ) {
+		if ( !this.active.is( ".ui-state-disabled" ) ) {
+			if ( this.active.is( "[aria-haspopup='true']" ) ) {
+				this.expand( event );
+			} else {
+				this.select( event );
+			}
+		}
+	},
+
+	refresh: function() {
+		var menus, items,
+			that = this,
+			icon = this.options.icons.submenu,
+			submenus = this.element.find( this.options.menus );
+
+		this.element.toggleClass( "ui-menu-icons", !!this.element.find( ".ui-icon" ).length );
+
+		// Initialize nested menus
+		submenus.filter( ":not(.ui-menu)" )
+			.addClass( "ui-menu ui-widget ui-widget-content ui-front" )
+			.hide()
+			.attr({
+				role: this.options.role,
+				"aria-hidden": "true",
+				"aria-expanded": "false"
+			})
+			.each(function() {
+				var menu = $( this ),
+					item = menu.parent(),
+					submenuCarat = $( "<span>" )
+						.addClass( "ui-menu-icon ui-icon " + icon )
+						.data( "ui-menu-submenu-carat", true );
+
+				item
+					.attr( "aria-haspopup", "true" )
+					.prepend( submenuCarat );
+				menu.attr( "aria-labelledby", item.attr( "id" ) );
+			});
+
+		menus = submenus.add( this.element );
+		items = menus.find( this.options.items );
+
+		// Initialize menu-items containing spaces and/or dashes only as dividers
+		items.not( ".ui-menu-item" ).each(function() {
+			var item = $( this );
+			if ( that._isDivider( item ) ) {
+				item.addClass( "ui-widget-content ui-menu-divider" );
+			}
+		});
+
+		// Don't refresh list items that are already adapted
+		items.not( ".ui-menu-item, .ui-menu-divider" )
+			.addClass( "ui-menu-item" )
+			.uniqueId()
+			.attr({
+				tabIndex: -1,
+				role: this._itemRole()
+			});
+
+		// Add aria-disabled attribute to any disabled menu item
+		items.filter( ".ui-state-disabled" ).attr( "aria-disabled", "true" );
+
+		// If the active item has been removed, blur the menu
+		if ( this.active && !$.contains( this.element[ 0 ], this.active[ 0 ] ) ) {
+			this.blur();
+		}
+	},
+
+	_itemRole: function() {
+		return {
+			menu: "menuitem",
+			listbox: "option"
+		}[ this.options.role ];
+	},
+
+	_setOption: function( key, value ) {
+		if ( key === "icons" ) {
+			this.element.find( ".ui-menu-icon" )
+				.removeClass( this.options.icons.submenu )
+				.addClass( value.submenu );
+		}
+		if ( key === "disabled" ) {
+			this.element
+				.toggleClass( "ui-state-disabled", !!value )
+				.attr( "aria-disabled", value );
+		}
+		this._super( key, value );
+	},
+
+	focus: function( event, item ) {
+		var nested, focused;
+		this.blur( event, event && event.type === "focus" );
+
+		this._scrollIntoView( item );
+
+		this.active = item.first();
+		focused = this.active.addClass( "ui-state-focus" ).removeClass( "ui-state-active" );
+		// Only update aria-activedescendant if there's a role
+		// otherwise we assume focus is managed elsewhere
+		if ( this.options.role ) {
+			this.element.attr( "aria-activedescendant", focused.attr( "id" ) );
+		}
+
+		// Highlight active parent menu item, if any
+		this.active
+			.parent()
+			.closest( ".ui-menu-item" )
+			.addClass( "ui-state-active" );
+
+		if ( event && event.type === "keydown" ) {
+			this._close();
+		} else {
+			this.timer = this._delay(function() {
+				this._close();
+			}, this.delay );
+		}
+
+		nested = item.children( ".ui-menu" );
+		if ( nested.length && event && ( /^mouse/.test( event.type ) ) ) {
+			this._startOpening(nested);
+		}
+		this.activeMenu = item.parent();
+
+		this._trigger( "focus", event, { item: item } );
+	},
+
+	_scrollIntoView: function( item ) {
+		var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
+		if ( this._hasScroll() ) {
+			borderTop = parseFloat( $.css( this.activeMenu[0], "borderTopWidth" ) ) || 0;
+			paddingTop = parseFloat( $.css( this.activeMenu[0], "paddingTop" ) ) || 0;
+			offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
+			scroll = this.activeMenu.scrollTop();
+			elementHeight = this.activeMenu.height();
+			itemHeight = item.outerHeight();
+
+			if ( offset < 0 ) {
+				this.activeMenu.scrollTop( scroll + offset );
+			} else if ( offset + itemHeight > elementHeight ) {
+				this.activeMenu.scrollTop( scroll + offset - elementHeight + itemHeight );
+			}
+		}
+	},
+
+	blur: function( event, fromFocus ) {
+		if ( !fromFocus ) {
+			clearTimeout( this.timer );
+		}
+
+		if ( !this.active ) {
+			return;
+		}
+
+		this.active.removeClass( "ui-state-focus" );
+		this.active = null;
+
+		this._trigger( "blur", event, { item: this.active } );
+	},
+
+	_startOpening: function( submenu ) {
+		clearTimeout( this.timer );
+
+		// Don't open if already open fixes a Firefox bug that caused a .5 pixel
+		// shift in the submenu position when mousing over the carat icon
+		if ( submenu.attr( "aria-hidden" ) !== "true" ) {
+			return;
+		}
+
+		this.timer = this._delay(function() {
+			this._close();
+			this._open( submenu );
+		}, this.delay );
+	},
+
+	_open: function( submenu ) {
+		var position = $.extend({
+			of: this.active
+		}, this.options.position );
+
+		clearTimeout( this.timer );
+		this.element.find( ".ui-menu" ).not( submenu.parents( ".ui-menu" ) )
+			.hide()
+			.attr( "aria-hidden", "true" );
+
+		submenu
+			.show()
+			.removeAttr( "aria-hidden" )
+			.attr( "aria-expanded", "true" )
+			.position( position );
+	},
+
+	collapseAll: function( event, all ) {
+		clearTimeout( this.timer );
+		this.timer = this._delay(function() {
+			// If we were passed an event, look for the submenu that contains the event
+			var currentMenu = all ? this.element :
+				$( event && event.target ).closest( this.element.find( ".ui-menu" ) );
+
+			// If we found no valid submenu ancestor, use the main menu to close all sub menus anyway
+			if ( !currentMenu.length ) {
+				currentMenu = this.element;
+			}
+
+			this._close( currentMenu );
+
+			this.blur( event );
+			this.activeMenu = currentMenu;
+		}, this.delay );
+	},
+
+	// With no arguments, closes the currently active menu - if nothing is active
+	// it closes all menus.  If passed an argument, it will search for menus BELOW
+	_close: function( startMenu ) {
+		if ( !startMenu ) {
+			startMenu = this.active ? this.active.parent() : this.element;
+		}
+
+		startMenu
+			.find( ".ui-menu" )
+				.hide()
+				.attr( "aria-hidden", "true" )
+				.attr( "aria-expanded", "false" )
+			.end()
+			.find( ".ui-state-active" ).not( ".ui-state-focus" )
+				.removeClass( "ui-state-active" );
+	},
+
+	_closeOnDocumentClick: function( event ) {
+		return !$( event.target ).closest( ".ui-menu" ).length;
+	},
+
+	_isDivider: function( item ) {
+
+		// Match hyphen, em dash, en dash
+		return !/[^\-\u2014\u2013\s]/.test( item.text() );
+	},
+
+	collapse: function( event ) {
+		var newItem = this.active &&
+			this.active.parent().closest( ".ui-menu-item", this.element );
+		if ( newItem && newItem.length ) {
+			this._close();
+			this.focus( event, newItem );
+		}
+	},
+
+	expand: function( event ) {
+		var newItem = this.active &&
+			this.active
+				.children( ".ui-menu " )
+				.find( this.options.items )
+				.first();
+
+		if ( newItem && newItem.length ) {
+			this._open( newItem.parent() );
+
+			// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
+			this._delay(function() {
+				this.focus( event, newItem );
+			});
+		}
+	},
+
+	next: function( event ) {
+		this._move( "next", "first", event );
+	},
+
+	previous: function( event ) {
+		this._move( "prev", "last", event );
+	},
+
+	isFirstItem: function() {
+		return this.active && !this.active.prevAll( ".ui-menu-item" ).length;
+	},
+
+	isLastItem: function() {
+		return this.active && !this.active.nextAll( ".ui-menu-item" ).length;
+	},
+
+	_move: function( direction, filter, event ) {
+		var next;
+		if ( this.active ) {
+			if ( direction === "first" || direction === "last" ) {
+				next = this.active
+					[ direction === "first" ? "prevAll" : "nextAll" ]( ".ui-menu-item" )
+					.eq( -1 );
+			} else {
+				next = this.active
+					[ direction + "All" ]( ".ui-menu-item" )
+					.eq( 0 );
+			}
+		}
+		if ( !next || !next.length || !this.active ) {
+			next = this.activeMenu.find( this.options.items )[ filter ]();
+		}
+
+		this.focus( event, next );
+	},
+
+	nextPage: function( event ) {
+		var item, base, height;
+
+		if ( !this.active ) {
+			this.next( event );
+			return;
+		}
+		if ( this.isLastItem() ) {
+			return;
+		}
+		if ( this._hasScroll() ) {
+			base = this.active.offset().top;
+			height = this.element.height();
+			this.active.nextAll( ".ui-menu-item" ).each(function() {
+				item = $( this );
+				return item.offset().top - base - height < 0;
+			});
+
+			this.focus( event, item );
+		} else {
+			this.focus( event, this.activeMenu.find( this.options.items )
+				[ !this.active ? "first" : "last" ]() );
+		}
+	},
+
+	previousPage: function( event ) {
+		var item, base, height;
+		if ( !this.active ) {
+			this.next( event );
+			return;
+		}
+		if ( this.isFirstItem() ) {
+			return;
+		}
+		if ( this._hasScroll() ) {
+			base = this.active.offset().top;
+			height = this.element.height();
+			this.active.prevAll( ".ui-menu-item" ).each(function() {
+				item = $( this );
+				return item.offset().top - base + height > 0;
+			});
+
+			this.focus( event, item );
+		} else {
+			this.focus( event, this.activeMenu.find( this.options.items ).first() );
+		}
+	},
+
+	_hasScroll: function() {
+		return this.element.outerHeight() < this.element.prop( "scrollHeight" );
+	},
+
+	select: function( event ) {
+		// TODO: It should never be possible to not have an active item at this
+		// point, but the tests don't trigger mouseenter before click.
+		this.active = this.active || $( event.target ).closest( ".ui-menu-item" );
+		var ui = { item: this.active };
+		if ( !this.active.has( ".ui-menu" ).length ) {
+			this.collapseAll( event, true );
+		}
+		this._trigger( "select", event, ui );
+	},
+
+	_filterMenuItems: function(character) {
+		var escapedCharacter = character.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" ),
+			regex = new RegExp( "^" + escapedCharacter, "i" );
+
+		return this.activeMenu
+			.find( this.options.items )
+
+			// Only match on items, not dividers or other content (#10571)
+			.filter( ".ui-menu-item" )
+			.filter(function() {
+				return regex.test( $.trim( $( this ).text() ) );
+			});
+	}
+});
+
+
+/*
+ * jQuery UI Autocomplete 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/autocomplete/
+ */
+
+
+$.widget( "ui.autocomplete", {
+	version: "1.11.4",
+	defaultElement: "<input>",
+	options: {
+		appendTo: null,
+		autoFocus: false,
+		delay: 300,
+		minLength: 1,
+		position: {
+			my: "left top",
+			at: "left bottom",
+			collision: "none"
+		},
+		source: null,
+
+		// callbacks
+		change: null,
+		close: null,
+		focus: null,
+		open: null,
+		response: null,
+		search: null,
+		select: null
+	},
+
+	requestIndex: 0,
+	pending: 0,
+
+	_create: function() {
+		// Some browsers only repeat keydown events, not keypress events,
+		// so we use the suppressKeyPress flag to determine if we've already
+		// handled the keydown event. #7269
+		// Unfortunately the code for & in keypress is the same as the up arrow,
+		// so we use the suppressKeyPressRepeat flag to avoid handling keypress
+		// events when we know the keydown event was used to modify the
+		// search term. #7799
+		var suppressKeyPress, suppressKeyPressRepeat, suppressInput,
+			nodeName = this.element[ 0 ].nodeName.toLowerCase(),
+			isTextarea = nodeName === "textarea",
+			isInput = nodeName === "input";
+
+		this.isMultiLine =
+			// Textareas are always multi-line
+			isTextarea ? true :
+			// Inputs are always single-line, even if inside a contentEditable element
+			// IE also treats inputs as contentEditable
+			isInput ? false :
+			// All other element types are determined by whether or not they're contentEditable
+			this.element.prop( "isContentEditable" );
+
+		this.valueMethod = this.element[ isTextarea || isInput ? "val" : "text" ];
+		this.isNewMenu = true;
+
+		this.element
+			.addClass( "ui-autocomplete-input" )
+			.attr( "autocomplete", "off" );
+
+		this._on( this.element, {
+			keydown: function( event ) {
+				if ( this.element.prop( "readOnly" ) ) {
+					suppressKeyPress = true;
+					suppressInput = true;
+					suppressKeyPressRepeat = true;
+					return;
+				}
+
+				suppressKeyPress = false;
+				suppressInput = false;
+				suppressKeyPressRepeat = false;
+				var keyCode = $.ui.keyCode;
+				switch ( event.keyCode ) {
+				case keyCode.PAGE_UP:
+					suppressKeyPress = true;
+					this._move( "previousPage", event );
+					break;
+				case keyCode.PAGE_DOWN:
+					suppressKeyPress = true;
+					this._move( "nextPage", event );
+					break;
+				case keyCode.UP:
+					suppressKeyPress = true;
+					this._keyEvent( "previous", event );
+					break;
+				case keyCode.DOWN:
+					suppressKeyPress = true;
+					this._keyEvent( "next", event );
+					break;
+				case keyCode.ENTER:
+					// when menu is open and has focus
+					if ( this.menu.active ) {
+						// #6055 - Opera still allows the keypress to occur
+						// which causes forms to submit
+						suppressKeyPress = true;
+						event.preventDefault();
+						this.menu.select( event );
+					}
+					break;
+				case keyCode.TAB:
+					if ( this.menu.active ) {
+						this.menu.select( event );
+					}
+					break;
+				case keyCode.ESCAPE:
+					if ( this.menu.element.is( ":visible" ) ) {
+						if ( !this.isMultiLine ) {
+							this._value( this.term );
+						}
+						this.close( event );
+						// Different browsers have different default behavior for escape
+						// Single press can mean undo or clear
+						// Double press in IE means clear the whole form
+						event.preventDefault();
+					}
+					break;
+				default:
+					suppressKeyPressRepeat = true;
+					// search timeout should be triggered before the input value is changed
+					this._searchTimeout( event );
+					break;
+				}
+			},
+			keypress: function( event ) {
+				if ( suppressKeyPress ) {
+					suppressKeyPress = false;
+					if ( !this.isMultiLine || this.menu.element.is( ":visible" ) ) {
+						event.preventDefault();
+					}
+					return;
+				}
+				if ( suppressKeyPressRepeat ) {
+					return;
+				}
+
+				// replicate some key handlers to allow them to repeat in Firefox and Opera
+				var keyCode = $.ui.keyCode;
+				switch ( event.keyCode ) {
+				case keyCode.PAGE_UP:
+					this._move( "previousPage", event );
+					break;
+				case keyCode.PAGE_DOWN:
+					this._move( "nextPage", event );
+					break;
+				case keyCode.UP:
+					this._keyEvent( "previous", event );
+					break;
+				case keyCode.DOWN:
+					this._keyEvent( "next", event );
+					break;
+				}
+			},
+			input: function( event ) {
+				if ( suppressInput ) {
+					suppressInput = false;
+					event.preventDefault();
+					return;
+				}
+				this._searchTimeout( event );
+			},
+			focus: function() {
+				this.selectedItem = null;
+				this.previous = this._value();
+			},
+			blur: function( event ) {
+				if ( this.cancelBlur ) {
+					delete this.cancelBlur;
+					return;
+				}
+
+				clearTimeout( this.searching );
+				this.close( event );
+				this._change( event );
+			}
+		});
+
+		this._initSource();
+		this.menu = $( "<ul>" )
+			.addClass( "ui-autocomplete ui-front" )
+			.appendTo( this._appendTo() )
+			.menu({
+				// disable ARIA support, the live region takes care of that
+				role: null
+			})
+			.hide()
+			.menu( "instance" );
+
+		this._on( this.menu.element, {
+			mousedown: function( event ) {
+				// prevent moving focus out of the text field
+				event.preventDefault();
+
+				// IE doesn't prevent moving focus even with event.preventDefault()
+				// so we set a flag to know when we should ignore the blur event
+				this.cancelBlur = true;
+				this._delay(function() {
+					delete this.cancelBlur;
+				});
+
+				// clicking on the scrollbar causes focus to shift to the body
+				// but we can't detect a mouseup or a click immediately afterward
+				// so we have to track the next mousedown and close the menu if
+				// the user clicks somewhere outside of the autocomplete
+				var menuElement = this.menu.element[ 0 ];
+				if ( !$( event.target ).closest( ".ui-menu-item" ).length ) {
+					this._delay(function() {
+						var that = this;
+						this.document.one( "mousedown", function( event ) {
+							if ( event.target !== that.element[ 0 ] &&
+									event.target !== menuElement &&
+									!$.contains( menuElement, event.target ) ) {
+								that.close();
+							}
+						});
+					});
+				}
+			},
+			menufocus: function( event, ui ) {
+				var label, item;
+				// support: Firefox
+				// Prevent accidental activation of menu items in Firefox (#7024 #9118)
+				if ( this.isNewMenu ) {
+					this.isNewMenu = false;
+					if ( event.originalEvent && /^mouse/.test( event.originalEvent.type ) ) {
+						this.menu.blur();
+
+						this.document.one( "mousemove", function() {
+							$( event.target ).trigger( event.originalEvent );
+						});
+
+						return;
+					}
+				}
+
+				item = ui.item.data( "ui-autocomplete-item" );
+				if ( false !== this._trigger( "focus", event, { item: item } ) ) {
+					// use value to match what will end up in the input, if it was a key event
+					if ( event.originalEvent && /^key/.test( event.originalEvent.type ) ) {
+						this._value( item.value );
+					}
+				}
+
+				// Announce the value in the liveRegion
+				label = ui.item.attr( "aria-label" ) || item.value;
+				if ( label && $.trim( label ).length ) {
+					this.liveRegion.children().hide();
+					$( "<div>" ).text( label ).appendTo( this.liveRegion );
+				}
+			},
+			menuselect: function( event, ui ) {
+				var item = ui.item.data( "ui-autocomplete-item" ),
+					previous = this.previous;
+
+				// only trigger when focus was lost (click on menu)
+				if ( this.element[ 0 ] !== this.document[ 0 ].activeElement ) {
+					this.element.focus();
+					this.previous = previous;
+					// #6109 - IE triggers two focus events and the second
+					// is asynchronous, so we need to reset the previous
+					// term synchronously and asynchronously :-(
+					this._delay(function() {
+						this.previous = previous;
+						this.selectedItem = item;
+					});
+				}
+
+				if ( false !== this._trigger( "select", event, { item: item } ) ) {
+					this._value( item.value );
+				}
+				// reset the term after the select event
+				// this allows custom select handling to work properly
+				this.term = this._value();
+
+				this.close( event );
+				this.selectedItem = item;
+			}
+		});
+
+		this.liveRegion = $( "<span>", {
+				role: "status",
+				"aria-live": "assertive",
+				"aria-relevant": "additions"
+			})
+			.addClass( "ui-helper-hidden-accessible" )
+			.appendTo( this.document[ 0 ].body );
+
+		// turning off autocomplete prevents the browser from remembering the
+		// value when navigating through history, so we re-enable autocomplete
+		// if the page is unloaded before the widget is destroyed. #7790
+		this._on( this.window, {
+			beforeunload: function() {
+				this.element.removeAttr( "autocomplete" );
+			}
+		});
+	},
+
+	_destroy: function() {
+		clearTimeout( this.searching );
+		this.element
+			.removeClass( "ui-autocomplete-input" )
+			.removeAttr( "autocomplete" );
+		this.menu.element.remove();
+		this.liveRegion.remove();
+	},
+
+	_setOption: function( key, value ) {
+		this._super( key, value );
+		if ( key === "source" ) {
+			this._initSource();
+		}
+		if ( key === "appendTo" ) {
+			this.menu.element.appendTo( this._appendTo() );
+		}
+		if ( key === "disabled" && value && this.xhr ) {
+			this.xhr.abort();
+		}
+	},
+
+	_appendTo: function() {
+		var element = this.options.appendTo;
+
+		if ( element ) {
+			element = element.jquery || element.nodeType ?
+				$( element ) :
+				this.document.find( element ).eq( 0 );
+		}
+
+		if ( !element || !element[ 0 ] ) {
+			element = this.element.closest( ".ui-front" );
+		}
+
+		if ( !element.length ) {
+			element = this.document[ 0 ].body;
+		}
+
+		return element;
+	},
+
+	_initSource: function() {
+		var array, url,
+			that = this;
+		if ( $.isArray( this.options.source ) ) {
+			array = this.options.source;
+			this.source = function( request, response ) {
+				response( $.ui.autocomplete.filter( array, request.term ) );
+			};
+		} else if ( typeof this.options.source === "string" ) {
+			url = this.options.source;
+			this.source = function( request, response ) {
+				if ( that.xhr ) {
+					that.xhr.abort();
+				}
+				that.xhr = $.ajax({
+					url: url,
+					data: request,
+					dataType: "json",
+					success: function( data ) {
+						response( data );
+					},
+					error: function() {
+						response([]);
+					}
+				});
+			};
+		} else {
+			this.source = this.options.source;
+		}
+	},
+
+	_searchTimeout: function( event ) {
+		clearTimeout( this.searching );
+		this.searching = this._delay(function() {
+
+			// Search if the value has changed, or if the user retypes the same value (see #7434)
+			var equalValues = this.term === this._value(),
+				menuVisible = this.menu.element.is( ":visible" ),
+				modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+
+			if ( !equalValues || ( equalValues && !menuVisible && !modifierKey ) ) {
+				this.selectedItem = null;
+				this.search( null, event );
+			}
+		}, this.options.delay );
+	},
+
+	search: function( value, event ) {
+		value = value != null ? value : this._value();
+
+		// always save the actual value, not the one passed as an argument
+		this.term = this._value();
+
+		if ( value.length < this.options.minLength ) {
+			return this.close( event );
+		}
+
+		if ( this._trigger( "search", event ) === false ) {
+			return;
+		}
+
+		return this._search( value );
+	},
+
+	_search: function( value ) {
+		this.pending++;
+		this.element.addClass( "ui-autocomplete-loading" );
+		this.cancelSearch = false;
+
+		this.source( { term: value }, this._response() );
+	},
+
+	_response: function() {
+		var index = ++this.requestIndex;
+
+		return $.proxy(function( content ) {
+			if ( index === this.requestIndex ) {
+				this.__response( content );
+			}
+
+			this.pending--;
+			if ( !this.pending ) {
+				this.element.removeClass( "ui-autocomplete-loading" );
+			}
+		}, this );
+	},
+
+	__response: function( content ) {
+		if ( content ) {
+			content = this._normalize( content );
+		}
+		this._trigger( "response", null, { content: content } );
+		if ( !this.options.disabled && content && content.length && !this.cancelSearch ) {
+			this._suggest( content );
+			this._trigger( "open" );
+		} else {
+			// use ._close() instead of .close() so we don't cancel future searches
+			this._close();
+		}
+	},
+
+	close: function( event ) {
+		this.cancelSearch = true;
+		this._close( event );
+	},
+
+	_close: function( event ) {
+		if ( this.menu.element.is( ":visible" ) ) {
+			this.menu.element.hide();
+			this.menu.blur();
+			this.isNewMenu = true;
+			this._trigger( "close", event );
+		}
+	},
+
+	_change: function( event ) {
+		if ( this.previous !== this._value() ) {
+			this._trigger( "change", event, { item: this.selectedItem } );
+		}
+	},
+
+	_normalize: function( items ) {
+		// assume all items have the right format when the first item is complete
+		if ( items.length && items[ 0 ].label && items[ 0 ].value ) {
+			return items;
+		}
+		return $.map( items, function( item ) {
+			if ( typeof item === "string" ) {
+				return {
+					label: item,
+					value: item
+				};
+			}
+			return $.extend( {}, item, {
+				label: item.label || item.value,
+				value: item.value || item.label
+			});
+		});
+	},
+
+	_suggest: function( items ) {
+		var ul = this.menu.element.empty();
+		this._renderMenu( ul, items );
+		this.isNewMenu = true;
+		this.menu.refresh();
+
+		// size and position menu
+		ul.show();
+		this._resizeMenu();
+		ul.position( $.extend({
+			of: this.element
+		}, this.options.position ) );
+
+		if ( this.options.autoFocus ) {
+			this.menu.next();
+		}
+	},
+
+	_resizeMenu: function() {
+		var ul = this.menu.element;
+		ul.outerWidth( Math.max(
+			// Firefox wraps long text (possibly a rounding bug)
+			// so we add 1px to avoid the wrapping (#7513)
+			ul.width( "" ).outerWidth() + 1,
+			this.element.outerWidth()
+		) );
+	},
+
+	_renderMenu: function( ul, items ) {
+		var that = this;
+		$.each( items, function( index, item ) {
+			that._renderItemData( ul, item );
+		});
+	},
+
+	_renderItemData: function( ul, item ) {
+		return this._renderItem( ul, item ).data( "ui-autocomplete-item", item );
+	},
+
+	_renderItem: function( ul, item ) {
+		return $( "<li>" ).text( item.label ).appendTo( ul );
+	},
+
+	_move: function( direction, event ) {
+		if ( !this.menu.element.is( ":visible" ) ) {
+			this.search( null, event );
+			return;
+		}
+		if ( this.menu.isFirstItem() && /^previous/.test( direction ) ||
+				this.menu.isLastItem() && /^next/.test( direction ) ) {
+
+			if ( !this.isMultiLine ) {
+				this._value( this.term );
+			}
+
+			this.menu.blur();
+			return;
+		}
+		this.menu[ direction ]( event );
+	},
+
+	widget: function() {
+		return this.menu.element;
+	},
+
+	_value: function() {
+		return this.valueMethod.apply( this.element, arguments );
+	},
+
+	_keyEvent: function( keyEvent, event ) {
+		if ( !this.isMultiLine || this.menu.element.is( ":visible" ) ) {
+			this._move( keyEvent, event );
+
+			// prevents moving cursor to beginning/end of the text field in some browsers
+			event.preventDefault();
+		}
+	}
+});
+
+$.extend( $.ui.autocomplete, {
+	escapeRegex: function( value ) {
+		return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
+	},
+	filter: function( array, term ) {
+		var matcher = new RegExp( $.ui.autocomplete.escapeRegex( term ), "i" );
+		return $.grep( array, function( value ) {
+			return matcher.test( value.label || value.value || value );
+		});
+	}
+});
+
+// live region extension, adding a `messages` option
+// NOTE: This is an experimental API. We are still investigating
+// a full solution for string manipulation and internationalization.
+$.widget( "ui.autocomplete", $.ui.autocomplete, {
+	options: {
+		messages: {
+			noResults: "No search results.",
+			results: function( amount ) {
+				return amount + ( amount > 1 ? " results are" : " result is" ) +
+					" available, use up and down arrow keys to navigate.";
+			}
+		}
+	},
+
+	__response: function( content ) {
+		var message;
+		this._superApply( arguments );
+		if ( this.options.disabled || this.cancelSearch ) {
+			return;
+		}
+		if ( content && content.length ) {
+			message = this.options.messages.results( content.length );
+		} else {
+			message = this.options.messages.noResults;
+		}
+		this.liveRegion.children().hide();
+		$( "<div>" ).text( message ).appendTo( this.liveRegion );
+	}
+});
+
+var autocomplete = $.ui.autocomplete;
+
+
+/*
+ * jQuery UI Button 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/button/
+ */
+
+
+var lastActive,
 	baseClasses = "ui-button ui-widget ui-state-default ui-corner-all",
-	stateClasses = "ui-state-hover ui-state-active ",
 	typeClasses = "ui-button-icons-only ui-button-icon-only ui-button-text-icons ui-button-text-icon-primary ui-button-text-icon-secondary ui-button-text-only",
 	formResetHandler = function() {
 		var form = $( this );
@@ -5295,9 +7643,9 @@ var lastActive, startXPos, startYPos, clickDragged,
 		if ( name ) {
 			name = name.replace( /'/g, "\\'" );
 			if ( form ) {
-				radios = $( form ).find( "[name='" + name + "']" );
+				radios = $( form ).find( "[name='" + name + "'][type=radio]" );
 			} else {
-				radios = $( "[name='" + name + "']", radio.ownerDocument )
+				radios = $( "[name='" + name + "'][type=radio]", radio.ownerDocument )
 					.filter(function() {
 						return !this.form;
 					});
@@ -5307,7 +7655,7 @@ var lastActive, startXPos, startYPos, clickDragged,
 	};
 
 $.widget( "ui.button", {
-	version: "1.10.3",
+	version: "1.11.4",
 	defaultElement: "<button>",
 	options: {
 		disabled: null,
@@ -5335,8 +7683,7 @@ $.widget( "ui.button", {
 		var that = this,
 			options = this.options,
 			toggleButton = this.type === "checkbox" || this.type === "radio",
-			activeClass = !toggleButton ? "ui-state-active" : "",
-			focusClass = "ui-state-focus";
+			activeClass = !toggleButton ? "ui-state-active" : "";
 
 		if ( options.label === null ) {
 			options.label = (this.type === "input" ? this.buttonElement.val() : this.buttonElement.html());
@@ -5368,53 +7715,32 @@ $.widget( "ui.button", {
 				}
 			});
 
-		this.element
-			.bind( "focus" + this.eventNamespace, function() {
-				// no need to check disabled, focus won't be triggered anyway
-				that.buttonElement.addClass( focusClass );
-			})
-			.bind( "blur" + this.eventNamespace, function() {
-				that.buttonElement.removeClass( focusClass );
-			});
+		// Can't use _focusable() because the element that receives focus
+		// and the element that gets the ui-state-focus class are different
+		this._on({
+			focus: function() {
+				this.buttonElement.addClass( "ui-state-focus" );
+			},
+			blur: function() {
+				this.buttonElement.removeClass( "ui-state-focus" );
+			}
+		});
 
 		if ( toggleButton ) {
 			this.element.bind( "change" + this.eventNamespace, function() {
-				if ( clickDragged ) {
-					return;
-				}
 				that.refresh();
-			});
-			// if mouse moves between mousedown and mouseup (drag) set clickDragged flag
-			// prevents issue where button state changes but checkbox/radio checked state
-			// does not in Firefox (see ticket #6970)
-			this.buttonElement
-				.bind( "mousedown" + this.eventNamespace, function( event ) {
-					if ( options.disabled ) {
-						return;
-					}
-					clickDragged = false;
-					startXPos = event.pageX;
-					startYPos = event.pageY;
-				})
-				.bind( "mouseup" + this.eventNamespace, function( event ) {
-					if ( options.disabled ) {
-						return;
-					}
-					if ( startXPos !== event.pageX || startYPos !== event.pageY ) {
-						clickDragged = true;
-					}
 			});
 		}
 
 		if ( this.type === "checkbox" ) {
 			this.buttonElement.bind( "click" + this.eventNamespace, function() {
-				if ( options.disabled || clickDragged ) {
+				if ( options.disabled ) {
 					return false;
 				}
 			});
 		} else if ( this.type === "radio" ) {
 			this.buttonElement.bind( "click" + this.eventNamespace, function() {
-				if ( options.disabled || clickDragged ) {
+				if ( options.disabled ) {
 					return false;
 				}
 				$( this ).addClass( "ui-state-active" );
@@ -5471,9 +7797,6 @@ $.widget( "ui.button", {
 			}
 		}
 
-		// TODO: pull out $.Widget's handling for the disabled option into
-		// $.Widget.prototype._setOptionDisabled so it's easy to proxy and can
-		// be overridden by individual plugins
 		this._setOption( "disabled", options.disabled );
 		this._resetButton();
 	},
@@ -5524,7 +7847,7 @@ $.widget( "ui.button", {
 		this.element
 			.removeClass( "ui-helper-hidden-accessible" );
 		this.buttonElement
-			.removeClass( baseClasses + " " + stateClasses + " " + typeClasses )
+			.removeClass( baseClasses + " ui-state-active " + typeClasses )
 			.removeAttr( "role" )
 			.removeAttr( "aria-pressed" )
 			.html( this.buttonElement.find(".ui-button-text").html() );
@@ -5537,10 +7860,14 @@ $.widget( "ui.button", {
 	_setOption: function( key, value ) {
 		this._super( key, value );
 		if ( key === "disabled" ) {
+			this.widget().toggleClass( "ui-state-disabled", !!value );
+			this.element.prop( "disabled", !!value );
 			if ( value ) {
-				this.element.prop( "disabled", true );
-			} else {
-				this.element.prop( "disabled", false );
+				if ( this.type === "checkbox" || this.type === "radio" ) {
+					this.buttonElement.removeClass( "ui-state-focus" );
+				} else {
+					this.buttonElement.removeClass( "ui-state-focus ui-state-active" );
+				}
 			}
 			return;
 		}
@@ -5624,7 +7951,7 @@ $.widget( "ui.button", {
 });
 
 $.widget( "ui.buttonset", {
-	version: "1.10.3",
+	version: "1.11.4",
 	options: {
 		items: "button, input[type=button], input[type=submit], input[type=reset], input[type=checkbox], input[type=radio], a, :data(ui-button)"
 	},
@@ -5646,15 +7973,17 @@ $.widget( "ui.buttonset", {
 	},
 
 	refresh: function() {
-		var rtl = this.element.css( "direction" ) === "rtl";
+		var rtl = this.element.css( "direction" ) === "rtl",
+			allButtons = this.element.find( this.options.items ),
+			existingButtons = allButtons.filter( ":ui-button" );
 
-		this.buttons = this.element.find( this.options.items )
-			.filter( ":ui-button" )
-				.button( "refresh" )
-			.end()
-			.not( ":ui-button" )
-				.button()
-			.end()
+		// Initialize new buttons
+		allButtons.not( ":ui-button" ).button();
+
+		// Refresh existing buttons
+		existingButtons.button( "refresh" );
+
+		this.buttons = allButtons
 			.map(function() {
 				return $( this ).button( "widget" )[ 0 ];
 			})
@@ -5680,33 +8009,2100 @@ $.widget( "ui.buttonset", {
 	}
 });
 
-}( jQuery ) );
-(function( $, undefined ) {
+var button = $.ui.button;
 
-var sizeRelatedOptions = {
-		buttons: true,
-		height: true,
-		maxHeight: true,
-		maxWidth: true,
-		minHeight: true,
-		minWidth: true,
-		width: true
-	},
-	resizableRelatedOptions = {
-		maxHeight: true,
-		maxWidth: true,
-		minHeight: true,
-		minWidth: true
+
+/*
+ * jQuery UI Datepicker 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/datepicker/
+ */
+
+
+$.extend($.ui, { datepicker: { version: "1.11.4" } });
+
+var datepicker_instActive;
+
+function datepicker_getZindex( elem ) {
+	var position, value;
+	while ( elem.length && elem[ 0 ] !== document ) {
+		// Ignore z-index if position is set to a value where z-index is ignored by the browser
+		// This makes behavior of this function consistent across browsers
+		// WebKit always returns auto if the element is positioned
+		position = elem.css( "position" );
+		if ( position === "absolute" || position === "relative" || position === "fixed" ) {
+			// IE returns 0 when zIndex is not specified
+			// other browsers return a string
+			// we ignore the case of nested elements with an explicit value of 0
+			// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
+			value = parseInt( elem.css( "zIndex" ), 10 );
+			if ( !isNaN( value ) && value !== 0 ) {
+				return value;
+			}
+		}
+		elem = elem.parent();
+	}
+
+	return 0;
+}
+/* Date picker manager.
+   Use the singleton instance of this class, $.datepicker, to interact with the date picker.
+   Settings for (groups of) date pickers are maintained in an instance object,
+   allowing multiple different settings on the same page. */
+
+function Datepicker() {
+	this._curInst = null; // The current instance in use
+	this._keyEvent = false; // If the last event was a key event
+	this._disabledInputs = []; // List of date picker inputs that have been disabled
+	this._datepickerShowing = false; // True if the popup picker is showing , false if not
+	this._inDialog = false; // True if showing within a "dialog", false if not
+	this._mainDivId = "ui-datepicker-div"; // The ID of the main datepicker division
+	this._inlineClass = "ui-datepicker-inline"; // The name of the inline marker class
+	this._appendClass = "ui-datepicker-append"; // The name of the append marker class
+	this._triggerClass = "ui-datepicker-trigger"; // The name of the trigger marker class
+	this._dialogClass = "ui-datepicker-dialog"; // The name of the dialog marker class
+	this._disableClass = "ui-datepicker-disabled"; // The name of the disabled covering marker class
+	this._unselectableClass = "ui-datepicker-unselectable"; // The name of the unselectable cell marker class
+	this._currentClass = "ui-datepicker-current-day"; // The name of the current day marker class
+	this._dayOverClass = "ui-datepicker-days-cell-over"; // The name of the day hover marker class
+	this.regional = []; // Available regional settings, indexed by language code
+	this.regional[""] = { // Default regional settings
+		closeText: "Done", // Display text for close link
+		prevText: "Prev", // Display text for previous month link
+		nextText: "Next", // Display text for next month link
+		currentText: "Today", // Display text for current month link
+		monthNames: ["January","February","March","April","May","June",
+			"July","August","September","October","November","December"], // Names of months for drop-down and formatting
+		monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], // For formatting
+		dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], // For formatting
+		dayNamesShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], // For formatting
+		dayNamesMin: ["Su","Mo","Tu","We","Th","Fr","Sa"], // Column headings for days starting at Sunday
+		weekHeader: "Wk", // Column header for week of the year
+		dateFormat: "mm/dd/yy", // See format options on parseDate
+		firstDay: 0, // The first day of the week, Sun = 0, Mon = 1, ...
+		isRTL: false, // True if right-to-left language, false if left-to-right
+		showMonthAfterYear: false, // True if the year select precedes month, false for month then year
+		yearSuffix: "" // Additional text to append to the year in the month headers
 	};
+	this._defaults = { // Global defaults for all the date picker instances
+		showOn: "focus", // "focus" for popup on focus,
+			// "button" for trigger button, or "both" for either
+		showAnim: "fadeIn", // Name of jQuery animation for popup
+		showOptions: {}, // Options for enhanced animations
+		defaultDate: null, // Used when field is blank: actual date,
+			// +/-number for offset from today, null for today
+		appendText: "", // Display text following the input box, e.g. showing the format
+		buttonText: "...", // Text for trigger button
+		buttonImage: "", // URL for trigger button image
+		buttonImageOnly: false, // True if the image appears alone, false if it appears on a button
+		hideIfNoPrevNext: false, // True to hide next/previous month links
+			// if not applicable, false to just disable them
+		navigationAsDateFormat: false, // True if date formatting applied to prev/today/next links
+		gotoCurrent: false, // True if today link goes back to current selection instead
+		changeMonth: false, // True if month can be selected directly, false if only prev/next
+		changeYear: false, // True if year can be selected directly, false if only prev/next
+		yearRange: "c-10:c+10", // Range of years to display in drop-down,
+			// either relative to today's year (-nn:+nn), relative to currently displayed year
+			// (c-nn:c+nn), absolute (nnnn:nnnn), or a combination of the above (nnnn:-n)
+		showOtherMonths: false, // True to show dates in other months, false to leave blank
+		selectOtherMonths: false, // True to allow selection of dates in other months, false for unselectable
+		showWeek: false, // True to show week of the year, false to not show it
+		calculateWeek: this.iso8601Week, // How to calculate the week of the year,
+			// takes a Date and returns the number of the week for it
+		shortYearCutoff: "+10", // Short year values < this are in the current century,
+			// > this are in the previous century,
+			// string value starting with "+" for current year + value
+		minDate: null, // The earliest selectable date, or null for no limit
+		maxDate: null, // The latest selectable date, or null for no limit
+		duration: "fast", // Duration of display/closure
+		beforeShowDay: null, // Function that takes a date and returns an array with
+			// [0] = true if selectable, false if not, [1] = custom CSS class name(s) or "",
+			// [2] = cell title (optional), e.g. $.datepicker.noWeekends
+		beforeShow: null, // Function that takes an input field and
+			// returns a set of custom settings for the date picker
+		onSelect: null, // Define a callback function when a date is selected
+		onChangeMonthYear: null, // Define a callback function when the month or year is changed
+		onClose: null, // Define a callback function when the datepicker is closed
+		numberOfMonths: 1, // Number of months to show at a time
+		showCurrentAtPos: 0, // The position in multipe months at which to show the current month (starting at 0)
+		stepMonths: 1, // Number of months to step back/forward
+		stepBigMonths: 12, // Number of months to step back/forward for the big links
+		altField: "", // Selector for an alternate field to store selected dates into
+		altFormat: "", // The date format to use for the alternate field
+		constrainInput: true, // The input is constrained by the current date format
+		showButtonPanel: false, // True to show button panel, false to not show it
+		autoSize: false, // True to size the input for the date format, false to leave as is
+		disabled: false // The initial disabled state
+	};
+	$.extend(this._defaults, this.regional[""]);
+	this.regional.en = $.extend( true, {}, this.regional[ "" ]);
+	this.regional[ "en-US" ] = $.extend( true, {}, this.regional.en );
+	this.dpDiv = datepicker_bindHover($("<div id='" + this._mainDivId + "' class='ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>"));
+}
 
-$.widget( "ui.dialog", {
-	version: "1.10.3",
+$.extend(Datepicker.prototype, {
+	/* Class name added to elements to indicate already configured with a date picker. */
+	markerClassName: "hasDatepicker",
+
+	//Keep track of the maximum number of rows displayed (see #7043)
+	maxRows: 4,
+
+	// TODO rename to "widget" when switching to widget factory
+	_widgetDatepicker: function() {
+		return this.dpDiv;
+	},
+
+	/* Override the default settings for all instances of the date picker.
+	 * @param  settings  object - the new settings to use as defaults (anonymous object)
+	 * @return the manager object
+	 */
+	setDefaults: function(settings) {
+		datepicker_extendRemove(this._defaults, settings || {});
+		return this;
+	},
+
+	/* Attach the date picker to a jQuery selection.
+	 * @param  target	element - the target input field or division or span
+	 * @param  settings  object - the new settings to use for this date picker instance (anonymous)
+	 */
+	_attachDatepicker: function(target, settings) {
+		var nodeName, inline, inst;
+		nodeName = target.nodeName.toLowerCase();
+		inline = (nodeName === "div" || nodeName === "span");
+		if (!target.id) {
+			this.uuid += 1;
+			target.id = "dp" + this.uuid;
+		}
+		inst = this._newInst($(target), inline);
+		inst.settings = $.extend({}, settings || {});
+		if (nodeName === "input") {
+			this._connectDatepicker(target, inst);
+		} else if (inline) {
+			this._inlineDatepicker(target, inst);
+		}
+	},
+
+	/* Create a new instance object. */
+	_newInst: function(target, inline) {
+		var id = target[0].id.replace(/([^A-Za-z0-9_\-])/g, "\\\\$1"); // escape jQuery meta chars
+		return {id: id, input: target, // associated target
+			selectedDay: 0, selectedMonth: 0, selectedYear: 0, // current selection
+			drawMonth: 0, drawYear: 0, // month being drawn
+			inline: inline, // is datepicker inline or not
+			dpDiv: (!inline ? this.dpDiv : // presentation div
+			datepicker_bindHover($("<div class='" + this._inlineClass + " ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")))};
+	},
+
+	/* Attach the date picker to an input field. */
+	_connectDatepicker: function(target, inst) {
+		var input = $(target);
+		inst.append = $([]);
+		inst.trigger = $([]);
+		if (input.hasClass(this.markerClassName)) {
+			return;
+		}
+		this._attachments(input, inst);
+		input.addClass(this.markerClassName).keydown(this._doKeyDown).
+			keypress(this._doKeyPress).keyup(this._doKeyUp);
+		this._autoSize(inst);
+		$.data(target, "datepicker", inst);
+		//If disabled option is true, disable the datepicker once it has been attached to the input (see ticket #5665)
+		if( inst.settings.disabled ) {
+			this._disableDatepicker( target );
+		}
+	},
+
+	/* Make attachments based on settings. */
+	_attachments: function(input, inst) {
+		var showOn, buttonText, buttonImage,
+			appendText = this._get(inst, "appendText"),
+			isRTL = this._get(inst, "isRTL");
+
+		if (inst.append) {
+			inst.append.remove();
+		}
+		if (appendText) {
+			inst.append = $("<span class='" + this._appendClass + "'>" + appendText + "</span>");
+			input[isRTL ? "before" : "after"](inst.append);
+		}
+
+		input.unbind("focus", this._showDatepicker);
+
+		if (inst.trigger) {
+			inst.trigger.remove();
+		}
+
+		showOn = this._get(inst, "showOn");
+		if (showOn === "focus" || showOn === "both") { // pop-up date picker when in the marked field
+			input.focus(this._showDatepicker);
+		}
+		if (showOn === "button" || showOn === "both") { // pop-up date picker when button clicked
+			buttonText = this._get(inst, "buttonText");
+			buttonImage = this._get(inst, "buttonImage");
+			inst.trigger = $(this._get(inst, "buttonImageOnly") ?
+				$("<img/>").addClass(this._triggerClass).
+					attr({ src: buttonImage, alt: buttonText, title: buttonText }) :
+				$("<button type='button'></button>").addClass(this._triggerClass).
+					html(!buttonImage ? buttonText : $("<img/>").attr(
+					{ src:buttonImage, alt:buttonText, title:buttonText })));
+			input[isRTL ? "before" : "after"](inst.trigger);
+			inst.trigger.click(function() {
+				if ($.datepicker._datepickerShowing && $.datepicker._lastInput === input[0]) {
+					$.datepicker._hideDatepicker();
+				} else if ($.datepicker._datepickerShowing && $.datepicker._lastInput !== input[0]) {
+					$.datepicker._hideDatepicker();
+					$.datepicker._showDatepicker(input[0]);
+				} else {
+					$.datepicker._showDatepicker(input[0]);
+				}
+				return false;
+			});
+		}
+	},
+
+	/* Apply the maximum length for the date format. */
+	_autoSize: function(inst) {
+		if (this._get(inst, "autoSize") && !inst.inline) {
+			var findMax, max, maxI, i,
+				date = new Date(2009, 12 - 1, 20), // Ensure double digits
+				dateFormat = this._get(inst, "dateFormat");
+
+			if (dateFormat.match(/[DM]/)) {
+				findMax = function(names) {
+					max = 0;
+					maxI = 0;
+					for (i = 0; i < names.length; i++) {
+						if (names[i].length > max) {
+							max = names[i].length;
+							maxI = i;
+						}
+					}
+					return maxI;
+				};
+				date.setMonth(findMax(this._get(inst, (dateFormat.match(/MM/) ?
+					"monthNames" : "monthNamesShort"))));
+				date.setDate(findMax(this._get(inst, (dateFormat.match(/DD/) ?
+					"dayNames" : "dayNamesShort"))) + 20 - date.getDay());
+			}
+			inst.input.attr("size", this._formatDate(inst, date).length);
+		}
+	},
+
+	/* Attach an inline date picker to a div. */
+	_inlineDatepicker: function(target, inst) {
+		var divSpan = $(target);
+		if (divSpan.hasClass(this.markerClassName)) {
+			return;
+		}
+		divSpan.addClass(this.markerClassName).append(inst.dpDiv);
+		$.data(target, "datepicker", inst);
+		this._setDate(inst, this._getDefaultDate(inst), true);
+		this._updateDatepicker(inst);
+		this._updateAlternate(inst);
+		//If disabled option is true, disable the datepicker before showing it (see ticket #5665)
+		if( inst.settings.disabled ) {
+			this._disableDatepicker( target );
+		}
+		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
+		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
+		inst.dpDiv.css( "display", "block" );
+	},
+
+	/* Pop-up the date picker in a "dialog" box.
+	 * @param  input element - ignored
+	 * @param  date	string or Date - the initial date to display
+	 * @param  onSelect  function - the function to call when a date is selected
+	 * @param  settings  object - update the dialog date picker instance's settings (anonymous object)
+	 * @param  pos int[2] - coordinates for the dialog's position within the screen or
+	 *					event - with x/y coordinates or
+	 *					leave empty for default (screen centre)
+	 * @return the manager object
+	 */
+	_dialogDatepicker: function(input, date, onSelect, settings, pos) {
+		var id, browserWidth, browserHeight, scrollX, scrollY,
+			inst = this._dialogInst; // internal instance
+
+		if (!inst) {
+			this.uuid += 1;
+			id = "dp" + this.uuid;
+			this._dialogInput = $("<input type='text' id='" + id +
+				"' style='position: absolute; top: -100px; width: 0px;'/>");
+			this._dialogInput.keydown(this._doKeyDown);
+			$("body").append(this._dialogInput);
+			inst = this._dialogInst = this._newInst(this._dialogInput, false);
+			inst.settings = {};
+			$.data(this._dialogInput[0], "datepicker", inst);
+		}
+		datepicker_extendRemove(inst.settings, settings || {});
+		date = (date && date.constructor === Date ? this._formatDate(inst, date) : date);
+		this._dialogInput.val(date);
+
+		this._pos = (pos ? (pos.length ? pos : [pos.pageX, pos.pageY]) : null);
+		if (!this._pos) {
+			browserWidth = document.documentElement.clientWidth;
+			browserHeight = document.documentElement.clientHeight;
+			scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+			scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+			this._pos = // should use actual width/height below
+				[(browserWidth / 2) - 100 + scrollX, (browserHeight / 2) - 150 + scrollY];
+		}
+
+		// move input on screen for focus, but hidden behind dialog
+		this._dialogInput.css("left", (this._pos[0] + 20) + "px").css("top", this._pos[1] + "px");
+		inst.settings.onSelect = onSelect;
+		this._inDialog = true;
+		this.dpDiv.addClass(this._dialogClass);
+		this._showDatepicker(this._dialogInput[0]);
+		if ($.blockUI) {
+			$.blockUI(this.dpDiv);
+		}
+		$.data(this._dialogInput[0], "datepicker", inst);
+		return this;
+	},
+
+	/* Detach a datepicker from its control.
+	 * @param  target	element - the target input field or division or span
+	 */
+	_destroyDatepicker: function(target) {
+		var nodeName,
+			$target = $(target),
+			inst = $.data(target, "datepicker");
+
+		if (!$target.hasClass(this.markerClassName)) {
+			return;
+		}
+
+		nodeName = target.nodeName.toLowerCase();
+		$.removeData(target, "datepicker");
+		if (nodeName === "input") {
+			inst.append.remove();
+			inst.trigger.remove();
+			$target.removeClass(this.markerClassName).
+				unbind("focus", this._showDatepicker).
+				unbind("keydown", this._doKeyDown).
+				unbind("keypress", this._doKeyPress).
+				unbind("keyup", this._doKeyUp);
+		} else if (nodeName === "div" || nodeName === "span") {
+			$target.removeClass(this.markerClassName).empty();
+		}
+
+		if ( datepicker_instActive === inst ) {
+			datepicker_instActive = null;
+		}
+	},
+
+	/* Enable the date picker to a jQuery selection.
+	 * @param  target	element - the target input field or division or span
+	 */
+	_enableDatepicker: function(target) {
+		var nodeName, inline,
+			$target = $(target),
+			inst = $.data(target, "datepicker");
+
+		if (!$target.hasClass(this.markerClassName)) {
+			return;
+		}
+
+		nodeName = target.nodeName.toLowerCase();
+		if (nodeName === "input") {
+			target.disabled = false;
+			inst.trigger.filter("button").
+				each(function() { this.disabled = false; }).end().
+				filter("img").css({opacity: "1.0", cursor: ""});
+		} else if (nodeName === "div" || nodeName === "span") {
+			inline = $target.children("." + this._inlineClass);
+			inline.children().removeClass("ui-state-disabled");
+			inline.find("select.ui-datepicker-month, select.ui-datepicker-year").
+				prop("disabled", false);
+		}
+		this._disabledInputs = $.map(this._disabledInputs,
+			function(value) { return (value === target ? null : value); }); // delete entry
+	},
+
+	/* Disable the date picker to a jQuery selection.
+	 * @param  target	element - the target input field or division or span
+	 */
+	_disableDatepicker: function(target) {
+		var nodeName, inline,
+			$target = $(target),
+			inst = $.data(target, "datepicker");
+
+		if (!$target.hasClass(this.markerClassName)) {
+			return;
+		}
+
+		nodeName = target.nodeName.toLowerCase();
+		if (nodeName === "input") {
+			target.disabled = true;
+			inst.trigger.filter("button").
+				each(function() { this.disabled = true; }).end().
+				filter("img").css({opacity: "0.5", cursor: "default"});
+		} else if (nodeName === "div" || nodeName === "span") {
+			inline = $target.children("." + this._inlineClass);
+			inline.children().addClass("ui-state-disabled");
+			inline.find("select.ui-datepicker-month, select.ui-datepicker-year").
+				prop("disabled", true);
+		}
+		this._disabledInputs = $.map(this._disabledInputs,
+			function(value) { return (value === target ? null : value); }); // delete entry
+		this._disabledInputs[this._disabledInputs.length] = target;
+	},
+
+	/* Is the first field in a jQuery collection disabled as a datepicker?
+	 * @param  target	element - the target input field or division or span
+	 * @return boolean - true if disabled, false if enabled
+	 */
+	_isDisabledDatepicker: function(target) {
+		if (!target) {
+			return false;
+		}
+		for (var i = 0; i < this._disabledInputs.length; i++) {
+			if (this._disabledInputs[i] === target) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	/* Retrieve the instance data for the target control.
+	 * @param  target  element - the target input field or division or span
+	 * @return  object - the associated instance data
+	 * @throws  error if a jQuery problem getting data
+	 */
+	_getInst: function(target) {
+		try {
+			return $.data(target, "datepicker");
+		}
+		catch (err) {
+			throw "Missing instance data for this datepicker";
+		}
+	},
+
+	/* Update or retrieve the settings for a date picker attached to an input field or division.
+	 * @param  target  element - the target input field or division or span
+	 * @param  name	object - the new settings to update or
+	 *				string - the name of the setting to change or retrieve,
+	 *				when retrieving also "all" for all instance settings or
+	 *				"defaults" for all global defaults
+	 * @param  value   any - the new value for the setting
+	 *				(omit if above is an object or to retrieve a value)
+	 */
+	_optionDatepicker: function(target, name, value) {
+		var settings, date, minDate, maxDate,
+			inst = this._getInst(target);
+
+		if (arguments.length === 2 && typeof name === "string") {
+			return (name === "defaults" ? $.extend({}, $.datepicker._defaults) :
+				(inst ? (name === "all" ? $.extend({}, inst.settings) :
+				this._get(inst, name)) : null));
+		}
+
+		settings = name || {};
+		if (typeof name === "string") {
+			settings = {};
+			settings[name] = value;
+		}
+
+		if (inst) {
+			if (this._curInst === inst) {
+				this._hideDatepicker();
+			}
+
+			date = this._getDateDatepicker(target, true);
+			minDate = this._getMinMaxDate(inst, "min");
+			maxDate = this._getMinMaxDate(inst, "max");
+			datepicker_extendRemove(inst.settings, settings);
+			// reformat the old minDate/maxDate values if dateFormat changes and a new minDate/maxDate isn't provided
+			if (minDate !== null && settings.dateFormat !== undefined && settings.minDate === undefined) {
+				inst.settings.minDate = this._formatDate(inst, minDate);
+			}
+			if (maxDate !== null && settings.dateFormat !== undefined && settings.maxDate === undefined) {
+				inst.settings.maxDate = this._formatDate(inst, maxDate);
+			}
+			if ( "disabled" in settings ) {
+				if ( settings.disabled ) {
+					this._disableDatepicker(target);
+				} else {
+					this._enableDatepicker(target);
+				}
+			}
+			this._attachments($(target), inst);
+			this._autoSize(inst);
+			this._setDate(inst, date);
+			this._updateAlternate(inst);
+			this._updateDatepicker(inst);
+		}
+	},
+
+	// change method deprecated
+	_changeDatepicker: function(target, name, value) {
+		this._optionDatepicker(target, name, value);
+	},
+
+	/* Redraw the date picker attached to an input field or division.
+	 * @param  target  element - the target input field or division or span
+	 */
+	_refreshDatepicker: function(target) {
+		var inst = this._getInst(target);
+		if (inst) {
+			this._updateDatepicker(inst);
+		}
+	},
+
+	/* Set the dates for a jQuery selection.
+	 * @param  target element - the target input field or division or span
+	 * @param  date	Date - the new date
+	 */
+	_setDateDatepicker: function(target, date) {
+		var inst = this._getInst(target);
+		if (inst) {
+			this._setDate(inst, date);
+			this._updateDatepicker(inst);
+			this._updateAlternate(inst);
+		}
+	},
+
+	/* Get the date(s) for the first entry in a jQuery selection.
+	 * @param  target element - the target input field or division or span
+	 * @param  noDefault boolean - true if no default date is to be used
+	 * @return Date - the current date
+	 */
+	_getDateDatepicker: function(target, noDefault) {
+		var inst = this._getInst(target);
+		if (inst && !inst.inline) {
+			this._setDateFromField(inst, noDefault);
+		}
+		return (inst ? this._getDate(inst) : null);
+	},
+
+	/* Handle keystrokes. */
+	_doKeyDown: function(event) {
+		var onSelect, dateStr, sel,
+			inst = $.datepicker._getInst(event.target),
+			handled = true,
+			isRTL = inst.dpDiv.is(".ui-datepicker-rtl");
+
+		inst._keyEvent = true;
+		if ($.datepicker._datepickerShowing) {
+			switch (event.keyCode) {
+				case 9: $.datepicker._hideDatepicker();
+						handled = false;
+						break; // hide on tab out
+				case 13: sel = $("td." + $.datepicker._dayOverClass + ":not(." +
+									$.datepicker._currentClass + ")", inst.dpDiv);
+						if (sel[0]) {
+							$.datepicker._selectDay(event.target, inst.selectedMonth, inst.selectedYear, sel[0]);
+						}
+
+						onSelect = $.datepicker._get(inst, "onSelect");
+						if (onSelect) {
+							dateStr = $.datepicker._formatDate(inst);
+
+							// trigger custom callback
+							onSelect.apply((inst.input ? inst.input[0] : null), [dateStr, inst]);
+						} else {
+							$.datepicker._hideDatepicker();
+						}
+
+						return false; // don't submit the form
+				case 27: $.datepicker._hideDatepicker();
+						break; // hide on escape
+				case 33: $.datepicker._adjustDate(event.target, (event.ctrlKey ?
+							-$.datepicker._get(inst, "stepBigMonths") :
+							-$.datepicker._get(inst, "stepMonths")), "M");
+						break; // previous month/year on page up/+ ctrl
+				case 34: $.datepicker._adjustDate(event.target, (event.ctrlKey ?
+							+$.datepicker._get(inst, "stepBigMonths") :
+							+$.datepicker._get(inst, "stepMonths")), "M");
+						break; // next month/year on page down/+ ctrl
+				case 35: if (event.ctrlKey || event.metaKey) {
+							$.datepicker._clearDate(event.target);
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // clear on ctrl or command +end
+				case 36: if (event.ctrlKey || event.metaKey) {
+							$.datepicker._gotoToday(event.target);
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // current on ctrl or command +home
+				case 37: if (event.ctrlKey || event.metaKey) {
+							$.datepicker._adjustDate(event.target, (isRTL ? +1 : -1), "D");
+						}
+						handled = event.ctrlKey || event.metaKey;
+						// -1 day on ctrl or command +left
+						if (event.originalEvent.altKey) {
+							$.datepicker._adjustDate(event.target, (event.ctrlKey ?
+								-$.datepicker._get(inst, "stepBigMonths") :
+								-$.datepicker._get(inst, "stepMonths")), "M");
+						}
+						// next month/year on alt +left on Mac
+						break;
+				case 38: if (event.ctrlKey || event.metaKey) {
+							$.datepicker._adjustDate(event.target, -7, "D");
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // -1 week on ctrl or command +up
+				case 39: if (event.ctrlKey || event.metaKey) {
+							$.datepicker._adjustDate(event.target, (isRTL ? -1 : +1), "D");
+						}
+						handled = event.ctrlKey || event.metaKey;
+						// +1 day on ctrl or command +right
+						if (event.originalEvent.altKey) {
+							$.datepicker._adjustDate(event.target, (event.ctrlKey ?
+								+$.datepicker._get(inst, "stepBigMonths") :
+								+$.datepicker._get(inst, "stepMonths")), "M");
+						}
+						// next month/year on alt +right
+						break;
+				case 40: if (event.ctrlKey || event.metaKey) {
+							$.datepicker._adjustDate(event.target, +7, "D");
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // +1 week on ctrl or command +down
+				default: handled = false;
+			}
+		} else if (event.keyCode === 36 && event.ctrlKey) { // display the date picker on ctrl+home
+			$.datepicker._showDatepicker(this);
+		} else {
+			handled = false;
+		}
+
+		if (handled) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+
+	/* Filter entered characters - based on date format. */
+	_doKeyPress: function(event) {
+		var chars, chr,
+			inst = $.datepicker._getInst(event.target);
+
+		if ($.datepicker._get(inst, "constrainInput")) {
+			chars = $.datepicker._possibleChars($.datepicker._get(inst, "dateFormat"));
+			chr = String.fromCharCode(event.charCode == null ? event.keyCode : event.charCode);
+			return event.ctrlKey || event.metaKey || (chr < " " || !chars || chars.indexOf(chr) > -1);
+		}
+	},
+
+	/* Synchronise manual entry and field/alternate field. */
+	_doKeyUp: function(event) {
+		var date,
+			inst = $.datepicker._getInst(event.target);
+
+		if (inst.input.val() !== inst.lastVal) {
+			try {
+				date = $.datepicker.parseDate($.datepicker._get(inst, "dateFormat"),
+					(inst.input ? inst.input.val() : null),
+					$.datepicker._getFormatConfig(inst));
+
+				if (date) { // only if valid
+					$.datepicker._setDateFromField(inst);
+					$.datepicker._updateAlternate(inst);
+					$.datepicker._updateDatepicker(inst);
+				}
+			}
+			catch (err) {
+			}
+		}
+		return true;
+	},
+
+	/* Pop-up the date picker for a given input field.
+	 * If false returned from beforeShow event handler do not show.
+	 * @param  input  element - the input field attached to the date picker or
+	 *					event - if triggered by focus
+	 */
+	_showDatepicker: function(input) {
+		input = input.target || input;
+		if (input.nodeName.toLowerCase() !== "input") { // find from button/image trigger
+			input = $("input", input.parentNode)[0];
+		}
+
+		if ($.datepicker._isDisabledDatepicker(input) || $.datepicker._lastInput === input) { // already here
+			return;
+		}
+
+		var inst, beforeShow, beforeShowSettings, isFixed,
+			offset, showAnim, duration;
+
+		inst = $.datepicker._getInst(input);
+		if ($.datepicker._curInst && $.datepicker._curInst !== inst) {
+			$.datepicker._curInst.dpDiv.stop(true, true);
+			if ( inst && $.datepicker._datepickerShowing ) {
+				$.datepicker._hideDatepicker( $.datepicker._curInst.input[0] );
+			}
+		}
+
+		beforeShow = $.datepicker._get(inst, "beforeShow");
+		beforeShowSettings = beforeShow ? beforeShow.apply(input, [input, inst]) : {};
+		if(beforeShowSettings === false){
+			return;
+		}
+		datepicker_extendRemove(inst.settings, beforeShowSettings);
+
+		inst.lastVal = null;
+		$.datepicker._lastInput = input;
+		$.datepicker._setDateFromField(inst);
+
+		if ($.datepicker._inDialog) { // hide cursor
+			input.value = "";
+		}
+		if (!$.datepicker._pos) { // position below input
+			$.datepicker._pos = $.datepicker._findPos(input);
+			$.datepicker._pos[1] += input.offsetHeight; // add the height
+		}
+
+		isFixed = false;
+		$(input).parents().each(function() {
+			isFixed |= $(this).css("position") === "fixed";
+			return !isFixed;
+		});
+
+		offset = {left: $.datepicker._pos[0], top: $.datepicker._pos[1]};
+		$.datepicker._pos = null;
+		//to avoid flashes on Firefox
+		inst.dpDiv.empty();
+		// determine sizing offscreen
+		inst.dpDiv.css({position: "absolute", display: "block", top: "-1000px"});
+		$.datepicker._updateDatepicker(inst);
+		// fix width for dynamic number of date pickers
+		// and adjust position before showing
+		offset = $.datepicker._checkOffset(inst, offset, isFixed);
+		inst.dpDiv.css({position: ($.datepicker._inDialog && $.blockUI ?
+			"static" : (isFixed ? "fixed" : "absolute")), display: "none",
+			left: offset.left + "px", top: offset.top + "px"});
+
+		if (!inst.inline) {
+			showAnim = $.datepicker._get(inst, "showAnim");
+			duration = $.datepicker._get(inst, "duration");
+			inst.dpDiv.css( "z-index", datepicker_getZindex( $( input ) ) + 1 );
+			$.datepicker._datepickerShowing = true;
+
+			if ( $.effects && $.effects.effect[ showAnim ] ) {
+				inst.dpDiv.show(showAnim, $.datepicker._get(inst, "showOptions"), duration);
+			} else {
+				inst.dpDiv[showAnim || "show"](showAnim ? duration : null);
+			}
+
+			if ( $.datepicker._shouldFocusInput( inst ) ) {
+				inst.input.focus();
+			}
+
+			$.datepicker._curInst = inst;
+		}
+	},
+
+	/* Generate the date picker content. */
+	_updateDatepicker: function(inst) {
+		this.maxRows = 4; //Reset the max number of rows being displayed (see #7043)
+		datepicker_instActive = inst; // for delegate hover events
+		inst.dpDiv.empty().append(this._generateHTML(inst));
+		this._attachHandlers(inst);
+
+		var origyearshtml,
+			numMonths = this._getNumberOfMonths(inst),
+			cols = numMonths[1],
+			width = 17,
+			activeCell = inst.dpDiv.find( "." + this._dayOverClass + " a" );
+
+		if ( activeCell.length > 0 ) {
+			datepicker_handleMouseover.apply( activeCell.get( 0 ) );
+		}
+
+		inst.dpDiv.removeClass("ui-datepicker-multi-2 ui-datepicker-multi-3 ui-datepicker-multi-4").width("");
+		if (cols > 1) {
+			inst.dpDiv.addClass("ui-datepicker-multi-" + cols).css("width", (width * cols) + "em");
+		}
+		inst.dpDiv[(numMonths[0] !== 1 || numMonths[1] !== 1 ? "add" : "remove") +
+			"Class"]("ui-datepicker-multi");
+		inst.dpDiv[(this._get(inst, "isRTL") ? "add" : "remove") +
+			"Class"]("ui-datepicker-rtl");
+
+		if (inst === $.datepicker._curInst && $.datepicker._datepickerShowing && $.datepicker._shouldFocusInput( inst ) ) {
+			inst.input.focus();
+		}
+
+		// deffered render of the years select (to avoid flashes on Firefox)
+		if( inst.yearshtml ){
+			origyearshtml = inst.yearshtml;
+			setTimeout(function(){
+				//assure that inst.yearshtml didn't change.
+				if( origyearshtml === inst.yearshtml && inst.yearshtml ){
+					inst.dpDiv.find("select.ui-datepicker-year:first").replaceWith(inst.yearshtml);
+				}
+				origyearshtml = inst.yearshtml = null;
+			}, 0);
+		}
+	},
+
+	// #6694 - don't focus the input if it's already focused
+	// this breaks the change event in IE
+	// Support: IE and jQuery <1.9
+	_shouldFocusInput: function( inst ) {
+		return inst.input && inst.input.is( ":visible" ) && !inst.input.is( ":disabled" ) && !inst.input.is( ":focus" );
+	},
+
+	/* Check positioning to remain on screen. */
+	_checkOffset: function(inst, offset, isFixed) {
+		var dpWidth = inst.dpDiv.outerWidth(),
+			dpHeight = inst.dpDiv.outerHeight(),
+			inputWidth = inst.input ? inst.input.outerWidth() : 0,
+			inputHeight = inst.input ? inst.input.outerHeight() : 0,
+			viewWidth = document.documentElement.clientWidth + (isFixed ? 0 : $(document).scrollLeft()),
+			viewHeight = document.documentElement.clientHeight + (isFixed ? 0 : $(document).scrollTop());
+
+		offset.left -= (this._get(inst, "isRTL") ? (dpWidth - inputWidth) : 0);
+		offset.left -= (isFixed && offset.left === inst.input.offset().left) ? $(document).scrollLeft() : 0;
+		offset.top -= (isFixed && offset.top === (inst.input.offset().top + inputHeight)) ? $(document).scrollTop() : 0;
+
+		// now check if datepicker is showing outside window viewport - move to a better place if so.
+		offset.left -= Math.min(offset.left, (offset.left + dpWidth > viewWidth && viewWidth > dpWidth) ?
+			Math.abs(offset.left + dpWidth - viewWidth) : 0);
+		offset.top -= Math.min(offset.top, (offset.top + dpHeight > viewHeight && viewHeight > dpHeight) ?
+			Math.abs(dpHeight + inputHeight) : 0);
+
+		return offset;
+	},
+
+	/* Find an object's position on the screen. */
+	_findPos: function(obj) {
+		var position,
+			inst = this._getInst(obj),
+			isRTL = this._get(inst, "isRTL");
+
+		while (obj && (obj.type === "hidden" || obj.nodeType !== 1 || $.expr.filters.hidden(obj))) {
+			obj = obj[isRTL ? "previousSibling" : "nextSibling"];
+		}
+
+		position = $(obj).offset();
+		return [position.left, position.top];
+	},
+
+	/* Hide the date picker from view.
+	 * @param  input  element - the input field attached to the date picker
+	 */
+	_hideDatepicker: function(input) {
+		var showAnim, duration, postProcess, onClose,
+			inst = this._curInst;
+
+		if (!inst || (input && inst !== $.data(input, "datepicker"))) {
+			return;
+		}
+
+		if (this._datepickerShowing) {
+			showAnim = this._get(inst, "showAnim");
+			duration = this._get(inst, "duration");
+			postProcess = function() {
+				$.datepicker._tidyDialog(inst);
+			};
+
+			// DEPRECATED: after BC for 1.8.x $.effects[ showAnim ] is not needed
+			if ( $.effects && ( $.effects.effect[ showAnim ] || $.effects[ showAnim ] ) ) {
+				inst.dpDiv.hide(showAnim, $.datepicker._get(inst, "showOptions"), duration, postProcess);
+			} else {
+				inst.dpDiv[(showAnim === "slideDown" ? "slideUp" :
+					(showAnim === "fadeIn" ? "fadeOut" : "hide"))]((showAnim ? duration : null), postProcess);
+			}
+
+			if (!showAnim) {
+				postProcess();
+			}
+			this._datepickerShowing = false;
+
+			onClose = this._get(inst, "onClose");
+			if (onClose) {
+				onClose.apply((inst.input ? inst.input[0] : null), [(inst.input ? inst.input.val() : ""), inst]);
+			}
+
+			this._lastInput = null;
+			if (this._inDialog) {
+				this._dialogInput.css({ position: "absolute", left: "0", top: "-100px" });
+				if ($.blockUI) {
+					$.unblockUI();
+					$("body").append(this.dpDiv);
+				}
+			}
+			this._inDialog = false;
+		}
+	},
+
+	/* Tidy up after a dialog display. */
+	_tidyDialog: function(inst) {
+		inst.dpDiv.removeClass(this._dialogClass).unbind(".ui-datepicker-calendar");
+	},
+
+	/* Close date picker if clicked elsewhere. */
+	_checkExternalClick: function(event) {
+		if (!$.datepicker._curInst) {
+			return;
+		}
+
+		var $target = $(event.target),
+			inst = $.datepicker._getInst($target[0]);
+
+		if ( ( ( $target[0].id !== $.datepicker._mainDivId &&
+				$target.parents("#" + $.datepicker._mainDivId).length === 0 &&
+				!$target.hasClass($.datepicker.markerClassName) &&
+				!$target.closest("." + $.datepicker._triggerClass).length &&
+				$.datepicker._datepickerShowing && !($.datepicker._inDialog && $.blockUI) ) ) ||
+			( $target.hasClass($.datepicker.markerClassName) && $.datepicker._curInst !== inst ) ) {
+				$.datepicker._hideDatepicker();
+		}
+	},
+
+	/* Adjust one of the date sub-fields. */
+	_adjustDate: function(id, offset, period) {
+		var target = $(id),
+			inst = this._getInst(target[0]);
+
+		if (this._isDisabledDatepicker(target[0])) {
+			return;
+		}
+		this._adjustInstDate(inst, offset +
+			(period === "M" ? this._get(inst, "showCurrentAtPos") : 0), // undo positioning
+			period);
+		this._updateDatepicker(inst);
+	},
+
+	/* Action for current link. */
+	_gotoToday: function(id) {
+		var date,
+			target = $(id),
+			inst = this._getInst(target[0]);
+
+		if (this._get(inst, "gotoCurrent") && inst.currentDay) {
+			inst.selectedDay = inst.currentDay;
+			inst.drawMonth = inst.selectedMonth = inst.currentMonth;
+			inst.drawYear = inst.selectedYear = inst.currentYear;
+		} else {
+			date = new Date();
+			inst.selectedDay = date.getDate();
+			inst.drawMonth = inst.selectedMonth = date.getMonth();
+			inst.drawYear = inst.selectedYear = date.getFullYear();
+		}
+		this._notifyChange(inst);
+		this._adjustDate(target);
+	},
+
+	/* Action for selecting a new month/year. */
+	_selectMonthYear: function(id, select, period) {
+		var target = $(id),
+			inst = this._getInst(target[0]);
+
+		inst["selected" + (period === "M" ? "Month" : "Year")] =
+		inst["draw" + (period === "M" ? "Month" : "Year")] =
+			parseInt(select.options[select.selectedIndex].value,10);
+
+		this._notifyChange(inst);
+		this._adjustDate(target);
+	},
+
+	/* Action for selecting a day. */
+	_selectDay: function(id, month, year, td) {
+		var inst,
+			target = $(id);
+
+		if ($(td).hasClass(this._unselectableClass) || this._isDisabledDatepicker(target[0])) {
+			return;
+		}
+
+		inst = this._getInst(target[0]);
+		inst.selectedDay = inst.currentDay = $("a", td).html();
+		inst.selectedMonth = inst.currentMonth = month;
+		inst.selectedYear = inst.currentYear = year;
+		this._selectDate(id, this._formatDate(inst,
+			inst.currentDay, inst.currentMonth, inst.currentYear));
+	},
+
+	/* Erase the input field and hide the date picker. */
+	_clearDate: function(id) {
+		var target = $(id);
+		this._selectDate(target, "");
+	},
+
+	/* Update the input field with the selected date. */
+	_selectDate: function(id, dateStr) {
+		var onSelect,
+			target = $(id),
+			inst = this._getInst(target[0]);
+
+		dateStr = (dateStr != null ? dateStr : this._formatDate(inst));
+		if (inst.input) {
+			inst.input.val(dateStr);
+		}
+		this._updateAlternate(inst);
+
+		onSelect = this._get(inst, "onSelect");
+		if (onSelect) {
+			onSelect.apply((inst.input ? inst.input[0] : null), [dateStr, inst]);  // trigger custom callback
+		} else if (inst.input) {
+			inst.input.trigger("change"); // fire the change event
+		}
+
+		if (inst.inline){
+			this._updateDatepicker(inst);
+		} else {
+			this._hideDatepicker();
+			this._lastInput = inst.input[0];
+			if (typeof(inst.input[0]) !== "object") {
+				inst.input.focus(); // restore focus
+			}
+			this._lastInput = null;
+		}
+	},
+
+	/* Update any alternate field to synchronise with the main field. */
+	_updateAlternate: function(inst) {
+		var altFormat, date, dateStr,
+			altField = this._get(inst, "altField");
+
+		if (altField) { // update alternate field too
+			altFormat = this._get(inst, "altFormat") || this._get(inst, "dateFormat");
+			date = this._getDate(inst);
+			dateStr = this.formatDate(altFormat, date, this._getFormatConfig(inst));
+			$(altField).each(function() { $(this).val(dateStr); });
+		}
+	},
+
+	/* Set as beforeShowDay function to prevent selection of weekends.
+	 * @param  date  Date - the date to customise
+	 * @return [boolean, string] - is this date selectable?, what is its CSS class?
+	 */
+	noWeekends: function(date) {
+		var day = date.getDay();
+		return [(day > 0 && day < 6), ""];
+	},
+
+	/* Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
+	 * @param  date  Date - the date to get the week for
+	 * @return  number - the number of the week within the year that contains this date
+	 */
+	iso8601Week: function(date) {
+		var time,
+			checkDate = new Date(date.getTime());
+
+		// Find Thursday of this week starting on Monday
+		checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7));
+
+		time = checkDate.getTime();
+		checkDate.setMonth(0); // Compare with Jan 1
+		checkDate.setDate(1);
+		return Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
+	},
+
+	/* Parse a string value into a date object.
+	 * See formatDate below for the possible formats.
+	 *
+	 * @param  format string - the expected format of the date
+	 * @param  value string - the date in the above format
+	 * @param  settings Object - attributes include:
+	 *					shortYearCutoff  number - the cutoff year for determining the century (optional)
+	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
+	 *					dayNames		string[7] - names of the days from Sunday (optional)
+	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
+	 *					monthNames		string[12] - names of the months (optional)
+	 * @return  Date - the extracted date value or null if value is blank
+	 */
+	parseDate: function (format, value, settings) {
+		if (format == null || value == null) {
+			throw "Invalid arguments";
+		}
+
+		value = (typeof value === "object" ? value.toString() : value + "");
+		if (value === "") {
+			return null;
+		}
+
+		var iFormat, dim, extra,
+			iValue = 0,
+			shortYearCutoffTemp = (settings ? settings.shortYearCutoff : null) || this._defaults.shortYearCutoff,
+			shortYearCutoff = (typeof shortYearCutoffTemp !== "string" ? shortYearCutoffTemp :
+				new Date().getFullYear() % 100 + parseInt(shortYearCutoffTemp, 10)),
+			dayNamesShort = (settings ? settings.dayNamesShort : null) || this._defaults.dayNamesShort,
+			dayNames = (settings ? settings.dayNames : null) || this._defaults.dayNames,
+			monthNamesShort = (settings ? settings.monthNamesShort : null) || this._defaults.monthNamesShort,
+			monthNames = (settings ? settings.monthNames : null) || this._defaults.monthNames,
+			year = -1,
+			month = -1,
+			day = -1,
+			doy = -1,
+			literal = false,
+			date,
+			// Check whether a format character is doubled
+			lookAhead = function(match) {
+				var matches = (iFormat + 1 < format.length && format.charAt(iFormat + 1) === match);
+				if (matches) {
+					iFormat++;
+				}
+				return matches;
+			},
+			// Extract a number from the string value
+			getNumber = function(match) {
+				var isDoubled = lookAhead(match),
+					size = (match === "@" ? 14 : (match === "!" ? 20 :
+					(match === "y" && isDoubled ? 4 : (match === "o" ? 3 : 2)))),
+					minSize = (match === "y" ? size : 1),
+					digits = new RegExp("^\\d{" + minSize + "," + size + "}"),
+					num = value.substring(iValue).match(digits);
+				if (!num) {
+					throw "Missing number at position " + iValue;
+				}
+				iValue += num[0].length;
+				return parseInt(num[0], 10);
+			},
+			// Extract a name from the string value and convert to an index
+			getName = function(match, shortNames, longNames) {
+				var index = -1,
+					names = $.map(lookAhead(match) ? longNames : shortNames, function (v, k) {
+						return [ [k, v] ];
+					}).sort(function (a, b) {
+						return -(a[1].length - b[1].length);
+					});
+
+				$.each(names, function (i, pair) {
+					var name = pair[1];
+					if (value.substr(iValue, name.length).toLowerCase() === name.toLowerCase()) {
+						index = pair[0];
+						iValue += name.length;
+						return false;
+					}
+				});
+				if (index !== -1) {
+					return index + 1;
+				} else {
+					throw "Unknown name at position " + iValue;
+				}
+			},
+			// Confirm that a literal character matches the string value
+			checkLiteral = function() {
+				if (value.charAt(iValue) !== format.charAt(iFormat)) {
+					throw "Unexpected literal at position " + iValue;
+				}
+				iValue++;
+			};
+
+		for (iFormat = 0; iFormat < format.length; iFormat++) {
+			if (literal) {
+				if (format.charAt(iFormat) === "'" && !lookAhead("'")) {
+					literal = false;
+				} else {
+					checkLiteral();
+				}
+			} else {
+				switch (format.charAt(iFormat)) {
+					case "d":
+						day = getNumber("d");
+						break;
+					case "D":
+						getName("D", dayNamesShort, dayNames);
+						break;
+					case "o":
+						doy = getNumber("o");
+						break;
+					case "m":
+						month = getNumber("m");
+						break;
+					case "M":
+						month = getName("M", monthNamesShort, monthNames);
+						break;
+					case "y":
+						year = getNumber("y");
+						break;
+					case "@":
+						date = new Date(getNumber("@"));
+						year = date.getFullYear();
+						month = date.getMonth() + 1;
+						day = date.getDate();
+						break;
+					case "!":
+						date = new Date((getNumber("!") - this._ticksTo1970) / 10000);
+						year = date.getFullYear();
+						month = date.getMonth() + 1;
+						day = date.getDate();
+						break;
+					case "'":
+						if (lookAhead("'")){
+							checkLiteral();
+						} else {
+							literal = true;
+						}
+						break;
+					default:
+						checkLiteral();
+				}
+			}
+		}
+
+		if (iValue < value.length){
+			extra = value.substr(iValue);
+			if (!/^\s+/.test(extra)) {
+				throw "Extra/unparsed characters found in date: " + extra;
+			}
+		}
+
+		if (year === -1) {
+			year = new Date().getFullYear();
+		} else if (year < 100) {
+			year += new Date().getFullYear() - new Date().getFullYear() % 100 +
+				(year <= shortYearCutoff ? 0 : -100);
+		}
+
+		if (doy > -1) {
+			month = 1;
+			day = doy;
+			do {
+				dim = this._getDaysInMonth(year, month - 1);
+				if (day <= dim) {
+					break;
+				}
+				month++;
+				day -= dim;
+			} while (true);
+		}
+
+		date = this._daylightSavingAdjust(new Date(year, month - 1, day));
+		if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
+			throw "Invalid date"; // E.g. 31/02/00
+		}
+		return date;
+	},
+
+	/* Standard date formats. */
+	ATOM: "yy-mm-dd", // RFC 3339 (ISO 8601)
+	COOKIE: "D, dd M yy",
+	ISO_8601: "yy-mm-dd",
+	RFC_822: "D, d M y",
+	RFC_850: "DD, dd-M-y",
+	RFC_1036: "D, d M y",
+	RFC_1123: "D, d M yy",
+	RFC_2822: "D, d M yy",
+	RSS: "D, d M y", // RFC 822
+	TICKS: "!",
+	TIMESTAMP: "@",
+	W3C: "yy-mm-dd", // ISO 8601
+
+	_ticksTo1970: (((1970 - 1) * 365 + Math.floor(1970 / 4) - Math.floor(1970 / 100) +
+		Math.floor(1970 / 400)) * 24 * 60 * 60 * 10000000),
+
+	/* Format a date object into a string value.
+	 * The format can be combinations of the following:
+	 * d  - day of month (no leading zero)
+	 * dd - day of month (two digit)
+	 * o  - day of year (no leading zeros)
+	 * oo - day of year (three digit)
+	 * D  - day name short
+	 * DD - day name long
+	 * m  - month of year (no leading zero)
+	 * mm - month of year (two digit)
+	 * M  - month name short
+	 * MM - month name long
+	 * y  - year (two digit)
+	 * yy - year (four digit)
+	 * @ - Unix timestamp (ms since 01/01/1970)
+	 * ! - Windows ticks (100ns since 01/01/0001)
+	 * "..." - literal text
+	 * '' - single quote
+	 *
+	 * @param  format string - the desired format of the date
+	 * @param  date Date - the date value to format
+	 * @param  settings Object - attributes include:
+	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
+	 *					dayNames		string[7] - names of the days from Sunday (optional)
+	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
+	 *					monthNames		string[12] - names of the months (optional)
+	 * @return  string - the date in the above format
+	 */
+	formatDate: function (format, date, settings) {
+		if (!date) {
+			return "";
+		}
+
+		var iFormat,
+			dayNamesShort = (settings ? settings.dayNamesShort : null) || this._defaults.dayNamesShort,
+			dayNames = (settings ? settings.dayNames : null) || this._defaults.dayNames,
+			monthNamesShort = (settings ? settings.monthNamesShort : null) || this._defaults.monthNamesShort,
+			monthNames = (settings ? settings.monthNames : null) || this._defaults.monthNames,
+			// Check whether a format character is doubled
+			lookAhead = function(match) {
+				var matches = (iFormat + 1 < format.length && format.charAt(iFormat + 1) === match);
+				if (matches) {
+					iFormat++;
+				}
+				return matches;
+			},
+			// Format a number, with leading zero if necessary
+			formatNumber = function(match, value, len) {
+				var num = "" + value;
+				if (lookAhead(match)) {
+					while (num.length < len) {
+						num = "0" + num;
+					}
+				}
+				return num;
+			},
+			// Format a name, short or long as requested
+			formatName = function(match, value, shortNames, longNames) {
+				return (lookAhead(match) ? longNames[value] : shortNames[value]);
+			},
+			output = "",
+			literal = false;
+
+		if (date) {
+			for (iFormat = 0; iFormat < format.length; iFormat++) {
+				if (literal) {
+					if (format.charAt(iFormat) === "'" && !lookAhead("'")) {
+						literal = false;
+					} else {
+						output += format.charAt(iFormat);
+					}
+				} else {
+					switch (format.charAt(iFormat)) {
+						case "d":
+							output += formatNumber("d", date.getDate(), 2);
+							break;
+						case "D":
+							output += formatName("D", date.getDay(), dayNamesShort, dayNames);
+							break;
+						case "o":
+							output += formatNumber("o",
+								Math.round((new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000), 3);
+							break;
+						case "m":
+							output += formatNumber("m", date.getMonth() + 1, 2);
+							break;
+						case "M":
+							output += formatName("M", date.getMonth(), monthNamesShort, monthNames);
+							break;
+						case "y":
+							output += (lookAhead("y") ? date.getFullYear() :
+								(date.getYear() % 100 < 10 ? "0" : "") + date.getYear() % 100);
+							break;
+						case "@":
+							output += date.getTime();
+							break;
+						case "!":
+							output += date.getTime() * 10000 + this._ticksTo1970;
+							break;
+						case "'":
+							if (lookAhead("'")) {
+								output += "'";
+							} else {
+								literal = true;
+							}
+							break;
+						default:
+							output += format.charAt(iFormat);
+					}
+				}
+			}
+		}
+		return output;
+	},
+
+	/* Extract all possible characters from the date format. */
+	_possibleChars: function (format) {
+		var iFormat,
+			chars = "",
+			literal = false,
+			// Check whether a format character is doubled
+			lookAhead = function(match) {
+				var matches = (iFormat + 1 < format.length && format.charAt(iFormat + 1) === match);
+				if (matches) {
+					iFormat++;
+				}
+				return matches;
+			};
+
+		for (iFormat = 0; iFormat < format.length; iFormat++) {
+			if (literal) {
+				if (format.charAt(iFormat) === "'" && !lookAhead("'")) {
+					literal = false;
+				} else {
+					chars += format.charAt(iFormat);
+				}
+			} else {
+				switch (format.charAt(iFormat)) {
+					case "d": case "m": case "y": case "@":
+						chars += "0123456789";
+						break;
+					case "D": case "M":
+						return null; // Accept anything
+					case "'":
+						if (lookAhead("'")) {
+							chars += "'";
+						} else {
+							literal = true;
+						}
+						break;
+					default:
+						chars += format.charAt(iFormat);
+				}
+			}
+		}
+		return chars;
+	},
+
+	/* Get a setting value, defaulting if necessary. */
+	_get: function(inst, name) {
+		return inst.settings[name] !== undefined ?
+			inst.settings[name] : this._defaults[name];
+	},
+
+	/* Parse existing date and initialise date picker. */
+	_setDateFromField: function(inst, noDefault) {
+		if (inst.input.val() === inst.lastVal) {
+			return;
+		}
+
+		var dateFormat = this._get(inst, "dateFormat"),
+			dates = inst.lastVal = inst.input ? inst.input.val() : null,
+			defaultDate = this._getDefaultDate(inst),
+			date = defaultDate,
+			settings = this._getFormatConfig(inst);
+
+		try {
+			date = this.parseDate(dateFormat, dates, settings) || defaultDate;
+		} catch (event) {
+			dates = (noDefault ? "" : dates);
+		}
+		inst.selectedDay = date.getDate();
+		inst.drawMonth = inst.selectedMonth = date.getMonth();
+		inst.drawYear = inst.selectedYear = date.getFullYear();
+		inst.currentDay = (dates ? date.getDate() : 0);
+		inst.currentMonth = (dates ? date.getMonth() : 0);
+		inst.currentYear = (dates ? date.getFullYear() : 0);
+		this._adjustInstDate(inst);
+	},
+
+	/* Retrieve the default date shown on opening. */
+	_getDefaultDate: function(inst) {
+		return this._restrictMinMax(inst,
+			this._determineDate(inst, this._get(inst, "defaultDate"), new Date()));
+	},
+
+	/* A date may be specified as an exact value or a relative one. */
+	_determineDate: function(inst, date, defaultDate) {
+		var offsetNumeric = function(offset) {
+				var date = new Date();
+				date.setDate(date.getDate() + offset);
+				return date;
+			},
+			offsetString = function(offset) {
+				try {
+					return $.datepicker.parseDate($.datepicker._get(inst, "dateFormat"),
+						offset, $.datepicker._getFormatConfig(inst));
+				}
+				catch (e) {
+					// Ignore
+				}
+
+				var date = (offset.toLowerCase().match(/^c/) ?
+					$.datepicker._getDate(inst) : null) || new Date(),
+					year = date.getFullYear(),
+					month = date.getMonth(),
+					day = date.getDate(),
+					pattern = /([+\-]?[0-9]+)\s*(d|D|w|W|m|M|y|Y)?/g,
+					matches = pattern.exec(offset);
+
+				while (matches) {
+					switch (matches[2] || "d") {
+						case "d" : case "D" :
+							day += parseInt(matches[1],10); break;
+						case "w" : case "W" :
+							day += parseInt(matches[1],10) * 7; break;
+						case "m" : case "M" :
+							month += parseInt(matches[1],10);
+							day = Math.min(day, $.datepicker._getDaysInMonth(year, month));
+							break;
+						case "y": case "Y" :
+							year += parseInt(matches[1],10);
+							day = Math.min(day, $.datepicker._getDaysInMonth(year, month));
+							break;
+					}
+					matches = pattern.exec(offset);
+				}
+				return new Date(year, month, day);
+			},
+			newDate = (date == null || date === "" ? defaultDate : (typeof date === "string" ? offsetString(date) :
+				(typeof date === "number" ? (isNaN(date) ? defaultDate : offsetNumeric(date)) : new Date(date.getTime()))));
+
+		newDate = (newDate && newDate.toString() === "Invalid Date" ? defaultDate : newDate);
+		if (newDate) {
+			newDate.setHours(0);
+			newDate.setMinutes(0);
+			newDate.setSeconds(0);
+			newDate.setMilliseconds(0);
+		}
+		return this._daylightSavingAdjust(newDate);
+	},
+
+	/* Handle switch to/from daylight saving.
+	 * Hours may be non-zero on daylight saving cut-over:
+	 * > 12 when midnight changeover, but then cannot generate
+	 * midnight datetime, so jump to 1AM, otherwise reset.
+	 * @param  date  (Date) the date to check
+	 * @return  (Date) the corrected date
+	 */
+	_daylightSavingAdjust: function(date) {
+		if (!date) {
+			return null;
+		}
+		date.setHours(date.getHours() > 12 ? date.getHours() + 2 : 0);
+		return date;
+	},
+
+	/* Set the date(s) directly. */
+	_setDate: function(inst, date, noChange) {
+		var clear = !date,
+			origMonth = inst.selectedMonth,
+			origYear = inst.selectedYear,
+			newDate = this._restrictMinMax(inst, this._determineDate(inst, date, new Date()));
+
+		inst.selectedDay = inst.currentDay = newDate.getDate();
+		inst.drawMonth = inst.selectedMonth = inst.currentMonth = newDate.getMonth();
+		inst.drawYear = inst.selectedYear = inst.currentYear = newDate.getFullYear();
+		if ((origMonth !== inst.selectedMonth || origYear !== inst.selectedYear) && !noChange) {
+			this._notifyChange(inst);
+		}
+		this._adjustInstDate(inst);
+		if (inst.input) {
+			inst.input.val(clear ? "" : this._formatDate(inst));
+		}
+	},
+
+	/* Retrieve the date(s) directly. */
+	_getDate: function(inst) {
+		var startDate = (!inst.currentYear || (inst.input && inst.input.val() === "") ? null :
+			this._daylightSavingAdjust(new Date(
+			inst.currentYear, inst.currentMonth, inst.currentDay)));
+			return startDate;
+	},
+
+	/* Attach the onxxx handlers.  These are declared statically so
+	 * they work with static code transformers like Caja.
+	 */
+	_attachHandlers: function(inst) {
+		var stepMonths = this._get(inst, "stepMonths"),
+			id = "#" + inst.id.replace( /\\\\/g, "\\" );
+		inst.dpDiv.find("[data-handler]").map(function () {
+			var handler = {
+				prev: function () {
+					$.datepicker._adjustDate(id, -stepMonths, "M");
+				},
+				next: function () {
+					$.datepicker._adjustDate(id, +stepMonths, "M");
+				},
+				hide: function () {
+					$.datepicker._hideDatepicker();
+				},
+				today: function () {
+					$.datepicker._gotoToday(id);
+				},
+				selectDay: function () {
+					$.datepicker._selectDay(id, +this.getAttribute("data-month"), +this.getAttribute("data-year"), this);
+					return false;
+				},
+				selectMonth: function () {
+					$.datepicker._selectMonthYear(id, this, "M");
+					return false;
+				},
+				selectYear: function () {
+					$.datepicker._selectMonthYear(id, this, "Y");
+					return false;
+				}
+			};
+			$(this).bind(this.getAttribute("data-event"), handler[this.getAttribute("data-handler")]);
+		});
+	},
+
+	/* Generate the HTML for the current state of the date picker. */
+	_generateHTML: function(inst) {
+		var maxDraw, prevText, prev, nextText, next, currentText, gotoDate,
+			controls, buttonPanel, firstDay, showWeek, dayNames, dayNamesMin,
+			monthNames, monthNamesShort, beforeShowDay, showOtherMonths,
+			selectOtherMonths, defaultDate, html, dow, row, group, col, selectedDate,
+			cornerClass, calender, thead, day, daysInMonth, leadDays, curRows, numRows,
+			printDate, dRow, tbody, daySettings, otherMonth, unselectable,
+			tempDate = new Date(),
+			today = this._daylightSavingAdjust(
+				new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate())), // clear time
+			isRTL = this._get(inst, "isRTL"),
+			showButtonPanel = this._get(inst, "showButtonPanel"),
+			hideIfNoPrevNext = this._get(inst, "hideIfNoPrevNext"),
+			navigationAsDateFormat = this._get(inst, "navigationAsDateFormat"),
+			numMonths = this._getNumberOfMonths(inst),
+			showCurrentAtPos = this._get(inst, "showCurrentAtPos"),
+			stepMonths = this._get(inst, "stepMonths"),
+			isMultiMonth = (numMonths[0] !== 1 || numMonths[1] !== 1),
+			currentDate = this._daylightSavingAdjust((!inst.currentDay ? new Date(9999, 9, 9) :
+				new Date(inst.currentYear, inst.currentMonth, inst.currentDay))),
+			minDate = this._getMinMaxDate(inst, "min"),
+			maxDate = this._getMinMaxDate(inst, "max"),
+			drawMonth = inst.drawMonth - showCurrentAtPos,
+			drawYear = inst.drawYear;
+
+		if (drawMonth < 0) {
+			drawMonth += 12;
+			drawYear--;
+		}
+		if (maxDate) {
+			maxDraw = this._daylightSavingAdjust(new Date(maxDate.getFullYear(),
+				maxDate.getMonth() - (numMonths[0] * numMonths[1]) + 1, maxDate.getDate()));
+			maxDraw = (minDate && maxDraw < minDate ? minDate : maxDraw);
+			while (this._daylightSavingAdjust(new Date(drawYear, drawMonth, 1)) > maxDraw) {
+				drawMonth--;
+				if (drawMonth < 0) {
+					drawMonth = 11;
+					drawYear--;
+				}
+			}
+		}
+		inst.drawMonth = drawMonth;
+		inst.drawYear = drawYear;
+
+		prevText = this._get(inst, "prevText");
+		prevText = (!navigationAsDateFormat ? prevText : this.formatDate(prevText,
+			this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
+			this._getFormatConfig(inst)));
+
+		prev = (this._canAdjustMonth(inst, -1, drawYear, drawMonth) ?
+			"<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='click'" +
+			" title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w") + "'>" + prevText + "</span></a>" :
+			(hideIfNoPrevNext ? "" : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='"+ prevText +"'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w") + "'>" + prevText + "</span></a>"));
+
+		nextText = this._get(inst, "nextText");
+		nextText = (!navigationAsDateFormat ? nextText : this.formatDate(nextText,
+			this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
+			this._getFormatConfig(inst)));
+
+		next = (this._canAdjustMonth(inst, +1, drawYear, drawMonth) ?
+			"<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='click'" +
+			" title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e") + "'>" + nextText + "</span></a>" :
+			(hideIfNoPrevNext ? "" : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='"+ nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e") + "'>" + nextText + "</span></a>"));
+
+		currentText = this._get(inst, "currentText");
+		gotoDate = (this._get(inst, "gotoCurrent") && inst.currentDay ? currentDate : today);
+		currentText = (!navigationAsDateFormat ? currentText :
+			this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
+
+		controls = (!inst.inline ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='hide' data-event='click'>" +
+			this._get(inst, "closeText") + "</button>" : "");
+
+		buttonPanel = (showButtonPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + (isRTL ? controls : "") +
+			(this._isInRange(inst, gotoDate) ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all' data-handler='today' data-event='click'" +
+			">" + currentText + "</button>" : "") + (isRTL ? "" : controls) + "</div>" : "";
+
+		firstDay = parseInt(this._get(inst, "firstDay"),10);
+		firstDay = (isNaN(firstDay) ? 0 : firstDay);
+
+		showWeek = this._get(inst, "showWeek");
+		dayNames = this._get(inst, "dayNames");
+		dayNamesMin = this._get(inst, "dayNamesMin");
+		monthNames = this._get(inst, "monthNames");
+		monthNamesShort = this._get(inst, "monthNamesShort");
+		beforeShowDay = this._get(inst, "beforeShowDay");
+		showOtherMonths = this._get(inst, "showOtherMonths");
+		selectOtherMonths = this._get(inst, "selectOtherMonths");
+		defaultDate = this._getDefaultDate(inst);
+		html = "";
+		dow;
+		for (row = 0; row < numMonths[0]; row++) {
+			group = "";
+			this.maxRows = 4;
+			for (col = 0; col < numMonths[1]; col++) {
+				selectedDate = this._daylightSavingAdjust(new Date(drawYear, drawMonth, inst.selectedDay));
+				cornerClass = " ui-corner-all";
+				calender = "";
+				if (isMultiMonth) {
+					calender += "<div class='ui-datepicker-group";
+					if (numMonths[1] > 1) {
+						switch (col) {
+							case 0: calender += " ui-datepicker-group-first";
+								cornerClass = " ui-corner-" + (isRTL ? "right" : "left"); break;
+							case numMonths[1]-1: calender += " ui-datepicker-group-last";
+								cornerClass = " ui-corner-" + (isRTL ? "left" : "right"); break;
+							default: calender += " ui-datepicker-group-middle"; cornerClass = ""; break;
+						}
+					}
+					calender += "'>";
+				}
+				calender += "<div class='ui-datepicker-header ui-widget-header ui-helper-clearfix" + cornerClass + "'>" +
+					(/all|left/.test(cornerClass) && row === 0 ? (isRTL ? next : prev) : "") +
+					(/all|right/.test(cornerClass) && row === 0 ? (isRTL ? prev : next) : "") +
+					this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate,
+					row > 0 || col > 0, monthNames, monthNamesShort) + // draw month headers
+					"</div><table class='ui-datepicker-calendar'><thead>" +
+					"<tr>";
+				thead = (showWeek ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") + "</th>" : "");
+				for (dow = 0; dow < 7; dow++) { // days of the week
+					day = (dow + firstDay) % 7;
+					thead += "<th scope='col'" + ((dow + firstDay + 6) % 7 >= 5 ? " class='ui-datepicker-week-end'" : "") + ">" +
+						"<span title='" + dayNames[day] + "'>" + dayNamesMin[day] + "</span></th>";
+				}
+				calender += thead + "</tr></thead><tbody>";
+				daysInMonth = this._getDaysInMonth(drawYear, drawMonth);
+				if (drawYear === inst.selectedYear && drawMonth === inst.selectedMonth) {
+					inst.selectedDay = Math.min(inst.selectedDay, daysInMonth);
+				}
+				leadDays = (this._getFirstDayOfMonth(drawYear, drawMonth) - firstDay + 7) % 7;
+				curRows = Math.ceil((leadDays + daysInMonth) / 7); // calculate the number of rows to generate
+				numRows = (isMultiMonth ? this.maxRows > curRows ? this.maxRows : curRows : curRows); //If multiple months, use the higher number of rows (see #7043)
+				this.maxRows = numRows;
+				printDate = this._daylightSavingAdjust(new Date(drawYear, drawMonth, 1 - leadDays));
+				for (dRow = 0; dRow < numRows; dRow++) { // create date picker rows
+					calender += "<tr>";
+					tbody = (!showWeek ? "" : "<td class='ui-datepicker-week-col'>" +
+						this._get(inst, "calculateWeek")(printDate) + "</td>");
+					for (dow = 0; dow < 7; dow++) { // create date picker days
+						daySettings = (beforeShowDay ?
+							beforeShowDay.apply((inst.input ? inst.input[0] : null), [printDate]) : [true, ""]);
+						otherMonth = (printDate.getMonth() !== drawMonth);
+						unselectable = (otherMonth && !selectOtherMonths) || !daySettings[0] ||
+							(minDate && printDate < minDate) || (maxDate && printDate > maxDate);
+						tbody += "<td class='" +
+							((dow + firstDay + 6) % 7 >= 5 ? " ui-datepicker-week-end" : "") + // highlight weekends
+							(otherMonth ? " ui-datepicker-other-month" : "") + // highlight days from other months
+							((printDate.getTime() === selectedDate.getTime() && drawMonth === inst.selectedMonth && inst._keyEvent) || // user pressed key
+							(defaultDate.getTime() === printDate.getTime() && defaultDate.getTime() === selectedDate.getTime()) ?
+							// or defaultDate is current printedDate and defaultDate is selectedDate
+							" " + this._dayOverClass : "") + // highlight selected day
+							(unselectable ? " " + this._unselectableClass + " ui-state-disabled": "") +  // highlight unselectable days
+							(otherMonth && !showOtherMonths ? "" : " " + daySettings[1] + // highlight custom dates
+							(printDate.getTime() === currentDate.getTime() ? " " + this._currentClass : "") + // highlight selected day
+							(printDate.getTime() === today.getTime() ? " ui-datepicker-today" : "")) + "'" + // highlight today (if different)
+							((!otherMonth || showOtherMonths) && daySettings[2] ? " title='" + daySettings[2].replace(/'/g, "&#39;") + "'" : "") + // cell title
+							(unselectable ? "" : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'") + ">" + // actions
+							(otherMonth && !showOtherMonths ? "&#xa0;" : // display for other months
+							(unselectable ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>" : "<a class='ui-state-default" +
+							(printDate.getTime() === today.getTime() ? " ui-state-highlight" : "") +
+							(printDate.getTime() === currentDate.getTime() ? " ui-state-active" : "") + // highlight selected day
+							(otherMonth ? " ui-priority-secondary" : "") + // distinguish dates from other months
+							"' href='#'>" + printDate.getDate() + "</a>")) + "</td>"; // display selectable date
+						printDate.setDate(printDate.getDate() + 1);
+						printDate = this._daylightSavingAdjust(printDate);
+					}
+					calender += tbody + "</tr>";
+				}
+				drawMonth++;
+				if (drawMonth > 11) {
+					drawMonth = 0;
+					drawYear++;
+				}
+				calender += "</tbody></table>" + (isMultiMonth ? "</div>" +
+							((numMonths[0] > 0 && col === numMonths[1]-1) ? "<div class='ui-datepicker-row-break'></div>" : "") : "");
+				group += calender;
+			}
+			html += group;
+		}
+		html += buttonPanel;
+		inst._keyEvent = false;
+		return html;
+	},
+
+	/* Generate the month and year header. */
+	_generateMonthYearHeader: function(inst, drawMonth, drawYear, minDate, maxDate,
+			secondary, monthNames, monthNamesShort) {
+
+		var inMinYear, inMaxYear, month, years, thisYear, determineYear, year, endYear,
+			changeMonth = this._get(inst, "changeMonth"),
+			changeYear = this._get(inst, "changeYear"),
+			showMonthAfterYear = this._get(inst, "showMonthAfterYear"),
+			html = "<div class='ui-datepicker-title'>",
+			monthHtml = "";
+
+		// month selection
+		if (secondary || !changeMonth) {
+			monthHtml += "<span class='ui-datepicker-month'>" + monthNames[drawMonth] + "</span>";
+		} else {
+			inMinYear = (minDate && minDate.getFullYear() === drawYear);
+			inMaxYear = (maxDate && maxDate.getFullYear() === drawYear);
+			monthHtml += "<select class='ui-datepicker-month' data-handler='selectMonth' data-event='change'>";
+			for ( month = 0; month < 12; month++) {
+				if ((!inMinYear || month >= minDate.getMonth()) && (!inMaxYear || month <= maxDate.getMonth())) {
+					monthHtml += "<option value='" + month + "'" +
+						(month === drawMonth ? " selected='selected'" : "") +
+						">" + monthNamesShort[month] + "</option>";
+				}
+			}
+			monthHtml += "</select>";
+		}
+
+		if (!showMonthAfterYear) {
+			html += monthHtml + (secondary || !(changeMonth && changeYear) ? "&#xa0;" : "");
+		}
+
+		// year selection
+		if ( !inst.yearshtml ) {
+			inst.yearshtml = "";
+			if (secondary || !changeYear) {
+				html += "<span class='ui-datepicker-year'>" + drawYear + "</span>";
+			} else {
+				// determine range of years to display
+				years = this._get(inst, "yearRange").split(":");
+				thisYear = new Date().getFullYear();
+				determineYear = function(value) {
+					var year = (value.match(/c[+\-].*/) ? drawYear + parseInt(value.substring(1), 10) :
+						(value.match(/[+\-].*/) ? thisYear + parseInt(value, 10) :
+						parseInt(value, 10)));
+					return (isNaN(year) ? thisYear : year);
+				};
+				year = determineYear(years[0]);
+				endYear = Math.max(year, determineYear(years[1] || ""));
+				year = (minDate ? Math.max(year, minDate.getFullYear()) : year);
+				endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);
+				inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='change'>";
+				for (; year <= endYear; year++) {
+					inst.yearshtml += "<option value='" + year + "'" +
+						(year === drawYear ? " selected='selected'" : "") +
+						">" + year + "</option>";
+				}
+				inst.yearshtml += "</select>";
+
+				html += inst.yearshtml;
+				inst.yearshtml = null;
+			}
+		}
+
+		html += this._get(inst, "yearSuffix");
+		if (showMonthAfterYear) {
+			html += (secondary || !(changeMonth && changeYear) ? "&#xa0;" : "") + monthHtml;
+		}
+		html += "</div>"; // Close datepicker_header
+		return html;
+	},
+
+	/* Adjust one of the date sub-fields. */
+	_adjustInstDate: function(inst, offset, period) {
+		var year = inst.drawYear + (period === "Y" ? offset : 0),
+			month = inst.drawMonth + (period === "M" ? offset : 0),
+			day = Math.min(inst.selectedDay, this._getDaysInMonth(year, month)) + (period === "D" ? offset : 0),
+			date = this._restrictMinMax(inst, this._daylightSavingAdjust(new Date(year, month, day)));
+
+		inst.selectedDay = date.getDate();
+		inst.drawMonth = inst.selectedMonth = date.getMonth();
+		inst.drawYear = inst.selectedYear = date.getFullYear();
+		if (period === "M" || period === "Y") {
+			this._notifyChange(inst);
+		}
+	},
+
+	/* Ensure a date is within any min/max bounds. */
+	_restrictMinMax: function(inst, date) {
+		var minDate = this._getMinMaxDate(inst, "min"),
+			maxDate = this._getMinMaxDate(inst, "max"),
+			newDate = (minDate && date < minDate ? minDate : date);
+		return (maxDate && newDate > maxDate ? maxDate : newDate);
+	},
+
+	/* Notify change of month/year. */
+	_notifyChange: function(inst) {
+		var onChange = this._get(inst, "onChangeMonthYear");
+		if (onChange) {
+			onChange.apply((inst.input ? inst.input[0] : null),
+				[inst.selectedYear, inst.selectedMonth + 1, inst]);
+		}
+	},
+
+	/* Determine the number of months to show. */
+	_getNumberOfMonths: function(inst) {
+		var numMonths = this._get(inst, "numberOfMonths");
+		return (numMonths == null ? [1, 1] : (typeof numMonths === "number" ? [1, numMonths] : numMonths));
+	},
+
+	/* Determine the current maximum date - ensure no time components are set. */
+	_getMinMaxDate: function(inst, minMax) {
+		return this._determineDate(inst, this._get(inst, minMax + "Date"), null);
+	},
+
+	/* Find the number of days in a given month. */
+	_getDaysInMonth: function(year, month) {
+		return 32 - this._daylightSavingAdjust(new Date(year, month, 32)).getDate();
+	},
+
+	/* Find the day of the week of the first of a month. */
+	_getFirstDayOfMonth: function(year, month) {
+		return new Date(year, month, 1).getDay();
+	},
+
+	/* Determines if we should allow a "next/prev" month display change. */
+	_canAdjustMonth: function(inst, offset, curYear, curMonth) {
+		var numMonths = this._getNumberOfMonths(inst),
+			date = this._daylightSavingAdjust(new Date(curYear,
+			curMonth + (offset < 0 ? offset : numMonths[0] * numMonths[1]), 1));
+
+		if (offset < 0) {
+			date.setDate(this._getDaysInMonth(date.getFullYear(), date.getMonth()));
+		}
+		return this._isInRange(inst, date);
+	},
+
+	/* Is the given date in the accepted range? */
+	_isInRange: function(inst, date) {
+		var yearSplit, currentYear,
+			minDate = this._getMinMaxDate(inst, "min"),
+			maxDate = this._getMinMaxDate(inst, "max"),
+			minYear = null,
+			maxYear = null,
+			years = this._get(inst, "yearRange");
+			if (years){
+				yearSplit = years.split(":");
+				currentYear = new Date().getFullYear();
+				minYear = parseInt(yearSplit[0], 10);
+				maxYear = parseInt(yearSplit[1], 10);
+				if ( yearSplit[0].match(/[+\-].*/) ) {
+					minYear += currentYear;
+				}
+				if ( yearSplit[1].match(/[+\-].*/) ) {
+					maxYear += currentYear;
+				}
+			}
+
+		return ((!minDate || date.getTime() >= minDate.getTime()) &&
+			(!maxDate || date.getTime() <= maxDate.getTime()) &&
+			(!minYear || date.getFullYear() >= minYear) &&
+			(!maxYear || date.getFullYear() <= maxYear));
+	},
+
+	/* Provide the configuration settings for formatting/parsing. */
+	_getFormatConfig: function(inst) {
+		var shortYearCutoff = this._get(inst, "shortYearCutoff");
+		shortYearCutoff = (typeof shortYearCutoff !== "string" ? shortYearCutoff :
+			new Date().getFullYear() % 100 + parseInt(shortYearCutoff, 10));
+		return {shortYearCutoff: shortYearCutoff,
+			dayNamesShort: this._get(inst, "dayNamesShort"), dayNames: this._get(inst, "dayNames"),
+			monthNamesShort: this._get(inst, "monthNamesShort"), monthNames: this._get(inst, "monthNames")};
+	},
+
+	/* Format the given date for display. */
+	_formatDate: function(inst, day, month, year) {
+		if (!day) {
+			inst.currentDay = inst.selectedDay;
+			inst.currentMonth = inst.selectedMonth;
+			inst.currentYear = inst.selectedYear;
+		}
+		var date = (day ? (typeof day === "object" ? day :
+			this._daylightSavingAdjust(new Date(year, month, day))) :
+			this._daylightSavingAdjust(new Date(inst.currentYear, inst.currentMonth, inst.currentDay)));
+		return this.formatDate(this._get(inst, "dateFormat"), date, this._getFormatConfig(inst));
+	}
+});
+
+/*
+ * Bind hover events for datepicker elements.
+ * Done via delegate so the binding only occurs once in the lifetime of the parent div.
+ * Global datepicker_instActive, set by _updateDatepicker allows the handlers to find their way back to the active picker.
+ */
+function datepicker_bindHover(dpDiv) {
+	var selector = "button, .ui-datepicker-prev, .ui-datepicker-next, .ui-datepicker-calendar td a";
+	return dpDiv.delegate(selector, "mouseout", function() {
+			$(this).removeClass("ui-state-hover");
+			if (this.className.indexOf("ui-datepicker-prev") !== -1) {
+				$(this).removeClass("ui-datepicker-prev-hover");
+			}
+			if (this.className.indexOf("ui-datepicker-next") !== -1) {
+				$(this).removeClass("ui-datepicker-next-hover");
+			}
+		})
+		.delegate( selector, "mouseover", datepicker_handleMouseover );
+}
+
+function datepicker_handleMouseover() {
+	if (!$.datepicker._isDisabledDatepicker( datepicker_instActive.inline? datepicker_instActive.dpDiv.parent()[0] : datepicker_instActive.input[0])) {
+		$(this).parents(".ui-datepicker-calendar").find("a").removeClass("ui-state-hover");
+		$(this).addClass("ui-state-hover");
+		if (this.className.indexOf("ui-datepicker-prev") !== -1) {
+			$(this).addClass("ui-datepicker-prev-hover");
+		}
+		if (this.className.indexOf("ui-datepicker-next") !== -1) {
+			$(this).addClass("ui-datepicker-next-hover");
+		}
+	}
+}
+
+/* jQuery extend now ignores nulls! */
+function datepicker_extendRemove(target, props) {
+	$.extend(target, props);
+	for (var name in props) {
+		if (props[name] == null) {
+			target[name] = props[name];
+		}
+	}
+	return target;
+}
+
+/* Invoke the datepicker functionality.
+   @param  options  string - a command, optionally followed by additional parameters or
+					Object - settings for attaching new datepicker functionality
+   @return  jQuery object */
+$.fn.datepicker = function(options){
+
+	/* Verify an empty collection wasn't passed - Fixes #6976 */
+	if ( !this.length ) {
+		return this;
+	}
+
+	/* Initialise the date picker. */
+	if (!$.datepicker.initialized) {
+		$(document).mousedown($.datepicker._checkExternalClick);
+		$.datepicker.initialized = true;
+	}
+
+	/* Append datepicker main container to body if not exist. */
+	if ($("#"+$.datepicker._mainDivId).length === 0) {
+		$("body").append($.datepicker.dpDiv);
+	}
+
+	var otherArgs = Array.prototype.slice.call(arguments, 1);
+	if (typeof options === "string" && (options === "isDisabled" || options === "getDate" || options === "widget")) {
+		return $.datepicker["_" + options + "Datepicker"].
+			apply($.datepicker, [this[0]].concat(otherArgs));
+	}
+	if (options === "option" && arguments.length === 2 && typeof arguments[1] === "string") {
+		return $.datepicker["_" + options + "Datepicker"].
+			apply($.datepicker, [this[0]].concat(otherArgs));
+	}
+	return this.each(function() {
+		typeof options === "string" ?
+			$.datepicker["_" + options + "Datepicker"].
+				apply($.datepicker, [this].concat(otherArgs)) :
+			$.datepicker._attachDatepicker(this, options);
+	});
+};
+
+$.datepicker = new Datepicker(); // singleton instance
+$.datepicker.initialized = false;
+$.datepicker.uuid = new Date().getTime();
+$.datepicker.version = "1.11.4";
+
+var datepicker = $.datepicker;
+
+
+/*
+ * jQuery UI Dialog 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/dialog/
+ */
+
+
+var dialog = $.widget( "ui.dialog", {
+	version: "1.11.4",
 	options: {
 		appendTo: "body",
 		autoOpen: true,
 		buttons: [],
 		closeOnEscape: true,
-		closeText: "close",
+		closeText: "Close",
 		dialogClass: "",
 		draggable: true,
 		hide: null,
@@ -5747,27 +10143,44 @@ $.widget( "ui.dialog", {
 		resizeStop: null
 	},
 
+	sizeRelatedOptions: {
+		buttons: true,
+		height: true,
+		maxHeight: true,
+		maxWidth: true,
+		minHeight: true,
+		minWidth: true,
+		width: true
+	},
+
+	resizableRelatedOptions: {
+		maxHeight: true,
+		maxWidth: true,
+		minHeight: true,
+		minWidth: true
+	},
+
 	_create: function() {
 		this.originalCss = {
-			display: this.element[0].style.display,
-			width: this.element[0].style.width,
-			minHeight: this.element[0].style.minHeight,
-			maxHeight: this.element[0].style.maxHeight,
-			height: this.element[0].style.height
+			display: this.element[ 0 ].style.display,
+			width: this.element[ 0 ].style.width,
+			minHeight: this.element[ 0 ].style.minHeight,
+			maxHeight: this.element[ 0 ].style.maxHeight,
+			height: this.element[ 0 ].style.height
 		};
 		this.originalPosition = {
 			parent: this.element.parent(),
 			index: this.element.parent().children().index( this.element )
 		};
-		this.originalTitle = this.element.attr("title");
+		this.originalTitle = this.element.attr( "title" );
 		this.options.title = this.options.title || this.originalTitle;
 
 		this._createWrapper();
 
 		this.element
 			.show()
-			.removeAttr("title")
-			.addClass("ui-dialog-content ui-widget-content")
+			.removeAttr( "title" )
+			.addClass( "ui-dialog-content ui-widget-content" )
 			.appendTo( this.uiDialog );
 
 		this._createTitlebar();
@@ -5781,6 +10194,8 @@ $.widget( "ui.dialog", {
 		}
 
 		this._isOpen = false;
+
+		this._trackFocus();
 	},
 
 	_init: function() {
@@ -5801,11 +10216,12 @@ $.widget( "ui.dialog", {
 		var next,
 			originalPosition = this.originalPosition;
 
+		this._untrackInstance();
 		this._destroyOverlay();
 
 		this.element
 			.removeUniqueId()
-			.removeClass("ui-dialog-content ui-widget-content")
+			.removeClass( "ui-dialog-content ui-widget-content" )
 			.css( this.originalCss )
 			// Without detaching first, the following becomes really slow
 			.detach();
@@ -5818,7 +10234,7 @@ $.widget( "ui.dialog", {
 
 		next = originalPosition.parent.children().eq( originalPosition.index );
 		// Don't try to place the dialog next to itself (#8613)
-		if ( next.length && next[0] !== this.element[0] ) {
+		if ( next.length && next[ 0 ] !== this.element[ 0 ] ) {
 			next.before( this.element );
 		} else {
 			originalPosition.parent.append( this.element );
@@ -5833,20 +10249,35 @@ $.widget( "ui.dialog", {
 	enable: $.noop,
 
 	close: function( event ) {
-		var that = this;
+		var activeElement,
+			that = this;
 
 		if ( !this._isOpen || this._trigger( "beforeClose", event ) === false ) {
 			return;
 		}
 
 		this._isOpen = false;
+		this._focusedElement = null;
 		this._destroyOverlay();
+		this._untrackInstance();
 
-		if ( !this.opener.filter(":focusable").focus().length ) {
-			// Hiding a focused element doesn't trigger blur in WebKit
-			// so in case we have nothing to focus on, explicitly blur the active element
-			// https://bugs.webkit.org/show_bug.cgi?id=47182
-			$( this.document[0].activeElement ).blur();
+		if ( !this.opener.filter( ":focusable" ).focus().length ) {
+
+			// support: IE9
+			// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+			try {
+				activeElement = this.document[ 0 ].activeElement;
+
+				// Support: IE9, IE10
+				// If the <body> is blurred, IE will switch windows, see #4520
+				if ( activeElement && activeElement.nodeName.toLowerCase() !== "body" ) {
+
+					// Hiding a focused element doesn't trigger blur in WebKit
+					// so in case we have nothing to focus on, explicitly blur the active element
+					// https://bugs.webkit.org/show_bug.cgi?id=47182
+					$( activeElement ).blur();
+				}
+			} catch ( error ) {}
 		}
 
 		this._hide( this.uiDialog, this.options.hide, function() {
@@ -5863,7 +10294,17 @@ $.widget( "ui.dialog", {
 	},
 
 	_moveToTop: function( event, silent ) {
-		var moved = !!this.uiDialog.nextAll(":visible").insertBefore( this.uiDialog ).length;
+		var moved = false,
+			zIndices = this.uiDialog.siblings( ".ui-front:visible" ).map(function() {
+				return +$( this ).css( "z-index" );
+			}).get(),
+			zIndexMax = Math.max.apply( null, zIndices );
+
+		if ( zIndexMax >= +this.uiDialog.css( "z-index" ) ) {
+			this.uiDialog.css( "z-index", zIndexMax + 1 );
+			moved = true;
+		}
+
 		if ( moved && !silent ) {
 			this._trigger( "focus", event );
 		}
@@ -5880,36 +10321,53 @@ $.widget( "ui.dialog", {
 		}
 
 		this._isOpen = true;
-		this.opener = $( this.document[0].activeElement );
+		this.opener = $( this.document[ 0 ].activeElement );
 
 		this._size();
 		this._position();
 		this._createOverlay();
 		this._moveToTop( null, true );
+
+		// Ensure the overlay is moved to the top with the dialog, but only when
+		// opening. The overlay shouldn't move after the dialog is open so that
+		// modeless dialogs opened after the modal dialog stack properly.
+		if ( this.overlay ) {
+			this.overlay.css( "z-index", this.uiDialog.css( "z-index" ) - 1 );
+		}
+
 		this._show( this.uiDialog, this.options.show, function() {
 			that._focusTabbable();
-			that._trigger("focus");
+			that._trigger( "focus" );
 		});
 
-		this._trigger("open");
+		// Track the dialog immediately upon openening in case a focus event
+		// somehow occurs outside of the dialog before an element inside the
+		// dialog is focused (#10152)
+		this._makeFocusTarget();
+
+		this._trigger( "open" );
 	},
 
 	_focusTabbable: function() {
 		// Set focus to the first match:
-		// 1. First element inside the dialog matching [autofocus]
-		// 2. Tabbable element inside the content element
-		// 3. Tabbable element inside the buttonpane
-		// 4. The close button
-		// 5. The dialog itself
-		var hasFocus = this.element.find("[autofocus]");
-		if ( !hasFocus.length ) {
-			hasFocus = this.element.find(":tabbable");
+		// 1. An element that was focused previously
+		// 2. First element inside the dialog matching [autofocus]
+		// 3. Tabbable element inside the content element
+		// 4. Tabbable element inside the buttonpane
+		// 5. The close button
+		// 6. The dialog itself
+		var hasFocus = this._focusedElement;
+		if ( !hasFocus ) {
+			hasFocus = this.element.find( "[autofocus]" );
 		}
 		if ( !hasFocus.length ) {
-			hasFocus = this.uiDialogButtonPane.find(":tabbable");
+			hasFocus = this.element.find( ":tabbable" );
 		}
 		if ( !hasFocus.length ) {
-			hasFocus = this.uiDialogTitlebarClose.filter(":tabbable");
+			hasFocus = this.uiDialogButtonPane.find( ":tabbable" );
+		}
+		if ( !hasFocus.length ) {
+			hasFocus = this.uiDialogTitlebarClose.filter( ":tabbable" );
 		}
 		if ( !hasFocus.length ) {
 			hasFocus = this.uiDialog;
@@ -5956,18 +10414,22 @@ $.widget( "ui.dialog", {
 				}
 
 				// prevent tabbing out of dialogs
-				if ( event.keyCode !== $.ui.keyCode.TAB ) {
+				if ( event.keyCode !== $.ui.keyCode.TAB || event.isDefaultPrevented() ) {
 					return;
 				}
-				var tabbables = this.uiDialog.find(":tabbable"),
-					first = tabbables.filter(":first"),
-					last  = tabbables.filter(":last");
+				var tabbables = this.uiDialog.find( ":tabbable" ),
+					first = tabbables.filter( ":first" ),
+					last = tabbables.filter( ":last" );
 
 				if ( ( event.target === last[0] || event.target === this.uiDialog[0] ) && !event.shiftKey ) {
-					first.focus( 1 );
+					this._delay(function() {
+						first.focus();
+					});
 					event.preventDefault();
 				} else if ( ( event.target === first[0] || event.target === this.uiDialog[0] ) && event.shiftKey ) {
-					last.focus( 1 );
+					this._delay(function() {
+						last.focus();
+					});
 					event.preventDefault();
 				}
 			},
@@ -5981,9 +10443,9 @@ $.widget( "ui.dialog", {
 		// We assume that any existing aria-describedby attribute means
 		// that the dialog content is marked up properly
 		// otherwise we brute force the content as the description
-		if ( !this.element.find("[aria-describedby]").length ) {
+		if ( !this.element.find( "[aria-describedby]" ).length ) {
 			this.uiDialog.attr({
-				"aria-describedby": this.element.uniqueId().attr("id")
+				"aria-describedby": this.element.uniqueId().attr( "id" )
 			});
 		}
 	},
@@ -5991,22 +10453,25 @@ $.widget( "ui.dialog", {
 	_createTitlebar: function() {
 		var uiDialogTitle;
 
-		this.uiDialogTitlebar = $("<div>")
-			.addClass("ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix")
+		this.uiDialogTitlebar = $( "<div>" )
+			.addClass( "ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" )
 			.prependTo( this.uiDialog );
 		this._on( this.uiDialogTitlebar, {
 			mousedown: function( event ) {
 				// Don't prevent click on close button (#8838)
 				// Focusing a dialog that is partially scrolled out of view
 				// causes the browser to scroll it into view, preventing the click event
-				if ( !$( event.target ).closest(".ui-dialog-titlebar-close") ) {
+				if ( !$( event.target ).closest( ".ui-dialog-titlebar-close" ) ) {
 					// Dialog isn't getting focus when dragging (#8063)
 					this.uiDialog.focus();
 				}
 			}
 		});
 
-		this.uiDialogTitlebarClose = $("<button></button>")
+		// support: IE
+		// Use type="button" to prevent enter keypresses in textboxes from closing the
+		// dialog in IE (#9312)
+		this.uiDialogTitlebarClose = $( "<button type='button'></button>" )
 			.button({
 				label: this.options.closeText,
 				icons: {
@@ -6014,7 +10479,7 @@ $.widget( "ui.dialog", {
 				},
 				text: false
 			})
-			.addClass("ui-dialog-titlebar-close")
+			.addClass( "ui-dialog-titlebar-close" )
 			.appendTo( this.uiDialogTitlebar );
 		this._on( this.uiDialogTitlebarClose, {
 			click: function( event ) {
@@ -6023,30 +10488,30 @@ $.widget( "ui.dialog", {
 			}
 		});
 
-		uiDialogTitle = $("<span>")
+		uiDialogTitle = $( "<span>" )
 			.uniqueId()
-			.addClass("ui-dialog-title")
+			.addClass( "ui-dialog-title" )
 			.prependTo( this.uiDialogTitlebar );
 		this._title( uiDialogTitle );
 
 		this.uiDialog.attr({
-			"aria-labelledby": uiDialogTitle.attr("id")
+			"aria-labelledby": uiDialogTitle.attr( "id" )
 		});
 	},
 
 	_title: function( title ) {
 		if ( !this.options.title ) {
-			title.html("&#160;");
+			title.html( "&#160;" );
 		}
 		title.text( this.options.title );
 	},
 
 	_createButtonPane: function() {
-		this.uiDialogButtonPane = $("<div>")
-			.addClass("ui-dialog-buttonpane ui-widget-content ui-helper-clearfix");
+		this.uiDialogButtonPane = $( "<div>" )
+			.addClass( "ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" );
 
-		this.uiButtonSet = $("<div>")
-			.addClass("ui-dialog-buttonset")
+		this.uiButtonSet = $( "<div>" )
+			.addClass( "ui-dialog-buttonset" )
 			.appendTo( this.uiDialogButtonPane );
 
 		this._createButtons();
@@ -6061,7 +10526,7 @@ $.widget( "ui.dialog", {
 		this.uiButtonSet.empty();
 
 		if ( $.isEmptyObject( buttons ) || ($.isArray( buttons ) && !buttons.length) ) {
-			this.uiDialog.removeClass("ui-dialog-buttons");
+			this.uiDialog.removeClass( "ui-dialog-buttons" );
 			return;
 		}
 
@@ -6075,7 +10540,7 @@ $.widget( "ui.dialog", {
 			// Change the context for the click callback to be the main element
 			click = props.click;
 			props.click = function() {
-				click.apply( that.element[0], arguments );
+				click.apply( that.element[ 0 ], arguments );
 			};
 			buttonOptions = {
 				icons: props.icons,
@@ -6087,7 +10552,7 @@ $.widget( "ui.dialog", {
 				.button( buttonOptions )
 				.appendTo( that.uiButtonSet );
 		});
-		this.uiDialog.addClass("ui-dialog-buttons");
+		this.uiDialog.addClass( "ui-dialog-buttons" );
 		this.uiDialogButtonPane.appendTo( this.uiDialog );
 	},
 
@@ -6107,7 +10572,7 @@ $.widget( "ui.dialog", {
 			handle: ".ui-dialog-titlebar",
 			containment: "document",
 			start: function( event, ui ) {
-				$( this ).addClass("ui-dialog-dragging");
+				$( this ).addClass( "ui-dialog-dragging" );
 				that._blockFrames();
 				that._trigger( "dragStart", event, filteredUi( ui ) );
 			},
@@ -6115,11 +10580,16 @@ $.widget( "ui.dialog", {
 				that._trigger( "drag", event, filteredUi( ui ) );
 			},
 			stop: function( event, ui ) {
-				options.position = [
-					ui.position.left - that.document.scrollLeft(),
-					ui.position.top - that.document.scrollTop()
-				];
-				$( this ).removeClass("ui-dialog-dragging");
+				var left = ui.offset.left - that.document.scrollLeft(),
+					top = ui.offset.top - that.document.scrollTop();
+
+				options.position = {
+					my: "left top",
+					at: "left" + (left >= 0 ? "+" : "") + left + " " +
+						"top" + (top >= 0 ? "+" : "") + top,
+					of: that.window
+				};
+				$( this ).removeClass( "ui-dialog-dragging" );
 				that._unblockFrames();
 				that._trigger( "dragStop", event, filteredUi( ui ) );
 			}
@@ -6156,7 +10626,7 @@ $.widget( "ui.dialog", {
 			minHeight: this._minHeight(),
 			handles: resizeHandles,
 			start: function( event, ui ) {
-				$( this ).addClass("ui-dialog-resizing");
+				$( this ).addClass( "ui-dialog-resizing" );
 				that._blockFrames();
 				that._trigger( "resizeStart", event, filteredUi( ui ) );
 			},
@@ -6164,14 +10634,55 @@ $.widget( "ui.dialog", {
 				that._trigger( "resize", event, filteredUi( ui ) );
 			},
 			stop: function( event, ui ) {
-				options.height = $( this ).height();
-				options.width = $( this ).width();
-				$( this ).removeClass("ui-dialog-resizing");
+				var offset = that.uiDialog.offset(),
+					left = offset.left - that.document.scrollLeft(),
+					top = offset.top - that.document.scrollTop();
+
+				options.height = that.uiDialog.height();
+				options.width = that.uiDialog.width();
+				options.position = {
+					my: "left top",
+					at: "left" + (left >= 0 ? "+" : "") + left + " " +
+						"top" + (top >= 0 ? "+" : "") + top,
+					of: that.window
+				};
+				$( this ).removeClass( "ui-dialog-resizing" );
 				that._unblockFrames();
 				that._trigger( "resizeStop", event, filteredUi( ui ) );
 			}
 		})
 		.css( "position", position );
+	},
+
+	_trackFocus: function() {
+		this._on( this.widget(), {
+			focusin: function( event ) {
+				this._makeFocusTarget();
+				this._focusedElement = $( event.target );
+			}
+		});
+	},
+
+	_makeFocusTarget: function() {
+		this._untrackInstance();
+		this._trackingInstances().unshift( this );
+	},
+
+	_untrackInstance: function() {
+		var instances = this._trackingInstances(),
+			exists = $.inArray( this, instances );
+		if ( exists !== -1 ) {
+			instances.splice( exists, 1 );
+		}
+	},
+
+	_trackingInstances: function() {
+		var instances = this.document.data( "ui-dialog-instances" );
+		if ( !instances ) {
+			instances = [];
+			this.document.data( "ui-dialog-instances", instances );
+		}
+		return instances;
 	},
 
 	_minHeight: function() {
@@ -6184,7 +10695,7 @@ $.widget( "ui.dialog", {
 
 	_position: function() {
 		// Need to show the dialog to get the actual offset in the position plugin
-		var isVisible = this.uiDialog.is(":visible");
+		var isVisible = this.uiDialog.is( ":visible" );
 		if ( !isVisible ) {
 			this.uiDialog.show();
 		}
@@ -6202,10 +10713,10 @@ $.widget( "ui.dialog", {
 		$.each( options, function( key, value ) {
 			that._setOption( key, value );
 
-			if ( key in sizeRelatedOptions ) {
+			if ( key in that.sizeRelatedOptions ) {
 				resize = true;
 			}
-			if ( key in resizableRelatedOptions ) {
+			if ( key in that.resizableRelatedOptions ) {
 				resizableOptions[ key ] = value;
 			}
 		});
@@ -6214,13 +10725,12 @@ $.widget( "ui.dialog", {
 			this._size();
 			this._position();
 		}
-		if ( this.uiDialog.is(":data(ui-resizable)") ) {
+		if ( this.uiDialog.is( ":data(ui-resizable)" ) ) {
 			this.uiDialog.resizable( "option", resizableOptions );
 		}
 	},
 
 	_setOption: function( key, value ) {
-		/*jshint maxcomplexity:15*/
 		var isDraggable, isResizable,
 			uiDialog = this.uiDialog;
 
@@ -6252,9 +10762,9 @@ $.widget( "ui.dialog", {
 		}
 
 		if ( key === "draggable" ) {
-			isDraggable = uiDialog.is(":data(ui-draggable)");
+			isDraggable = uiDialog.is( ":data(ui-draggable)" );
 			if ( isDraggable && !value ) {
-				uiDialog.draggable("destroy");
+				uiDialog.draggable( "destroy" );
 			}
 
 			if ( !isDraggable && value ) {
@@ -6268,9 +10778,9 @@ $.widget( "ui.dialog", {
 
 		if ( key === "resizable" ) {
 			// currently resizable, becoming non-resizable
-			isResizable = uiDialog.is(":data(ui-resizable)");
+			isResizable = uiDialog.is( ":data(ui-resizable)" );
 			if ( isResizable && !value ) {
-				uiDialog.resizable("destroy");
+				uiDialog.resizable( "destroy" );
 			}
 
 			// currently resizable, changing handles
@@ -6285,7 +10795,7 @@ $.widget( "ui.dialog", {
 		}
 
 		if ( key === "title" ) {
-			this._title( this.uiDialogTitlebar.find(".ui-dialog-title") );
+			this._title( this.uiDialogTitlebar.find( ".ui-dialog-title" ) );
 		}
 	},
 
@@ -6329,7 +10839,7 @@ $.widget( "ui.dialog", {
 			this.element.height( Math.max( 0, options.height - nonContentHeight ) );
 		}
 
-		if (this.uiDialog.is(":data(ui-resizable)") ) {
+		if ( this.uiDialog.is( ":data(ui-resizable)" ) ) {
 			this.uiDialog.resizable( "option", "minHeight", this._minHeight() );
 		}
 	},
@@ -6357,13 +10867,13 @@ $.widget( "ui.dialog", {
 	},
 
 	_allowInteraction: function( event ) {
-		if ( $( event.target ).closest(".ui-dialog").length ) {
+		if ( $( event.target ).closest( ".ui-dialog" ).length ) {
 			return true;
 		}
 
 		// TODO: Remove hack when datepicker implements
 		// the .ui-front logic (#8989)
-		return !!$( event.target ).closest(".ui-datepicker").length;
+		return !!$( event.target ).closest( ".ui-datepicker" ).length;
 	},
 
 	_createOverlay: function() {
@@ -6371,33 +10881,40 @@ $.widget( "ui.dialog", {
 			return;
 		}
 
-		var that = this,
-			widgetFullName = this.widgetFullName;
-		if ( !$.ui.dialog.overlayInstances ) {
-			// Prevent use of anchors and inputs.
-			// We use a delay in case the overlay is created from an
-			// event that we're going to be cancelling. (#2804)
-			this._delay(function() {
-				// Handle .dialog().dialog("close") (#4065)
-				if ( $.ui.dialog.overlayInstances ) {
-					this.document.bind( "focusin.dialog", function( event ) {
-						if ( !that._allowInteraction( event ) ) {
-							event.preventDefault();
-							$(".ui-dialog:visible:last .ui-dialog-content")
-								.data( widgetFullName )._focusTabbable();
-						}
-					});
+		// We use a delay in case the overlay is created from an
+		// event that we're going to be cancelling (#2804)
+		var isOpening = true;
+		this._delay(function() {
+			isOpening = false;
+		});
+
+		if ( !this.document.data( "ui-dialog-overlays" ) ) {
+
+			// Prevent use of anchors and inputs
+			// Using _on() for an event handler shared across many instances is
+			// safe because the dialogs stack and must be closed in reverse order
+			this._on( this.document, {
+				focusin: function( event ) {
+					if ( isOpening ) {
+						return;
+					}
+
+					if ( !this._allowInteraction( event ) ) {
+						event.preventDefault();
+						this._trackingInstances()[ 0 ]._focusTabbable();
+					}
 				}
 			});
 		}
 
-		this.overlay = $("<div>")
-			.addClass("ui-widget-overlay ui-front")
+		this.overlay = $( "<div>" )
+			.addClass( "ui-widget-overlay ui-front" )
 			.appendTo( this._appendTo() );
 		this._on( this.overlay, {
 			mousedown: "_keepFocus"
 		});
-		$.ui.dialog.overlayInstances++;
+		this.document.data( "ui-dialog-overlays",
+			(this.document.data( "ui-dialog-overlays" ) || 0) + 1 );
 	},
 
 	_destroyOverlay: function() {
@@ -6406,680 +10923,37 @@ $.widget( "ui.dialog", {
 		}
 
 		if ( this.overlay ) {
-			$.ui.dialog.overlayInstances--;
+			var overlays = this.document.data( "ui-dialog-overlays" ) - 1;
 
-			if ( !$.ui.dialog.overlayInstances ) {
-				this.document.unbind( "focusin.dialog" );
+			if ( !overlays ) {
+				this.document
+					.unbind( "focusin" )
+					.removeData( "ui-dialog-overlays" );
+			} else {
+				this.document.data( "ui-dialog-overlays", overlays );
 			}
+
 			this.overlay.remove();
 			this.overlay = null;
 		}
 	}
 });
 
-$.ui.dialog.overlayInstances = 0;
 
-// DEPRECATED
-if ( $.uiBackCompat !== false ) {
-	// position option with array notation
-	// just override with old implementation
-	$.widget( "ui.dialog", $.ui.dialog, {
-		_position: function() {
-			var position = this.options.position,
-				myAt = [],
-				offset = [ 0, 0 ],
-				isVisible;
-
-			if ( position ) {
-				if ( typeof position === "string" || (typeof position === "object" && "0" in position ) ) {
-					myAt = position.split ? position.split(" ") : [ position[0], position[1] ];
-					if ( myAt.length === 1 ) {
-						myAt[1] = myAt[0];
-					}
-
-					$.each( [ "left", "top" ], function( i, offsetPosition ) {
-						if ( +myAt[ i ] === myAt[ i ] ) {
-							offset[ i ] = myAt[ i ];
-							myAt[ i ] = offsetPosition;
-						}
-					});
-
-					position = {
-						my: myAt[0] + (offset[0] < 0 ? offset[0] : "+" + offset[0]) + " " +
-							myAt[1] + (offset[1] < 0 ? offset[1] : "+" + offset[1]),
-						at: myAt.join(" ")
-					};
-				}
-
-				position = $.extend( {}, $.ui.dialog.prototype.options.position, position );
-			} else {
-				position = $.ui.dialog.prototype.options.position;
-			}
-
-			// need to show the dialog to get the actual offset in the position plugin
-			isVisible = this.uiDialog.is(":visible");
-			if ( !isVisible ) {
-				this.uiDialog.show();
-			}
-			this.uiDialog.position( position );
-			if ( !isVisible ) {
-				this.uiDialog.hide();
-			}
-		}
-	});
-}
-
-}( jQuery ) );
-(function( $, undefined ) {
-
-$.widget( "ui.menu", {
-	version: "1.10.3",
-	defaultElement: "<ul>",
-	delay: 300,
-	options: {
-		icons: {
-			submenu: "ui-icon-carat-1-e"
-		},
-		menus: "ul",
-		position: {
-			my: "left top",
-			at: "right top"
-		},
-		role: "menu",
-
-		// callbacks
-		blur: null,
-		focus: null,
-		select: null
-	},
-
-	_create: function() {
-		this.activeMenu = this.element;
-		// flag used to prevent firing of the click handler
-		// as the event bubbles up through nested menus
-		this.mouseHandled = false;
-		this.element
-			.uniqueId()
-			.addClass( "ui-menu ui-widget ui-widget-content ui-corner-all" )
-			.toggleClass( "ui-menu-icons", !!this.element.find( ".ui-icon" ).length )
-			.attr({
-				role: this.options.role,
-				tabIndex: 0
-			})
-			// need to catch all clicks on disabled menu
-			// not possible through _on
-			.bind( "click" + this.eventNamespace, $.proxy(function( event ) {
-				if ( this.options.disabled ) {
-					event.preventDefault();
-				}
-			}, this ));
-
-		if ( this.options.disabled ) {
-			this.element
-				.addClass( "ui-state-disabled" )
-				.attr( "aria-disabled", "true" );
-		}
-
-		this._on({
-			// Prevent focus from sticking to links inside menu after clicking
-			// them (focus should always stay on UL during navigation).
-			"mousedown .ui-menu-item > a": function( event ) {
-				event.preventDefault();
-			},
-			"click .ui-state-disabled > a": function( event ) {
-				event.preventDefault();
-			},
-			"click .ui-menu-item:has(a)": function( event ) {
-				var target = $( event.target ).closest( ".ui-menu-item" );
-				if ( !this.mouseHandled && target.not( ".ui-state-disabled" ).length ) {
-					this.mouseHandled = true;
-
-					this.select( event );
-					// Open submenu on click
-					if ( target.has( ".ui-menu" ).length ) {
-						this.expand( event );
-					} else if ( !this.element.is( ":focus" ) ) {
-						// Redirect focus to the menu
-						this.element.trigger( "focus", [ true ] );
-
-						// If the active item is on the top level, let it stay active.
-						// Otherwise, blur the active item since it is no longer visible.
-						if ( this.active && this.active.parents( ".ui-menu" ).length === 1 ) {
-							clearTimeout( this.timer );
-						}
-					}
-				}
-			},
-			"mouseenter .ui-menu-item": function( event ) {
-				var target = $( event.currentTarget );
-				// Remove ui-state-active class from siblings of the newly focused menu item
-				// to avoid a jump caused by adjacent elements both having a class with a border
-				target.siblings().children( ".ui-state-active" ).removeClass( "ui-state-active" );
-				this.focus( event, target );
-			},
-			mouseleave: "collapseAll",
-			"mouseleave .ui-menu": "collapseAll",
-			focus: function( event, keepActiveItem ) {
-				// If there's already an active item, keep it active
-				// If not, activate the first item
-				var item = this.active || this.element.children( ".ui-menu-item" ).eq( 0 );
-
-				if ( !keepActiveItem ) {
-					this.focus( event, item );
-				}
-			},
-			blur: function( event ) {
-				this._delay(function() {
-					if ( !$.contains( this.element[0], this.document[0].activeElement ) ) {
-						this.collapseAll( event );
-					}
-				});
-			},
-			keydown: "_keydown"
-		});
-
-		this.refresh();
-
-		// Clicks outside of a menu collapse any open menus
-		this._on( this.document, {
-			click: function( event ) {
-				if ( !$( event.target ).closest( ".ui-menu" ).length ) {
-					this.collapseAll( event );
-				}
-
-				// Reset the mouseHandled flag
-				this.mouseHandled = false;
-			}
-		});
-	},
-
-	_destroy: function() {
-		// Destroy (sub)menus
-		this.element
-			.removeAttr( "aria-activedescendant" )
-			.find( ".ui-menu" ).addBack()
-				.removeClass( "ui-menu ui-widget ui-widget-content ui-corner-all ui-menu-icons" )
-				.removeAttr( "role" )
-				.removeAttr( "tabIndex" )
-				.removeAttr( "aria-labelledby" )
-				.removeAttr( "aria-expanded" )
-				.removeAttr( "aria-hidden" )
-				.removeAttr( "aria-disabled" )
-				.removeUniqueId()
-				.show();
-
-		// Destroy menu items
-		this.element.find( ".ui-menu-item" )
-			.removeClass( "ui-menu-item" )
-			.removeAttr( "role" )
-			.removeAttr( "aria-disabled" )
-			.children( "a" )
-				.removeUniqueId()
-				.removeClass( "ui-corner-all ui-state-hover" )
-				.removeAttr( "tabIndex" )
-				.removeAttr( "role" )
-				.removeAttr( "aria-haspopup" )
-				.children().each( function() {
-					var elem = $( this );
-					if ( elem.data( "ui-menu-submenu-carat" ) ) {
-						elem.remove();
-					}
-				});
-
-		// Destroy menu dividers
-		this.element.find( ".ui-menu-divider" ).removeClass( "ui-menu-divider ui-widget-content" );
-	},
-
-	_keydown: function( event ) {
-		/*jshint maxcomplexity:20*/
-		var match, prev, character, skip, regex,
-			preventDefault = true;
-
-		function escape( value ) {
-			return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
-		}
-
-		switch ( event.keyCode ) {
-		case $.ui.keyCode.PAGE_UP:
-			this.previousPage( event );
-			break;
-		case $.ui.keyCode.PAGE_DOWN:
-			this.nextPage( event );
-			break;
-		case $.ui.keyCode.HOME:
-			this._move( "first", "first", event );
-			break;
-		case $.ui.keyCode.END:
-			this._move( "last", "last", event );
-			break;
-		case $.ui.keyCode.UP:
-			this.previous( event );
-			break;
-		case $.ui.keyCode.DOWN:
-			this.next( event );
-			break;
-		case $.ui.keyCode.LEFT:
-			this.collapse( event );
-			break;
-		case $.ui.keyCode.RIGHT:
-			if ( this.active && !this.active.is( ".ui-state-disabled" ) ) {
-				this.expand( event );
-			}
-			break;
-		case $.ui.keyCode.ENTER:
-		case $.ui.keyCode.SPACE:
-			this._activate( event );
-			break;
-		case $.ui.keyCode.ESCAPE:
-			this.collapse( event );
-			break;
-		default:
-			preventDefault = false;
-			prev = this.previousFilter || "";
-			character = String.fromCharCode( event.keyCode );
-			skip = false;
-
-			clearTimeout( this.filterTimer );
-
-			if ( character === prev ) {
-				skip = true;
-			} else {
-				character = prev + character;
-			}
-
-			regex = new RegExp( "^" + escape( character ), "i" );
-			match = this.activeMenu.children( ".ui-menu-item" ).filter(function() {
-				return regex.test( $( this ).children( "a" ).text() );
-			});
-			match = skip && match.index( this.active.next() ) !== -1 ?
-				this.active.nextAll( ".ui-menu-item" ) :
-				match;
-
-			// If no matches on the current filter, reset to the last character pressed
-			// to move down the menu to the first item that starts with that character
-			if ( !match.length ) {
-				character = String.fromCharCode( event.keyCode );
-				regex = new RegExp( "^" + escape( character ), "i" );
-				match = this.activeMenu.children( ".ui-menu-item" ).filter(function() {
-					return regex.test( $( this ).children( "a" ).text() );
-				});
-			}
-
-			if ( match.length ) {
-				this.focus( event, match );
-				if ( match.length > 1 ) {
-					this.previousFilter = character;
-					this.filterTimer = this._delay(function() {
-						delete this.previousFilter;
-					}, 1000 );
-				} else {
-					delete this.previousFilter;
-				}
-			} else {
-				delete this.previousFilter;
-			}
-		}
-
-		if ( preventDefault ) {
-			event.preventDefault();
-		}
-	},
-
-	_activate: function( event ) {
-		if ( !this.active.is( ".ui-state-disabled" ) ) {
-			if ( this.active.children( "a[aria-haspopup='true']" ).length ) {
-				this.expand( event );
-			} else {
-				this.select( event );
-			}
-		}
-	},
-
-	refresh: function() {
-		var menus,
-			icon = this.options.icons.submenu,
-			submenus = this.element.find( this.options.menus );
-
-		// Initialize nested menus
-		submenus.filter( ":not(.ui-menu)" )
-			.addClass( "ui-menu ui-widget ui-widget-content ui-corner-all" )
-			.hide()
-			.attr({
-				role: this.options.role,
-				"aria-hidden": "true",
-				"aria-expanded": "false"
-			})
-			.each(function() {
-				var menu = $( this ),
-					item = menu.prev( "a" ),
-					submenuCarat = $( "<span>" )
-						.addClass( "ui-menu-icon ui-icon " + icon )
-						.data( "ui-menu-submenu-carat", true );
-
-				item
-					.attr( "aria-haspopup", "true" )
-					.prepend( submenuCarat );
-				menu.attr( "aria-labelledby", item.attr( "id" ) );
-			});
-
-		menus = submenus.add( this.element );
-
-		// Don't refresh list items that are already adapted
-		menus.children( ":not(.ui-menu-item):has(a)" )
-			.addClass( "ui-menu-item" )
-			.attr( "role", "presentation" )
-			.children( "a" )
-				.uniqueId()
-				.addClass( "ui-corner-all" )
-				.attr({
-					tabIndex: -1,
-					role: this._itemRole()
-				});
-
-		// Initialize unlinked menu-items containing spaces and/or dashes only as dividers
-		menus.children( ":not(.ui-menu-item)" ).each(function() {
-			var item = $( this );
-			// hyphen, em dash, en dash
-			if ( !/[^\-\u2014\u2013\s]/.test( item.text() ) ) {
-				item.addClass( "ui-widget-content ui-menu-divider" );
-			}
-		});
-
-		// Add aria-disabled attribute to any disabled menu item
-		menus.children( ".ui-state-disabled" ).attr( "aria-disabled", "true" );
-
-		// If the active item has been removed, blur the menu
-		if ( this.active && !$.contains( this.element[ 0 ], this.active[ 0 ] ) ) {
-			this.blur();
-		}
-	},
-
-	_itemRole: function() {
-		return {
-			menu: "menuitem",
-			listbox: "option"
-		}[ this.options.role ];
-	},
-
-	_setOption: function( key, value ) {
-		if ( key === "icons" ) {
-			this.element.find( ".ui-menu-icon" )
-				.removeClass( this.options.icons.submenu )
-				.addClass( value.submenu );
-		}
-		this._super( key, value );
-	},
-
-	focus: function( event, item ) {
-		var nested, focused;
-		this.blur( event, event && event.type === "focus" );
-
-		this._scrollIntoView( item );
-
-		this.active = item.first();
-		focused = this.active.children( "a" ).addClass( "ui-state-focus" );
-		// Only update aria-activedescendant if there's a role
-		// otherwise we assume focus is managed elsewhere
-		if ( this.options.role ) {
-			this.element.attr( "aria-activedescendant", focused.attr( "id" ) );
-		}
-
-		// Highlight active parent menu item, if any
-		this.active
-			.parent()
-			.closest( ".ui-menu-item" )
-			.children( "a:first" )
-			.addClass( "ui-state-active" );
-
-		if ( event && event.type === "keydown" ) {
-			this._close();
-		} else {
-			this.timer = this._delay(function() {
-				this._close();
-			}, this.delay );
-		}
-
-		nested = item.children( ".ui-menu" );
-		if ( nested.length && ( /^mouse/.test( event.type ) ) ) {
-			this._startOpening(nested);
-		}
-		this.activeMenu = item.parent();
-
-		this._trigger( "focus", event, { item: item } );
-	},
-
-	_scrollIntoView: function( item ) {
-		var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
-		if ( this._hasScroll() ) {
-			borderTop = parseFloat( $.css( this.activeMenu[0], "borderTopWidth" ) ) || 0;
-			paddingTop = parseFloat( $.css( this.activeMenu[0], "paddingTop" ) ) || 0;
-			offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
-			scroll = this.activeMenu.scrollTop();
-			elementHeight = this.activeMenu.height();
-			itemHeight = item.height();
-
-			if ( offset < 0 ) {
-				this.activeMenu.scrollTop( scroll + offset );
-			} else if ( offset + itemHeight > elementHeight ) {
-				this.activeMenu.scrollTop( scroll + offset - elementHeight + itemHeight );
-			}
-		}
-	},
-
-	blur: function( event, fromFocus ) {
-		if ( !fromFocus ) {
-			clearTimeout( this.timer );
-		}
-
-		if ( !this.active ) {
-			return;
-		}
-
-		this.active.children( "a" ).removeClass( "ui-state-focus" );
-		this.active = null;
-
-		this._trigger( "blur", event, { item: this.active } );
-	},
-
-	_startOpening: function( submenu ) {
-		clearTimeout( this.timer );
-
-		// Don't open if already open fixes a Firefox bug that caused a .5 pixel
-		// shift in the submenu position when mousing over the carat icon
-		if ( submenu.attr( "aria-hidden" ) !== "true" ) {
-			return;
-		}
-
-		this.timer = this._delay(function() {
-			this._close();
-			this._open( submenu );
-		}, this.delay );
-	},
-
-	_open: function( submenu ) {
-		var position = $.extend({
-			of: this.active
-		}, this.options.position );
-
-		clearTimeout( this.timer );
-		this.element.find( ".ui-menu" ).not( submenu.parents( ".ui-menu" ) )
-			.hide()
-			.attr( "aria-hidden", "true" );
-
-		submenu
-			.show()
-			.removeAttr( "aria-hidden" )
-			.attr( "aria-expanded", "true" )
-			.position( position );
-	},
-
-	collapseAll: function( event, all ) {
-		clearTimeout( this.timer );
-		this.timer = this._delay(function() {
-			// If we were passed an event, look for the submenu that contains the event
-			var currentMenu = all ? this.element :
-				$( event && event.target ).closest( this.element.find( ".ui-menu" ) );
-
-			// If we found no valid submenu ancestor, use the main menu to close all sub menus anyway
-			if ( !currentMenu.length ) {
-				currentMenu = this.element;
-			}
-
-			this._close( currentMenu );
-
-			this.blur( event );
-			this.activeMenu = currentMenu;
-		}, this.delay );
-	},
-
-	// With no arguments, closes the currently active menu - if nothing is active
-	// it closes all menus.  If passed an argument, it will search for menus BELOW
-	_close: function( startMenu ) {
-		if ( !startMenu ) {
-			startMenu = this.active ? this.active.parent() : this.element;
-		}
-
-		startMenu
-			.find( ".ui-menu" )
-				.hide()
-				.attr( "aria-hidden", "true" )
-				.attr( "aria-expanded", "false" )
-			.end()
-			.find( "a.ui-state-active" )
-				.removeClass( "ui-state-active" );
-	},
-
-	collapse: function( event ) {
-		var newItem = this.active &&
-			this.active.parent().closest( ".ui-menu-item", this.element );
-		if ( newItem && newItem.length ) {
-			this._close();
-			this.focus( event, newItem );
-		}
-	},
-
-	expand: function( event ) {
-		var newItem = this.active &&
-			this.active
-				.children( ".ui-menu " )
-				.children( ".ui-menu-item" )
-				.first();
-
-		if ( newItem && newItem.length ) {
-			this._open( newItem.parent() );
-
-			// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
-			this._delay(function() {
-				this.focus( event, newItem );
-			});
-		}
-	},
-
-	next: function( event ) {
-		this._move( "next", "first", event );
-	},
-
-	previous: function( event ) {
-		this._move( "prev", "last", event );
-	},
-
-	isFirstItem: function() {
-		return this.active && !this.active.prevAll( ".ui-menu-item" ).length;
-	},
-
-	isLastItem: function() {
-		return this.active && !this.active.nextAll( ".ui-menu-item" ).length;
-	},
-
-	_move: function( direction, filter, event ) {
-		var next;
-		if ( this.active ) {
-			if ( direction === "first" || direction === "last" ) {
-				next = this.active
-					[ direction === "first" ? "prevAll" : "nextAll" ]( ".ui-menu-item" )
-					.eq( -1 );
-			} else {
-				next = this.active
-					[ direction + "All" ]( ".ui-menu-item" )
-					.eq( 0 );
-			}
-		}
-		if ( !next || !next.length || !this.active ) {
-			next = this.activeMenu.children( ".ui-menu-item" )[ filter ]();
-		}
-
-		this.focus( event, next );
-	},
-
-	nextPage: function( event ) {
-		var item, base, height;
-
-		if ( !this.active ) {
-			this.next( event );
-			return;
-		}
-		if ( this.isLastItem() ) {
-			return;
-		}
-		if ( this._hasScroll() ) {
-			base = this.active.offset().top;
-			height = this.element.height();
-			this.active.nextAll( ".ui-menu-item" ).each(function() {
-				item = $( this );
-				return item.offset().top - base - height < 0;
-			});
-
-			this.focus( event, item );
-		} else {
-			this.focus( event, this.activeMenu.children( ".ui-menu-item" )
-				[ !this.active ? "first" : "last" ]() );
-		}
-	},
-
-	previousPage: function( event ) {
-		var item, base, height;
-		if ( !this.active ) {
-			this.next( event );
-			return;
-		}
-		if ( this.isFirstItem() ) {
-			return;
-		}
-		if ( this._hasScroll() ) {
-			base = this.active.offset().top;
-			height = this.element.height();
-			this.active.prevAll( ".ui-menu-item" ).each(function() {
-				item = $( this );
-				return item.offset().top - base + height > 0;
-			});
-
-			this.focus( event, item );
-		} else {
-			this.focus( event, this.activeMenu.children( ".ui-menu-item" ).first() );
-		}
-	},
-
-	_hasScroll: function() {
-		return this.element.outerHeight() < this.element.prop( "scrollHeight" );
-	},
-
-	select: function( event ) {
-		// TODO: It should never be possible to not have an active item at this
-		// point, but the tests don't trigger mouseenter before click.
-		this.active = this.active || $( event.target ).closest( ".ui-menu-item" );
-		var ui = { item: this.active };
-		if ( !this.active.has( ".ui-menu" ).length ) {
-			this.collapseAll( event, true );
-		}
-		this._trigger( "select", event, ui );
-	}
-});
-
-}( jQuery ));
-(function( $, undefined ) {
-
-$.widget( "ui.progressbar", {
-	version: "1.10.3",
+/*
+ * jQuery UI Progressbar 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/progressbar/
+ */
+
+
+var progressbar = $.widget( "ui.progressbar", {
+	version: "1.11.4",
 	options: {
 		max: 100,
 		value: 0,
@@ -7161,7 +11035,11 @@ $.widget( "ui.progressbar", {
 			// Don't allow a max less than min
 			value = Math.max( this.min, value );
 		}
-
+		if ( key === "disabled" ) {
+			this.element
+				.toggleClass( "ui-state-disabled", !!value )
+				.attr( "aria-disabled", value );
+		}
 		this._super( key, value );
 	},
 
@@ -7206,15 +11084,620 @@ $.widget( "ui.progressbar", {
 	}
 });
 
-})( jQuery );
-(function( $, undefined ) {
 
-// number of pages in a slider
-// (how many times can you page up/down to go through the whole range)
-var numPages = 5;
+/*
+ * jQuery UI Selectmenu 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/selectmenu
+ */
 
-$.widget( "ui.slider", $.ui.mouse, {
-	version: "1.10.3",
+
+var selectmenu = $.widget( "ui.selectmenu", {
+	version: "1.11.4",
+	defaultElement: "<select>",
+	options: {
+		appendTo: null,
+		disabled: null,
+		icons: {
+			button: "ui-icon-triangle-1-s"
+		},
+		position: {
+			my: "left top",
+			at: "left bottom",
+			collision: "none"
+		},
+		width: null,
+
+		// callbacks
+		change: null,
+		close: null,
+		focus: null,
+		open: null,
+		select: null
+	},
+
+	_create: function() {
+		var selectmenuId = this.element.uniqueId().attr( "id" );
+		this.ids = {
+			element: selectmenuId,
+			button: selectmenuId + "-button",
+			menu: selectmenuId + "-menu"
+		};
+
+		this._drawButton();
+		this._drawMenu();
+
+		if ( this.options.disabled ) {
+			this.disable();
+		}
+	},
+
+	_drawButton: function() {
+		var that = this;
+
+		// Associate existing label with the new button
+		this.label = $( "label[for='" + this.ids.element + "']" ).attr( "for", this.ids.button );
+		this._on( this.label, {
+			click: function( event ) {
+				this.button.focus();
+				event.preventDefault();
+			}
+		});
+
+		// Hide original select element
+		this.element.hide();
+
+		// Create button
+		this.button = $( "<span>", {
+			"class": "ui-selectmenu-button ui-widget ui-state-default ui-corner-all",
+			tabindex: this.options.disabled ? -1 : 0,
+			id: this.ids.button,
+			role: "combobox",
+			"aria-expanded": "false",
+			"aria-autocomplete": "list",
+			"aria-owns": this.ids.menu,
+			"aria-haspopup": "true"
+		})
+			.insertAfter( this.element );
+
+		$( "<span>", {
+			"class": "ui-icon " + this.options.icons.button
+		})
+			.prependTo( this.button );
+
+		this.buttonText = $( "<span>", {
+			"class": "ui-selectmenu-text"
+		})
+			.appendTo( this.button );
+
+		this._setText( this.buttonText, this.element.find( "option:selected" ).text() );
+		this._resizeButton();
+
+		this._on( this.button, this._buttonEvents );
+		this.button.one( "focusin", function() {
+
+			// Delay rendering the menu items until the button receives focus.
+			// The menu may have already been rendered via a programmatic open.
+			if ( !that.menuItems ) {
+				that._refreshMenu();
+			}
+		});
+		this._hoverable( this.button );
+		this._focusable( this.button );
+	},
+
+	_drawMenu: function() {
+		var that = this;
+
+		// Create menu
+		this.menu = $( "<ul>", {
+			"aria-hidden": "true",
+			"aria-labelledby": this.ids.button,
+			id: this.ids.menu
+		});
+
+		// Wrap menu
+		this.menuWrap = $( "<div>", {
+			"class": "ui-selectmenu-menu ui-front"
+		})
+			.append( this.menu )
+			.appendTo( this._appendTo() );
+
+		// Initialize menu widget
+		this.menuInstance = this.menu
+			.menu({
+				role: "listbox",
+				select: function( event, ui ) {
+					event.preventDefault();
+
+					// support: IE8
+					// If the item was selected via a click, the text selection
+					// will be destroyed in IE
+					that._setSelection();
+
+					that._select( ui.item.data( "ui-selectmenu-item" ), event );
+				},
+				focus: function( event, ui ) {
+					var item = ui.item.data( "ui-selectmenu-item" );
+
+					// Prevent inital focus from firing and check if its a newly focused item
+					if ( that.focusIndex != null && item.index !== that.focusIndex ) {
+						that._trigger( "focus", event, { item: item } );
+						if ( !that.isOpen ) {
+							that._select( item, event );
+						}
+					}
+					that.focusIndex = item.index;
+
+					that.button.attr( "aria-activedescendant",
+						that.menuItems.eq( item.index ).attr( "id" ) );
+				}
+			})
+			.menu( "instance" );
+
+		// Adjust menu styles to dropdown
+		this.menu
+			.addClass( "ui-corner-bottom" )
+			.removeClass( "ui-corner-all" );
+
+		// Don't close the menu on mouseleave
+		this.menuInstance._off( this.menu, "mouseleave" );
+
+		// Cancel the menu's collapseAll on document click
+		this.menuInstance._closeOnDocumentClick = function() {
+			return false;
+		};
+
+		// Selects often contain empty items, but never contain dividers
+		this.menuInstance._isDivider = function() {
+			return false;
+		};
+	},
+
+	refresh: function() {
+		this._refreshMenu();
+		this._setText( this.buttonText, this._getSelectedItem().text() );
+		if ( !this.options.width ) {
+			this._resizeButton();
+		}
+	},
+
+	_refreshMenu: function() {
+		this.menu.empty();
+
+		var item,
+			options = this.element.find( "option" );
+
+		if ( !options.length ) {
+			return;
+		}
+
+		this._parseOptions( options );
+		this._renderMenu( this.menu, this.items );
+
+		this.menuInstance.refresh();
+		this.menuItems = this.menu.find( "li" ).not( ".ui-selectmenu-optgroup" );
+
+		item = this._getSelectedItem();
+
+		// Update the menu to have the correct item focused
+		this.menuInstance.focus( null, item );
+		this._setAria( item.data( "ui-selectmenu-item" ) );
+
+		// Set disabled state
+		this._setOption( "disabled", this.element.prop( "disabled" ) );
+	},
+
+	open: function( event ) {
+		if ( this.options.disabled ) {
+			return;
+		}
+
+		// If this is the first time the menu is being opened, render the items
+		if ( !this.menuItems ) {
+			this._refreshMenu();
+		} else {
+
+			// Menu clears focus on close, reset focus to selected item
+			this.menu.find( ".ui-state-focus" ).removeClass( "ui-state-focus" );
+			this.menuInstance.focus( null, this._getSelectedItem() );
+		}
+
+		this.isOpen = true;
+		this._toggleAttr();
+		this._resizeMenu();
+		this._position();
+
+		this._on( this.document, this._documentClick );
+
+		this._trigger( "open", event );
+	},
+
+	_position: function() {
+		this.menuWrap.position( $.extend( { of: this.button }, this.options.position ) );
+	},
+
+	close: function( event ) {
+		if ( !this.isOpen ) {
+			return;
+		}
+
+		this.isOpen = false;
+		this._toggleAttr();
+
+		this.range = null;
+		this._off( this.document );
+
+		this._trigger( "close", event );
+	},
+
+	widget: function() {
+		return this.button;
+	},
+
+	menuWidget: function() {
+		return this.menu;
+	},
+
+	_renderMenu: function( ul, items ) {
+		var that = this,
+			currentOptgroup = "";
+
+		$.each( items, function( index, item ) {
+			if ( item.optgroup !== currentOptgroup ) {
+				$( "<li>", {
+					"class": "ui-selectmenu-optgroup ui-menu-divider" +
+						( item.element.parent( "optgroup" ).prop( "disabled" ) ?
+							" ui-state-disabled" :
+							"" ),
+					text: item.optgroup
+				})
+					.appendTo( ul );
+
+				currentOptgroup = item.optgroup;
+			}
+
+			that._renderItemData( ul, item );
+		});
+	},
+
+	_renderItemData: function( ul, item ) {
+		return this._renderItem( ul, item ).data( "ui-selectmenu-item", item );
+	},
+
+	_renderItem: function( ul, item ) {
+		var li = $( "<li>" );
+
+		if ( item.disabled ) {
+			li.addClass( "ui-state-disabled" );
+		}
+		this._setText( li, item.label );
+
+		return li.appendTo( ul );
+	},
+
+	_setText: function( element, value ) {
+		if ( value ) {
+			element.text( value );
+		} else {
+			element.html( "&#160;" );
+		}
+	},
+
+	_move: function( direction, event ) {
+		var item, next,
+			filter = ".ui-menu-item";
+
+		if ( this.isOpen ) {
+			item = this.menuItems.eq( this.focusIndex );
+		} else {
+			item = this.menuItems.eq( this.element[ 0 ].selectedIndex );
+			filter += ":not(.ui-state-disabled)";
+		}
+
+		if ( direction === "first" || direction === "last" ) {
+			next = item[ direction === "first" ? "prevAll" : "nextAll" ]( filter ).eq( -1 );
+		} else {
+			next = item[ direction + "All" ]( filter ).eq( 0 );
+		}
+
+		if ( next.length ) {
+			this.menuInstance.focus( event, next );
+		}
+	},
+
+	_getSelectedItem: function() {
+		return this.menuItems.eq( this.element[ 0 ].selectedIndex );
+	},
+
+	_toggle: function( event ) {
+		this[ this.isOpen ? "close" : "open" ]( event );
+	},
+
+	_setSelection: function() {
+		var selection;
+
+		if ( !this.range ) {
+			return;
+		}
+
+		if ( window.getSelection ) {
+			selection = window.getSelection();
+			selection.removeAllRanges();
+			selection.addRange( this.range );
+
+		// support: IE8
+		} else {
+			this.range.select();
+		}
+
+		// support: IE
+		// Setting the text selection kills the button focus in IE, but
+		// restoring the focus doesn't kill the selection.
+		this.button.focus();
+	},
+
+	_documentClick: {
+		mousedown: function( event ) {
+			if ( !this.isOpen ) {
+				return;
+			}
+
+			if ( !$( event.target ).closest( ".ui-selectmenu-menu, #" + this.ids.button ).length ) {
+				this.close( event );
+			}
+		}
+	},
+
+	_buttonEvents: {
+
+		// Prevent text selection from being reset when interacting with the selectmenu (#10144)
+		mousedown: function() {
+			var selection;
+
+			if ( window.getSelection ) {
+				selection = window.getSelection();
+				if ( selection.rangeCount ) {
+					this.range = selection.getRangeAt( 0 );
+				}
+
+			// support: IE8
+			} else {
+				this.range = document.selection.createRange();
+			}
+		},
+
+		click: function( event ) {
+			this._setSelection();
+			this._toggle( event );
+		},
+
+		keydown: function( event ) {
+			var preventDefault = true;
+			switch ( event.keyCode ) {
+				case $.ui.keyCode.TAB:
+				case $.ui.keyCode.ESCAPE:
+					this.close( event );
+					preventDefault = false;
+					break;
+				case $.ui.keyCode.ENTER:
+					if ( this.isOpen ) {
+						this._selectFocusedItem( event );
+					}
+					break;
+				case $.ui.keyCode.UP:
+					if ( event.altKey ) {
+						this._toggle( event );
+					} else {
+						this._move( "prev", event );
+					}
+					break;
+				case $.ui.keyCode.DOWN:
+					if ( event.altKey ) {
+						this._toggle( event );
+					} else {
+						this._move( "next", event );
+					}
+					break;
+				case $.ui.keyCode.SPACE:
+					if ( this.isOpen ) {
+						this._selectFocusedItem( event );
+					} else {
+						this._toggle( event );
+					}
+					break;
+				case $.ui.keyCode.LEFT:
+					this._move( "prev", event );
+					break;
+				case $.ui.keyCode.RIGHT:
+					this._move( "next", event );
+					break;
+				case $.ui.keyCode.HOME:
+				case $.ui.keyCode.PAGE_UP:
+					this._move( "first", event );
+					break;
+				case $.ui.keyCode.END:
+				case $.ui.keyCode.PAGE_DOWN:
+					this._move( "last", event );
+					break;
+				default:
+					this.menu.trigger( event );
+					preventDefault = false;
+			}
+
+			if ( preventDefault ) {
+				event.preventDefault();
+			}
+		}
+	},
+
+	_selectFocusedItem: function( event ) {
+		var item = this.menuItems.eq( this.focusIndex );
+		if ( !item.hasClass( "ui-state-disabled" ) ) {
+			this._select( item.data( "ui-selectmenu-item" ), event );
+		}
+	},
+
+	_select: function( item, event ) {
+		var oldIndex = this.element[ 0 ].selectedIndex;
+
+		// Change native select element
+		this.element[ 0 ].selectedIndex = item.index;
+		this._setText( this.buttonText, item.label );
+		this._setAria( item );
+		this._trigger( "select", event, { item: item } );
+
+		if ( item.index !== oldIndex ) {
+			this._trigger( "change", event, { item: item } );
+		}
+
+		this.close( event );
+	},
+
+	_setAria: function( item ) {
+		var id = this.menuItems.eq( item.index ).attr( "id" );
+
+		this.button.attr({
+			"aria-labelledby": id,
+			"aria-activedescendant": id
+		});
+		this.menu.attr( "aria-activedescendant", id );
+	},
+
+	_setOption: function( key, value ) {
+		if ( key === "icons" ) {
+			this.button.find( "span.ui-icon" )
+				.removeClass( this.options.icons.button )
+				.addClass( value.button );
+		}
+
+		this._super( key, value );
+
+		if ( key === "appendTo" ) {
+			this.menuWrap.appendTo( this._appendTo() );
+		}
+
+		if ( key === "disabled" ) {
+			this.menuInstance.option( "disabled", value );
+			this.button
+				.toggleClass( "ui-state-disabled", value )
+				.attr( "aria-disabled", value );
+
+			this.element.prop( "disabled", value );
+			if ( value ) {
+				this.button.attr( "tabindex", -1 );
+				this.close();
+			} else {
+				this.button.attr( "tabindex", 0 );
+			}
+		}
+
+		if ( key === "width" ) {
+			this._resizeButton();
+		}
+	},
+
+	_appendTo: function() {
+		var element = this.options.appendTo;
+
+		if ( element ) {
+			element = element.jquery || element.nodeType ?
+				$( element ) :
+				this.document.find( element ).eq( 0 );
+		}
+
+		if ( !element || !element[ 0 ] ) {
+			element = this.element.closest( ".ui-front" );
+		}
+
+		if ( !element.length ) {
+			element = this.document[ 0 ].body;
+		}
+
+		return element;
+	},
+
+	_toggleAttr: function() {
+		this.button
+			.toggleClass( "ui-corner-top", this.isOpen )
+			.toggleClass( "ui-corner-all", !this.isOpen )
+			.attr( "aria-expanded", this.isOpen );
+		this.menuWrap.toggleClass( "ui-selectmenu-open", this.isOpen );
+		this.menu.attr( "aria-hidden", !this.isOpen );
+	},
+
+	_resizeButton: function() {
+		var width = this.options.width;
+
+		if ( !width ) {
+			width = this.element.show().outerWidth();
+			this.element.hide();
+		}
+
+		this.button.outerWidth( width );
+	},
+
+	_resizeMenu: function() {
+		this.menu.outerWidth( Math.max(
+			this.button.outerWidth(),
+
+			// support: IE10
+			// IE10 wraps long text (possibly a rounding bug)
+			// so we add 1px to avoid the wrapping
+			this.menu.width( "" ).outerWidth() + 1
+		) );
+	},
+
+	_getCreateOptions: function() {
+		return { disabled: this.element.prop( "disabled" ) };
+	},
+
+	_parseOptions: function( options ) {
+		var data = [];
+		options.each(function( index, item ) {
+			var option = $( item ),
+				optgroup = option.parent( "optgroup" );
+			data.push({
+				element: option,
+				index: index,
+				value: option.val(),
+				label: option.text(),
+				optgroup: optgroup.attr( "label" ) || "",
+				disabled: optgroup.prop( "disabled" ) || option.prop( "disabled" )
+			});
+		});
+		this.items = data;
+	},
+
+	_destroy: function() {
+		this.menuWrap.remove();
+		this.button.remove();
+		this.element.show();
+		this.element.removeUniqueId();
+		this.label.attr( "for", this.ids.element );
+	}
+});
+
+
+/*
+ * jQuery UI Slider 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/slider/
+ */
+
+
+var slider = $.widget( "ui.slider", $.ui.mouse, {
+	version: "1.11.4",
 	widgetEventPrefix: "slide",
 
 	options: {
@@ -7235,6 +11718,10 @@ $.widget( "ui.slider", $.ui.mouse, {
 		stop: null
 	},
 
+	// number of pages in a slider
+	// (how many times can you page up/down to go through the whole range)
+	numPages: 5,
+
 	_create: function() {
 		this._keySliding = false;
 		this._mouseSliding = false;
@@ -7242,6 +11729,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 		this._handleIndex = null;
 		this._detectOrientation();
 		this._mouseInit();
+		this._calculateNewMax();
 
 		this.element
 			.addClass( "ui-slider" +
@@ -7267,7 +11755,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 		var i, handleCount,
 			options = this.options,
 			existingHandles = this.element.find( ".ui-slider-handle" ).addClass( "ui-state-default ui-corner-all" ),
-			handle = "<a class='ui-slider-handle ui-state-default ui-corner-all' href='#'></a>",
+			handle = "<span class='ui-slider-handle ui-state-default ui-corner-all' tabindex='0'></span>",
 			handles = [];
 
 		handleCount = ( options.values && options.values.length ) || 1;
@@ -7325,21 +11813,25 @@ $.widget( "ui.slider", $.ui.mouse, {
 			this.range.addClass( classes +
 				( ( options.range === "min" || options.range === "max" ) ? " ui-slider-range-" + options.range : "" ) );
 		} else {
-			this.range = $([]);
+			if ( this.range ) {
+				this.range.remove();
+			}
+			this.range = null;
 		}
 	},
 
 	_setupEvents: function() {
-		var elements = this.handles.add( this.range ).filter( "a" );
-		this._off( elements );
-		this._on( elements, this._handleEvents );
-		this._hoverable( elements );
-		this._focusable( elements );
+		this._off( this.handles );
+		this._on( this.handles, this._handleEvents );
+		this._hoverable( this.handles );
+		this._focusable( this.handles );
 	},
 
 	_destroy: function() {
 		this.handles.remove();
-		this.range.remove();
+		if ( this.range ) {
+			this.range.remove();
+		}
 
 		this.element
 			.removeClass( "ui-slider" +
@@ -7511,7 +12003,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 				} );
 				otherVal = this.values( index ? 0 : 1 );
 				if ( allowed !== false ) {
-					this.values( index, newVal, true );
+					this.values( index, newVal );
 				}
 			}
 		} else {
@@ -7612,7 +12104,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 				this.options.value = this._values( 0 );
 				this.options.values = null;
 			} else if ( value === "max" ) {
-				this.options.value = this._values( this.options.values.length-1 );
+				this.options.value = this._values( this.options.values.length - 1 );
 				this.options.values = null;
 			}
 		}
@@ -7621,7 +12113,11 @@ $.widget( "ui.slider", $.ui.mouse, {
 			valsLength = this.options.values.length;
 		}
 
-		$.Widget.prototype._setOption.apply( this, arguments );
+		if ( key === "disabled" ) {
+			this.element.toggleClass( "ui-state-disabled", !!value );
+		}
+
+		this._super( key, value );
 
 		switch ( key ) {
 			case "orientation":
@@ -7630,6 +12126,9 @@ $.widget( "ui.slider", $.ui.mouse, {
 					.removeClass( "ui-slider-horizontal ui-slider-vertical" )
 					.addClass( "ui-slider-" + this.orientation );
 				this._refreshValue();
+
+				// Reset positioning from previous orientation
+				this.handles.css( value === "horizontal" ? "bottom" : "left", "" );
 				break;
 			case "value":
 				this._animateOff = true;
@@ -7645,9 +12144,11 @@ $.widget( "ui.slider", $.ui.mouse, {
 				}
 				this._animateOff = false;
 				break;
+			case "step":
 			case "min":
 			case "max":
 				this._animateOff = true;
+				this._calculateNewMax();
 				this._refreshValue();
 				this._animateOff = false;
 				break;
@@ -7685,7 +12186,7 @@ $.widget( "ui.slider", $.ui.mouse, {
 			// .slice() creates a copy of the array
 			// this copy gets trimmed by min and max and then returned
 			vals = this.options.values.slice();
-			for ( i = 0; i < vals.length; i+= 1) {
+			for ( i = 0; i < vals.length; i += 1) {
 				vals[ i ] = this._trimAlignValue( vals[ i ] );
 			}
 
@@ -7716,12 +12217,35 @@ $.widget( "ui.slider", $.ui.mouse, {
 		return parseFloat( alignValue.toFixed(5) );
 	},
 
+	_calculateNewMax: function() {
+		var max = this.options.max,
+			min = this._valueMin(),
+			step = this.options.step,
+			aboveMin = Math.floor( ( +( max - min ).toFixed( this._precision() ) ) / step ) * step;
+		max = aboveMin + min;
+		this.max = parseFloat( max.toFixed( this._precision() ) );
+	},
+
+	_precision: function() {
+		var precision = this._precisionOf( this.options.step );
+		if ( this.options.min !== null ) {
+			precision = Math.max( precision, this._precisionOf( this.options.min ) );
+		}
+		return precision;
+	},
+
+	_precisionOf: function( num ) {
+		var str = num.toString(),
+			decimal = str.indexOf( "." );
+		return decimal === -1 ? 0 : str.length - decimal - 1;
+	},
+
 	_valueMin: function() {
 		return this.options.min;
 	},
 
 	_valueMax: function() {
-		return this.options.max;
+		return this.max;
 	},
 
 	_refreshValue: function() {
@@ -7783,7 +12307,6 @@ $.widget( "ui.slider", $.ui.mouse, {
 
 	_handleEvents: {
 		keydown: function( event ) {
-			/*jshint maxcomplexity:25*/
 			var allowed, curVal, newVal, step,
 				index = $( event.target ).data( "ui-slider-handle-index" );
 
@@ -7823,10 +12346,13 @@ $.widget( "ui.slider", $.ui.mouse, {
 					newVal = this._valueMax();
 					break;
 				case $.ui.keyCode.PAGE_UP:
-					newVal = this._trimAlignValue( curVal + ( (this._valueMax() - this._valueMin()) / numPages ) );
+					newVal = this._trimAlignValue(
+						curVal + ( ( this._valueMax() - this._valueMin() ) / this.numPages )
+					);
 					break;
 				case $.ui.keyCode.PAGE_DOWN:
-					newVal = this._trimAlignValue( curVal - ( (this._valueMax() - this._valueMin()) / numPages ) );
+					newVal = this._trimAlignValue(
+						curVal - ( (this._valueMax() - this._valueMin()) / this.numPages ) );
 					break;
 				case $.ui.keyCode.UP:
 				case $.ui.keyCode.RIGHT:
@@ -7846,9 +12372,6 @@ $.widget( "ui.slider", $.ui.mouse, {
 
 			this._slide( event, index, newVal );
 		},
-		click: function( event ) {
-			event.preventDefault();
-		},
 		keyup: function( event ) {
 			var index = $( event.target ).data( "ui-slider-handle-index" );
 
@@ -7860,13 +12383,22 @@ $.widget( "ui.slider", $.ui.mouse, {
 			}
 		}
 	}
-
 });
 
-}(jQuery));
-(function( $ ) {
 
-function modifier( fn ) {
+/*
+ * jQuery UI Spinner 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/spinner/
+ */
+
+
+function spinner_modifier( fn ) {
 	return function() {
 		var previous = this.element.val();
 		fn.apply( this, arguments );
@@ -7877,8 +12409,8 @@ function modifier( fn ) {
 	};
 }
 
-$.widget( "ui.spinner", {
-	version: "1.10.3",
+var spinner = $.widget( "ui.spinner", {
+	version: "1.11.4",
 	defaultElement: "<input>",
 	widgetEventPrefix: "spin",
 	options: {
@@ -7906,8 +12438,12 @@ $.widget( "ui.spinner", {
 		this._setOption( "min", this.options.min );
 		this._setOption( "step", this.options.step );
 
-		// format the value, but don't constrain
-		this._value( this.element.val(), true );
+		// Only format if there is a value, prevents the field from being marked
+		// as invalid in Firefox, see #9573.
+		if ( this.value() !== "" ) {
+			// Format the value, but don't constrain.
+			this._value( this.element.val(), true );
+		}
 
 		this._draw();
 		this._on( this._events );
@@ -8148,7 +12684,7 @@ $.widget( "ui.spinner", {
 		if ( incremental ) {
 			return $.isFunction( incremental ) ?
 				incremental( i ) :
-				Math.floor( i*i*i/50000 - i*i/500 + 17*i/200 + 1 );
+				Math.floor( i * i * i / 50000 - i * i / 500 + 17 * i / 200 + 1 );
 		}
 
 		return 1;
@@ -8232,19 +12768,14 @@ $.widget( "ui.spinner", {
 		this._super( key, value );
 
 		if ( key === "disabled" ) {
-			if ( value ) {
-				this.element.prop( "disabled", true );
-				this.buttons.button( "disable" );
-			} else {
-				this.element.prop( "disabled", false );
-				this.buttons.button( "enable" );
-			}
+			this.widget().toggleClass( "ui-state-disabled", !!value );
+			this.element.prop( "disabled", !!value );
+			this.buttons.button( value ? "disable" : "enable" );
 		}
 	},
 
-	_setOptions: modifier(function( options ) {
+	_setOptions: spinner_modifier(function( options ) {
 		this._super( options );
-		this._value( this.element.val() );
 	}),
 
 	_parse: function( val ) {
@@ -8271,6 +12802,18 @@ $.widget( "ui.spinner", {
 			// TODO: what should we do with values that can't be parsed?
 			"aria-valuenow": this._parse( this.element.val() )
 		});
+	},
+
+	isValid: function() {
+		var value = this.value();
+
+		// null is invalid
+		if ( value === null ) {
+			return false;
+		}
+
+		// if value gets adjusted, it's invalid
+		return value === this._adjustValue( value );
 	},
 
 	// update the value without triggering change
@@ -8301,7 +12844,7 @@ $.widget( "ui.spinner", {
 		this.uiSpinner.replaceWith( this.element );
 	},
 
-	stepUp: modifier(function( steps ) {
+	stepUp: spinner_modifier(function( steps ) {
 		this._stepUp( steps );
 	}),
 	_stepUp: function( steps ) {
@@ -8311,7 +12854,7 @@ $.widget( "ui.spinner", {
 		}
 	},
 
-	stepDown: modifier(function( steps ) {
+	stepDown: spinner_modifier(function( steps ) {
 		this._stepDown( steps );
 	}),
 	_stepDown: function( steps ) {
@@ -8321,11 +12864,11 @@ $.widget( "ui.spinner", {
 		}
 	},
 
-	pageUp: modifier(function( pages ) {
+	pageUp: spinner_modifier(function( pages ) {
 		this._stepUp( (pages || 1) * this.options.page );
 	}),
 
-	pageDown: modifier(function( pages ) {
+	pageDown: spinner_modifier(function( pages ) {
 		this._stepDown( (pages || 1) * this.options.page );
 	}),
 
@@ -8333,7 +12876,7 @@ $.widget( "ui.spinner", {
 		if ( !arguments.length ) {
 			return this._parse( this.element.val() );
 		}
-		modifier( this._value ).call( this, newVal );
+		spinner_modifier( this._value ).call( this, newVal );
 	},
 
 	widget: function() {
@@ -8341,24 +12884,21 @@ $.widget( "ui.spinner", {
 	}
 });
 
-}( jQuery ) );
-(function( $, undefined ) {
 
-var tabId = 0,
-	rhash = /#.*$/;
+/*
+ * jQuery UI Tabs 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/tabs/
+ */
 
-function getNextTabId() {
-	return ++tabId;
-}
 
-function isLocal( anchor ) {
-	return anchor.hash.length > 1 &&
-		decodeURIComponent( anchor.href.replace( rhash, "" ) ) ===
-			decodeURIComponent( location.href.replace( rhash, "" ) );
-}
-
-$.widget( "ui.tabs", {
-	version: "1.10.3",
+var tabs = $.widget( "ui.tabs", {
+	version: "1.11.4",
 	delay: 300,
 	options: {
 		active: null,
@@ -8375,6 +12915,31 @@ $.widget( "ui.tabs", {
 		load: null
 	},
 
+	_isLocal: (function() {
+		var rhash = /#.*$/;
+
+		return function( anchor ) {
+			var anchorUrl, locationUrl;
+
+			// support: IE7
+			// IE7 doesn't normalize the href property when set via script (#9317)
+			anchor = anchor.cloneNode( false );
+
+			anchorUrl = anchor.href.replace( rhash, "" );
+			locationUrl = location.href.replace( rhash, "" );
+
+			// decoding may throw an error if the URL isn't UTF-8 (#9518)
+			try {
+				anchorUrl = decodeURIComponent( anchorUrl );
+			} catch ( error ) {}
+			try {
+				locationUrl = decodeURIComponent( locationUrl );
+			} catch ( error ) {}
+
+			return anchor.hash.length > 1 && anchorUrl === locationUrl;
+		};
+	})(),
+
 	_create: function() {
 		var that = this,
 			options = this.options;
@@ -8383,24 +12948,7 @@ $.widget( "ui.tabs", {
 
 		this.element
 			.addClass( "ui-tabs ui-widget ui-widget-content ui-corner-all" )
-			.toggleClass( "ui-tabs-collapsible", options.collapsible )
-			// Prevent users from focusing disabled tabs via click
-			.delegate( ".ui-tabs-nav > li", "mousedown" + this.eventNamespace, function( event ) {
-				if ( $( this ).is( ".ui-state-disabled" ) ) {
-					event.preventDefault();
-				}
-			})
-			// support: IE <9
-			// Preventing the default action in mousedown doesn't prevent IE
-			// from focusing the element, so if the anchor gets focused, blur.
-			// We don't have to worry about focusing the previously focused
-			// element since clicking on a non-focusable element should focus
-			// the body anyway.
-			.delegate( ".ui-tabs-anchor", "focus" + this.eventNamespace, function() {
-				if ( $( this ).closest( "li" ).is( ".ui-state-disabled" ) ) {
-					this.blur();
-				}
-			});
+			.toggleClass( "ui-tabs-collapsible", options.collapsible );
 
 		this._processTabs();
 		options.active = this._initialActive();
@@ -8480,7 +13028,6 @@ $.widget( "ui.tabs", {
 	},
 
 	_tabKeydown: function( event ) {
-		/*jshint maxcomplexity:15*/
 		var focusedTab = $( this.document[0].activeElement ).closest( "li" ),
 			selectedIndex = this.tabs.index( focusedTab ),
 			goingForward = true;
@@ -8527,8 +13074,9 @@ $.widget( "ui.tabs", {
 		clearTimeout( this.activating );
 		selectedIndex = this._focusNextTab( selectedIndex, goingForward );
 
-		// Navigating with control key will prevent automatic activation
-		if ( !event.ctrlKey ) {
+		// Navigating with control/command key will prevent automatic activation
+		if ( !event.ctrlKey && !event.metaKey ) {
+
 			// Update aria-selected immediately so that AT think the tab is already selected.
 			// Otherwise AT may confuse the user by stating that they need to activate the tab,
 			// but the tab will already be activated by the time the announcement finishes.
@@ -8623,10 +13171,6 @@ $.widget( "ui.tabs", {
 		}
 	},
 
-	_tabId: function( tab ) {
-		return tab.attr( "aria-controls" ) || "ui-tabs-" + getNextTabId();
-	},
-
 	_sanitizeSelector: function( hash ) {
 		return hash ? hash.replace( /[!"$%&'()*+,.\/:;<=>?@\[\]\^`{|}~]/g, "\\$&" ) : "";
 	},
@@ -8673,12 +13217,12 @@ $.widget( "ui.tabs", {
 
 		this.tabs.not( this.active ).attr({
 			"aria-selected": "false",
+			"aria-expanded": "false",
 			tabIndex: -1
 		});
 		this.panels.not( this._getPanelForTab( this.active ) )
 			.hide()
 			.attr({
-				"aria-expanded": "false",
 				"aria-hidden": "true"
 			});
 
@@ -8690,23 +13234,45 @@ $.widget( "ui.tabs", {
 				.addClass( "ui-tabs-active ui-state-active" )
 				.attr({
 					"aria-selected": "true",
+					"aria-expanded": "true",
 					tabIndex: 0
 				});
 			this._getPanelForTab( this.active )
 				.show()
 				.attr({
-					"aria-expanded": "true",
 					"aria-hidden": "false"
 				});
 		}
 	},
 
 	_processTabs: function() {
-		var that = this;
+		var that = this,
+			prevTabs = this.tabs,
+			prevAnchors = this.anchors,
+			prevPanels = this.panels;
 
 		this.tablist = this._getList()
 			.addClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" )
-			.attr( "role", "tablist" );
+			.attr( "role", "tablist" )
+
+			// Prevent users from focusing disabled tabs via click
+			.delegate( "> li", "mousedown" + this.eventNamespace, function( event ) {
+				if ( $( this ).is( ".ui-state-disabled" ) ) {
+					event.preventDefault();
+				}
+			})
+
+			// support: IE <9
+			// Preventing the default action in mousedown doesn't prevent IE
+			// from focusing the element, so if the anchor gets focused, blur.
+			// We don't have to worry about focusing the previously focused
+			// element since clicking on a non-focusable element should focus
+			// the body anyway.
+			.delegate( ".ui-tabs-anchor", "focus" + this.eventNamespace, function() {
+				if ( $( this ).closest( "li" ).is( ".ui-state-disabled" ) ) {
+					this.blur();
+				}
+			});
 
 		this.tabs = this.tablist.find( "> li:has(a[href])" )
 			.addClass( "ui-state-default ui-corner-top" )
@@ -8733,12 +13299,15 @@ $.widget( "ui.tabs", {
 				originalAriaControls = tab.attr( "aria-controls" );
 
 			// inline tab
-			if ( isLocal( anchor ) ) {
+			if ( that._isLocal( anchor ) ) {
 				selector = anchor.hash;
+				panelId = selector.substring( 1 );
 				panel = that.element.find( that._sanitizeSelector( selector ) );
 			// remote tab
 			} else {
-				panelId = that._tabId( tab );
+				// If the tab doesn't already have aria-controls,
+				// generate an id by using a throw-away element
+				panelId = tab.attr( "aria-controls" ) || $( {} ).uniqueId()[ 0 ].id;
 				selector = "#" + panelId;
 				panel = that.element.find( selector );
 				if ( !panel.length ) {
@@ -8755,7 +13324,7 @@ $.widget( "ui.tabs", {
 				tab.data( "ui-tabs-aria-controls", originalAriaControls );
 			}
 			tab.attr({
-				"aria-controls": selector.substring( 1 ),
+				"aria-controls": panelId,
 				"aria-labelledby": anchorId
 			});
 			panel.attr( "aria-labelledby", anchorId );
@@ -8764,11 +13333,18 @@ $.widget( "ui.tabs", {
 		this.panels
 			.addClass( "ui-tabs-panel ui-widget-content ui-corner-bottom" )
 			.attr( "role", "tabpanel" );
+
+		// Avoid memory leaks (#10056)
+		if ( prevTabs ) {
+			this._off( prevTabs.not( this.tabs ) );
+			this._off( prevAnchors.not( this.anchors ) );
+			this._off( prevPanels.not( this.panels ) );
+		}
 	},
 
 	// allow overriding how to find the list for rare usage scenarios (#7715)
 	_getList: function() {
-		return this.element.find( "ol,ul" ).eq( 0 );
+		return this.tablist || this.element.find( "ol,ul" ).eq( 0 );
 	},
 
 	_createPanel: function( id ) {
@@ -8804,11 +13380,7 @@ $.widget( "ui.tabs", {
 	},
 
 	_setupEvents: function( event ) {
-		var events = {
-			click: function( event ) {
-				event.preventDefault();
-			}
-		};
+		var events = {};
 		if ( event ) {
 			$.each( event.split(" "), function( index, eventName ) {
 				events[ eventName ] = "_eventHandler";
@@ -8816,6 +13388,12 @@ $.widget( "ui.tabs", {
 		}
 
 		this._off( this.anchors.add( this.tabs ).add( this.panels ) );
+		// Always prevent the default action, even when disabled
+		this._on( true, this.anchors, {
+			click: function( event ) {
+				event.preventDefault();
+			}
+		});
 		this._on( this.anchors, events );
 		this._on( this.tabs, { keydown: "_tabKeydown" } );
 		this._on( this.panels, { keydown: "_panelKeydown" } );
@@ -8942,11 +13520,11 @@ $.widget( "ui.tabs", {
 			show();
 		}
 
-		toHide.attr({
-			"aria-expanded": "false",
-			"aria-hidden": "true"
+		toHide.attr( "aria-hidden", "true" );
+		eventData.oldTab.attr({
+			"aria-selected": "false",
+			"aria-expanded": "false"
 		});
-		eventData.oldTab.attr( "aria-selected", "false" );
 		// If we're switching tabs, remove the old tab from the tab order.
 		// If we're opening from collapsed state, remove the previous tab from the tab order.
 		// If we're collapsing, then keep the collapsing tab in the tab order.
@@ -8959,12 +13537,10 @@ $.widget( "ui.tabs", {
 			.attr( "tabIndex", -1 );
 		}
 
-		toShow.attr({
-			"aria-expanded": "true",
-			"aria-hidden": "false"
-		});
+		toShow.attr( "aria-hidden", "false" );
 		eventData.newTab.attr({
 			"aria-selected": "true",
+			"aria-expanded": "true",
 			tabIndex: 0
 		});
 	},
@@ -9020,6 +13596,8 @@ $.widget( "ui.tabs", {
 			.removeAttr( "role" )
 			.removeAttr( "tabIndex" )
 			.removeUniqueId();
+
+		this.tablist.unbind( this.eventNamespace );
 
 		this.tabs.add( this.panels ).each(function() {
 			if ( $.data( this, "ui-tabs-destroy" ) ) {
@@ -9112,10 +13690,22 @@ $.widget( "ui.tabs", {
 			eventData = {
 				tab: tab,
 				panel: panel
+			},
+			complete = function( jqXHR, status ) {
+				if ( status === "abort" ) {
+					that.panels.stop( false, true );
+				}
+
+				tab.removeClass( "ui-tabs-loading" );
+				panel.removeAttr( "aria-busy" );
+
+				if ( jqXHR === that.xhr ) {
+					delete that.xhr;
+				}
 			};
 
 		// not remote
-		if ( isLocal( anchor[ 0 ] ) ) {
+		if ( this._isLocal( anchor[ 0 ] ) ) {
 			return;
 		}
 
@@ -9129,28 +13719,21 @@ $.widget( "ui.tabs", {
 			panel.attr( "aria-busy", "true" );
 
 			this.xhr
-				.success(function( response ) {
+				.done(function( response, status, jqXHR ) {
 					// support: jQuery <1.8
 					// http://bugs.jquery.com/ticket/11778
 					setTimeout(function() {
 						panel.html( response );
 						that._trigger( "load", event, eventData );
+
+						complete( jqXHR, status );
 					}, 1 );
 				})
-				.complete(function( jqXHR, status ) {
+				.fail(function( jqXHR, status ) {
 					// support: jQuery <1.8
 					// http://bugs.jquery.com/ticket/11778
 					setTimeout(function() {
-						if ( status === "abort" ) {
-							that.panels.stop( false, true );
-						}
-
-						tab.removeClass( "ui-tabs-loading" );
-						panel.removeAttr( "aria-busy" );
-
-						if ( jqXHR === that.xhr ) {
-							delete that.xhr;
-						}
+						complete( jqXHR, status );
 					}, 1 );
 				});
 		}
@@ -9162,7 +13745,7 @@ $.widget( "ui.tabs", {
 			url: anchor.attr( "href" ),
 			beforeSend: function( jqXHR, settings ) {
 				return that._trigger( "beforeLoad", event,
-					$.extend( { jqXHR : jqXHR, ajaxSettings: settings }, eventData ) );
+					$.extend( { jqXHR: jqXHR, ajaxSettings: settings }, eventData ) );
 			}
 		};
 	},
@@ -9173,38 +13756,21 @@ $.widget( "ui.tabs", {
 	}
 });
 
-})( jQuery );
-(function( $ ) {
 
-var increments = 0;
+/*
+ * jQuery UI Tooltip 1.11.4
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/tooltip/
+ */
 
-function addDescribedBy( elem, id ) {
-	var describedby = (elem.attr( "aria-describedby" ) || "").split( /\s+/ );
-	describedby.push( id );
-	elem
-		.data( "ui-tooltip-id", id )
-		.attr( "aria-describedby", $.trim( describedby.join( " " ) ) );
-}
 
-function removeDescribedBy( elem ) {
-	var id = elem.data( "ui-tooltip-id" ),
-		describedby = (elem.attr( "aria-describedby" ) || "").split( /\s+/ ),
-		index = $.inArray( id, describedby );
-	if ( index !== -1 ) {
-		describedby.splice( index, 1 );
-	}
-
-	elem.removeData( "ui-tooltip-id" );
-	describedby = $.trim( describedby.join( " " ) );
-	if ( describedby ) {
-		elem.attr( "aria-describedby", describedby );
-	} else {
-		elem.removeAttr( "aria-describedby" );
-	}
-}
-
-$.widget( "ui.tooltip", {
-	version: "1.10.3",
+var tooltip = $.widget( "ui.tooltip", {
+	version: "1.11.4",
 	options: {
 		content: function() {
 			// support: IE<9, Opera in jQuery <1.7
@@ -9230,6 +13796,32 @@ $.widget( "ui.tooltip", {
 		open: null
 	},
 
+	_addDescribedBy: function( elem, id ) {
+		var describedby = (elem.attr( "aria-describedby" ) || "").split( /\s+/ );
+		describedby.push( id );
+		elem
+			.data( "ui-tooltip-id", id )
+			.attr( "aria-describedby", $.trim( describedby.join( " " ) ) );
+	},
+
+	_removeDescribedBy: function( elem ) {
+		var id = elem.data( "ui-tooltip-id" ),
+			describedby = (elem.attr( "aria-describedby" ) || "").split( /\s+/ ),
+			index = $.inArray( id, describedby );
+
+		if ( index !== -1 ) {
+			describedby.splice( index, 1 );
+		}
+
+		elem.removeData( "ui-tooltip-id" );
+		describedby = $.trim( describedby.join( " " ) );
+		if ( describedby ) {
+			elem.attr( "aria-describedby", describedby );
+		} else {
+			elem.removeAttr( "aria-describedby" );
+		}
+	},
+
 	_create: function() {
 		this._on({
 			mouseover: "open",
@@ -9238,12 +13830,23 @@ $.widget( "ui.tooltip", {
 
 		// IDs of generated tooltips, needed for destroy
 		this.tooltips = {};
+
 		// IDs of parent tooltips where we removed the title attribute
 		this.parents = {};
 
 		if ( this.options.disabled ) {
 			this._disable();
 		}
+
+		// Append the aria-live region so tooltips announce correctly
+		this.liveRegion = $( "<div>" )
+			.attr({
+				role: "log",
+				"aria-live": "assertive",
+				"aria-relevant": "additions"
+			})
+			.addClass( "ui-helper-hidden-accessible" )
+			.appendTo( this.document[ 0 ].body );
 	},
 
 	_setOption: function( key, value ) {
@@ -9259,8 +13862,8 @@ $.widget( "ui.tooltip", {
 		this._super( key, value );
 
 		if ( key === "content" ) {
-			$.each( this.tooltips, function( id, element ) {
-				that._updateContent( element );
+			$.each( this.tooltips, function( id, tooltipData ) {
+				that._updateContent( tooltipData.element );
 			});
 		}
 	},
@@ -9269,9 +13872,9 @@ $.widget( "ui.tooltip", {
 		var that = this;
 
 		// close open tooltips
-		$.each( this.tooltips, function( id, element ) {
+		$.each( this.tooltips, function( id, tooltipData ) {
 			var event = $.Event( "blur" );
-			event.target = event.currentTarget = element[0];
+			event.target = event.currentTarget = tooltipData.element[ 0 ];
 			that.close( event, true );
 		});
 
@@ -9281,7 +13884,7 @@ $.widget( "ui.tooltip", {
 			if ( element.is( "[title]" ) ) {
 				element
 					.data( "ui-tooltip-title", element.attr( "title" ) )
-					.attr( "title", "" );
+					.removeAttr( "title" );
 			}
 		});
 	},
@@ -9335,6 +13938,7 @@ $.widget( "ui.tooltip", {
 			});
 		}
 
+		this._registerCloseHandlers( event, target );
 		this._updateContent( target, event );
 	},
 
@@ -9349,13 +13953,16 @@ $.widget( "ui.tooltip", {
 		}
 
 		content = contentOption.call( target[0], function( response ) {
-			// ignore async response if tooltip was closed already
-			if ( !target.data( "ui-tooltip-open" ) ) {
-				return;
-			}
+
 			// IE may instantly serve a cached response for ajax requests
 			// delay this call to _open so the other call to _open runs first
 			that._delay(function() {
+
+				// Ignore async response if tooltip was closed already
+				if ( !target.data( "ui-tooltip-open" ) ) {
+					return;
+				}
+
 				// jQuery creates a special event for focusin when it doesn't
 				// exist natively. To improve performance, the native event
 				// object is reused and the type is changed. Therefore, we can't
@@ -9373,7 +13980,7 @@ $.widget( "ui.tooltip", {
 	},
 
 	_open: function( event, target, content ) {
-		var tooltip, events, delayedShow,
+		var tooltipData, tooltip, delayedShow, a11yContent,
 			positionOption = $.extend( {}, this.options.position );
 
 		if ( !content ) {
@@ -9382,16 +13989,15 @@ $.widget( "ui.tooltip", {
 
 		// Content can be updated multiple times. If the tooltip already
 		// exists, then just update the content and bail.
-		tooltip = this._find( target );
-		if ( tooltip.length ) {
-			tooltip.find( ".ui-tooltip-content" ).html( content );
+		tooltipData = this._find( target );
+		if ( tooltipData ) {
+			tooltipData.tooltip.find( ".ui-tooltip-content" ).html( content );
 			return;
 		}
 
 		// if we have a title, clear it to prevent the native tooltip
 		// we have to check first to avoid defining a title if none exists
 		// (we don't want to cause an element to start matching [title])
-		//
 		// We use removeAttr only for key events, to allow IE to export the correct
 		// accessible attributes. For mouse events, set to empty string to avoid
 		// native tooltip showing up (happens only when removing inside mouseover).
@@ -9403,9 +14009,22 @@ $.widget( "ui.tooltip", {
 			}
 		}
 
-		tooltip = this._tooltip( target );
-		addDescribedBy( target, tooltip.attr( "id" ) );
+		tooltipData = this._tooltip( target );
+		tooltip = tooltipData.tooltip;
+		this._addDescribedBy( target, tooltip.attr( "id" ) );
 		tooltip.find( ".ui-tooltip-content" ).html( content );
+
+		// Support: Voiceover on OS X, JAWS on IE <= 9
+		// JAWS announces deletions even when aria-relevant="additions"
+		// Voiceover will sometimes re-read the entire log region's contents from the beginning
+		this.liveRegion.children().hide();
+		if ( content.clone ) {
+			a11yContent = content.clone();
+			a11yContent.removeAttr( "id" ).find( "[id]" ).removeAttr( "id" );
+		} else {
+			a11yContent = content;
+		}
+		$( "<div>" ).html( a11yContent ).appendTo( this.liveRegion );
 
 		function position( event ) {
 			positionOption.of = event;
@@ -9442,19 +14061,27 @@ $.widget( "ui.tooltip", {
 		}
 
 		this._trigger( "open", event, { tooltip: tooltip } );
+	},
 
-		events = {
+	_registerCloseHandlers: function( event, target ) {
+		var events = {
 			keyup: function( event ) {
 				if ( event.keyCode === $.ui.keyCode.ESCAPE ) {
 					var fakeEvent = $.Event(event);
 					fakeEvent.currentTarget = target[0];
 					this.close( fakeEvent, true );
 				}
-			},
-			remove: function() {
-				this._removeTooltip( tooltip );
 			}
 		};
+
+		// Only bind remove handler for delegated targets. Non-delegated
+		// tooltips will handle this in destroy.
+		if ( target[ 0 ] !== this.element[ 0 ] ) {
+			events.remove = function() {
+				this._removeTooltip( this._find( target ).tooltip );
+			};
+		}
+
 		if ( !event || event.type === "mouseover" ) {
 			events.mouseleave = "close";
 		}
@@ -9465,13 +14092,27 @@ $.widget( "ui.tooltip", {
 	},
 
 	close: function( event ) {
-		var that = this,
+		var tooltip,
+			that = this,
 			target = $( event ? event.currentTarget : this.element ),
-			tooltip = this._find( target );
+			tooltipData = this._find( target );
+
+		// The tooltip may already be closed
+		if ( !tooltipData ) {
+
+			// We set ui-tooltip-open immediately upon open (in open()), but only set the
+			// additional data once there's actually content to show (in _open()). So even if the
+			// tooltip doesn't have full data, we always remove ui-tooltip-open in case we're in
+			// the period between open() and _open().
+			target.removeData( "ui-tooltip-open" );
+			return;
+		}
+
+		tooltip = tooltipData.tooltip;
 
 		// disabling closes the tooltip, so we need to track when we're closing
 		// to avoid an infinite loop in case the tooltip becomes disabled on close
-		if ( this.closing ) {
+		if ( tooltipData.closing ) {
 			return;
 		}
 
@@ -9479,12 +14120,14 @@ $.widget( "ui.tooltip", {
 		clearInterval( this.delayedShow );
 
 		// only set title if we had one before (see comment in _open())
-		if ( target.data( "ui-tooltip-title" ) ) {
+		// If the title attribute has changed since open(), don't restore
+		if ( target.data( "ui-tooltip-title" ) && !target.attr( "title" ) ) {
 			target.attr( "title", target.data( "ui-tooltip-title" ) );
 		}
 
-		removeDescribedBy( target );
+		this._removeDescribedBy( target );
 
+		tooltipData.hiding = true;
 		tooltip.stop( true );
 		this._hide( tooltip, this.options.hide, function() {
 			that._removeTooltip( $( this ) );
@@ -9492,8 +14135,9 @@ $.widget( "ui.tooltip", {
 
 		target.removeData( "ui-tooltip-open" );
 		this._off( target, "mouseleave focusout keyup" );
+
 		// Remove 'remove' binding only on delegated targets
-		if ( target[0] !== this.element[0] ) {
+		if ( target[ 0 ] !== this.element[ 0 ] ) {
 			this._off( target, "remove" );
 		}
 		this._off( this.document, "mousemove" );
@@ -9505,31 +14149,35 @@ $.widget( "ui.tooltip", {
 			});
 		}
 
-		this.closing = true;
+		tooltipData.closing = true;
 		this._trigger( "close", event, { tooltip: tooltip } );
-		this.closing = false;
+		if ( !tooltipData.hiding ) {
+			tooltipData.closing = false;
+		}
 	},
 
 	_tooltip: function( element ) {
-		var id = "ui-tooltip-" + increments++,
-			tooltip = $( "<div>" )
-				.attr({
-					id: id,
-					role: "tooltip"
-				})
+		var tooltip = $( "<div>" )
+				.attr( "role", "tooltip" )
 				.addClass( "ui-tooltip ui-widget ui-corner-all ui-widget-content " +
-					( this.options.tooltipClass || "" ) );
+					( this.options.tooltipClass || "" ) ),
+			id = tooltip.uniqueId().attr( "id" );
+
 		$( "<div>" )
 			.addClass( "ui-tooltip-content" )
 			.appendTo( tooltip );
+
 		tooltip.appendTo( this.document[0].body );
-		this.tooltips[ id ] = element;
-		return tooltip;
+
+		return this.tooltips[ id ] = {
+			element: element,
+			tooltip: tooltip
+		};
 	},
 
 	_find: function( target ) {
 		var id = target.data( "ui-tooltip-id" );
-		return id ? $( "#" + id ) : $();
+		return id ? this.tooltips[ id ] : null;
 	},
 
 	_removeTooltip: function( tooltip ) {
@@ -9541,10 +14189,11 @@ $.widget( "ui.tooltip", {
 		var that = this;
 
 		// close open tooltips
-		$.each( this.tooltips, function( id, element ) {
+		$.each( this.tooltips, function( id, tooltipData ) {
 			// Delegate to close method to handle common cleanup
-			var event = $.Event( "blur" );
-			event.target = event.currentTarget = element[0];
+			var event = $.Event( "blur" ),
+				element = tooltipData.element;
+			event.target = event.currentTarget = element[ 0 ];
 			that.close( event, true );
 
 			// Remove immediately; destroying an open tooltip doesn't use the
@@ -9553,14 +14202,20 @@ $.widget( "ui.tooltip", {
 
 			// Restore the title
 			if ( element.data( "ui-tooltip-title" ) ) {
-				element.attr( "title", element.data( "ui-tooltip-title" ) );
+				// If the title attribute has changed since open(), don't restore
+				if ( !element.attr( "title" ) ) {
+					element.attr( "title", element.data( "ui-tooltip-title" ) );
+				}
 				element.removeData( "ui-tooltip-title" );
 			}
 		});
+		this.liveRegion.remove();
 	}
 });
 
-}( jQuery ) );
+
+
+}));
 })(ChemDoodle.lib.jQuery);
 /*
  * jQuery simple-color plugin
@@ -9909,10 +14564,205 @@ $.widget( "ui.tooltip", {
   };
 
 })(ChemDoodle.lib.jQuery);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-ChemDoodle.uis = (function() {
+/*
+ *
+ * jQuery UI Touch Punch 0.2.3
+ *
+ * Copyright 2011–2014, Dave Furfero
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ *
+ * Depends:
+ *  jquery.ui.widget.js
+ *  jquery.ui.mouse.js
+ */
+(function ($) {
+
+  // Detect touch support
+  $.support.touch = 'ontouchend' in document;
+
+  // Ignore browsers without touch support
+  if (!$.support.touch) {
+    return;
+  }
+
+  var mouseProto = $.ui.mouse.prototype,
+      _mouseInit = mouseProto._mouseInit,
+      _mouseDestroy = mouseProto._mouseDestroy,
+      touchHandled;
+
+  /**
+   * Simulate a mouse event based on a corresponding touch event
+   * @param {Object} event A touch event
+   * @param {String} simulatedType The corresponding mouse event
+   */
+  function simulateMouseEvent (event, simulatedType) {
+
+    // Ignore multi-touch events
+    if (event.originalEvent.touches.length > 1) {
+      return;
+    }
+
+    event.preventDefault();
+
+    var touch = event.originalEvent.changedTouches[0],
+        simulatedEvent = document.createEvent('MouseEvents');
+    
+    // Initialize the simulated mouse event using the touch event's coordinates
+    simulatedEvent.initMouseEvent(
+      simulatedType,    // type
+      true,             // bubbles                    
+      true,             // cancelable                 
+      window,           // view                       
+      1,                // detail                     
+      touch.screenX,    // screenX                    
+      touch.screenY,    // screenY                    
+      touch.clientX,    // clientX                    
+      touch.clientY,    // clientY                    
+      false,            // ctrlKey                    
+      false,            // altKey                     
+      false,            // shiftKey                   
+      false,            // metaKey                    
+      0,                // button                     
+      null              // relatedTarget              
+    );
+
+    // Dispatch the simulated event to the target element
+    event.target.dispatchEvent(simulatedEvent);
+  }
+
+  /**
+   * Handle the jQuery UI widget's touchstart events
+   * @param {Object} event The widget element's touchstart event
+   */
+  mouseProto._touchStart = function (event) {
+
+    var self = this;
+
+    // Ignore the event if another widget is already being handled
+    if (touchHandled || !self._mouseCapture(event.originalEvent.changedTouches[0])) {
+      return;
+    }
+
+    // Set the flag to prevent other widgets from inheriting the touch event
+    touchHandled = true;
+
+    // Track movement to determine if interaction was a click
+    self._touchMoved = false;
+
+    // Simulate the mouseover event
+    simulateMouseEvent(event, 'mouseover');
+
+    // Simulate the mousemove event
+    simulateMouseEvent(event, 'mousemove');
+
+    // Simulate the mousedown event
+    simulateMouseEvent(event, 'mousedown');
+    
+    // iChemLabs - making touchmove less sensitive
+    this.psave = {x: event.originalEvent.changedTouches?event.originalEvent.changedTouches[0].pageX:event.pageX, y: event.originalEvent.changedTouches?event.originalEvent.changedTouches[0].pageY:event.pageY};
+  };
+
+  /**
+   * Handle the jQuery UI widget's touchmove events
+   * @param {Object} event The document's touchmove event
+   */
+  mouseProto._touchMove = function (event) {
+
+    // iChemLabs - making touchmove less sensitive
+    var x = event.pageX;
+    var y = event.pageY;
+    if (event.originalEvent.changedTouches) {
+		x = event.originalEvent.changedTouches[0].pageX;
+		y = event.originalEvent.changedTouches[0].pageY;
+	}
+	if(x-this.psave.x<4 && y-this.psave.y<4){
+		return;
+	}
+
+    // Ignore event if not handled
+    if (!touchHandled) {
+      return;
+    }
+
+    // Interaction was not a click
+    this._touchMoved = true;
+
+    // Simulate the mousemove event
+    simulateMouseEvent(event, 'mousemove');
+  };
+
+  /**
+   * Handle the jQuery UI widget's touchend events
+   * @param {Object} event The document's touchend event
+   */
+  mouseProto._touchEnd = function (event) {
+
+    // iChemLabs - making touchmove less sensitive
+    this.psave = undefined;
+    
+    // Ignore event if not handled
+    if (!touchHandled) {
+      return;
+    }
+
+    // Simulate the mouseup event
+    simulateMouseEvent(event, 'mouseup');
+
+    // Simulate the mouseout event
+    simulateMouseEvent(event, 'mouseout');
+
+    // If the touch interaction did not move, it should trigger a click
+    if (!this._touchMoved) {
+
+      // Simulate the click event
+      simulateMouseEvent(event, 'click');
+    }
+
+    // Unset the flag to allow other widgets to inherit the touch event
+    touchHandled = false;
+  };
+
+  /**
+   * A duck punch of the $.ui.mouse _mouseInit method to support touch events.
+   * This method extends the widget with bound touch event handlers that
+   * translate touch events to mouse events and pass them to the widget's
+   * original mouse event handling methods.
+   */
+  mouseProto._mouseInit = function () {
+    
+    var self = this;
+
+    // Delegate the touch handlers to the widget's element
+    self.element.bind({
+      touchstart: $.proxy(self, '_touchStart'),
+      touchmove: $.proxy(self, '_touchMove'),
+      touchend: $.proxy(self, '_touchEnd')
+    });
+
+    // Call the original $.ui.mouse init method
+    _mouseInit.call(self);
+  };
+
+  /**
+   * Remove the touch event handlers
+   */
+  mouseProto._mouseDestroy = function () {
+    
+    var self = this;
+
+    // Delegate the touch handlers to the widget's element
+    self.element.unbind({
+      touchstart: $.proxy(self, '_touchStart'),
+      touchmove: $.proxy(self, '_touchMove'),
+      touchend: $.proxy(self, '_touchEnd')
+    });
+
+    // Call the original $.ui.mouse destroy method
+    _mouseDestroy.call(self);
+  };
+
+})(ChemDoodle.lib.jQuery);
+ChemDoodle.uis = (function(undefined) {
 	'use strict';
 	var p = {};
 
@@ -9926,11 +14776,8 @@ ChemDoodle.uis = (function() {
 	return p;
 
 })();
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions._Action = function() {
 	};
@@ -9950,15 +14797,13 @@ ChemDoodle.uis = (function() {
 		if (sketcher.lasso && sketcher.lasso.isActive()) {
 			sketcher.lasso.setBounds();
 		}
+		sketcher.checksOnAction();
 		sketcher.repaint();
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(informatics, structures, actions) {
+(function(informatics, structures, actions, undefined) {
 	'use strict';
 	actions.AddAction = function(sketcher, a, as, bs) {
 		this.sketcher = sketcher;
@@ -10039,11 +14884,31 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.informatics, ChemDoodle.structures, ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions) {
+(function(actions, undefined) {
+	'use strict';
+	actions.AddContentAction = function(sketcher, mols, shapes) {
+		this.sketcher = sketcher;
+		this.mols = mols;
+		this.shapes = shapes;
+	};
+	var _ = actions.AddContentAction.prototype = new actions._Action();
+	_.innerForward = function() {
+		this.sketcher.molecules = this.sketcher.molecules.concat(this.mols);
+		this.sketcher.shapes = this.sketcher.shapes.concat(this.shapes);
+	};
+	_.innerReverse = function() {
+		for(var i = 0, ii = this.mols.length; i<ii; i++){
+			this.sketcher.removeMolecule(this.mols[i]);
+		}
+		for(var i = 0, ii = this.shapes.length; i<ii; i++){
+			this.sketcher.removeShape(this.shapes[i]);
+		}
+	};
+
+})(ChemDoodle.uis.actions);
+
+(function(actions, undefined) {
 	'use strict';
 	actions.AddShapeAction = function(sketcher, s) {
 		this.sketcher = sketcher;
@@ -10058,10 +14923,31 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions, Bond, m) {
+(function(actions, undefined) {
+	'use strict';
+	actions.AddVAPAttachementAction = function(vap, a, substituent) {
+		this.vap = vap;
+		this.a = a;
+		this.substituent = substituent;
+	};
+	var _ = actions.AddVAPAttachementAction.prototype = new actions._Action();
+	_.innerForward = function() {
+		if(this.substituent){
+			this.vap.substituent = this.a;
+		}else{
+			this.vap.attachments.push(this.a);
+		}
+	};
+	_.innerReverse = function() {
+		if(this.substituent){
+			this.vap.substituent = undefined;
+		}else{
+			this.vap.attachments.pop();
+		}
+	};
+
+})(ChemDoodle.uis.actions);
+(function(actions, Bond, m, undefined) {
 	'use strict';
 	actions.ChangeBondAction = function(b, orderAfter, stereoAfter) {
 		this.b = b;
@@ -10090,10 +14976,38 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.structures.Bond, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions, m) {
+(function(actions, m, undefined) {
+	'use strict';
+	actions.ChangeDynamicBracketAttributeAction = function(s, type) {
+		this.s = s;
+		this.type = type;
+	};
+	var _ = actions.ChangeDynamicBracketAttributeAction.prototype = new actions._Action();
+	_.innerForward = function() {
+		var c = this.type > 0 ? 1 : -1;
+		switch (m.abs(this.type)) {
+		case 1:
+			this.s.n1 += c;
+			break;
+		case 2:
+			this.s.n2 += c;
+			break;
+		}
+	};
+	_.innerReverse = function() {
+		var c = this.type > 0 ? -1 : 1;
+		switch (m.abs(this.type)) {
+		case 1:
+			this.s.n1 += c;
+			break;
+		case 2:
+			this.s.n2 += c;
+			break;
+		}
+	};
+
+})(ChemDoodle.uis.actions, Math);
+(function(actions, m, undefined) {
 	'use strict';
 	actions.ChangeBracketAttributeAction = function(s, type) {
 		this.s = s;
@@ -10130,10 +15044,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.ChangeChargeAction = function(a, delta) {
 		this.a = a;
@@ -10148,10 +15059,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.ChangeCoordinatesAction = function(as, newCoords) {
 		this.as = as;
@@ -10180,10 +15088,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.ChangeLabelAction = function(a, after) {
 		this.a = a;
@@ -10199,10 +15104,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.ChangeLonePairAction = function(a, delta) {
 		this.a = a;
@@ -10217,10 +15119,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.ChangeQueryAction = function(o, after) {
 		this.o = o;
@@ -10236,10 +15135,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.ChangeRadicalAction = function(a, delta) {
 		this.a = a;
@@ -10254,29 +15150,50 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, Bond, m, undefined) {
 	'use strict';
-	actions.ChangeRgroupAction = function(a, rafter) {
-		this.a = a;
-		this.rbefore = a.rgroup;
-		this.rafter = rafter;
+	actions.ChangeVAPOrderAction = function(vap, orderAfter) {
+		this.vap = vap;
+		this.orderBefore = vap.bondType;
+		this.orderAfter = orderAfter;
 	};
-	var _ = actions.ChangeRgroupAction.prototype = new actions._Action();
+	var _ = actions.ChangeVAPOrderAction.prototype = new actions._Action();
 	_.innerForward = function() {
-		this.a.rgroup = this.rafter;
+		this.vap.bondType = this.orderAfter;
 	};
 	_.innerReverse = function() {
-		this.a.rgroup = this.rbefore;
+		this.vap.bondType = this.orderBefore;
 	};
 
-})(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(structures, actions) {
+})(ChemDoodle.uis.actions, ChemDoodle.structures.Bond, Math);
+(function(actions, Bond, m, undefined) {
+	'use strict';
+	actions.ChangeVAPSubstituentAction = function(vap, nsub) {
+		this.vap = vap;
+		this.nsub = nsub;
+		this.orderBefore = vap.bondType;
+		this.osub = vap.substituent;
+	};
+	var _ = actions.ChangeVAPSubstituentAction.prototype = new actions._Action();
+	_.innerForward = function() {
+		this.vap.bondType = 1;
+		this.vap.substituent = this.nsub;
+		this.vap.attachments.splice(this.vap.attachments.indexOf(this.nsub), 1);
+		if(this.osub){
+			this.vap.attachments.push(this.osub);
+		}
+	};
+	_.innerReverse = function() {
+		this.vap.bondType = this.orderBefore;
+		this.vap.substituent = this.osub;
+		if(this.osub){
+			this.vap.attachments.pop();
+		}
+		this.vap.attachments.push(this.nsub);
+	};
+
+})(ChemDoodle.uis.actions, ChemDoodle.structures.Bond, Math);
+(function(structures, actions, undefined) {
 	'use strict';
 	actions.ClearAction = function(sketcher) {
 		this.sketcher = sketcher;
@@ -10305,10 +15222,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.structures, ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.DeleteAction = function(sketcher, a, as, bs) {
 		this.sketcher = sketcher;
@@ -10334,11 +15248,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(informatics, actions) {
+(function(informatics, actions, undefined) {
 	'use strict';
 	actions.DeleteContentAction = function(sketcher, as, ss) {
 		this.sketcher = sketcher;
@@ -10349,7 +15260,7 @@ ChemDoodle.uis = (function() {
 			var mol = this.sketcher.molecules[i];
 			for ( var j = 0, jj = mol.bonds.length; j < jj; j++) {
 				var b = mol.bonds[j];
-				if (b.a1.isLassoed && b.a2.isLassoed) {
+				if (b.a1.isLassoed || b.a2.isLassoed) {
 					this.bs.push(b);
 				}
 			}
@@ -10398,10 +15309,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.informatics, ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.DeleteShapeAction = function(sketcher, s) {
 		this.sketcher = sketcher;
@@ -10412,10 +15320,68 @@ ChemDoodle.uis = (function() {
 	_.innerReverse = actions.AddShapeAction.prototype.innerForward;
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
+	'use strict';
+	actions.DeleteVAPConnectionAction = function(vap, connection) {
+		this.vap = vap;
+		this.connection = connection;
+		this.substituent = vap.substituent===connection;
+	};
+	var _ = actions.DeleteVAPConnectionAction.prototype = new actions._Action();
+	_.innerForward = function() {
+		if(this.substituent){
+			this.vap.substituent = undefined;
+		}else{
+			this.vap.attachments.splice(this.vap.attachments.indexOf(this.connection), 1);
+		}
+	};
+	_.innerReverse = function() {
+		if(this.substituent){
+			this.vap.substituent = this.connection;
+		}else{
+			this.vap.attachments.push(this.connection);
+		}
+	};
+
+})(ChemDoodle.uis.actions);
+(function(structures, actions, m, undefined) {
+	'use strict';
+	actions.FlipAction = function(ps, bs, horizontal) {
+		this.ps = ps;
+		this.bs = bs;
+		var minX = Infinity, minY = Infinity;
+		var maxX = -Infinity, maxY = -Infinity;
+		for ( var i = 0, ii = this.ps.length; i < ii; i++) {
+			minX = m.min(this.ps[i].x, minX);
+			minY = m.min(this.ps[i].y, minY);
+			maxX = m.max(this.ps[i].x, maxX);
+			maxY = m.max(this.ps[i].y, maxY);
+		}
+		this.center = new structures.Point((maxX + minX) / 2, (maxY + minY) / 2);
+		this.horizontal = horizontal;		
+	};
+	var _ = actions.FlipAction.prototype = new actions._Action();
+	_.innerForward = _.innerReverse = function() {
+		for ( var i = 0, ii = this.ps.length; i < ii; i++) {
+			var p = this.ps[i];
+			if(this.horizontal){
+				p.x += 2*(this.center.x-p.x);
+			}else{
+				p.y += 2*(this.center.y-p.y);
+			}
+		}
+		for(var i = 0, ii = this.bs.length; i<ii; i++){
+			var b = this.bs[i];
+			if(b.stereo===structures.Bond.STEREO_PROTRUDING){
+				b.stereo = structures.Bond.STEREO_RECESSED;
+			}else if(b.stereo===structures.Bond.STEREO_RECESSED){
+				b.stereo = structures.Bond.STEREO_PROTRUDING;
+			}
+		}
+	};
+
+})(ChemDoodle.structures, ChemDoodle.uis.actions, Math);
+(function(actions, undefined) {
 	'use strict';
 	actions.FlipBondAction = function(b) {
 		this.b = b;
@@ -10431,10 +15397,18 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
+(function(actions, undefined) {
+	'use strict';
+	actions.FlipDynamicBracketAction = function(b) {
+		this.b = b;
+	};
+	var _ = actions.FlipDynamicBracketAction.prototype = new actions._Action();
+	_.innerReverse = _.innerForward = function() {
+		this.b.flip = !this.b.flip;
+	};
+
+})(ChemDoodle.uis.actions);
+(function(actions, undefined) {
 	'use strict';
 	actions.MoveAction = function(ps, dif) {
 		this.ps = ps;
@@ -10453,11 +15427,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(structures, actions) {
+(function(structures, actions, undefined) {
 	'use strict';
 	actions.NewMoleculeAction = function(sketcher, as, bs) {
 		this.sketcher = sketcher;
@@ -10477,10 +15448,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.structures, ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions, m) {
+(function(actions, m, undefined) {
 	'use strict';
 	actions.RotateAction = function(ps, dif, center) {
 		this.ps = ps;
@@ -10508,11 +15476,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.SwitchContentAction = function(sketcher, mols, shapes) {
 		this.sketcher = sketcher;
@@ -10531,11 +15496,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.SwitchMoleculeAction = function(sketcher, mol) {
 		this.sketcher = sketcher;
@@ -10553,26 +15515,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions) {
-	'use strict';
-	actions.ToggleAnyAtomAction = function(a) {
-		this.a = a;
-	};
-	var _ = actions.ToggleAnyAtomAction.prototype = new actions._Action();
-	_.innerForward = function() {
-		this.a.any = !this.a.any;
-	};
-	_.innerReverse = actions.ToggleAnyAtomAction.prototype.innerForward;
 
-})(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-
-(function(actions) {
+(function(actions, undefined) {
 	'use strict';
 	actions.HistoryManager = function(sketcher) {
 		this.sketcher = sketcher;
@@ -10629,11 +15573,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(math, monitor, actions, states, structures, SYMBOLS, m) {
+(function(math, monitor, actions, states, desktop, structures, d2, SYMBOLS, m, window, undefined) {
 	'use strict';
 	states._State = function() {
 	};
@@ -10653,7 +15594,7 @@ ChemDoodle.uis = (function() {
 		this.clearHover();
 		var min = Infinity;
 		var hovering;
-		var hoverdist = this.sketcher.specs.bondLength_2D;
+		var hoverdist = 10;
 		if (!this.sketcher.isMobile) {
 			hoverdist /= this.sketcher.specs.scale;
 		}
@@ -10677,8 +15618,8 @@ ChemDoodle.uis = (function() {
 				for ( var j = 0, jj = mol.bonds.length; j < jj; j++) {
 					var b = mol.bonds[j];
 					b.isHover = false;
-					var dist = e.p.distance(b.getCenter());
-					if (dist < hoverdist && dist < min) {
+					var dist = math.distanceFromPointToLineInclusive(e.p, b.a1, b.a2, hoverdist/2);
+					if (dist !== -1 && dist < hoverdist && dist < min) {
 						min = dist;
 						hovering = b;
 					}
@@ -10690,6 +15631,9 @@ ChemDoodle.uis = (function() {
 				var s = this.sketcher.shapes[i];
 				s.isHover = false;
 				s.hoverPoint = undefined;
+				if(this instanceof states.DynamicBracketState && (!(s instanceof d2.DynamicBracket) || !s.contents.flippable)){
+					continue;
+				}
 				var sps = s.getPoints();
 				for ( var j = 0, jj = sps.length; j < jj; j++) {
 					var p = sps[j];
@@ -10698,6 +15642,28 @@ ChemDoodle.uis = (function() {
 						min = dist;
 						hovering = s;
 						s.hoverPoint = p;
+					}
+				}
+				if(this instanceof states.EraseState && s instanceof d2.VAP){
+					s.hoverBond = undefined;
+					// check vap bonds only in the erase state
+					if(s.substituent){
+						var att = s.substituent;
+						var dist = e.p.distance(new structures.Point((s.asterisk.x + att.x) / 2, (s.asterisk.y + att.y) / 2));
+						if (dist < hoverdist && dist < min) {
+							min = dist;
+							s.hoverBond = att;
+							hovering = s;
+						}
+					}
+					for ( var j = 0, jj = s.attachments.length; j < jj; j++) {
+						var att = s.attachments[j];
+						var dist = e.p.distance(new structures.Point((s.asterisk.x + att.x) / 2, (s.asterisk.y + att.y) / 2));
+						if (dist < hoverdist && dist < min) {
+							min = dist;
+							s.hoverBond = att;
+							hovering = s;
+						}
 					}
 				}
 			}
@@ -10750,7 +15716,9 @@ ChemDoodle.uis = (function() {
 				}
 			}
 			if(modded){
-				angles.sort();
+				angles.sort(function(a, b) {
+					return a - b;
+				});
 			}
 			angle = math.angleBetweenLargest(angles).angle;
 		}
@@ -10762,6 +15730,13 @@ ChemDoodle.uis = (function() {
 			this.sketcher.startAtom.y = -10;
 			this.sketcher.repaint();
 		}
+	};
+	_.placeRequiredAtom = function(e){
+		var a = new structures.Atom('C', e.p.x, e.p.y);
+		this.sketcher.hovering = a;
+		this.sketcher.hovering.isHover = true;
+		this.sketcher.historyManager.pushUndo(new actions.NewMoleculeAction(this.sketcher, [ a ], []));
+		this.innermousedown(e);
 	};
 
 	_.enter = function() {
@@ -10790,11 +15765,7 @@ ChemDoodle.uis = (function() {
 		}
 		if (!this.sketcher.hovering && this.sketcher.oneMolecule) {
 			// center structure
-			var dif = new structures.Point(this.sketcher.width / 2, this.sketcher.height / 2);
-			var bounds = this.sketcher.getContentBounds();
-			dif.x -= (bounds.maxX + bounds.minX) / 2;
-			dif.y -= (bounds.maxY + bounds.minY) / 2;
-			this.sketcher.historyManager.pushUndo(new actions.MoveAction(this.sketcher.getAllPoints(), dif));
+			this.sketcher.toolbarManager.buttonCenter.func();
 		}
 	};
 	_.mousedown = function(e) {
@@ -10804,7 +15775,7 @@ ChemDoodle.uis = (function() {
 			this.sketcher.isHelp = false;
 			this.sketcher.lastPoint = undefined;
 			this.sketcher.repaint();
-			window.open('http://web.chemdoodle.com/demos/sketcher');
+			window.open('https://web.chemdoodle.com/demos/sketcher');
 		} else if (this.innermousedown) {
 			this.innermousedown(e);
 		}
@@ -10815,6 +15786,8 @@ ChemDoodle.uis = (function() {
 		}
 	};
 	_.mousemove = function(e) {
+		// lastMousePos is really only used for pasting
+		this.sketcher.lastMousePos = e.p;
 		if (this.innermousemove) {
 			this.innermousemove(e);
 		}
@@ -10823,6 +15796,7 @@ ChemDoodle.uis = (function() {
 		this.sketcher.repaint();
 	};
 	_.mouseout = function(e) {
+		this.sketcher.lastMousePos = undefined;
 		if (this.innermouseout) {
 			this.innermouseout(e);
 		}
@@ -10863,7 +15837,7 @@ ChemDoodle.uis = (function() {
 		if (this.innerdrag) {
 			this.innerdrag(e);
 		}
-		if (!this.sketcher.hovering && this !== this.sketcher.stateManager.STATE_LASSO && this !== this.sketcher.stateManager.STATE_SHAPE && this !== this.sketcher.stateManager.STATE_PUSHER) {
+		if (!this.sketcher.hovering && !this.dontTranslateOnDrag) {
 			if (monitor.SHIFT) {
 				// rotate structure
 				if (this.parentAction) {
@@ -10929,7 +15903,8 @@ ChemDoodle.uis = (function() {
 	_.keydown = function(e) {
 		if (monitor.CANVAS_DRAGGING === this.sketcher) {
 			if (this.sketcher.lastPoint) {
-				e.p = this.sketcher.lastPoint;
+				// create a copy, as the drag function may alter the point
+				e.p = new structures.Point(this.sketcher.lastPoint.x, this.sketcher.lastPoint.y);
 				this.drag(e);
 			}
 		} else if (monitor.META) {
@@ -10941,58 +15916,47 @@ ChemDoodle.uis = (function() {
 				this.sketcher.historyManager.redo();
 			} else if (e.which === 83) {
 				// s
-				this.sketcher.toolbarManager.buttonSave.getElement().click();
+				this.sketcher.toolbarManager.buttonSave.func();
 			} else if (e.which === 79) {
 				// o
-				this.sketcher.toolbarManager.buttonOpen.getElement().click();
+				this.sketcher.toolbarManager.buttonOpen.func();
 			} else if (e.which === 78) {
 				// n
-				this.sketcher.toolbarManager.buttonClear.getElement().click();
+				this.sketcher.toolbarManager.buttonClear.func();
 			} else if (e.which === 187 || e.which === 61) {
 				// +
-				this.sketcher.toolbarManager.buttonScalePlus.getElement().click();
+				this.sketcher.toolbarManager.buttonScalePlus.func();
 			} else if (e.which === 189 || e.which === 109) {
 				// -
-				this.sketcher.toolbarManager.buttonScaleMinus.getElement().click();
+				this.sketcher.toolbarManager.buttonScaleMinus.func();
 			} else if (e.which === 65) {
 				// a
 				if (!this.sketcher.oneMolecule) {
+					this.sketcher.toolbarManager.buttonLasso.select();
 					this.sketcher.toolbarManager.buttonLasso.getElement().click();
 					this.sketcher.lasso.select(this.sketcher.getAllAtoms(), this.sketcher.shapes);
 				}
+			} else if (e.which === 88) {
+				// x
+				this.sketcher.copyPasteManager.copy(true);
+			} else if (e.which === 67) {
+				// c
+				this.sketcher.copyPasteManager.copy(false);
+			} else if (e.which === 86) {
+				// v
+				this.sketcher.copyPasteManager.paste();
 			}
 		} else if (e.which === 9) {
 			// tab
 			if (!this.sketcher.oneMolecule) {
 				this.sketcher.lasso.block = true;
+				this.sketcher.toolbarManager.buttonLasso.select();
 				this.sketcher.toolbarManager.buttonLasso.getElement().click();
 				this.sketcher.lasso.block = false;
 				if (monitor.SHIFT) {
-					if (this.sketcher.shapes.length > 0) {
-						var nextShapeIndex = this.sketcher.shapes.length - 1;
-						if (this.sketcher.lasso.shapes.length > 0) {
-							nextShapeIndex = this.sketcher.shapes.indexOf(this.sketcher.lasso.shapes[0]) + 1;
-						}
-						if (nextShapeIndex === this.sketcher.shapes.length) {
-							nextShapeIndex = 0;
-						}
-						// have to manually empty because shift modifier key
-						// is down
-						this.sketcher.lasso.empty();
-						this.sketcher.lasso.select([], [ this.sketcher.shapes[nextShapeIndex] ]);
-					}
+					this.sketcher.lasso.selectNextShape();
 				} else {
-					if (this.sketcher.molecules.length > 0) {
-						var nextMolIndex = this.sketcher.molecules.length - 1;
-						if (this.sketcher.lasso.atoms.length > 0) {
-							var curMol = this.sketcher.getMoleculeByAtom(this.sketcher.lasso.atoms[0]);
-							nextMolIndex = this.sketcher.molecules.indexOf(curMol) + 1;
-						}
-						if (nextMolIndex === this.sketcher.molecules.length) {
-							nextMolIndex = 0;
-						}
-						this.sketcher.lasso.select(this.sketcher.molecules[nextMolIndex].atoms, []);
-					}
+					this.sketcher.lasso.selectNextMolecule();
 				}
 			}
 		} else if (e.which === 32) {
@@ -11000,7 +15964,23 @@ ChemDoodle.uis = (function() {
 			if (this.sketcher.lasso) {
 				this.sketcher.lasso.empty();
 			}
-			this.sketcher.toolbarManager.buttonSingle.getElement().click();
+			if(this.sketcher.hovering instanceof structures.Atom){
+				if(desktop.TextInput){
+					this.sketcher.stateManager.STATE_TEXT_INPUT.innerclick(e);
+				}
+			}else if(this.sketcher.stateManager.getCurrentState() === this.sketcher.stateManager.STATE_LASSO){
+				if(this.sketcher.floatDrawTools){
+					this.sketcher.toolbarManager.buttonBond.getLabelElement().click();
+					this.sketcher.toolbarManager.buttonBond.getElement().click();
+				}else{
+					this.sketcher.toolbarManager.buttonSingle.getElement().click();
+				}
+			}
+		} else if (e.which === 13) {
+			// enter or return key
+			if(this.sketcher.hovering instanceof structures.Atom && this.sketcher.stateManager.STATE_TEXT_INPUT.lastLabel && this.sketcher.stateManager.STATE_TEXT_INPUT.lastLabel !== this.sketcher.hovering.label){
+				this.sketcher.historyManager.pushUndo(new actions.ChangeLabelAction(this.sketcher.hovering, this.sketcher.stateManager.STATE_TEXT_INPUT.lastLabel));
+			}
 		} else if (e.which >= 37 && e.which <= 40) {
 			// arrow keys
 			var dif = new structures.Point();
@@ -11024,7 +16004,7 @@ ChemDoodle.uis = (function() {
 			if (this.sketcher.hovering && this.sketcher.hovering instanceof structures.Atom) {
 				this.sketcher.historyManager.pushUndo(new actions.ChangeChargeAction(this.sketcher.hovering, e.which === 187 || e.which === 61 ? 1 : -1));
 			}
-		} else if (e.which === 8 || e.which === 127) {
+		} else if (e.which === 8 || e.which === 46) {
 			// delete or backspace
 			this.sketcher.stateManager.STATE_ERASE.handleDelete();
 		} else if (e.which >= 48 && e.which <= 57) {
@@ -11198,7 +16178,8 @@ ChemDoodle.uis = (function() {
 	_.keyup = function(e) {
 		if (monitor.CANVAS_DRAGGING === this.sketcher) {
 			if (this.sketcher.lastPoint) {
-				e.p = this.sketcher.lastPoint;
+				// create a copy, as the drag function may alter the point
+				e.p = new structures.Point(this.sketcher.lastPoint.x, this.sketcher.lastPoint.y);
 				this.sketcher.drag(e);
 			}
 		}
@@ -11207,12 +16188,9 @@ ChemDoodle.uis = (function() {
 		}
 	};
 
-})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, ChemDoodle.SYMBOLS, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.uis.gui.desktop, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.SYMBOLS, Math, window);
 
-(function(actions, states) {
+(function(actions, states, undefined) {
 	'use strict';
 	states.ChargeState = function(sketcher) {
 		this.setup(sketcher);
@@ -11229,19 +16207,227 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions, states, structures, d2) {
+(function(extensions, math, structures, d2, actions, states, m, undefined) {
+	'use strict';
+	var controlsize = 4;
+	
+	states.DynamicBracketState = function(sketcher) {
+		this.setup(sketcher);
+		this.dontTranslateOnDrag = true;
+	};
+	var _ = states.DynamicBracketState.prototype = new states._State();
+	_.superDoubleClick = _.dblclick;
+	_.dblclick = function(e) {
+		// override double click not to center when editing controls
+		if (!this.control) {
+			this.superDoubleClick(e);
+		}
+	};
+	_.innermousedown = function(e) {
+		if (this.control) {
+			// this part controls the limits
+			var cont = true;
+			var c = this.control.t > 0 ? 1 : -1;
+			switch (m.abs(this.control.t)) {
+			case 1:
+				var nn = this.control.s.n1 + c;
+				if(nn<0 || nn>this.control.s.n2){
+					cont = false;
+				}
+				break;
+			case 2:
+				var nn = this.control.s.n2 + c;
+				if(nn>20 || nn<this.control.s.n1){
+					cont = false;
+				}
+				break;
+			}
+			if(cont){
+				this.sketcher.historyManager.pushUndo(new actions.ChangeDynamicBracketAttributeAction(this.control.s, this.control.t));
+				this.sketcher.repaint();
+			}
+		} else if (this.sketcher.hovering && this.start!==this.sketcher.hovering && this.sketcher.hovering instanceof structures.Bond) {
+			if(!this.start){
+				this.start = this.sketcher.hovering;
+			}
+		}else{
+			this.start = undefined;
+			this.end = undefined;
+			this.sketcher.repaint();
+		}
+	};
+	_.innerdrag = function(e) {
+		this.control = undefined;
+		if (this.start) {
+			this.end = new structures.Point(e.p.x, e.p.y);
+			this.findHoveredObject(e, false, true);
+			this.sketcher.repaint();
+		}
+	};
+	_.innermouseup = function(e) {
+		if (this.start && this.sketcher.hovering && this.sketcher.hovering !== this.start) {
+			var dup;
+			var remove = false;
+			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
+				var s = this.sketcher.shapes[i];
+				if (s instanceof d2.DynamicBracket) {
+					if (s.b1 === this.start && s.b2 === this.sketcher.hovering || s.b2 === this.start && s.b1 === this.sketcher.hovering) {
+						dup = s;
+						remove = true;
+					}
+				}
+			}
+			if (dup) {
+				if (remove) {
+					this.sketcher.historyManager.pushUndo(new actions.DeleteShapeAction(this.sketcher, dup));
+				}
+				this.start = undefined;
+				this.end = undefined;
+				this.sketcher.repaint();
+			} else {
+				var shape = new d2.DynamicBracket(this.start, this.sketcher.hovering);
+				this.start = undefined;
+				this.end = undefined;
+				this.sketcher.historyManager.pushUndo(new actions.AddShapeAction(this.sketcher, shape));
+			}
+		} else if(this.sketcher.hovering instanceof d2.DynamicBracket){
+			this.sketcher.historyManager.pushUndo(new actions.FlipDynamicBracketAction(this.sketcher.hovering));
+		} else {
+			//this.start = undefined;
+			//this.end = undefined;
+			//this.sketcher.repaint();
+		}
+	};
+	_.innermousemove = function(e) {
+		this.control = undefined;
+		if(this.start){
+			this.end = new structures.Point(e.p.x, e.p.y);
+		}else{
+			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
+				var s = this.sketcher.shapes[i];
+				if (s instanceof d2.DynamicBracket && !s.error) {
+					var hits = [];
+					hits.push({
+						x : s.textPos.x-1,
+						y : s.textPos.y+6,
+						v : 1
+					});
+					hits.push({
+						x : s.textPos.x+13,
+						y : s.textPos.y+6,
+						v : 2
+					});
+					for ( var j = 0, jj = hits.length; j < jj; j++) {
+						var h = hits[j];
+						if (math.isBetween(e.p.x, h.x, h.x + controlsize * 2) && math.isBetween(e.p.y, h.y - controlsize, h.y+3)) {
+							this.control = {
+								s : s,
+								t : h.v
+							};
+							break;
+						} else if (math.isBetween(e.p.x, h.x, h.x + controlsize * 2) && math.isBetween(e.p.y, h.y + controlsize-2, h.y + controlsize * 2+3)) {
+							this.control = {
+								s : s,
+								t : -1 * h.v
+							};
+							break;
+						}
+					}
+					if (this.control) {
+						break;
+					}
+				}
+			}
+		}
+		if(this.control){
+			this.clearHover();
+		}else{
+			this.findHoveredObject(e, false, true, true);
+			if(this.sketcher.hovering && this.sketcher.hovering instanceof d2._Shape && !(this.sketcher.hovering instanceof d2.DynamicBracket)){
+				this.clearHover();
+			}
+		}
+		this.sketcher.repaint();
+	};
+	function drawBracketControl(ctx, specs, x, y, control, type) {
+		if (control && m.abs(control.t) === type) {
+			ctx.fillStyle = specs.colorHover;
+			ctx.beginPath();
+			if (control.t > 0) {
+				ctx.moveTo(x, y);
+				ctx.lineTo(x + controlsize, y - controlsize);
+				ctx.lineTo(x + controlsize * 2, y);
+			} else {
+				ctx.moveTo(x, y + controlsize);
+				ctx.lineTo(x + controlsize, y + controlsize * 2);
+				ctx.lineTo(x + controlsize * 2, y + controlsize);
+			}
+			ctx.closePath();
+			ctx.fill();
+		}
+		ctx.strokeStyle = 'blue';
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.lineTo(x + controlsize, y - controlsize);
+		ctx.lineTo(x + controlsize * 2, y);
+		ctx.moveTo(x, y + controlsize);
+		ctx.lineTo(x + controlsize, y + controlsize * 2);
+		ctx.lineTo(x + controlsize * 2, y + controlsize);
+		ctx.stroke();
+	}
+	_.draw = function(ctx, specs) {
+		if (this.start && this.end) {
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
+			ctx.lineWidth = 1;
+			var p1 = this.start.getCenter();
+			var p2 = this.end;
+			if (this.sketcher.hovering && this.sketcher.hovering !== this.start) {
+				p2 = this.sketcher.hovering.getCenter();
+			}
+			ctx.beginPath();
+			ctx.moveTo(p1.x, p1.y);
+			ctx.lineTo(p2.x, p2.y);
+			ctx.setLineDash([2]);
+			ctx.stroke();
+			ctx.setLineDash([]);
+		}else {
+			// controls
+			ctx.lineWidth = 2;
+			ctx.lineJoin = 'miter';
+			ctx.lineCap = 'butt';
+			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
+				var s = this.sketcher.shapes[i];
+				if (s instanceof d2.DynamicBracket && !s.error) {
+					var c = this.control && this.control.s === s ? this.control : undefined;
+					drawBracketControl(ctx, specs, s.textPos.x-1, s.textPos.y+6, c, 1);
+					drawBracketControl(ctx, specs, s.textPos.x+13, s.textPos.y+6, c, 2);
+				}
+			}
+			if(this.sketcher.hovering && this.sketcher.hovering instanceof d2.DynamicBracket && this.sketcher.hovering.contents.flippable){
+				var s = this.sketcher.hovering;
+				ctx.font = extensions.getFontString(specs.text_font_size, specs.text_font_families, specs.text_font_bold, specs.text_font_italic);
+				ctx.fillStyle = specs.colorPreview;
+				ctx.textAlign = 'left';
+				ctx.textBaseline = 'bottom';
+				ctx.fillText('flip?', s.textPos.x+(s.error?0:20), s.textPos.y);
+			}
+		}
+	};
+
+})(ChemDoodle.extensions, ChemDoodle.math, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states, Math);
+
+(function(actions, states, structures, d2, undefined) {
 	'use strict';
 	states.EraseState = function(sketcher) {
 		this.setup(sketcher);
 	};
 	var _ = states.EraseState.prototype = new states._State();
 	_.handleDelete = function() {
+		var action;
 		if (this.sketcher.lasso && this.sketcher.lasso.isActive()) {
-			this.sketcher.historyManager.pushUndo(new actions.DeleteContentAction(this.sketcher, this.sketcher.lasso.atoms, this.sketcher.lasso.shapes));
+			action = new actions.DeleteContentAction(this.sketcher, this.sketcher.lasso.atoms, this.sketcher.lasso.shapes);
 			this.sketcher.lasso.empty();
 		} else if (this.sketcher.hovering) {
 			if (this.sketcher.hovering instanceof structures.Atom) {
@@ -11304,52 +16490,113 @@ ChemDoodle.uis = (function() {
 								bs.push(b);
 							}
 						}
-						this.sketcher.historyManager.pushUndo(new actions.DeleteAction(this.sketcher, hold, as, bs));
+						action = new actions.DeleteAction(this.sketcher, hold, as, bs);
 					} else {
-						this.sketcher.historyManager.pushUndo(new actions.ClearAction(this.sketcher));
+						action = new actions.ClearAction(this.sketcher);
 					}
 				} else {
 					var mol = this.sketcher.getMoleculeByAtom(this.sketcher.hovering);
-					this.sketcher.historyManager.pushUndo(new actions.DeleteAction(this.sketcher, mol.atoms[0], [ this.sketcher.hovering ], mol.getBonds(this.sketcher.hovering)));
+					action = new actions.DeleteAction(this.sketcher, mol.atoms[0], [ this.sketcher.hovering ], mol.getBonds(this.sketcher.hovering));
 				}
 			} else if (this.sketcher.hovering instanceof structures.Bond) {
 				if (!this.sketcher.oneMolecule || this.sketcher.hovering.ring) {
-					this.sketcher.historyManager.pushUndo(new actions.DeleteAction(this.sketcher, this.sketcher.hovering.a1, undefined, [ this.sketcher.hovering ]));
+					action = new actions.DeleteAction(this.sketcher, this.sketcher.hovering.a1, undefined, [ this.sketcher.hovering ]);
 				}
 			} else if (this.sketcher.hovering instanceof d2._Shape) {
-				this.sketcher.historyManager.pushUndo(new actions.DeleteShapeAction(this.sketcher, this.sketcher.hovering));
+				var s = this.sketcher.hovering;
+				if(s.hoverBond){
+					// delete only the hovered bond in the VAP
+					action = new actions.DeleteVAPConnectionAction(s, s.hoverBond);
+				}else{
+					action = new actions.DeleteShapeAction(this.sketcher, s);
+				}
 			}
+			this.sketcher.hovering.isHover = false;
 			this.sketcher.hovering = undefined;
 			this.sketcher.repaint();
 		}
-		for ( var i = this.sketcher.shapes.length - 1; i >= 0; i--) {
-			var s = this.sketcher.shapes[i];
-			if (s instanceof d2.Pusher) {
-				var remains1 = false, remains2 = false;
-				for ( var j = 0, jj = this.sketcher.molecules.length; j < jj; j++) {
-					var mol = this.sketcher.molecules[j];
-					for ( var k = 0, kk = mol.atoms.length; k < kk; k++) {
-						var a = mol.atoms[k];
-						if (a === s.o1) {
-							remains1 = true;
-						} else if (a === s.o2) {
-							remains2 = true;
+		if(action){
+			this.sketcher.historyManager.pushUndo(action);
+			// check shapes to see if they should be removed
+			for ( var i = this.sketcher.shapes.length - 1; i >= 0; i--) {
+				var s = this.sketcher.shapes[i];
+				if (s instanceof d2.Pusher || s instanceof d2.AtomMapping) {
+					var remains1 = false, remains2 = false;
+					for ( var j = 0, jj = this.sketcher.molecules.length; j < jj; j++) {
+						var mol = this.sketcher.molecules[j];
+						for ( var k = 0, kk = mol.atoms.length; k < kk; k++) {
+							var a = mol.atoms[k];
+							if (a === s.o1) {
+								remains1 = true;
+							} else if (a === s.o2) {
+								remains2 = true;
+							}
+						}
+						for ( var k = 0, kk = mol.bonds.length; k < kk; k++) {
+							var b = mol.bonds[k];
+							if (b === s.o1) {
+								remains1 = true;
+							} else if (b === s.o2) {
+								remains2 = true;
+							}
 						}
 					}
-					for ( var k = 0, kk = mol.bonds.length; k < kk; k++) {
-						var b = mol.bonds[k];
-						if (b === s.o1) {
-							remains1 = true;
-						} else if (b === s.o2) {
-							remains2 = true;
-						}
+					if (!remains1 || !remains2) {
+						action.ss.push(s);
+						this.sketcher.removeShape(s);
 					}
 				}
-				if (!remains1 || !remains2) {
-					this.sketcher.historyManager.undoStack[this.sketcher.historyManager.undoStack.length - 1].ss.push(s);
-					this.sketcher.removeShape(s);
+				if (s instanceof d2.DynamicBracket) {
+					var remains1 = false, remains2 = false;
+					for ( var j = 0, jj = this.sketcher.molecules.length; j < jj; j++) {
+						var mol = this.sketcher.molecules[j];
+						for ( var k = 0, kk = mol.bonds.length; k < kk; k++) {
+							var b = mol.bonds[k];
+							if (b === s.b1) {
+								remains1 = true;
+							} else if (b === s.b2) {
+								remains2 = true;
+							}
+						}
+					}
+					if (!remains1 || !remains2) {
+						action.ss.push(s);
+						this.sketcher.removeShape(s);
+					}
+				}
+				if (s instanceof d2.VAP) {
+					var broken = false;
+					for ( var j = 0, jj = this.sketcher.molecules.length; j < jj; j++) {
+						var mol = this.sketcher.molecules[j];
+						for ( var k = 0, kk = mol.atoms.length; k < kk; k++) {
+							mol.atoms[k].present = true;
+						}
+					}
+					if(s.substituent && !s.substituent.present){
+						broken = true;
+					}
+					if(!broken){
+						for(var j = 0, jj = s.attachments.length; j < jj; j++){
+							if(!s.attachments[j].present){
+								broken = true;
+								break;
+							}
+						}
+					}
+					for ( var j = 0, jj = this.sketcher.molecules.length; j < jj; j++) {
+						var mol = this.sketcher.molecules[j];
+						for ( var k = 0, kk = mol.atoms.length; k < kk; k++) {
+							mol.atoms[k].present = undefined;
+						}
+					}
+					if (broken) {
+						action.ss.push(s);
+						this.sketcher.removeShape(s);
+					}
 				}
 			}
+			this.sketcher.checksOnAction();
+			this.sketcher.repaint();
 		}
 	};
 	_.innermouseup = function(e) {
@@ -11360,10 +16607,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, ChemDoodle.structures.d2);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(monitor, structures, actions, states, m) {
+(function(monitor, structures, actions, states, m, undefined) {
 	'use strict';
 	states.LabelState = function(sketcher) {
 		this.setup(sketcher);
@@ -11430,20 +16674,18 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.monitor, ChemDoodle.structures, ChemDoodle.uis.actions, ChemDoodle.uis.states, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(math, monitor, structures, d2, actions, states, tools, m) {
+(function(math, monitor, structures, d2, actions, states, tools, m, undefined) {
 	'use strict';
-	states.LassoState = function(sketcher) {
-		this.setup(sketcher);
-	};
 	var TRANSLATE = 1;
 	var ROTATE = 2;
 	//var SCALE = 3;
-	var transformType = TRANSLATE;
+	var transformType = undefined;
 	var paintRotate = false;
-
+	
+	states.LassoState = function(sketcher) {
+		this.setup(sketcher);
+		this.dontTranslateOnDrag = true;
+	};
 	var _ = states.LassoState.prototype = new states._State();
 	_.innerdrag = function(e) {
 		this.inDrag = true;
@@ -11465,14 +16707,7 @@ ChemDoodle.uis = (function() {
 						this.parentAction.ps[i].add(dif);
 					}
 					// must check here as change is outside of an action
-					for ( var i = 0, ii = this.sketcher.molecules.length; i < ii; i++) {
-						this.sketcher.molecules[i].check();
-					}
-					this.sketcher.lasso.bounds.minX += dif.x;
-					this.sketcher.lasso.bounds.maxX += dif.x;
-					this.sketcher.lasso.bounds.minY += dif.y;
-					this.sketcher.lasso.bounds.maxY += dif.y;
-					this.sketcher.repaint();
+					this.parentAction.checks(this.sketcher);
 				} else {
 					this.parentAction = new actions.MoveAction(this.sketcher.lasso.getAllPoints(), dif);
 					this.sketcher.historyManager.pushUndo(this.parentAction);
@@ -11493,11 +16728,7 @@ ChemDoodle.uis = (function() {
 						a.y = center.y - dist * m.sin(angle);
 					}
 					// must check here as change is outside of an action
-					for ( var i = 0, ii = this.sketcher.molecules.length; i < ii; i++) {
-						this.sketcher.molecules[i].check();
-					}
-					this.sketcher.lasso.setBounds();
-					this.sketcher.repaint();
+					this.parentAction.checks(this.sketcher);
 				} else {
 					var center = new structures.Point((this.sketcher.lasso.bounds.minX + this.sketcher.lasso.bounds.maxX) / 2, (this.sketcher.lasso.bounds.minY + this.sketcher.lasso.bounds.maxY) / 2);
 					var oldAngle = center.angle(this.sketcher.lastPoint);
@@ -11535,10 +16766,7 @@ ChemDoodle.uis = (function() {
 					this.parentAction.ps[i].add(dif);
 				}
 				// must check here as change is outside of an action
-				for ( var i = 0, ii = this.sketcher.molecules.length; i < ii; i++) {
-					this.sketcher.molecules[i].check();
-				}
-				this.sketcher.repaint();
+				this.parentAction.checks(this.sketcher);
 			}
 		} else {
 			// must check against undefined as lastGestureRotate can be 0, in
@@ -11549,8 +16777,8 @@ ChemDoodle.uis = (function() {
 	};
 	_.innermousedown = function(e) {
 		this.inDrag = false;
+		transformType = undefined;
 		if (this.sketcher.lasso.isActive() && !monitor.SHIFT) {
-			transformType = undefined;
 			var rotateBuffer = 25 / this.sketcher.specs.scale;
 			if (math.isBetween(e.p.x, this.sketcher.lasso.bounds.minX, this.sketcher.lasso.bounds.maxX) && math.isBetween(e.p.y, this.sketcher.lasso.bounds.minY, this.sketcher.lasso.bounds.maxY)) {
 				transformType = TRANSLATE;
@@ -11612,9 +16840,10 @@ ChemDoodle.uis = (function() {
 			this.sketcher.lasso.empty();
 		}
 	};
-	_.draw = function(ctx) {
+	_.draw = function(ctx, specs) {
 		if (paintRotate && this.sketcher.lasso.bounds) {
-			ctx.fillStyle = 'rgba(0,0,255,.1)';
+			ctx.fillStyle = specs.colorSelect;
+			ctx.globalAlpha = .1;
 			var rotateBuffer = 25 / this.sketcher.specs.scale;
 			var b = this.sketcher.lasso.bounds;
 			ctx.beginPath();
@@ -11623,15 +16852,13 @@ ChemDoodle.uis = (function() {
 			ctx.rect(b.minX - rotateBuffer, b.minY, rotateBuffer, b.maxY - b.minY);
 			ctx.rect(b.maxX, b.minY, rotateBuffer, b.maxY - b.minY);
 			ctx.fill();
+			ctx.globalAlpha = 1;
 		}
 	};
 
 })(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.uis.tools, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions, states) {
+(function(actions, states, undefined) {
 	'use strict';
 	states.LonePairState = function(sketcher) {
 		this.setup(sketcher);
@@ -11651,10 +16878,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions, states, structures) {
+(function(actions, states, structures, undefined) {
 	'use strict';
 	states.MoveState = function(sketcher) {
 		this.setup(sketcher);
@@ -11698,10 +16922,7 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(monitor, actions, states, structures, m) {
+(function(monitor, actions, states, structures, m, undefined) {
 	'use strict';
 	states.NewBondState = function(sketcher) {
 		this.setup(sketcher);
@@ -11803,6 +17024,8 @@ ChemDoodle.uis = (function() {
 				this.sketcher.molecules[i].check();
 			}
 			this.sketcher.repaint();
+		}else if(!this.sketcher.hovering && !this.sketcher.requireStartingAtom){
+			this.placeRequiredAtom(e);
 		}
 	};
 	_.innermouseup = function(e) {
@@ -11859,10 +17082,153 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(math, monitor, actions, states, structures, m) {
+(function(math, monitor, actions, states, structures, m, undefined) {
+	'use strict';
+	states.NewChainState = function(sketcher) {
+		this.setup(sketcher);
+	};
+	var _ = states.NewChainState.prototype = new states._State();
+	_.getChain = function(pivot, end) {
+		if (monitor.SHIFT) {
+			var difx = end.x - pivot.x;
+			var dify = end.y - pivot.y;
+			if (m.abs(difx) > m.abs(dify)) {
+				end.x = pivot.x+difx;
+				end.y = pivot.y;
+			} else {
+				end.x = pivot.x;
+				end.y = pivot.y+dify;
+			}
+		}
+		var chain = [];
+		var beginning = pivot;
+		var angle = 2 * m.PI - pivot.angle(end);
+		if(!monitor.SHIFT && !monitor.ALT){
+			var remainder = angle % (m.PI / 24);
+			angle -= remainder;
+		}
+		var blength = this.sketcher.specs.bondLength_2D;
+		var length =  m.floor(pivot.distance(end) / (blength * m.cos(m.PI / 6)));
+		var flip = m.round(angle / (m.PI / 24)) % 2 == 1;
+		if (flip) {
+			angle -= m.PI / 24;
+		}
+		if (this.flipOverride) {
+			flip = !flip;
+		}
+		for (var i = 0; i < length; i++) {
+			var angleAdd = m.PI / 6 * (flip ? 1 : -1);
+			if ((i & 1) == 1) {
+				angleAdd *= -1;
+			}
+			var newX = beginning.x + blength * m.cos(angle + angleAdd);
+			var newY = beginning.y + blength * m.sin(angle + angleAdd);
+			beginning = new structures.Atom('C', newX, newY);
+			chain.push(beginning);
+		}
+		
+		var allAs = this.sketcher.getAllAtoms();
+		for ( var i = 0, ii = allAs.length; i < ii; i++) {
+			allAs[i].isOverlap = false;
+		}
+		for ( var i = 0, ii = chain.length; i < ii; i++) {
+			var minDist = Infinity;
+			var closest;
+			for ( var k = 0, kk = allAs.length; k < kk; k++) {
+				var dist = allAs[k].distance(chain[i]);
+				if (dist < minDist) {
+					minDist = dist;
+					closest = allAs[k];
+				}
+			}
+			if (minDist < 5) {
+				chain[i] = closest;
+				closest.isOverlap = true;
+			}
+		}
+		return chain;
+	};
+
+	_.innerexit = function() {
+		this.removeStartAtom();
+	};
+	_.innerdrag = function(e) {
+		this.newMolAllowed = false;
+		this.removeStartAtom();
+		if (this.sketcher.hovering) {
+			// send in a copy of e.p as the getChain function does change the point if shift is held
+			this.sketcher.tempChain = this.getChain(this.sketcher.hovering, new structures.Point(e.p.x, e.p.y));
+			this.sketcher.repaint();
+		}
+	};
+	_.innerclick = function(e) {
+		if (!this.sketcher.hovering && !this.sketcher.oneMolecule && this.newMolAllowed) {
+			this.sketcher.historyManager.pushUndo(new actions.NewMoleculeAction(this.sketcher, [ new structures.Atom('C', e.p.x, e.p.y) ], []));
+			if (!this.sketcher.isMobile) {
+				this.mousemove(e);
+			}
+			this.newMolAllowed = false;
+		}
+	};
+	_.innermousedown = function(e) {
+		this.newMolAllowed = true;
+		if (this.sketcher.hovering) {
+			this.sketcher.hovering.isHover = false;
+			this.sketcher.hovering.isSelected = true;
+			this.drag(e);
+		}else if(!this.sketcher.requireStartingAtom){
+			this.placeRequiredAtom(e);
+		}
+	};
+	_.innermouseup = function(e) {
+		if (this.sketcher.tempChain && this.sketcher.hovering && this.sketcher.tempChain.length!==0) {
+			var as = [];
+			var bs = [];
+			var allAs = this.sketcher.getAllAtoms();
+			for ( var i = 0, ii = this.sketcher.tempChain.length; i < ii; i++) {
+				if (allAs.indexOf(this.sketcher.tempChain[i]) === -1) {
+					as.push(this.sketcher.tempChain[i]);
+				}
+				if (i!=0 && !this.sketcher.bondExists(this.sketcher.tempChain[i - 1], this.sketcher.tempChain[i])) {
+					bs.push(new structures.Bond(this.sketcher.tempChain[i - 1], this.sketcher.tempChain[i]));
+				}
+			}
+			if (!this.sketcher.bondExists(this.sketcher.tempChain[0], this.sketcher.hovering)) {
+				bs.push(new structures.Bond(this.sketcher.tempChain[0], this.sketcher.hovering));
+			}
+			if (as.length !== 0 || bs.length !== 0) {
+				this.sketcher.historyManager.pushUndo(new actions.AddAction(this.sketcher, this.sketcher.hovering, as, bs));
+			}
+			for ( var j = 0, jj = allAs.length; j < jj; j++) {
+				allAs[j].isOverlap = false;
+			}
+		}
+		this.sketcher.tempChain = undefined;
+		if (!this.sketcher.isMobile) {
+			this.mousemove(e);
+		}
+	};
+	_.innermousemove = function(e) {
+		if (this.sketcher.tempAtom) {
+			return;
+		}
+		this.findHoveredObject(e, true);
+		if (this.sketcher.startAtom) {
+			if (this.sketcher.hovering) {
+				this.sketcher.startAtom.x = -10;
+				this.sketcher.startAtom.y = -10;
+			} else {
+				this.sketcher.startAtom.x = e.p.x;
+				this.sketcher.startAtom.y = e.p.y;
+			}
+		}
+	};
+	_.innermouseout = function(e) {
+		this.removeStartAtom();
+	};
+
+})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, Math);
+(function(math, monitor, actions, states, structures, m, undefined) {
 	'use strict';
 	states.NewRingState = function(sketcher) {
 		this.setup(sketcher);
@@ -11939,10 +17305,30 @@ ChemDoodle.uis = (function() {
 	_.innerdrag = function(e) {
 		this.newMolAllowed = false;
 		this.removeStartAtom();
+		function getHeight(n, startFromSide, standardLength) {
+			var mpn = m.PI / n;
+			var r = standardLength/ 2 / m.sin(mpn);
+			var a = r * m.cos(mpn);
+			var odd = n % 2 == 1;
+			return odd ? a + r : startFromSide ? 2 * a : 2 * r;
+		};
 		if (this.sketcher.hovering instanceof structures.Atom) {
 			var a = 0;
 			var l = 0;
-			if (e.p.distance(this.sketcher.hovering) < 15) {
+			var n = this.numSides;
+			if(n === -1){
+				a = this.sketcher.hovering.angle(e.p);
+				l = this.sketcher.specs.bondLength_2D;
+				n = 3;
+				var dist = this.sketcher.hovering.distance(e.p);
+				while (dist > getHeight(n + 1, false, l)) {
+					n++;
+				}
+				if (!monitor.ALT) {
+					var increments = m.floor((a + m.PI / 12) / (m.PI / 6));
+					a = increments * m.PI / 6;
+				}
+			}else if (e.p.distance(this.sketcher.hovering) < 15) {
 				var angles = this.sketcher.getMoleculeByAtom(this.sketcher.hovering).getAngles(this.sketcher.hovering);
 				if (angles.length === 0) {
 					a = 3 * m.PI / 2;
@@ -11963,18 +17349,27 @@ ChemDoodle.uis = (function() {
 					}
 				}
 			}
-			this.sketcher.tempRing = this.getRing(this.sketcher.hovering, this.numSides, l, a, true);
+			this.sketcher.tempRing = this.getRing(this.sketcher.hovering, n, l, a, true);
 			this.sketcher.repaint();
 		} else if (this.sketcher.hovering instanceof structures.Bond) {
 			var dist = math.distanceFromPointToLineInclusive(e.p, this.sketcher.hovering.a1, this.sketcher.hovering.a2);
 			var ringUse;
-			if (dist !== -1 && dist <= 7) {
-				ringUse = this.getOptimalRing(this.sketcher.hovering, this.numSides);
-			} else {
-				var innerAngle = m.PI / 2 - m.PI / this.numSides;
+			var n = this.numSides;
+			if(n === -1){
+				n = 3;
+				var dist = this.sketcher.hovering.getCenter().distance(e.p);
 				var bondLength = this.sketcher.hovering.a1.distance(this.sketcher.hovering.a2);
-				var ring1 = this.getRing(this.sketcher.hovering.a1, this.numSides, bondLength, this.sketcher.hovering.a1.angle(this.sketcher.hovering.a2) - innerAngle, false);
-				var ring2 = this.getRing(this.sketcher.hovering.a2, this.numSides, bondLength, this.sketcher.hovering.a2.angle(this.sketcher.hovering.a1) - innerAngle, false);
+				while (dist > getHeight(n + 1, true, bondLength)) {
+					n++;
+				}
+			}
+			if (dist !== -1 && dist <= 7) {
+				ringUse = this.getOptimalRing(this.sketcher.hovering, n);
+			} else {
+				var innerAngle = m.PI / 2 - m.PI / n;
+				var bondLength = this.sketcher.hovering.a1.distance(this.sketcher.hovering.a2);
+				var ring1 = this.getRing(this.sketcher.hovering.a1, n, bondLength, this.sketcher.hovering.a1.angle(this.sketcher.hovering.a2) - innerAngle, false);
+				var ring2 = this.getRing(this.sketcher.hovering.a2, n, bondLength, this.sketcher.hovering.a2.angle(this.sketcher.hovering.a1) - innerAngle, false);
 				var center1 = new structures.Point();
 				var center2 = new structures.Point();
 				for ( var i = 1, ii = ring1.length; i < ii; i++) {
@@ -12016,6 +17411,8 @@ ChemDoodle.uis = (function() {
 			this.sketcher.hovering.isHover = false;
 			this.sketcher.hovering.isSelected = true;
 			this.drag(e);
+		}else if(!this.sketcher.requireStartingAtom){
+			this.placeRequiredAtom(e);
 		}
 	};
 	_.innermouseup = function(e) {
@@ -12023,6 +17420,7 @@ ChemDoodle.uis = (function() {
 			var as = [];
 			var bs = [];
 			var allAs = this.sketcher.getAllAtoms();
+			var unsat = this.unsaturated || this.numSides===-1 && monitor.SHIFT;
 			if (this.sketcher.hovering instanceof structures.Atom) {
 				if (allAs.indexOf(this.sketcher.tempRing[0]) === -1) {
 					as.push(this.sketcher.tempRing[0]);
@@ -12031,15 +17429,17 @@ ChemDoodle.uis = (function() {
 					bs.push(new structures.Bond(this.sketcher.hovering, this.sketcher.tempRing[0]));
 				}
 				for ( var i = 1, ii = this.sketcher.tempRing.length; i < ii; i++) {
-					if (allAs.indexOf(this.sketcher.tempRing[i]) === -1) {
-						as.push(this.sketcher.tempRing[i]);
+					var ai = this.sketcher.tempRing[i];
+					var aip = this.sketcher.tempRing[i-1];
+					if (allAs.indexOf(ai) === -1) {
+						as.push(ai);
 					}
-					if (!this.sketcher.bondExists(this.sketcher.tempRing[i - 1], this.sketcher.tempRing[i])) {
-						bs.push(new structures.Bond(this.sketcher.tempRing[i - 1], this.sketcher.tempRing[i], i % 2 === 1 && this.unsaturated ? 2 : 1));
+					if (!this.sketcher.bondExists(aip, ai)) {
+						bs.push(new structures.Bond(aip, ai, unsat && i % 2 === 1 && ai.getImplicitHydrogenCount()>1 && aip.getImplicitHydrogenCount()>1 ? 2 : 1));
 					}
 				}
 				if (!this.sketcher.bondExists(this.sketcher.tempRing[this.sketcher.tempRing.length - 1], this.sketcher.hovering)) {
-					bs.push(new structures.Bond(this.sketcher.tempRing[this.sketcher.tempRing.length - 1], this.sketcher.hovering, this.unsaturated ? 2 : 1));
+					bs.push(new structures.Bond(this.sketcher.tempRing[this.sketcher.tempRing.length - 1], this.sketcher.hovering, unsat && this.sketcher.tempRing.length%2===1 && this.sketcher.tempRing[this.sketcher.tempRing.length - 1].getImplicitHydrogenCount()>1 && this.sketcher.hovering.getImplicitHydrogenCount()>1 ? 2 : 1));
 				}
 			} else if (this.sketcher.hovering instanceof structures.Bond) {
 				var start = this.sketcher.hovering.a2;
@@ -12055,15 +17455,17 @@ ChemDoodle.uis = (function() {
 					bs.push(new structures.Bond(start, this.sketcher.tempRing[1]));
 				}
 				for ( var i = 2, ii = this.sketcher.tempRing.length; i < ii; i++) {
-					if (allAs.indexOf(this.sketcher.tempRing[i]) === -1) {
-						as.push(this.sketcher.tempRing[i]);
+					var ai = this.sketcher.tempRing[i];
+					var aip = this.sketcher.tempRing[i - 1];
+					if (allAs.indexOf(ai) === -1) {
+						as.push(ai);
 					}
-					if (!this.sketcher.bondExists(this.sketcher.tempRing[i - 1], this.sketcher.tempRing[i])) {
-						bs.push(new structures.Bond(this.sketcher.tempRing[i - 1], this.sketcher.tempRing[i], i % 2 === 0 && this.unsaturated ? 2 : 1));
+					if (!this.sketcher.bondExists(aip, ai)) {
+						bs.push(new structures.Bond(aip, ai, unsat && i % 2 === 0 && ai.getImplicitHydrogenCount()>1 && aip.getImplicitHydrogenCount()>1 ? 2 : 1));
 					}
 				}
 				if (!this.sketcher.bondExists(this.sketcher.tempRing[this.sketcher.tempRing.length - 1], end)) {
-					bs.push(new structures.Bond(this.sketcher.tempRing[this.sketcher.tempRing.length - 1], end));
+					bs.push(new structures.Bond(this.sketcher.tempRing[this.sketcher.tempRing.length - 1], end, unsat && this.sketcher.tempRing.length % 2 === 0 && this.sketcher.tempRing[this.sketcher.tempRing.length - 1].getImplicitHydrogenCount()>1 && end.getImplicitHydrogenCount()>1 ? 2 : 1));
 				}
 			}
 			if (as.length !== 0 || bs.length !== 0) {
@@ -12098,26 +17500,214 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+(function(math, monitor, actions, states, io, structures, m, undefined) {
+	'use strict';
+	
+	var INTERPRETER = new io.JSONInterpreter();
+	
+	states.NewTemplateState = function(sketcher) {
+		this.setup(sketcher);
+		this.template = {"a":[{"x":270,"i":"a0","y":105},{"x":252.6795,"i":"a1","y":115},{"x":252.6795,"i":"a2","y":135},{"x":270,"i":"a3","y":145},{"x":287.3205,"i":"a4","y":135},{"x":287.3205,"i":"a5","y":115},{"x":270,"i":"a6","y":85},{"x":287.3205,"i":"a7","y":75},{"x":270,"i":"a8","y":165,"l":"O"},{"x":252.6795,"i":"a9","y":175},{"x":252.6795,"i":"a10","y":195},{"x":252.6795,"i":"a11","y":215},{"x":252.6795,"i":"a12","y":235,"l":"Si"},{"x":272.6795,"i":"a13","y":235},{"x":232.6795,"i":"a14","y":235},{"x":252.6795,"i":"a15","y":255}],"b":[{"b":0,"e":1,"i":"b0","o":2},{"b":1,"e":2,"i":"b1"},{"b":2,"e":3,"i":"b2","o":2},{"b":3,"e":4,"i":"b3"},{"b":4,"e":5,"i":"b4","o":2},{"b":5,"e":0,"i":"b5"},{"b":0,"e":6,"i":"b6"},{"b":6,"e":7,"i":"b7","o":2},{"b":3,"e":8,"i":"b8"},{"b":8,"e":9,"i":"b9"},{"b":9,"e":10,"i":"b10"},{"b":10,"e":11,"i":"b11","o":3},{"b":11,"e":12,"i":"b12"},{"b":12,"e":13,"i":"b13"},{"b":12,"e":14,"i":"b14"},{"b":12,"e":15,"i":"b15"}]};
+		this.attachPos = 0;
+	};
+	var _ = states.NewTemplateState.prototype = new states._State();
+	_.getTemplate = function(p) {
+		var origin = this.sketcher.hovering;
+		var newMol = INTERPRETER.molFrom(this.template);
+		newMol.scaleToAverageBondLength(this.sketcher.specs.bondLength_2D);
+		var pivot = newMol.atoms[this.attachPos];
+		var thrad = origin.angle(p);
+		var rotate = true;
+		if (!monitor.ALT) {
+			if (origin.distance(p) < 15) {
+				var angles = this.sketcher.getMoleculeByAtom(this.sketcher.hovering).getAngles(this.sketcher.hovering);
+				if (angles.length === 0) {
+					thrad = 0;
+					rotate = false;
+				} else if (angles.length === 1) {
+					thrad = angles[0] + m.PI;
+				} else {
+					thrad = math.angleBetweenLargest(angles).angle;
+				}
+				var angles2 = newMol.getAngles(pivot);
+				if (angles2.length === 1) {
+					thrad -= angles2[0] + (angles.length === 1 ? m.PI / 3 : 0);
+				} else {
+					thrad -= math.angleBetweenLargest(angles2).angle + m.PI;
+				}
+			} else {
+				var divider = m.round(thrad / (m.PI / 6));
+				thrad = divider * m.PI / 6;
+			}
+		}
+		var difx = origin.x-pivot.x;
+		var dify = origin.y-pivot.y;
+		for(var i = 0, ii = newMol.atoms.length; i<ii; i++){
+			var a = newMol.atoms[i];
+			a.x+=difx;
+			a.y+=dify;
+		}
+		if (rotate) {
+			for(var i = 0, ii = newMol.atoms.length; i<ii; i++){
+				var a = newMol.atoms[i];
+				var angleUse = a.angle(origin) + thrad;
+				var distance = pivot.distance(a);
+				if (monitor.SHIFT) {
+					distance *= origin.distance(p) / this.sketcher.specs.bondLength_2D;
+				}
+				a.x = origin.x - m.cos(angleUse) * distance;
+				a.y = origin.y + m.sin(angleUse) * distance;
+			}
+		}
+		var allAs = this.sketcher.getAllAtoms();
+		var allBs = this.sketcher.getAllBonds();
+		for ( var j = 0, jj = allAs.length; j < jj; j++) {
+			var a2 = allAs[j];
+			a2.isOverlap = false;
+			var hits = [];
+			for(var i = 0, ii = newMol.atoms.length; i<ii; i++){
+				var a = newMol.atoms[i];
+				if (a2.distance(a) < 5) {
+					hits.push(i);
+				}
+			}
+			// make sure to look for the closest, as several atoms may
+			// try to merge onto a single atom...
+			var closest = -1;
+			for(var i = 0, ii = hits.length; i<ii; i++){
+				var h = hits[i];
+				if (closest === -1 || a2.distance(newMol.atoms[h]) < a2.distance(newMol.atoms[closest])) {
+					closest = h;
+				}
+			}
+			if (closest !== -1) {
+				var a = newMol.atoms[closest];
+				newMol.atoms.splice(closest,1);
+				if (a2.x!==pivot.x || a2.y!==pivot.y) {
+					a2.isOverlap = true;
+				}
+				for(var i = 0, ii = newMol.bonds.length; i<ii; i++){
+					var b = newMol.bonds[i];
+					if(b.a1===a){
+						b.a1 = a2;
+						b.tmpreplace1 = true;
+					}else if(b.a2===a){
+						b.a2 = a2;
+						b.tmpreplace2 = true;
+					}
+					if(b.tmpreplace1 && b.tmpreplace2){
+						// get rid of the bond if both atoms are overlapping
+						// just double check that that bond doesn't exist even if the atoms have both been replaced
+						var match = false;
+						for(var k = 0, kk = allBs.length; k<kk; k++){
+							var b2 = allBs[k];
+							if(b.a1===b2.a1 && b.a2===b2.a2 || b.a2===b2.a1 && b.a1===b2.a2){
+								match = true;
+								break;
+							}
+						}
+						if(match){
+							newMol.bonds.splice(i--,1);
+							ii--;
+						}
+					}
+				}
+			}
+		}
+		newMol.check();
+		newMol.check(true);
+		return newMol;
+	};
 
-(function(extensions, structures, d2, actions, states) {
+	_.innerexit = function() {
+		this.removeStartAtom();
+	};
+	_.innerdrag = function(e) {
+		this.newMolAllowed = false;
+		this.removeStartAtom();
+		if (this.sketcher.hovering) {
+			this.sketcher.tempTemplate = this.getTemplate(e.p);
+			this.sketcher.repaint();
+		}
+	};
+	_.innerclick = function(e) {
+		if (!this.sketcher.hovering && !this.sketcher.oneMolecule && this.newMolAllowed) {
+			this.sketcher.historyManager.pushUndo(new actions.NewMoleculeAction(this.sketcher, [ new structures.Atom('C', e.p.x, e.p.y) ], []));
+			if (!this.sketcher.isMobile) {
+				this.mousemove(e);
+			}
+			this.newMolAllowed = false;
+		}
+	};
+	_.innermousedown = function(e) {
+		this.newMolAllowed = true;
+		if (this.sketcher.hovering) {
+			this.sketcher.hovering.isHover = false;
+			this.sketcher.hovering.isSelected = true;
+			this.drag(e);
+		}else if(!this.sketcher.requireStartingAtom){
+			this.placeRequiredAtom(e);
+		}
+	};
+	_.innermouseup = function(e) {
+		if (this.sketcher.hovering && this.sketcher.tempTemplate) {
+			if(this.sketcher.tempTemplate.atoms.length!==0){
+				this.sketcher.historyManager.pushUndo(new actions.AddAction(this.sketcher, this.sketcher.hovering, this.sketcher.tempTemplate.atoms, this.sketcher.tempTemplate.bonds));
+			}
+			var allAs = this.sketcher.getAllAtoms();
+			for ( var i = 0, ii = allAs.length; i < ii; i++) {
+				allAs[i].isOverlap = false;
+			}
+			this.sketcher.tempTemplate = undefined;
+		}
+		if (!this.sketcher.isMobile) {
+			this.mousemove(e);
+		}
+	};
+	_.innermousemove = function(e) {
+		if (this.sketcher.tempAtom) {
+			return;
+		}
+		this.findHoveredObject(e, true);
+		if (this.sketcher.startAtom) {
+			if (this.sketcher.hovering) {
+				this.sketcher.startAtom.x = -10;
+				this.sketcher.startAtom.y = -10;
+			} else {
+				this.sketcher.startAtom.x = e.p.x;
+				this.sketcher.startAtom.y = e.p.y;
+			}
+		}
+	};
+	_.innermouseout = function(e) {
+		this.removeStartAtom();
+	};
+
+})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.io, ChemDoodle.structures, Math);
+
+(function(structures, d2, actions, states, undefined) {
 	'use strict';
 	states.PusherState = function(sketcher) {
 		this.setup(sketcher);
+		this.dontTranslateOnDrag = true;
 	};
 	var _ = states.PusherState.prototype = new states._State();
 	_.numElectron = 1;
 	_.innermousedown = function(e) {
-		if (this.sketcher.hovering) {
-			this.start = this.sketcher.hovering;
+		if (this.sketcher.hovering && this.start!==this.sketcher.hovering) {
+			if(!this.start){
+				this.start = this.sketcher.hovering;
+			}
+		}else{
+			this.start = undefined;
+			this.end = undefined;
+			this.sketcher.repaint();
 		}
 	};
 	_.innerdrag = function(e) {
 		if (this.start) {
 			this.end = new structures.Point(e.p.x, e.p.y);
-			this.findHoveredObject(e, true, true);
+			this.findHoveredObject(e, true, this.numElectron!=-10);
 			this.sketcher.repaint();
 		}
 	};
@@ -12134,6 +17724,11 @@ ChemDoodle.uis = (function() {
 						dup = s;
 						remove = true;
 					}
+				}else if (s instanceof d2.AtomMapping) {
+					if (s.o1 === this.start && s.o2 === this.sketcher.hovering || s.o2 === this.start && s.o1 === this.sketcher.hovering) {
+						dup = s;
+						remove = true;
+					}
 				}
 			}
 			if (dup) {
@@ -12144,25 +17739,33 @@ ChemDoodle.uis = (function() {
 				this.end = undefined;
 				this.sketcher.repaint();
 			} else {
-				var shape = new d2.Pusher(this.start, this.sketcher.hovering, this.numElectron);
+				var shape;
+				if(this.numElectron==-10){
+					shape = new d2.AtomMapping(this.start, this.sketcher.hovering);
+				}else{
+					shape = new d2.Pusher(this.start, this.sketcher.hovering, this.numElectron);
+				}
 				this.start = undefined;
 				this.end = undefined;
 				this.sketcher.historyManager.pushUndo(new actions.AddShapeAction(this.sketcher, shape));
 			}
 		} else {
-			this.start = undefined;
-			this.end = undefined;
-			this.sketcher.repaint();
+			//this.start = undefined;
+			//this.end = undefined;
+			//this.sketcher.repaint();
 		}
 	};
 	_.innermousemove = function(e) {
-		this.findHoveredObject(e, true, true);
+		if(this.start){
+			this.end = new structures.Point(e.p.x, e.p.y);
+		}
+		this.findHoveredObject(e, true, this.numElectron!=-10);
 		this.sketcher.repaint();
 	};
-	_.draw = function(ctx) {
+	_.draw = function(ctx, specs) {
 		if (this.start && this.end) {
-			ctx.strokeStyle = '#00FF00';
-			ctx.fillStyle = '#00FF00';
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
 			ctx.lineWidth = 1;
 			var p1 = this.start instanceof structures.Atom ? this.start : this.start.getCenter();
 			var p2 = this.end;
@@ -12171,17 +17774,16 @@ ChemDoodle.uis = (function() {
 			}
 			ctx.beginPath();
 			ctx.moveTo(p1.x, p1.y);
-			extensions.contextHashTo(ctx, p1.x, p1.y, p2.x, p2.y, 2, 2);
+			ctx.lineTo(p2.x, p2.y);
+			ctx.setLineDash([2]);
 			ctx.stroke();
+			ctx.setLineDash([]);
 		}
 	};
 
-})(ChemDoodle.extensions, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+})(ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states);
 
-(function(actions, states, structures, d2) {
+(function(actions, states, structures, d2, undefined) {
 	'use strict';
 	states.QueryState = function(sketcher) {
 		this.setup(sketcher);
@@ -12191,10 +17793,10 @@ ChemDoodle.uis = (function() {
 		if (this.sketcher.hovering) {
 			if(this.sketcher.hovering instanceof structures.Atom){
 				this.sketcher.dialogManager.atomQueryDialog.setAtom(this.sketcher.hovering);
-				this.sketcher.dialogManager.atomQueryDialog.getElement().dialog('open');
+				this.sketcher.dialogManager.atomQueryDialog.open();
 			}else if(this.sketcher.hovering instanceof structures.Bond){
 				this.sketcher.dialogManager.bondQueryDialog.setBond(this.sketcher.hovering);
-				this.sketcher.dialogManager.bondQueryDialog.getElement().dialog('open');
+				this.sketcher.dialogManager.bondQueryDialog.open();
 			}
 		}
 	};
@@ -12203,11 +17805,8 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, ChemDoodle.structures.d2);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(actions, states) {
+(function(actions, states, undefined) {
 	'use strict';
 	states.RadicalState = function(sketcher) {
 		this.setup(sketcher);
@@ -12227,14 +17826,12 @@ ChemDoodle.uis = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(extensions, math, monitor, structures, d2, actions, states, m) {
+(function(math, monitor, structures, d2, actions, states, m, undefined) {
 	'use strict';
 	states.ShapeState = function(sketcher) {
 		this.setup(sketcher);
+		this.dontTranslateOnDrag = true;
 	};
 	var _ = states.ShapeState.prototype = new states._State();
 	_.shapeType = states.ShapeState.LINE;
@@ -12368,10 +17965,10 @@ ChemDoodle.uis = (function() {
 			}
 		}
 	};
-	function drawBracketControl(ctx, x, y, control, type) {
+	function drawBracketControl(ctx, specs, x, y, control, type) {
 		var size = 6;
 		if (control && m.abs(control.t) === type) {
-			ctx.fillStyle = '#885110';
+			ctx.fillStyle = specs.colorHover;
 			ctx.beginPath();
 			if (control.t > 0) {
 				ctx.moveTo(x, y);
@@ -12395,22 +17992,24 @@ ChemDoodle.uis = (function() {
 		ctx.lineTo(x + size * 2, y + size);
 		ctx.stroke();
 	}
-	_.draw = function(ctx) {
+	_.draw = function(ctx, specs) {
 		if (this.start && this.end) {
-			ctx.strokeStyle = '#00FF00';
-			ctx.fillStyle = '#00FF00';
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
 			ctx.lineWidth = 1;
 			ctx.beginPath();
 			ctx.moveTo(this.start.x, this.start.y);
 			if (this.shapeType === states.ShapeState.BRACKET) {
-				extensions.contextHashTo(ctx, this.start.x, this.start.y, this.end.x, this.start.y, 2, 2);
-				extensions.contextHashTo(ctx, this.end.x, this.start.y, this.end.x, this.end.y, 2, 2);
-				extensions.contextHashTo(ctx, this.end.x, this.end.y, this.start.x, this.end.y, 2, 2);
-				extensions.contextHashTo(ctx, this.start.x, this.end.y, this.start.x, this.start.y, 2, 2);
+				ctx.lineTo(this.end.x, this.start.y);
+				ctx.lineTo(this.end.x, this.end.y);
+				ctx.lineTo(this.start.x, this.end.y);
+				ctx.lineTo(this.start.x, this.start.y);
 			} else {
-				extensions.contextHashTo(ctx, this.start.x, this.start.y, this.end.x, this.end.y, 2, 2);
+				ctx.lineTo(this.end.x, this.end.y);
 			}
+			ctx.setLineDash([2]);
 			ctx.stroke();
+			ctx.setLineDash([]);
 		} else if (this.shapeType === states.ShapeState.BRACKET) {
 			ctx.lineWidth = 2;
 			ctx.lineJoin = 'miter';
@@ -12423,9 +18022,9 @@ ChemDoodle.uis = (function() {
 					var minY = m.min(s.p1.y, s.p2.y);
 					var maxY = m.max(s.p1.y, s.p2.y);
 					var c = this.control && this.control.s === s ? this.control : undefined;
-					drawBracketControl(ctx, maxX + 5, minY + 15, c, 1);
-					drawBracketControl(ctx, maxX + 5, maxY + 15, c, 2);
-					drawBracketControl(ctx, minX - 17, (minY + maxY) / 2 + 15, c, 3);
+					drawBracketControl(ctx, specs, maxX + 5, minY + 15, c, 1);
+					drawBracketControl(ctx, specs, maxX + 5, maxY + 15, c, 2);
+					drawBracketControl(ctx, specs, minX - 17, (minY + maxY) / 2 + 15, c, 3);
 				}
 			}
 		}
@@ -12439,16 +18038,196 @@ ChemDoodle.uis = (function() {
 	states.ShapeState.ARROW_EQUILIBRIUM = 5;
 	states.ShapeState.BRACKET = 10;
 
-})(ChemDoodle.extensions, ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states, Math);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states, Math);
 
-(function(states) {
+(function(math, structures, d2, actions, states, undefined) {
+	'use strict';
+	states.VAPState = function(sketcher) {
+		this.setup(sketcher);
+		this.dontTranslateOnDrag = true;
+	};
+	var _ = states.VAPState.prototype = new states._State();
+	_.innermousedown = function(e) {
+		if(!this.sketcher.hovering && (!this.start || !(this.start instanceof d2.VAP))){
+			// out of convenience, since the user cannot drag from the VAP asterisk and may accidentally try to, don't allow placement of another vap within 30 pixels
+			var add = true; 
+			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
+				var s = this.sketcher.shapes[i];
+				if(s instanceof d2.VAP && s.asterisk.distance(e.p)<30){
+					add = false;
+				}
+			}
+			if(add){
+				var vap = new d2.VAP(e.p.x, e.p.y);
+				if (!this.sketcher.isMobile) {
+					vap.isHover = true;
+					this.sketcher.hovering = vap;
+				}
+				this.sketcher.historyManager.pushUndo(new actions.AddShapeAction(this.sketcher, vap));
+			}
+		}else if (this.sketcher.hovering && this.start!==this.sketcher.hovering) {
+			if(this.sketcher.hovering.hoverBond){
+				var vap = this.sketcher.hovering;
+				if(vap.hoverBond===vap.substituent){
+					var nbo = 1;
+					if(vap.bondType===1 || vap.bondType===2){
+						nbo = vap.bondType+1;
+					}else if(vap.bondType===3){
+						nbo = .5;
+					}
+					this.sketcher.historyManager.pushUndo(new actions.ChangeVAPOrderAction(vap, nbo));
+				}else {
+					this.sketcher.historyManager.pushUndo(new actions.ChangeVAPSubstituentAction(vap, this.sketcher.hovering.hoverBond));
+				}
+			}else if(!this.start){
+				this.start = this.sketcher.hovering;
+			}
+		}else{
+			this.start = undefined;
+			this.end = undefined;
+			this.sketcher.repaint();
+		}
+	};
+	_.innerdrag = function(e) {
+		if (this.start) {
+			this.end = new structures.Point(e.p.x, e.p.y);
+			this.findHoveredObject(e, this.start instanceof d2.VAP, false, this.start instanceof structures.Atom);
+			this.sketcher.repaint();
+		}
+	};
+	_.innermouseup = function(e) {
+		if (this.start && this.sketcher.hovering && this.sketcher.hovering !== this.start) {
+			var vap = this.sketcher.hovering;
+			var attach = this.start;
+			if(attach instanceof d2.VAP){
+				var tmp = vap;
+				vap = attach;
+				attach = tmp;
+			}
+			if(vap.substituent!==attach && vap.attachments.indexOf(attach)===-1){
+				this.sketcher.historyManager.pushUndo(new actions.AddVAPAttachementAction(vap, attach, vap.substituent===undefined));
+			}
+			this.start = undefined;
+			this.end = undefined;
+			this.sketcher.repaint();
+		} else {
+			//this.start = undefined;
+			//this.end = undefined;
+			//this.sketcher.repaint();
+		}
+	};
+	_.innermousemove = function(e) {
+		if(this.start){
+			this.end = new structures.Point(e.p.x, e.p.y);
+			this.findHoveredObject(e, this.start instanceof d2.VAP, false, this.start instanceof structures.Atom);
+		}else{
+			this.findHoveredObject(e, true, true, true);
+		}
+		this.sketcher.repaint();
+	};
+	_.draw = function(ctx, specs) {
+		if (this.start && this.end) {
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
+			ctx.lineWidth = 1;
+			var p1 = this.start;
+			var p2 = this.end;
+			if (this.sketcher.hovering) {
+				p2 = this.sketcher.hovering;
+			}
+			if(p1 instanceof d2.VAP){
+				p1 = p1.asterisk;
+			}
+			if(p2 instanceof d2.VAP){
+				p2 = p2.asterisk;
+			}
+			ctx.beginPath();
+			ctx.moveTo(p1.x, p1.y);
+			ctx.lineTo(p2.x, p2.y);
+			ctx.setLineDash([2]);
+			ctx.stroke();
+			ctx.setLineDash([]);
+		}
+	};
+	_.findHoveredObject = function(e, includeAtoms, includeVAPsBonds, includeVAPsAsterisks) {
+		this.clearHover();
+		var min = Infinity;
+		var hovering;
+		var hoverdist = 10;
+		if (!this.sketcher.isMobile) {
+			hoverdist /= this.sketcher.specs.scale;
+		}
+		if (includeAtoms) {
+			for ( var i = 0, ii = this.sketcher.molecules.length; i < ii; i++) {
+				var mol = this.sketcher.molecules[i];
+				for ( var j = 0, jj = mol.atoms.length; j < jj; j++) {
+					var a = mol.atoms[j];
+					a.isHover = false;
+					var dist = e.p.distance(a);
+					if (dist < hoverdist && dist < min) {
+						min = dist;
+						hovering = a;
+					}
+				}
+			}
+		}
+		if (includeVAPsBonds) {
+			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
+				var s = this.sketcher.shapes[i];
+				if(s instanceof d2.VAP){
+					s.hoverBond = undefined;
+					if(s.substituent){
+						var att = s.substituent;
+						var dist = math.distanceFromPointToLineInclusive(e.p, s.asterisk, att, hoverdist/2);
+						if (dist !== -1 && dist < hoverdist && dist < min) {
+							min = dist;
+							s.hoverBond = att;
+							hovering = s;
+						}
+					}
+					for ( var j = 0, jj = s.attachments.length; j < jj; j++) {
+						var att = s.attachments[j];
+						var dist = math.distanceFromPointToLineInclusive(e.p, s.asterisk, att, hoverdist/2);
+						if (dist !== -1 && dist < hoverdist && dist < min) {
+							min = dist;
+							s.hoverBond = att;
+							hovering = s;
+						}
+					}
+				}
+			}
+		}
+		if (includeVAPsAsterisks) {
+			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
+				var s = this.sketcher.shapes[i];
+				if(s instanceof d2.VAP){
+					s.isHover = false;
+					var dist = e.p.distance(s.asterisk);
+					if (dist < hoverdist && dist < min) {
+						min = dist;
+						hovering = s;
+					}
+				}
+			}
+		}
+		if (hovering) {
+			hovering.isHover = true;
+			this.sketcher.hovering = hovering;
+		}
+	};
+
+})(ChemDoodle.math, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.actions, ChemDoodle.uis.states);
+
+(function(states, q, undefined) {
 	'use strict';
 	states.StateManager = function(sketcher) {
 		this.STATE_NEW_BOND = new states.NewBondState(sketcher);
 		this.STATE_NEW_RING = new states.NewRingState(sketcher);
+		this.STATE_NEW_CHAIN = new states.NewChainState(sketcher);
+		this.STATE_NEW_TEMPLATE= new states.NewTemplateState(sketcher);
+		if(states.TextInputState){
+			this.STATE_TEXT_INPUT= new states.TextInputState(sketcher);
+		}
 		this.STATE_CHARGE = new states.ChargeState(sketcher);
 		this.STATE_LONE_PAIR = new states.LonePairState(sketcher);
 		this.STATE_RADICAL = new states.RadicalState(sketcher);
@@ -12458,6 +18237,8 @@ ChemDoodle.uis = (function() {
 		this.STATE_LASSO = new states.LassoState(sketcher);
 		this.STATE_SHAPE = new states.ShapeState(sketcher);
 		this.STATE_PUSHER = new states.PusherState(sketcher);
+		this.STATE_DYNAMIC_BRACKET = new states.DynamicBracketState(sketcher);
+		this.STATE_VAP = new states.VAPState(sketcher);
 		this.STATE_QUERY = new states.QueryState(sketcher);
 		var currentState = this.STATE_NEW_BOND;
 		this.setState = function(nextState) {
@@ -12466,18 +18247,19 @@ ChemDoodle.uis = (function() {
 				currentState = nextState;
 				currentState.enter();
 			}
+			if(sketcher.openTray && q('#'+sketcher.openTray.dummy.id+'_label').attr('aria-pressed')==='false'){
+				// due to weirdness in how radio buttons in groups, but outside of jquery ui buttonsets are treated, we check for the aria-pressed attribute on the button label to determine select state
+				sketcher.openTray.close();
+			}
 		};
 		this.getCurrentState = function() {
 			return currentState;
 		};
 	};
 
-})(ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+})(ChemDoodle.uis.states, ChemDoodle.lib.jQuery);
 
-ChemDoodle.uis.gui.imageDepot = (function() {
+ChemDoodle.uis.gui.imageDepot = (function(undefined) {
 	'use strict';
 	var d = {};
 	d.getURI = function(s) {
@@ -12493,6 +18275,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	d.ARROW_RESONANCE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAWUlEQVR42mNgGAWjYPACFiBWwSOvAcQc+AzgAWIXIJ4BxP+h2AOPehMkdduAuAiIbaDmMNQgSVIDo7hwERkuPADEFUDsAHMhriBwgIYlNgDynshoUhsFVAIA/dMiIBsQRGUAAAAASUVORK5CYII=';
 	d.ARROW_RETROSYNTHETIC = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAYElEQVR42mNgGI5AhZqGKQDxbSA2oaahBrQ01ILahr4HYhtskv8pwF9xGUouAHn7MRA7UNNQG6hrPahtoA+1vPwc3XWURooPtZLNc2qFG8iw+9Q2zIFahQPV05zG0C59AY3IMME0CTYYAAAAAElFTkSuQmCC';
 	d.ARROW_SYNTHETIC = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAUklEQVR42mNgGAWjgC5ABoh5qGmgAhD/B+I7QJwAxALUMPQg1NAHQPwdiPegG/6fipgssA+q+REQ/wDivUCcAsQi5EYKLAzJNgQ9UmRGE/tIBgDIaCG7b3KulAAAAABJRU5ErkJggg==';
+	d.ATOM_REACTION_MAP = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAjUlEQVR42mNgGAVUAQ0NDf+xYbLVwwS2b9/+/969e//7+/uJMhCnepiC7u7u/xcvXvw/YcIEogzEqR7Z2aQYiFP90DFw165d/9+8eQNWNHXqVIIG4lRP9WQzGMAPIP4NxAlALEANA6OBGOTFB0D8HYj3oBv+n4qYIhc+gnp/LxCnALEIJWH4n1JDBgYAAJTDI69J6QenAAAAAElFTkSuQmCC';
 	d.BENZENE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA5klEQVR42s2VPwrCMBSH06k0o1MX6R2c7A08hDfRRdDVgp5BR71GvUKdtHNvIMRf4FcoIdgkzeCDD0r+fLyQl1ch3GMmIkUOzuADDkBOEVWgA0ewABfQgjVIQkU5x/vMlqAGD1CGiFKwBS+QcSxhli2znpsyvVAZIh0r8AQ3UFiS0FnvuDczJ9XgW2++g4bSsVC/BiWPt+FxXSRqbEHmmZVyTvtvhTKmUMvesS+lYO0Fl01f2JWlsJvQws75UjpDnPL4Xk/PRdzLSjaGmo3Cq30Nxbp9XXlhXu3LJj6xwe6nNNigX8AXVupH9hGtsNcAAAAASUVORK5CYII=';
 	d.BOND_ANY = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA3UlEQVR42mNgGMRAgJqGeQDxc2oZ6gLE76GGUs0wH2oYZkNNw0Auew3EEQMS/fOB2AGJbwQVg4FsIFYA4glArAkVEwfiemyGqUOjfw2SGMjwv0AcB+V3Qg0CheFaqNhUqF4M0A3E/kB8H4hFkQyciiTWieSyDUCcAhXDAGxAfB6I+YG4C4hLkAwsAuIkIF6GZiCIfgPEfNgMDAPi9UDcCMTNQHwJzUAGqPx5JANB4AKuyNgMxMJI/FVAbI1moAg0jLWIMZCmifY9tRItVfOmBzUNE4AGtgc1sxxVCkcAqLktfrI9I0gAAAAASUVORK5CYII=';
 	d.BOND_DOUBLE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAQUlEQVR42mNgoA7gZqAicADi+0DMRS3DXgGxPTVcim4YzKVUMwyZP2rYqGGjhg0Dw7ihpQRVDIMBLmoahsulZAEA2GgvCVlTJIIAAAAASUVORK5CYII=';
@@ -12506,13 +18289,19 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	d.BOND_SEXTUPLE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAZElEQVR42s3OMQ6AMAxDUc/uocr9L8HOKZqBCaXgBiNhKevPA7Q1GLfF7XF0xY647pBeY6+kWawsfYotSZWYLF2N3Uorsam0nZ+6U8o/S/GFFE5pOjpjVak0OmOqtDQ6YzNpugFelEmRwpAbowAAAABJRU5ErkJggg==';
 	d.BOND_SINGLE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAMklEQVR42mNgGMSAm5qGOQDxfSDmopZhr4DYftSwUcNGDRs1jP6GcUPLM6oYBgNUKRwBiE8XjxDJvZUAAAAASUVORK5CYII=';
 	d.BOND_TRIPLE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAUUlEQVR42mNgoAxwM1AROADxfSDmopZhr4DYnhouRTeMIpdiM4xslxIyDOZSqhmGzB81bNSwATeMG5rCqWIYDHBR0zBiXUoW4KKmYbhcShIAAA2MPiFy45L3AAAAAElFTkSuQmCC';
+	d.BOND_WAVY = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAh0lEQVR42mNgGK7ABIhjgNgCiDkoNWwxEF+G0qeB+DMQ81DisstoBvBQ4roIIF5OzbDTgbqQagAUAd+BWISahq4G4gRqJo0cIJ5OadIAeXMzEJdA6QZKk4YI1JvToYbxjCYNopJGDDUNrADifmp4FTmt9VNq2HuktPccmqApdqEFNNmokGsIAL13HwsFh4ptAAAAAElFTkSuQmCC';
 	d.BOND_ZERO = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mNgGAVkgPtQPHgNHA2z0TAbDbPRMBsAAADVkQ3x7nq43wAAAABJRU5ErkJggg==';
+	d.BRACKET_CHARGE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAYUlEQVR42mNgGAnACYhF0AX/Q3EDDk0NSGrQwUogNsZmIDEApk4MiOWheAsQ+yLxyTJwIhBfgOIPQHwLiU+WgVT3Mk0NlAZiDkoNXAjEz3Bgil1IkcJRA4e6geSWNkMMAAAxJTQf078zGQAAAABJRU5ErkJggg==';
+	d.BRACKET_DYNAMIC = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAApElEQVR42mNgoBH4j4RJkcNrIDXUjBo4auCogVA1/1OA+AIUuwPxcSB+CMRV5BrICMQ/gRjI/18NxJpA/JGB4RlQ7AgvmV7+/xVqoAaE/+wqA8MZIH+rHZUMPHOFgWEzkD/dgcziC2bgM6iBm4EGzgTyGxzILT6/Aw0DGnBWE8KfCfRyA5Cf5kiOYZkQw0BhtrmLgWEGMNzqfwANA/J9VlC96AcA6bhuijWnoMUAAAAASUVORK5CYII=';
 	d.BROMINE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA3UlEQVR42mNgGAVUB8s0NDYu09T8D8LLNTVvA+lZKzQ1dSg18MRSTU2X5RoarUD2dyC+SKmBu+B8Tc0FQPx3prExK1UMXK6lNRPo2rNIFnQB1UwCikUs09K6DuQXEGXgQg0NYaCGGCD7xVItLX8kA5cD8R1QsADDOBZosCoxBv6F4v9AQxNR5CEGPl2kpydGkpdXqalJA+ksIH4AxLNRDASqITsMgV6yA7kUlnQoNhCYdBRABgINzqTEwINAA+SXq6ubANnrgfgfiE2Jgf+h+C0QrwSKBZMdhqNg4AEAUSSF6Clvq/4AAAAASUVORK5CYII=';
 	d.CALCULATE = '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';
 	d.CARBON = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA2klEQVR42mNgGAXYwMyZM1knTZqk1dvbK9vQ0MBEtkETJ06UmzBhwi4g/gXEn4D4L5R9jGTDQK4BanwPxNeArtP///8/4/z58zmAfFcg7iHZQKCmaUD8derUqRIUh9mqVauYgYb9ABlKlUiYPHmyItCw//39/QlUMRBokAPIQFB4UcXAvr4+XaiB4VQxsLu7mxtqYDPVEjM0/b0BJhk+qhgINMgQaOBvID4LS4fAXMIC5JsDw3gCuZFjBDTgPNT7n4H4O1DsApDuoMi1HR0d/MBsaAyiR0s22gMANJ6AxDvp00kAAAAASUVORK5CYII=';
-	d.CHARGE_BRACKET = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAYUlEQVR42mNgGAnACYhF0AX/Q3EDDk0NSGrQwUogNsZmIDEApk4MiOWheAsQ+yLxyTJwIhBfgOIPQHwLiU+WgVT3Mk0NlAZiDkoNXAjEz3Bgil1IkcJRA4e6geSWNkMMAAAxJTQf078zGQAAAABJRU5ErkJggg==';
+	d.CENTER = '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';
+	d.CHAIN_CARBON = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA2ElEQVR42mNgIB34APF1IBZgoBCwAHE3EB8HYhVKDZOBGjQZiDkYqAD+A3EIAxXBfwYqgxFmoA+1DByy6e5/ChBfgGJ3IAZa/P8hEFeRGQn/GYH4JxAD1fyvBmJNIP4IEXvNS2as/v8KNVADyr/KwPAMyD9nRyUDn11hYDgD5G92oJKBZ4AGbgbyp2M1MIMIA79DDHymCeFvAXp5JpDf6IisygKaVJZDkw0uwzKhhgHx6S4Ghq3AcJv5g4GhAchPWwFSIQLE04H4PBA7UCPNgYrzEmjOoBgAAHAEYmXCT6SqAAAAAElFTkSuQmCC';
 	d.CHLORINE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA9klEQVR42mNgGAXIwPi/MavcZzkt5bfKsgz/GZiQ5RTeKyTIfZBLI8ogpXdKcgofFHbJf5D/BcSfgPgvlH0MpgbIXq7wUWEjQcNArgEqfg/E1xTfK+oDXcao8F+BA+gaV6BYD8kGAhVOA+KvCl8UJAioI8LA/wzMQIU/QIYSYTFhA4GKFIH4PyjAqWIg0CAHkIGg8KKKgTLvZHTBLvygEE4VA8VfiHODDATGcTNVDAR7G5L+3qi8VeGjioFA1xkCFf8G4rOwdAjELEDN5kA8gWQDoYqNgPg82Psf5D8D8XcgvgB0fQdZBiJlQX5gjBuD6NGSjX4AAER4jBfAQ3QdAAAAAElFTkSuQmCC';
 	d.CLEAR = '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';
+	d.COPY = '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';
+	d.CUT = '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';
 	d.CYCLOBUTANE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAiklEQVR42q3UwQ2AIAwF0E7hOv4bTCN7uwIXG0MTYgRa2iYNF3lB+ECkr4MCK3NX7hSBgfvmvtp4RmCCnB4Ug8lbKBaTTCiUH6tQGH9nimJzw3/R7IyEoEluQG0581RpzlvJuUL0KyRnaKd7b0VVB6lFTalYoVsRG6HwHOAXRcQTJmiJwPqcql7sB1sQMyMuYZLDAAAAAElFTkSuQmCC';
 	d.CYCLOHEPTANE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAA+UlEQVR42mNgIB4IMFABMAOxJxCvAeK/QLwAiA3IMUgTiDuB+CkQnwDiDCBWAuIKIH4ExIeAOASIWfAZIgzEmUB8EmpQBxBr4HA1yLCDUMMrgVgcXREPEP8D4pVA7AHVRAzQB+J5UL08yBKKQPyQgrAGuVQBWcARiA9QYCDI+w7IAonQGCQXLATiBGSBRiBuoMBADP0YNpAIMHyIEQYkAow4wIglEgFKKuGFpiMTCgw0gZrBCxMIgdogQYZhElC9IegS1dB8y0GCYRzQrFqNS8FSKCYWLCOkngPqymoiDKsh1kewMAnCoyaY1DA3BOL/BLAhqbHHRY4cAH9nN15emqC1AAAAAElFTkSuQmCC';
 	d.CYCLOHEXANE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAoElEQVR42mNgIB4IMVAJSADxZCD+A8StQMxFiUH9QPwWiPuA2AiIlwLxYyCOAWJGcg2SQJO3AOITQHwSiC0pMQgZMEJd+Rjqall0BZxA/J8Ig9ABKDwboXo50SX/UxBx/4kWHDVw1EDcemEJu5+aCVsCmlPeEmEwwaxHisGW0ILhBLSgIKn4QjYYVHwtA+JHpBZf2AyeBC1gWygpYMmqAgB+TzRkG9cEtwAAAABJRU5ErkJggg==';
@@ -12522,6 +18311,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	d.DECREASE_CHARGE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAs0lEQVR42mNgGAU4gAAQK0BpsgELEGcA8WUg/g3E/6H4NhCXQOVJMmw/EL8G4gYgdoC60AKIK4D4ORAfB2IeYg07DMT3gVgFhxoZID4PNZSDkIE5UJepEFAnA3VpCSEDL0O9SQyogIYp3tj8DQ0zUPhI4sE80DD9jy/2FaAKFKCu/I8H16Opp48LqR6GNIllWDq8jidsZKBqiEqHyIZSJacgG5oDdSly7N6HepNjwEubwQEAQdI454gPA8EAAAAASUVORK5CYII=';
 	d.DISTANCE = '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';
 	d.ERASE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAKQ2lDQ1BJQ0MgUHJvZmlsZQAAeAGdlndUU1kTwO97L73QEkKREnoNTUoAkRJ6kV5FJSQBQgkYErBXRAVXFBVpiiKLIi64uhRZK6JYWBQUsC/IIqCsi6uIimVf9Bxl/9j9vrPzx5zfmztz79yZuec8ACi+gUJRJqwAQIZIIg7z8WDGxMYx8d0ABkSAA9YAcHnZWUHh3hEAFT8vDjMbdZKxTKDP+nX/F7jF8g1hMj+b/n+lyMsSS9CdQtCQuXxBNg/lPJTTcyVZMvskyvTENBnDGBmL0QRRVpVx8hc2/+zzhd1kzM8Q8VEfWc5Z/Ay+jDtQ3pIjFaCMBKKcnyMU5KJ8G2X9dGmGEOU3KNMzBNxsADAUmV0i4KWgbIUyRRwRxkF5HgAESvIsTpzFEsEyNE8AOJlZy8XC5BQJ05hnwrR2dGQzfQW56QKJhBXC5aVxxXwmJzMjiytaDsCXO8uigJKstky0yPbWjvb2LBsLtPxf5V8Xv3r9O8h6+8XjZejnnkGMrm+2b7HfbJnVALCn0Nrs+GZLLAOgZRMAqve+2fQPACCfB0DzjVn3YcjmJUUiyXKytMzNzbUQCngWsoJ+lf/p8NXzn2HWeRay877WjukpSOJK0yVMWVF5memZUjEzO4vLEzBZfxtidOv/HDgrrVl5mIcJkgRigQg9KgqdMqEoGW23iC+UCDNFTKHonzr8H8Nm5SDDL3ONAq3mI6AvsQAKN+gA+b0LYGhkgMTvR1egr30LJEYB2cuL1h79Mvcoo+uf9d8UXIR+wtnCZKbMzAmLYPKk4hwZo29CprCABOQBHagBLaAHjAEL2AAH4AzcgBfwB8EgAsSCxYAHUkAGEINcsAqsB/mgEOwAe0A5qAI1oA40gBOgBZwGF8BlcB3cBH3gPhgEI+AZmASvwQwEQXiICtEgNUgbMoDMIBuIDc2HvKBAKAyKhRKgZEgESaFV0EaoECqGyqGDUB30I3QKugBdhXqgu9AQNA79Cb2DEZgC02FN2BC2hNmwOxwAR8CL4GR4KbwCzoO3w6VwNXwMboYvwNfhPngQfgZPIQAhIwxEB2EhbISDBCNxSBIiRtYgBUgJUo00IG1IJ3ILGUQmkLcYHIaGYWJYGGeMLyYSw8MsxazBbMOUY45gmjEdmFuYIcwk5iOWitXAmmGdsH7YGGwyNhebjy3B1mKbsJewfdgR7GscDsfAGeEccL64WFwqbiVuG24frhF3HteDG8ZN4fF4NbwZ3gUfjOfiJfh8fBn+GP4cvhc/gn9DIBO0CTYEb0IcQUTYQCghHCWcJfQSRgkzRAWiAdGJGEzkE5cTi4g1xDbiDeIIcYakSDIiuZAiSKmk9aRSUgPpEukB6SWZTNYlO5JDyULyOnIp+Tj5CnmI/JaiRDGlcCjxFCllO+Uw5TzlLuUllUo1pLpR46gS6nZqHfUi9RH1jRxNzkLOT44vt1auQq5ZrlfuuTxR3kDeXX6x/Ar5EvmT8jfkJxSICoYKHAWuwhqFCoVTCgMKU4o0RWvFYMUMxW2KRxWvKo4p4ZUMlbyU+Ep5SoeULioN0xCaHo1D49E20mpol2gjdBzdiO5HT6UX0n+gd9MnlZWUbZWjlJcpVyifUR5kIAxDhh8jnVHEOMHoZ7xT0VRxVxGobFVpUOlVmVado+qmKlAtUG1U7VN9p8ZU81JLU9up1qL2UB2jbqoeqp6rvl/9kvrEHPoc5zm8OQVzTsy5pwFrmGqEaazUOKTRpTGlqaXpo5mlWaZ5UXNCi6HlppWqtVvrrNa4Nk17vrZQe7f2Oe2nTGWmOzOdWcrsYE7qaOj46kh1Dup068zoGulG6m7QbdR9qEfSY+sl6e3Wa9eb1NfWD9JfpV+vf8+AaMA2SDHYa9BpMG1oZBhtuNmwxXDMSNXIz2iFUb3RA2OqsavxUuNq49smOBO2SZrJPpObprCpnWmKaYXpDTPYzN5MaLbPrMcca+5oLjKvNh9gUVjurBxWPWvIgmERaLHBosXiuaW+ZZzlTstOy49WdlbpVjVW962VrP2tN1i3Wf9pY2rDs6mwuT2XOtd77tq5rXNf2JrZCmz3296xo9kF2W22a7f7YO9gL7ZvsB930HdIcKh0GGDT2SHsbewrjlhHD8e1jqcd3zrZO0mcTjj94cxyTnM+6jw2z2ieYF7NvGEXXReuy0GXwfnM+QnzD8wfdNVx5bpWuz5203Pju9W6jbqbuKe6H3N/7mHlIfZo8pjmOHFWc857Ip4+ngWe3V5KXpFe5V6PvHW9k73rvSd97HxW+pz3xfoG+O70HfDT9OP51flN+jv4r/bvCKAEhAeUBzwONA0UB7YFwUH+QbuCHiwwWCBa0BIMgv2CdwU/DDEKWRrycyguNCS0IvRJmHXYqrDOcFr4kvCj4a8jPCKKIu5HGkdKI9uj5KPio+qipqM9o4ujB2MsY1bHXI9VjxXGtsbh46LiauOmFnot3LNwJN4uPj++f5HRomWLri5WX5y++MwS+SXcJScTsAnRCUcT3nODudXcqUS/xMrESR6Ht5f3jO/G380fF7gIigWjSS5JxUljyS7Ju5LHU1xTSlImhBxhufBFqm9qVep0WnDa4bRP6dHpjRmEjISMUyIlUZqoI1Mrc1lmT5ZZVn7W4FKnpXuWTooDxLXZUPai7FYJHf2Z6pIaSzdJh3Lm51TkvMmNyj25THGZaFnXctPlW5ePrvBe8f1KzEreyvZVOqvWrxpa7b764BpoTeKa9rV6a/PWjqzzWXdkPWl92vpfNlhtKN7wamP0xrY8zbx1ecObfDbV58vli/MHNjtvrtqC2SLc0r117tayrR8L+AXXCq0KSwrfb+Ntu/ad9Xel333anrS9u8i+aP8O3A7Rjv6drjuPFCsWryge3hW0q3k3c3fB7ld7luy5WmJbUrWXtFe6d7A0sLS1TL9sR9n78pTyvgqPisZKjcqtldP7+Pt697vtb6jSrCqsendAeODOQZ+DzdWG1SWHcIdyDj2piarp/J79fV2tem1h7YfDosODR8KOdNQ51NUd1ThaVA/XS+vHj8Ufu/mD5w+tDayGg42MxsLj4Lj0+NMfE37sPxFwov0k+2TDTwY/VTbRmgqaoeblzZMtKS2DrbGtPaf8T7W3Obc1/Wzx8+HTOqcrziifKTpLOpt39tO5Feemzmedn7iQfGG4fUn7/YsxF293hHZ0Xwq4dOWy9+WLne6d5664XDl91enqqWvsay3X7a83d9l1Nf1i90tTt3138w2HG603HW+29czrOdvr2nvhluety7f9bl/vW9DX0x/Zf2cgfmDwDv/O2N30uy/u5dybub/uAfZBwUOFhyWPNB5V/2rya+Og/eCZIc+hrsfhj+8P84af/Zb92/uRvCfUJyWj2qN1YzZjp8e9x28+Xfh05FnWs5mJ/N8Vf698bvz8pz/c/uiajJkceSF+8enPbS/VXh5+ZfuqfSpk6tHrjNcz0wVv1N4cect+2/ku+t3oTO57/PvSDyYf2j4GfHzwKePTp78AA5vz/OzO54oAAAAJcEhZcwAACxMAAAsTAQCanBgAAAQfSURBVDgRhZNdTFtlGMf/pz30Y4W13WhhBZKlshgCSyryFTK1LJvRbFkgxuiFZq1xiXEX6oV6Obgx8YrEK++oVxpvNm+8Mo4sM2qA8dVS2FlXCqVftPS0pR30nJ7j8x5WhbHFN3n7nHOePr88///7vBz+Z3EcB5PJBLfbjaGhIfT09MD/+hWfockyWc0Wkbm36D/39Xt36hh9/eF5UafTwWq1ahCv16tF3xtXp8xO+zjf0GDSyapJSuXf3/x5OuZ889UFxuCeB2LfeJ6Hw+GAx+NBf38/Prv8rs3UbLtrPGnxoCpDWt+GnMpr5buZHWw/2vCf/+5m4BiQSTQYDGhra8PAwIAGvPHaVa/F5bjdYDbZlNITSA8TqOVKUBUFIBWcjkN+M41wKOTnD3fIYI2Njejs7NRgXV1d+Ojitc/Np22TPBUyiCQQrLSnlXEkUK0pUFWgxMuYzUQn/wXq9XrY7XbNJ9bZV1c+sJmc9skTTpuPkxTUEnnsRZKAVDswiiB1w0rlCv4KLuC+sGjTgMyv1tZW9Pb2oq+vDzdHxjzmNseUudnqwRMJUjQDKbkDTlGhkklMCYtaawQWVtfwe2gGMTET4I1GIzo6OjA4OHjg16WxUVOLfYrMt6kkTRaSkPNlcFSoEohotOmFgkJyI8FV3I0uILKdgKKoP/AulwvDw8Ma7OPLY+Pmdsct3miAShBmvlqpaow6TOuOaFWSKQTD+CMnIJTZxE6psL4mJqZ5Zjw7hBtvv3Pb4naNMiVKuoBadBuQ2SmyVmhr8cC3UjqH5ZUgFssJLG9GsBKLQJWVCcqCZ3I/vXDNZ7CcGK2VKtCJ+1AyBZZ7Ko9gJJN1xqDxYARLcQHhQhKLG4+wHBWg7suBh4VUgJXw7FrxZuMtPbksTge1U7SddR3AWFdPd7W8j8ezS5jPxSDkEpiLrmF9Kw5Fkv11mAb8cnjMa+lwnuXoNI0kTYyTVDLbyqA6kkydVXIFhP6cI4lxCOk4ZiJhZLM5kWZwhGDalWMwtnhjs/U6bzGhlipqY9XUcgoFmvrdRBZtgz3IClHMzc8hXE4hvBXDHMH2disLqqKOCMW0eID575crLkXzTR1OmzQbhVwsQ97fR7Wyh1JyG0WxiBVxC6simb8RQYjMV/akAIH8dYTKrsmhxSu1GlSxrI2BjplPN0ZPg85bzAhHQniQXceDx2vYTCdFVap9QbDAofpjj/y973+aMLafnmx3nkGL7RRMHE9ToiK2sYH78VX8HVlBQSysk19jBDvi1zEafaBjBL69dN3X/rJ7qru7GzaTBVupBH789Rf8JswziXdIlv95frHaZyVrQJb45uKHPvJySjJwmFlawGJkFVJVmiDQOMu/aD0LPPK/T/re8l146bz6yhn3/LmTLd4jyRe8MODh/Q+zf/gKTlsAkwAAAABJRU5ErkJggg==';
+	d.FLIP_HOR = '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';
+	d.FLIP_VER = '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';
 	d.FLUORINE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAUElEQVR42mNgGAU0AxPuB26c8CDgPxr+SqmBpyc+DDCG4UkP/AwpNXAvtb08+A38A8SfYbj/ob8LpQae6Hvoqw3DU1+F8oxGygAaOAoGDgAAN7dbSHln+I0AAAAASUVORK5CYII=';
 	d.HYDROGEN = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAANElEQVR42mNgGAW0BBuBeC8W8SIg/jtqINEGngBiTTTcSYmB/4D4Jxr+Mxopw8jAUTBAAADIhCT11Q14ZwAAAABJRU5ErkJggg==';
 	d.INCREASE_CHARGE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAyklEQVR42mNgGAU4gAAQK0BpsgELEGcA8WUg/g3E/6H4NhCXQOVJMmw/EL8G4gYgdoC60AKIK4D4ORAfB2IeYg07DMT3gVgFKsYDNRhmgAwQn4caykHIwByoy1SQxCSh3pVEEpOBurSEkIGXoa5hIGAgA9T7twnF5m9omPFADQBhA6iBBkhiPNAw/Y8v9hWgChSgrvyPB9ejqaePC6kehjSJZVg6vI4UNjzQMENOh4eJTYfIhlIlpyAbmgN1KXLs3od6k2PAS5vBAQCFSEECjKrjagAAAABJRU5ErkJggg==';
@@ -12534,6 +18325,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	d.OPEN = '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';
 	d.OPTIMIZE = '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';
 	d.OXYGEN = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABCklEQVR42mNgGAXYwH8pKa7/PDxa/xkY2CgzSFBQ7j8v7wEg/gPEn4H4JxBvAGJh0g3j4pICanwDxCf+8/MrgcW4uXWB/FtAfA/katIM5OGZCNT44b+AgACKOD+/MtTFxcQbxsDADNTwDWQoVnle3nVAfJt4A/n5FYEa/v/n44vF4fpqoPxfoiMJqMEBbCA3twsOFyaC5aFhS4yBOmANPDwhOAwsAssLCfERG4acQA3/gLgKqzwf33Sg3CvSYpmXdy0Q3wEazoQiLirKAxR/jyvC8BmoAY3pZTCvAcNUHCi2F5w+eXhESU/ckLC8CE13T8Axy8u7D5SDKMuCvLwiwBg1Bnl3tGSjPQAAoX15+BfxFYQAAAAASUVORK5CYII=';
+	d.PASTE = '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';
 	d.PERIODIC_TABLE = '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';
 	d.PERSPECTIVE = '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';
 	d.PHOSPHORUS = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAeElEQVR42mNgGAU0A/8bGDYC8X8o/gLEV/43MqRSZmA9wwkgtgAalA/kXwSy//1vYtCnxIW74PxGBnewa+sZMqhjYD2DCtTAHOoY2MDQAjXQjBIDrwANKALS+4H4D5A9g9JY/gA1bC4Q+1Ej2eyidjocSQaOgoEDAIsaZcCSspZYAAAAAElFTkSuQmCC';
@@ -12544,23 +18336,1035 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	d.REDO = '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';
 	d.REMOVE_LONE_PAIR = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAN0lEQVR42mNgGAWjYHACBSDeD8T/gfg4lE+KPAYAKTaBsg2gmkiRxwD/KeTT3oVUD8NRMAoIAAADoBa5tWLP/wAAAABJRU5ErkJggg==';
 	d.REMOVE_RADICAL = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAM0lEQVR42mNgGAWjYGgABSDeD8T/gfg4lE8RABlmAmUbQA2lCPwnwB94F1I9DEfBKEADAAT6C11yCuPwAAAAAElFTkSuQmCC';
+	d.RING_ARBITRARY = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABDUlEQVR42mNgoCNQAOJmIN4PxN+B+D+UPg7E3UCsQ6xBLEDcD8SvgbgdiG2AWAAqxwPEJkDcAJWfDBXDCSSgLpgOxCIELBaAWnwZiGVwuew41HZSQAPUUAyX9kNdRg7oh3ofJQJeE+FNfN5/jhxRzdAIQAP/c4H4PBBvBeI4IL4LxIeBWBeH17thnP3Q2EQ3EBgu/4HJ5T8wufwPAeIcKL8Xi4Em0DgAg+9ISQPZQHaoAZ+gfF0o/yAWA3mg5kBUYg8aDAN1oPwjOMLyP6kuxGcgigtxhSEHDgOPEgpDfLH8H4o9gLgJyn4PxIb4Ypnq6ZDqOYUmeRm9tBEgwpvdUMMUqFEePiemPKS4xAYAAZmCtejUmxcAAAAASUVORK5CYII=';
 	d.SAVE = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAKQ2lDQ1BJQ0MgUHJvZmlsZQAAeAGdlndUU1kTwO97L73QEkKREnoNTUoAkRJ6kV5FJSQBQgkYErBXRAVXFBVpiiKLIi64uhRZK6JYWBQUsC/IIqCsi6uIimVf9Bxl/9j9vrPzx5zfmztz79yZuec8ACi+gUJRJqwAQIZIIg7z8WDGxMYx8d0ABkSAA9YAcHnZWUHh3hEAFT8vDjMbdZKxTKDP+nX/F7jF8g1hMj+b/n+lyMsSS9CdQtCQuXxBNg/lPJTTcyVZMvskyvTENBnDGBmL0QRRVpVx8hc2/+zzhd1kzM8Q8VEfWc5Z/Ay+jDtQ3pIjFaCMBKKcnyMU5KJ8G2X9dGmGEOU3KNMzBNxsADAUmV0i4KWgbIUyRRwRxkF5HgAESvIsTpzFEsEyNE8AOJlZy8XC5BQJ05hnwrR2dGQzfQW56QKJhBXC5aVxxXwmJzMjiytaDsCXO8uigJKstky0yPbWjvb2LBsLtPxf5V8Xv3r9O8h6+8XjZejnnkGMrm+2b7HfbJnVALCn0Nrs+GZLLAOgZRMAqve+2fQPACCfB0DzjVn3YcjmJUUiyXKytMzNzbUQCngWsoJ+lf/p8NXzn2HWeRay877WjukpSOJK0yVMWVF5memZUjEzO4vLEzBZfxtidOv/HDgrrVl5mIcJkgRigQg9KgqdMqEoGW23iC+UCDNFTKHonzr8H8Nm5SDDL3ONAq3mI6AvsQAKN+gA+b0LYGhkgMTvR1egr30LJEYB2cuL1h79Mvcoo+uf9d8UXIR+wtnCZKbMzAmLYPKk4hwZo29CprCABOQBHagBLaAHjAEL2AAH4AzcgBfwB8EgAsSCxYAHUkAGEINcsAqsB/mgEOwAe0A5qAI1oA40gBOgBZwGF8BlcB3cBH3gPhgEI+AZmASvwQwEQXiICtEgNUgbMoDMIBuIDc2HvKBAKAyKhRKgZEgESaFV0EaoECqGyqGDUB30I3QKugBdhXqgu9AQNA79Cb2DEZgC02FN2BC2hNmwOxwAR8CL4GR4KbwCzoO3w6VwNXwMboYvwNfhPngQfgZPIQAhIwxEB2EhbISDBCNxSBIiRtYgBUgJUo00IG1IJ3ILGUQmkLcYHIaGYWJYGGeMLyYSw8MsxazBbMOUY45gmjEdmFuYIcwk5iOWitXAmmGdsH7YGGwyNhebjy3B1mKbsJewfdgR7GscDsfAGeEccL64WFwqbiVuG24frhF3HteDG8ZN4fF4NbwZ3gUfjOfiJfh8fBn+GP4cvhc/gn9DIBO0CTYEb0IcQUTYQCghHCWcJfQSRgkzRAWiAdGJGEzkE5cTi4g1xDbiDeIIcYakSDIiuZAiSKmk9aRSUgPpEukB6SWZTNYlO5JDyULyOnIp+Tj5CnmI/JaiRDGlcCjxFCllO+Uw5TzlLuUllUo1pLpR46gS6nZqHfUi9RH1jRxNzkLOT44vt1auQq5ZrlfuuTxR3kDeXX6x/Ar5EvmT8jfkJxSICoYKHAWuwhqFCoVTCgMKU4o0RWvFYMUMxW2KRxWvKo4p4ZUMlbyU+Ep5SoeULioN0xCaHo1D49E20mpol2gjdBzdiO5HT6UX0n+gd9MnlZWUbZWjlJcpVyifUR5kIAxDhh8jnVHEOMHoZ7xT0VRxVxGobFVpUOlVmVado+qmKlAtUG1U7VN9p8ZU81JLU9up1qL2UB2jbqoeqp6rvl/9kvrEHPoc5zm8OQVzTsy5pwFrmGqEaazUOKTRpTGlqaXpo5mlWaZ5UXNCi6HlppWqtVvrrNa4Nk17vrZQe7f2Oe2nTGWmOzOdWcrsYE7qaOj46kh1Dup068zoGulG6m7QbdR9qEfSY+sl6e3Wa9eb1NfWD9JfpV+vf8+AaMA2SDHYa9BpMG1oZBhtuNmwxXDMSNXIz2iFUb3RA2OqsavxUuNq49smOBO2SZrJPpObprCpnWmKaYXpDTPYzN5MaLbPrMcca+5oLjKvNh9gUVjurBxWPWvIgmERaLHBosXiuaW+ZZzlTstOy49WdlbpVjVW962VrP2tN1i3Wf9pY2rDs6mwuT2XOtd77tq5rXNf2JrZCmz3296xo9kF2W22a7f7YO9gL7ZvsB930HdIcKh0GGDT2SHsbewrjlhHD8e1jqcd3zrZO0mcTjj94cxyTnM+6jw2z2ieYF7NvGEXXReuy0GXwfnM+QnzD8wfdNVx5bpWuz5203Pju9W6jbqbuKe6H3N/7mHlIfZo8pjmOHFWc857Ip4+ngWe3V5KXpFe5V6PvHW9k73rvSd97HxW+pz3xfoG+O70HfDT9OP51flN+jv4r/bvCKAEhAeUBzwONA0UB7YFwUH+QbuCHiwwWCBa0BIMgv2CdwU/DDEKWRrycyguNCS0IvRJmHXYqrDOcFr4kvCj4a8jPCKKIu5HGkdKI9uj5KPio+qipqM9o4ujB2MsY1bHXI9VjxXGtsbh46LiauOmFnot3LNwJN4uPj++f5HRomWLri5WX5y++MwS+SXcJScTsAnRCUcT3nODudXcqUS/xMrESR6Ht5f3jO/G380fF7gIigWjSS5JxUljyS7Ju5LHU1xTSlImhBxhufBFqm9qVep0WnDa4bRP6dHpjRmEjISMUyIlUZqoI1Mrc1lmT5ZZVn7W4FKnpXuWTooDxLXZUPai7FYJHf2Z6pIaSzdJh3Lm51TkvMmNyj25THGZaFnXctPlW5ePrvBe8f1KzEreyvZVOqvWrxpa7b764BpoTeKa9rV6a/PWjqzzWXdkPWl92vpfNlhtKN7wamP0xrY8zbx1ecObfDbV58vli/MHNjtvrtqC2SLc0r117tayrR8L+AXXCq0KSwrfb+Ntu/ad9Xel333anrS9u8i+aP8O3A7Rjv6drjuPFCsWryge3hW0q3k3c3fB7ld7luy5WmJbUrWXtFe6d7A0sLS1TL9sR9n78pTyvgqPisZKjcqtldP7+Pt697vtb6jSrCqsendAeODOQZ+DzdWG1SWHcIdyDj2piarp/J79fV2tem1h7YfDosODR8KOdNQ51NUd1ThaVA/XS+vHj8Ufu/mD5w+tDayGg42MxsLj4Lj0+NMfE37sPxFwov0k+2TDTwY/VTbRmgqaoeblzZMtKS2DrbGtPaf8T7W3Obc1/Wzx8+HTOqcrziifKTpLOpt39tO5Feemzmedn7iQfGG4fUn7/YsxF293hHZ0Xwq4dOWy9+WLne6d5664XDl91enqqWvsay3X7a83d9l1Nf1i90tTt3138w2HG603HW+29czrOdvr2nvhluety7f9bl/vW9DX0x/Zf2cgfmDwDv/O2N30uy/u5dybub/uAfZBwUOFhyWPNB5V/2rya+Og/eCZIc+hrsfhj+8P84af/Zb92/uRvCfUJyWj2qN1YzZjp8e9x28+Xfh05FnWs5mJ/N8Vf698bvz8pz/c/uiajJkceSF+8enPbS/VXh5+ZfuqfSpk6tHrjNcz0wVv1N4cect+2/ku+t3oTO57/PvSDyYf2j4GfHzwKePTp78AA5vz/OzO54oAAAAJcEhZcwAACxMAAAsTAQCanBgAAAKmSURBVDgRrZTPTxNBFMe/24VCgNYCVYhISLDBeCEejCRelBOJ4Wy8iYmevfoneDOKV0O8mXhVEk/ERGI4GFZj0gIxlKalWFe6v3/PrDPTEGiWYg+8ZGZn3sx83pu3854UxzG4vF6v3fVCipC25kJ5RheRGKodYkd1lNXHs9rRVokDX32prkxn00ueFcF1I2wZqli/d3UI05eykCSJ6V04jiOabdtQVRUVP4OvwWVFObAfbT+bU/ihHt6FQbQU2DFqVQemHmK1XuVqXB8YRb4fSKVSMAwDuq5jeXkZ5XIZhUIBEzcXMTZ25QbCeE16+mk+frmgCGDD8pF2JOwd2LD0CJuVQwFszPTCHR+CLMuwLAuapqFYLKJUKiGKCILxOQwNhpiJSe5vY2sNWBhuecjiwWNHu4wft8ZDRSiFz+LuGX+QamzluF4A+aBbmZychO/7yGQy4gjl4CgAcQ0xPxP4qxkgW7NEDE3DhW5EmF24j6k5DbX9OtyeQaQF5vhlnAp8ePEasxpD25OwdiBB6ksBfSOsjULKsnFewvAUEPmsBccwzmar5ysJD/O5Pty6PQrKfpQwJzMPeyRAZobFtzWmVMLPiokfu2abRwngyIU0Fu+Mt23qNIkC+n8gpQSe53ZiwDQt2I4t1k2TJPYlPKSEwradxEZCiHjY/MkcCcvEhCSA/KBtt8clDCOms8VjPkmI4+Q/TQDDKESz2WTnWPBxdva0ClU7VAD5a2clRRinLJ08LzrpSMcxIb1s7RSgxkrW/sZHrH94hwdPnqNeb79yJ6J+OIjN92/g6U3QfpHKrVz+rOxoBd3K5Sdm8H1jFc2d7oB1fwApOc0CE8NTy8KuuHK5qMzXK99epIzf2K1uo9Tb3ZUdIoM3XqTCOH7LiaJiC/Q5df8A94VafhNL/ZIAAAAASUVORK5CYII=';
-	d.SEARCH = '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';
+	d.SEARCH = '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';
 	d.SETTINGS = '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';
+	d.SILICON = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABGklEQVR42mNgGAU0A//372f5cHyhy/vj8x2+nJgtjiz36eRC4U9nlokQbdj7kwsKP5xc8OrDiYUXPpxYcBaIf388ttAMJg/kL/94YsFGogz7cHSBMlDD/48n50fBxQ4vFXx9ZC4vnH9ykSJIHVEGfj40TxRo4J8PxxdU47T0xMKu9ycXTiLayx+Pz18AciUQz0R2GVleBkfI//+M708saAZq/AfE994dm69LkYHwyAHGMFDjU6ABnz+emG9BsYEgAEoyQAPeAMNtLlUMhMTqgu1AQ46TZeC7Ewv13p+cHwBK2CD+21MLtIEGfAfiNvLS4akFzkANH4Gu+gFMOg+B7Psfjy/o+79tEjtFXn53ZpHc5xPztEYLIfoDAI4A0VPzcKzGAAAAAElFTkSuQmCC';
 	d.SULFUR = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAwUlEQVR42mNgGAXo4P9/Y7n///Wl//9nYKTQIAP///8NzwIN+w5k/wHir0BsQK6ruICa3wHxEiCbH8I3jPv/X1eJTAP1jICG/Qe6zoxK4WYmDDTwNxDXUzEyDOZBXGkw+/9/cz4qGMjACHIhEP8D4gdkRwgWl1oD8UNoLFtTKy2KAA17DcTzqRimhjuABh4jU7O+IdCAiP//VdihhpkADfsJpJvJdY0z0ICP0KTzDBoxi2EWUJiPDUxBYThaqtEPAAAQY5TwZ4cDHAAAAABJRU5ErkJggg==';
+	d.TEMPLATES = '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';
+	d.TEXT = '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';
 	d.TORSION = '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';
 	d.UNDO = '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';
+	d.VARIABLE_ATTACHMENT_POINTS = 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABNklEQVR42mNgIB/IA/FXIG4EYikgfggVowhUAPFPID4KxJkMVACsQHwfiJ8AMSM1DDQE4hdA/B+Igyg1jAWIzwKxGxCvBuIHQMyJT4MFENvgkS8D4oVQtiwQfwHiJmwKOYC4HYifA/FrIO6GisGAPRQTBUyA+DLUEB6oQSD2daiLQQa9IsZAmKuu4/CmCTSdgdKdKyHDDNBcBQIKQJwCxDlArAF1Ecj7K6CWGuAzsAGIlyPxE4D4MRD3QzHIi5+RvLkYqgevgQ1ILnsMpWER8BZqqAYW9QQNzIC6igEtAvqh3qfYQJg3yTYQ3cvIYjqkGIgeKc+RIuUxkuuIihQDaImBnCMUoN7PQXIZLK3eh6ZLohL2bWiOwJWD+pHSKlHABmoozLXIFgWQWyzxIBUOj6GGCxCrGQCGi08noVxlaAAAAABJRU5ErkJggg==';
 	d.ZOOM_IN = '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';
 	d.ZOOM_OUT = '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';
 
 	return d;
 
 })();
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(desktop, imageDepot, q) {
+ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
+	'use strict';
+	var d = [];
+	
+	var group = {name:'Amino Acids', templates:[]};
+	group.templates.push({
+		name: 'Alanine <b>Ala</b> <i>A</i>',
+		data: {"a":[{"x":195.34,"y":269},{"x":195.34,"y":289,"l":"N"},{"x":178.018,"y":259},{"x":212.66,"y":259},{"x":212.66,"y":239,"l":"O"},{"x":229.982,"y":269,"l":"O"}],"b":[{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":1},{"b":3,"e":5},{"b":3,"e":4,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Alanine <i>chain</i>',
+		data: {"a":[{"x":-29.9995,"y":0,"l":"N"},{"x":-9.9989,"y":0},{"x":9.9989,"y":0},{"x":-9.9989,"y":20.0006},{"x":29.9995,"y":0,"l":"O"},{"x":9.9989,"y":-20.0006,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":4},{"b":2,"e":5,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Alanine <i>side chain</i>',
+		data: {"a":[{"x":-10,"y":0},{"x":10,"y":0}],"b":[{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Arginine <b>Arg</b> <i>R</i>',
+		data: {"a":[{"x":134.718,"y":269,"l":"N"},{"x":152.04,"y":259},{"x":169.36,"y":269,"l":"N"},{"x":152.04,"y":239,"l":"N"},{"x":186.68,"y":259},{"x":204,"y":269},{"x":221.322,"y":259},{"x":238.642,"y":269},{"x":255.962,"y":259},{"x":238.642,"y":289,"l":"N"},{"x":273.282,"y":269,"l":"O"},{"x":255.962,"y":239,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3,"o":2},{"b":2,"e":4},{"b":4,"e":5},{"b":5,"e":6},{"b":7,"e":6},{"b":7,"e":8},{"b":7,"e":9},{"b":8,"e":10},{"b":8,"e":11,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Arginine <i>chain</i>',
+		data: {"a":[{"x":-30.0001,"y":-49.9998,"l":"N"},{"x":-9.9991,"y":-49.9998},{"x":9.9991,"y":-49.9998},{"x":-9.9991,"y":-29.9988},{"x":9.9991,"y":-70.0007,"l":"O"},{"x":30.0001,"y":-49.9998,"l":"O"},{"x":-9.9991,"y":-10.0005},{"x":-9.9991,"y":10.0005},{"x":-9.9991,"y":29.9987,"l":"N"},{"x":-9.9991,"y":49.9997},{"x":-9.9991,"y":70.0007,"l":"N"},{"x":9.9991,"y":49.9997,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":5},{"b":2,"e":4,"o":2},{"b":3,"e":6},{"b":6,"e":7},{"b":7,"e":8},{"b":8,"e":9},{"b":9,"e":10},{"b":9,"e":11,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Arginine <i>side chain</i>',
+		data: {"a":[{"x":-59.9973,"y":9.9986},{"x":-39.9973,"y":9.9986},{"x":-20,"y":9.9986},{"x":-0,"y":9.9986},{"x":19.9972,"y":9.9986,"l":"N"},{"x":39.9973,"y":9.9986},{"x":39.9973,"y":-9.9986,"l":"N"},{"x":59.9973,"y":9.9986,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":3,"e":4},{"b":4,"e":5},{"b":5,"e":7},{"b":5,"e":6,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Asparagine <b>Asn</b> <i>N</i>',
+		data: {"a":[{"x":178.02,"y":269},{"x":178.02,"y":289,"l":"N"},{"x":160.698,"y":259,"l":"O"},{"x":195.34,"y":259},{"x":212.66,"y":269},{"x":229.98,"y":259},{"x":212.66,"y":289,"l":"N"},{"x":247.302,"y":269,"l":"O"},{"x":229.98,"y":239,"l":"O"}],"b":[{"b":0,"e":3},{"b":0,"e":2,"o":2},{"b":0,"e":1},{"b":4,"e":3},{"b":4,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":5,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Asparagine <i>chain</i>',
+		data: {"a":[{"x":-30.0002,"y":-19.9996,"l":"N"},{"x":-9.9991,"y":-19.9996},{"x":-9.9991,"y":0.0014},{"x":9.9991,"y":-19.9996},{"x":-9.9991,"y":19.9996},{"x":9.9991,"y":-40.0007,"l":"O"},{"x":30.0002,"y":-19.9997,"l":"O"},{"x":-9.9991,"y":40.0007,"l":"N"},{"x":9.9991,"y":19.9996,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":6},{"b":3,"e":5,"o":2},{"b":2,"e":4},{"b":4,"e":7},{"b":4,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Asparagine <i>side chain</i>',
+		data: {"a":[{"x":-29.9986,"y":9.9986},{"x":-9.9986,"y":9.9986},{"x":9.9986,"y":9.9986},{"x":29.9986,"y":9.9986,"l":"N"},{"x":9.9986,"y":-9.9986,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":2,"e":4,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Aspartic Acid <b>Asp</b> <i>D</i>',
+		data: {"a":[{"x":178.02,"y":269},{"x":178.02,"y":289,"l":"O"},{"x":195.34,"y":259},{"x":160.698,"y":259,"l":"O"},{"x":212.66,"y":269},{"x":229.98,"y":259},{"x":212.66,"y":289,"l":"N"},{"x":229.98,"y":239,"l":"O"},{"x":247.302,"y":269,"l":"O"}],"b":[{"b":0,"e":2},{"b":0,"e":3,"o":2},{"b":0,"e":1},{"b":4,"e":2},{"b":4,"e":5},{"b":4,"e":6},{"b":5,"e":8},{"b":5,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Aspartic Acid <i>chain</i>',
+		data: {"a":[{"x":-30.0002,"y":-19.9997,"l":"N"},{"x":-9.9991,"y":-19.9997},{"x":-9.9991,"y":0.0014},{"x":9.9991,"y":-19.9997},{"x":-9.9991,"y":19.9996},{"x":30.0002,"y":-19.9997,"l":"O"},{"x":9.9991,"y":-40.0007,"l":"O"},{"x":-9.9991,"y":40.0007,"l":"O"},{"x":9.9991,"y":19.9996,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":5},{"b":3,"e":6,"o":2},{"b":2,"e":4},{"b":4,"e":7},{"b":4,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Aspartic Acid <i>side chain</i>',
+		data: {"a":[{"x":-29.9986,"y":9.9986},{"x":-9.9986,"y":9.9986},{"x":9.9986,"y":9.9986},{"x":9.9986,"y":-9.9986,"l":"O"},{"x":29.9986,"y":9.9986,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":4},{"b":2,"e":3,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Cysteine <b>Cys</b> <i>C</i>',
+		data: {"a":[{"x":169.358,"y":269,"l":"S"},{"x":186.678,"y":259},{"x":203.998,"y":269},{"x":221.32,"y":259},{"x":203.998,"y":289,"l":"N"},{"x":221.32,"y":239,"l":"O"},{"x":238.642,"y":269,"l":"O"}],"b":[{"b":0,"e":1},{"b":2,"e":1},{"b":2,"e":3},{"b":2,"e":4},{"b":3,"e":6},{"b":3,"e":5,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Cysteine <i>chain</i>',
+		data: {"a":[{"x":-30,"y":-9.9991,"l":"N"},{"x":-9.9991,"y":-9.9991},{"x":-9.9991,"y":10.0019},{"x":9.9991,"y":-9.9991},{"x":-9.9991,"y":30,"l":"S"},{"x":30,"y":-9.9991,"l":"O"},{"x":9.9991,"y":-30,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":5},{"b":3,"e":6,"o":2},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Cysteine <i>side chain</i>',
+		data: {"a":[{"x":-19.9986,"y":0},{"x":0.0014,"y":0},{"x":19.9986,"y":0,"l":"S"}],"b":[{"b":0,"e":1},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Glutamic Acid <b>Glu</b> <i>E</i>',
+		data: {"a":[{"x":152.038,"y":269,"l":"O"},{"x":169.358,"y":259},{"x":186.68,"y":269},{"x":169.358,"y":239,"l":"O"},{"x":204,"y":259},{"x":221.32,"y":269},{"x":238.642,"y":259},{"x":221.32,"y":289,"l":"N"},{"x":255.962,"y":269,"l":"O"},{"x":238.642,"y":239,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3,"o":2},{"b":2,"e":4},{"b":5,"e":4},{"b":5,"e":6},{"b":5,"e":7},{"b":6,"e":8},{"b":6,"e":9,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glutamic Acid <i>chain</i>',
+		data: {"a":[{"x":-30.0005,"y":-29.9991,"l":"N"},{"x":-9.9992,"y":-29.9991},{"x":-9.9992,"y":-9.9978},{"x":9.9993,"y":-29.9991},{"x":-9.9992,"y":10.0006},{"x":9.9992,"y":-50.0003,"l":"O"},{"x":30.0005,"y":-29.9991,"l":"O"},{"x":-9.9992,"y":30.0018},{"x":-9.9992,"y":50.0003,"l":"O"},{"x":9.9992,"y":30.0018,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":6},{"b":3,"e":5,"o":2},{"b":2,"e":4},{"b":4,"e":7},{"b":7,"e":8},{"b":7,"e":9,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glutamic Acid <i>side chain</i>',
+		data: {"a":[{"x":-40.0028,"y":10},{"x":-20,"y":10},{"x":0,"y":10},{"x":20.0028,"y":10},{"x":40.0028,"y":10,"l":"O"},{"x":20.0028,"y":-10,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":3,"e":4},{"b":3,"e":5,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glutamine <b>Gln</b> <i>Q</i>',
+		data: {"a":[{"x":152.038,"y":269,"l":"N"},{"x":169.358,"y":259},{"x":186.68,"y":269},{"x":169.358,"y":239,"l":"O"},{"x":204,"y":259},{"x":221.32,"y":269},{"x":238.642,"y":259},{"x":221.32,"y":289,"l":"N"},{"x":238.642,"y":239,"l":"O"},{"x":255.962,"y":269,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3,"o":2},{"b":2,"e":4},{"b":5,"e":4},{"b":5,"e":6},{"b":5,"e":7},{"b":6,"e":9},{"b":6,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glutamine <i>chain</i>',
+		data: {"a":[{"x":-30.0005,"y":-29.9991,"l":"N"},{"x":-9.9992,"y":-29.9991},{"x":9.9992,"y":-29.9991},{"x":-9.9992,"y":-9.9979},{"x":9.9992,"y":-50.0003,"l":"O"},{"x":30.0005,"y":-29.9991,"l":"O"},{"x":-9.9992,"y":10.0006},{"x":-9.9992,"y":30.0018},{"x":-9.9992,"y":50.0003,"l":"N"},{"x":9.9992,"y":30.0018,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":5},{"b":2,"e":4,"o":2},{"b":3,"e":6},{"b":6,"e":7},{"b":7,"e":8},{"b":7,"e":9,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glutamine <i>side chain</i>',
+		data: {"a":[{"x":-40.0028,"y":10},{"x":-20,"y":10},{"x":0,"y":10},{"x":20.0028,"y":10},{"x":40.0027,"y":10,"l":"N"},{"x":20.0028,"y":-10,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":3,"e":4},{"b":3,"e":5,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glycine <b>Gly</b> <i>G</i>',
+		data: {"a":[{"x":186.678,"y":269},{"x":204,"y":259},{"x":186.678,"y":289,"l":"N"},{"x":221.322,"y":269,"l":"O"},{"x":204,"y":239,"l":"O"}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":1,"e":4,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glycine <i>chain</i>',
+		data: {"a":[{"x":-29.9995,"y":0,"l":"N"},{"x":-9.9989,"y":0},{"x":9.9989,"y":0},{"x":-9.9989,"y":20.0005,"l":"H"},{"x":29.9995,"y":0,"l":"O"},{"x":9.9989,"y":-20.0005,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":4},{"b":2,"e":5,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Glycine <i>side chain</i>',
+		data: {"a":[{"x":-10,"y":0},{"x":10,"y":0,"l":"H"}],"b":[{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Histidine <b>His</b> <i>H</i>',
+		data: {"a":[{"x":185.186,"y":266.976},{"x":166.914,"y":258.84,"l":"N"},{"x":183.094,"y":286.866},{"x":202.506,"y":256.976},{"x":153.532,"y":273.704},{"x":163.532,"y":291.024,"l":"N"},{"x":219.826,"y":266.976},{"x":219.826,"y":286.976,"l":"N"},{"x":237.146,"y":256.976},{"x":254.468,"y":266.976,"l":"O"},{"x":237.146,"y":236.976,"l":"O"}],"b":[{"b":0,"e":3},{"b":0,"e":2,"o":2},{"b":0,"e":1},{"b":6,"e":3},{"b":2,"e":5},{"b":4,"e":1,"o":2},{"b":5,"e":4},{"b":6,"e":8},{"b":6,"e":7},{"b":8,"e":9},{"b":8,"e":10,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Histidine <i>chain</i>',
+		data: {"a":[{"x":-30.009,"y":-25.4208,"l":"N"},{"x":-10.0021,"y":-25.4208},{"x":10.0021,"y":-25.4208},{"x":-10.0021,"y":-5.4138},{"x":30.009,"y":-25.4208,"l":"O"},{"x":10.0021,"y":-45.4277,"l":"O"},{"x":-10.0021,"y":14.5903},{"x":6.1209,"y":26.4104},{"x":-26.1636,"y":26.4104,"l":"N"},{"x":0.0179,"y":45.4277,"l":"N"},{"x":-19.9532,"y":45.4277}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":4},{"b":2,"e":5,"o":2},{"b":3,"e":6},{"b":6,"e":8},{"b":8,"e":10,"o":2},{"b":10,"e":9},{"b":9,"e":7},{"b":6,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Histidine <i>side chain</i>',
+		data: {"a":[{"x":-35.4168,"y":-0.0193},{"x":-15.4141,"y":-0.0193},{"x":4.5859,"y":-0.0193},{"x":16.4035,"y":16.1389,"l":"N"},{"x":16.4035,"y":-16.1389},{"x":35.4168,"y":9.9297},{"x":35.4168,"y":-10.0372,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":3,"e":5,"o":2},{"b":5,"e":6},{"b":6,"e":4},{"b":2,"e":4,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Isoleucine <b>Ile</b> <i>I</i>',
+		data: {"a":[{"x":178.02,"y":269},{"x":160.698,"y":259},{"x":195.34,"y":259},{"x":212.66,"y":269},{"x":195.34,"y":239},{"x":212.66,"y":289,"l":"N"},{"x":229.98,"y":259},{"x":247.302,"y":269,"l":"O"},{"x":229.98,"y":239,"l":"O"}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":3},{"b":2,"e":4},{"b":3,"e":6},{"b":3,"e":5},{"b":6,"e":7},{"b":6,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Isoleucine <i>chain</i>',
+		data: {"a":[{"x":-30.0002,"y":-19.9997,"l":"N"},{"x":-9.9991,"y":-19.9997},{"x":-9.9991,"y":0.0014},{"x":9.9991,"y":-19.9997},{"x":9.9991,"y":0.0014},{"x":-9.9991,"y":19.9997},{"x":9.9991,"y":-40.0007,"l":"O"},{"x":30.0002,"y":-19.9997,"l":"O"},{"x":-9.9991,"y":40.0007}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":7},{"b":3,"e":6,"o":2},{"b":2,"e":4},{"b":2,"e":5},{"b":5,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Isoleucine <i>side chain</i>',
+		data: {"a":[{"x":-27.0711,"y":2.5882},{"x":-7.0711,"y":2.5882},{"x":7.0711,"y":16.7303},{"x":-1.8947,"y":-16.7303,"l":"H"},{"x":7.0711,"y":-11.554},{"x":27.0711,"y":16.7303}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":1,"e":2},{"b":2,"e":5},{"b":1,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Leucine <b>Leu</b> <i>L</i>',
+		data: {"a":[{"x":178.02,"y":269},{"x":178.02,"y":289},{"x":160.698,"y":259},{"x":195.34,"y":259},{"x":212.66,"y":269},{"x":212.66,"y":289,"l":"N"},{"x":229.98,"y":259},{"x":247.302,"y":269,"l":"O"},{"x":229.98,"y":239,"l":"O"}],"b":[{"b":0,"e":3},{"b":0,"e":2},{"b":0,"e":1},{"b":4,"e":3},{"b":4,"e":6},{"b":4,"e":5},{"b":6,"e":7},{"b":6,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Leucine <i>chain</i>',
+		data: {"a":[{"x":-30.0002,"y":-19.9997,"l":"N"},{"x":-9.9991,"y":-19.9997},{"x":-9.9991,"y":0.0013},{"x":9.9991,"y":-19.9997},{"x":-9.9991,"y":19.9996},{"x":9.9991,"y":-40.0007,"l":"O"},{"x":30.0002,"y":-19.9997,"l":"O"},{"x":-9.9992,"y":40.0007},{"x":9.9991,"y":19.9996}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":6},{"b":3,"e":5,"o":2},{"b":2,"e":4},{"b":4,"e":8},{"b":4,"e":7}]}
+	});
+	group.templates.push({
+		name: 'Leucine <i>side chain</i>',
+		data: {"a":[{"x":-29.9986,"y":9.9986},{"x":-9.9986,"y":9.9986},{"x":9.9986,"y":9.9986},{"x":29.9986,"y":9.9986},{"x":9.9986,"y":-9.9986}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":4},{"b":2,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Lysine <b>Lys</b> <i>K</i>',
+		data: {"a":[{"x":160.698,"y":269},{"x":143.378,"y":259,"l":"N"},{"x":178.02,"y":259},{"x":195.34,"y":269},{"x":212.66,"y":259},{"x":229.98,"y":269},{"x":247.302,"y":259},{"x":229.98,"y":289,"l":"N"},{"x":264.622,"y":269,"l":"O"},{"x":247.302,"y":239,"l":"O"}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":3},{"b":3,"e":4},{"b":5,"e":4},{"b":5,"e":6},{"b":5,"e":7},{"b":6,"e":8},{"b":6,"e":9,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Lysine <i>chain</i>',
+		data: {"a":[{"x":-30,"y":-39.9991,"l":"N"},{"x":-9.9991,"y":-39.9991},{"x":-9.9991,"y":-19.9982},{"x":9.9991,"y":-39.9991},{"x":-9.9991,"y":-0},{"x":30,"y":-39.9991,"l":"O"},{"x":9.9991,"y":-60,"l":"O"},{"x":-9.9991,"y":20.0009},{"x":-9.9991,"y":39.9991},{"x":-9.9991,"y":60.0001,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":5},{"b":3,"e":6,"o":2},{"b":2,"e":4},{"b":4,"e":7},{"b":7,"e":8},{"b":8,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Lysine <i>side chain</i>',
+		data: {"a":[{"x":-49.9973,"y":0},{"x":-29.9973,"y":0},{"x":-10,"y":0},{"x":10,"y":0},{"x":29.9973,"y":0},{"x":49.9973,"y":0,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":3,"e":4},{"b":4,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Methionine <b>Met</b> <i>M</i>',
+		data: {"a":[{"x":169.36,"y":259,"l":"S"},{"x":152.038,"y":269},{"x":186.68,"y":269},{"x":204,"y":259},{"x":221.32,"y":269},{"x":221.32,"y":289,"l":"N"},{"x":238.642,"y":259},{"x":255.962,"y":269,"l":"O"},{"x":238.642,"y":239,"l":"O"}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":2,"e":3},{"b":4,"e":3},{"b":4,"e":6},{"b":4,"e":5},{"b":6,"e":7},{"b":6,"e":8,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Methionine <i>chain</i>',
+		data: {"a":[{"x":-30.0002,"y":-29.9989,"l":"N"},{"x":-9.9992,"y":-29.9989},{"x":9.9991,"y":-29.9989},{"x":-9.9991,"y":-9.9978},{"x":9.9991,"y":-49.9999,"l":"O"},{"x":30.0002,"y":-29.9989,"l":"O"},{"x":-9.9991,"y":10.0004},{"x":-9.9991,"y":30.0015,"l":"S"},{"x":-9.9992,"y":49.9998}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":5},{"b":2,"e":4,"o":2},{"b":3,"e":6},{"b":6,"e":7},{"b":7,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Methionine <i>side chain</i>',
+		data: {"a":[{"x":-39.9972,"y":0},{"x":-19.9972,"y":0},{"x":0,"y":0},{"x":20,"y":0,"l":"S"},{"x":39.9972,"y":0}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":3,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Phenylalanine <b>Phe</b> <i>F</i>',
+		data: {"a":[{"x":186.678,"y":264},{"x":169.358,"y":254},{"x":186.678,"y":284},{"x":204,"y":254},{"x":152.04,"y":264},{"x":169.358,"y":294},{"x":221.322,"y":264},{"x":152.04,"y":284},{"x":238.64,"y":254},{"x":221.322,"y":284,"l":"N"},{"x":255.96,"y":264,"l":"O"},{"x":238.64,"y":234,"l":"O"}],"b":[{"b":0,"e":2,"o":2},{"b":0,"e":1},{"b":0,"e":3},{"b":2,"e":5},{"b":4,"e":1,"o":2},{"b":6,"e":3},{"b":5,"e":7,"o":2},{"b":7,"e":4},{"b":6,"e":8},{"b":6,"e":9},{"b":8,"e":10},{"b":8,"e":11,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Phenylalanine <i>chain</i>',
+		data: {"a":[{"x":-29.9902,"y":-30.0426,"l":"N"},{"x":-9.9958,"y":-30.0426},{"x":-9.9958,"y":-10.0482},{"x":9.9958,"y":-30.0426},{"x":-9.9958,"y":9.9435},{"x":29.9902,"y":-30.0426,"l":"O"},{"x":9.9958,"y":-50.037,"l":"O"},{"x":-27.3098,"y":19.993},{"x":7.2823,"y":19.993},{"x":-27.3098,"y":40.0232},{"x":7.2823,"y":40.0232},{"x":-9.9958,"y":50.037}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":5},{"b":3,"e":6,"o":2},{"b":2,"e":4},{"b":4,"e":7,"o":2},{"b":7,"e":9},{"b":9,"e":11,"o":2},{"b":11,"e":10},{"b":10,"e":8,"o":2},{"b":4,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Phenylalanine <i>side chain</i>',
+		data: {"a":[{"x":-40.0373,"y":-0.0179},{"x":-20.0442,"y":-0.0179},{"x":-0.0537,"y":-0.0179},{"x":9.9952,"y":17.295},{"x":9.9952,"y":-17.295},{"x":30.0242,"y":17.295},{"x":30.0242,"y":-17.295},{"x":40.0373,"y":-0.0179}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3,"o":2},{"b":3,"e":5},{"b":5,"e":7,"o":2},{"b":7,"e":6},{"b":6,"e":4,"o":2},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Proline <b>Pro</b> <i>P</i>',
+		data: {"a":[{"x":202.506,"y":266.976},{"x":184.236,"y":258.84},{"x":200.414,"y":286.866,"l":"N"},{"x":219.828,"y":256.976},{"x":170.854,"y":273.704},{"x":180.854,"y":291.024},{"x":237.148,"y":266.976,"l":"O"},{"x":219.828,"y":236.976,"l":"O"}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":0,"e":3},{"b":2,"e":5},{"b":4,"e":1},{"b":5,"e":4},{"b":3,"e":6},{"b":3,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Proline <i>chain</i>',
+		data: {"a":[{"x":14.9378,"y":29.9651},{"x":14.9378,"y":9.9874},{"x":-4.0875,"y":36.1665},{"x":-4.0875,"y":3.786},{"x":-15.8902,"y":19.9597,"l":"N"},{"x":-4.0875,"y":-16.1888},{"x":15.8902,"y":-16.1888,"l":"O"},{"x":-4.0875,"y":-36.1665,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":4},{"b":4,"e":2},{"b":0,"e":2},{"b":3,"e":5},{"b":5,"e":6},{"b":5,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Proline <i>side chain</i>',
+		data: {"a":[{"x":15.4059,"y":9.9836},{"x":15.4059,"y":-9.9836},{"x":-3.6094,"y":16.1817},{"x":-3.6094,"y":-16.1817},{"x":-15.4059,"y":-0.0165}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":4,"e":2},{"b":0,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Serine <b>Ser</b> <i>S</i>',
+		data: {"a":[{"x":204.002,"y":269},{"x":221.322,"y":259},{"x":186.678,"y":259},{"x":204.002,"y":289,"l":"N"},{"x":238.642,"y":269,"l":"O"},{"x":221.322,"y":239,"l":"O"},{"x":169.358,"y":269,"l":"O"}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":0,"e":3},{"b":2,"e":6},{"b":1,"e":4},{"b":1,"e":5,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Serine <i>chain</i>',
+		data: {"a":[{"x":-30,"y":-9.9991,"l":"N"},{"x":-9.9991,"y":-9.9991},{"x":9.9991,"y":-9.9991},{"x":-9.9991,"y":10.0019},{"x":30,"y":-9.9991,"l":"O"},{"x":9.9991,"y":-29.9999,"l":"O"},{"x":-9.9991,"y":30,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":4},{"b":2,"e":5,"o":2},{"b":3,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Serine <i>side chain</i>',
+		data: {"a":[{"x":-19.9986,"y":0},{"x":0.0014,"y":0},{"x":19.9986,"y":0,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Threonine <b>Thr</b> <i>T</i>',
+		data: {"a":[{"x":204.002,"y":269},{"x":221.322,"y":259},{"x":204.002,"y":289,"l":"N"},{"x":186.68,"y":259},{"x":221.322,"y":239,"l":"O"},{"x":238.642,"y":269,"l":"O"},{"x":186.68,"y":239,"l":"O"},{"x":169.358,"y":269}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":4,"o":2},{"b":1,"e":5},{"b":3,"e":7},{"b":3,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Threonine <i>chain</i>',
+		data: {"a":[{"x":-30.0004,"y":-9.9993,"l":"N"},{"x":-9.9992,"y":-9.9993},{"x":-9.9992,"y":10.002},{"x":9.9992,"y":-9.9993},{"x":-9.9992,"y":30.0004},{"x":9.9992,"y":10.002,"l":"O"},{"x":30.0004,"y":-9.9992,"l":"O"},{"x":9.9992,"y":-30.0004,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":6},{"b":3,"e":7,"o":2},{"b":2,"e":5},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Threonine <i>side chain</i>',
+		data: {"a":[{"x":-17.0711,"y":0.999},{"x":2.9289,"y":0.999},{"x":8.1053,"y":-18.3195,"l":"H"},{"x":12.9289,"y":18.3195},{"x":17.0711,"y":-13.1431,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":1,"e":3},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Tryptophan <b>Trp</b> <i>W</i>',
+		data: {"a":[{"x":232.89,"y":267.526},{"x":232.89,"y":287.526,"l":"N"},{"x":250.21,"y":257.526},{"x":215.57,"y":257.526},{"x":267.532,"y":267.526,"l":"O"},{"x":250.21,"y":237.526,"l":"O"},{"x":198.248,"y":267.526},{"x":196.158,"y":287.418},{"x":179.98,"y":259.392},{"x":176.596,"y":291.576,"l":"N"},{"x":173.23,"y":240.256},{"x":166.596,"y":274.254},{"x":153.6,"y":236.424},{"x":146.968,"y":270.424},{"x":140.468,"y":251.51}],"b":[{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":1},{"b":2,"e":4},{"b":2,"e":5,"o":2},{"b":3,"e":6},{"b":6,"e":7,"o":2},{"b":6,"e":8},{"b":7,"e":9},{"b":11,"e":8,"o":2},{"b":10,"e":8},{"b":9,"e":11},{"b":11,"e":13},{"b":12,"e":10,"o":2},{"b":13,"e":14,"o":2},{"b":14,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Tryptophan <i>chain</i>',
+		data: {"a":[{"x":-34.5594,"y":-32.7962,"l":"N"},{"x":-14.5632,"y":-32.7962},{"x":-14.5632,"y":-12.8},{"x":5.4302,"y":-32.7962},{"x":-14.5632,"y":7.1934},{"x":25.4264,"y":-32.7962,"l":"O"},{"x":5.4302,"y":-52.7924,"l":"O"},{"x":-30.7519,"y":18.8666},{"x":1.5511,"y":18.8666},{"x":-24.6495,"y":37.8737,"l":"N"},{"x":-4.6891,"y":37.8737},{"x":21.1946,"y":14.7065},{"x":8.6757,"y":52.7924},{"x":34.5594,"y":29.6581},{"x":28.2834,"y":48.7011}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":5},{"b":3,"e":6,"o":2},{"b":2,"e":4},{"b":4,"e":7,"o":2},{"b":7,"e":9},{"b":9,"e":10},{"b":10,"e":8,"o":2},{"b":4,"e":8},{"b":10,"e":12},{"b":12,"e":14,"o":2},{"b":14,"e":13},{"b":13,"e":11,"o":2},{"b":8,"e":11}]}
+	});
+	group.templates.push({
+		name: 'Tryptophan <i>side chain</i>',
+		data: {"a":[{"x":-42.876,"y":16.3756},{"x":-22.8416,"y":16.3756},{"x":-2.81,"y":16.3756},{"x":9.0262,"y":0.2305},{"x":9.0262,"y":32.5593},{"x":4.9631,"y":-19.0972},{"x":28.0696,"y":6.3418},{"x":28.0696,"y":26.3403,"l":"N"},{"x":19.6976,"y":-32.5593},{"x":42.876,"y":-7.0485},{"x":38.6693,"y":-26.517}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":4,"o":2},{"b":4,"e":7},{"b":7,"e":6},{"b":6,"e":3,"o":2},{"b":2,"e":3},{"b":6,"e":9},{"b":9,"e":10,"o":2},{"b":10,"e":8},{"b":8,"e":5,"o":2},{"b":3,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Tyrosine <b>Tyr</b> <i>Y</i>',
+		data: {"a":[{"x":247.3,"y":254},{"x":247.3,"y":234,"l":"O"},{"x":229.98,"y":264},{"x":264.622,"y":264,"l":"O"},{"x":212.66,"y":254},{"x":229.98,"y":284,"l":"N"},{"x":195.34,"y":264},{"x":195.34,"y":284},{"x":178.018,"y":254},{"x":178.018,"y":294},{"x":160.698,"y":264},{"x":160.698,"y":284},{"x":143.378,"y":294,"l":"O"}],"b":[{"b":0,"e":1,"o":2},{"b":0,"e":3},{"b":0,"e":2},{"b":2,"e":4},{"b":2,"e":5},{"b":4,"e":6},{"b":6,"e":7,"o":2},{"b":6,"e":8},{"b":7,"e":9},{"b":10,"e":8,"o":2},{"b":9,"e":11,"o":2},{"b":11,"e":10},{"b":11,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Tyrosine <i>chain</i>',
+		data: {"a":[{"x":-29.9912,"y":-40.0397,"l":"N"},{"x":-9.9962,"y":-40.0397},{"x":9.9961,"y":-40.0397},{"x":-9.9962,"y":-20.0447},{"x":29.9911,"y":-40.0397,"l":"O"},{"x":9.9961,"y":-60.0347,"l":"O"},{"x":-9.9962,"y":-0.0524},{"x":7.2826,"y":9.9976},{"x":-27.3107,"y":9.9976},{"x":7.2826,"y":30.0284},{"x":-27.3107,"y":30.0285},{"x":-9.9962,"y":40.0424},{"x":-9.9962,"y":60.0347,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":2,"e":4},{"b":2,"e":5,"o":2},{"b":3,"e":6},{"b":6,"e":8,"o":2},{"b":8,"e":10},{"b":10,"e":11,"o":2},{"b":11,"e":9},{"b":9,"e":7,"o":2},{"b":6,"e":7},{"b":11,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Tyrosine <i>side chain</i>',
+		data: {"a":[{"x":-50.0496,"y":-0.0179},{"x":-30.0496,"y":-0.0179},{"x":-10.0524,"y":-0.0179},{"x":0,"y":17.3009},{"x":0,"y":-17.3009},{"x":20.0358,"y":17.3009},{"x":20.0358,"y":-17.3009},{"x":30.0524,"y":-0.0179},{"x":50.0496,"y":-0.0179,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3,"o":2},{"b":3,"e":5},{"b":5,"e":7,"o":2},{"b":7,"e":6},{"b":6,"e":4,"o":2},{"b":2,"e":4},{"b":7,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Valine <b>Val</b> <i>V</i>',
+		data: {"a":[{"x":204,"y":269},{"x":204,"y":289,"l":"N"},{"x":186.678,"y":259},{"x":221.322,"y":259},{"x":186.678,"y":239},{"x":169.36,"y":269},{"x":238.64,"y":269,"l":"O"},{"x":221.322,"y":239,"l":"O"}],"b":[{"b":0,"e":3},{"b":0,"e":2},{"b":0,"e":1},{"b":3,"e":6},{"b":3,"e":7,"o":2},{"b":2,"e":5},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Valine <i>chain</i>',
+		data: {"a":[{"x":-30.0004,"y":-9.9992,"l":"N"},{"x":-9.9992,"y":-9.9992},{"x":-9.9992,"y":10.0019},{"x":9.9992,"y":-9.9992},{"x":9.9992,"y":10.0019},{"x":-9.9992,"y":30.0004},{"x":30.0004,"y":-9.9992,"l":"O"},{"x":9.9992,"y":-30.0005,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":3,"e":6},{"b":3,"e":7,"o":2},{"b":2,"e":4},{"b":2,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Valine <i>side chain</i>',
+		data: {"a":[{"x":-20.0014,"y":10},{"x":0.0014,"y":10},{"x":20.0014,"y":10},{"x":0.0014,"y":-10}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2}]}
+	});
+	d.push(group);
+	
+	group = {name:'Cyclic Terpenes', templates:[]};
+	group.templates.push({
+		name: 'Bornane',
+		data: {"a":[{"x":-1.0324,"y":-18.324},{"x":9.6351,"y":-4.5595},{"x":-16.3453,"y":-28.3032},{"x":-5.3337,"y":12.4741},{"x":14.1611,"y":-27.0959},{"x":-10.8395,"y":1.8066},{"x":25.2923,"y":1.8066},{"x":-14.2806,"y":28.3032},{"x":-25.2923,"y":15.9152},{"x":14.7968,"y":16.6035}],"b":[{"b":0,"e":4},{"b":0,"e":2},{"b":0,"e":1},{"b":1,"e":6},{"b":6,"e":9},{"b":9,"e":3},{"b":3,"e":7},{"b":8,"e":3},{"b":8,"e":5},{"b":5,"e":1},{"b":0,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Carane',
+		data: {"a":[{"x":-19.9985,"y":-39.643},{"x":-9.9992,"y":-22.3243},{"x":-19.9985,"y":-5.0056},{"x":9.9992,"y":-22.3242},{"x":-9.9992,"y":12.3151},{"x":19.9985,"y":-5.0056},{"x":0,"y":29.6437},{"x":9.9992,"y":12.3151},{"x":-17.3187,"y":39.643},{"x":17.3187,"y":39.643}],"b":[{"b":4,"e":6},{"b":7,"e":6},{"b":6,"e":9},{"b":6,"e":8},{"b":4,"e":7},{"b":4,"e":2},{"b":7,"e":5},{"b":2,"e":1},{"b":5,"e":3},{"b":1,"e":3},{"b":1,"e":0}]}
+	});
+	group.templates.push({
+		name: 'Menthane',
+		data: {"a":[{"x":-17.3202,"y":-5.0001},{"x":-17.3203,"y":15.0002},{"x":0,"y":-15.0002},{"x":0,"y":25.0003},{"x":17.3203,"y":-5.0001},{"x":0,"y":-35.0005},{"x":17.3202,"y":15.0002},{"x":0,"y":45.0006},{"x":-17.3203,"y":-45.0006},{"x":17.3202,"y":-45.0006}],"b":[{"b":2,"e":0},{"b":2,"e":4},{"b":2,"e":5},{"b":0,"e":1},{"b":4,"e":6},{"b":3,"e":6},{"b":3,"e":1},{"b":3,"e":7},{"b":5,"e":9},{"b":5,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Norbornane 1',
+		data: {"a":[{"x":-0.995,"y":-16.8329},{"x":-5.1411,"y":12.8527},{"x":9.2871,"y":-3.5656},{"x":-24.3787,"y":16.1695},{"x":14.2624,"y":16.8329},{"x":-10.448,"y":2.5705},{"x":24.3787,"y":2.5705}],"b":[{"b":0,"e":2},{"b":2,"e":6},{"b":6,"e":4},{"b":4,"e":1},{"b":3,"e":1},{"b":3,"e":5},{"b":5,"e":2},{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Norbornane 2',
+		data: {"a":[{"x":0,"y":-19.7533},{"x":-6.3211,"y":0},{"x":17.1069,"y":-9.8766},{"x":-17.1069,"y":-9.8766},{"x":0,"y":19.7533},{"x":17.1069,"y":9.8767},{"x":-17.1069,"y":9.8767}],"b":[{"b":0,"e":3},{"b":3,"e":6},{"b":6,"e":4},{"b":4,"e":5},{"b":5,"e":2},{"b":2,"e":0},{"b":4,"e":1},{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Norcarane',
+		data: {"a":[{"x":9.9989,"y":-25.983},{"x":19.9977,"y":-8.665},{"x":-9.9989,"y":-25.983},{"x":9.9989,"y":8.653},{"x":-19.9977,"y":-8.665},{"x":0,"y":25.9831},{"x":-9.9989,"y":8.653}],"b":[{"b":3,"e":6},{"b":3,"e":5},{"b":3,"e":1},{"b":6,"e":5},{"b":6,"e":4},{"b":1,"e":0},{"b":4,"e":2},{"b":0,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Norpinane',
+		data: {"a":[{"x":-9.0329,"y":-16.7698},{"x":-14.1777,"y":-0.5106},{"x":-5.027,"y":9.1507},{"x":3.6889,"y":3.8049},{"x":-24.1925,"y":16.7698},{"x":15.081,"y":13.8636},{"x":24.1925,"y":0.3535}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":6},{"b":6,"e":5},{"b":5,"e":2},{"b":4,"e":2},{"b":4,"e":1},{"b":0,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Pinane',
+		data: {"a":[{"x":-9.3626,"y":-10.136},{"x":-24.0985,"y":-22.6738},{"x":3.2566,"y":-24.6277},{"x":-5.2105,"y":16.7306},{"x":-14.6952,"y":6.7166},{"x":15.6315,"y":21.6154},{"x":-25.0755,"y":24.6277},{"x":5.5362,"y":2.646},{"x":25.0755,"y":7.6122},{"x":13.3519,"y":-10.6245}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":0,"e":4},{"b":4,"e":7},{"b":7,"e":9},{"b":7,"e":8},{"b":8,"e":5},{"b":5,"e":3},{"b":6,"e":3},{"b":6,"e":4},{"b":0,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Thujane',
+		data: {"a":[{"x":-24.0519,"y":2.3998},{"x":-12.2969,"y":-13.7808},{"x":-12.2969,"y":18.5784},{"x":6.7214,"y":-7.5993},{"x":6.7214,"y":12.399},{"x":-18.4764,"y":37.5967},{"x":6.7214,"y":-27.5976},{"x":24.0519,"y":2.3998},{"x":24.0419,"y":-37.5967},{"x":-10.5971,"y":-37.5967}],"b":[{"b":3,"e":4},{"b":3,"e":7},{"b":3,"e":1},{"b":3,"e":6},{"b":4,"e":7},{"b":4,"e":2},{"b":2,"e":0},{"b":2,"e":5},{"b":1,"e":0},{"b":6,"e":8},{"b":6,"e":9}]}
+	});
+	d.push(group);
+	
+	group = {name:'Cycloalkanes', templates:[]};
+	group.templates.push({
+		name: '<a></a><b>9</b> Nonane <i>packed</i>',
+		data: {"a":[{"x":236.708,"y":264},{"x":224.954,"y":247.82},{"x":224.954,"y":280.178},{"x":205.932,"y":254},{"x":205.932,"y":273.998},{"x":188.612,"y":244},{"x":188.612,"y":284},{"x":171.29,"y":254},{"x":171.29,"y":273.998}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":7}]}
+	});
+	group.templates.push({
+		name: '<a></a><b>9</b> Nonane <i>unpacked</i>',
+		data: {"a":[{"x":175.644,"y":274},{"x":175.644,"y":254},{"x":188.5,"y":289.32},{"x":188.5,"y":238.68},{"x":208.196,"y":292.794},{"x":208.196,"y":235.206},{"x":225.516,"y":282.794},{"x":225.516,"y":245.206},{"x":232.356,"y":264}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":7}]}
+	});
+	group.templates.push({
+		name: '<b>10</b> Decane <i>packed</i>',
+		data: {"a":[{"x":186.678,"y":244},{"x":169.36,"y":254},{"x":204,"y":254},{"x":169.36,"y":274},{"x":221.32,"y":244},{"x":186.678,"y":284},{"x":238.642,"y":254},{"x":204,"y":274},{"x":238.642,"y":274},{"x":221.32,"y":284}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":5,"e":3},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":9},{"b":9,"e":7}]}
+	});
+	group.templates.push({
+		name: '<b>10</b> Decane <i>unpacked</i>',
+		data: {"a":[{"x":173.224,"y":274},{"x":184.978,"y":290.18},{"x":173.224,"y":254},{"x":204,"y":296.36},{"x":184.978,"y":237.82},{"x":223.022,"y":290.18},{"x":204,"y":231.64},{"x":234.776,"y":274},{"x":223.022,"y":237.82},{"x":234.776,"y":254}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":9,"e":8}]}
+	});
+	group.templates.push({
+		name: '<b>11</b> Undecane <i>packed</i>',
+		data: {"a":[{"x":169.358,"y":243.61},{"x":169.358,"y":263.612},{"x":186.678,"y":233.612},{"x":186.678,"y":273.61},{"x":204,"y":243.61},{"x":193.998,"y":294.388},{"x":221.318,"y":233.612},{"x":213.998,"y":294.388},{"x":238.64,"y":243.61},{"x":221.318,"y":273.61},{"x":238.64,"y":263.612}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":5,"e":3},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":9}]}
+	});
+	group.templates.push({
+		name: '<b>11</b> Undecane <i>unpacked</i>',
+		data: {"a":[{"x":169.224,"y":274},{"x":180.038,"y":290.826},{"x":169.224,"y":254},{"x":198.23,"y":299.134},{"x":180.038,"y":237.174},{"x":218.026,"y":296.288},{"x":198.23,"y":228.866},{"x":233.142,"y":283.19},{"x":218.026,"y":231.712},{"x":238.776,"y":264},{"x":233.142,"y":244.81}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":10}]}
+	});
+	group.templates.push({
+		name: '<b>12</b> Dodecane <i>packed</i>',
+		data: {"a":[{"x":204,"y":229},{"x":186.678,"y":239},{"x":221.32,"y":239},{"x":186.678,"y":259},{"x":221.32,"y":259},{"x":169.358,"y":269},{"x":238.64,"y":269},{"x":169.358,"y":289},{"x":238.64,"y":289},{"x":186.678,"y":299},{"x":221.32,"y":299},{"x":204,"y":289}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":11},{"b":11,"e":9}]}
+	});
+	group.templates.push({
+		name: '<b>12</b> Dodecane <i>unpacked</i>',
+		data: {"a":[{"x":166.68,"y":274},{"x":176.68,"y":291.32},{"x":166.68,"y":254},{"x":194,"y":301.32},{"x":176.68,"y":236.68},{"x":214,"y":301.32},{"x":194,"y":226.68},{"x":231.32,"y":291.32},{"x":214,"y":226.68},{"x":241.32,"y":274},{"x":231.32,"y":236.68},{"x":241.32,"y":254}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":11,"e":10}]}
+	});
+	group.templates.push({
+		name: '<b>13</b> Tridecane <i>packed</i>',
+		data: {"a":[{"x":204,"y":218.612},{"x":221.322,"y":228.614},{"x":186.68,"y":228.614},{"x":221.322,"y":248.612},{"x":186.68,"y":248.612},{"x":238.64,"y":258.614},{"x":169.358,"y":258.614},{"x":238.64,"y":278.612},{"x":169.358,"y":278.612},{"x":221.322,"y":288.614},{"x":186.68,"y":288.614},{"x":214.002,"y":309.388},{"x":194,"y":309.388}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":12,"e":10},{"b":11,"e":12}]}
+	});
+	group.templates.push({
+		name: '<b>13</b> Tridecane <i>unpacked</i>',
+		data: {"a":[{"x":162.822,"y":274},{"x":172.116,"y":291.71},{"x":162.822,"y":254},{"x":188.576,"y":303.07},{"x":172.116,"y":236.29},{"x":208.43,"y":305.482},{"x":188.576,"y":224.93},{"x":227.13,"y":298.39},{"x":208.43,"y":222.518},{"x":240.392,"y":283.418},{"x":227.13,"y":229.61},{"x":245.178,"y":264},{"x":240.392,"y":244.582}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":12,"e":10},{"b":11,"e":12}]}
+	});
+	group.templates.push({
+		name: '<b>14</b> Tetradecane <i>packed</i>',
+		data: {"a":[{"x":204,"y":214},{"x":186.68,"y":224},{"x":221.32,"y":224},{"x":186.68,"y":244},{"x":221.32,"y":244},{"x":169.358,"y":254},{"x":238.642,"y":254},{"x":169.358,"y":274},{"x":238.642,"y":274},{"x":186.68,"y":284},{"x":221.32,"y":284},{"x":186.68,"y":304},{"x":221.32,"y":304},{"x":204,"y":314}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":5,"e":3},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":11,"e":9},{"b":12,"e":13},{"b":13,"e":11}]}
+	});
+	group.templates.push({
+		name: '<b>14</b> Tetradecane <i>unpacked</i>',
+		data: {"a":[{"x":160.188,"y":274},{"x":168.864,"y":292.02},{"x":160.188,"y":254},{"x":184.502,"y":304.49},{"x":168.864,"y":235.98},{"x":204,"y":308.94},{"x":184.502,"y":223.51},{"x":223.498,"y":304.49},{"x":204,"y":219.06},{"x":239.136,"y":292.02},{"x":223.498,"y":223.51},{"x":247.812,"y":274},{"x":239.136,"y":235.98},{"x":247.812,"y":254}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":12,"e":10},{"b":11,"e":13},{"b":13,"e":12}]}
+	});
+	group.templates.push({
+		name: '<b>15</b> Pendecane <i>packed</i>',
+		data: {"a":[{"x":184,"y":251.23},{"x":164,"y":251.23},{"x":186.226,"y":233.358},{"x":154,"y":268.548},{"x":204.306,"y":224.808},{"x":164,"y":285.87},{"x":222.264,"y":233.61},{"x":184,"y":285.87},{"x":224,"y":251.23},{"x":194,"y":303.192},{"x":244,"y":251.23},{"x":214,"y":303.192},{"x":254,"y":268.548},{"x":224,"y":285.87},{"x":244,"y":285.87}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":3,"e":1},{"b":2,"e":4},{"b":5,"e":3},{"b":4,"e":6},{"b":7,"e":5},{"b":6,"e":8},{"b":9,"e":7},{"b":8,"e":10},{"b":11,"e":9},{"b":10,"e":12},{"b":13,"e":11},{"b":12,"e":14},{"b":14,"e":13}]}
+	});
+	group.templates.push({
+		name: '<b>15</b> Pendecane <i>unpacked</i>',
+		data: {"a":[{"x":156.428,"y":274},{"x":164.562,"y":292.27},{"x":156.428,"y":254},{"x":179.426,"y":305.654},{"x":164.562,"y":235.728},{"x":198.446,"y":311.834},{"x":179.426,"y":222.346},{"x":218.338,"y":309.744},{"x":198.446,"y":216.166},{"x":235.658,"y":299.744},{"x":218.338,"y":218.256},{"x":247.414,"y":283.562},{"x":235.658,"y":228.256},{"x":251.572,"y":264},{"x":247.414,"y":244.438}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":3,"e":1},{"b":2,"e":4},{"b":5,"e":3},{"b":4,"e":6},{"b":7,"e":5},{"b":6,"e":8},{"b":9,"e":7},{"b":8,"e":10},{"b":11,"e":9},{"b":10,"e":12},{"b":13,"e":11},{"b":12,"e":14},{"b":14,"e":13}]}
+	});
+	group.templates.push({
+		name: '<b>16</b> Hexadecane <i>packed</i>',
+		data: {"a":[{"x":186.68,"y":229},{"x":204.002,"y":239},{"x":169.36,"y":239},{"x":221.32,"y":229},{"x":169.36,"y":259},{"x":238.642,"y":239},{"x":152.038,"y":269},{"x":238.642,"y":259},{"x":152.038,"y":289},{"x":255.962,"y":269},{"x":169.36,"y":299},{"x":255.962,"y":289},{"x":186.68,"y":289},{"x":238.642,"y":299},{"x":204.002,"y":299},{"x":221.32,"y":289}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":12,"e":10},{"b":11,"e":13},{"b":14,"e":12},{"b":15,"e":13},{"b":15,"e":14}]}
+	});
+	group.templates.push({
+		name: '<b>16</b> Hexadecane <i>unpacked</i>',
+		data: {"a":[{"x":153.726,"y":274},{"x":161.38,"y":292.478},{"x":153.726,"y":254},{"x":175.522,"y":306.62},{"x":161.38,"y":235.522},{"x":194,"y":314.274},{"x":175.522,"y":221.38},{"x":214,"y":314.274},{"x":194,"y":213.726},{"x":232.478,"y":306.62},{"x":214,"y":213.726},{"x":246.62,"y":292.478},{"x":232.478,"y":221.38},{"x":254.274,"y":274},{"x":246.62,"y":235.522},{"x":254.274,"y":254}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":12,"e":10},{"b":11,"e":13},{"b":14,"e":12},{"b":15,"e":13},{"b":15,"e":14}]}
+	});
+	group.templates.push({
+		name: '<b>17</b> Heptadecane <i>packed</i>',
+		data: {"a":[{"x":152.038,"y":228.614},{"x":152.038,"y":248.612},{"x":169.358,"y":218.612},{"x":169.358,"y":258.614},{"x":186.68,"y":228.614},{"x":169.358,"y":278.612},{"x":203.998,"y":218.612},{"x":186.68,"y":288.614},{"x":221.32,"y":228.614},{"x":194,"y":309.388},{"x":238.64,"y":218.612},{"x":214,"y":309.388},{"x":255.962,"y":228.614},{"x":221.32,"y":288.614},{"x":255.962,"y":248.612},{"x":238.64,"y":278.612},{"x":238.64,"y":258.614}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":5,"e":3},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":11,"e":9},{"b":12,"e":14},{"b":13,"e":11},{"b":14,"e":16},{"b":15,"e":13},{"b":16,"e":15}]}
+	});
+	group.templates.push({
+		name: '<b>17</b> Heptadecane <i>unpacked</i>',
+		data: {"a":[{"x":150.042,"y":274},{"x":150.042,"y":254},{"x":157.266,"y":292.65},{"x":157.266,"y":235.35},{"x":170.74,"y":307.43},{"x":170.74,"y":220.57},{"x":188.644,"y":316.344},{"x":188.644,"y":211.656},{"x":208.558,"y":318.19},{"x":208.558,"y":209.81},{"x":227.794,"y":312.716},{"x":227.794,"y":215.284},{"x":243.754,"y":300.664},{"x":243.754,"y":227.336},{"x":254.284,"y":283.66},{"x":254.284,"y":244.34},{"x":257.958,"y":264}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":5,"e":3},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":11,"e":9},{"b":12,"e":14},{"b":13,"e":11},{"b":14,"e":16},{"b":15,"e":13},{"b":16,"e":15}]}
+	});
+	group.templates.push({
+		name: '<b>18</b> Octodecane <i>packed</i>',
+		data: {"a":[{"x":186.68,"y":214},{"x":169.36,"y":224},{"x":204.002,"y":224},{"x":169.36,"y":244},{"x":221.32,"y":214},{"x":152.038,"y":254},{"x":238.642,"y":224},{"x":152.038,"y":274},{"x":238.642,"y":244},{"x":169.36,"y":284},{"x":255.962,"y":254},{"x":169.36,"y":304},{"x":255.962,"y":274},{"x":186.68,"y":314},{"x":238.642,"y":284},{"x":204.002,"y":304},{"x":238.642,"y":304},{"x":221.32,"y":314}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":11,"e":9},{"b":12,"e":14},{"b":13,"e":11},{"b":14,"e":16},{"b":15,"e":13},{"b":16,"e":17},{"b":17,"e":15}]}
+	});
+	group.templates.push({
+		name: '<b>18</b> Octodecane <i>unpacked</i>',
+		data: {"a":[{"x":147.288,"y":274},{"x":147.288,"y":254},{"x":154.128,"y":292.794},{"x":154.128,"y":235.206},{"x":166.984,"y":308.114},{"x":166.984,"y":219.886},{"x":184.304,"y":318.114},{"x":184.304,"y":209.886},{"x":204,"y":321.588},{"x":204,"y":206.412},{"x":223.696,"y":318.114},{"x":223.696,"y":209.886},{"x":241.016,"y":308.114},{"x":241.016,"y":219.886},{"x":253.872,"y":292.794},{"x":253.872,"y":235.206},{"x":260.712,"y":274},{"x":260.712,"y":254}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":11,"e":9},{"b":12,"e":14},{"b":13,"e":11},{"b":14,"e":16},{"b":15,"e":13},{"b":16,"e":17},{"b":17,"e":15}]}
+	});
+	group.templates.push({
+		name: '<b>19</b> Enneadecane <i>packed</i>',
+		data: {"a":[{"x":186.68,"y":203.612},{"x":169.36,"y":213.61},{"x":203.998,"y":213.61},{"x":169.36,"y":233.612},{"x":221.32,"y":203.612},{"x":152.038,"y":243.61},{"x":238.642,"y":213.61},{"x":152.038,"y":263.612},{"x":238.642,"y":233.612},{"x":169.36,"y":273.61},{"x":255.962,"y":243.61},{"x":169.36,"y":293.612},{"x":255.962,"y":263.612},{"x":186.68,"y":303.61},{"x":238.642,"y":273.61},{"x":194,"y":324.388},{"x":238.64,"y":293.612},{"x":214,"y":324.388},{"x":221.32,"y":303.61}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":11,"e":9},{"b":12,"e":14},{"b":13,"e":11},{"b":14,"e":16},{"b":15,"e":13},{"b":16,"e":18},{"b":17,"e":15},{"b":18,"e":17}]}
+	});
+	group.templates.push({
+		name: '<b>19</b> Enneadecane <i>unpacked</i>',
+		data: {"a":[{"x":143.658,"y":274},{"x":150.152,"y":292.916},{"x":143.658,"y":254},{"x":162.438,"y":308.7},{"x":150.154,"y":235.084},{"x":179.18,"y":319.638},{"x":162.438,"y":219.3},{"x":198.568,"y":324.548},{"x":179.18,"y":208.362},{"x":218.5,"y":322.896},{"x":198.568,"y":203.452},{"x":236.816,"y":314.862},{"x":218.5,"y":205.104},{"x":251.53,"y":301.316},{"x":236.816,"y":213.138},{"x":261.05,"y":283.728},{"x":251.53,"y":226.684},{"x":264.342,"y":264},{"x":261.05,"y":244.272}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":12,"e":10},{"b":11,"e":13},{"b":14,"e":12},{"b":13,"e":15},{"b":16,"e":14},{"b":15,"e":17},{"b":18,"e":16},{"b":17,"e":18}]}
+	});
+	group.templates.push({
+		name: '<b>20</b> Icosane <i>packed</i>',
+		data: {"a":[{"x":139.36,"y":264},{"x":149.358,"y":281.318},{"x":149.358,"y":246.682},{"x":169.36,"y":281.318},{"x":169.36,"y":246.682},{"x":169.36,"y":301.32},{"x":169.36,"y":226.68},{"x":186.678,"y":311.318},{"x":186.678,"y":216.682},{"x":204,"y":301.32},{"x":204,"y":226.68},{"x":221.322,"y":311.318},{"x":221.322,"y":216.682},{"x":238.642,"y":301.32},{"x":238.642,"y":226.68},{"x":238.642,"y":281.318},{"x":238.642,"y":246.682},{"x":258.642,"y":281.318},{"x":258.642,"y":246.682},{"x":268.64,"y":264}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":6},{"b":3,"e":5},{"b":6,"e":8},{"b":7,"e":5},{"b":8,"e":10},{"b":9,"e":7},{"b":10,"e":12},{"b":9,"e":11},{"b":12,"e":14},{"b":13,"e":11},{"b":14,"e":16},{"b":15,"e":13},{"b":16,"e":18},{"b":17,"e":15},{"b":18,"e":19},{"b":19,"e":17}]}
+	});
+	group.templates.push({
+		name: '<b>20</b> Icosane <i>unpacked</i>',
+		data: {"a":[{"x":140.862,"y":274},{"x":147.042,"y":293.02},{"x":140.862,"y":254},{"x":158.798,"y":309.202},{"x":147.042,"y":234.98},{"x":174.978,"y":320.958},{"x":158.798,"y":218.798},{"x":194,"y":327.138},{"x":174.978,"y":207.042},{"x":214,"y":327.138},{"x":194,"y":200.862},{"x":233.022,"y":320.958},{"x":214,"y":200.862},{"x":249.202,"y":309.202},{"x":233.02,"y":207.042},{"x":260.958,"y":293.02},{"x":249.202,"y":218.798},{"x":267.138,"y":274},{"x":260.958,"y":234.978},{"x":267.138,"y":254}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":10,"e":12},{"b":11,"e":13},{"b":14,"e":12},{"b":13,"e":15},{"b":16,"e":14},{"b":15,"e":17},{"b":18,"e":16},{"b":17,"e":19},{"b":19,"e":18}]}
+	});
+	d.push(group);
+	
+	group = {name:'Functional Groups', templates:[]};
+	group.templates.push({
+		name: 'Alkenyl',
+		data: {"a":[{"x":194.002,"y":263.998},{"x":214,"y":263.998},{"x":184,"y":246.68},{"x":184,"y":281.32},{"x":224.002,"y":281.32},{"x":224.002,"y":246.68}],"b":[{"b":0,"e":1,"o":2},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":5},{"b":1,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Alkynyl',
+		data: {"a":[{"x":193.998,"y":264},{"x":174,"y":264},{"x":213.998,"y":264},{"x":234,"y":264}],"b":[{"b":0,"e":2,"o":3},{"b":0,"e":1},{"b":2,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Amine',
+		data: {"a":[{"x":204.002,"y":259.002,"l":"N"},{"x":221.32,"y":249},{"x":204.002,"y":279},{"x":186.68,"y":249}],"b":[{"b":0,"e":1},{"b":0,"e":3},{"b":0,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Ammonium',
+		data: {"a":[{"c":1,"x":203.998,"y":265.342,"l":"N"},{"x":186.68,"y":275.34},{"x":203.998,"y":245.34},{"x":194,"y":282.66},{"x":221.32,"y":275.34}],"b":[{"b":0,"e":2},{"b":0,"e":4},{"b":0,"e":1},{"b":0,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Azide',
+		data: {"a":[{"x":178.02,"y":263.998},{"x":195.34,"y":254,"l":"N"},{"c":1,"x":212.662,"y":263.998,"l":"N"},{"c":-1,"x":229.98,"y":274,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":3,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Azo',
+		data: {"a":[{"x":184,"y":246.68},{"x":194,"y":264.002,"l":"N"},{"x":214,"y":264.002,"l":"N"},{"x":224,"y":281.32}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Benzyl',
+		data: {"a":[{"x":169.36,"y":254},{"x":186.678,"y":244},{"x":204,"y":254},{"x":204,"y":274},{"x":221.32,"y":244},{"x":221.32,"y":284},{"x":238.64,"y":254},{"x":238.64,"y":274}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":4,"o":2},{"b":2,"e":3},{"b":4,"e":6},{"b":5,"e":3,"o":2},{"b":6,"e":7,"o":2},{"b":7,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Carbonate Ester',
+		data: {"a":[{"x":186.678,"y":279,"l":"O"},{"x":169.36,"y":269.002},{"x":204,"y":269.002},{"x":221.32,"y":279,"l":"O"},{"x":204,"y":249,"l":"O"},{"x":238.642,"y":269.002}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":4,"o":2},{"b":2,"e":3},{"b":3,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Carbonyl',
+		data: {"a":[{"x":186.68,"y":279},{"x":204.002,"y":268.998},{"x":204.002,"y":249,"l":"O"},{"x":221.32,"y":279}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":1,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Carboxamide',
+		data: {"a":[{"x":178.02,"y":269},{"x":195.34,"y":259},{"x":195.34,"y":239,"l":"O"},{"x":212.662,"y":269,"l":"N"},{"x":212.662,"y":289},{"x":229.98,"y":259}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":1,"e":3},{"b":3,"e":5},{"b":3,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Cyanate',
+		data: {"a":[{"x":178.02,"y":263.998},{"x":195.338,"y":254,"l":"O"},{"x":212.66,"y":263.998},{"x":229.98,"y":274,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3,"o":3}]}
+	});
+	group.templates.push({
+		name: 'Disulfide',
+		data: {"a":[{"x":184,"y":246.68},{"x":194,"y":263.998,"l":"S"},{"x":214,"y":263.998,"l":"S"},{"x":224,"y":281.32}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Ester',
+		data: {"a":[{"x":178.02,"y":279},{"x":195.34,"y":269.002},{"x":212.66,"y":279,"l":"O"},{"x":195.34,"y":249,"l":"O"},{"x":229.98,"y":269.002}],"b":[{"b":0,"e":1},{"b":1,"e":3,"o":2},{"b":1,"e":2},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Ether',
+		data: {"a":[{"x":186.68,"y":269},{"x":204.002,"y":259,"l":"O"},{"x":221.32,"y":269}],"b":[{"b":0,"e":1},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Imide',
+		data: {"a":[{"x":169.36,"y":269.002},{"x":186.678,"y":258.998},{"x":186.678,"y":239.002,"l":"O"},{"x":204,"y":269.002,"l":"N"},{"x":204,"y":288.998},{"x":221.32,"y":258.998},{"x":238.64,"y":269.002},{"x":221.32,"y":239.002,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2,"o":2},{"b":3,"e":5},{"b":3,"e":4},{"b":5,"e":6},{"b":5,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Isocyanate',
+		data: {"a":[{"x":178.02,"y":264.002},{"x":195.34,"y":254,"l":"N"},{"x":212.662,"y":264.002},{"x":229.98,"y":274,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":3,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Isocyanide',
+		data: {"a":[{"x":184,"y":264},{"c":1,"x":204.002,"y":264,"l":"N"},{"c":-1,"x":224,"y":264}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":3}]}
+	});
+	group.templates.push({
+		name: 'Isothiocyanate',
+		data: {"a":[{"x":178.02,"y":264},{"x":195.34,"y":254,"l":"N"},{"x":212.662,"y":264},{"x":229.98,"y":274,"l":"S"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":3,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Ketimine',
+		data: {"a":[{"x":204,"y":273.998},{"x":204,"y":254.002,"l":"N"},{"x":221.32,"y":284.002},{"x":186.68,"y":284.002},{"x":221.32,"y":243.998}],"b":[{"b":0,"e":1,"o":2},{"b":0,"e":3},{"b":0,"e":2},{"b":1,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Nitrate',
+		data: {"a":[{"x":178.02,"y":269},{"x":195.338,"y":279,"l":"O"},{"c":1,"x":212.66,"y":269,"l":"N"},{"c":-1,"x":229.98,"y":279,"l":"O"},{"x":212.66,"y":249,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":2,"e":4,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Nitrile',
+		data: {"a":[{"x":184,"y":264},{"x":204.002,"y":264},{"x":224,"y":264,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":3}]}
+	});
+	group.templates.push({
+		name: 'Nitro',
+		data: {"a":[{"x":189,"y":263.998},{"c":1,"x":209.002,"y":263.998,"l":"N"},{"c":-1,"x":219,"y":281.32,"l":"O"},{"x":219,"y":246.68,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3,"o":2},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Nitroso',
+		data: {"a":[{"x":186.68,"y":269},{"x":203.998,"y":259,"l":"N"},{"x":221.32,"y":269,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Nitrosooxy',
+		data: {"a":[{"x":178.018,"y":259},{"x":195.34,"y":269,"l":"O"},{"x":212.66,"y":259,"l":"N"},{"x":229.982,"y":269,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Peroxy',
+		data: {"a":[{"x":183.998,"y":246.68},{"x":194.002,"y":264.002,"l":"O"},{"x":213.998,"y":264.002,"l":"O"},{"x":224.002,"y":281.32}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Phosphate',
+		data: {"a":[{"x":204,"y":265.342,"l":"P"},{"x":221.322,"y":275.34,"l":"O"},{"x":204,"y":245.34,"l":"O"},{"x":186.682,"y":275.34,"l":"O"},{"x":194.002,"y":282.66,"l":"O"},{"x":238.642,"y":265.342},{"x":169.36,"y":265.342},{"x":174,"y":282.66}],"b":[{"b":0,"e":2,"o":2},{"b":0,"e":1},{"b":0,"e":3},{"b":0,"e":4},{"b":1,"e":5},{"b":3,"e":6},{"b":4,"e":7}]}
+	});
+	group.templates.push({
+		name: 'Phosphino',
+		data: {"a":[{"x":204,"y":255.34,"l":"P"},{"x":194.002,"y":272.66},{"x":186.678,"y":265.34},{"x":221.322,"y":265.34}],"b":[{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Pyridyl',
+		data: {"a":[{"x":178.018,"y":244},{"x":195.34,"y":254},{"x":212.66,"y":244},{"x":195.34,"y":274},{"x":229.982,"y":254},{"x":212.66,"y":284},{"x":229.982,"y":274,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":1,"e":3},{"b":2,"e":4},{"b":5,"e":3,"o":2},{"b":4,"e":6,"o":2},{"b":6,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Sulfide',
+		data: {"a":[{"x":203.998,"y":259,"l":"S"},{"x":186.68,"y":269},{"x":221.32,"y":269}],"b":[{"b":0,"e":1},{"b":0,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Sulfinyl',
+		data: {"a":[{"x":186.68,"y":279},{"x":203.998,"y":268.998,"l":"S"},{"x":203.998,"y":249,"l":"O"},{"x":221.32,"y":279}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Sulfonyl',
+		data: {"a":[{"x":204,"y":267.66,"l":"S"},{"x":194.002,"y":250.342,"l":"O"},{"x":213.998,"y":250.342,"l":"O"},{"x":186.68,"y":277.658},{"x":221.32,"y":277.658}],"b":[{"b":0,"e":3},{"b":0,"e":4},{"b":0,"e":1,"o":2},{"b":0,"e":2,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Thiocyanate',
+		data: {"a":[{"x":178.018,"y":264.002},{"x":195.34,"y":254,"l":"S"},{"x":212.66,"y":264.002},{"x":229.982,"y":274,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3,"o":3}]}
+	});
+	d.push(group);
+	
+	group = {name:'Sugars (Hexoses)', templates:[]};
+	group.templates.push({
+		name: 'Allose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":0,"y":-10},{"x":20,"y":-30,"l":"O"},{"x":-20,"y":-30,"l":"H"},{"x":-20,"y":-10,"l":"H"},{"x":20,"y":-10,"l":"O"},{"x":0,"y":10},{"x":20,"y":10,"l":"O"},{"x":-20,"y":10,"l":"H"},{"x":0,"y":30},{"x":-20,"y":30,"l":"H"},{"x":20,"y":30,"l":"O"},{"x":0,"y":50,"l":"CH2OH"}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":5},{"b":2,"e":6},{"b":2,"e":7},{"b":7,"e":9},{"b":7,"e":8},{"b":7,"e":10},{"b":10,"e":11},{"b":10,"e":12},{"b":10,"e":13}]}
+	});
+	group.templates.push({
+		name: 'Allose <i>Furanose Form</i>',
+		data: {"a":[{"x":7.3205,"y":-13.6239,"l":"O"},{"x":-27.7677,"y":-1.3055},{"x":42.4087,"y":-1.3055},{"x":-14.3652,"y":18.6261},{"x":-27.7677,"y":-21.3055},{"x":-27.7677,"y":18.6945,"l":"H"},{"x":29.0062,"y":18.6261},{"x":62.4087,"y":-1.3055,"l":"O"},{"x":-14.3652,"y":38.6261,"l":"O"},{"x":-14.3652,"y":-1.3739,"l":"H"},{"x":-17.7677,"y":-38.6261,"l":"O"},{"x":-45.0882,"y":-31.3055},{"x":-9.2969,"y":-28.9755,"l":"H"},{"x":29.0062,"y":38.6261,"l":"O"},{"x":29.0062,"y":-1.3739,"l":"H"},{"x":-62.4087,"y":-21.3055,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":6,"o":1},{"b":2,"e":6},{"b":2,"e":0},{"b":3,"e":9},{"b":3,"e":8},{"b":6,"e":14},{"b":6,"e":13},{"b":1,"e":4},{"b":1,"e":5},{"b":4,"e":11},{"b":11,"e":15},{"b":4,"e":10},{"b":4,"e":12},{"b":2,"e":7,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Allose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-22.0845,"y":15.5237},{"x":-36.6654,"y":-29.7292,"l":"H"},{"x":-8.6254,"y":-2.3409},{"x":-54.1679,"y":-0.0514,"l":"O"},{"x":-22.0845,"y":35.5237,"l":"O"},{"x":-41.6882,"y":11.5623,"l":"H"},{"x":6.1279,"y":8.1324},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":-23.6658,"y":-15.5237},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":34.1679,"y":15.5237},{"x":6.1279,"y":-11.8676,"l":"H"},{"x":20.3041,"y":22.2404,"l":"O"},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":1},{"b":3,"e":0},{"b":10,"e":3},{"b":11,"e":7},{"b":11,"e":10},{"b":3,"e":8},{"b":7,"e":12},{"b":7,"e":13},{"b":3,"e":9},{"b":9,"e":14},{"b":0,"e":2},{"b":0,"e":4},{"b":1,"e":5},{"b":1,"e":6},{"b":1,"e":7,"o":1},{"b":11,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Altrose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":-20,"y":-30,"l":"O"},{"x":0,"y":-10},{"x":20,"y":-30,"l":"H"},{"x":-20,"y":-10,"l":"H"},{"x":20,"y":-10,"l":"O"},{"x":0,"y":10},{"x":20,"y":10,"l":"O"},{"x":-20,"y":10,"l":"H"},{"x":0,"y":30},{"x":-20,"y":30,"l":"H"},{"x":0,"y":50,"l":"CH2OH"},{"x":20,"y":30,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":4},{"b":1,"e":3},{"b":3,"e":5},{"b":3,"e":6},{"b":3,"e":7},{"b":7,"e":9},{"b":7,"e":8},{"b":7,"e":10},{"b":10,"e":11},{"b":10,"e":13},{"b":10,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Altrose <i>Furanose Form</i>',
+		data: {"a":[{"x":7.3205,"y":-13.6239,"l":"O"},{"x":-27.7677,"y":-1.3055},{"x":42.4087,"y":-1.3055},{"x":-27.7677,"y":18.6945,"l":"H"},{"x":-14.3652,"y":18.6261},{"x":-27.7677,"y":-21.3055},{"x":29.0062,"y":18.6261},{"x":62.4087,"y":-1.3055,"l":"O"},{"x":-14.3652,"y":38.6261,"l":"O"},{"x":-14.3652,"y":-1.3739,"l":"H"},{"x":-9.2969,"y":-28.9755,"l":"H"},{"x":-45.0882,"y":-31.3055},{"x":-17.7677,"y":-38.6261,"l":"O"},{"x":29.0062,"y":-1.3739,"l":"O"},{"x":29.0062,"y":38.6261,"l":"H"},{"x":-62.4087,"y":-21.3055,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":4,"e":6,"o":1},{"b":2,"e":6},{"b":2,"e":0},{"b":4,"e":9},{"b":4,"e":8},{"b":6,"e":13},{"b":6,"e":14},{"b":1,"e":5},{"b":1,"e":3},{"b":5,"e":11},{"b":11,"e":15},{"b":5,"e":12},{"b":5,"e":10},{"b":2,"e":7,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Altrose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-22.0845,"y":15.5237},{"x":-36.6654,"y":-29.7292,"l":"H"},{"x":-8.6254,"y":-2.3409},{"x":-54.1679,"y":-0.0514,"l":"O"},{"x":-22.0845,"y":35.5237,"l":"O"},{"x":6.1279,"y":8.1324},{"x":-41.6882,"y":11.5623,"l":"H"},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-23.6658,"y":-15.5237},{"x":20.3041,"y":22.2404,"l":"H"},{"x":34.1679,"y":15.5237},{"x":6.1279,"y":-11.8676,"l":"O"},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":1},{"b":3,"e":0},{"b":9,"e":3},{"b":12,"e":6},{"b":12,"e":9},{"b":3,"e":8},{"b":6,"e":13},{"b":6,"e":11},{"b":3,"e":10},{"b":10,"e":14},{"b":0,"e":2},{"b":0,"e":4},{"b":1,"e":5},{"b":1,"e":7},{"b":1,"e":6,"o":1},{"b":12,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Galactose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":20,"y":-30,"l":"O"},{"x":0,"y":-10},{"x":-20,"y":-30,"l":"H"},{"x":-20,"y":-10,"l":"O"},{"x":20,"y":-10,"l":"H"},{"x":0,"y":10},{"x":-20,"y":10,"l":"O"},{"x":20,"y":10,"l":"H"},{"x":0,"y":30},{"x":20,"y":30,"l":"O"},{"x":0,"y":50,"l":"CH2OH"},{"x":-20,"y":30,"l":"H"}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":1,"e":2},{"b":1,"e":3},{"b":3,"e":5},{"b":3,"e":6},{"b":3,"e":7},{"b":7,"e":8},{"b":7,"e":9},{"b":7,"e":10},{"b":10,"e":13},{"b":10,"e":11},{"b":10,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Galactose <i>Furanose Form</i>',
+		data: {"a":[{"x":8.6603,"y":-22.3184,"l":"O"},{"x":43.7485,"y":-10},{"x":-26.428,"y":-10},{"x":30.346,"y":9.9316},{"x":63.7485,"y":-10,"l":"O"},{"x":-43.7485,"y":0},{"x":-13.0255,"y":9.9316},{"x":-26.428,"y":-30,"l":"H"},{"x":30.346,"y":-10.0684,"l":"H"},{"x":30.346,"y":29.9316,"l":"O"},{"x":-63.7485,"y":0,"l":"O"},{"x":-53.7485,"y":-17.3205,"l":"H"},{"x":-43.7485,"y":20},{"x":-13.0255,"y":-10.0684,"l":"O"},{"x":-13.0255,"y":29.9316,"l":"H"},{"x":-61.069,"y":30,"l":"O"}],"b":[{"b":6,"e":3,"o":1},{"b":1,"e":3},{"b":1,"e":0},{"b":6,"e":13},{"b":6,"e":14},{"b":3,"e":8},{"b":3,"e":9},{"b":1,"e":4,"o":1},{"b":0,"e":2},{"b":2,"e":6},{"b":2,"e":7},{"b":2,"e":5},{"b":5,"e":12},{"b":12,"e":15},{"b":5,"e":11},{"b":5,"e":10}]}
+	});
+	group.templates.push({
+		name: 'Galactose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-36.6654,"y":-29.7292,"l":"O"},{"x":-54.1679,"y":-0.0514,"l":"H"},{"x":-22.0845,"y":15.5237},{"x":-8.6254,"y":-2.3409},{"x":-41.6882,"y":11.5623,"l":"O"},{"x":6.1279,"y":8.1324},{"x":-22.0845,"y":35.5237,"l":"H"},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":-23.6658,"y":-15.5237},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":34.1679,"y":15.5237},{"x":6.1279,"y":-11.8676,"l":"H"},{"x":20.3041,"y":22.2404,"l":"O"},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":3},{"b":4,"e":0},{"b":10,"e":4},{"b":11,"e":6},{"b":11,"e":10},{"b":4,"e":8},{"b":6,"e":12},{"b":6,"e":13},{"b":4,"e":9},{"b":9,"e":14},{"b":0,"e":1},{"b":0,"e":2},{"b":3,"e":7},{"b":3,"e":5},{"b":3,"e":6,"o":1},{"b":11,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Glucose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":-20,"y":-30,"l":"H"},{"x":20,"y":-30,"l":"O"},{"x":0,"y":-10},{"x":20,"y":-10,"l":"H"},{"x":-20,"y":-10,"l":"O"},{"x":0,"y":10},{"x":-20,"y":10,"l":"H"},{"x":20,"y":10,"l":"O"},{"x":0,"y":30},{"x":-20,"y":30,"l":"H"},{"x":20,"y":30,"l":"O"},{"x":0,"y":50,"l":"CH2OH"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":1,"e":4},{"b":4,"e":6},{"b":4,"e":5},{"b":4,"e":7},{"b":7,"e":8},{"b":7,"e":9},{"b":7,"e":10},{"b":10,"e":11},{"b":10,"e":12},{"b":10,"e":13}]}
+	});
+	group.templates.push({
+		name: 'Glucose <i>Furanose Form</i>',
+		data: {"a":[{"x":7.3205,"y":-13.6239,"l":"O"},{"x":42.4087,"y":-1.3055},{"x":-27.7677,"y":-1.3055},{"x":29.0062,"y":18.6261},{"x":62.4087,"y":-1.3055,"l":"O"},{"x":-27.7677,"y":18.6945,"l":"H"},{"x":-14.3652,"y":18.6261},{"x":-27.7677,"y":-21.3055},{"x":29.0062,"y":38.6261,"l":"O"},{"x":29.0062,"y":-1.3739,"l":"H"},{"x":-14.3652,"y":38.6261,"l":"H"},{"x":-14.3652,"y":-1.3739,"l":"O"},{"x":-9.2969,"y":-28.9755,"l":"H"},{"x":-17.7677,"y":-38.6261,"l":"O"},{"x":-45.0882,"y":-31.3055},{"x":-62.4087,"y":-21.3055,"l":"O"}],"b":[{"b":0,"e":2},{"b":2,"e":6},{"b":6,"e":3,"o":1},{"b":1,"e":3},{"b":1,"e":0},{"b":6,"e":11},{"b":6,"e":10},{"b":3,"e":9},{"b":3,"e":8},{"b":2,"e":7},{"b":2,"e":5},{"b":7,"e":14},{"b":14,"e":15},{"b":7,"e":13},{"b":7,"e":12},{"b":1,"e":4,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Glucose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-54.1679,"y":-0.0514,"l":"O"},{"x":-36.6654,"y":-29.7292,"l":"H"},{"x":-8.6254,"y":-2.3409},{"x":-22.0845,"y":15.5237},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":-23.6658,"y":-15.5237},{"x":-22.0845,"y":35.5237,"l":"H"},{"x":6.1279,"y":8.1324},{"x":-41.6882,"y":11.5623,"l":"O"},{"x":34.1679,"y":15.5237},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":20.3041,"y":22.2404,"l":"O"},{"x":6.1279,"y":-11.8676,"l":"H"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":4},{"b":3,"e":0},{"b":5,"e":3},{"b":11,"e":9},{"b":11,"e":5},{"b":3,"e":6},{"b":9,"e":14},{"b":9,"e":13},{"b":3,"e":7},{"b":7,"e":12},{"b":0,"e":2},{"b":0,"e":1},{"b":4,"e":8},{"b":4,"e":10},{"b":4,"e":9,"o":1},{"b":11,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Gulose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":-20,"y":-30,"l":"H"},{"x":20,"y":-30,"l":"O"},{"x":0,"y":-10},{"x":-20,"y":-10,"l":"H"},{"x":20,"y":-10,"l":"O"},{"x":0,"y":10},{"x":-20,"y":10,"l":"O"},{"x":20,"y":10,"l":"H"},{"x":0,"y":30},{"x":-20,"y":30,"l":"H"},{"x":20,"y":30,"l":"O"},{"x":0,"y":50,"l":"CH2OH"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":1,"e":4},{"b":4,"e":5},{"b":4,"e":6},{"b":4,"e":7},{"b":7,"e":8},{"b":7,"e":9},{"b":7,"e":10},{"b":10,"e":11},{"b":10,"e":12},{"b":10,"e":13}]}
+	});
+	group.templates.push({
+		name: 'Gulose <i>Furanose Form</i>',
+		data: {"a":[{"x":8.6603,"y":-22.3184,"l":"O"},{"x":43.7485,"y":-10},{"x":-26.428,"y":-10},{"x":63.7485,"y":-10,"l":"O"},{"x":30.346,"y":9.9316},{"x":-43.7485,"y":0},{"x":-13.0255,"y":9.9316},{"x":-26.428,"y":-30,"l":"H"},{"x":30.346,"y":29.9316,"l":"O"},{"x":30.346,"y":-10.0684,"l":"H"},{"x":-43.7485,"y":20},{"x":-53.7485,"y":-17.3205,"l":"H"},{"x":-63.7485,"y":0,"l":"O"},{"x":-13.0255,"y":29.9316,"l":"O"},{"x":-13.0255,"y":-10.0684,"l":"H"},{"x":-61.069,"y":30,"l":"O"}],"b":[{"b":6,"e":4,"o":1},{"b":1,"e":4},{"b":1,"e":0},{"b":6,"e":14},{"b":6,"e":13},{"b":4,"e":9},{"b":4,"e":8},{"b":1,"e":3,"o":1},{"b":0,"e":2},{"b":2,"e":6},{"b":2,"e":7},{"b":2,"e":5},{"b":5,"e":10},{"b":10,"e":15},{"b":5,"e":11},{"b":5,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Gulose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-22.0845,"y":15.5237},{"x":-36.6654,"y":-29.7292,"l":"O"},{"x":-54.1679,"y":-0.0514,"l":"H"},{"x":-8.6254,"y":-2.3409},{"x":-41.6882,"y":11.5623,"l":"H"},{"x":-22.0845,"y":35.5237,"l":"O"},{"x":6.1279,"y":8.1324},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-23.6658,"y":-15.5237},{"x":34.1679,"y":15.5237},{"x":6.1279,"y":-11.8676,"l":"H"},{"x":20.3041,"y":22.2404,"l":"O"},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":1},{"b":4,"e":0},{"b":9,"e":4},{"b":11,"e":7},{"b":11,"e":9},{"b":4,"e":8},{"b":7,"e":12},{"b":7,"e":13},{"b":4,"e":10},{"b":10,"e":14},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":6},{"b":1,"e":5},{"b":1,"e":7,"o":1},{"b":11,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Idose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":0,"y":-10},{"x":20,"y":-30,"l":"H"},{"x":-20,"y":-30,"l":"O"},{"x":0,"y":10},{"x":-20,"y":-10,"l":"H"},{"x":20,"y":-10,"l":"O"},{"x":0,"y":30},{"x":-20,"y":10,"l":"O"},{"x":20,"y":10,"l":"H"},{"x":-20,"y":30,"l":"H"},{"x":20,"y":30,"l":"O"},{"x":0,"y":50,"l":"CH2OH"}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":6},{"b":2,"e":7},{"b":2,"e":5},{"b":5,"e":9},{"b":5,"e":10},{"b":5,"e":8},{"b":8,"e":11},{"b":8,"e":12},{"b":8,"e":13}]}
+	});
+	group.templates.push({
+		name: 'Idose <i>Furanose Form</i>',
+		data: {"a":[{"x":8.6603,"y":-22.3184,"l":"O"},{"x":43.7485,"y":-10},{"x":-26.428,"y":-10},{"x":30.346,"y":9.9316},{"x":63.7485,"y":-10,"l":"O"},{"x":-43.7485,"y":0},{"x":-13.0255,"y":9.9316},{"x":-26.428,"y":-30,"l":"H"},{"x":30.346,"y":-10.0684,"l":"O"},{"x":30.346,"y":29.9316,"l":"H"},{"x":-53.7485,"y":-17.3205,"l":"H"},{"x":-43.7485,"y":20},{"x":-63.7485,"y":0,"l":"O"},{"x":-13.0255,"y":-10.0684,"l":"H"},{"x":-13.0255,"y":29.9316,"l":"O"},{"x":-61.069,"y":30,"l":"O"}],"b":[{"b":6,"e":3,"o":1},{"b":1,"e":3},{"b":1,"e":0},{"b":6,"e":13},{"b":6,"e":14},{"b":3,"e":8},{"b":3,"e":9},{"b":1,"e":4,"o":1},{"b":0,"e":2},{"b":2,"e":6},{"b":2,"e":7},{"b":2,"e":5},{"b":5,"e":11},{"b":11,"e":15},{"b":5,"e":10},{"b":5,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Idose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-22.0845,"y":15.5237},{"x":-54.1679,"y":-0.0514,"l":"H"},{"x":-8.6254,"y":-2.3409},{"x":-36.6654,"y":-29.7292,"l":"O"},{"x":-41.6882,"y":11.5623,"l":"H"},{"x":-22.0845,"y":35.5237,"l":"O"},{"x":6.1279,"y":8.1324},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-23.6658,"y":-15.5237},{"x":20.3041,"y":22.2404,"l":"H"},{"x":6.1279,"y":-11.8676,"l":"O"},{"x":34.1679,"y":15.5237},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":1},{"b":3,"e":0},{"b":9,"e":3},{"b":13,"e":7},{"b":13,"e":9},{"b":3,"e":8},{"b":7,"e":12},{"b":7,"e":11},{"b":3,"e":10},{"b":10,"e":14},{"b":0,"e":4},{"b":0,"e":2},{"b":1,"e":6},{"b":1,"e":5},{"b":1,"e":7,"o":1},{"b":13,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Mannose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":20,"y":-30,"l":"H"},{"x":-20,"y":-30,"l":"O"},{"x":0,"y":-10},{"x":20,"y":-10,"l":"H"},{"x":-20,"y":-10,"l":"O"},{"x":0,"y":10},{"x":0,"y":30},{"x":-20,"y":10,"l":"H"},{"x":20,"y":10,"l":"O"},{"x":-20,"y":30,"l":"H"},{"x":0,"y":50,"l":"CH2OH"},{"x":20,"y":30,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":1,"e":4},{"b":4,"e":6},{"b":4,"e":5},{"b":4,"e":7},{"b":7,"e":9},{"b":7,"e":10},{"b":7,"e":8},{"b":8,"e":11},{"b":8,"e":13},{"b":8,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Mannose <i>Furanose Form</i>',
+		data: {"a":[{"x":7.3205,"y":-13.6239,"l":"O"},{"x":42.4087,"y":-1.3055},{"x":-27.7677,"y":-1.3055},{"x":29.0062,"y":18.6261},{"x":62.4087,"y":-1.3055,"l":"O"},{"x":-14.3652,"y":18.6261},{"x":-27.7677,"y":18.6945,"l":"H"},{"x":-27.7677,"y":-21.3055},{"x":29.0062,"y":38.6261,"l":"H"},{"x":29.0062,"y":-1.3739,"l":"O"},{"x":-14.3652,"y":-1.3739,"l":"O"},{"x":-14.3652,"y":38.6261,"l":"H"},{"x":-9.2969,"y":-28.9755,"l":"H"},{"x":-45.0882,"y":-31.3055},{"x":-17.7677,"y":-38.6261,"l":"O"},{"x":-62.4087,"y":-21.3055,"l":"O"}],"b":[{"b":0,"e":2},{"b":2,"e":5},{"b":5,"e":3,"o":1},{"b":1,"e":3},{"b":1,"e":0},{"b":5,"e":10},{"b":5,"e":11},{"b":3,"e":9},{"b":3,"e":8},{"b":2,"e":7},{"b":2,"e":6},{"b":7,"e":13},{"b":13,"e":15},{"b":7,"e":14},{"b":7,"e":12},{"b":1,"e":4,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Mannose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-8.6254,"y":-2.3409},{"x":-36.6654,"y":-29.7292,"l":"H"},{"x":-54.1679,"y":-0.0514,"l":"O"},{"x":-22.0845,"y":15.5237},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":-23.6658,"y":-15.5237},{"x":6.1279,"y":8.1324},{"x":-22.0845,"y":35.5237,"l":"H"},{"x":-41.6882,"y":11.5623,"l":"O"},{"x":34.1679,"y":15.5237},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":6.1279,"y":-11.8676,"l":"O"},{"x":20.3041,"y":22.2404,"l":"H"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":4},{"b":1,"e":0},{"b":5,"e":1},{"b":11,"e":8},{"b":11,"e":5},{"b":1,"e":6},{"b":8,"e":13},{"b":8,"e":14},{"b":1,"e":7},{"b":7,"e":12},{"b":0,"e":2},{"b":0,"e":3},{"b":4,"e":9},{"b":4,"e":10},{"b":4,"e":8,"o":1},{"b":11,"e":15,"o":1}]}
+	});
+	group.templates.push({
+		name: 'Talose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-50,"l":"CHO"},{"x":0,"y":-30},{"x":0,"y":-10},{"x":-20,"y":-30,"l":"O"},{"x":20,"y":-30,"l":"H"},{"x":-20,"y":-10,"l":"O"},{"x":20,"y":-10,"l":"H"},{"x":0,"y":10},{"x":20,"y":10,"l":"H"},{"x":0,"y":30},{"x":-20,"y":10,"l":"O"},{"x":20,"y":30,"l":"O"},{"x":0,"y":50,"l":"CH2OH"},{"x":-20,"y":30,"l":"H"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":4},{"b":1,"e":2},{"b":2,"e":5},{"b":2,"e":6},{"b":2,"e":7},{"b":7,"e":10},{"b":7,"e":8},{"b":7,"e":9},{"b":9,"e":13},{"b":9,"e":11},{"b":9,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Talose <i>Furanose Form</i>',
+		data: {"a":[{"x":8.6603,"y":-22.3184,"l":"O"},{"x":43.7485,"y":-10},{"x":-26.428,"y":-10},{"x":30.346,"y":9.9316},{"x":63.7485,"y":-10,"l":"O"},{"x":-13.0255,"y":9.9316},{"x":-26.428,"y":-30,"l":"H"},{"x":-43.7485,"y":0},{"x":30.346,"y":29.9316,"l":"H"},{"x":30.346,"y":-10.0684,"l":"O"},{"x":-13.0255,"y":29.9316,"l":"H"},{"x":-13.0255,"y":-10.0684,"l":"O"},{"x":-43.7485,"y":20},{"x":-53.7485,"y":-17.3205,"l":"H"},{"x":-63.7485,"y":0,"l":"O"},{"x":-61.069,"y":30,"l":"O"}],"b":[{"b":5,"e":3,"o":1},{"b":1,"e":3},{"b":1,"e":0},{"b":5,"e":11},{"b":5,"e":10},{"b":3,"e":9},{"b":3,"e":8},{"b":1,"e":4,"o":1},{"b":0,"e":2},{"b":2,"e":5},{"b":2,"e":6},{"b":2,"e":7},{"b":7,"e":12},{"b":12,"e":15},{"b":7,"e":13},{"b":7,"e":14}]}
+	});
+	group.templates.push({
+		name: 'Talose <i>Pyranose Form</i>',
+		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-22.0845,"y":15.5237},{"x":-54.1679,"y":-0.0514,"l":"H"},{"x":-36.6654,"y":-29.7292,"l":"O"},{"x":-8.6254,"y":-2.3409},{"x":-41.6882,"y":11.5623,"l":"O"},{"x":-22.0845,"y":35.5237,"l":"H"},{"x":6.1279,"y":8.1324},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":-23.6658,"y":-15.5237},{"x":34.1679,"y":15.5237},{"x":20.3041,"y":22.2404,"l":"H"},{"x":6.1279,"y":-11.8676,"l":"O"},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":1},{"b":4,"e":0},{"b":8,"e":4},{"b":11,"e":7},{"b":11,"e":8},{"b":4,"e":9},{"b":7,"e":13},{"b":7,"e":12},{"b":4,"e":10},{"b":10,"e":14},{"b":0,"e":3},{"b":0,"e":2},{"b":1,"e":6},{"b":1,"e":5},{"b":1,"e":7,"o":1},{"b":11,"e":15,"o":1}]}
+	});
+	d.push(group);
+	
+	group = {name:'Sugars (Other Monosaccharides)', templates:[]};
+	group.templates.push({
+		name: 'Glyceraldehyde <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":0},{"x":0,"y":-20,"l":"CHO"},{"x":0,"y":20,"l":"CH2OH"},{"x":-20,"y":0,"l":"H"},{"x":20,"y":0,"l":"O"}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Erythrose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-30,"l":"CHO"},{"x":0,"y":-10},{"x":20,"y":-10,"l":"O"},{"x":0,"y":10},{"x":-20,"y":-10,"l":"H"},{"x":20,"y":10,"l":"O"},{"x":0,"y":30,"l":"CH2OH"},{"x":-20,"y":10,"l":"H"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":6},{"b":3,"e":5},{"b":1,"e":2},{"b":1,"e":4},{"b":3,"e":7}]}
+	});
+	group.templates.push({
+		name: 'Threose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-30,"l":"CHO"},{"x":0,"y":-10},{"x":0,"y":10},{"x":20,"y":-10,"l":"H"},{"x":-20,"y":-10,"l":"O"},{"x":-20,"y":10,"l":"H"},{"x":20,"y":10,"l":"O"},{"x":0,"y":30,"l":"CH2OH"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":7},{"b":2,"e":6},{"b":1,"e":3},{"b":1,"e":4},{"b":2,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Ribose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-20},{"x":20,"y":-20,"l":"O"},{"x":0,"y":0},{"x":0,"y":-40,"l":"CHO"},{"x":-20,"y":-20,"l":"H"},{"x":20,"y":0,"l":"O"},{"x":-20,"y":0,"l":"H"},{"x":0,"y":20},{"x":0,"y":40,"l":"CH2OH"},{"x":20,"y":20,"l":"O"},{"x":-20,"y":20,"l":"H"}],"b":[{"b":0,"e":3},{"b":0,"e":2},{"b":2,"e":7},{"b":7,"e":8},{"b":0,"e":4},{"b":0,"e":1},{"b":2,"e":6},{"b":2,"e":5},{"b":7,"e":10},{"b":7,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Arabinose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-20},{"x":0,"y":-40,"l":"CHO"},{"x":-20,"y":-20,"l":"O"},{"x":0,"y":0},{"x":20,"y":-20,"l":"H"},{"x":-20,"y":0,"l":"H"},{"x":20,"y":0,"l":"O"},{"x":0,"y":20},{"x":0,"y":40,"l":"CH2OH"},{"x":-20,"y":20,"l":"H"},{"x":20,"y":20,"l":"O"}],"b":[{"b":0,"e":1},{"b":0,"e":3},{"b":3,"e":7},{"b":7,"e":8},{"b":0,"e":2},{"b":0,"e":4},{"b":3,"e":5},{"b":3,"e":6},{"b":7,"e":9},{"b":7,"e":10}]}
+	});
+	group.templates.push({
+		name: 'Xylose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-20},{"x":0,"y":-40,"l":"CHO"},{"x":0,"y":0},{"x":-20,"y":-20,"l":"H"},{"x":20,"y":-20,"l":"O"},{"x":20,"y":0,"l":"H"},{"x":0,"y":20},{"x":-20,"y":0,"l":"O"},{"x":20,"y":20,"l":"O"},{"x":-20,"y":20,"l":"H"},{"x":0,"y":40,"l":"CH2OH"}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":2,"e":6},{"b":6,"e":10},{"b":0,"e":3},{"b":0,"e":4},{"b":2,"e":7},{"b":2,"e":5},{"b":6,"e":9},{"b":6,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Lyxose <i>Fisher Projection</i>',
+		data: {"a":[{"x":0,"y":-20},{"x":-20,"y":-20,"l":"O"},{"x":0,"y":-40,"l":"CHO"},{"x":20,"y":-20,"l":"H"},{"x":0,"y":0},{"x":20,"y":0,"l":"H"},{"x":0,"y":20},{"x":-20,"y":0,"l":"O"},{"x":20,"y":20,"l":"O"},{"x":-20,"y":20,"l":"H"},{"x":0,"y":40,"l":"CH2OH"}],"b":[{"b":0,"e":2},{"b":0,"e":4},{"b":4,"e":6},{"b":6,"e":10},{"b":0,"e":1},{"b":0,"e":3},{"b":4,"e":7},{"b":4,"e":5},{"b":6,"e":9},{"b":6,"e":8}]}
+	});
+	d.push(group);
+	
+	group = {name:'Nucleotides', templates:[]};
+	group.templates.push({
+		name: 'Adenine',
+		data: {"a":[{"x":-32.709,"y":10},{"x":-20.9532,"y":26.1804,"l":"N"},{"x":-20.9532,"y":-6.1803,"l":"N"},{"x":-1.9321,"y":20},{"x":-1.9321,"y":0},{"x":15.3884,"y":30.0001,"l":"N"},{"x":15.3884,"y":-10},{"x":32.709,"y":20},{"x":15.3884,"y":-30,"l":"N"},{"x":32.709,"y":0,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":4,"o":2},{"b":4,"e":2},{"b":2,"e":0,"o":2},{"b":3,"e":5},{"b":5,"e":7,"o":2},{"b":7,"e":9},{"b":9,"e":6,"o":2},{"b":6,"e":4},{"b":6,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Guanine',
+		data: {"a":[{"x":-41.3692,"y":10},{"x":-29.6135,"y":-6.1804,"l":"N"},{"x":-29.6135,"y":26.1803,"l":"N"},{"x":-10.5924,"y":-0},{"x":-10.5924,"y":20},{"x":6.7282,"y":-10.0001},{"x":6.7282,"y":30,"l":"N"},{"x":6.7282,"y":-30,"l":"O"},{"x":24.0487,"y":-0,"l":"N"},{"x":24.0487,"y":20},{"x":41.3692,"y":30,"l":"N"}],"b":[{"b":0,"e":2},{"b":2,"e":4},{"b":4,"e":3,"o":2},{"b":3,"e":1},{"b":1,"e":0,"o":2},{"b":4,"e":6},{"b":6,"e":9,"o":2},{"b":9,"e":8},{"b":8,"e":5},{"b":5,"e":3},{"b":5,"e":7,"o":2},{"b":9,"e":10}]}
+	});
+	group.templates.push({
+		name: 'Cytosine',
+		data: {"a":[{"x":-8.6603,"y":-10},{"x":-8.6603,"y":-30,"l":"N"},{"x":-25.9808,"y":0},{"x":8.6603,"y":0,"l":"N"},{"x":-25.9808,"y":20},{"x":8.6603,"y":20},{"x":-8.6603,"y":30,"l":"N"},{"x":25.9808,"y":30,"l":"O"}],"b":[{"b":0,"e":2},{"b":2,"e":4,"o":2},{"b":4,"e":6},{"b":6,"e":5},{"b":5,"e":3},{"b":3,"e":0,"o":2},{"b":5,"e":7,"o":2},{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Thymine',
+		data: {"a":[{"x":0,"y":-10},{"x":17.3205,"y":0,"l":"N"},{"x":0,"y":-30,"l":"O"},{"x":-17.3205,"y":0},{"x":17.3205,"y":20},{"x":-17.3205,"y":20},{"x":-34.641,"y":-10},{"x":34.641,"y":30,"l":"O"},{"x":0,"y":30,"l":"N"}],"b":[{"b":0,"e":3},{"b":3,"e":5,"o":2},{"b":5,"e":8},{"b":8,"e":4},{"b":4,"e":1},{"b":1,"e":0},{"b":0,"e":2,"o":2},{"b":3,"e":6},{"b":4,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Uracil',
+		data: {"a":[{"x":-8.6603,"y":-10},{"x":-25.9808,"y":0},{"x":-8.6603,"y":-30,"l":"O"},{"x":8.6603,"y":0,"l":"N"},{"x":-25.9808,"y":20},{"x":8.6603,"y":20},{"x":-8.6603,"y":30,"l":"N"},{"x":25.9808,"y":30,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":4,"o":2},{"b":4,"e":6},{"b":6,"e":5},{"b":5,"e":3},{"b":3,"e":0},{"b":0,"e":2,"o":2},{"b":5,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Ribonucleoside',
+		data: {"a":[{"x":-14.2796,"y":-14.9551},{"c":-1,"x":-34.2796,"y":-14.9551,"l":"O"},{"x":-14.2796,"y":5.0449},{"x":9.5513,"y":-2.7359,"l":"O"},{"x":-5.177,"y":17.6345},{"x":33.3822,"y":5.045},{"x":24.2796,"y":17.6345},{"x":-15.177,"y":34.955,"l":"O"},{"x":33.3822,"y":-34.955,"l":"N"},{"x":34.2796,"y":34.955,"l":"O"}],"b":[{"b":3,"e":2},{"b":2,"e":4},{"b":4,"e":6,"o":1},{"b":5,"e":6},{"b":5,"e":3},{"b":4,"e":7},{"b":5,"e":8},{"b":2,"e":0},{"b":0,"e":1},{"b":6,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Ribonucleoside Monophosphate',
+		data: {"a":[{"x":5.7204,"y":-14.955},{"x":-14.2796,"y":-14.955,"l":"O"},{"x":5.7204,"y":5.045},{"x":-34.2796,"y":-14.955,"l":"P"},{"x":14.823,"y":17.6345},{"x":29.5513,"y":-2.7358,"l":"O"},{"c":-1,"x":-54.2796,"y":-14.9551,"l":"O"},{"x":-34.2796,"y":-34.955,"l":"O"},{"c":-1,"x":-34.2796,"y":5.045,"l":"O"},{"x":4.823,"y":34.955,"l":"O"},{"x":44.2796,"y":17.6345},{"x":53.3822,"y":5.045},{"x":54.2796,"y":34.955,"l":"O"},{"x":53.3822,"y":-34.955,"l":"N"}],"b":[{"b":5,"e":2},{"b":2,"e":4},{"b":4,"e":10,"o":1},{"b":11,"e":10},{"b":11,"e":5},{"b":4,"e":9},{"b":11,"e":13},{"b":2,"e":0},{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":6},{"b":3,"e":7,"o":2},{"b":3,"e":8},{"b":10,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Ribonucleoside Diphosphate',
+		data: {"a":[{"x":25.7204,"y":-14.955},{"x":5.7204,"y":-14.955,"l":"O"},{"x":25.7204,"y":5.045},{"x":-14.2796,"y":-14.955,"l":"P"},{"x":49.5513,"y":-2.7358,"l":"O"},{"x":34.823,"y":17.6345},{"c":-1,"x":-14.2796,"y":5.045,"l":"O"},{"x":-14.2796,"y":-34.955,"l":"O"},{"x":-34.2796,"y":-14.955,"l":"O"},{"x":73.3822,"y":5.045},{"x":64.2796,"y":17.6345},{"x":24.823,"y":34.955,"l":"O"},{"x":-54.2796,"y":-14.955,"l":"P"},{"x":73.3822,"y":-34.955,"l":"N"},{"x":74.2796,"y":34.9551,"l":"O"},{"c":-1,"x":-54.2796,"y":5.045,"l":"O"},{"x":-54.2796,"y":-34.955,"l":"O"},{"c":-1,"x":-74.2796,"y":-14.955,"l":"O"}],"b":[{"b":4,"e":2},{"b":2,"e":5},{"b":5,"e":10,"o":1},{"b":9,"e":10},{"b":9,"e":4},{"b":5,"e":11},{"b":9,"e":13},{"b":2,"e":0},{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":8},{"b":3,"e":7,"o":2},{"b":3,"e":6},{"b":10,"e":14},{"b":8,"e":12},{"b":12,"e":17},{"b":12,"e":16,"o":2},{"b":12,"e":15}]}
+	});
+	group.templates.push({
+		name: 'Ribonucleoside Triphosphate',
+		data: {"a":[{"x":45.7204,"y":-14.955},{"x":45.7204,"y":5.045},{"x":25.7204,"y":-14.955,"l":"O"},{"x":54.823,"y":17.6345},{"x":69.5513,"y":-2.7358,"l":"O"},{"x":5.7204,"y":-14.955,"l":"P"},{"x":44.823,"y":34.955,"l":"O"},{"x":84.2796,"y":17.6345},{"x":93.3822,"y":5.045},{"c":-1,"x":5.7204,"y":5.045,"l":"O"},{"x":-14.2796,"y":-14.955,"l":"O"},{"x":5.7204,"y":-34.955,"l":"O"},{"x":94.2796,"y":34.9551,"l":"O"},{"x":93.3822,"y":-34.955,"l":"N"},{"x":-34.2796,"y":-14.955,"l":"P"},{"c":-1,"x":-34.2796,"y":5.045,"l":"O"},{"x":-34.2796,"y":-34.955,"l":"O"},{"x":-54.2796,"y":-14.955,"l":"O"},{"x":-74.2796,"y":-14.955,"l":"P"},{"x":-74.2796,"y":-34.955,"l":"O"},{"c":-1,"x":-94.2796,"y":-14.955,"l":"O"},{"c":-1,"x":-74.2796,"y":5.045,"l":"O"}],"b":[{"b":4,"e":1},{"b":1,"e":3},{"b":3,"e":7,"o":1},{"b":8,"e":7},{"b":8,"e":4},{"b":3,"e":6},{"b":8,"e":13},{"b":1,"e":0},{"b":0,"e":2},{"b":2,"e":5},{"b":5,"e":10},{"b":5,"e":11,"o":2},{"b":5,"e":9},{"b":7,"e":12},{"b":10,"e":14},{"b":14,"e":17},{"b":14,"e":16,"o":2},{"b":14,"e":15},{"b":17,"e":18},{"b":18,"e":20},{"b":18,"e":19,"o":2},{"b":18,"e":21}]}
+	});
+	group.templates.push({
+		name: 'Ribonucleotide chain form',
+		data: {"a":[{"x":-13.8309,"y":-36.2948},{"x":-33.8309,"y":-36.2948,"l":"O"},{"x":-13.8309,"y":-16.2948},{"x":10,"y":-24.0756,"l":"O"},{"x":-4.7283,"y":-3.7052},{"x":33.8309,"y":-16.2948},{"x":24.7283,"y":-3.7052},{"x":-4.7283,"y":16.2948,"l":"O"},{"x":33.8309,"y":-56.2948,"l":"N"},{"x":24.7283,"y":16.2948,"l":"O"},{"x":-4.7283,"y":36.2948,"l":"P"},{"c":-1,"x":-4.7283,"y":56.2948,"l":"O"},{"c":-1,"x":15.2717,"y":36.2948,"l":"O"},{"x":-24.7283,"y":36.2948,"l":"O"}],"b":[{"b":3,"e":2},{"b":2,"e":4},{"b":4,"e":6,"o":1},{"b":5,"e":6},{"b":5,"e":3},{"b":4,"e":7},{"b":5,"e":8},{"b":2,"e":0},{"b":0,"e":1},{"b":6,"e":9},{"b":7,"e":10},{"b":10,"e":12},{"b":10,"e":13,"o":2},{"b":10,"e":11}]}
+	});
+	group.templates.push({
+		name: 'Deoxyribonucleoside',
+		data: {"a":[{"x":-13.8309,"y":-14.9551},{"c":-1,"x":-33.8309,"y":-14.9551,"l":"O"},{"x":-13.8309,"y":5.0449},{"x":10,"y":-2.7359,"l":"O"},{"x":-4.7283,"y":17.6345},{"x":33.8309,"y":5.045},{"x":24.7283,"y":17.6345},{"x":-14.7283,"y":34.955,"l":"O"},{"x":33.8309,"y":-34.955,"l":"N"}],"b":[{"b":3,"e":2},{"b":2,"e":4},{"b":4,"e":6,"o":1},{"b":5,"e":6},{"b":5,"e":3},{"b":4,"e":7},{"b":5,"e":8},{"b":2,"e":0},{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Deoxyribonucleoside Monophosphate',
+		data: {"a":[{"x":6.1691,"y":-14.955},{"x":-13.8309,"y":-14.955,"l":"O"},{"x":6.1691,"y":5.045},{"x":-33.8309,"y":-14.955,"l":"P"},{"x":30,"y":-2.7358,"l":"O"},{"x":15.2717,"y":17.6345},{"x":-33.8309,"y":-34.955,"l":"O"},{"c":-1,"x":-53.8309,"y":-14.9551,"l":"O"},{"c":-1,"x":-33.8309,"y":5.045,"l":"O"},{"x":53.8309,"y":5.045},{"x":5.2717,"y":34.955,"l":"O"},{"x":44.7283,"y":17.6345},{"x":53.8309,"y":-34.955,"l":"N"}],"b":[{"b":4,"e":2},{"b":2,"e":5},{"b":5,"e":11,"o":1},{"b":9,"e":11},{"b":9,"e":4},{"b":5,"e":10},{"b":9,"e":12},{"b":2,"e":0},{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":7},{"b":3,"e":6,"o":2},{"b":3,"e":8}]}
+	});
+	group.templates.push({
+		name: 'Deoxyribonucleoside Diphosphate',
+		data: {"a":[{"x":26.1691,"y":-14.955},{"x":6.1691,"y":-14.955,"l":"O"},{"x":26.1691,"y":5.045},{"x":-13.8309,"y":-14.955,"l":"P"},{"x":50,"y":-2.7358,"l":"O"},{"x":35.2717,"y":17.6345},{"c":-1,"x":-13.8309,"y":5.045,"l":"O"},{"x":-13.8309,"y":-34.955,"l":"O"},{"x":-33.8309,"y":-14.955,"l":"O"},{"x":73.8309,"y":5.045},{"x":64.7283,"y":17.6345},{"x":25.2717,"y":34.955,"l":"O"},{"x":-53.8309,"y":-14.955,"l":"P"},{"x":73.8309,"y":-34.955,"l":"N"},{"x":-53.8309,"y":-34.955,"l":"O"},{"c":-1,"x":-53.8309,"y":5.045,"l":"O"},{"c":-1,"x":-73.8309,"y":-14.955,"l":"O"}],"b":[{"b":4,"e":2},{"b":2,"e":5},{"b":5,"e":10,"o":1},{"b":9,"e":10},{"b":9,"e":4},{"b":5,"e":11},{"b":9,"e":13},{"b":2,"e":0},{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":8},{"b":3,"e":7,"o":2},{"b":3,"e":6},{"b":8,"e":12},{"b":12,"e":16},{"b":12,"e":14,"o":2},{"b":12,"e":15}]}
+	});
+	group.templates.push({
+		name: 'Deoxyribonucleoside Triphosphate',
+		data: {"a":[{"x":46.1691,"y":-14.955},{"x":26.1691,"y":-14.955,"l":"O"},{"x":46.1691,"y":5.045},{"x":6.1691,"y":-14.955,"l":"P"},{"x":70,"y":-2.7358,"l":"O"},{"x":55.2717,"y":17.6345},{"c":-1,"x":6.1691,"y":5.045,"l":"O"},{"x":-13.8309,"y":-14.955,"l":"O"},{"x":6.1691,"y":-34.955,"l":"O"},{"x":93.8309,"y":5.045},{"x":84.7283,"y":17.6345},{"x":45.2717,"y":34.955,"l":"O"},{"x":-33.8309,"y":-14.955,"l":"P"},{"x":93.8309,"y":-34.955,"l":"N"},{"x":-33.8309,"y":-34.955,"l":"O"},{"c":-1,"x":-33.8309,"y":5.045,"l":"O"},{"x":-53.8309,"y":-14.955,"l":"O"},{"x":-73.8309,"y":-14.955,"l":"P"},{"x":-73.8309,"y":-34.955,"l":"O"},{"c":-1,"x":-93.8309,"y":-14.955,"l":"O"},{"c":-1,"x":-73.8309,"y":5.045,"l":"O"}],"b":[{"b":4,"e":2},{"b":2,"e":5},{"b":5,"e":10,"o":1},{"b":9,"e":10},{"b":9,"e":4},{"b":5,"e":11},{"b":9,"e":13},{"b":2,"e":0},{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":7},{"b":3,"e":8,"o":2},{"b":3,"e":6},{"b":7,"e":12},{"b":12,"e":16},{"b":12,"e":14,"o":2},{"b":12,"e":15},{"b":16,"e":17},{"b":17,"e":19},{"b":17,"e":18,"o":2},{"b":17,"e":20}]}
+	});
+	group.templates.push({
+		name: 'Deoxyribonucleotide chain form',
+		data: {"a":[{"x":-13.8309,"y":-36.2948},{"x":-13.8309,"y":-16.2948},{"x":-33.8309,"y":-36.2948,"l":"O"},{"x":10,"y":-24.0756,"l":"O"},{"x":-4.7284,"y":-3.7052},{"x":33.8309,"y":-16.2948},{"x":24.7283,"y":-3.7052},{"x":-4.7284,"y":16.2948,"l":"O"},{"x":33.8309,"y":-56.2948,"l":"N"},{"x":-4.7284,"y":36.2948,"l":"P"},{"x":-24.7284,"y":36.2948,"l":"O"},{"c":-1,"x":-4.7284,"y":56.2948,"l":"O"},{"c":-1,"x":15.2716,"y":36.2948,"l":"O"}],"b":[{"b":3,"e":1},{"b":1,"e":4},{"b":4,"e":6,"o":1},{"b":5,"e":6},{"b":5,"e":3},{"b":4,"e":7},{"b":5,"e":8},{"b":1,"e":0},{"b":0,"e":2},{"b":7,"e":9},{"b":9,"e":12},{"b":9,"e":10,"o":2},{"b":9,"e":11}]}
+	});
+	group.templates.push({
+		name: 'Phosphate',
+		data: {"a":[{"x":-18.6602,"y":-0.6571,"l":"O"},{"x":1.3398,"y":-0.6571,"l":"P"},{"c":-1,"x":8.6025,"y":17.9776,"l":"O"},{"x":11.3398,"y":-17.9776,"l":"O"},{"c":-1,"x":18.6603,"y":9.3429,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3,"o":2},{"b":1,"e":4}]}
+	});
+	d.push(group);
+	
+	group = {name:'Other', templates:[]};
+	group.templates.push({
+		name: 'Adamantane',
+		data: {"a":[{"x":-23.2311,"y":23.1027},{"x":-5.451,"y":14.1461},{"x":-12.329,"y":4.0241},{"x":12.3291,"y":23.1027},{"x":-5.451,"y":-4.0241},{"x":5.451,"y":13.1092},{"x":-12.329,"y":-14.1461},{"x":23.2311,"y":4.0241},{"x":5.451,"y":-23.1027},{"x":23.2311,"y":-14.1461}],"b":[{"b":0,"e":1},{"b":4,"e":8},{"b":8,"e":6},{"b":6,"e":2},{"b":0,"e":2},{"b":2,"e":5},{"b":5,"e":7},{"b":7,"e":3},{"b":1,"e":3},{"b":7,"e":9},{"b":8,"e":9},{"b":4,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Basketane',
+		data: {"a":[{"x":8.0624,"y":-6.6984,"z":0.0009},{"x":-10.9369,"y":7.243,"z":0.0009},{"x":6.1745,"y":-24.4805,"z":0.0007},{"x":21.1864,"y":7.5359,"z":0.0002},{"x":4.6483,"y":26.1053,"z":0.0005},{"x":-21.1864,"y":5.6242,"z":-0.0003},{"x":-4.1138,"y":-26.1053,"z":-0.0005},{"x":10.9373,"y":5.9171,"z":-0.001},{"x":-5.8568,"y":24.4464,"z":-0.0007},{"x":-7.126,"y":-9.0969,"z":-0.0009}],"b":[{"b":0,"e":3},{"b":0,"e":2},{"b":0,"e":1},{"b":3,"e":7},{"b":3,"e":4},{"b":7,"e":8},{"b":7,"e":9},{"b":8,"e":4},{"b":8,"e":5},{"b":4,"e":1},{"b":1,"e":5},{"b":5,"e":9},{"b":9,"e":6},{"b":6,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Bishomotwistane',
+		data: {"a":[{"x":-9.3245,"y":9.3434,"z":0.0012},{"x":-3.4592,"y":27.6792,"z":0.0006},{"x":-27.685,"y":3.7727,"z":0.0006},{"x":9.1603,"y":-9.3884,"z":0.0012},{"x":3.7793,"y":27.6792,"z":-0.0006},{"x":-27.6729,"y":-3.3575,"z":-0.0006},{"x":27.5776,"y":-3.773,"z":0.0006},{"x":3.3516,"y":-27.6792,"z":0.0006},{"x":9.4006,"y":9.313,"z":-0.0012},{"x":-9.3316,"y":-9.1718,"z":-0.0012},{"x":27.6851,"y":3.4533,"z":-0.0006},{"x":-3.7669,"y":-27.5837,"z":-0.0006}],"b":[{"b":0,"e":3},{"b":0,"e":1},{"b":3,"e":7},{"b":9,"e":8},{"b":9,"e":11},{"b":8,"e":4},{"b":1,"e":4},{"b":7,"e":11},{"b":0,"e":2},{"b":2,"e":5},{"b":5,"e":9},{"b":8,"e":10},{"b":10,"e":6},{"b":6,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Cuneane',
+		data: {"a":[{"x":1.9228,"y":16.1562,"z":0.0003},{"x":-17.4892,"y":4.2593,"z":0.0007},{"x":21.6967,"y":1.7764,"z":0.0004},{"x":-1.9533,"y":6.9712,"z":-0.0008},{"x":-21.6967,"y":-5.7118,"z":-0.0004},{"x":-10.3535,"y":-14.8421,"z":0.0004},{"x":10.3842,"y":-16.1562,"z":0.0002},{"x":17.4892,"y":-8.1944,"z":-0.0007}],"b":[{"b":0,"e":3},{"b":0,"e":1},{"b":0,"e":2},{"b":3,"e":4},{"b":3,"e":7},{"b":1,"e":4},{"b":1,"e":5},{"b":2,"e":7},{"b":2,"e":6},{"b":4,"e":5},{"b":7,"e":6},{"b":5,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Diademan',
+		data: {"a":[{"x":-13.929,"y":-20.6479,"z":-0.0001},{"x":-14.1084,"y":-8.6671,"z":0.0009},{"x":-23.7135,"y":3.8281,"z":0},{"x":7.2834,"y":-23.6595,"z":-0.0005},{"x":8.8036,"y":0.6176,"z":0.0009},{"x":-10.952,"y":21.9588,"z":-0.0002},{"x":22.0579,"y":-2.6695,"z":-0.0008},{"x":23.7134,"y":-14.0348,"z":0.0002},{"x":8.6453,"y":23.6595,"z":0.0004},{"x":13.6064,"y":18.472,"z":-0.0007}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":2},{"b":1,"e":4},{"b":2,"e":5},{"b":3,"e":7},{"b":3,"e":6},{"b":4,"e":7},{"b":4,"e":8},{"b":5,"e":8},{"b":5,"e":9},{"b":7,"e":6},{"b":6,"e":9},{"b":8,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Diamantane',
+		data: {"a":[{"x":-14.141,"y":21.12,"z":0},{"x":-29.3361,"y":18.0407,"z":0.0006},{"x":10.8073,"y":19.3824,"z":0.0006},{"x":-10.7711,"y":6.3888,"z":-0.0011},{"x":-27.8889,"y":-9.1493,"z":0.001},{"x":25.7558,"y":25.458,"z":0.0001},{"x":10.7709,"y":-6.3887,"z":0.0011},{"x":-10.8074,"y":-19.3824,"z":-0.0006},{"x":2.5813,"y":11.5032,"z":-0.0017},{"x":-25.7559,"y":-25.458,"z":-0.0001},{"x":-2.5814,"y":-11.5031,"z":0.0017},{"x":27.8887,"y":9.1493,"z":-0.001},{"x":14.1409,"y":-21.12,"z":-0},{"x":29.3361,"y":-18.0406,"z":-0.0006}],"b":[{"b":0,"e":3},{"b":0,"e":2},{"b":0,"e":1},{"b":3,"e":7},{"b":3,"e":8},{"b":2,"e":6},{"b":2,"e":5},{"b":7,"e":12},{"b":7,"e":9},{"b":6,"e":12},{"b":6,"e":10},{"b":12,"e":13},{"b":4,"e":1},{"b":4,"e":9},{"b":4,"e":10},{"b":11,"e":8},{"b":11,"e":5},{"b":11,"e":13}]}
+	});
+	group.templates.push({
+		name: 'Dihomocubane',
+		data: {"a":[{"x":-1.8424,"y":-19.703,"z":-0.0007},{"x":-16.4495,"y":-15.2664,"z":0.0004},{"x":19.0463,"y":-14.4468,"z":0.0001},{"x":-4.0421,"y":5.4673,"z":-0.0011},{"x":4.0428,"y":-5.4672,"z":0.0011},{"x":-29.925,"y":-0.6907,"z":0.0003},{"x":29.9251,"y":0.6911,"z":-0.0003},{"x":-19.0462,"y":14.4468,"z":-0.0001},{"x":16.4496,"y":15.2664,"z":-0.0004},{"x":1.8432,"y":19.703,"z":0.0007}],"b":[{"b":0,"e":3},{"b":0,"e":1},{"b":0,"e":2},{"b":3,"e":7},{"b":3,"e":8},{"b":4,"e":9},{"b":4,"e":1},{"b":4,"e":2},{"b":9,"e":7},{"b":9,"e":8},{"b":1,"e":5},{"b":2,"e":6},{"b":7,"e":5},{"b":8,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Homoadamantane',
+		data: {"a":[{"x":-18.7389,"y":6.0639,"z":-0.0008},{"x":3.5456,"y":9.9613,"z":-0.0015},{"x":-25.4634,"y":21.2769,"z":0.0001},{"x":-23.4106,"y":-20.1097,"z":-0.0006},{"x":21.6364,"y":2.2969,"z":-0.0006},{"x":-9.571,"y":14.4702,"z":0.0011},{"x":-4.1032,"y":-23.0779,"z":0.0003},{"x":25.4634,"y":17.5276,"z":0.0002},{"x":19.5509,"y":-21.9076,"z":-0.0002},{"x":11.2348,"y":23.0779,"z":0.001},{"x":-9.4581,"y":-10.5918,"z":0.0014}],"b":[{"b":0,"e":3},{"b":0,"e":1},{"b":0,"e":2},{"b":6,"e":3},{"b":6,"e":8},{"b":6,"e":10},{"b":4,"e":1},{"b":4,"e":8},{"b":4,"e":7},{"b":5,"e":2},{"b":5,"e":10},{"b":5,"e":9},{"b":7,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Homocubane',
+		data: {"a":[{"x":6.7729,"y":18.8807,"z":0.0007},{"x":7.3705,"y":-7.6566,"z":0.001},{"x":17.1692,"y":14.1707,"z":-0.0004},{"x":-18.1844,"y":14.3742,"z":0.0002},{"x":-16.6906,"y":-8.9747,"z":0.0006},{"x":18.1844,"y":-12.5556,"z":-0.0001},{"x":-7.3703,"y":9.4751,"z":-0.001},{"x":-15.1701,"y":-18.8807,"z":-0.0001},{"x":-3.1609,"y":-15.1039,"z":-0.0008}],"b":[{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":1},{"b":2,"e":6},{"b":2,"e":5},{"b":3,"e":6},{"b":3,"e":4},{"b":1,"e":5},{"b":1,"e":4},{"b":6,"e":8},{"b":5,"e":8},{"b":4,"e":7},{"b":8,"e":7}]}
+	});
+	group.templates.push({
+		name: 'Pagodane',
+		data: {"a":[{"x":-14.2104,"y":6.7147,"z":0.0011},{"x":-20.5671,"y":-2.7196,"z":-0.0008},{"x":20.5671,"y":2.7185,"z":0.0008},{"x":-21.1215,"y":-15.4349,"z":0.0015},{"x":-17.4963,"y":31.478,"z":0.0009},{"x":-28.3797,"y":-26.2067,"z":-0.0006},{"x":-24.7543,"y":20.706,"z":-0.0012},{"x":14.2099,"y":-6.7158,"z":-0.0011},{"x":28.3797,"y":26.2067,"z":0.0006},{"x":24.7543,"y":-20.706,"z":0.0012},{"x":-33.3155,"y":-26.6568,"z":0.0006},{"x":0.1614,"y":-37.1774,"z":0.0016},{"x":6.6932,"y":47.3504,"z":0.0004},{"x":-28.6453,"y":33.7758,"z":-0.0002},{"x":-6.6932,"y":-47.3504,"z":-0.0004},{"x":-0.1614,"y":37.1774,"z":-0.0016},{"x":17.4963,"y":-31.478,"z":-0.0009},{"x":21.1215,"y":15.4349,"z":-0.0015},{"x":33.3155,"y":26.6568,"z":-0.0006},{"x":28.6453,"y":-33.7758,"z":0.0002}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":4},{"b":1,"e":7},{"b":1,"e":5},{"b":1,"e":6},{"b":2,"e":7},{"b":2,"e":9},{"b":2,"e":8},{"b":7,"e":16},{"b":7,"e":17},{"b":3,"e":11},{"b":3,"e":10},{"b":4,"e":12},{"b":4,"e":13},{"b":5,"e":14},{"b":5,"e":10},{"b":6,"e":15},{"b":6,"e":13},{"b":9,"e":11},{"b":9,"e":19},{"b":8,"e":12},{"b":8,"e":18},{"b":16,"e":14},{"b":16,"e":19},{"b":17,"e":15},{"b":17,"e":18},{"b":11,"e":14},{"b":12,"e":15}]}
+	});
+	group.templates.push({
+		name: 'Peristylane',
+		data: {"a":[{"x":-15.3409,"y":-17.2723,"z":-0.0002},{"x":4.8361,"y":-19.4524,"z":-0.0006},{"x":-13.4583,"y":-10.0681,"z":0.0008},{"x":-29.1197,"y":-8.9382,"z":-0.0008},{"x":7.9832,"y":-12.9467,"z":-0.0016},{"x":19.1897,"y":-13.5953,"z":0.0001},{"x":7.8828,"y":-7.7953,"z":0.001},{"x":-25.658,"y":4.3094,"z":0.0011},{"x":-13.5287,"y":-2.0397,"z":-0.0017},{"x":-34.3758,"y":8.6531,"z":-0},{"x":25.8177,"y":2.1503,"z":-0.0012},{"x":34.3758,"y":-2.1764,"z":-0.0001},{"x":13.585,"y":8.4881,"z":0.0015},{"x":-7.912,"y":19.4523,"z":0.0014},{"x":29.2903,"y":15.4332,"z":0.0007}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":5},{"b":1,"e":4},{"b":2,"e":6},{"b":2,"e":7},{"b":5,"e":6},{"b":5,"e":11},{"b":6,"e":12},{"b":3,"e":8},{"b":3,"e":9},{"b":4,"e":8},{"b":4,"e":10},{"b":7,"e":9},{"b":7,"e":13},{"b":11,"e":10},{"b":11,"e":14},{"b":12,"e":13},{"b":12,"e":14}]}
+	});
+	group.templates.push({
+		name: 'Porphine',
+		data: {"a":[{"x":40.7025,"y":17.8205},{"x":20.9488,"y":20.9488,"l":"N"},{"x":49.7832,"y":-0},{"x":49.7817,"y":35.6396},{"x":17.8205,"y":40.7024},{"x":40.7025,"y":-17.8205},{"x":35.6396,"y":49.7817},{"x":0,"y":49.7832},{"x":49.7817,"y":-35.6396},{"x":20.9487,"y":-20.9487,"l":"N"},{"x":-17.8205,"y":40.7025},{"x":35.6396,"y":-49.7818},{"x":17.8205,"y":-40.7025},{"x":-35.6396,"y":49.7818},{"x":-20.9487,"y":20.9488,"l":"N"},{"x":-0,"y":-49.7832},{"x":-49.7817,"y":35.6396},{"x":-40.7025,"y":17.8205},{"x":-17.8205,"y":-40.7025},{"x":-49.7832,"y":0},{"x":-35.6396,"y":-49.7817},{"x":-20.9488,"y":-20.9487,"l":"N"},{"x":-40.7024,"y":-17.8205},{"x":-49.7818,"y":-35.6396}],"b":[{"b":0,"e":2},{"b":2,"e":5,"o":2},{"b":5,"e":8},{"b":8,"e":11,"o":2},{"b":5,"e":9},{"b":9,"e":12},{"b":12,"e":11},{"b":12,"e":15,"o":2},{"b":0,"e":1,"o":2},{"b":1,"e":4},{"b":4,"e":6},{"b":6,"e":3,"o":2},{"b":3,"e":0},{"b":4,"e":7,"o":2},{"b":7,"e":10},{"b":10,"e":13,"o":2},{"b":13,"e":16},{"b":16,"e":17,"o":2},{"b":17,"e":19},{"b":19,"e":22,"o":2},{"b":22,"e":23},{"b":23,"e":20,"o":2},{"b":20,"e":18},{"b":18,"e":15},{"b":18,"e":21,"o":2},{"b":21,"e":22},{"b":17,"e":14},{"b":14,"e":10}]}
+	});
+	group.templates.push({
+		name: 'Propellaprismane',
+		data: {"a":[{"x":15.8061,"y":23.5917,"z":0.0008},{"x":26.2297,"y":29.8832,"z":0.0014},{"x":23.1528,"y":15.0751,"z":-0.001},{"x":-23.3446,"y":21.8447,"z":0.0005},{"x":15.998,"y":-13.3281,"z":0.0013},{"x":32.9326,"y":10.6278,"z":0.0022},{"x":-15.998,"y":13.3281,"z":-0.0013},{"x":23.3446,"y":-21.8447,"z":-0.0005},{"x":38.3971,"y":15.7753,"z":-0.0015},{"x":-23.1528,"y":-15.0751,"z":0.001},{"x":-38.6203,"y":26.9893,"z":0.0009},{"x":26.452,"y":-12.882,"z":0.002},{"x":-26.452,"y":12.882,"z":-0.002},{"x":-15.8061,"y":-23.5917,"z":-0.0008},{"x":38.6192,"y":-26.9897,"z":-0.0009},{"x":48.1469,"y":-7.0099,"z":-0.0015},{"x":-38.3981,"y":-15.7758,"z":0.0015},{"x":-48.1469,"y":7.0099,"z":0.0015},{"x":-32.9318,"y":-10.628,"z":-0.0022},{"x":-26.2297,"y":-29.8832,"z":-0.0014}],"b":[{"b":0,"e":2},{"b":0,"e":3},{"b":0,"e":4},{"b":0,"e":1},{"b":4,"e":7},{"b":4,"e":9},{"b":4,"e":11},{"b":7,"e":13},{"b":7,"e":14},{"b":7,"e":2},{"b":2,"e":6},{"b":2,"e":8},{"b":3,"e":6},{"b":3,"e":10},{"b":3,"e":9},{"b":9,"e":13},{"b":9,"e":16},{"b":13,"e":6},{"b":13,"e":19},{"b":6,"e":12},{"b":14,"e":15},{"b":15,"e":8},{"b":11,"e":5},{"b":5,"e":1},{"b":10,"e":17},{"b":17,"e":16},{"b":12,"e":18},{"b":18,"e":19}]}
+	});
+	group.templates.push({
+		name: 'Pyramidane',
+		data: {"a":[{"x":-17.2378,"y":6.685,"z":0.0002},{"x":-4.7779,"y":2.0713,"z":-0.0009},{"x":1.0091,"y":-10.8859,"z":0.0002},{"x":4.7776,"y":10.8859,"z":0.0008},{"x":17.2379,"y":6.2731,"z":-0.0003}],"b":[{"b":0,"e":3},{"b":3,"e":4},{"b":4,"e":1},{"b":1,"e":0},{"b":0,"e":2},{"b":2,"e":1},{"b":4,"e":2},{"b":3,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Secocubane',
+		data: {"a":[{"x":-12.7876,"y":0.469,"z":0.0009},{"x":-17.3436,"y":-13.3054,"z":0.0001},{"x":-3.3968,"y":18.2664,"z":0.0006},{"x":1.8735,"y":-18.2664,"z":-0.0005},{"x":-18.1791,"y":9.8903,"z":-0.0003},{"x":15.8203,"y":13.3053,"z":-0},{"x":18.1791,"y":-7.5251,"z":-0.0001},{"x":2.5011,"y":4.5517,"z":-0.001}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":4},{"b":1,"e":3},{"b":3,"e":6},{"b":3,"e":7},{"b":6,"e":5},{"b":2,"e":4},{"b":2,"e":5},{"b":4,"e":7},{"b":7,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Snoutane',
+		data: {"a":[{"x":-6.3364,"y":20.3269,"z":-0.0001},{"x":7.6179,"y":19.8849,"z":0.0003},{"x":-8.926,"y":7.7702,"z":-0.0008},{"x":-20.0203,"y":9.1351,"z":0.0002},{"x":8.926,"y":8.2183,"z":0.001},{"x":20.0203,"y":6.8534,"z":0},{"x":8.4811,"y":-3.8285,"z":-0.0007},{"x":-9.6143,"y":-1.6023,"z":0.001},{"x":3.4219,"y":-20.3269,"z":-0.0003},{"x":-6.3552,"y":-19.124,"z":0.0006}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":5},{"b":1,"e":4},{"b":2,"e":3},{"b":2,"e":6},{"b":3,"e":7},{"b":5,"e":4},{"b":5,"e":6},{"b":4,"e":7},{"b":6,"e":8},{"b":7,"e":9},{"b":8,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Tetraasterane',
+		data: {"a":[{"x":7.9814,"y":-4.7005,"z":-0.0012},{"x":4.5426,"y":16.8926,"z":-0.0011},{"x":7.4295,"y":-23.9433,"z":-0.0007},{"x":16.8749,"y":22.9377,"z":0.0001},{"x":-19.7619,"y":17.8982,"z":-0.0005},{"x":19.7619,"y":-17.8982,"z":0.0005},{"x":-16.8749,"y":-22.9377,"z":-0.0001},{"x":24.425,"y":3.3596,"z":0.0004},{"x":-7.4295,"y":23.9433,"z":0.0007},{"x":-24.425,"y":-3.3596,"z":-0.0004},{"x":-4.5426,"y":-16.8926,"z":0.0011},{"x":-7.9814,"y":4.7005,"z":0.0012}],"b":[{"b":0,"e":2},{"b":0,"e":1},{"b":2,"e":6},{"b":2,"e":5},{"b":1,"e":4},{"b":1,"e":3},{"b":6,"e":9},{"b":6,"e":10},{"b":4,"e":9},{"b":4,"e":8},{"b":7,"e":5},{"b":7,"e":3},{"b":5,"e":10},{"b":3,"e":8},{"b":10,"e":11},{"b":8,"e":11}]}
+	});
+	group.templates.push({
+		name: 'Triptycene',
+		data: {"a":[{"x":-1.8416,"y":33.5953},{"x":-22.0802,"y":39.915},{"x":15.2565,"y":41.2332},{"x":-1.8416,"y":7.8124},{"x":-11.7283,"y":24.3677},{"x":-40.1864,"y":47.0877},{"x":25.5308,"y":24.329},{"x":29.5243,"y":50.9648},{"x":9.2469,"y":-6.8431},{"x":-10.1774,"y":-11.9997},{"x":-32.4321,"y":21.9251},{"x":9.2469,"y":15.1014},{"x":-57.6334,"y":41.2332},{"x":45.3042,"y":24.329},{"x":46.9713,"y":50.9648},{"x":14.0546,"y":-29.4079},{"x":-6.3003,"y":-36.1929},{"x":-47.9406,"y":27.7409},{"x":57.6334,"y":35.4563},{"x":8.045,"y":-50.9648}],"b":[{"b":0,"e":1},{"b":1,"e":4,"o":2},{"b":4,"e":11},{"b":0,"e":3},{"b":3,"e":8,"o":2},{"b":11,"e":8},{"b":11,"e":6},{"b":0,"e":2},{"b":6,"e":2,"o":2},{"b":2,"e":7},{"b":7,"e":14,"o":2},{"b":14,"e":18},{"b":18,"e":13,"o":2},{"b":6,"e":13},{"b":4,"e":10},{"b":10,"e":17,"o":2},{"b":17,"e":12},{"b":12,"e":5,"o":2},{"b":1,"e":5},{"b":3,"e":9},{"b":9,"e":16,"o":2},{"b":16,"e":19},{"b":19,"e":15,"o":2},{"b":8,"e":15}]}
+	});
+	group.templates.push({
+		name: 'Twistane',
+		data: {"a":[{"x":-9.5219,"y":-26.0012},{"x":7.2133,"y":-26.1571},{"x":-14.5434,"y":-10.0357},{"x":12.5334,"y":-10.2879},{"x":-28.325,"y":0.1651},{"x":13.5307,"y":10.0357},{"x":28.325,"y":-1.1706},{"x":-13.5501,"y":10.2879},{"x":8.5073,"y":26.0012},{"x":-8.228,"y":26.1571}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":6},{"b":6,"e":5},{"b":5,"e":8},{"b":8,"e":9},{"b":9,"e":7},{"b":7,"e":3},{"b":7,"e":4},{"b":4,"e":2},{"b":2,"e":0},{"b":2,"e":5}]}
+	});
+	d.push(group);
+	
+	group = {name:'Platonic Solids', templates:[]};
+	group.templates.push({
+		name: 'Cubane',
+		data: {"a":[{"x":6.8116,"y":7.3797,"z":-0.001},{"x":15.7836,"y":14.3051,"z":0.0002},{"x":-16.3582,"y":9.4716,"z":-0.0005},{"x":7.3866,"y":-16.3971,"z":-0.0006},{"x":-7.3865,"y":16.3971,"z":0.0006},{"x":16.3582,"y":-9.4716,"z":0.0005},{"x":-15.7838,"y":-14.3053,"z":-0.0002},{"x":-6.8118,"y":-7.38,"z":0.001}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":4,"e":2},{"b":2,"e":0},{"b":0,"e":3},{"b":2,"e":6},{"b":4,"e":7},{"b":1,"e":5},{"b":6,"e":3},{"b":3,"e":5},{"b":5,"e":7},{"b":7,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Dodecahedrane',
+		data: {"a":[{"x":5.5634,"y":23.4684,"z":-0.0013},{"x":16.1591,"y":0.9427,"z":-0.0016},{"x":-19.3759,"y":19.7391,"z":-0.0011},{"x":15.6559,"y":31.7957,"z":-0.0002},{"x":-2.2312,"y":-16.7085,"z":-0.0016},{"x":32.801,"y":-4.6523,"z":-0.0007},{"x":-24.6961,"y":25.7614,"z":0.0001},{"x":-24.1925,"y":-5.0917,"z":-0.0013},{"x":32.4899,"y":14.4157,"z":0.0002},{"x":-3.0451,"y":33.2128,"z":0.0006},{"x":3.0451,"y":-33.2128,"z":-0.0006},{"x":24.6961,"y":-25.7618,"z":-0.0001},{"x":-32.801,"y":4.6523,"z":0.0007},{"x":-32.4904,"y":-14.4156,"z":-0.0002},{"x":24.1925,"y":5.0917,"z":0.0013},{"x":2.2307,"y":16.7087,"z":0.0016},{"x":-15.6564,"y":-31.7956,"z":0.0002},{"x":19.3759,"y":-19.7394,"z":0.0011},{"x":-16.1591,"y":-0.9427,"z":0.0016},{"x":-5.5634,"y":-23.4684,"z":0.0013}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":0,"e":3},{"b":1,"e":4},{"b":1,"e":5},{"b":2,"e":7},{"b":2,"e":6},{"b":3,"e":8},{"b":3,"e":9},{"b":4,"e":7},{"b":4,"e":10},{"b":5,"e":8},{"b":5,"e":11},{"b":7,"e":13},{"b":6,"e":9},{"b":6,"e":12},{"b":8,"e":14},{"b":9,"e":15},{"b":10,"e":11},{"b":10,"e":16},{"b":11,"e":17},{"b":13,"e":12},{"b":13,"e":16},{"b":12,"e":18},{"b":14,"e":15},{"b":14,"e":17},{"b":15,"e":18},{"b":16,"e":19},{"b":17,"e":19},{"b":18,"e":19}]}
+	});
+	group.templates.push({
+		name: 'Icosahedrane',
+		data: {"a":[{"x":-2.1935,"y":16.5915,"z":0.0009},{"x":19.041,"y":14.7651,"z":0.0002},{"x":-2.7246,"y":23.1426,"z":-0.0004},{"x":-12.2778,"y":-6.837,"z":0.001},{"x":13.1368,"y":-3.7632,"z":0.001},{"x":-22.0806,"y":9.7916,"z":0.0002},{"x":12.2777,"y":6.837,"z":-0.001},{"x":22.0806,"y":-9.7917,"z":-0.0002},{"x":-13.1371,"y":3.7632,"z":-0.001},{"x":2.7243,"y":-23.1426,"z":0.0004},{"x":-19.0411,"y":-14.7652,"z":-0.0002},{"x":2.1933,"y":-16.5915,"z":-0.0009}],"b":[{"b":0,"e":4},{"b":4,"e":7},{"b":7,"e":6},{"b":6,"e":2},{"b":2,"e":0},{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":6},{"b":1,"e":7},{"b":1,"e":4},{"b":11,"e":8},{"b":8,"e":5},{"b":5,"e":3},{"b":3,"e":9},{"b":9,"e":11},{"b":11,"e":10},{"b":10,"e":9},{"b":10,"e":8},{"b":10,"e":5},{"b":10,"e":3},{"b":0,"e":3,"o":2},{"b":0,"e":5},{"b":5,"e":2},{"b":2,"e":8},{"b":8,"e":6},{"b":6,"e":11},{"b":11,"e":7},{"b":7,"e":9},{"b":9,"e":4},{"b":4,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Octahedrane',
+		data: {"a":[{"x":17.605,"y":1.6441,"z":0.0003},{"x":-0.3217,"y":18.0965,"z":-0.0002},{"x":0.3216,"y":-18.0965,"z":0.0002},{"x":5.9408,"y":-3.8922,"z":-0.0009},{"x":-5.941,"y":3.8922,"z":0.0009},{"x":-17.605,"y":-1.6443,"z":-0.0003}],"b":[{"b":0,"e":1},{"b":1,"e":5},{"b":5,"e":2},{"b":2,"e":0},{"b":2,"e":4},{"b":1,"e":4},{"b":0,"e":3},{"b":2,"e":3},{"b":1,"e":3},{"b":5,"e":3},{"b":5,"e":4},{"b":0,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Tetrahedrane',
+		data: {"a":[{"x":-10.8801,"y":10.377,"z":-0.0003},{"x":9.7747,"y":11.0081,"z":0.0004},{"x":-2.0447,"y":-11.0081,"z":0.0002},{"x":10.8801,"y":0.3176,"z":-0.0007}],"b":[{"b":0,"e":1},{"b":0,"e":3},{"b":3,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":2,"e":0}]}
+	});
+	d.push(group);
+	
+	group = {name:'Ring Conformers', templates:[]};
+	group.templates.push({
+		name: '<b>4</b> Cyclobutane',
+		data: {"a":[{"x":188,"y":262},{"x":198,"y":260},{"x":208,"y":272},{"x":220,"y":256}],"b":[{"b":0,"e":2},{"b":1,"e":0},{"b":2,"e":3},{"b":3,"e":1}]}
+	});
+	group.templates.push({
+		name: '<b>5</b> Cyclopentane <i>Parallel Pentagon</i>',
+		data: {"a":[{"x":204,"y":249},{"x":186.68,"y":259},{"x":221.32,"y":259},{"x":186.68,"y":279},{"x":221.32,"y":279}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":2,"e":4},{"b":3,"e":4}]}
+	});
+	group.templates.push({
+		name: '<b>5</b> Cyclopentane',
+		data: {"a":[{"x":187.5,"y":256},{"x":182.5,"y":272},{"x":214.5,"y":259},{"x":202.5,"y":265},{"x":225.5,"y":263}],"b":[{"b":0,"e":1},{"b":2,"e":0},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":4}]}
+	});
+	group.templates.push({
+		name: '<b>6</b> Cyclohexane <i>Boat</i>',
+		data: {"a":[{"x":185.5,"y":254.5},{"x":201.5,"y":265.5},{"x":189.5,"y":273.5},{"x":222.5,"y":264.5},{"x":208.5,"y":273.5},{"x":220.5,"y":254.5}],"b":[{"b":0,"e":2},{"b":1,"e":0},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":5},{"b":5,"e":3}]}
+	});
+	group.templates.push({
+		name: '<b>6</b> Cyclohexane <i>Chair 1</i>',
+		data: {"a":[{"x":179.754,"y":255.356},{"x":198.95,"y":260.414},{"x":189.736,"y":272.644},{"x":218.266,"y":255.356},{"x":209.05,"y":267.584},{"x":228.246,"y":272.644}],"b":[{"b":0,"e":2},{"b":1,"e":0},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":5},{"b":5,"e":3}]}
+	});
+	group.templates.push({
+		name: '<b>6</b> Cyclohexane <i>Chair 2</i>',
+		data: {"a":[{"x":189.736,"y":255.356},{"x":209.05,"y":260.84},{"x":179.752,"y":272.644},{"x":228.248,"y":255.356},{"x":198.95,"y":267.158},{"x":218.262,"y":272.644}],"b":[{"b":0,"e":2},{"b":1,"e":0},{"b":2,"e":4},{"b":3,"e":1},{"b":4,"e":5},{"b":5,"e":3}]}
+	});
+	group.templates.push({
+		name: '<b>6</b> Cyclohexane <i>Twist Boat</i>',
+		data: {"a":[{"x":183.5,"y":258},{"x":196.5,"y":267},{"x":190.5,"y":274},{"x":219.5,"y":268},{"x":208.5,"y":265},{"x":224.5,"y":254}],"b":[{"b":0,"e":1},{"b":2,"e":0},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":5,"e":4}]}
+	});
+	group.templates.push({
+		name: '<b>7</b> Cycloheptane',
+		data: {"a":[{"x":178,"y":254.5},{"x":177,"y":275.5},{"x":196,"y":256.5},{"x":201,"y":284.5},{"x":218,"y":243.5},{"x":217,"y":261.5},{"x":231,"y":257.5}],"b":[{"b":0,"e":1},{"b":2,"e":0},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":6}]}
+	});
+	group.templates.push({
+		name: '<b>8</b> Cyclooctane',
+		data: {"a":[{"x":188.5,"y":239},{"x":171.5,"y":260},{"x":205.5,"y":248},{"x":180.5,"y":274},{"x":229.5,"y":245},{"x":201.5,"y":289},{"x":236.5,"y":270},{"x":223.5,"y":273}],"b":[{"b":0,"e":1},{"b":2,"e":0},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":7,"e":6}]}
+	});
+	d.push(group);
+	
+	group = {name:'Stereocenters and Geometries', templates:[]};
+	group.templates.push({
+		name: 'Bent Away',
+		data: {"a":[{"x":195.34,"y":279},{"x":212.66,"y":269.002},{"x":212.66,"y":249}],"b":[{"b":0,"e":1},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Bent Towards',
+		data: {"a":[{"x":195.338,"y":279},{"x":212.66,"y":269.002},{"x":212.66,"y":249}],"b":[{"b":0,"e":1},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Generic Diastereocenter',
+		data: {"a":[{"x":181.68,"y":268.998},{"x":198.998,"y":258.998},{"x":216.32,"y":268.998},{"x":209,"y":241.68},{"x":189,"y":241.68},{"x":206.322,"y":286.32},{"x":226.32,"y":286.32}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":4},{"b":1,"e":3},{"b":2,"e":5},{"b":2,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Generic Stereocenter',
+		data: {"a":[{"x":190.34,"y":277.66},{"x":207.662,"y":267.662},{"x":217.66,"y":250.34},{"x":197.66,"y":250.34}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2}]}
+	});
+	group.templates.push({
+		name: 'Heptavalent 1',
+		data: {"a":[{"x":185.34,"y":263.998},{"x":205.338,"y":263.998},{"x":205.338,"y":284},{"x":222.66,"y":254},{"x":197.34,"y":252.68},{"x":199.338,"y":276.32},{"x":205.338,"y":244},{"x":222.66,"y":274}],"b":[{"b":0,"e":1},{"b":1,"e":6},{"b":1,"e":2},{"b":1,"e":3},{"b":1,"e":7},{"b":1,"e":4},{"b":1,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Heptavalent 2',
+		data: {"a":[{"x":186.68,"y":252.66},{"x":204.002,"y":262.658},{"x":221.32,"y":252.66},{"x":186.68,"y":272.658},{"x":194.002,"y":245.34},{"x":221.32,"y":272.658},{"x":214,"y":245.34},{"x":204.002,"y":282.66}],"b":[{"b":1,"e":0},{"b":1,"e":2},{"b":1,"e":5},{"b":1,"e":3},{"b":1,"e":4},{"b":1,"e":6},{"b":1,"e":7}]}
+	});
+	group.templates.push({
+		name: 'Hexavalent',
+		data: {"a":[{"x":203.998,"y":263.998},{"x":186.68,"y":274},{"x":221.32,"y":274},{"x":214,"y":281.32},{"x":194,"y":246.68},{"x":214,"y":246.68},{"x":194,"y":281.32}],"b":[{"b":0,"e":4},{"b":0,"e":5},{"b":0,"e":1},{"b":0,"e":6},{"b":0,"e":2},{"b":0,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Incomplete Diastereocenter 1',
+		data: {"a":[{"x":186.68,"y":269},{"x":203.998,"y":259},{"x":203.998,"y":239},{"x":221.32,"y":269},{"x":221.32,"y":289}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":3,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Incomplete Diastereocenter 2',
+		data: {"a":[{"x":186.68,"y":269.002},{"x":203.998,"y":258.998},{"x":221.32,"y":269.002},{"x":203.998,"y":239.002},{"x":221.32,"y":288.998}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Incomplete Diastereocenter 3',
+		data: {"a":[{"x":186.68,"y":269},{"x":203.998,"y":259},{"x":221.32,"y":269},{"x":203.998,"y":239},{"x":221.32,"y":289}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Incomplete Diastereocenter 4',
+		data: {"a":[{"x":186.68,"y":269},{"x":204.002,"y":259},{"x":204.002,"y":239},{"x":221.32,"y":269},{"x":221.32,"y":289}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":3,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Octahedral',
+		data: {"a":[{"x":203.998,"y":244},{"x":203.998,"y":264},{"x":186.68,"y":254},{"x":186.68,"y":274},{"x":203.998,"y":284},{"x":221.32,"y":254},{"x":221.32,"y":274}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":5},{"b":1,"e":3},{"b":1,"e":6},{"b":1,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Octavalent 1',
+		data: {"a":[{"x":204,"y":264.002},{"x":194,"y":281.32},{"x":221.322,"y":254},{"x":213.998,"y":246.68},{"x":213.998,"y":281.32},{"x":186.678,"y":254},{"x":186.678,"y":274},{"x":221.322,"y":274},{"x":194,"y":246.68}],"b":[{"b":0,"e":5},{"b":0,"e":6},{"b":0,"e":2},{"b":0,"e":7},{"b":0,"e":8},{"b":0,"e":3},{"b":0,"e":1},{"b":0,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Octavalent 2',
+		data: {"a":[{"x":183.998,"y":264},{"x":204,"y":264},{"x":194.002,"y":246.682},{"x":221.32,"y":274},{"x":213.998,"y":281.318},{"x":186.68,"y":274},{"x":213.998,"y":246.682},{"x":224.002,"y":264},{"x":194.002,"y":281.318}],"b":[{"b":0,"e":1},{"b":1,"e":7},{"b":1,"e":2},{"b":1,"e":6},{"b":1,"e":5},{"b":1,"e":3},{"b":1,"e":8},{"b":1,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Square Planar',
+		data: {"a":[{"x":186.68,"y":254},{"x":203.998,"y":264.002},{"x":186.68,"y":274},{"x":221.32,"y":254},{"x":221.32,"y":274}],"b":[{"b":1,"e":0},{"b":1,"e":2},{"b":1,"e":3},{"b":1,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Square Pyramidal',
+		data: {"a":[{"x":204.002,"y":249},{"x":204.002,"y":268.998},{"x":186.68,"y":259},{"x":221.32,"y":259},{"x":221.32,"y":279},{"x":186.68,"y":279}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3},{"b":1,"e":4},{"b":1,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Tetrahedral',
+		data: {"a":[{"x":204.002,"y":265.338},{"x":221.32,"y":275.34},{"x":204.002,"y":245.34},{"x":214,"y":282.66},{"x":186.68,"y":275.34}],"b":[{"b":0,"e":2},{"b":0,"e":4},{"b":0,"e":1},{"b":0,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Trigonal Bipyramidal',
+		data: {"a":[{"x":185.338,"y":263.998},{"x":205.34,"y":263.998},{"x":205.34,"y":284},{"x":222.662,"y":274},{"x":205.34,"y":244},{"x":222.662,"y":254}],"b":[{"b":0,"e":1},{"b":1,"e":4},{"b":1,"e":2},{"b":1,"e":5},{"b":1,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Trigonal Planar',
+		data: {"a":[{"x":185.338,"y":263.998},{"x":205.34,"y":263.998},{"x":222.662,"y":254},{"x":222.662,"y":274}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Trigonal Pyramidal',
+		data: {"a":[{"x":186.68,"y":265.34},{"x":204.002,"y":255.34},{"x":214,"y":272.66},{"x":221.32,"y":265.34}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2}]}
+	});
+	d.push(group);
+	
+	group = {name:'Vitamins', templates:[]};
+	group.templates.push({
+		name: 'Vitamin A',
+		data: {"a":[{"x":51.9615,"y":33.6602},{"x":51.9615,"y":13.6602},{"x":69.282,"y":3.6602},{"x":34.641,"y":3.6602},{"x":86.6025,"y":13.6602},{"x":17.3205,"y":13.6602},{"x":103.9231,"y":3.6602,"l":"OH"},{"x":0,"y":3.6602},{"x":-17.3205,"y":13.6602},{"x":-17.3205,"y":33.6602},{"x":-34.641,"y":3.6602},{"x":-51.9615,"y":13.6602},{"x":-69.2821,"y":3.6602},{"x":-86.6025,"y":13.6602},{"x":-69.2821,"y":-16.3398},{"x":-86.6025,"y":33.6602},{"x":-103.9231,"y":3.6602},{"x":-49.2821,"y":-16.3398},{"x":-59.2821,"y":-33.6603},{"x":-86.6025,"y":-26.3398},{"x":-103.9231,"y":-16.3398}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":4},{"b":4,"e":6},{"b":1,"e":3},{"b":3,"e":5,"o":2},{"b":5,"e":7},{"b":7,"e":8,"o":2},{"b":8,"e":9},{"b":8,"e":10},{"b":10,"e":11,"o":2},{"b":11,"e":12},{"b":12,"e":13,"o":2},{"b":13,"e":15},{"b":13,"e":16},{"b":16,"e":20},{"b":20,"e":19},{"b":19,"e":14},{"b":12,"e":14},{"b":14,"e":18},{"b":14,"e":17}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>12</sub> (Cyanocobalamin)',
+		data: {"a":[{"c":1,"x":3.3371,"y":-66.8596,"l":"Co"},{"x":3.3371,"y":-101.4081,"l":"CN"},{"x":23.0279,"y":-45.765,"l":"N"},{"x":-11.166,"y":-45.6584,"l":"N"},{"x":19.8359,"y":-89.7705,"l":"N"},{"x":-3.2171,"y":38.9619,"l":"N"},{"x":-14.0155,"y":-84.9408,"l":"N"},{"x":23.0322,"y":-25.5761},{"x":41.9322,"y":-51.4369},{"x":-28.8696,"y":-53.9362},{"x":-11.8939,"y":-26.1046},{"x":39.3607,"y":-86.886},{"x":16.9262,"y":-109.7484},{"x":-14.614,"y":55.3971},{"x":15.9353,"y":44.7225},{"x":-17.558,"y":-104.1851},{"x":-30.3391,"y":-74.1948},{"x":41.9009,"y":-19.2102},{"x":5.5664,"y":-16.0075},{"x":53.7886,"y":-35.3435},{"x":49.8682,"y":-69.8304},{"x":-42.1304,"y":-38.4984},{"x":-42.2629,"y":-57.2596,"l":"H"},{"x":-31.6747,"y":-21.3799},{"x":48.7705,"y":-104.5222},{"x":34.6787,"y":-118.7709},{"x":-1.7374,"y":-116.6962},{"x":-2.5054,"y":71.3148,"l":"N"},{"x":16.3752,"y":64.7177},{"x":33.0317,"y":34.344},{"x":-37.8135,"y":-106.0053},{"x":-45.6892,"y":-87.5572},{"x":-49.3397,"y":-67.9516},{"x":47.9104,"y":-0.1344},{"x":5.3354,"y":3.9912},{"x":62.8086,"y":-17.493},{"x":73.7887,"y":-35.3435},{"x":-62.0654,"y":-40.1103},{"x":-24.2744,"y":-2.7994},{"x":-48.9952,"y":-11.3799},{"x":68.5611,"y":-107.4094},{"x":44.6789,"y":-136.0914},{"x":24.6787,"y":-136.0914},{"x":-4.8522,"y":-136.4521},{"x":-2.5054,"y":127.7894},{"x":33.9115,"y":74.3343},{"x":50.5679,"y":43.9606},{"x":-48.0763,"y":-123.1714},{"x":-62.2078,"y":-76.2816},{"x":-63.5787,"y":-96.4996},{"x":67.3099,"y":4.73},{"x":-73.4289,"y":-23.6522,"l":"CONH2"},{"x":-48.9952,"y":8.6201},{"x":80.9568,"y":-91.7139},{"x":64.6788,"y":-136.0914,"l":"CONH2"},{"x":-21.4629,"y":133.9404,"l":"O"},{"x":-11.6748,"y":118.62},{"x":51.0078,"y":63.9557},{"x":67.6643,"y":33.5821},{"x":-38.0763,"y":-140.4919},{"x":-80.2678,"y":-85.4781,"l":"CONH2"},{"x":81.2223,"y":-9.6382,"l":"CONH2"},{"x":-66.3158,"y":18.6201},{"x":100.9568,"y":-91.7139,"l":"CONH2"},{"x":-40.8672,"y":127.8124},{"x":-31.6748,"y":118.62},{"x":-11.6748,"y":98.62,"l":"O"},{"x":68.5441,"y":73.5724},{"x":-48.0763,"y":-157.8124,"l":"CONH2"},{"x":-83.6363,"y":8.6201,"l":"O"},{"x":-66.3158,"y":38.62,"l":"N"},{"x":-40.8672,"y":147.8124},{"x":-31.6748,"y":98.62,"l":"O"},{"x":-83.6363,"y":48.62},{"x":-58.1877,"y":157.8124,"l":"O"},{"x":-48.9953,"y":88.62,"l":"P"},{"x":-83.6363,"y":68.62},{"x":-38.9953,"y":71.2995,"l":"O"},{"x":-66.3158,"y":78.62,"l":"O"},{"x":-58.9953,"y":105.9405,"l":"O"},{"x":-100.9568,"y":78.62}],"b":[{"b":20,"e":11},{"b":8,"e":20,"o":2},{"b":11,"e":4,"o":2},{"b":11,"e":24},{"b":19,"e":8},{"b":2,"e":8},{"b":4,"e":0,"o":0},{"b":12,"e":4},{"b":24,"e":40},{"b":24,"e":25},{"b":19,"e":36},{"b":17,"e":19},{"b":19,"e":35},{"b":2,"e":0,"o":0},{"b":2,"e":7,"o":2},{"b":3,"e":0},{"b":6,"e":0,"o":0},{"b":25,"e":12},{"b":12,"e":26,"o":2},{"b":40,"e":53},{"b":25,"e":41},{"b":25,"e":42},{"b":17,"e":33},{"b":7,"e":17},{"b":18,"e":7},{"b":3,"e":10},{"b":3,"e":9},{"b":15,"e":6,"o":2},{"b":6,"e":16},{"b":15,"e":26},{"b":26,"e":43},{"b":53,"e":63},{"b":41,"e":54},{"b":33,"e":50},{"b":18,"e":34},{"b":23,"e":10},{"b":9,"e":21},{"b":9,"e":22},{"b":9,"e":16},{"b":30,"e":15},{"b":16,"e":32},{"b":16,"e":31},{"b":50,"e":61},{"b":21,"e":23},{"b":23,"e":39},{"b":23,"e":38},{"b":21,"e":37},{"b":31,"e":30},{"b":30,"e":47},{"b":31,"e":48},{"b":31,"e":49},{"b":39,"e":52},{"b":37,"e":51},{"b":47,"e":59},{"b":49,"e":60},{"b":52,"e":62},{"b":59,"e":68},{"b":62,"e":70},{"b":62,"e":69,"o":2},{"b":70,"e":73},{"b":73,"e":76},{"b":76,"e":80},{"b":76,"e":78},{"b":78,"e":75},{"b":75,"e":72},{"b":75,"e":77,"o":2},{"b":75,"e":79},{"b":72,"e":65},{"b":65,"e":56},{"b":56,"e":66},{"b":56,"e":44},{"b":65,"e":64},{"b":64,"e":55},{"b":44,"e":55},{"b":64,"e":71},{"b":71,"e":74},{"b":44,"e":27},{"b":27,"e":28},{"b":28,"e":14},{"b":14,"e":5},{"b":5,"e":13,"o":2},{"b":13,"e":27},{"b":28,"e":45,"o":2},{"b":45,"e":57},{"b":57,"e":46,"o":2},{"b":46,"e":29},{"b":29,"e":14,"o":2},{"b":46,"e":58},{"b":57,"e":67},{"b":0,"e":5,"o":0},{"b":10,"e":18,"o":2},{"b":0,"e":1}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>1</sub>',
+		data: {"a":[{"x":24.1354,"y":-28.8488},{"x":19.9771,"y":-9.2859},{"x":33.3597,"y":5.577},{"c":1,"x":1.7062,"y":-1.1512,"l":"N"},{"x":53.2502,"y":3.4865},{"x":23.3597,"y":22.8975,"l":"S"},{"x":3.7968,"y":18.7393},{"x":-15.6143,"y":-11.1512},{"x":65.0059,"y":19.6668},{"x":-32.9348,"y":-1.1512},{"x":84.8963,"y":17.5762,"l":"OH"},{"x":-32.9348,"y":18.8488},{"x":-50.2553,"y":-11.1512},{"x":-50.2553,"y":28.8488,"l":"N"},{"x":-15.6143,"y":28.8488,"l":"NH2"},{"x":-67.5758,"y":-1.1512,"l":"N"},{"x":-67.5758,"y":18.8488},{"x":-84.8963,"y":28.8488}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":4},{"b":4,"e":8},{"b":8,"e":10},{"b":2,"e":5},{"b":5,"e":6},{"b":6,"e":3,"o":2},{"b":1,"e":3},{"b":3,"e":7},{"b":7,"e":9},{"b":9,"e":11,"o":2},{"b":11,"e":14},{"b":11,"e":13},{"b":13,"e":16,"o":2},{"b":16,"e":17},{"b":16,"e":15},{"b":15,"e":12,"o":2},{"b":9,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>3</sub> (Niacin)',
+		data: {"a":[{"x":-17.3205,"y":30,"l":"N"},{"x":0,"y":20},{"x":-34.641,"y":20},{"x":0,"y":0},{"x":-34.641,"y":0},{"x":-17.3205,"y":-10},{"x":17.3205,"y":-10},{"x":17.3205,"y":-30,"l":"O"},{"x":34.641,"y":0}],"b":[{"b":0,"e":1,"o":2},{"b":1,"e":3},{"b":3,"e":5,"o":2},{"b":5,"e":4},{"b":4,"e":2,"o":2},{"b":2,"e":0},{"b":3,"e":6},{"b":6,"e":8},{"b":6,"e":7,"o":2}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>5</sub>',
+		data: {"a":[{"x":-15.9808,"y":23.6603,"l":"H"},{"x":-25.9808,"y":6.3397},{"x":-8.6603,"y":-3.6603},{"x":-35.9808,"y":23.6603,"l":"OH"},{"x":-43.3013,"y":-3.6603},{"x":-8.6603,"y":-23.6603,"l":"O"},{"x":8.6602,"y":6.3397,"l":"NH"},{"x":-53.3013,"y":-20.9808},{"x":-60.6218,"y":6.3397},{"x":-33.3013,"y":-20.9808},{"x":25.9807,"y":-3.6603},{"x":-77.9423,"y":-3.6603,"l":"OH"},{"x":43.3012,"y":6.3397},{"x":60.6218,"y":-3.6603},{"x":77.9423,"y":6.3397,"l":"OH"},{"x":60.6218,"y":-23.6603,"l":"O"}],"b":[{"b":1,"e":0},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":5,"o":2},{"b":2,"e":6},{"b":6,"e":10},{"b":10,"e":12},{"b":12,"e":13},{"b":13,"e":14},{"b":13,"e":15,"o":2},{"b":1,"e":4},{"b":4,"e":9},{"b":4,"e":7},{"b":4,"e":8},{"b":8,"e":11}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>6</sub>',
+		data: {"a":[{"x":-43.3012,"y":-10},{"x":-25.9808,"y":0},{"x":-25.9808,"y":20,"l":"N"},{"x":-8.6602,"y":-10},{"x":-8.6602,"y":30},{"x":8.6602,"y":0},{"x":-8.6602,"y":-30,"l":"OH"},{"x":8.6602,"y":20},{"x":25.9808,"y":-10},{"x":25.9808,"y":30},{"x":43.3012,"y":0,"l":"OH"},{"x":43.3012,"y":20,"l":"OH"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":4},{"b":4,"e":7,"o":2},{"b":7,"e":9},{"b":9,"e":11},{"b":7,"e":5},{"b":5,"e":8},{"b":8,"e":10},{"b":5,"e":3,"o":2},{"b":1,"e":3},{"b":3,"e":6}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>7</sub>',
+		data: {"a":[{"x":-65.6493,"y":26.9066,"l":"H"},{"x":-52.2667,"y":12.0436},{"x":-42.2667,"y":29.3641},{"x":-38.8841,"y":-2.8193},{"x":-70.5376,"y":3.9089,"l":"NH"},{"x":-22.7037,"y":25.2059,"l":"S"},{"x":-48.8841,"y":-20.1398,"l":"NH"},{"x":-25.5015,"y":-17.6822,"l":"H"},{"x":-20.6132,"y":5.3155},{"x":-68.447,"y":-15.9815},{"x":-3.2927,"y":-4.6845},{"x":-83.3099,"y":-29.3641,"l":"O"},{"x":14.0278,"y":5.3155},{"x":31.3483,"y":-4.6845},{"x":48.6689,"y":5.3155},{"x":65.9894,"y":-4.6845},{"x":65.9894,"y":-24.6845,"l":"O"},{"x":83.3099,"y":5.3155,"l":"OH"}],"b":[{"b":1,"e":0},{"b":1,"e":2},{"b":2,"e":5},{"b":5,"e":8},{"b":8,"e":10},{"b":10,"e":12},{"b":12,"e":13},{"b":13,"e":14},{"b":14,"e":15},{"b":15,"e":17},{"b":15,"e":16,"o":2},{"b":8,"e":3},{"b":1,"e":3},{"b":3,"e":7},{"b":3,"e":6},{"b":6,"e":9},{"b":9,"e":11,"o":2},{"b":9,"e":4},{"b":1,"e":4}]}
+	});
+	group.templates.push({
+		name: 'Vitamin B<sub>9</sub>',
+		data: {"a":[{"x":-147.2244,"y":50,"l":"NH2"},{"x":-129.9039,"y":40},{"x":-129.9039,"y":20,"l":"N"},{"x":-112.5833,"y":50,"l":"N"},{"x":-112.5833,"y":10},{"x":-95.2628,"y":40},{"x":-95.2628,"y":20},{"x":-112.5833,"y":-10,"l":"OH"},{"x":-77.9423,"y":50,"l":"N"},{"x":-77.9423,"y":10,"l":"N"},{"x":-60.6218,"y":40},{"x":-60.6218,"y":20},{"x":-43.3013,"y":10},{"x":-25.9808,"y":20,"l":"NH"},{"x":-8.6603,"y":10},{"x":-8.6603,"y":-10},{"x":8.6602,"y":20},{"x":8.6602,"y":-20},{"x":25.9808,"y":10},{"x":25.9808,"y":-10},{"x":43.3013,"y":-20},{"x":43.3013,"y":-40,"l":"O"},{"x":60.6218,"y":-10,"l":"NH"},{"x":77.9423,"y":-20},{"x":95.2628,"y":-10},{"x":77.9423,"y":-40},{"x":112.5834,"y":-20},{"x":60.6218,"y":-50,"l":"O"},{"x":95.2628,"y":-50,"l":"OH"},{"x":129.9038,"y":-10},{"x":147.2244,"y":-20,"l":"OH"},{"x":129.9038,"y":10,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2,"o":2},{"b":2,"e":4},{"b":4,"e":7},{"b":4,"e":6,"o":2},{"b":6,"e":9},{"b":9,"e":11,"o":2},{"b":11,"e":12},{"b":12,"e":13},{"b":13,"e":14},{"b":14,"e":15,"o":2},{"b":15,"e":17},{"b":17,"e":19,"o":2},{"b":19,"e":18},{"b":18,"e":16,"o":2},{"b":14,"e":16},{"b":19,"e":20},{"b":20,"e":21,"o":2},{"b":20,"e":22},{"b":22,"e":23},{"b":23,"e":24},{"b":24,"e":26},{"b":26,"e":29},{"b":29,"e":30},{"b":29,"e":31,"o":2},{"b":23,"e":25},{"b":25,"e":28},{"b":25,"e":27,"o":2},{"b":11,"e":10},{"b":10,"e":8,"o":2},{"b":8,"e":5},{"b":6,"e":5},{"b":5,"e":3,"o":2},{"b":1,"e":3}]}
+	});
+	group.templates.push({
+		name: 'Vitamin C',
+		data: {"a":[{"x":14.8183,"y":-7.3993,"l":"H"},{"x":-2.5022,"y":2.6007},{"x":-14.2579,"y":18.781,"l":"O"},{"x":-14.2579,"y":-13.5797},{"x":14.8183,"y":12.6007},{"x":-33.279,"y":12.6007},{"x":-33.2791,"y":-7.3993},{"x":-8.0775,"y":-32.6008,"l":"OH"},{"x":32.1389,"y":2.6007},{"x":14.8183,"y":32.6007,"l":"OH"},{"x":-49.4593,"y":24.3563,"l":"O"},{"x":-49.4593,"y":-19.155,"l":"OH"},{"x":49.4594,"y":12.6007,"l":"OH"}],"b":[{"b":1,"e":0},{"b":1,"e":2},{"b":2,"e":5},{"b":5,"e":10,"o":2},{"b":5,"e":6},{"b":6,"e":11},{"b":6,"e":3,"o":2},{"b":1,"e":3},{"b":3,"e":7},{"b":1,"e":4},{"b":4,"e":9},{"b":4,"e":8},{"b":8,"e":12}]}
+	});
+	group.templates.push({
+		name: 'Vitamin D<sub>3</sub>',
+		data: {"a":[{"x":-177.0877,"y":20.5302},{"x":-153.0316,"y":34.4191},{"x":-153.0316,"y":62.1969},{"x":-128.9753,"y":20.5302},{"x":-104.9189,"y":34.4191},{"x":-80.8628,"y":20.5302},{"x":-56.8066,"y":34.4191},{"x":-32.7503,"y":20.5302},{"x":-56.8066,"y":62.1969},{"x":-56.8065,"y":6.6413,"l":"H"},{"x":-29.8467,"y":-7.0957},{"x":-7.3741,"y":31.8285},{"x":-2.6759,"y":-12.871},{"x":-28.0168,"y":50.415},{"x":11.213,"y":11.185},{"x":1.2099,"y":58.2465},{"x":27.5404,"y":-11.2874,"l":"H"},{"x":38.3838,"y":16.961},{"x":28.3806,"y":64.0218},{"x":46.9676,"y":43.379},{"x":56.9707,"y":-3.6825},{"x":84.1414,"y":2.0928},{"x":103.7833,"y":-17.549},{"x":130.6146,"y":-10.359},{"x":96.5939,"y":-44.38},{"x":150.2565,"y":-30.0015},{"x":69.7627,"y":-51.5693},{"x":116.2357,"y":-64.0218},{"x":177.0877,"y":-22.8116,"l":"OH"},{"x":143.0669,"y":-56.8325}],"b":[{"b":14,"e":16},{"b":14,"e":12},{"b":12,"e":10},{"b":10,"e":7},{"b":7,"e":6},{"b":6,"e":8},{"b":6,"e":5},{"b":5,"e":4},{"b":4,"e":3},{"b":3,"e":1},{"b":1,"e":2},{"b":1,"e":0},{"b":7,"e":11},{"b":14,"e":11},{"b":11,"e":13},{"b":11,"e":15},{"b":15,"e":18},{"b":18,"e":19},{"b":19,"e":17},{"b":14,"e":17},{"b":17,"e":20,"o":2},{"b":20,"e":21},{"b":21,"e":22,"o":2},{"b":22,"e":23},{"b":23,"e":25},{"b":25,"e":28},{"b":25,"e":29},{"b":29,"e":27},{"b":27,"e":24},{"b":22,"e":24},{"b":24,"e":26,"o":2},{"b":7,"e":9}]}
+	});
+	group.templates.push({
+		name: 'Vitamin D<sub>4</sub>',
+		data: {"a":[{"x":-150.3688,"y":57.1289},{"x":-126.3125,"y":71.0178},{"x":-102.2562,"y":57.1289},{"x":-126.3125,"y":98.7956},{"x":-78.1999,"y":71.0178},{"x":-102.2562,"y":29.3511},{"x":-54.1437,"y":57.1289},{"x":-30.0875,"y":71.0178},{"x":-30.0875,"y":98.7956},{"x":-6.0311,"y":57.1289},{"x":-6.0311,"y":84.9067,"l":"H"},{"x":-17.3294,"y":31.7532},{"x":21.5944,"y":54.2257},{"x":3.3135,"y":13.166},{"x":42.2374,"y":72.8122},{"x":27.3697,"y":27.0549},{"x":13.0107,"y":80.6437},{"x":68.6556,"y":64.2287},{"x":30.2734,"y":-0.571,"l":"H"},{"x":53.788,"y":18.4706},{"x":74.4309,"y":37.0578},{"x":59.5634,"y":-8.6995},{"x":85.9816,"y":-17.2838},{"x":91.7569,"y":-44.4546},{"x":118.1751,"y":-53.0382},{"x":71.114,"y":-63.0412},{"x":123.9505,"y":-80.209},{"x":76.8894,"y":-90.212},{"x":44.6957,"y":-54.4576},{"x":150.3688,"y":-88.7926,"l":"OH"},{"x":103.3076,"y":-98.7956}],"b":[{"b":9,"e":10},{"b":9,"e":11},{"b":11,"e":13},{"b":13,"e":15},{"b":15,"e":18},{"b":15,"e":19},{"b":19,"e":20},{"b":20,"e":17},{"b":17,"e":14},{"b":14,"e":12},{"b":9,"e":12},{"b":15,"e":12},{"b":12,"e":16},{"b":19,"e":21,"o":2},{"b":21,"e":22},{"b":22,"e":23,"o":2},{"b":23,"e":24},{"b":24,"e":26},{"b":26,"e":29},{"b":26,"e":30},{"b":30,"e":27},{"b":27,"e":25},{"b":23,"e":25},{"b":25,"e":28,"o":2},{"b":9,"e":7},{"b":7,"e":8},{"b":7,"e":6},{"b":6,"e":4},{"b":4,"e":2},{"b":2,"e":5},{"b":2,"e":1},{"b":1,"e":3},{"b":1,"e":0}]}
+	});
+	group.templates.push({
+		name: 'Vitamin D<sub>5</sub>',
+		data: {"a":[{"x":-150.3688,"y":57.1289},{"x":-126.3126,"y":71.0178},{"x":-102.2563,"y":57.1289},{"x":-102.2563,"y":29.3511},{"x":-78.2,"y":71.0178},{"x":-78.2,"y":15.4622},{"x":-126.3126,"y":15.4622},{"x":-54.1438,"y":57.1289},{"x":-30.0875,"y":71.0178},{"x":-6.0311,"y":57.1289},{"x":-30.0875,"y":98.7956},{"x":-17.3294,"y":31.7532},{"x":-6.0311,"y":84.9067,"l":"H"},{"x":21.5944,"y":54.2257},{"x":3.3135,"y":13.166},{"x":42.2374,"y":72.8122},{"x":27.3698,"y":27.0549},{"x":13.0106,"y":80.6437},{"x":68.6556,"y":64.2287},{"x":30.2734,"y":-0.571,"l":"H"},{"x":53.788,"y":18.4713},{"x":74.4308,"y":37.0578},{"x":59.5634,"y":-8.6995},{"x":85.9816,"y":-17.2838},{"x":91.7569,"y":-44.4546},{"x":118.1751,"y":-53.0382},{"x":71.1139,"y":-63.0412},{"x":123.9505,"y":-80.209},{"x":76.8894,"y":-90.212},{"x":44.6957,"y":-54.4576},{"x":103.3076,"y":-98.7956},{"x":150.3688,"y":-88.7926,"l":"OH"}],"b":[{"b":9,"e":12},{"b":9,"e":11},{"b":11,"e":14},{"b":14,"e":16},{"b":16,"e":19},{"b":16,"e":20},{"b":20,"e":21},{"b":21,"e":18},{"b":18,"e":15},{"b":15,"e":13},{"b":9,"e":13},{"b":16,"e":13},{"b":13,"e":17},{"b":20,"e":22,"o":2},{"b":22,"e":23},{"b":23,"e":24,"o":2},{"b":24,"e":25},{"b":25,"e":27},{"b":27,"e":31},{"b":27,"e":30},{"b":30,"e":28},{"b":28,"e":26},{"b":24,"e":26},{"b":26,"e":29,"o":2},{"b":9,"e":8},{"b":8,"e":10},{"b":8,"e":7},{"b":7,"e":4},{"b":4,"e":2},{"b":2,"e":1},{"b":1,"e":0},{"b":2,"e":3},{"b":3,"e":6},{"b":3,"e":5}]}
+	});
+	group.templates.push({
+		name: 'Vitamin E',
+		data: {"a":[{"x":138.5641,"y":-10},{"x":138.5641,"y":10},{"x":121.2436,"y":20},{"x":155.8846,"y":20},{"x":103.9231,"y":10},{"x":86.6026,"y":20},{"x":69.282,"y":10},{"x":69.282,"y":-10},{"x":51.9615,"y":20},{"x":34.641,"y":10},{"x":17.3205,"y":20},{"x":0,"y":10},{"x":0,"y":-10},{"x":-17.3205,"y":20},{"x":-34.641,"y":10},{"x":-51.9615,"y":20},{"x":-69.2821,"y":10},{"x":-69.2821,"y":30},{"x":-69.2821,"y":-10},{"x":-86.6026,"y":20,"l":"O"},{"x":-86.6026,"y":-20},{"x":-103.9231,"y":10},{"x":-103.9231,"y":-10},{"x":-121.2436,"y":20},{"x":-121.2436,"y":-20},{"x":-138.5641,"y":10},{"x":-121.2436,"y":40},{"x":-121.2436,"y":-40},{"x":-138.5641,"y":-10},{"x":-155.8846,"y":20},{"x":-155.8846,"y":-20,"l":"OH"}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":4},{"b":4,"e":5},{"b":5,"e":6},{"b":6,"e":7},{"b":6,"e":8},{"b":8,"e":9},{"b":9,"e":10},{"b":10,"e":11},{"b":11,"e":12},{"b":11,"e":13},{"b":13,"e":14},{"b":14,"e":15},{"b":15,"e":16},{"b":16,"e":17},{"b":16,"e":18},{"b":18,"e":20},{"b":20,"e":22},{"b":22,"e":24,"o":2},{"b":24,"e":27},{"b":24,"e":28},{"b":28,"e":30},{"b":28,"e":25,"o":2},{"b":25,"e":29},{"b":25,"e":23},{"b":23,"e":26},{"b":23,"e":21,"o":2},{"b":22,"e":21},{"b":21,"e":19},{"b":16,"e":19}]}
+	});
+	group.templates.push({
+		name: 'Vitamin K<sub>1</sub>',
+		data: {"a":[{"x":-155.8846,"y":40},{"x":-155.8846,"y":20},{"x":-138.5641,"y":10},{"x":-173.2051,"y":10},{"x":-121.2436,"y":20},{"x":-103.9231,"y":10},{"x":-86.6025,"y":20},{"x":-86.6025,"y":40},{"x":-69.2821,"y":10},{"x":-51.9615,"y":20},{"x":-34.641,"y":10},{"x":-17.3205,"y":20},{"x":0,"y":10},{"x":-17.3205,"y":40},{"x":17.3205,"y":20},{"x":34.641,"y":10},{"x":51.9615,"y":20},{"x":69.2821,"y":10},{"x":51.9615,"y":40},{"x":86.6026,"y":20},{"x":103.9231,"y":10},{"x":121.2437,"y":20},{"x":103.9231,"y":-10},{"x":138.5641,"y":10},{"x":121.2437,"y":40,"l":"O"},{"x":121.2437,"y":-20},{"x":86.6026,"y":-20},{"x":155.8847,"y":20},{"x":138.5641,"y":-10},{"x":121.2437,"y":-40,"l":"O"},{"x":173.2051,"y":10},{"x":155.8847,"y":-20},{"x":173.2051,"y":-10}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":4},{"b":4,"e":5},{"b":5,"e":6},{"b":6,"e":7},{"b":6,"e":8},{"b":8,"e":9},{"b":9,"e":10},{"b":10,"e":11},{"b":11,"e":13},{"b":11,"e":12},{"b":12,"e":14},{"b":14,"e":15},{"b":15,"e":16},{"b":16,"e":18},{"b":16,"e":17,"o":2},{"b":17,"e":19},{"b":19,"e":20},{"b":20,"e":22,"o":2},{"b":22,"e":26},{"b":22,"e":25},{"b":25,"e":29,"o":2},{"b":25,"e":28},{"b":28,"e":23,"o":2},{"b":23,"e":27},{"b":27,"e":30,"o":2},{"b":30,"e":32},{"b":32,"e":31,"o":2},{"b":28,"e":31},{"b":23,"e":21},{"b":20,"e":21},{"b":21,"e":24,"o":2}]}
+	});
+	d.push(group);
+	
+	// this is the user's template group, don't remove this or the templates widget won't work
+	// IE/Edge doesn't allow localStorage from local files
+	var saved;
+	if(localStorage){
+		// load from local storage
+		saved = localStorage.getItem('chemdoodle_user_templates');
+	}
+	group = {name:'My Templates', templates:!saved||saved===null?[]:JSON.parse(saved)};
+	d.push(group);
+
+	return d;
+
+})(JSON, localStorage);
+
+(function(desktop, imageDepot, q, undefined) {
 	'use strict';
 	desktop.Button = function(id, icon, tooltip, func) {
 		this.id = id;
@@ -12573,6 +19377,12 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	_.getElement = function() {
 		return q('#' + this.id);
 	};
+	_.getLabelElement = function() {
+		if(this.toggle){
+			return q('#' + this.id + '_label');
+		}
+		return undefined;
+	};
 	_.getSource = function(buttonGroup) {
 		var sb = [];
 		if (this.toggle) {
@@ -12582,14 +19392,19 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			sb.push(this.id);
 			sb.push('" title="');
 			sb.push(this.tooltip);
-			sb.push('" /><label for="');
+			sb.push('" /><label id="');
+			sb.push(this.id);
+			sb.push('_label" for="');
 			sb.push(this.id);
 			sb.push('"><img id="');
 			sb.push(this.id);
 			sb.push('_icon" title="');
 			sb.push(this.tooltip);
-			sb.push('" width="20" height="20" src="');
-			sb.push(imageDepot.getURI(this.icon));
+			sb.push('" width="20" height="20');
+			if(this.icon){
+				sb.push('" src="');
+				sb.push(imageDepot.getURI(this.icon));
+			}
 			sb.push('"></label>');
 		} else {
 			sb.push('<button id="');
@@ -12598,8 +19413,11 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			sb.push(this.tooltip);
 			sb.push('"><img title="');
 			sb.push(this.tooltip);
-			sb.push('" width="20" height="20" src="');
-			sb.push(imageDepot.getURI(this.icon));
+			sb.push('" width="20" height="20');
+			if(this.icon){
+				sb.push('" src="');
+				sb.push(imageDepot.getURI(this.icon));
+			}
 			sb.push('"></button>');
 		}
 		return sb.join('');
@@ -12620,21 +19438,24 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.getElement().button('enable');
 	};
 	_.select = function() {
+		// getElement().click() - executes its function (same as just calling .func())
+		// getLabelElement().click() - selects a toggle button (based on radio), similar to this call
 		var element = this.getElement();
 		element.attr('checked', true);
 		element.button('refresh');
+		if(this.toggle){
+			this.getLabelElement().click();
+		}
 	};
 
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.uis.gui.imageDepot, ChemDoodle.lib.jQuery);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(desktop, q) {
+(function(desktop, q, undefined) {
 	'use strict';
 	desktop.ButtonSet = function(id) {
 		this.id = id;
 		this.buttons = [];
 		this.toggle = true;
+		this.columnCount = -1;
 	};
 	var _ = desktop.ButtonSet.prototype;
 	_.getElement = function() {
@@ -12642,28 +19463,52 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 	_.getSource = function(buttonGroup) {
 		var sb = [];
-		sb.push('<span id="');
-		sb.push(this.id);
-		sb.push('">');
-		for ( var i = 0, ii = this.buttons.length; i < ii; i++) {
-			if (this.toggle) {
-				this.buttons[i].toggle = true;
+		if(this.columnCount===-1){
+			sb.push('<span id="');
+			sb.push(this.id);
+			sb.push('">');
+			for ( var i = 0, ii = this.buttons.length; i < ii; i++) {
+				if (this.toggle) {
+					this.buttons[i].toggle = true;
+				}
+				sb.push(this.buttons[i].getSource(buttonGroup));
 			}
-			sb.push(this.buttons[i].getSource(buttonGroup));
-		}
-		if (this.dropDown) {
-			sb.push(this.dropDown.getButtonSource());
-		}
-		sb.push('</span>');
-		if (this.dropDown) {
-			sb.push(this.dropDown.getHiddenSource());
+			if (this.dropDown) {
+				sb.push(this.dropDown.getButtonSource());
+			}
+			sb.push('</span>');
+			if (this.dropDown) {
+				sb.push(this.dropDown.getHiddenSource());
+			}
+		}else{
+			sb.push('<table cellspacing="0" style="margin-right:-2px;">');
+			var c = 0;
+			for ( var i = 0, ii = this.buttons.length; i < ii; i++) {
+				if (this.toggle) {
+						this.buttons[i].toggle = true;
+				}
+				if(c===0){
+					sb.push('<tr>');
+				}
+				sb.push('<td>');
+				sb.push(this.buttons[i].getSource(buttonGroup));
+				sb.push('</td>');
+				c++;
+				if(c===this.columnCount){
+					sb.push('</tr>');
+					c = 0;
+				}
+			}
+			sb.push('</table>');
 		}
 		return sb.join('');
 	};
 	_.setup = function() {
-		this.getElement().buttonset();
+		if(this.columnCount===-1){
+			this.getElement().buttonset();
+		}
 		for ( var i = 0, ii = this.buttons.length; i < ii; i++) {
-			this.buttons[i].setup(false);
+			this.buttons[i].setup(this.columnCount!==-1);
 		}
 		if (this.dropDown) {
 			this.dropDown.setup();
@@ -12686,10 +19531,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery);
-//
-// Copyright 2009-2015 iChemLabs, LLC. All rights reserved.
-//
-(function(desktop, q) {
+(function(desktop, q, undefined) {
 	'use strict';
 	desktop.CheckBox = function(id, tooltip, func, checked) {
 		this.id = id;
@@ -12727,10 +19569,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.getElement().removeAttr('checked');
 	};
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery);
-//
-// Copyright 2009-2015 iChemLabs, LLC. All rights reserved.
-//
-(function(desktop, q) {
+(function(desktop, q, undefined) {
 	'use strict';
 	desktop.ColorPicker = function (id, tooltip, func) {
 		this.id = id;
@@ -12761,11 +19600,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.getElement().setColor(color);
 	};
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(desktop, q, document) {
+(function(desktop, q, document, undefined) {
 	'use strict';
 	desktop.Dialog = function(sketcherid, subid, title) {
 		// sketcherid is the DOM element id everything will be anchored around
@@ -12830,13 +19666,52 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			buttons : self.buttons
 		});
 	};
+	_.open = function() {
+		this.getElement().dialog('open');
+	};
 
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+(function(desktop, q, undefined) {
+	'use strict';
+	desktop.FloatingToolbar = function(sketcher) {
+		this.sketcher = sketcher;
+		this.components = [];
+	};
+	var _ = desktop.FloatingToolbar.prototype;
+	_.getElement = function() {
+		return q('#' + this.id);
+	};
+	_.getSource = function(buttonGroup) {
+		var sb = [];
+		sb.push('<div id="');
+		sb.push(this.sketcher.id);
+		sb.push('_floating_toolbar" style="position:absolute;left:-50px;z-index:10;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);border:1px #C1C1C1 solid;background:#F5F5F5;padding:2px;">');
+		sb.push('<div id="');
+		sb.push(this.sketcher.id);
+		sb.push('_floating_toolbar_handle" style="height:14px;"><div style="height:2px;border-top:1px solid #999;border-bottom:1px solid #999;">');
+		sb.push('</div></div>');
+		for ( var i = 0, ii = this.components.length; i < ii; i++) {
+			sb.push(this.components[i].getSource(buttonGroup));
+			sb.push('<br>');	
+		}
+		sb.push('</div>');
+		return sb.join('');
+	};
+	_.setup = function() {
+		var self = this;
+		q('#'+this.sketcher.id+'_floating_toolbar').draggable({handle:'#'+this.sketcher.id+'_floating_toolbar_handle', drag:function(){
+			if(self.sketcher.openTray){
+				self.sketcher.openTray.reposition();
+			}
+		}, containment:'document'});
+		for ( var i = 0, ii = this.components.length; i < ii; i++) {
+			this.components[i].setup(true);
+		}
+	};
 
-(function(c, structures, actions, desktop, q, document) {
+})(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery);
+
+(function(c, structures, actions, desktop, q, document, undefined) {
 	'use strict';
 
 	var makeRow = function(id, name, tag, description, component) {
@@ -12956,8 +19831,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		sb.push(makeRow(this.id+'_chirality', 'Chirality', '@', 'Defines the stereochemical configuration of the atom.', '<div id="'+this.id+'_radio"><input type="radio" id="'+this.id+'_chiral_a" name="radio"><label for="'+this.id+'_chiral_a">Any (A)</label><input type="radio" id="'+this.id+'_chiral_r" name="radio"><label for="'+this.id+'_chiral_r">Rectus (R)</label><input type="radio" id="'+this.id+'_chiral_s" name="radio"><label for="'+this.id+'_chiral_s">Sinestra (S)</label></div>'));
 		sb.push('</table>');
 		sb.push('</div>');
-		if (document.getElementById(this.id)) {
-			var canvas = q('#' + this.id);
+		if (document.getElementById(this.sketcher.id)) {
+			var canvas = q('#' + this.sketcher.id);
 			canvas.before(sb.join(''));
 		} else {
 			document.writeln(sb.join(''));
@@ -13046,7 +19921,6 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			q(this).dialog('close');
 		};
 		q('#'+this.id+'_radio').buttonset();
-		var self = this;
 		this.getElement().dialog({
 			autoOpen : false,
 			width : 500,
@@ -13063,11 +19937,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.structures, ChemDoodle.uis.actions, ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(c, structures, actions, desktop, imageDepot, q, document) {
+(function(c, structures, actions, desktop, imageDepot, q, document, undefined) {
 	'use strict';
 
 	var makeRow = function(id, name, tag, description, component) {
@@ -13189,8 +20060,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		sb.push(makeRow(this.id+'_stereo', 'Stereochemistry', '@', 'Defines the stereochemical configuration of the bond.', '<div id="'+this.id+'_radio"><input type="radio" id="'+this.id+'_stereo_a" name="radio"><label for="'+this.id+'_stereo_a">Any (A)</label><input type="radio" id="'+this.id+'_stereo_e" name="radio"><label for="'+this.id+'_stereo_e">Entgegen (E)</label><input type="radio" id="'+this.id+'_stereo_z" name="radio"><label for="'+this.id+'_stereo_z">Zusammen (Z)</label></div>'));
 		sb.push('</table>');
 		sb.push('</div>');
-		if (document.getElementById(this.id)) {
-			var canvas = q('#' + this.id);
+		if (document.getElementById(this.sketcher.id)) {
+			var canvas = q('#' + this.sketcher.id);
 			canvas.before(sb.join(''));
 		} else {
 			document.writeln(sb.join(''));
@@ -13270,11 +20141,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.structures, ChemDoodle.uis.actions, ChemDoodle.uis.gui.desktop, ChemDoodle.uis.gui.imageDepot, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(c, desktop, q, document) {
+(function(c, desktop, q, document, undefined) {
 	'use strict';
 	desktop.MolGrabberDialog = function(sketcherid, subid) {
 		this.sketcherid = sketcherid;
@@ -13323,15 +20191,12 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(c, desktop, q, document) {
+(function(c, desktop, q, document, undefined) {
 	'use strict';
-	desktop.PeriodicTableDialog = function(sketcherid, subid) {
-		this.sketcherid = sketcherid;
-		this.id = sketcherid + subid;
+	desktop.PeriodicTableDialog = function(sketcher, subid) {
+		this.sketcher = sketcher;
+		this.id = sketcher.id + subid;
 	};
 	var _ = desktop.PeriodicTableDialog.prototype = new desktop.Dialog();
 	_.title = 'Periodic Table';
@@ -13345,14 +20210,32 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		sb.push('<canvas class="ChemDoodleWebComponents" id="');
 		sb.push(this.id);
 		sb.push('_pt"></canvas></div>');
-		if (document.getElementById(this.sketcherid)) {
-			var canvas = q('#' + this.sketcherid);
+		if (document.getElementById(this.sketcher.id)) {
+			var canvas = q('#' + this.sketcher.id);
 			canvas.before(sb.join(''));
 		} else {
 			document.writeln(sb.join(''));
 		}
 		this.canvas = new ChemDoodle.PeriodicTableCanvas(this.id + '_pt', 20);
+		// set default to oxygen
+		this.canvas.selected = this.canvas.cells[7];
+		this.canvas.repaint();
 		var self = this;
+		this.canvas.click = function(evt) {
+			if (this.hovered) {
+				this.selected = this.hovered;
+				var e = this.getHoveredElement();
+				self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
+				self.sketcher.stateManager.STATE_LABEL.label = e.symbol;
+				if(self.sketcher.floatDrawTools){
+					self.sketcher.toolbarManager.labelTray.open(self.sketcher.toolbarManager.buttonLabelPT);
+				}else{
+					self.sketcher.toolbarManager.buttonLabel.absorb(self.sketcher.toolbarManager.buttonLabelPT);
+				}
+				self.sketcher.toolbarManager.buttonLabel.select();
+				this.repaint();
+			}
+		};
 		this.getElement().dialog({
 			autoOpen : false,
 			width : 400,
@@ -13361,11 +20244,87 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+(function(desktop, q, document, undefined) {
+	'use strict';
+	desktop.Popover = function(sketcher, id, free, onclose) {
+		this.sketcher = sketcher;
+		this.id = id;
+		this.free = free;
+		this.onclose = onclose;
+	};
+	var _ = desktop.Popover.prototype;
+	_.getHiddenSource = function() {
+		var sb = [];
+		sb.push('<div style="display:none;position:absolute;z-index:10;border:1px #C1C1C1 solid;background:#F5F5F5;padding:5px;');
+		if(this.free){
+			// if free, round all edges
+			sb.push('border-radius:5px;-moz-border-radius:5px;');
+		}else{
+			sb.push('border-bottom-left-radius:5px;-moz-border-radius-bottomleft:5px;border-bottom-right-radius:5px;-moz-border-radius-bottomright:5px;border-top-color:black;');
+		}
+		sb.push('" id="');
+		sb.push(this.id);
+		sb.push('">');
+		sb.push(this.getContentSource());
+		sb.push('</div>');
+		return sb.join('');
+	};
+	_.setup = function() {
+		if (document.getElementById(this.sketcher.id)) {
+			var canvas = q('#' + this.sketcher.id);
+			canvas.before(this.getHiddenSource());
+		} else {
+			document.writeln(this.getHiddenSource());
+		}
+		var tag = '#' + this.id;
+		q(tag).hide();
+		if(this.setupContent){
+			this.setupContent();
+		}
+	};
+	_.show = function(e){
+		if(this.sketcher.modal){
+			// apparently there is already another popover up, this shouldn't happen
+			return false;
+		}
+		this.sketcher.modal = this;
+		this.sketcher.doEventDefault = true;
+		var component = q('#' + this.id);
+		var self = this;
+		if(this.free){
+			component.fadeIn(200).position({
+				my : 'center bottom',
+				at : 'center top',
+				of : e,
+				collision : 'fit'
+			});
+		}else{
+			component.slideDown(400).position({
+				my : 'center top',
+				at : 'center top',
+				of : q('#' + this.sketcher.id),
+				collision : 'fit'
+			});
+		}
+		return false;
+	};
+	_.close = function(cancel){
+		var component = q('#' + this.id);
+		if(this.free){
+			component.hide(0);
+		}else{
+			component.slideUp(400);
+		}
+		if(this.onclose){
+			this.onclose(cancel);
+		}
+		this.sketcher.modal = undefined;
+		this.sketcher.doEventDefault = false;
+	};
 
-(function(c, desktop, q, document) {
+})(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
+
+(function(c, desktop, q, document, undefined) {
 	'use strict';
 	desktop.SaveFileDialog = function(id, sketcher) {
 		this.id = id;
@@ -13445,13 +20404,296 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(c, actions, gui, desktop, q) {
+(function(c, io, desktop, templateDepot, q, m, document, JSON, localStorage, undefined) {
+	'use strict';
+	
+	var INTERPRETER = new io.JSONInterpreter();
+	var allowedRegex = /[^A-z0-9]|\[|\]/g;
+	
+	desktop.TemplateDialog = function(sketcher, subid) {
+		this.sketcher = sketcher;
+		this.id = sketcher.id + subid;
+	};
+	var _ = desktop.TemplateDialog.prototype = new desktop.Dialog();
+	_.title = 'Templates';
+	_.setup = function() {
+		var self = this;
+		var sb = [];
+		sb.push('<div style="font-size:12px;align-items:center;display:flex;flex-direction:column;" id="');
+		sb.push(this.id);
+		sb.push('" title="');
+		sb.push(this.title);
+		sb.push('">');
+		// Next is the MolGrabberCanvas, whose constructor will be called AFTER
+		// the elements are in the DOM.
+		sb.push('<canvas class="ChemDoodleWebComponent" id="');
+		sb.push(this.id);
+		sb.push('_buffer" style="display:none;"></canvas>');
+		sb.push('<canvas class="ChemDoodleWebComponent" id="');
+		sb.push(this.id);
+		sb.push('_attachment"></canvas>');
+		sb.push('<div><select id="');
+		sb.push(this.id);
+		sb.push('_select">');
+		for(var i = 0, ii = templateDepot.length; i<ii; i++){
+			var group = templateDepot[i];
+			sb.push('<option value="');
+			sb.push(group.name);
+			sb.push('">');
+			sb.push(group.name);
+			sb.push('</option>');
+		}
+		sb.push('</select>');
+		sb.push('&nbsp;&nbsp;<button id="');
+		sb.push(this.id);
+		sb.push('_button_add">Add Template</button></div>');
+		// have to include height for Safari...
+		sb.push('<div id="');
+		sb.push(this.id);
+		sb.push('_scroll" style="width:100%;height:150px;flex-grow:1;overflow-y:scroll;overflow-x:hidden;background:#eee;padding-right:5px;padding-bottom:5px;">');
+		for(var i = 0, ii = templateDepot.length; i<ii; i++){
+			var group = templateDepot[i];
+			group.condensedName = group.name.replace(allowedRegex, '');
+			sb.push('<div style="display:flex;flex-wrap:wrap;justify-content:center;" id="');
+			sb.push(this.id);
+			sb.push('_');
+			sb.push(group.condensedName);
+			sb.push('_panel">');
+			sb.push('</div>');
+		}
+		sb.push('</div>');
+		sb.push('</div>');
+		if (document.getElementById(this.sketcher.id)) {
+			var canvas = q('#' + this.sketcher.id);
+			canvas.before(sb.join(''));
+		} else {
+			document.writeln(sb.join(''));
+		}
+		this.buffer = new c.ViewerCanvas(this.id + '_buffer', 100, 100);
+		this.bufferElement = document.getElementById(this.buffer.id);
+		this.canvas = new c.ViewerCanvas(this.id + '_attachment', 200, 200);
+		this.canvas.mouseout = function(e){
+			if(this.molecules.length!==0){
+				for(var i = 0, ii = this.molecules[0].atoms.length; i<ii; i++){
+					this.molecules[0].atoms[i].isHover = false;
+				}
+				this.repaint();
+			}
+		};
+		this.canvas.touchend = this.canvas.mouseout;
+		this.canvas.mousemove = function(e){
+			if(this.molecules.length!==0){
+				var closest=undefined;
+				e.p.x = this.width / 2 + (e.p.x - this.width / 2) / this.specs.scale;
+				e.p.y = this.height / 2 + (e.p.y - this.height / 2) / this.specs.scale;
+				for(var i = 0, ii = this.molecules[0].atoms.length; i<ii; i++){
+					var a = this.molecules[0].atoms[i];
+					a.isHover = false;
+					if(closest===undefined || e.p.distance(a)<e.p.distance(closest)){
+						closest = a;
+					}
+				}
+				if(e.p.distance(closest)<10){
+					closest.isHover = true;
+				}
+				this.repaint();
+			}
+		};
+		this.canvas.mousedown = function(e){
+			if(this.molecules.length!==0){
+				var cont = false;
+				for(var i = 0, ii = this.molecules[0].atoms.length; i<ii; i++){
+					var a = this.molecules[0].atoms[i];
+					if(a.isHover){
+						cont = true;
+						break;
+					}
+				}
+				// if no atom is hovered, then don't continue
+				if(cont){
+					for(var i = 0, ii = this.molecules[0].atoms.length; i<ii; i++){
+						var a = this.molecules[0].atoms[i];
+						a.isSelected = false;
+						if(a.isHover){
+							a.isSelected = true;
+							a.isHover = false;
+							self.sketcher.stateManager.STATE_NEW_TEMPLATE.attachPos = i;
+							self.sketcher.toolbarManager.buttonTemplate.select();
+							self.sketcher.toolbarManager.buttonTemplate.getElement().click();
+						}
+					}
+				}
+				this.repaint();
+			}
+		};
+		this.canvas.touchstart = function(e){self.canvas.mousemove(e);self.canvas.mousedown(e);}
+		this.canvas.drawChildExtras = function(ctx, specs){
+			ctx.strokeStyle = self.sketcher.specs.colorSelect;
+			ctx.fillStyle = self.sketcher.specs.colorSelect;
+			ctx.beginPath();
+			ctx.arc(8, 8, 7, 0, m.PI * 2, false);
+			ctx.stroke();
+			ctx.textAlign = 'left';
+			ctx.textBaseline = 'middle';
+			ctx.fillText('Substitution Point', 18, 8);
+			ctx.save();
+			ctx.translate(this.width / 2, this.height / 2);
+			ctx.rotate(specs.rotateAngle);
+			ctx.scale(specs.scale, specs.scale);
+			ctx.translate(-this.width / 2, -this.height / 2);
+			if(this.molecules.length!==0){
+				for(var i = 0, ii = this.molecules[0].atoms.length; i<ii; i++){
+					this.molecules[0].atoms[i].drawDecorations(ctx, self.sketcher.specs);
+				}
+			}
+			ctx.restore();
+		};
+		
+		this.getElement().dialog({
+			autoOpen : false,
+			width : 260,
+			height : 450,
+			buttons : self.buttons,
+			open : function(){
+				if(!self.populated){
+					self.populated = true;
+					self.populate();
+				}
+			}
+		});
+		
+		var select = q('#'+this.id+'_select');
+		select.change(function(){
+			var index = this.selectedIndex;
+			for(var i = 0, ii = templateDepot.length; i<ii; i++){
+				var group = templateDepot[i];
+				q('#'+self.id+'_'+group.condensedName+'_panel').hide();
+			}
+			q('#'+self.id+'_'+templateDepot[index].condensedName+'_panel').show();
+			q('#'+self.id+'_scroll').scrollTop(0);
+			self.loadTemplate(index, 0, true);
+		});
+		
+		q('#'+this.id+'_button_add').click(function(){
+			if(self.sketcher.lasso.atoms.length===0){
+				alert('Please select a structure to define a template.');
+			}else{
+				var cont = true;
+				if(self.sketcher.lasso.atoms.length>1){
+					var mol = self.sketcher.lasso.getFirstMolecule();
+					for(var i = 1, ii = self.sketcher.lasso.atoms.length; i<ii; i++){
+						if(mol!==self.sketcher.getMoleculeByAtom(self.sketcher.lasso.atoms[i])){
+							cont = false;
+							alert('Templates may only be defined of a single discrete structure.');
+							break;
+						}
+					}
+				}
+				if(cont){
+					var name = prompt("Please enter the template name:", "My template");
+					if(name!==null){
+						var userTemplates = templateDepot[templateDepot.length-1];
+						var jsonm = INTERPRETER.molTo(self.sketcher.lasso.getFirstMolecule());
+						var mol = INTERPRETER.molFrom(jsonm);
+						var panel = q('#'+self.id+'_'+userTemplates.condensedName+'_panel');
+						if(userTemplates.templates.length===0){
+							panel.empty();
+						}
+						var t = {name:name, data:jsonm};
+						mol.scaleToAverageBondLength(self.sketcher.specs.bondLength_2D);
+						self.buffer.loadMolecule(mol);
+						t.img = self.bufferElement.toDataURL('image/png');
+						t.condensedName = t.name.replace(allowedRegex, '');
+						panel.append('<div style="margin-left:5px;margin-top:5px;"><center><img src="'+t.img+'" id="'+self.id+'_'+t.condensedName+'" g="'+(templateDepot.length-1)+'" t="'+userTemplates.templates.length+'"style="width:100px;height:100px;" /><br>'+t.name+'</center></div>');
+						var img = q('#'+self.id+'_'+t.condensedName);
+						img.click(function(){
+							self.loadTemplate(parseInt(this.getAttribute('g')), parseInt(this.getAttribute('t')), true);
+						});
+						img.hover(function(){q(this).css({'border':'1px solid '+self.sketcher.specs.colorHover, 'margin':'-1px'});}, function(){q(this).css({'border':'none', 'margin':'0px'});});
+						userTemplates.templates.push(t);
+						// IE/Edge doesn't allow localStorage from local files
+						if(localStorage){
+							localStorage.setItem('chemdoodle_user_templates', JSON.stringify(templateDepot[templateDepot.length-1].templates));
+						}
+					}
+				}
+			}
+		});
+	};
+	_.loadTemplate = function(g, t, changeState){
+		var template = templateDepot[g].templates[t];
+		if(template){
+			var loading = INTERPRETER.molFrom(template.data);
+			loading.scaleToAverageBondLength(this.sketcher.specs.bondLength_2D);
+			var first = -1;
+			var min = Infinity;
+			for (var i = 0, ii = loading.atoms.length; i<ii; i++) {
+				var a = loading.atoms[i];
+				if (a.label==='C' && a.x < min) {
+					first = i;
+					min = a.x;
+				}
+			}
+			if (first === -1) {
+				first = 0;
+			}
+			loading.atoms[first].isSelected = true;
+			this.canvas.loadMolecule(loading);
+			this.sketcher.stateManager.STATE_NEW_TEMPLATE.template = template.data;
+			this.sketcher.stateManager.STATE_NEW_TEMPLATE.attachPos = first;
+			if(changeState){
+				this.sketcher.toolbarManager.buttonTemplate.select();
+				this.sketcher.toolbarManager.buttonTemplate.getElement().click();
+			}
+		}
+	};
+	_.populate = function() {
+		// copy over specs from the sketcher
+		this.canvas.specs = q.extend({}, this.sketcher.specs);
+		this.canvas.specs.atoms_implicitHydrogens_2D = false;
+		this.buffer.specs = q.extend({}, this.sketcher.specs);
+		this.buffer.specs.atoms_implicitHydrogens_2D = false;
+		// make template panels
+		var self = this;
+		for(var i = 0, ii = templateDepot.length; i<ii; i++){
+			var group = templateDepot[i];
+			var panel = q('#'+this.id+'_'+group.condensedName+'_panel');
+			if(group.templates.length===0){
+				panel.append('<div style="margin:5px;">There are no templates in this group.</div>');
+			}else{
+				for(var j = 0, jj = group.templates.length; j<jj; j++){
+					var t = group.templates[j];
+					var mol = INTERPRETER.molFrom(t.data);
+					mol.scaleToAverageBondLength(this.sketcher.specs.bondLength_2D);
+					this.buffer.loadMolecule(mol);
+					t.img = this.bufferElement.toDataURL('image/png');
+					t.condensedName = t.name.replace(allowedRegex, '');
+					panel.append('<div style="margin-left:5px;margin-top:5px;"><center><img src="'+t.img+'" id="'+this.id+'_'+t.condensedName+'" g="'+i+'" t="'+j+'" style="width:100px;height:100px;" /><br>'+t.name+'</center></div>');
+					var img = q('#'+this.id+'_'+t.condensedName);
+					img.click(function(){
+						self.loadTemplate(parseInt(this.getAttribute('g')), parseInt(this.getAttribute('t')), true);
+					});
+					img.hover(function(){q(this).css({'border':'1px solid '+self.sketcher.specs.colorHover, 'margin':'-1px'});}, function(){q(this).css({'border':'none', 'margin':'0px'});});
+				}
+			}
+			if(i!==0){
+				panel.hide();
+			}
+		}
+		if(templateDepot.length!==0){
+			q('#'+this.id+'_'+templateDepot[0].condensedName+'_panel').show();
+			this.loadTemplate(0, 0, false);
+		}
+	};
+
+})(ChemDoodle, ChemDoodle.io, ChemDoodle.uis.gui.desktop, ChemDoodle.uis.gui.templateDepot, ChemDoodle.lib.jQuery, Math, document, JSON, localStorage);
+
+(function(c, actions, gui, desktop, q, undefined) {
 	'use strict';
 	gui.DialogManager = function(sketcher) {
+		var self = this;
+	
 		if (sketcher.useServices) {
 			this.saveDialog = new desktop.SaveFileDialog(sketcher.id + '_save_dialog', sketcher);
 		} else {
@@ -13466,24 +20708,27 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		}
 		this.saveDialog.setup();
 
-		this.loadDialog = new desktop.Dialog(sketcher.id, '_load_dialog', 'Load Molecule');
-		var sb = [ 'Copy and paste the contents of a MOLFile (<strong>.mol</strong>)' ];
-		// if (sketcher.useServices) {
-		// sb.push(', a SMILES string');
-		// }
-		sb.push(' or ChemDoodle JSON in the textarea below and then press the <strong>Load</strong> button.');
-		this.loadDialog.message = sb.join('');
-		this.loadDialog.includeTextArea = true;
-		// You must keep this link displayed at all times to abide by the
-		// license
-		// Contact us for permission to remove it,
-		// http://www.ichemlabs.com/contact-us
-		this.loadDialog.afterMessage = '<a href="http://www.chemdoodle.com" target="_blank">Where do I get MOLFiles or ChemDoodle JSON?</a>';
-		var self = this;
-		this.loadDialog.buttons = {
-			'Load' : function() {
-				q(this).dialog('close');
-				var s = self.loadDialog.getTextArea().val();
+		this.openPopup = new desktop.Popover(sketcher, sketcher.id+'_open_popover');
+		this.openPopup.getContentSource = function(){
+			var sb = ['<div style="width:320px;">'];
+			//sb.push('<div width="100%">Open chemical file from your computer:</div><br><form action="demo_form.asp">'];
+  			//sb.push('<input type="file" name="file" accept="image/*">');
+  			//sb.push('<input onclick="alert(\'include your form code here.\');" type="button" value="Open" /*type="submit"*/>');
+			//sb.push('</form>');
+			//sb.push('<hr>
+			// You must keep this link displayed at all times to abide by the
+			// license
+			// Contact us for permission to remove it,
+			// http://www.ichemlabs.com/contact-us
+			sb.push('<div width="100%">Or paste <em>MOLFile</em> or <em>ChemDoodle JSON</em> text and press the <strong>Load</strong> button.<br><br><center><a href="http://www.chemdoodle.com" target="_blank">Where do I get MOLFiles or ChemDoodle JSON?</a></center><br></div>');
+			sb.push('<textarea rows="12" id="'+sketcher.id+'_open_text" style="width:100%;"></textarea>');
+			sb.push('<br><button style="margin-left:270px;" id="'+sketcher.id+'_open_load">Load</button></div>');
+			return sb.join('');
+		};
+		this.openPopup.setupContent = function(){
+			q('#'+sketcher.id+'_open_load').click(function(){
+				self.openPopup.close();
+				var s = q('#'+sketcher.id+'_open_text').val();
 				var newContent;
 				if (s.indexOf('v2000') !== -1 || s.indexOf('V2000') !== -1) {
 					newContent = {
@@ -13491,7 +20736,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 						shapes : []
 					};
 				} else if (s.charAt(0) == '{') {
-					newContent = new c.readJSON(s);
+					newContent = c.readJSON(s);
 				}
 				if (sketcher.oneMolecule && newContent && newContent.molecules.length > 0 && newContent.molecules[0].atoms.length > 0) {
 					sketcher.historyManager.pushUndo(new actions.SwitchMoleculeAction(sketcher, newContent.molecules[0]));
@@ -13500,9 +20745,9 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 				} else {
 					alert('No chemical content was recognized.');
 				}
-			}
+			});
 		};
-		this.loadDialog.setup();
+		this.openPopup.setup();
 
 		this.atomQueryDialog = new desktop.AtomQueryDialog(sketcher, '_atom_query_dialog');
 		this.atomQueryDialog.setup();
@@ -13510,21 +20755,31 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.bondQueryDialog = new desktop.BondQueryDialog(sketcher, '_bond_query_dialog');
 		this.bondQueryDialog.setup();
 
+		this.templateDialog = new desktop.TemplateDialog(sketcher, '_templates_dialog');
+		this.templateDialog.setup();
+
 		this.searchDialog = new desktop.MolGrabberDialog(sketcher.id, '_search_dialog');
 		this.searchDialog.buttons = {
 			'Load' : function() {
-				q(this).dialog('close');
 				var newMol = self.searchDialog.canvas.molecules[0];
 				if (newMol && newMol.atoms.length > 0) {
+					q(this).dialog('close');
 					if (sketcher.oneMolecule) {
 						if (newMol !== sketcher.molecule) {
 							sketcher.historyManager.pushUndo(new actions.SwitchMoleculeAction(sketcher, newMol));
 						}
 					} else {
-						sketcher.historyManager.pushUndo(new actions.NewMoleculeAction(sketcher, newMol.atoms, newMol.bonds));
+						sketcher.historyManager.pushUndo(new actions.AddContentAction(sketcher, self.searchDialog.canvas.molecules, self.searchDialog.canvas.shapes));
+						sketcher.toolbarManager.buttonLasso.select();
 						sketcher.toolbarManager.buttonLasso.getElement().click();
-						sketcher.lasso.select(newMol.atoms, []);
+						var as = [];
+						for(var i = 0, ii = self.searchDialog.canvas.molecules.length; i<ii; i++){
+							as = as.concat(self.searchDialog.canvas.molecules[i].atoms);
+						}
+						sketcher.lasso.select(as, self.searchDialog.canvas.shapes);
 					}
+				}else{
+					alert('After entering a search term, press the "Show Molecule" button to show it before loading. To close this dialog, press the "X" button to the top-right.');
 				}
 			}
 		};
@@ -13540,23 +20795,13 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			this.specsDialog.setup(this.specsDialog, sketcher);
 		}
 
-		this.periodicTableDialog = new desktop.PeriodicTableDialog(sketcher.id, '_periodicTable_dialog');
+		this.periodicTableDialog = new desktop.PeriodicTableDialog(sketcher, '_periodicTable_dialog');
 		this.periodicTableDialog.buttons = {
 			'Close' : function() {
 				q(this).dialog('close');
 			}
 		};
 		this.periodicTableDialog.setup();
-		this.periodicTableDialog.canvas.click = function(evt) {
-			if (this.hovered) {
-				this.selected = this.hovered;
-				var e = this.getHoveredElement();
-				sketcher.stateManager.setState(sketcher.stateManager.STATE_LABEL);
-				sketcher.stateManager.STATE_LABEL.label = e.symbol;
-				sketcher.toolbarManager.buttonLabel.select();
-				this.repaint();
-			}
-		};
 
 		this.calculateDialog = new desktop.Dialog(sketcher.id, '_calculate_dialog', 'Calculations');
 		this.calculateDialog.includeTextArea = true;
@@ -13579,13 +20824,14 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			}
 		};
 		this.inputDialog.setup();
+		
+		if(this.makeOtherDialogs){
+			this.makeOtherDialogs(sketcher);
+		}
 	};
 
 })(ChemDoodle, ChemDoodle.uis.actions, ChemDoodle.uis.gui, ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(desktop, imageDepot, q, document) {
+(function(desktop, imageDepot, q, document, undefined) {
 	'use strict';
 	desktop.DropDown = function(id, tooltip, dummy) {
 		this.id = id;
@@ -13623,20 +20869,20 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			this.defaultButton = this.buttonSet.buttons[0];
 		}
 		var tag = '#' + this.id;
-		q(tag).button();
-		q(tag + '_hidden').hide();
-		q(tag).click(function() {
+		var qt = q(tag);
+		qt.button();
+		qt.click(function() {
 			// mobile safari doesn't allow clicks to be triggered
 			q(document).trigger('click');
-			var component = q(tag + '_hidden');
-			component.show().position({
+			var qth = q(tag + '_hidden');
+			qth.show().position({
 				my : 'center top',
 				at : 'center bottom',
 				of : this,
 				collision : 'fit'
 			});
 			q(document).one('click', function() {
-				component.hide();
+				qth.hide();
 			});
 			return false;
 		});
@@ -13645,8 +20891,9 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		q.each(this.buttonSet.buttons, function(index, value) {
 			self.buttonSet.buttons[index].getElement().click(function() {
 				self.dummy.absorb(self.buttonSet.buttons[index]);
+				// both are needed, the first highlights, the second executes, select should be called first to get the tray to disappear
 				self.dummy.select();
-				self.dummy.func();
+				self.dummy.getElement().click();
 			});
 		});
 		self.dummy.absorb(this.defaultButton);
@@ -13654,15 +20901,11 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.uis.gui.imageDepot, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(desktop, imageDepot, q) {
+(function(desktop, imageDepot, q, undefined) {
 	'use strict';
-	desktop.DummyButton = function(id, icon, tooltip) {
+	desktop.DummyButton = function(id, tooltip) {
 		this.id = id;
-		this.icon = icon;
 		this.toggle = false;
 		this.tooltip = tooltip ? tooltip : '';
 		this.func = undefined;
@@ -13680,10 +20923,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.uis.gui.imageDepot, ChemDoodle.lib.jQuery);
-//
-// Copyright 2009-2015 iChemLabs, LLC. All rights reserved.
-//
-(function(desktop, q) {
+(function(desktop, q, undefined) {
 	'use strict';
 	desktop.TextButton = function(id, tooltip, func) {
 		this.id = id;
@@ -13733,22 +20973,111 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(c, iChemLabs, io, structures, actions, gui, imageDepot, desktop, tools, states, q, document) {
+(function(desktop, imageDepot, q, document, undefined) {
+	'use strict';
+	desktop.Tray = function(sketcher, id, dummy, columnCount) {
+		this.sketcher = sketcher;
+		this.id = id;
+		this.tooltip = dummy.tooltip;
+		this.dummy = dummy;
+		this.dummy.toggle = true;
+		this.buttonSet = new desktop.ButtonSet(id + '_set');
+		this.buttonSet.columnCount = columnCount;
+		this.buttonSet.buttonGroup = this.tooltip;
+		this.defaultButton = undefined;
+	};
+	var _ = desktop.Tray.prototype;
+	_.getSource = function(buttonGroup) {
+		var sb = [];
+		sb.push(this.dummy.getSource(buttonGroup));
+		sb.push('<div style="display:none;position:absolute;z-index:11;border:none;background:#F5F5F5;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" id="');
+		sb.push(this.id);
+		sb.push('_hidden">');
+		sb.push(this.buttonSet.getSource(this.id + '_popup_set'));
+		sb.push('</div>');
+		return sb.join('');
+	};
+	_.setup = function() {
+		this.dummy.setup(true);
+		var button = this.dummy.getElement();
+		// dummy doesn't call button() because when used in drop downs, the buttonset function is called
+		// so we have to call it here
+		button.button();
+		if (!this.defaultButton) {
+			this.defaultButton = this.buttonSet.buttons[0];
+		}
+		var self = this;
+		var tag = '#' + this.id;
+		button.click(function() {
+			// have to duplicate here as scope makes "this" the button
+			if(self.sketcher.openTray!==self){
+				if(self.sketcher.openTray){
+					self.sketcher.openTray.close();
+				}
+				self.sketcher.openTray = self;
+				// mobile safari doesn't allow clicks to be triggered
+				q(document).trigger('click');
+				q(tag + '_hidden').show();
+			}
+			self.reposition();
+		});
+		this.buttonSet.setup();
+		q.each(this.buttonSet.buttons, function(index, value) {
+			self.buttonSet.buttons[index].getElement().click(function() {
+				self.dummy.absorb(self.buttonSet.buttons[index]);
+			});
+		});
+		this.dummy.absorb(this.defaultButton);
+		this.defaultButton.select();
+	};
+	_.open = function(select) {
+		if(this.sketcher.openTray!==this){
+			if(this.sketcher.openTray){
+				this.sketcher.openTray.close();
+			}
+			this.sketcher.openTray = this;
+			// mobile safari doesn't allow clicks to be triggered
+			q(document).trigger('click');
+			q('#'+this.id + '_hidden').show();
+		}
+		if(select){
+			this.dummy.absorb(select);
+			select.select();
+		}
+		this.reposition();
+	};
+	_.reposition = function(){
+		var button = q('#'+this.dummy.id+'_icon');
+		q('#' + this.id + '_hidden').position({
+			my : 'right-8 center',
+			at : 'left center',
+			of : button,
+			collision: 'flip none'
+		});
+	};
+	_.close = function(){
+		q('#' + this.id + '_hidden').hide();
+		this.sketcher.openTray = undefined;
+	};
+
+})(ChemDoodle.uis.gui.desktop, ChemDoodle.uis.gui.imageDepot, ChemDoodle.lib.jQuery, document);
+(function(c, iChemLabs, io, structures, actions, gui, imageDepot, desktop, tools, states, q, document, undefined) {
 	'use strict';
 	gui.ToolbarManager = function(sketcher) {
 		this.sketcher = sketcher;
 
+		if(this.sketcher.floatDrawTools){
+			this.drawTools = new desktop.FloatingToolbar(sketcher);
+		}
+		
 		// open
 		this.buttonOpen = new desktop.Button(sketcher.id + '_button_open', imageDepot.OPEN, 'Open', function() {
-			sketcher.dialogManager.loadDialog.getTextArea().val('');
-			sketcher.dialogManager.loadDialog.getElement().dialog('open');
+			sketcher.dialogManager.openPopup.show();
 		});
 		// save
 		this.buttonSave = new desktop.Button(sketcher.id + '_button_save', imageDepot.SAVE, 'Save', function() {
-            // elabftw
+
+            // ELABFTW CUSTOMIZATION
             // save directly in a file and upload it
             var query = getQueryParams(document.location.search);
             var item = query.id;
@@ -13757,30 +21086,37 @@ ChemDoodle.uis.gui.imageDepot = (function() {
             if (page === 'database.php') {
                 type = 'items';
             }
-            // only if we are editing an experiment, not from team page
-            if (item % 1 === 0) {
-                $.post('app/controllers/EntityController.php', {
-                    addFromString: true,
-                    fileType: 'mol',
-                    type: type,
-                    id: item,
-                    string: c.writeMOL(sketcher.molecules[0])
-                }).done(function() {
-                    $("#filesdiv").load(page + "?mode=edit&id=" + item + " #filesdiv");
-                });
-            } else if (sketcher.useServices) {
+            $.post('app/controllers/EntityController.php', {
+                addFromString: true,
+                fileType: 'mol',
+                type: type,
+                id: item,
+                string: c.writeMOL(sketcher.molecules[0])
+            }).done(function() {
+                $("#filesdiv").load("?mode=edit&id=" + item + " #filesdiv");
+            });
+            // END ELABFTW CUSTOMIZATION
+        });
+        /*
+			if (sketcher.useServices) {
 				sketcher.dialogManager.saveDialog.clear();
 			} else if (sketcher.oneMolecule) {
 				sketcher.dialogManager.saveDialog.getTextArea().val(c.writeMOL(sketcher.molecules[0]));
-                sketcher.dialogManager.saveDialog.getElement().dialog('open');
 			} else if (sketcher.lasso.isActive()) {
 				sketcher.dialogManager.saveDialog.getTextArea().val(c.writeMOL(sketcher.lasso.getFirstMolecule()));
-                sketcher.dialogManager.saveDialog.getElement().dialog('open');
 			}
+			sketcher.dialogManager.saveDialog.open();
 		});
+        */
+		// template
+		this.buttonTemplate = new desktop.Button(sketcher.id + '_button_template', imageDepot.TEMPLATES, 'Templates', function() {
+			sketcher.stateManager.setState(sketcher.stateManager.STATE_NEW_TEMPLATE);
+			sketcher.dialogManager.templateDialog.open();
+		});
+		this.buttonTemplate.toggle = true;
 		// search
 		this.buttonSearch = new desktop.Button(sketcher.id + '_button_search', imageDepot.SEARCH, 'Search', function() {
-			sketcher.dialogManager.searchDialog.getElement().dialog('open');
+			sketcher.dialogManager.searchDialog.open();
 		});
 		// calculate
 		this.buttonCalculate = new desktop.Button(sketcher.id + '_button_calculate', imageDepot.CALCULATE, 'Calculate', function() {
@@ -13817,7 +21153,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 					addDatum('logP', content.xlogp2, '');
 					addDatum('Complexity', content.bertz, '');
 					sketcher.dialogManager.calculateDialog.getTextArea().val(sb.join(''));
-					sketcher.dialogManager.calculateDialog.getElement().dialog('open');
+					sketcher.dialogManager.calculateDialog.open();
 				});
 			}
 		});
@@ -13832,6 +21168,14 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			sketcher.stateManager.setState(sketcher.stateManager.STATE_ERASE);
 		});
 		this.buttonErase.toggle = true;
+		// center
+		this.buttonCenter = new desktop.Button(sketcher.id + '_button_center', imageDepot.CENTER, 'Center', function() {
+			var dif = new structures.Point(sketcher.width / 2, sketcher.height / 2);
+			var bounds = sketcher.getContentBounds();
+			dif.x -= (bounds.maxX + bounds.minX) / 2;
+			dif.y -= (bounds.maxY + bounds.minY) / 2;
+			sketcher.historyManager.pushUndo(new actions.MoveAction(sketcher.getAllPoints(), dif));
+		});
 
 		// clear
 		this.buttonClear = new desktop.Button(sketcher.id + '_button_clear', imageDepot.CLEAR, 'Clear', function() {
@@ -13881,8 +21225,14 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		// lasso set
 		this.makeLassoSet(this);
 
+		// cut/copy/paste set
+		this.makeCopySet(this);
+
 		// scale set
 		this.makeScaleSet(this);
+
+		// flip set
+		this.makeFlipSet(this);
 
 		// history set
 		this.makeHistorySet(this);
@@ -13891,6 +21241,10 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.makeLabelSet(this);
 		
 		// query
+		this.buttonTextInput = new desktop.Button(sketcher.id + '_button_text_input', imageDepot.TEXT, 'Set Atom Label', function() {
+			sketcher.stateManager.setState(sketcher.stateManager.STATE_TEXT_INPUT);
+		});
+		this.buttonTextInput.toggle = true;
 		this.buttonQuery = new desktop.Button(sketcher.id + '_button_query', imageDepot.QUERY, 'Set Query to Atom or Bond', function() {
 			sketcher.stateManager.setState(sketcher.stateManager.STATE_QUERY);
 		});
@@ -13901,12 +21255,22 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 
 		// ring set
 		this.makeRingSet(this);
+		
+		// chain
+		this.buttonChain = new desktop.Button(sketcher.id + '_button_chain', imageDepot.CHAIN_CARBON, 'Add Carbon Chain', function() {
+			sketcher.stateManager.setState(sketcher.stateManager.STATE_NEW_CHAIN);
+		});
+		this.buttonChain.toggle = true;
 
 		// attribute set
 		this.makeAttributeSet(this);
 
 		// shape set
 		this.makeShapeSet(this);
+		
+		if(this.makeOtherButtons){
+			this.makeOtherButtons(this);
+		}
 	};
 	var _ = gui.ToolbarManager.prototype;
 	_.write = function() {
@@ -13919,29 +21283,54 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		}
 		sb.push(this.buttonClear.getSource());
 		sb.push(this.buttonErase.getSource(bg));
+		sb.push(this.buttonCenter.getSource());
 		if (this.sketcher.useServices) {
 			sb.push(this.buttonClean.getSource());
 		}
+		sb.push(this.flipSet.getSource());
 		sb.push(this.historySet.getSource());
+		if (!this.sketcher.oneMolecule) {
+			sb.push(this.copySet.getSource());
+		}
 		sb.push(this.scaleSet.getSource());
 		sb.push(this.buttonOpen.getSource());
 		sb.push(this.buttonSave.getSource());
+		sb.push(this.buttonTemplate.getSource(bg));
 		if (this.sketcher.useServices) {
 			sb.push(this.buttonSearch.getSource());
 			sb.push(this.buttonCalculate.getSource());
 		}
-		sb.push('<br>');
-		sb.push(this.labelSet.getSource(bg));
-		if (this.sketcher.includeQuery) {
-			sb.push(this.buttonQuery.getSource(bg));
-		}
-		sb.push(this.attributeSet.getSource(bg));
-		sb.push(this.bondSet.getSource(bg));
-		sb.push(this.ringSet.getSource(bg));
-		if (!this.sketcher.oneMolecule) {
-			sb.push(this.shapeSet.getSource(bg));
+		if(!this.sketcher.floatDrawTools){
+			sb.push('<br>');
+			if(desktop.TextInput){
+				sb.push(this.buttonTextInput.getSource(bg));
+			}
+			sb.push(this.labelSet.getSource(bg));
+			if (this.sketcher.includeQuery) {
+				sb.push(this.buttonQuery.getSource(bg));
+			}
+			sb.push(this.attributeSet.getSource(bg));
+			sb.push(this.bondSet.getSource(bg));
+			sb.push(this.ringSet.getSource(bg));
+			sb.push(this.buttonChain.getSource(bg));
+			if (!this.sketcher.oneMolecule) {
+				sb.push(this.shapeSet.getSource(bg));
+			}
 		}
 		sb.push('</div>');
+		if(this.sketcher.floatDrawTools){
+			if(desktop.TextInput){
+				this.drawTools.components.splice(0, 0, this.buttonTextInput);
+			}
+			if (this.sketcher.includeQuery) {
+				this.drawTools.components.splice((desktop.TextInput?1:0), 0, this.buttonQuery);
+			}
+			this.drawTools.components.splice(this.drawTools.components.length-(this.sketcher.oneMolecule?1:3), 0, this.buttonChain);
+			if (!this.sketcher.oneMolecule) {
+				this.drawTools.components.push(this.buttonVAP);
+			}
+			sb.push(this.drawTools.getSource(bg));
+		}
 
 		if (document.getElementById(this.sketcher.id)) {
 			var canvas = q('#' + this.sketcher.id);
@@ -13958,32 +21347,53 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		}
 		this.buttonClear.setup();
 		this.buttonErase.setup(true);
+		this.buttonCenter.setup();
 		if (this.sketcher.useServices) {
 			this.buttonClean.setup();
 		}
+		this.flipSet.setup();
 		this.historySet.setup();
+		if (!this.sketcher.oneMolecule) {
+			this.copySet.setup();
+		}
 		this.scaleSet.setup();
 		this.buttonOpen.setup();
 		this.buttonSave.setup();
+		this.buttonTemplate.setup(true);
 		if (this.sketcher.useServices) {
 			this.buttonSearch.setup();
 			this.buttonCalculate.setup();
 		}
-		this.labelSet.setup();
-		if (this.sketcher.includeQuery) {
-			this.buttonQuery.setup(true);
-		}
-		this.attributeSet.setup();
-		this.bondSet.setup();
-		this.ringSet.setup();
-		if (!this.sketcher.oneMolecule) {
-			this.shapeSet.setup();
+		if(this.sketcher.floatDrawTools){
+			this.drawTools.setup();
+			this.buttonBond.getElement().click();
+			this.buttonBond.select();
+		}else{
+			if(desktop.TextInput){
+				this.buttonTextInput.setup(true);
+			}
+			this.labelSet.setup();
+			if (this.sketcher.includeQuery) {
+				this.buttonQuery.setup(true);
+			}
+			this.attributeSet.setup();
+			this.bondSet.setup();
+			this.ringSet.setup();
+			this.buttonChain.setup(true);
+			if (!this.sketcher.oneMolecule) {
+				this.shapeSet.setup();
+			}
+			this.buttonSingle.select();
 		}
 
-		this.buttonSingle.select();
 		this.buttonUndo.disable();
 		this.buttonRedo.disable();
 		if (!this.sketcher.oneMolecule) {
+			this.buttonCut.disable();
+			this.buttonCopy.disable();
+			this.buttonPaste.disable();
+			this.buttonFlipVert.disable();
+			this.buttonFlipHor.disable();
 			if (this.sketcher.useServices) {
 				this.buttonClean.disable();
 				this.buttonCalculate.disable();
@@ -13992,295 +21402,493 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		}
 	};
 
+	_.makeCopySet = function(self) {
+		this.buttonCut = new desktop.Button(self.sketcher.id + '_button_cut', imageDepot.CUT, 'Cut', function() {
+			self.sketcher.copyPasteManager.copy(true);
+		});
+		this.buttonCopy = new desktop.Button(self.sketcher.id + '_button_copy', imageDepot.COPY, 'Copy', function() {
+			self.sketcher.copyPasteManager.copy(false);
+		});
+		this.buttonPaste = new desktop.Button(self.sketcher.id + '_button_paste', imageDepot.PASTE, 'Paste', function() {
+			self.sketcher.copyPasteManager.paste();
+		});
+		
+		this.copySet = new desktop.ButtonSet(self.sketcher.id + '_buttons_copy');
+		this.copySet.toggle = false;
+		this.copySet.buttons.push(this.buttonCut);
+		this.copySet.buttons.push(this.buttonCopy);
+		this.copySet.buttons.push(this.buttonPaste);
+	};
 	_.makeScaleSet = function(self) {
-		this.scaleSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_scale');
-		this.scaleSet.toggle = false;
 		this.buttonScalePlus = new desktop.Button(self.sketcher.id + '_button_scale_plus', imageDepot.ZOOM_IN, 'Increase Scale', function() {
 			self.sketcher.specs.scale *= 1.5;
 			self.sketcher.checkScale();
 			self.sketcher.repaint();
 		});
-		this.scaleSet.buttons.push(this.buttonScalePlus);
 		this.buttonScaleMinus = new desktop.Button(self.sketcher.id + '_button_scale_minus', imageDepot.ZOOM_OUT, 'Decrease Scale', function() {
 			self.sketcher.specs.scale /= 1.5;
 			self.sketcher.checkScale();
 			self.sketcher.repaint();
 		});
+		
+		this.scaleSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_scale');
+		this.scaleSet.toggle = false;
+		this.scaleSet.buttons.push(this.buttonScalePlus);
 		this.scaleSet.buttons.push(this.buttonScaleMinus);
 	};
 	_.makeLassoSet = function(self) {
-		this.lassoSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_lasso');
-		this.buttonLasso = new desktop.DummyButton(self.sketcher.id + '_button_lasso', imageDepot.LASSO, 'Selection Tool');
-		this.lassoSet.buttons.push(this.buttonLasso);
-		this.lassoSet.addDropDown('More Selection Tools');
-		this.lassoSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_lasso_lasso', imageDepot.LASSO, 'Lasso Tool', function() {
+		this.buttonLassoAll = new desktop.Button(self.sketcher.id + '_button_lasso_lasso', imageDepot.LASSO, 'Lasso Tool', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LASSO);
 			self.sketcher.lasso.mode = tools.Lasso.MODE_LASSO;
-			if (self.sketcher.molecules.length > 0 && !self.sketcher.lasso.isActive()) {
-				self.sketcher.lasso.select(self.sketcher.molecules[self.sketcher.molecules.length - 1].atoms, []);
+			if (!self.sketcher.lasso.isActive()) {
+				self.sketcher.lasso.selectNextMolecule();
 			}
-		}));
-		this.lassoSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_lasso_shapes', imageDepot.LASSO_SHAPES, 'Lasso Tool (shapes only)', function() {
+		});
+		this.buttonLassoShapes = new desktop.Button(self.sketcher.id + '_button_lasso_shapes', imageDepot.LASSO_SHAPES, 'Lasso Tool (shapes only)', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LASSO);
 			self.sketcher.lasso.mode = tools.Lasso.MODE_LASSO_SHAPES;
-			if (self.sketcher.shapes.length > 0 && !self.sketcher.lasso.isActive()) {
-				self.sketcher.lasso.select([], [ self.sketcher.shapes[self.sketcher.shapes.length - 1] ]);
+			if (!self.sketcher.lasso.isActive()) {
+				self.sketcher.lasso.selectNextShape();
 			}
-		}));
-		this.lassoSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_lasso_marquee', imageDepot.MARQUEE, 'Marquee Tool', function() {
+		});
+		this.buttonRectMarq = new desktop.Button(self.sketcher.id + '_button_lasso_marquee', imageDepot.MARQUEE, 'Marquee Tool', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LASSO);
 			self.sketcher.lasso.mode = tools.Lasso.MODE_RECTANGLE_MARQUEE;
-			if (self.sketcher.molecules.length > 0 && !self.sketcher.lasso.isActive()) {
-				self.sketcher.lasso.select(self.sketcher.molecules[self.sketcher.molecules.length - 1].atoms, []);
+			if (!self.sketcher.lasso.isActive()) {
+				self.sketcher.lasso.selectNextMolecule();
 			}
-		}));
+		});
+		
+		this.lassoSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_lasso');
+		this.buttonLasso = new desktop.DummyButton(self.sketcher.id + '_button_lasso', 'Selection Tool');
+		this.lassoSet.buttons.push(this.buttonLasso);
+		this.lassoSet.addDropDown('More Selection Tools');
+		this.lassoSet.dropDown.buttonSet.buttons.push(this.buttonLassoAll);
+		this.lassoSet.dropDown.buttonSet.buttons.push(this.buttonLassoShapes);
+		this.lassoSet.dropDown.buttonSet.buttons.push(this.buttonRectMarq);
+	};
+	_.makeFlipSet = function(self) {
+		var action = function(horizontal){
+			var ps = self.sketcher.oneMolecule?self.sketcher.getAllPoints():self.sketcher.lasso.getAllPoints();
+			var bs = [];
+			var lbs = self.sketcher.oneMolecule?self.sketcher.getAllBonds():self.sketcher.lasso.getBonds();
+			for(var i = 0, ii = lbs.length; i<ii; i++){
+				var b = lbs[i];
+				if(b.bondOrder===1 && (b.stereo===structures.Bond.STEREO_PROTRUDING || b.stereo===structures.Bond.STEREO_RECESSED)){
+					bs.push(b);
+				}
+			}
+			self.sketcher.historyManager.pushUndo(new actions.FlipAction(ps, bs, horizontal));
+		}
+		this.buttonFlipVert = new desktop.Button(self.sketcher.id + '_button_flip_hor', imageDepot.FLIP_HOR, 'Flip Horizontally', function() {
+			action(true);
+		});
+		this.buttonFlipHor = new desktop.Button(self.sketcher.id + '_button_flip_ver', imageDepot.FLIP_VER, 'Flip Vertically', function() {
+			action(false);
+		});
+		
+		this.flipSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_flip');
+		this.flipSet.toggle = false;
+		this.flipSet.buttons.push(this.buttonFlipVert);
+		this.flipSet.buttons.push(this.buttonFlipHor);
 	};
 	_.makeHistorySet = function(self) {
-		this.historySet = new desktop.ButtonSet(self.sketcher.id + '_buttons_history');
-		this.historySet.toggle = false;
 		this.buttonUndo = new desktop.Button(self.sketcher.id + '_button_undo', imageDepot.UNDO, 'Undo', function() {
 			self.sketcher.historyManager.undo();
 		});
-		this.historySet.buttons.push(this.buttonUndo);
 		this.buttonRedo = new desktop.Button(self.sketcher.id + '_button_redo', imageDepot.REDO, 'Redo', function() {
 			self.sketcher.historyManager.redo();
 		});
+		
+		this.historySet = new desktop.ButtonSet(self.sketcher.id + '_buttons_history');
+		this.historySet.toggle = false;
+		this.historySet.buttons.push(this.buttonUndo);
 		this.historySet.buttons.push(this.buttonRedo);
 	};
 	_.makeLabelSet = function(self) {
-		this.labelSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_label');
-		this.buttonLabel = new desktop.DummyButton(self.sketcher.id + '_button_label', imageDepot.CARBON, 'Set Label');
-		this.labelSet.buttons.push(this.buttonLabel);
-		this.labelSet.addDropDown('More Labels');
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_h', imageDepot.HYDROGEN, 'Hydrogen', function() {
+		this.buttonLabelH = new desktop.Button(self.sketcher.id + '_button_label_h', imageDepot.HYDROGEN, 'Hydrogen', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'H';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_c', imageDepot.CARBON, 'Carbon', function() {
+		});
+		this.buttonLabelC = new desktop.Button(self.sketcher.id + '_button_label_c', imageDepot.CARBON, 'Carbon', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'C';
-		}));
-		this.labelSet.dropDown.defaultButton = this.labelSet.dropDown.buttonSet.buttons[this.labelSet.dropDown.buttonSet.buttons.length - 1];
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_n', imageDepot.NITROGEN, 'Nitrogen', function() {
+		});
+		this.buttonLabelN = new desktop.Button(self.sketcher.id + '_button_label_n', imageDepot.NITROGEN, 'Nitrogen', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'N';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_o', imageDepot.OXYGEN, 'Oxygen', function() {
+		});
+		this.buttonLabelO = new desktop.Button(self.sketcher.id + '_button_label_o', imageDepot.OXYGEN, 'Oxygen', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'O';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_f', imageDepot.FLUORINE, 'Fluorine', function() {
+		});
+		this.buttonLabelF = new desktop.Button(self.sketcher.id + '_button_label_f', imageDepot.FLUORINE, 'Fluorine', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'F';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_cl', imageDepot.CHLORINE, 'Chlorine', function() {
+		});
+		this.buttonLabelCl = new desktop.Button(self.sketcher.id + '_button_label_cl', imageDepot.CHLORINE, 'Chlorine', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'Cl';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_br', imageDepot.BROMINE, 'Bromine', function() {
+		});
+		this.buttonLabelBr = new desktop.Button(self.sketcher.id + '_button_label_br', imageDepot.BROMINE, 'Bromine', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'Br';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_i', imageDepot.IODINE, 'Iodine', function() {
+		});
+		this.buttonLabelI = new desktop.Button(self.sketcher.id + '_button_label_i', imageDepot.IODINE, 'Iodine', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'I';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_p', imageDepot.PHOSPHORUS, 'Phosphorus', function() {
+		});
+		this.buttonLabelP = new desktop.Button(self.sketcher.id + '_button_label_p', imageDepot.PHOSPHORUS, 'Phosphorus', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'P';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_s', imageDepot.SULFUR, 'Sulfur', function() {
+		});
+		this.buttonLabelS = new desktop.Button(self.sketcher.id + '_button_label_s', imageDepot.SULFUR, 'Sulfur', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
 			self.sketcher.stateManager.STATE_LABEL.label = 'S';
-		}));
-		this.labelSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_label_pt', imageDepot.PERIODIC_TABLE, 'Choose Symbol', function() {
-			for ( var i = 0, ii = self.sketcher.dialogManager.periodicTableDialog.canvas.cells.length; i < ii; i++) {
-				var cell = self.sketcher.dialogManager.periodicTableDialog.canvas.cells[i];
-				if (cell.element.symbol === self.sketcher.stateManager.STATE_LABEL.label) {
-					self.sketcher.dialogManager.periodicTableDialog.canvas.selected = cell;
-					self.sketcher.dialogManager.periodicTableDialog.canvas.repaint();
-					break;
-				}
+		});
+		this.buttonLabelSi = new desktop.Button(self.sketcher.id + '_button_label_si', imageDepot.SILICON, 'Silicon', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
+			self.sketcher.stateManager.STATE_LABEL.label = 'Si';
+		});
+		this.buttonLabelPT = new desktop.Button(self.sketcher.id + '_button_label_pt', imageDepot.PERIODIC_TABLE, 'Choose Symbol', function() {
+			if(self.sketcher.dialogManager.periodicTableDialog.canvas.selected){
+				self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LABEL);
+				self.sketcher.stateManager.STATE_LABEL.label = self.sketcher.dialogManager.periodicTableDialog.canvas.selected.element.symbol;
 			}
-			self.sketcher.dialogManager.periodicTableDialog.getElement().dialog('open');
-		}));
+			self.sketcher.dialogManager.periodicTableDialog.open();
+		});
+		
+		this.buttonLabel = new desktop.DummyButton(self.sketcher.id + '_button_label', 'Set Label');
+		if(self.sketcher.floatDrawTools){
+			this.labelTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_label', this.buttonLabel, 3);
+			this.labelTray.defaultButton = this.buttonLabelO;
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelH);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelC);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelN);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelO);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelF);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelCl);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelBr);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelI);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelP);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelS);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelSi);
+			this.labelTray.buttonSet.buttons.push(this.buttonLabelPT);
+			this.drawTools.components.push(this.labelTray);
+		}else{
+			this.labelSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_label');
+			this.labelSet.buttons.push(this.buttonLabel);
+			this.labelSet.addDropDown('More Labels');
+			this.labelSet.dropDown.defaultButton = this.buttonLabelO;
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelH);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelC);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelN);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelO);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelF);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelCl);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelBr);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelI);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelP);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelS);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelSi);
+			this.labelSet.dropDown.buttonSet.buttons.push(this.buttonLabelPT);
+		}
 	};
 	_.makeBondSet = function(self) {
-		this.bondSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_bond');
 		this.buttonSingle = new desktop.Button(self.sketcher.id + '_button_bond_single', imageDepot.BOND_SINGLE, 'Single Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 1;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
 		});
-		this.bondSet.buttons.push(this.buttonSingle);
 		this.buttonRecessed = new desktop.Button(self.sketcher.id + '_button_bond_recessed', imageDepot.BOND_RECESSED, 'Recessed Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 1;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_RECESSED;
 		});
-		this.bondSet.buttons.push(this.buttonRecessed);
 		this.buttonProtruding = new desktop.Button(self.sketcher.id + '_button_bond_protruding', imageDepot.BOND_PROTRUDING, 'Protruding Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 1;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_PROTRUDING;
 		});
-		this.bondSet.buttons.push(this.buttonProtruding);
 		this.buttonDouble = new desktop.Button(self.sketcher.id + '_button_bond_double', imageDepot.BOND_DOUBLE, 'Double Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 2;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
 		});
-		this.bondSet.buttons.push(this.buttonDouble);
-		this.buttonBond = new desktop.DummyButton(self.sketcher.id + '_button_bond', imageDepot.BOND_TRIPLE, 'Other Bond');
-		this.bondSet.buttons.push(this.buttonBond);
-		this.bondSet.addDropDown('More Bonds');
-		this.bondSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_bond_zero', imageDepot.BOND_ZERO, 'Zero Bond (Ionic/Hydrogen)', function() {
+		this.buttonZero = new desktop.Button(self.sketcher.id + '_button_bond_zero', imageDepot.BOND_ZERO, 'Zero Bond (Ionic/Hydrogen)', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 0;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
-		}));
-		this.bondSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_bond_half', imageDepot.BOND_HALF, 'Half Bond', function() {
+		});
+		this.buttonHalf = new desktop.Button(self.sketcher.id + '_button_bond_half', imageDepot.BOND_HALF, 'Half Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 0.5;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
-		}));
-		this.bondSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_bond_resonance', imageDepot.BOND_RESONANCE, 'Resonance Bond', function() {
+		});
+		this.buttonWavy = new desktop.Button(self.sketcher.id + '_button_bond_wavy', imageDepot.BOND_WAVY, 'Wavy Bond', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
+			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 1;
+			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_AMBIGUOUS;
+		});
+		this.buttonResonance = new desktop.Button(self.sketcher.id + '_button_bond_resonance', imageDepot.BOND_RESONANCE, 'Resonance Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 1.5;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
-		}));
-		this.bondSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_bond_ambiguous_double', imageDepot.BOND_DOUBLE_AMBIGUOUS, 'Ambiguous Double Bond', function() {
+		});
+		this.buttonDoubleAmbiguous = new desktop.Button(self.sketcher.id + '_button_bond_ambiguous_double', imageDepot.BOND_DOUBLE_AMBIGUOUS, 'Ambiguous Double Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 2;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_AMBIGUOUS;
-		}));
-		this.bondSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_bond_triple', imageDepot.BOND_TRIPLE, 'Triple Bond', function() {
+		});
+		this.buttonTriple = new desktop.Button(self.sketcher.id + '_button_bond_triple', imageDepot.BOND_TRIPLE, 'Triple Bond', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_BOND);
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 3;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
-		}));
-		this.bondSet.dropDown.defaultButton = this.bondSet.dropDown.buttonSet.buttons[this.bondSet.dropDown.buttonSet.buttons.length - 1];
+		});
+		
+		this.buttonBond = new desktop.DummyButton(self.sketcher.id + '_button_bond', self.sketcher.floatDrawTools?'Draw Bond':'Other Bond');
+		if(self.sketcher.floatDrawTools){
+			this.bondTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_bond', this.buttonBond, 2);
+			this.bondTray.defaultButton = this.buttonSingle;
+			this.bondTray.buttonSet.buttons.push(this.buttonZero);
+			this.bondTray.buttonSet.buttons.push(this.buttonHalf);
+			this.bondTray.buttonSet.buttons.push(this.buttonWavy);
+			this.bondTray.buttonSet.buttons.push(this.buttonSingle);
+			this.bondTray.buttonSet.buttons.push(this.buttonRecessed);
+			this.bondTray.buttonSet.buttons.push(this.buttonProtruding);
+			this.bondTray.buttonSet.buttons.push(this.buttonDoubleAmbiguous);
+			this.bondTray.buttonSet.buttons.push(this.buttonDouble);
+			this.bondTray.buttonSet.buttons.push(this.buttonResonance);
+			this.bondTray.buttonSet.buttons.push(this.buttonTriple);
+			this.drawTools.components.push(this.bondTray);
+		}else{
+			this.bondSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_bond');
+			this.bondSet.buttons.push(this.buttonSingle);
+			this.bondSet.buttons.push(this.buttonRecessed);
+			this.bondSet.buttons.push(this.buttonProtruding);
+			this.bondSet.buttons.push(this.buttonDouble);
+			this.bondSet.buttons.push(this.buttonBond);
+			this.bondSet.addDropDown('More Bonds');
+			this.bondSet.dropDown.buttonSet.buttons.push(this.buttonZero);
+			this.bondSet.dropDown.buttonSet.buttons.push(this.buttonHalf);
+			this.bondSet.dropDown.buttonSet.buttons.push(this.buttonWavy);
+			this.bondSet.dropDown.buttonSet.buttons.push(this.buttonResonance);
+			this.bondSet.dropDown.buttonSet.buttons.push(this.buttonDoubleAmbiguous);
+			this.bondSet.dropDown.buttonSet.buttons.push(this.buttonTriple);
+			this.bondSet.dropDown.defaultButton = this.buttonTriple;
+		}
 	};
 	_.makeRingSet = function(self) {
-		this.ringSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_ring');
 		this.buttonCyclohexane = new desktop.Button(self.sketcher.id + '_button_ring_cyclohexane', imageDepot.CYCLOHEXANE, 'Cyclohexane Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 6;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
 		});
-		this.ringSet.buttons.push(this.buttonCyclohexane);
 		this.buttonBenzene = new desktop.Button(self.sketcher.id + '_button_ring_benzene', imageDepot.BENZENE, 'Benzene Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 6;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = true;
 		});
-		this.ringSet.buttons.push(this.buttonBenzene);
-		this.buttonRing = new desktop.DummyButton(self.sketcher.id + '_button_ring', imageDepot.CYCLOPENTANE, 'Other Ring');
-		this.ringSet.buttons.push(this.buttonRing);
-		this.ringSet.addDropDown('More Rings');
-		this.ringSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_ring_cyclopropane', imageDepot.CYCLOPROPANE, 'Cyclopropane Ring', function() {
+		this.buttonCyclopropane = new desktop.Button(self.sketcher.id + '_button_ring_cyclopropane', imageDepot.CYCLOPROPANE, 'Cyclopropane Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 3;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
-		}));
-		this.ringSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_ring_cyclobutane', imageDepot.CYCLOBUTANE, 'Cyclobutane Ring', function() {
+		});
+		this.buttonCyclobutane = new desktop.Button(self.sketcher.id + '_button_ring_cyclobutane', imageDepot.CYCLOBUTANE, 'Cyclobutane Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 4;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
-		}));
-		this.ringSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_ring_cyclopentane', imageDepot.CYCLOPENTANE, 'Cyclopentane Ring', function() {
+		});
+		this.buttonCyclopentane = new desktop.Button(self.sketcher.id + '_button_ring_cyclopentane', imageDepot.CYCLOPENTANE, 'Cyclopentane Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 5;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
-		}));
-		this.ringSet.dropDown.defaultButton = this.ringSet.dropDown.buttonSet.buttons[this.ringSet.dropDown.buttonSet.buttons.length - 1];
-		this.ringSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_ring_cycloheptane', imageDepot.CYCLOHEPTANE, 'Cycloheptane Ring', function() {
+		});
+		this.buttonCycloheptane = new desktop.Button(self.sketcher.id + '_button_ring_cycloheptane', imageDepot.CYCLOHEPTANE, 'Cycloheptane Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 7;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
-		}));
-		this.ringSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_ring_cyclooctane', imageDepot.CYCLOOCTANE, 'Cyclooctane Ring', function() {
+		});
+		this.buttonCyclooctane = new desktop.Button(self.sketcher.id + '_button_ring_cyclooctane', imageDepot.CYCLOOCTANE, 'Cyclooctane Ring', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = 8;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
-		}));
+		});
+		this.buttonRingArbitrary = new desktop.Button(self.sketcher.id + '_button_ring_arbitrary', imageDepot.RING_ARBITRARY, 'Arbitrary Ring Size Tool', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_NEW_RING);
+			self.sketcher.stateManager.STATE_NEW_RING.numSides = -1;
+			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
+		});
+		
+		this.buttonRing = new desktop.DummyButton(self.sketcher.id + '_button_ring', self.sketcher.floatDrawTools?'Draw Ring':'Other Ring');
+		if(self.sketcher.floatDrawTools){
+			this.ringTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_ring', this.buttonRing, 2);
+			this.ringTray.defaultButton = this.buttonCyclohexane;
+			this.ringTray.buttonSet.buttons.push(this.buttonCyclopropane);
+			this.ringTray.buttonSet.buttons.push(this.buttonCyclobutane);
+			this.ringTray.buttonSet.buttons.push(this.buttonCyclopentane);
+			this.ringTray.buttonSet.buttons.push(this.buttonCyclohexane);
+			this.ringTray.buttonSet.buttons.push(this.buttonCycloheptane);
+			this.ringTray.buttonSet.buttons.push(this.buttonCyclooctane);
+			this.ringTray.buttonSet.buttons.push(this.buttonBenzene);
+			this.ringTray.buttonSet.buttons.push(this.buttonRingArbitrary);
+			this.drawTools.components.push(this.ringTray);
+		}else{
+			this.ringSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_ring');
+			this.ringSet.buttons.push(this.buttonCyclohexane);
+			this.ringSet.buttons.push(this.buttonBenzene);
+			this.ringSet.buttons.push(this.buttonRing);
+			this.ringSet.addDropDown('More Rings');
+			this.ringSet.dropDown.buttonSet.buttons.push(this.buttonCyclopropane);
+			this.ringSet.dropDown.buttonSet.buttons.push(this.buttonCyclobutane);
+			this.ringSet.dropDown.buttonSet.buttons.push(this.buttonCyclopentane);
+			this.ringSet.dropDown.defaultButton = this.buttonCyclopentane;
+			this.ringSet.dropDown.buttonSet.buttons.push(this.buttonCycloheptane);
+			this.ringSet.dropDown.buttonSet.buttons.push(this.buttonCyclooctane);
+			this.ringSet.dropDown.buttonSet.buttons.push(this.buttonRingArbitrary);
+		}
 	};
 	_.makeAttributeSet = function(self) {
-		this.attributeSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_attribute');
-		this.buttonAttribute = new desktop.DummyButton(self.sketcher.id + '_button_attribute', imageDepot.INCREASE_CHARGE, 'Attributes');
-		this.attributeSet.buttons.push(this.buttonAttribute);
-		this.attributeSet.addDropDown('More Attributes');
-		this.attributeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_attribute_charge_increment', imageDepot.INCREASE_CHARGE, 'Increase Charge', function() {
+		this.buttonChargePlus = new desktop.Button(self.sketcher.id + '_button_attribute_charge_increment', imageDepot.INCREASE_CHARGE, 'Increase Charge', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_CHARGE);
 			self.sketcher.stateManager.STATE_CHARGE.delta = 1;
-		}));
-		this.attributeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_attribute_charge_decrement', imageDepot.DECREASE_CHARGE, 'Decrease Charge', function() {
+		});
+		this.buttonChargeMinus = new desktop.Button(self.sketcher.id + '_button_attribute_charge_decrement', imageDepot.DECREASE_CHARGE, 'Decrease Charge', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_CHARGE);
 			self.sketcher.stateManager.STATE_CHARGE.delta = -1;
-		}));
-		this.attributeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_attribute_lonePair_increment', imageDepot.ADD_LONE_PAIR, 'Add Lone Pair', function() {
+		});
+		this.buttonPairPlus = new desktop.Button(self.sketcher.id + '_button_attribute_lonePair_increment', imageDepot.ADD_LONE_PAIR, 'Add Lone Pair', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LONE_PAIR);
 			self.sketcher.stateManager.STATE_LONE_PAIR.delta = 1;
-		}));
-		this.attributeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_attribute_lonePair_decrement', imageDepot.REMOVE_LONE_PAIR, 'Remove Lone Pair', function() {
+		});
+		this.buttonPairMinus = new desktop.Button(self.sketcher.id + '_button_attribute_lonePair_decrement', imageDepot.REMOVE_LONE_PAIR, 'Remove Lone Pair', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_LONE_PAIR);
 			self.sketcher.stateManager.STATE_LONE_PAIR.delta = -1;
-		}));
-		this.attributeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_attribute_radical_increment', imageDepot.ADD_RADICAL, 'Add Radical', function() {
+		});
+		this.buttonRadicalPlus = new desktop.Button(self.sketcher.id + '_button_attribute_radical_increment', imageDepot.ADD_RADICAL, 'Add Radical', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_RADICAL);
 			self.sketcher.stateManager.STATE_RADICAL.delta = 1;
-		}));
-		this.attributeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_attribute_radical_decrement', imageDepot.REMOVE_RADICAL, 'Remove Radical', function() {
+		});
+		this.buttonRadicalMinus = new desktop.Button(self.sketcher.id + '_button_attribute_radical_decrement', imageDepot.REMOVE_RADICAL, 'Remove Radical', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_RADICAL);
 			self.sketcher.stateManager.STATE_RADICAL.delta = -1;
-		}));
+		});
+	
+		this.buttonAttribute = new desktop.DummyButton(self.sketcher.id + '_button_attribute', 'Attributes');
+		if(self.sketcher.floatDrawTools){
+			this.attributeTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_attribute', this.buttonAttribute, 2);
+			this.attributeTray.defaultButton = this.buttonChargePlus;
+			this.attributeTray.buttonSet.buttons.push(this.buttonChargeMinus);
+			this.attributeTray.buttonSet.buttons.push(this.buttonChargePlus);
+			this.attributeTray.buttonSet.buttons.push(this.buttonPairMinus);
+			this.attributeTray.buttonSet.buttons.push(this.buttonPairPlus);
+			this.attributeTray.buttonSet.buttons.push(this.buttonRadicalMinus);
+			this.attributeTray.buttonSet.buttons.push(this.buttonRadicalPlus);
+			this.drawTools.components.push(this.attributeTray);
+		}else{
+			this.attributeSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_attribute');
+			this.attributeSet.buttons.push(this.buttonAttribute);
+			this.attributeSet.addDropDown('More Attributes');
+			this.attributeSet.dropDown.buttonSet.buttons.push(this.buttonChargePlus);
+			this.attributeSet.dropDown.buttonSet.buttons.push(this.buttonChargeMinus);
+			this.attributeSet.dropDown.buttonSet.buttons.push(this.buttonPairPlus);
+			this.attributeSet.dropDown.buttonSet.buttons.push(this.buttonPairMinus);
+			this.attributeSet.dropDown.buttonSet.buttons.push(this.buttonRadicalPlus);
+			this.attributeSet.dropDown.buttonSet.buttons.push(this.buttonRadicalMinus);
+		}
 	};
 	_.makeShapeSet = function(self) {
-		this.shapeSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_shape');
-		this.buttonShape = new desktop.DummyButton(self.sketcher.id + '_button_shape', imageDepot.ARROW_SYNTHETIC, 'Add Shape');
-		this.shapeSet.buttons.push(this.buttonShape);
-		this.shapeSet.addDropDown('More Shapes');
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_arrow_synthetic', imageDepot.ARROW_SYNTHETIC, 'Synthetic Arrow', function() {
+		this.buttonArrowSynthetic = new desktop.Button(self.sketcher.id + '_button_shape_arrow_synthetic', imageDepot.ARROW_SYNTHETIC, 'Synthetic Arrow', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_SHAPE);
 			self.sketcher.stateManager.STATE_SHAPE.shapeType = states.ShapeState.ARROW_SYNTHETIC;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_arrow_retrosynthetic', imageDepot.ARROW_RETROSYNTHETIC, 'Retrosynthetic Arrow', function() {
+		});
+		this.buttonArrowRetrosynthetic = new desktop.Button(self.sketcher.id + '_button_shape_arrow_retrosynthetic', imageDepot.ARROW_RETROSYNTHETIC, 'Retrosynthetic Arrow', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_SHAPE);
 			self.sketcher.stateManager.STATE_SHAPE.shapeType = states.ShapeState.ARROW_RETROSYNTHETIC;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_arrow_resonance', imageDepot.ARROW_RESONANCE, 'Resonance Arrow', function() {
+		});
+		this.buttonArrowResonance = new desktop.Button(self.sketcher.id + '_button_shape_arrow_resonance', imageDepot.ARROW_RESONANCE, 'Resonance Arrow', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_SHAPE);
 			self.sketcher.stateManager.STATE_SHAPE.shapeType = states.ShapeState.ARROW_RESONANCE;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_arrow_equilibrium', imageDepot.ARROW_EQUILIBRIUM, 'Equilibrium Arrow', function() {
+		});
+		this.buttonArrowEquilibrum = new desktop.Button(self.sketcher.id + '_button_shape_arrow_equilibrium', imageDepot.ARROW_EQUILIBRIUM, 'Equilibrium Arrow', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_SHAPE);
 			self.sketcher.stateManager.STATE_SHAPE.shapeType = states.ShapeState.ARROW_EQUILIBRIUM;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_pusher_1', imageDepot.PUSHER_SINGLE, 'Single Electron Pusher', function() {
+		});
+		this.buttonReactionMapping = new desktop.Button(self.sketcher.id + '_button_reaction_mapping', imageDepot.ATOM_REACTION_MAP, 'Reaction Mapping', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_PUSHER);
+			self.sketcher.stateManager.STATE_PUSHER.numElectron = -10;
+		});
+		this.buttonPusher1 = new desktop.Button(self.sketcher.id + '_button_shape_pusher_1', imageDepot.PUSHER_SINGLE, 'Single Electron Pusher', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_PUSHER);
 			self.sketcher.stateManager.STATE_PUSHER.numElectron = 1;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_pusher_2', imageDepot.PUSHER_DOUBLE, 'Electron Pair Pusher', function() {
+		});
+		this.buttonPusher2 = new desktop.Button(self.sketcher.id + '_button_shape_pusher_2', imageDepot.PUSHER_DOUBLE, 'Electron Pair Pusher', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_PUSHER);
 			self.sketcher.stateManager.STATE_PUSHER.numElectron = 2;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_pusher_bond_forming', imageDepot.PUSHER_BOND_FORMING, 'Bond Forming Pusher', function() {
+		});
+		this.buttonPusherBond = new desktop.Button(self.sketcher.id + '_button_shape_pusher_bond_forming', imageDepot.PUSHER_BOND_FORMING, 'Bond Forming Pusher', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_PUSHER);
 			self.sketcher.stateManager.STATE_PUSHER.numElectron = -1;
-		}));
-		this.shapeSet.dropDown.buttonSet.buttons.push(new desktop.Button(self.sketcher.id + '_button_shape_charge_bracket', imageDepot.CHARGE_BRACKET, 'Bracket', function() {
+		});
+		this.buttonReactionMapping = new desktop.Button(self.sketcher.id + '_button_reaction_mapping', imageDepot.ATOM_REACTION_MAP, 'Reaction Mapping', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_PUSHER);
+			self.sketcher.stateManager.STATE_PUSHER.numElectron = -10;
+		});
+		this.buttonBracket = new desktop.Button(self.sketcher.id + '_button_shape_charge_bracket', imageDepot.BRACKET_CHARGE, 'Bracket', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_SHAPE);
 			self.sketcher.stateManager.STATE_SHAPE.shapeType = states.ShapeState.BRACKET;
 			self.sketcher.repaint();
-		}));
+		});
+		this.buttonDynamicBracket = new desktop.Button(self.sketcher.id + '_button_bracket_dynamic', imageDepot.BRACKET_DYNAMIC, 'Repeating Group', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_DYNAMIC_BRACKET);
+		});
+		this.buttonVAP = new desktop.Button(self.sketcher.id + '_button_vap', imageDepot.VARIABLE_ATTACHMENT_POINTS, 'Variable Attachment Points', function() {
+			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_VAP);
+		});
+		
+		if(!this.sketcher.oneMolecule){
+			this.buttonShape = new desktop.DummyButton(self.sketcher.id + '_button_shape', self.sketcher.floatDrawTools?'Reactions':'Shapes');
+			if(self.sketcher.floatDrawTools){
+				// we have to set toggle to true for buttons we are including as parent options
+				this.buttonVAP.toggle = true;
+				this.shapeTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_shape', this.buttonShape, 4);
+				this.shapeTray.defaultButton = this.buttonArrowSynthetic;
+				this.shapeTray.buttonSet.buttons.push(this.buttonArrowSynthetic);
+				this.shapeTray.buttonSet.buttons.push(this.buttonArrowRetrosynthetic);
+				this.shapeTray.buttonSet.buttons.push(this.buttonArrowResonance);
+				this.shapeTray.buttonSet.buttons.push(this.buttonArrowEquilibrum);
+				this.shapeTray.buttonSet.buttons.push(this.buttonPusher1);
+				this.shapeTray.buttonSet.buttons.push(this.buttonPusher2);
+				this.shapeTray.buttonSet.buttons.push(this.buttonPusherBond);
+				this.shapeTray.buttonSet.buttons.push(this.buttonReactionMapping);
+				this.drawTools.components.push(this.shapeTray);
+				this.buttonBrackets = new desktop.DummyButton(self.sketcher.id + '_button_bracket', 'Brackets');
+				this.bracketTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_bracket', this.buttonBrackets, 2);
+				this.bracketTray.buttonSet.buttons.push(this.buttonBracket);
+				this.bracketTray.buttonSet.buttons.push(this.buttonDynamicBracket);
+				this.drawTools.components.push(this.bracketTray);
+			}else{
+				this.shapeSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_shape');
+				this.shapeSet.buttons.push(this.buttonShape);
+				this.shapeSet.addDropDown('More Shapes');
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonArrowSynthetic);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonArrowRetrosynthetic);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonArrowResonance);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonArrowEquilibrum);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonPusher1);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonPusher2);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonPusherBond);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonReactionMapping);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonBracket);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonDynamicBracket);
+				this.shapeSet.dropDown.buttonSet.buttons.push(this.buttonVAP);
+			}
+		}
 	};
 
 })(ChemDoodle, ChemDoodle.iChemLabs, ChemDoodle.io, ChemDoodle.structures, ChemDoodle.uis.actions, ChemDoodle.uis.gui, ChemDoodle.uis.gui.imageDepot, ChemDoodle.uis.gui.desktop, ChemDoodle.uis.tools, ChemDoodle.uis.states, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(math, monitor, tools) {
+(function(math, monitor, structures, tools, undefined) {
 	'use strict';
 	tools.Lasso = function(sketcher) {
 		this.sketcher = sketcher;
@@ -14419,12 +22027,23 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			if (this.atoms.length > 0) {
 				this.sketcher.toolbarManager.buttonClean.enable();
 				this.sketcher.toolbarManager.buttonCalculate.enable();
-				this.sketcher.toolbarManager.buttonSave.enable();
 			} else {
 				this.sketcher.toolbarManager.buttonClean.disable();
 				this.sketcher.toolbarManager.buttonCalculate.disable();
-				this.sketcher.toolbarManager.buttonSave.disable();
 			}
+		}
+		if(this.atoms.length>0 || this.shapes.length>0){
+			this.sketcher.toolbarManager.buttonSave.enable();
+			this.sketcher.toolbarManager.buttonCut.enable();
+			this.sketcher.toolbarManager.buttonCopy.enable();
+			this.sketcher.toolbarManager.buttonFlipVert.enable();
+			this.sketcher.toolbarManager.buttonFlipHor.enable();
+		}else{
+			this.sketcher.toolbarManager.buttonSave.disable();
+			this.sketcher.toolbarManager.buttonCut.disable();
+			this.sketcher.toolbarManager.buttonCopy.disable();
+			this.sketcher.toolbarManager.buttonFlipVert.disable();
+			this.sketcher.toolbarManager.buttonFlipHor.disable();
 		}
 	};
 	_.setBounds = function() {
@@ -14461,12 +22080,9 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.sketcher.repaint();
 	};
 	_.draw = function(ctx, specs) {
-		ctx.strokeStyle = 'blue';
+		ctx.strokeStyle = specs.colorSelect;
 		ctx.lineWidth = 0.5 / specs.scale;
-		/*
-		 * if(ctx.setLineDash){ // new feature in HTML5, not yet supported
-		 * everywhere, so don't use as it is unstable ctx.setLineDash([5]); }
-		 */
+		ctx.setLineDash([5]);
 		if (this.points.length > 0) {
 			if (this.mode === tools.Lasso.MODE_RECTANGLE_MARQUEE) {
 				if (this.points.length === 2) {
@@ -14493,6 +22109,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			ctx.rect(this.bounds.minX, this.bounds.minY, this.bounds.maxX - this.bounds.minX, this.bounds.maxY - this.bounds.minY);
 			ctx.stroke();
 		}
+		ctx.setLineDash([]);
 	};
 	_.isActive = function() {
 		return this.atoms.length > 0 || this.shapes.length > 0;
@@ -14502,6 +22119,21 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			return this.sketcher.getMoleculeByAtom(this.atoms[0]);
 		}
 		return undefined;
+	};
+	_.getBonds = function() {
+		var bonds = [];
+		if (this.atoms.length > 0) {
+			for ( var i = 0, ii = this.sketcher.molecules.length; i < ii; i++) {
+				var m = this.sketcher.molecules[i];
+				for ( var j = 0, jj = m.bonds.length; j < jj; j++) {
+					var b = m.bonds[j];
+					if(b.a1.isLassoed && b.a2.isLassoed){
+						bonds.push(b);
+					}
+				}
+			}
+		}
+		return bonds;
 	};
 	_.getAllPoints = function() {
 		var ps = this.atoms;
@@ -14523,20 +22155,112 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			this.points.push(p);
 		}
 	};
+	_.selectNextMolecule = function(){
+		if (this.sketcher.molecules.length > 0) {
+			var nextMolIndex = this.sketcher.molecules.length - 1;
+			if (this.atoms.length > 0) {
+				var curMol = this.sketcher.getMoleculeByAtom(this.atoms[0]);
+				nextMolIndex = this.sketcher.molecules.indexOf(curMol) + 1;
+			}
+			if (nextMolIndex === this.sketcher.molecules.length) {
+				nextMolIndex = 0;
+			}
+			var mol = this.sketcher.molecules[nextMolIndex];
+			var attachedShapes = [];
+			// also select shape appendages, like repeating groups
+			for(var i = 0, ii = this.sketcher.shapes.length; i<ii; i++){
+				var s = this.sketcher.shapes[i];
+				if(s instanceof structures.d2.DynamicBracket && s.contents.length!==0 && mol.atoms.indexOf(s.contents[0])!==-1){
+					attachedShapes.push(s);
+				}
+			}
+			this.select(mol.atoms, attachedShapes);
+		}
+	};
+	_.selectNextShape = function(){
+		if (this.sketcher.shapes.length > 0) {
+			var nextShapeIndex = this.sketcher.shapes.length - 1;
+			if (this.shapes.length > 0) {
+				nextShapeIndex = this.sketcher.shapes.indexOf(this.shapes[0]) + 1;
+			}
+			if (nextShapeIndex === this.sketcher.shapes.length) {
+				nextShapeIndex = 0;
+			}
+			// have to manually empty because shift modifier key
+			// is down
+			this.empty();
+			this.select([], [ this.sketcher.shapes[nextShapeIndex] ]);
+		}
+	};
 
-})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.tools);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+})(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.structures, ChemDoodle.uis.tools);
 
-(function(c, extensions, featureDetection, sketcherPack, structures, tools, q, m, window) {
+(function(informatics, io, structures, uis, actions, undefined) {
+	'use strict';
+	
+	var SPLITTER = new informatics.Splitter();
+	
+	uis.CopyPasteManager = function(sketcher) {
+		this.sketcher = sketcher;
+		this.data = undefined;
+	};
+	var _ = uis.CopyPasteManager.prototype;
+	_.interpreter = new io.JSONInterpreter();
+	_.copy = function(remove) {
+		if (this.sketcher.lasso.isActive()) {
+			var mols = SPLITTER.split({atoms:this.sketcher.lasso.atoms, bonds:this.sketcher.lasso.getBonds()}); 
+			var shapes = this.sketcher.lasso.shapes;
+			this.data = this.interpreter.contentTo(mols, shapes);
+			if(remove){
+				this.sketcher.stateManager.STATE_ERASE.handleDelete();
+			}
+			this.sketcher.toolbarManager.buttonPaste.enable();
+		}
+	};
+	_.paste = function() {
+		if(this.data){
+			var content = this.interpreter.contentFrom(this.data);
+			if(content.molecules.length!==0 || content.shapes.length!==0){
+				var atoms = [];
+				for(var i = 0, ii = content.molecules.length; i<ii; i++){
+					atoms = atoms.concat(content.molecules[i].atoms);
+				}
+				var c;
+				if(this.sketcher.lastMousePos){
+					// you need to create a copy here as c is modified below
+					c = new structures.Point(this.sketcher.lastMousePos.x, this.sketcher.lastMousePos.y);
+				}else if(this.sketcher.lasso.isActive()){
+					this.sketcher.lasso.setBounds();
+					var b = this.sketcher.lasso.bounds;
+					c = new structures.Point((b.minX+b.maxX)/2+50, (b.minY+b.maxY)/2+50);
+				}else{
+					c = new structures.Point(this.sketcher.width / 2, this.sketcher.height / 2);
+				}
+				this.sketcher.historyManager.pushUndo(new actions.AddContentAction(this.sketcher, content.molecules, content.shapes));
+				this.sketcher.lasso.empty();
+				this.sketcher.lasso.select(atoms, content.shapes);
+				this.sketcher.lasso.setBounds();
+				var b2 = this.sketcher.lasso.bounds;
+				c.sub(new structures.Point((b2.minX+b2.maxX)/2+10, (b2.minY+b2.maxY)/2+10));
+				new actions.MoveAction(this.sketcher.lasso.getAllPoints(), c).forward(this.sketcher);
+				this.sketcher.repaint();
+			}
+		}
+	};
+
+})(ChemDoodle.informatics, ChemDoodle.io, ChemDoodle.structures, ChemDoodle.uis, ChemDoodle.uis.actions);
+
+(function(c, extensions, featureDetection, sketcherPack, structures, d2, tools, q, m, window, undefined) {
 	'use strict';
 	c.SketcherCanvas = function(id, width, height, options) {
 		// keep checks to undefined here as these are booleans
 		this.isMobile = options.isMobile === undefined ? featureDetection.supports_touch() : options.isMobile;
 		this.useServices = options.useServices === undefined ? false : options.useServices;
 		this.oneMolecule = options.oneMolecule === undefined ? false : options.oneMolecule;
+		this.requireStartingAtom = options.requireStartingAtom === undefined ? true : options.requireStartingAtom;
 		this.includeToolbar = options.includeToolbar === undefined ? true : options.includeToolbar;
+		this.floatDrawTools = options.floatDrawTools === undefined ? false : options.floatDrawTools;
+		this.resizable = options.resizable === undefined ? false : options.resizable;
 		this.includeQuery = options.includeQuery === undefined ? false : options.includeQuery;
 		// toolbar manager needs the sketcher id to make it unique to this
 		// canvas
@@ -14548,7 +22272,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			// calling setup.
 			var self = this;
 			if (document.getElementById(this.id)) {
-				q('#' + id + '_button_attribute_lonePair_decrement_icon').load(function() {
+				q('#' + id + '_button_chain_icon').load(function() {
 					self.toolbarManager.setup();
 				});
 			} else {
@@ -14558,11 +22282,16 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			}
 			this.dialogManager = new sketcherPack.gui.DialogManager(this);
 		}
+		if(sketcherPack.gui.desktop.TextInput){
+			this.textInput = new sketcherPack.gui.desktop.TextInput(this, this.id+'_textInput');
+		}
 		this.stateManager = new sketcherPack.states.StateManager(this);
 		this.historyManager = new sketcherPack.actions.HistoryManager(this);
+		this.copyPasteManager = new sketcherPack.CopyPasteManager(this);
 		if (id) {
 			this.create(id, width, height);
 		}
+		// specs is now created and available
 		this.specs.atoms_circleDiameter_2D = 7;
 		this.specs.atoms_circleBorderWidth_2D = 0;
 		this.isHelp = false;
@@ -14578,28 +22307,39 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			this.startAtom.isLone = true;
 			this.lasso = new tools.Lasso(this);
 		}
+		if(this.resizable){
+			var jqsk = q('#'+this.id);
+			var self = this;
+			jqsk.resizable({
+				resize: function( event, ui ) {
+					self.resize(jqsk.innerWidth(), jqsk.innerHeight());
+				}
+			});
+		}
 	};
 	var _ = c.SketcherCanvas.prototype = new c._Canvas();
-	_.drawSketcherDecorations = function(ctx) {
+	_.drawSketcherDecorations = function(ctx, specs) {
 		ctx.save();
 		ctx.translate(this.width / 2, this.height / 2);
-		ctx.rotate(this.specs.rotateAngle);
-		ctx.scale(this.specs.scale, this.specs.scale);
+		ctx.rotate(specs.rotateAngle);
+		ctx.scale(specs.scale, specs.scale);
 		ctx.translate(-this.width / 2, -this.height / 2);
 		if (this.hovering) {
-			this.hovering.drawDecorations(ctx, this.specs);
+			this.hovering.drawDecorations(ctx, specs);
 		}
 		if (this.startAtom && this.startAtom.x != -10 && !this.isMobile) {
-			this.startAtom.draw(ctx, this.specs);
+			this.startAtom.draw(ctx, specs);
 		}
 		if (this.tempAtom) {
-			ctx.strokeStyle = '#00FF00';
-			ctx.fillStyle = '#00FF00';
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
 			ctx.lineWidth = 1;
 			ctx.beginPath();
 			ctx.moveTo(this.hovering.x, this.hovering.y);
-			extensions.contextHashTo(ctx, this.hovering.x, this.hovering.y, this.tempAtom.x, this.tempAtom.y, 2, 2);
+			ctx.lineTo(this.tempAtom.x, this.tempAtom.y);
+			ctx.setLineDash([2]);
 			ctx.stroke();
+			ctx.setLineDash([]);
 			if (this.tempAtom.label === 'C') {
 				ctx.beginPath();
 				ctx.arc(this.tempAtom.x, this.tempAtom.y, 3, 0, m.PI * 2, false);
@@ -14607,11 +22347,11 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			}else{
 				ctx.textAlign = 'center';
 				ctx.textBaseline = 'middle';
-				ctx.font = extensions.getFontString(this.specs.atoms_font_size_2D, this.specs.atoms_font_families_2D, this.specs.atoms_font_bold_2D, this.specs.atoms_font_italic_2D);
+				ctx.font = extensions.getFontString(specs.atoms_font_size_2D, specs.atoms_font_families_2D, specs.atoms_font_bold_2D, specs.atoms_font_italic_2D);
 				ctx.fillText(this.tempAtom.label, this.tempAtom.x, this.tempAtom.y);
 			}
 			if (this.tempAtom.isOverlap) {
-				ctx.strokeStyle = '#C10000';
+				ctx.strokeStyle = specs.colorError;
 				ctx.lineWidth = 1.2;
 				ctx.beginPath();
 				ctx.arc(this.tempAtom.x, this.tempAtom.y, 7, 0, m.PI * 2, false);
@@ -14619,17 +22359,17 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			}
 		}
 		if (this.tempRing) {
-			ctx.strokeStyle = '#00FF00';
-			ctx.fillStyle = '#00FF00';
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
 			ctx.lineWidth = 1;
 			ctx.beginPath();
 			if (this.hovering instanceof structures.Atom) {
 				ctx.moveTo(this.hovering.x, this.hovering.y);
-				extensions.contextHashTo(ctx, this.hovering.x, this.hovering.y, this.tempRing[0].x, this.tempRing[0].y, 2, 2);
+				ctx.lineTo(this.tempRing[0].x, this.tempRing[0].y);
 				for ( var i = 1, ii = this.tempRing.length; i < ii; i++) {
-					extensions.contextHashTo(ctx, this.tempRing[i - 1].x, this.tempRing[i - 1].y, this.tempRing[i].x, this.tempRing[i].y, 2, 2);
+					ctx.lineTo(this.tempRing[i].x, this.tempRing[i].y);
 				}
-				extensions.contextHashTo(ctx, this.tempRing[this.tempRing.length - 1].x, this.tempRing[this.tempRing.length - 1].y, this.hovering.x, this.hovering.y, 2, 2);
+				ctx.lineTo(this.hovering.x, this.hovering.y);
 			} else if (this.hovering instanceof structures.Bond) {
 				var start = this.hovering.a2;
 				var end = this.hovering.a1;
@@ -14638,14 +22378,16 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 					end = this.hovering.a2;
 				}
 				ctx.moveTo(start.x, start.y);
-				extensions.contextHashTo(ctx, start.x, start.y, this.tempRing[1].x, this.tempRing[1].y, 2, 2);
+				ctx.lineTo(this.tempRing[1].x, this.tempRing[1].y);
 				for ( var i = 2, ii = this.tempRing.length; i < ii; i++) {
-					extensions.contextHashTo(ctx, this.tempRing[i - 1].x, this.tempRing[i - 1].y, this.tempRing[i].x, this.tempRing[i].y, 2, 2);
+					ctx.lineTo(this.tempRing[i].x, this.tempRing[i].y);
 				}
-				extensions.contextHashTo(ctx, this.tempRing[this.tempRing.length - 1].x, this.tempRing[this.tempRing.length - 1].y, end.x, end.y, 2, 2);
+				ctx.lineTo(end.x, end.y);
 			}
+			ctx.setLineDash([2]);
 			ctx.stroke();
-			ctx.strokeStyle = '#C10000';
+			ctx.setLineDash([]);
+			ctx.strokeStyle = specs.colorError;
 			ctx.lineWidth = 1.2;
 			for ( var i = 0, ii = this.tempRing.length; i < ii; i++) {
 				if (this.tempRing[i].isOverlap) {
@@ -14654,36 +22396,235 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 					ctx.stroke();
 				}
 			}
+			// arbitrary ring size number
+			if(this.stateManager.STATE_NEW_RING.numSides===-1){
+				var midx = 0;
+				var midy = 0;
+				if (this.hovering instanceof structures.Atom) {
+					midx+=this.hovering.x;
+					midy+=this.hovering.y;
+				} else if (this.hovering instanceof structures.Bond) {
+					var start = this.hovering.a1;
+					if (this.tempRing[0] === this.hovering.a1) {
+						start = this.hovering.a2;
+					}
+					midx+=start.x;
+					midy+=start.y;
+				}
+				var ii = this.tempRing.length;
+				for ( var i = 0; i < ii; i++) {
+					midx += this.tempRing[i].x;
+					midy += this.tempRing[i].y;
+				}
+				ii++;
+				midx /= ii;
+				midy /= ii;
+				ctx.font = extensions.getFontString(specs.text_font_size, specs.text_font_families, specs.text_font_bold, specs.text_font_italic);
+				ctx.textAlign = 'center';
+				ctx.textBaseline = 'middle';
+				ctx.fillStyle = 'black';
+				ctx.fillText(ii, midx, midy);
+			}
+		}
+		if (this.tempChain && this.tempChain.length>0) {
+			ctx.strokeStyle = specs.colorPreview;
+			ctx.fillStyle = specs.colorPreview;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(this.hovering.x, this.hovering.y);
+			ctx.lineTo(this.tempChain[0].x, this.tempChain[0].y);
+			for ( var i = 1, ii = this.tempChain.length; i < ii; i++) {
+				ctx.lineTo(this.tempChain[i].x, this.tempChain[i].y);
+			}
+			ctx.setLineDash([2]);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.strokeStyle = specs.colorError;
+			ctx.lineWidth = 1.2;
+			for ( var i = 0, ii = this.tempChain.length; i < ii; i++) {
+				if (this.tempChain[i].isOverlap) {
+					ctx.beginPath();
+					ctx.arc(this.tempChain[i].x, this.tempChain[i].y, 7, 0, m.PI * 2, false);
+					ctx.stroke();
+				}
+			}
+			ctx.font = extensions.getFontString(specs.text_font_size, specs.text_font_families, specs.text_font_bold, specs.text_font_italic);
+			ctx.textAlign = 'left';
+			ctx.textBaseline = 'bottom';
+			var size = this.tempChain.length;
+			ctx.fillStyle = 'black';
+			ctx.fillText(size, this.tempChain[size-1].x+10, this.tempChain[size-1].y-10);
+		}
+		if (this.tempTemplate) {
+			if(this.tempTemplate.atoms.length>0){
+				var spec1 = specs.atoms_color;
+				var spec2 = specs.atoms_useJMOLColors;
+				var spec3 = specs.atoms_usePYMOLColors;
+				var spec4 = specs.bonds_color;
+				var spec5 = specs.atoms_HBlack_2D;
+				specs.atoms_color = specs.colorPreview;
+				specs.atoms_useJMOLColors = false;
+				specs.atoms_usePYMOLColors = false;
+				specs.bonds_color = specs.colorPreview;
+				specs.atoms_HBlack_2D = false;
+				this.tempTemplate.draw(ctx, specs);
+				specs.atoms_color = spec1;
+				specs.atoms_useJMOLColors = spec2;
+				specs.atoms_usePYMOLColors = spec3;
+				specs.bonds_color = spec4;
+				specs.atoms_HBlack_2D = spec5;
+			}
+			ctx.strokeStyle = specs.colorError;
+			ctx.lineWidth = 1.2;
+			for ( var i = 0, ii = this.molecules.length; i < ii; i++) {
+				var mol = this.molecules[i];
+				for ( var j = 0, jj = mol.atoms.length; j < jj; j++) {
+					var a = mol.atoms[j];
+					if (a.isOverlap) {
+						ctx.beginPath();
+						ctx.arc(a.x, a.y, 7, 0, m.PI * 2, false);
+						ctx.stroke();
+					}
+				}
+			}
 		}
 		if (this.lasso) {
-			this.lasso.draw(ctx, this.specs);
+			this.lasso.draw(ctx, specs);
 		}
 		if (this.stateManager.getCurrentState().draw) {
-			this.stateManager.getCurrentState().draw(ctx);
+			this.stateManager.getCurrentState().draw(ctx, specs);
 		}
 		ctx.restore();
 	};
-	_.drawChildExtras = function(ctx) {
-		this.drawSketcherDecorations(ctx);
+	_.checksOnAction = function(force){
+		// using force improves efficiency, so changes will not be checked
+		// until a render occurs
+		// you can force a check by sending true to this function after
+		// calling check with a false
+		if (force && this.doChecks) {
+			// setup data for atom mappings
+			var arrow;
+			var mappings = [];
+			var brackets = [];
+			var vaps = [];
+			for(var i = 0, ii = this.shapes.length; i<ii; i++){
+				var s = this.shapes[i];
+				if(s instanceof d2.AtomMapping){
+					s.error = false;
+					mappings.push(s);
+				}else if(s instanceof d2.Line && !arrow){
+					// make sure arrow isn't defined, just to make sure we use the first arrow
+					arrow = s;
+				}else if(s instanceof d2.DynamicBracket){
+					s.error = false;
+					brackets.push(s);
+				}else if(s instanceof d2.VAP){
+					s.error = false;
+					vaps.push(s);
+				}
+			}
+			for(var i = 0, ii = mappings.length; i<ii; i++){
+				var si = mappings[i];
+				si.label = (i+1).toString();
+				for(var j = i+1, jj = mappings.length; j<jj; j++){
+					var sj = mappings[j];
+					if(si.o1===sj.o1 || si.o2===sj.o1 || si.o1===sj.o2 || si.o2===sj.o2){
+						si.error = true;
+						sj.error = true;
+					}
+				}
+				// different labels
+				if(!si.error && si.o1.label !== si.o2.label){
+					si.error = true;
+				}
+				// same structure
+				if(!si.error && this.getMoleculeByAtom(si.o1) === this.getMoleculeByAtom(si.o2)){
+					si.error = true;
+				}
+			}
+			if(brackets.length!==0){
+				var allAs = this.getAllAtoms();
+				for(var i = 0, ii = allAs.length; i<ii; i++){
+					allAs[i].inBracket = false;
+				}
+				for(var i = 0, ii = brackets.length; i<ii; i++){
+					var si = brackets[i];
+					si.setContents(this);
+					if(si.contents.length===0){
+						// user error
+						si.error = true;
+					}else{
+						for(var j = 0, jj = si.contents.length; j<jj; j++){
+							if(si.contents[j].inBracket){
+								si.error = true;
+								break;
+							}
+						}
+					}
+					for(var j = 0, jj = si.contents.length; j<jj; j++){
+						si.contents[j].inBracket = true;
+					}
+				}
+			}
+			for(var i = 0, ii = vaps.length; i<ii; i++){
+				var vap = vaps[i];
+				if(!vap.substituent){
+					// no substituent
+					vap.error = true;
+				}else if(vap.attachments.length===0){
+					// no attachments
+					vap.error = true;
+				}
+				if(!vap.error){
+					// check that all attachments are part of the same molecule
+					var m = this.getMoleculeByAtom(vap.attachments[0]);
+					vap.substituent.present = undefined;
+					for(var j = 0, jj = m.atoms.length; j<jj; j++){
+						m.atoms[j].present = true;
+					}
+					// also make sure the substituent is NOT part of the same molecule
+					if(vap.substituent.present){
+						vap.error = true;
+					}
+					if(!vap.error){
+						for(var j = 0, jj = vap.attachments.length; j<jj; j++){
+							if(!vap.attachments[j].present){
+								vap.error = true;
+								break;
+							}
+						}
+					}
+					for(var j = 0, jj = m.atoms.length; j<jj; j++){
+						m.atoms[j].present = undefined;
+					}
+				}
+			}
+		}
+		this.doChecks = !force;
+	};
+	_.drawChildExtras = function(ctx, specs) {
+		this.drawSketcherDecorations(ctx, specs);
 		if (!this.hideHelp) {
 			// help and tutorial
 			var helpPos = new structures.Point(this.width - 20, 20);
 			var radgrad = ctx.createRadialGradient(helpPos.x, helpPos.y, 10, helpPos.x, helpPos.y, 2);
 			radgrad.addColorStop(0, '#00680F');
-			radgrad.addColorStop(1, '#FFFFFF');
+			radgrad.addColorStop(1, '#01DF01');
 			ctx.fillStyle = radgrad;
 			ctx.beginPath();
 			ctx.arc(helpPos.x, helpPos.y, 10, 0, m.PI * 2, false);
 			ctx.fill();
+			ctx.lineWidth = 2;
 			if (this.isHelp) {
-				ctx.lineWidth = 2;
-				ctx.strokeStyle = 'black';
+				ctx.strokeStyle = specs.colorHover;
 				ctx.stroke();
 			}
-			ctx.fillStyle = this.isHelp ? 'red' : 'black';
+			ctx.strokeStyle = 'black';
+			ctx.fillStyle = 'white';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 			ctx.font = '14px sans-serif';
+			ctx.strokeText('?', helpPos.x, helpPos.y);
 			ctx.fillText('?', helpPos.x, helpPos.y);
 		}
 		if (!this.paidToHideTrademark) {
@@ -14695,9 +22636,9 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			var width = ctx.measureText(x).width;
 			ctx.textAlign = 'left';
 			ctx.textBaseline = 'bottom';
-			ctx.fillStyle = 'rgba(0, 60, 0, 0.5)';
+			ctx.fillStyle = 'rgba(60, 60, 60, 0.5)';
 			ctx.fillText(x, this.width - width - 13, this.height - 4);
-			ctx.font = '8px sans-serif';
+			ctx.font = '10px sans-serif';
 			ctx.fillText('\u00AE', this.width - 13, this.height - 12);
 		}
 	};
@@ -14718,25 +22659,46 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	// desktop events
 	_.click = function(e) {
 		this.scaleEvent(e);
+		if(this.modal){
+			// for modal popovers, close requires a true value to state that is was cancelled
+			// for text input, the event is required
+			this.modal.close(e);
+			return false;
+		}
 		this.stateManager.getCurrentState().click(e);
 	};
 	_.rightclick = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().rightclick(e);
 	};
 	_.dblclick = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().dblclick(e);
 	};
 	_.mousedown = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().mousedown(e);
 	};
 	_.rightmousedown = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().rightmousedown(e);
 	};
 	_.mousemove = function(e) {
+		if(this.modal){
+			return false;
+		}
 		// link to tutorial
 		this.isHelp = false;
 		if (e.p.distance(new structures.Point(this.width - 20, 20)) < 10) {
@@ -14747,42 +22709,73 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		// repaint is called in the state mousemove event
 	};
 	_.mouseout = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().mouseout(e);
 	};
 	_.mouseover = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().mouseover(e);
 	};
 	_.mouseup = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().mouseup(e);
 	};
 	_.rightmouseup = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().rightmouseup(e);
 	};
 	_.mousewheel = function(e, delta) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().mousewheel(e, delta);
 	};
 	_.drag = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().drag(e);
 	};
 	_.keydown = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().keydown(e);
 	};
 	_.keypress = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().keypress(e);
 	};
 	_.keyup = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().keyup(e);
 	};
+	// mobile events
 	_.touchstart = function(e) {
+		if(this.modal){
+			return false;
+		}
 		if (e.originalEvent.touches && e.originalEvent.touches.length > 1) {
 			if (this.tempAtom || this.tempRing) {
 				this.tempAtom = undefined;
@@ -14798,12 +22791,18 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		}
 	};
 	_.touchmove = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
-		if (!this.inGesture) {
+		if (!this.inGesture && this.lastPoint.distance(e.p)>5) {
 			this.stateManager.getCurrentState().drag(e);
 		}
 	};
 	_.touchend = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.scaleEvent(e);
 		this.stateManager.getCurrentState().mouseup(e);
 		if (this.hovering) {
@@ -14812,7 +22811,12 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		}
 	};
 	_.gesturechange = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.inGesture = true;
+		// set no new mols to form to stop actions in label state
+		this.stateManager.getCurrentState().newMolAllowed = false;
 		if (e.originalEvent.scale - this.lastPinchScale !== 1) {
 			if (!(this.lasso && this.lasso.isActive())) {
 				this.specs.scale *= e.originalEvent.scale / this.lastPinchScale;
@@ -14849,18 +22853,18 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.repaint();
 	};
 	_.gestureend = function(e) {
+		if(this.modal){
+			return false;
+		}
 		this.inGesture = false;
 		this.lastPinchScale = 1;
 		this.lastGestureRotate = 0;
 		this.parentAction = undefined;
 	};
 
-})(ChemDoodle, ChemDoodle.extensions, ChemDoodle.featureDetection, ChemDoodle.uis, ChemDoodle.structures, ChemDoodle.uis.tools, ChemDoodle.lib.jQuery, Math, window);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
+})(ChemDoodle, ChemDoodle.extensions, ChemDoodle.featureDetection, ChemDoodle.uis, ChemDoodle.structures, ChemDoodle.structures.d2, ChemDoodle.uis.tools, ChemDoodle.lib.jQuery, Math, window);
 
-(function(c, math, monitor, actions, states, structures, SYMBOLS, m, m4) {
+(function(c, math, monitor, actions, states, structures, SYMBOLS, m, m4, undefined) {
 	'use strict';
 	states._State3D = function() {
 	};
@@ -14965,19 +22969,20 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 				this.editor.historyManager.redo();
 			} else if (e.which === 83) {
 				// s
-				this.editor.toolbarManager.buttonSave.getElement().click();
+				this.editor.toolbarManager.buttonSave.func();
 			} else if (e.which === 79) {
 				// o
-				this.editor.toolbarManager.buttonOpen.getElement().click();
+				this.editor.toolbarManager.buttonOpen.func();
 			} else if (e.which === 78) {
 				// n
-				this.editor.toolbarManager.buttonClear.getElement().click();
+				// this seems to always be overridden in some browsers, so we can't actually listen to ctrl/command+n
+				this.editor.toolbarManager.buttonClear.func();
 			} else if (e.which === 187 || e.which === 61) {
 				// +
-				this.editor.toolbarManager.buttonScalePlus.getElement().click();
+				this.editor.toolbarManager.buttonScalePlus.func();
 			} else if (e.which === 189 || e.which === 109) {
 				// -
-				this.editor.toolbarManager.buttonScaleMinus.getElement().click();
+				this.editor.toolbarManager.buttonScaleMinus.func();
 			}
 		}
 		if (this.innerkeydown) {
@@ -14996,10 +23001,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, ChemDoodle.SYMBOLS, Math, ChemDoodle.lib.mat4);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(actions, states, structures, d3, q) {
+(function(actions, states, structures, d3, q, undefined) {
 	'use strict';
 	states.MeasureState3D = function(editor) {
 		this.setup(editor);
@@ -15073,10 +23075,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, ChemDoodle.structures.d3, ChemDoodle.lib.jQuery);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(states) {
+(function(states, undefined) {
 	'use strict';
 	states.ViewState3D = function(editor) {
 		this.setup(editor);
@@ -15084,11 +23083,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	var _ = states.ViewState3D.prototype = new states._State3D();
 
 })(ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(states) {
+(function(states, undefined) {
 	'use strict';
 	states.StateManager3D = function(editor) {
 		this.STATE_VIEW = new states.ViewState3D(editor);
@@ -15107,18 +23103,14 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle.uis.states);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
-(function(c, iChemLabs, io, structures, actions, gui, imageDepot, desktop, tools, states, q, document) {
+(function(c, iChemLabs, io, structures, actions, gui, imageDepot, desktop, tools, states, q, document, undefined) {
 	'use strict';
 	gui.ToolbarManager3D = function(editor) {
 		this.editor = editor;
 
 		// open
 		this.buttonOpen = new desktop.Button(editor.id + '_button_open', imageDepot.OPEN, 'Open', function() {
-			editor.dialogManager.loadDialog.getTextArea().val('');
-			editor.dialogManager.loadDialog.getElement().dialog('open');
+			editor.dialogManager.openPopup.show();
 		});
 		// save
 		this.buttonSave = new desktop.Button(editor.id + '_button_save', imageDepot.SAVE, 'Save', function() {
@@ -15127,11 +23119,11 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			} else {
 				editor.dialogManager.saveDialog.getTextArea().val(c.writeMOL(editor.molecules[0]));
 			}
-			editor.dialogManager.saveDialog.getElement().dialog('open');
+			editor.dialogManager.saveDialog.open();
 		});
 		// search
 		this.buttonSearch = new desktop.Button(editor.id + '_button_search', imageDepot.SEARCH, 'Search', function() {
-			editor.dialogManager.searchDialog.getElement().dialog('open');
+			editor.dialogManager.searchDialog.open();
 		});
 		// calculate
 		this.buttonCalculate = new desktop.Button(editor.id + '_button_calculate', imageDepot.CALCULATE, 'Calculate', function() {
@@ -15168,7 +23160,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 					addDatum('logP', content.xlogp2, '');
 					addDatum('Complexity', content.bertz, '');
 					editor.dialogManager.calculateDialog.getTextArea().val(sb.join(''));
-					editor.dialogManager.calculateDialog.getElement().dialog('open');
+					editor.dialogManager.calculateDialog.open();
 				});
 			}
 		});
@@ -15182,7 +23174,7 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		// visual specifications
 		this.buttonSettings = new desktop.Button(editor.id + '_button_specifications', imageDepot.SETTINGS, 'Visual Specifications', function() {
 			editor.dialogManager.specsDialog.update(editor.specs);
-			editor.dialogManager.specsDialog.getElement().dialog('open');
+			editor.dialogManager.specsDialog.open();
 		});
 
 		// animations
@@ -15315,11 +23307,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.iChemLabs, ChemDoodle.io, ChemDoodle.structures, ChemDoodle.uis.actions, ChemDoodle.uis.gui, ChemDoodle.uis.gui.imageDepot, ChemDoodle.uis.gui.desktop, ChemDoodle.uis.tools, ChemDoodle.uis.states, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(c, desktop, q, document) {
+(function(c, desktop, q, document, undefined) {
 	'use strict';
 	desktop.SpecsDialog = function(editor, subid) {
 		this.editor = editor;
@@ -15955,11 +23944,8 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 	};
 
 })(ChemDoodle, ChemDoodle.uis.gui.desktop, ChemDoodle.lib.jQuery, document);
-//
-//  Copyright 2009 iChemLabs, LLC.  All rights reserved.
-//
 
-(function(c, extensions, featureDetection, d3, sketcherPack, structures, tools, q, m, m4, window) {
+(function(c, featureDetection, d3, sketcherPack, structures, tools, q, m, m4, window, undefined) {
 	'use strict';
 	c.EditorCanvas3D = function(id, width, height, options) {
 		// keep checks to undefined here as these are booleans
@@ -16017,22 +24003,15 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		// NOTE: gl and this.gl is same object because "EditorCanvas3D" inherit
 		// from "_Canvas3D"
 
-		var pUniform = gl.getUniformLocation(gl.program, 'u_projection_matrix');
-
+		gl.disable(gl.DEPTH_TEST);
+		
 		var translationMatrix = m4.create();
-
-		var textImage = new d3.TextImage();
-		textImage.init(gl);
-
-		var textMesh = new d3.TextMesh();
-		textMesh.init(gl);
 
 		var height = this.height / 20;
 		var tanTheta = m.tan(this.specs.projectionPerspectiveVerticalFieldOfView_3D / 360 * m.PI);
 		var depth = height / tanTheta;
 		var near = m.max(depth - height, 0.1);
 		var far = depth + height;
-
 		var aspec = this.width / this.height;
 
 		var nearRatio = depth / this.height * tanTheta;
@@ -16043,9 +24022,11 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 
 		var projectionMatrix = m4.ortho(left, right, bottom, top, near, far, []);
 
-		gl.uniformMatrix4fv(pUniform, false, projectionMatrix);
+		this.phongShader.useShaderProgram(gl);
 
-		gl.fogging.setMode(0);
+		this.phongShader.setProjectionMatrix(gl, projectionMatrix);
+
+		this.phongShader.setFogMode(gl, 0);
 
 		if (!this.hideHelp) {
 			// help and tutorial
@@ -16056,12 +24037,14 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			m4.translate(m4.identity([]), [ posX, posY, -depth ], translationMatrix);
 
 			// setting "help" button color
-			gl.material.setTempColors(this.specs.bonds_materialAmbientColor_3D, undefined, this.specs.bonds_materialSpecularColor_3D, this.specs.bonds_materialShininess_3D);
-			gl.material.setDiffuseColor('#00ff00');
+			gl.material.setTempColors(gl, this.specs.bonds_materialAmbientColor_3D, undefined, this.specs.bonds_materialSpecularColor_3D, this.specs.bonds_materialShininess_3D);
+			gl.material.setDiffuseColor(gl, '#00ff00');
 
 			// this "gl.modelViewMatrix" must be set because it used by Atom
 			// when rendered
 			gl.modelViewMatrix = m4.multiply(translationMatrix, gl.rotationMatrix, []);
+
+			this.phongShader.enableAttribsArray(gl);
 
 			gl.sphereBuffer.bindBuffers(this.gl);
 			this.helpButton.render(gl, undefined, true);
@@ -16079,35 +24062,27 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 				gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 			}
 
+			this.phongShader.disableAttribsArray(gl);
+
+			gl.flush();
+
 			// enable blend and depth mask set to false
 			gl.enable(gl.BLEND);
 			gl.depthMask(false);
 
-			// prepare for the "?" part
-			textImage.updateFont(gl, 14.1, [ 'sans-serif' ], false, false, true);
-			textImage.useTexture(gl);
+			this.labelShader.useShaderProgram(gl);
+			this.labelShader.setProjectionMatrix(gl, projectionMatrix);
 
-			// vertex data for draw "?"
-			var vertexData = {
-				position : [],
-				texCoord : [],
-				translation : []
-			};
-
-			textImage.pushVertexData('?', [ 0, 0, 0 ], 0, vertexData);
-			textMesh.storeData(gl, vertexData.position, vertexData.texCoord, vertexData.translation);
-
-			// enable vertex for draw text
-			gl.enableVertexAttribArray(gl.shader.vertexTexCoordAttribute);
+			this.textTextImage.updateFont(this.gl, 14.1, [ 'sans-serif' ], false, false, true);
 
 			var modelMatrix = m4.multiply(translationMatrix, m4.identity([]), []);
-			gl.setMatrixUniforms(modelMatrix);
+			this.labelShader.setModelViewMatrix(gl, modelMatrix);
 
-			textImage.useTexture(gl);
-			textMesh.render(gl);
+			this.labelShader.enableAttribsArray(gl);
 
-			// disable vertex for draw text
-			gl.disableVertexAttribArray(gl.shader.vertexTexCoordAttribute);
+			this.renderText('?', [ 0, 0, 0 ]);
+
+			this.labelShader.disableAttribsArray(gl);
 
 			// disable blend and depth mask set to true
 			gl.disable(gl.BLEND);
@@ -16124,62 +24099,61 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 			// enable blend for transparancy
 			gl.enable(this.gl.BLEND);
 
-			// enable vertex for draw text
-			gl.enableVertexAttribArray(gl.shader.vertexTexCoordAttribute);
+			this.labelShader.useShaderProgram(gl);
+			this.labelShader.setProjectionMatrix(gl, projectionMatrix);
 
+			this.labelShader.enableAttribsArray(gl);
 			// Draw the "ChemDoodle" part
-			textImage.updateFont(gl, 14.1, [ 'sans-serif' ], false, false, true);
-			textImage.useTexture(gl);
+			this.textTextImage.updateFont(gl, 14.1, [ 'sans-serif' ], false, false, true);
 
-			var width = textImage.textWidth(x);
+			var width = this.textTextImage.textWidth(x);
 
 			var vertexData = {
 				position : [],
 				texCoord : [],
 				translation : []
 			};
-
-			textImage.pushVertexData(x, [ 0, 0, 0 ], 0, vertexData);
-			textMesh.storeData(gl, vertexData.position, vertexData.texCoord, vertexData.translation);
 
 			var posX = (this.width - width - 30) * nearRatio;
 			var posY = (-this.height + 24) * nearRatio;
 
 			m4.translate(m4.identity([]), [ posX, posY, -depth ], translationMatrix);
 			var modelMatrix = m4.multiply(translationMatrix, gl.rotationMatrix, []);
-			gl.setMatrixUniforms(modelMatrix);
+			this.labelShader.setModelViewMatrix(gl, modelMatrix);
 
-			textMesh.render(gl);
+			this.renderText(x, [ 0, 0, 0 ]);
 
 			// Draw the (R) part
-			textImage.updateFont(gl, 8, [ 'sans-serif' ], false, false, true);
-			textImage.useTexture(gl);
-
-			var vertexData = {
-				position : [],
-				texCoord : [],
-				translation : []
-			};
-
-			textImage.pushVertexData('\u00AE', [ 0, 0, 0 ], 0, vertexData);
-
-			textMesh.storeData(gl, vertexData.position, vertexData.texCoord, vertexData.translation);
-
 			var posX = (this.width - 24) * nearRatio;
 			var posY = (-this.height + 30) * nearRatio;
 
 			m4.translate(m4.identity([]), [ posX, posY, -depth ], translationMatrix);
 			var modelMatrix = m4.multiply(translationMatrix, gl.rotationMatrix, []);
-			gl.setMatrixUniforms(modelMatrix);
+			this.labelShader.setModelViewMatrix(gl, modelMatrix);
 
-			textMesh.render(gl);
+			this.textTextImage.updateFont(gl, 8, [ 'sans-serif' ], false, false, true);
+
+			this.renderText('\u00AE', [ 0, 0, 0 ]);
 
 			// disable vertex for draw text
-			gl.disableVertexAttribArray(gl.shader.vertexTexCoordAttribute);
+			this.labelShader.disableAttribsArray(gl);
 
 			// disable blend
 			gl.disable(gl.BLEND);
+			gl.flush();
 		}
+
+		gl.enable(gl.DEPTH_TEST);
+	};
+	_.checksOnAction = function(force){
+		// using force improves efficiency, so changes will not be checked
+		// until a render occurs
+		// you can force a check by sending true to this function after
+		// calling check with a false
+		if (force && this.doChecks) {
+			
+		}
+		this.doChecks = !force;
 	};
 	// desktop events
 	_.click = function(e) {
@@ -16232,4 +24206,4 @@ ChemDoodle.uis.gui.imageDepot = (function() {
 		this.stateManager.getCurrentState().keyup(e);
 	};
 
-})(ChemDoodle, ChemDoodle.extensions, ChemDoodle.featureDetection, ChemDoodle.structures.d3, ChemDoodle.uis, ChemDoodle.structures, ChemDoodle.uis.tools, ChemDoodle.lib.jQuery, Math, ChemDoodle.lib.mat4, window);
+})(ChemDoodle, ChemDoodle.featureDetection, ChemDoodle.structures.d3, ChemDoodle.uis, ChemDoodle.structures, ChemDoodle.uis.tools, ChemDoodle.lib.jQuery, Math, ChemDoodle.lib.mat4, window);

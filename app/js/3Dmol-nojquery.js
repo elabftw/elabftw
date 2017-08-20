@@ -4942,7 +4942,3592 @@ exports.ungzip  = inflate;
 
 },{"./utils/common":1,"./utils/strings":2,"./zlib/constants":4,"./zlib/gzheader":6,"./zlib/inflate.js":8,"./zlib/messages":10,"./zlib/zstream":11}]},{},[])("/lib/inflate.js")
 });
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["netcdfjs"] = factory();
+	else
+		root["netcdfjs"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+/**
+ * Throws a non-valid NetCDF exception if the statement it's true
+ * @ignore
+ * @param {boolean} statement - Throws if true
+ * @param {string} reason - Reason to throw
+ */
+
+function notNetcdf(statement, reason) {
+    if (statement) {
+        throw new TypeError('Not a valid NetCDF v3.x file: ' + reason);
+    }
+}
+
+/**
+ * Moves 1, 2, or 3 bytes to next 4-byte boundary
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ */
+function padding(buffer) {
+    if (buffer.offset % 4 !== 0) {
+        buffer.skip(4 - buffer.offset % 4);
+    }
+}
+
+/**
+ * Reads the name
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @return {string} - Name
+ */
+function readName(buffer) {
+    // Read name
+    var nameLength = buffer.readUint32();
+    var name = buffer.readChars(nameLength);
+
+    // validate name
+    // TODO
+
+    // Apply padding
+    padding(buffer);
+    return name;
+}
+
+module.exports.notNetcdf = notNetcdf;
+module.exports.padding = padding;
+module.exports.readName = readName;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const notNetcdf = __webpack_require__(0).notNetcdf;
+
+const types = {
+    BYTE: 1,
+    CHAR: 2,
+    SHORT: 3,
+    INT: 4,
+    FLOAT: 5,
+    DOUBLE: 6
+};
+
+/**
+ * Parse a number into their respective type
+ * @ignore
+ * @param {number} type - integer that represents the type
+ * @return {string} - parsed value of the type
+ */
+function num2str(type) {
+    switch (Number(type)) {
+        case types.BYTE:
+            return 'byte';
+        case types.CHAR:
+            return 'char';
+        case types.SHORT:
+            return 'short';
+        case types.INT:
+            return 'int';
+        case types.FLOAT:
+            return 'float';
+        case types.DOUBLE:
+            return 'double';
+        /* istanbul ignore next */
+        default:
+            return 'undefined';
+    }
+}
+
+/**
+ * Parse a number type identifier to his size in bytes
+ * @ignore
+ * @param {number} type - integer that represents the type
+ * @return {number} -size of the type
+ */
+function num2bytes(type) {
+    switch (Number(type)) {
+        case types.BYTE:
+            return 1;
+        case types.CHAR:
+            return 1;
+        case types.SHORT:
+            return 2;
+        case types.INT:
+            return 4;
+        case types.FLOAT:
+            return 4;
+        case types.DOUBLE:
+            return 8;
+        /* istanbul ignore next */
+        default:
+            return -1;
+    }
+}
+
+/**
+ * Reverse search of num2str
+ * @ignore
+ * @param {string} type - string that represents the type
+ * @return {number} - parsed value of the type
+ */
+function str2num(type) {
+    switch (String(type)) {
+        case 'byte':
+            return types.BYTE;
+        case 'char':
+            return types.CHAR;
+        case 'short':
+            return types.SHORT;
+        case 'int':
+            return types.INT;
+        case 'float':
+            return types.FLOAT;
+        case 'double':
+            return types.DOUBLE;
+        /* istanbul ignore next */
+        default:
+            return -1;
+    }
+}
+
+/**
+ * Auxiliary function to read numeric data
+ * @ignore
+ * @param {number} size - Size of the element to read
+ * @param {function} bufferReader - Function to read next value
+ * @return {Array<number>|number}
+ */
+function readNumber(size, bufferReader) {
+    if (size !== 1) {
+        var numbers = new Array(size);
+        for (var i = 0; i < size; i++) {
+            numbers[i] = bufferReader();
+        }
+        return numbers;
+    } else {
+        return bufferReader();
+    }
+}
+
+/**
+ * Given a type and a size reads the next element
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @param {number} type - Type of the data to read
+ * @param {number} size - Size of the element to read
+ * @return {string|Array<number>|number}
+ */
+function readType(buffer, type, size) {
+    switch (type) {
+        case types.BYTE:
+            return buffer.readBytes(size);
+        case types.CHAR:
+            return trimNull(buffer.readChars(size));
+        case types.SHORT:
+            return readNumber(size, buffer.readInt16.bind(buffer));
+        case types.INT:
+            return readNumber(size, buffer.readInt32.bind(buffer));
+        case types.FLOAT:
+            return readNumber(size, buffer.readFloat32.bind(buffer));
+        case types.DOUBLE:
+            return readNumber(size, buffer.readFloat64.bind(buffer));
+        /* istanbul ignore next */
+        default:
+            notNetcdf(true, 'non valid type ' + type);
+            return undefined;
+    }
+}
+
+/**
+ * Removes null terminate value
+ * @ignore
+ * @param {string} value - String to trim
+ * @return {string} - Trimmed string
+ */
+function trimNull(value) {
+    if (value.charCodeAt(value.length - 1) === 0) {
+        return value.substring(0, value.length - 1);
+    }
+    return value;
+}
+
+module.exports = types;
+module.exports.num2str = num2str;
+module.exports.num2bytes = num2bytes;
+module.exports.str2num = str2num;
+module.exports.readType = readType;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const types = __webpack_require__(1);
+
+// const STREAMING = 4294967295;
+
+/**
+ * Read data for the given non-record variable
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @param {object} variable - Variable metadata
+ * @return {Array} - Data of the element
+ */
+function nonRecord(buffer, variable) {
+    // variable type
+    const type = types.str2num(variable.type);
+
+    // size of the data
+    var size = variable.size / types.num2bytes(type);
+
+    // iterates over the data
+    var data = new Array(size);
+    for (var i = 0; i < size; i++) {
+        data[i] = types.readType(buffer, type, 1);
+    }
+
+    return data;
+}
+
+/**
+ * Read data for the given record variable
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @param {object} variable - Variable metadata
+ * @param {object} recordDimension - Record dimension metadata
+ * @return {Array} - Data of the element
+ */
+function record(buffer, variable, recordDimension) {
+    // variable type
+    const type = types.str2num(variable.type);
+    const width = variable.size ? variable.size / types.num2bytes(type) : 1;
+
+    // size of the data
+    // TODO streaming data
+    var size = recordDimension.length;
+
+    // iterates over the data
+    var data = new Array(size);
+    const step = recordDimension.recordStep;
+
+    for (var i = 0; i < size; i++) {
+        var currentOffset = buffer.offset;
+        data[i] = types.readType(buffer, type, width);
+        buffer.seek(currentOffset + step);
+    }
+
+    return data;
+}
+
+module.exports.nonRecord = nonRecord;
+module.exports.record = record;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const utils = __webpack_require__(0);
+const types = __webpack_require__(1);
+
+// Grammar constants
+const ZERO = 0;
+const NC_DIMENSION = 10;
+const NC_VARIABLE = 11;
+const NC_ATTRIBUTE = 12;
+
+/**
+ * Read the header of the file
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @param {number} version - Version of the file
+ * @return {object} - Object with the fields:
+ *  * `recordDimension`: Number with the length of record dimension
+ *  * `dimensions`: List of dimensions
+ *  * `globalAttributes`: List of global attributes
+ *  * `variables`: List of variables
+ */
+function header(buffer, version) {
+    // Length of record dimension
+    // sum of the varSize's of all the record variables.
+    var header = { recordDimension: { length: buffer.readUint32() } };
+
+    // Version
+    header.version = version;
+
+    // List of dimensions
+    var dimList = dimensionsList(buffer);
+    header.recordDimension.id = dimList.recordId;
+    header.recordDimension.name = dimList.recordName;
+    header.dimensions = dimList.dimensions;
+
+    // List of global attributes
+    header.globalAttributes = attributesList(buffer);
+
+    // List of variables
+    var variables = variablesList(buffer, dimList.recordId, version);
+    header.variables = variables.variables;
+    header.recordDimension.recordStep = variables.recordStep;
+
+    return header;
+}
+
+/**
+ * List of dimensions
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @return {object} - List of dimensions and record dimension with:
+ *  * `name`: String with the name of the dimension
+ *  * `size`: Number with the size of the dimension
+ */
+function dimensionsList(buffer) {
+    var recordId, recordName;
+    const dimList = buffer.readUint32();
+    if (dimList === ZERO) {
+        utils.notNetcdf(buffer.readUint32() !== ZERO, 'wrong empty tag for list of dimensions');
+        return [];
+    } else {
+        utils.notNetcdf(dimList !== NC_DIMENSION, 'wrong tag for list of dimensions');
+
+        // Length of dimensions
+        const dimensionSize = buffer.readUint32();
+        var dimensions = new Array(dimensionSize);
+        for (var dim = 0; dim < dimensionSize; dim++) {
+            // Read name
+            var name = utils.readName(buffer);
+
+            // Read dimension size
+            const size = buffer.readUint32();
+            if (size === 0) {
+                recordId = dim;
+                recordName = name;
+            }
+
+            dimensions[dim] = {
+                name: name,
+                size: size
+            };
+        }
+    }
+    return {
+        dimensions: dimensions,
+        recordId: recordId,
+        recordName: recordName
+    };
+}
+
+/**
+ * List of attributes
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @return {Array<object>} - List of attributes with:
+ *  * `name`: String with the name of the attribute
+ *  * `type`: String with the type of the attribute
+ *  * `value`: A number or string with the value of the attribute
+ */
+function attributesList(buffer) {
+    const gAttList = buffer.readUint32();
+    if (gAttList === ZERO) {
+        utils.notNetcdf(buffer.readUint32() !== ZERO, 'wrong empty tag for list of attributes');
+        return [];
+    } else {
+        utils.notNetcdf(gAttList !== NC_ATTRIBUTE, 'wrong tag for list of attributes');
+
+        // Length of attributes
+        const attributeSize = buffer.readUint32();
+        var attributes = new Array(attributeSize);
+        for (var gAtt = 0; gAtt < attributeSize; gAtt++) {
+            // Read name
+            var name = utils.readName(buffer);
+
+            // Read type
+            var type = buffer.readUint32();
+            utils.notNetcdf(type < 1 || type > 6, 'non valid type ' + type);
+
+            // Read attribute
+            var size = buffer.readUint32();
+            var value = types.readType(buffer, type, size);
+
+            // Apply padding
+            utils.padding(buffer);
+
+            attributes[gAtt] = {
+                name: name,
+                type: types.num2str(type),
+                value: value
+            };
+        }
+    }
+    return attributes;
+}
+
+/**
+ * List of variables
+ * @ignore
+ * @param {IOBuffer} buffer - Buffer for the file data
+ * @param {number} recordId - Id if the record dimension
+ * @param {number} version - Version of the file
+ * @return {object} - Number of recordStep and list of variables with:
+ *  * `name`: String with the name of the variable
+ *  * `dimensions`: Array with the dimension IDs of the variable
+ *  * `attributes`: Array with the attributes of the variable
+ *  * `type`: String with the type of the variable
+ *  * `size`: Number with the size of the variable
+ *  * `offset`: Number with the offset where of the variable begins
+ *  * `record`: True if is a record variable, false otherwise
+ */
+function variablesList(buffer, recordId, version) {
+    const varList = buffer.readUint32();
+    var recordStep = 0;
+    if (varList === ZERO) {
+        utils.notNetcdf(buffer.readUint32() !== ZERO, 'wrong empty tag for list of variables');
+        return [];
+    } else {
+        utils.notNetcdf(varList !== NC_VARIABLE, 'wrong tag for list of variables');
+
+        // Length of variables
+        const variableSize = buffer.readUint32();
+        var variables = new Array(variableSize);
+        for (var v = 0; v < variableSize; v++) {
+            // Read name
+            var name = utils.readName(buffer);
+
+            // Read dimensionality of the variable
+            const dimensionality = buffer.readUint32();
+
+            // Index into the list of dimensions
+            var dimensionsIds = new Array(dimensionality);
+            for (var dim = 0; dim < dimensionality; dim++) {
+                dimensionsIds[dim] = buffer.readUint32();
+            }
+
+            // Read variables size
+            var attributes = attributesList(buffer);
+
+            // Read type
+            var type = buffer.readUint32();
+            utils.notNetcdf(type < 1 && type > 6, 'non valid type ' + type);
+
+            // Read variable size
+            // The 32-bit varSize field is not large enough to contain the size of variables that require
+            // more than 2^32 - 4 bytes, so 2^32 - 1 is used in the varSize field for such variables.
+            const varSize = buffer.readUint32();
+
+            // Read offset
+            var offset = buffer.readUint32();
+            if (version === 2) {
+                utils.notNetcdf(offset > 0, 'offsets larger than 4GB not supported');
+                offset = buffer.readUint32();
+            }
+
+            // Count amount of record variables
+            if (dimensionsIds[0] === recordId) {
+                recordStep += varSize;
+            }
+
+            variables[v] = {
+                name: name,
+                dimensions: dimensionsIds,
+                attributes: attributes,
+                type: types.num2str(type),
+                size: varSize,
+                offset: offset,
+                record: dimensionsIds[0] === recordId
+            };
+        }
+    }
+
+    return {
+        variables: variables,
+        recordStep: recordStep
+    };
+}
+
+module.exports = header;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {
+
+const utf8 = __webpack_require__(11);
+
+const defaultByteLength = 1024 * 8;
+const charArray = [];
+
+/**
+ * IOBuffer
+ * @constructor
+ * @param {undefined|number|ArrayBuffer|TypedArray|IOBuffer|Buffer} data - The data to construct the IOBuffer with.
+ *
+ * If it's a number, it will initialize the buffer with the number as the buffer's length<br>
+ * If it's undefined, it will initialize the buffer with a default length of 8 Kb<br>
+ * If its an ArrayBuffer, a TypedArray, an IOBuffer instance,
+ * or a Node.js Buffer, it will create a view over the underlying ArrayBuffer.
+ * @param {object} [options]
+ * @param {number} [options.offset=0] - Ignore the first n bytes of the ArrayBuffer
+ * @property {ArrayBuffer} buffer - Reference to the internal ArrayBuffer object
+ * @property {number} length - Byte length of the internal ArrayBuffer
+ * @property {number} offset - The current offset of the buffer's pointer
+ * @property {number} byteLength - Byte length of the internal ArrayBuffer
+ * @property {number} byteOffset - Byte offset of the internal ArrayBuffer
+ */
+class IOBuffer {
+    constructor(data, options) {
+        options = options || {};
+        var dataIsGiven = false;
+        if (data === undefined) {
+            data = defaultByteLength;
+        }
+        if (typeof data === 'number') {
+            data = new ArrayBuffer(data);
+        } else {
+            dataIsGiven = true;
+            this._lastWrittenByte = data.byteLength;
+        }
+
+        const offset = options.offset ? options.offset >>> 0 : 0;
+        let byteLength = data.byteLength - offset;
+        let dvOffset = offset;
+        if (data.buffer) {
+            if (data.byteLength !== data.buffer.byteLength) {
+                dvOffset = data.byteOffset + offset;
+            }
+            data = data.buffer;
+        }
+        if (dataIsGiven) {
+            this._lastWrittenByte = byteLength;
+        } else {
+            this._lastWrittenByte = 0;
+        }
+        this.buffer = data;
+        this.length = byteLength;
+        this.byteLength = byteLength;
+        this.byteOffset = dvOffset;
+        this.offset = 0;
+        this.littleEndian = true;
+        this._data = new DataView(this.buffer, dvOffset, byteLength);
+        this._mark = 0;
+        this._marks = [];
+    }
+
+    /**
+     * Checks if the memory allocated to the buffer is sufficient to store more bytes after the offset
+     * @param {number} [byteLength=1] The needed memory in bytes
+     * @return {boolean} Returns true if there is sufficient space and false otherwise
+     */
+    available(byteLength) {
+        if (byteLength === undefined) byteLength = 1;
+        return (this.offset + byteLength) <= this.length;
+    }
+
+    /**
+     * Check if little-endian mode is used for reading and writing multi-byte values
+     * @return {boolean} Returns true if little-endian mode is used, false otherwise
+     */
+    isLittleEndian() {
+        return this.littleEndian;
+    }
+
+    /**
+     * Set little-endian mode for reading and writing multi-byte values
+     * @return {IOBuffer}
+     */
+    setLittleEndian() {
+        this.littleEndian = true;
+        return this;
+    }
+
+    /**
+     * Check if big-endian mode is used for reading and writing multi-byte values
+     * @return {boolean} Returns true if big-endian mode is used, false otherwise
+     */
+    isBigEndian() {
+        return !this.littleEndian;
+    }
+
+    /**
+     * Switches to big-endian mode for reading and writing multi-byte values
+     * @return {IOBuffer}
+     */
+    setBigEndian() {
+        this.littleEndian = false;
+        return this;
+    }
+
+    /**
+     * Move the pointer n bytes forward
+     * @param {number} n
+     * @return {IOBuffer}
+     */
+    skip(n) {
+        if (n === undefined) n = 1;
+        this.offset += n;
+        return this;
+    }
+
+    /**
+     * Move the pointer to the given offset
+     * @param {number} offset
+     * @return {IOBuffer}
+     */
+    seek(offset) {
+        this.offset = offset;
+        return this;
+    }
+
+    /**
+     * Store the current pointer offset.
+     * @see {@link IOBuffer#reset}
+     * @return {IOBuffer}
+     */
+    mark() {
+        this._mark = this.offset;
+        return this;
+    }
+
+    /**
+     * Move the pointer back to the last pointer offset set by mark
+     * @see {@link IOBuffer#mark}
+     * @return {IOBuffer}
+     */
+    reset() {
+        this.offset = this._mark;
+        return this;
+    }
+
+    /**
+     * Push the current pointer offset to the mark stack
+     * @see {@link IOBuffer#popMark}
+     * @return {IOBuffer}
+     */
+    pushMark() {
+        this._marks.push(this.offset);
+        return this;
+    }
+
+    /**
+     * Pop the last pointer offset from the mark stack, and set the current pointer offset to the popped value
+     * @see {@link IOBuffer#pushMark}
+     * @return {IOBuffer}
+     */
+    popMark() {
+        const offset = this._marks.pop();
+        if (offset === undefined) throw new Error('Mark stack empty');
+        this.seek(offset);
+        return this;
+    }
+
+    /**
+     * Move the pointer offset back to 0
+     * @return {IOBuffer}
+     */
+    rewind() {
+        this.offset = 0;
+        return this;
+    }
+
+    /**
+     * Make sure the buffer has sufficient memory to write a given byteLength at the current pointer offset
+     * If the buffer's memory is insufficient, this method will create a new buffer (a copy) with a length
+     * that is twice (byteLength + current offset)
+     * @param {number} [byteLength = 1]
+     * @return {IOBuffer}
+     */
+    ensureAvailable(byteLength) {
+        if (byteLength === undefined) byteLength = 1;
+        if (!this.available(byteLength)) {
+            const lengthNeeded = this.offset + byteLength;
+            const newLength = lengthNeeded * 2;
+            const newArray = new Uint8Array(newLength);
+            newArray.set(new Uint8Array(this.buffer));
+            this.buffer = newArray.buffer;
+            this.length = this.byteLength = newLength;
+            this._data = new DataView(this.buffer);
+        }
+        return this;
+    }
+
+    /**
+     * Read a byte and return false if the byte's value is 0, or true otherwise
+     * Moves pointer forward
+     * @return {boolean}
+     */
+    readBoolean() {
+        return this.readUint8() !== 0;
+    }
+
+    /**
+     * Read a signed 8-bit integer and move pointer forward
+     * @return {number}
+     */
+    readInt8() {
+        return this._data.getInt8(this.offset++);
+    }
+
+    /**
+     * Read an unsigned 8-bit integer and move pointer forward
+     * @return {number}
+     */
+    readUint8() {
+        return this._data.getUint8(this.offset++);
+    }
+
+    /**
+     * Alias for {@link IOBuffer#readUint8}
+     * @return {number}
+     */
+    readByte() {
+        return this.readUint8();
+    }
+
+    /**
+     * Read n bytes and move pointer forward.
+     * @param {number} n
+     * @return {Uint8Array}
+     */
+    readBytes(n) {
+        if (n === undefined) n = 1;
+        var bytes = new Uint8Array(n);
+        for (var i = 0; i < n; i++) {
+            bytes[i] = this.readByte();
+        }
+        return bytes;
+    }
+
+    /**
+     * Read a 16-bit signed integer and move pointer forward
+     * @return {number}
+     */
+    readInt16() {
+        var value = this._data.getInt16(this.offset, this.littleEndian);
+        this.offset += 2;
+        return value;
+    }
+
+    /**
+     * Read a 16-bit unsigned integer and move pointer forward
+     * @return {number}
+     */
+    readUint16() {
+        var value = this._data.getUint16(this.offset, this.littleEndian);
+        this.offset += 2;
+        return value;
+    }
+
+    /**
+     * Read a 32-bit signed integer and move pointer forward
+     * @return {number}
+     */
+    readInt32() {
+        var value = this._data.getInt32(this.offset, this.littleEndian);
+        this.offset += 4;
+        return value;
+    }
+
+    /**
+     * Read a 32-bit unsigned integer and move pointer forward
+     * @return {number}
+     */
+    readUint32() {
+        var value = this._data.getUint32(this.offset, this.littleEndian);
+        this.offset += 4;
+        return value;
+    }
+
+    /**
+     * Read a 32-bit floating number and move pointer forward
+     * @return {number}
+     */
+    readFloat32() {
+        var value = this._data.getFloat32(this.offset, this.littleEndian);
+        this.offset += 4;
+        return value;
+    }
+
+    /**
+     * Read a 64-bit floating number and move pointer forward
+     * @return {number}
+     */
+    readFloat64() {
+        var value = this._data.getFloat64(this.offset, this.littleEndian);
+        this.offset += 8;
+        return value;
+    }
+
+    /**
+     * Read 1-byte ascii character and move pointer forward
+     * @return {string}
+     */
+    readChar() {
+        return String.fromCharCode(this.readInt8());
+    }
+
+    /**
+     * Read n 1-byte ascii characters and move pointer forward
+     * @param {number} n
+     * @return {string}
+     */
+    readChars(n) {
+        if (n === undefined) n = 1;
+        charArray.length = n;
+        for (var i = 0; i < n; i++) {
+            charArray[i] = this.readChar();
+        }
+        return charArray.join('');
+    }
+
+    /**
+     * Read the next n bytes, return a UTF-8 decoded string and move pointer forward
+     * @param {number} n
+     * @return {string}
+     */
+    readUtf8(n) {
+        if (n === undefined) n = 1;
+        const bString = this.readChars(n);
+        return utf8.decode(bString);
+    }
+
+    /**
+     * Write 0xff if the passed value is truthy, 0x00 otherwise
+     * @param {any} value
+     * @return {IOBuffer}
+     */
+    writeBoolean(value) {
+        this.writeUint8(value ? 0xff : 0x00);
+        return this;
+    }
+
+    /**
+     * Write value as an 8-bit signed integer
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeInt8(value) {
+        this.ensureAvailable(1);
+        this._data.setInt8(this.offset++, value);
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write value as a 8-bit unsigned integer
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeUint8(value) {
+        this.ensureAvailable(1);
+        this._data.setUint8(this.offset++, value);
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * An alias for {@link IOBuffer#writeUint8}
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeByte(value) {
+        return this.writeUint8(value);
+    }
+
+    /**
+     * Write bytes
+     * @param {Array|Uint8Array} bytes
+     * @return {IOBuffer}
+     */
+    writeBytes(bytes) {
+        this.ensureAvailable(bytes.length);
+        for (var i = 0; i < bytes.length; i++) {
+            this._data.setUint8(this.offset++, bytes[i]);
+        }
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write value as an 16-bit signed integer
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeInt16(value) {
+        this.ensureAvailable(2);
+        this._data.setInt16(this.offset, value, this.littleEndian);
+        this.offset += 2;
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write value as a 16-bit unsigned integer
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeUint16(value) {
+        this.ensureAvailable(2);
+        this._data.setUint16(this.offset, value, this.littleEndian);
+        this.offset += 2;
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write a 32-bit signed integer at the current pointer offset
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeInt32(value) {
+        this.ensureAvailable(4);
+        this._data.setInt32(this.offset, value, this.littleEndian);
+        this.offset += 4;
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write a 32-bit unsigned integer at the current pointer offset
+     * @param {number} value - The value to set
+     * @return {IOBuffer}
+     */
+    writeUint32(value) {
+        this.ensureAvailable(4);
+        this._data.setUint32(this.offset, value, this.littleEndian);
+        this.offset += 4;
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write a 32-bit floating number at the current pointer offset
+     * @param {number} value - The value to set
+     * @return {IOBuffer}
+     */
+    writeFloat32(value) {
+        this.ensureAvailable(4);
+        this._data.setFloat32(this.offset, value, this.littleEndian);
+        this.offset += 4;
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write a 64-bit floating number at the current pointer offset
+     * @param {number} value
+     * @return {IOBuffer}
+     */
+    writeFloat64(value) {
+        this.ensureAvailable(8);
+        this._data.setFloat64(this.offset, value, this.littleEndian);
+        this.offset += 8;
+        this._updateLastWrittenByte();
+        return this;
+    }
+
+    /**
+     * Write the charCode of the passed string's first character to the current pointer offset
+     * @param {string} str - The character to set
+     * @return {IOBuffer}
+     */
+    writeChar(str) {
+        return this.writeUint8(str.charCodeAt(0));
+    }
+
+    /**
+     * Write the charCodes of the passed string's characters to the current pointer offset
+     * @param {string} str
+     * @return {IOBuffer}
+     */
+    writeChars(str) {
+        for (var i = 0; i < str.length; i++) {
+            this.writeUint8(str.charCodeAt(i));
+        }
+        return this;
+    }
+
+    /**
+     * UTF-8 encode and write the passed string to the current pointer offset
+     * @param {string} str
+     * @return {IOBuffer}
+     */
+    writeUtf8(str) {
+        const bString = utf8.encode(str);
+        return this.writeChars(bString);
+    }
+
+    /**
+     * Export a Uint8Array view of the internal buffer.
+     * The view starts at the byte offset and its length
+     * is calculated to stop at the last written byte or the original length.
+     * @return {Uint8Array}
+     */
+    toArray() {
+        return new Uint8Array(this.buffer, this.byteOffset, this._lastWrittenByte);
+    }
+
+    /**
+     * Same as {@link IOBuffer#toArray} but returns a Buffer if possible. Otherwise returns a Uint8Array.
+     * @return {Buffer|Uint8Array}
+     */
+    getBuffer() {
+        if (typeof Buffer !== 'undefined') {
+            return Buffer.from(this.toArray());
+        } else {
+            return this.toArray();
+        }
+    }
+
+    /**
+     * Update the last written byte offset
+     * @private
+     */
+    _updateLastWrittenByte() {
+        if (this.offset > this._lastWrittenByte) {
+            this._lastWrittenByte = this.offset;
+        }
+    }
+}
+
+module.exports = IOBuffer;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const IOBuffer = __webpack_require__(5);
+const utils = __webpack_require__(0);
+const data = __webpack_require__(3);
+const readHeader = __webpack_require__(4);
+
+/**
+ * Reads a NetCDF v3.x file
+ * https://www.unidata.ucar.edu/software/netcdf/docs/file_format_specifications.html
+ * @param {ArrayBuffer} data - ArrayBuffer or any Typed Array (including Node.js' Buffer from v4) with the data
+ * @constructor
+ */
+class NetCDFReader {
+    constructor(data) {
+        const buffer = new IOBuffer(data);
+        buffer.setBigEndian();
+
+        // Validate that it's a NetCDF file
+        utils.notNetcdf(buffer.readChars(3) !== 'CDF', 'should start with CDF');
+
+        // Check the NetCDF format
+        const version = buffer.readByte();
+        utils.notNetcdf(version > 2, 'unknown version');
+
+        // Read the header
+        this.header = readHeader(buffer, version);
+        this.buffer = buffer;
+    }
+
+    /**
+     * @return {string} - Version for the NetCDF format
+     */
+    get version() {
+        if (this.header.version === 1) {
+            return 'classic format';
+        } else {
+            return '64-bit offset format';
+        }
+    }
+
+    /**
+     * @return {object} - Metadata for the record dimension
+     *  * `length`: Number of elements in the record dimension
+     *  * `id`: Id number in the list of dimensions for the record dimension
+     *  * `name`: String with the name of the record dimension
+     *  * `recordStep`: Number with the record variables step size
+     */
+    get recordDimension() {
+        return this.header.recordDimension;
+    }
+
+    /**
+     * @return {Array<object>} - List of dimensions with:
+     *  * `name`: String with the name of the dimension
+     *  * `size`: Number with the size of the dimension
+     */
+    get dimensions() {
+        return this.header.dimensions;
+    }
+
+    /**
+     * @return {Array<object>} - List of global attributes with:
+     *  * `name`: String with the name of the attribute
+     *  * `type`: String with the type of the attribute
+     *  * `value`: A number or string with the value of the attribute
+     */
+    get globalAttributes() {
+        return this.header.globalAttributes;
+    }
+
+    /**
+     * @return {Array<object>} - List of variables with:
+     *  * `name`: String with the name of the variable
+     *  * `dimensions`: Array with the dimension IDs of the variable
+     *  * `attributes`: Array with the attributes of the variable
+     *  * `type`: String with the type of the variable
+     *  * `size`: Number with the size of the variable
+     *  * `offset`: Number with the offset where of the variable begins
+     *  * `record`: True if is a record variable, false otherwise
+     */
+    get variables() {
+        return this.header.variables;
+    }
+
+    /**
+     * Retrieves the data for a given variable
+     * @param {string|object} variableName - Name of the variable to search or variable object
+     * @return {Array} - List with the variable values
+     */
+    getDataVariable(variableName) {
+        var variable;
+        if (typeof variableName === 'string') {
+            // search the variable
+            variable = this.header.variables.find(function (val) {
+                return val.name === variableName;
+            });
+        } else {
+            variable = variableName;
+        }
+
+        // throws if variable not found
+        utils.notNetcdf(variable === undefined, 'variable not found');
+
+        // go to the offset position
+        this.buffer.seek(variable.offset);
+
+        if (variable.record) {
+            // record variable case
+            return data.record(this.buffer, variable, this.header.recordDimension);
+        } else {
+            // non-record variable case
+            return data.nonRecord(this.buffer, variable);
+        }
+    }
+}
+
+module.exports = NetCDFReader;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function placeHoldersCount (b64) {
+  var len = b64.length
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
+
+function byteLength (b64) {
+  // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
+  arr = new Arr(len * 3 / 4 - placeHolders)
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  l = placeHolders > 0 ? len - 4 : len
+
+  var L = 0
+
+  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
+    arr[L++] = (tmp >> 16) & 0xFF
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[L++] = tmp & 0xFF
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var output = ''
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    output += lookup[tmp >> 2]
+    output += lookup[(tmp << 4) & 0x3F]
+    output += '=='
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
+    output += lookup[tmp >> 10]
+    output += lookup[(tmp >> 4) & 0x3F]
+    output += lookup[(tmp << 2) & 0x3F]
+    output += '='
+  }
+
+  parts.push(output)
+
+  return parts.join('')
+}
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+
+
+var base64 = __webpack_require__(7)
+var ieee754 = __webpack_require__(9)
+var isArray = __webpack_require__(10)
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+exports.kMaxLength = kMaxLength()
+
+function typedArraySupport () {
+  try {
+    var arr = new Uint8Array(1)
+    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    return arr.foo() === 42 && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length)
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer(length)
+    }
+    that.length = length
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+    return new Buffer(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer._augment = function (arr) {
+  arr.__proto__ = Buffer.prototype
+  return arr
+}
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    Object.defineProperty(Buffer, Symbol.species, {
+      value: null,
+      configurable: true
+    })
+  }
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+}
+
+function allocUnsafe (that, size) {
+  assertSize(size)
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0
+  that = createBuffer(that, length)
+
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
+  that = createBuffer(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset)
+  } else {
+    array = new Uint8Array(array, byteOffset, length)
+  }
+
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array)
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (Buffer.isBuffer(obj)) {
+    var len = checked(obj.length) | 0
+    that = createBuffer(that, len)
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len)
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  var buffer = Buffer.allocUnsafe(length)
+  var pos = 0
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i]
+    if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos)
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string
+  }
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  var i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  var len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  var len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart
+  var y = end - start
+  var len = Math.min(x, y)
+
+  var thisCopy = this.slice(thisStart, thisEnd)
+  var targetCopy = target.slice(start, end)
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1
+  var arrLength = arr.length
+  var valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end)
+    newBuf.__proto__ = Buffer.prototype
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0)
+      if (code < 256) {
+        val = code
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  var i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    var bytes = Buffer.isBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer(val, encoding).toString())
+    var len = bytes.length
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/utf8js v2.1.2 by @mathias */
+;(function(root) {
+
+	// Detect free variables `exports`
+	var freeExports = typeof exports == 'object' && exports;
+
+	// Detect free variable `module`
+	var freeModule = typeof module == 'object' && module &&
+		module.exports == freeExports && module;
+
+	// Detect free variable `global`, from Node.js or Browserified code,
+	// and use it as `root`
+	var freeGlobal = typeof global == 'object' && global;
+	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+		root = freeGlobal;
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	var stringFromCharCode = String.fromCharCode;
+
+	// Taken from https://mths.be/punycode
+	function ucs2decode(string) {
+		var output = [];
+		var counter = 0;
+		var length = string.length;
+		var value;
+		var extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	// Taken from https://mths.be/punycode
+	function ucs2encode(array) {
+		var length = array.length;
+		var index = -1;
+		var value;
+		var output = '';
+		while (++index < length) {
+			value = array[index];
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+		}
+		return output;
+	}
+
+	function checkScalarValue(codePoint) {
+		if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+			throw Error(
+				'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+				' is not a scalar value'
+			);
+		}
+	}
+	/*--------------------------------------------------------------------------*/
+
+	function createByte(codePoint, shift) {
+		return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+	}
+
+	function encodeCodePoint(codePoint) {
+		if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
+			return stringFromCharCode(codePoint);
+		}
+		var symbol = '';
+		if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
+			symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+		}
+		else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+			checkScalarValue(codePoint);
+			symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
+			symbol += createByte(codePoint, 6);
+		}
+		else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
+			symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
+			symbol += createByte(codePoint, 12);
+			symbol += createByte(codePoint, 6);
+		}
+		symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+		return symbol;
+	}
+
+	function utf8encode(string) {
+		var codePoints = ucs2decode(string);
+		var length = codePoints.length;
+		var index = -1;
+		var codePoint;
+		var byteString = '';
+		while (++index < length) {
+			codePoint = codePoints[index];
+			byteString += encodeCodePoint(codePoint);
+		}
+		return byteString;
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	function readContinuationByte() {
+		if (byteIndex >= byteCount) {
+			throw Error('Invalid byte index');
+		}
+
+		var continuationByte = byteArray[byteIndex] & 0xFF;
+		byteIndex++;
+
+		if ((continuationByte & 0xC0) == 0x80) {
+			return continuationByte & 0x3F;
+		}
+
+		// If we end up here, it’s not a continuation byte
+		throw Error('Invalid continuation byte');
+	}
+
+	function decodeSymbol() {
+		var byte1;
+		var byte2;
+		var byte3;
+		var byte4;
+		var codePoint;
+
+		if (byteIndex > byteCount) {
+			throw Error('Invalid byte index');
+		}
+
+		if (byteIndex == byteCount) {
+			return false;
+		}
+
+		// Read first byte
+		byte1 = byteArray[byteIndex] & 0xFF;
+		byteIndex++;
+
+		// 1-byte sequence (no continuation bytes)
+		if ((byte1 & 0x80) == 0) {
+			return byte1;
+		}
+
+		// 2-byte sequence
+		if ((byte1 & 0xE0) == 0xC0) {
+			byte2 = readContinuationByte();
+			codePoint = ((byte1 & 0x1F) << 6) | byte2;
+			if (codePoint >= 0x80) {
+				return codePoint;
+			} else {
+				throw Error('Invalid continuation byte');
+			}
+		}
+
+		// 3-byte sequence (may include unpaired surrogates)
+		if ((byte1 & 0xF0) == 0xE0) {
+			byte2 = readContinuationByte();
+			byte3 = readContinuationByte();
+			codePoint = ((byte1 & 0x0F) << 12) | (byte2 << 6) | byte3;
+			if (codePoint >= 0x0800) {
+				checkScalarValue(codePoint);
+				return codePoint;
+			} else {
+				throw Error('Invalid continuation byte');
+			}
+		}
+
+		// 4-byte sequence
+		if ((byte1 & 0xF8) == 0xF0) {
+			byte2 = readContinuationByte();
+			byte3 = readContinuationByte();
+			byte4 = readContinuationByte();
+			codePoint = ((byte1 & 0x07) << 0x12) | (byte2 << 0x0C) |
+				(byte3 << 0x06) | byte4;
+			if (codePoint >= 0x010000 && codePoint <= 0x10FFFF) {
+				return codePoint;
+			}
+		}
+
+		throw Error('Invalid UTF-8 detected');
+	}
+
+	var byteArray;
+	var byteCount;
+	var byteIndex;
+	function utf8decode(byteString) {
+		byteArray = ucs2decode(byteString);
+		byteCount = byteArray.length;
+		byteIndex = 0;
+		var codePoints = [];
+		var tmp;
+		while ((tmp = decodeSymbol()) !== false) {
+			codePoints.push(tmp);
+		}
+		return ucs2encode(codePoints);
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	var utf8 = {
+		'version': '2.1.2',
+		'encode': utf8encode,
+		'decode': utf8decode
+	};
+
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		true
+	) {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+			return utf8;
+		}.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	}	else if (freeExports && !freeExports.nodeType) {
+		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+			freeModule.exports = utf8;
+		} else { // in Narwhal or RingoJS v0.7.0-
+			var object = {};
+			var hasOwnProperty = object.hasOwnProperty;
+			for (var key in utf8) {
+				hasOwnProperty.call(utf8, key) && (freeExports[key] = utf8[key]);
+			}
+		}
+	} else { // in Rhino or a web browser
+		root.utf8 = utf8;
+	}
+
+}(this));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module), __webpack_require__(2)))
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ })
+/******/ ]);
+});
 //This defines the $3Dmol object which is used to create viewers
 //and configure system-wide settings
 
@@ -5071,6 +8656,7 @@ $3Dmol.createViewer = function(element, config)
     if(!element) return;
 
     config = config || {}; 
+    console.log(config)
 
     //try to create the  viewer
     try {
@@ -5082,6 +8668,44 @@ $3Dmol.createViewer = function(element, config)
     
     return null;
 };
+
+$3Dmol.createViewerGrid  = function(element,config,viewer_config){
+    if($.type(element) === "string")
+        element = $("#"+element);
+    if(!element) return;
+
+    config = config || {}; 
+
+    var viewers = [];
+
+    //create canvas
+    var canvas = document.createElement('canvas');
+
+    viewer_config.rows = config.rows;
+    viewer_config.cols = config.cols;
+    viewer_config.control_all = config.control_all != undefined ? config.control_all : false;
+    $(element).append($(canvas));
+
+      //try to create the  viewer
+    try {  
+      for(var r =0;r<config.rows;r++){
+        viewers.push(new Array());
+        for(var c = 0;c<config.cols;c++){
+          viewer_config.row = r;
+          viewer_config.col = c;
+          viewer_config.canvas = canvas;
+          viewer_config.viewers = viewers;
+          viewer_config.control_all = config.control_all;
+          var viewer = $3Dmol.createViewer(element, viewer_config);
+          viewers[r].push(viewer)
+        }
+      }
+    }catch(e) {
+        throw "error creating viewer grid: "+e;
+    }
+    
+    return viewers;
+}
    
 /**
  * Contains a dictionary of embedded viewers created from HTML elements
@@ -5096,19 +8720,27 @@ $3Dmol.viewers = {};
  * @function $3Dmol.getbin
  * @param {string} uri - location of data
  * @param {Function} callback - Function to call with arraybuffer as argument.  
-
+ * @param {string} request - type of request
+ * @return {Promise}
  */ 
-$3Dmol.getbin = function(uri, callback) {
-    $.ajax({url:uri, 
-        type: "GET",
-        dataType: "binary",
-        responseType: "arraybuffer",
-        processData: false}).done(
-            function(ret, txt, response) {
-                callback(ret);
-            }).fail(function(e,txt) { 
-                console.log(txt);
-                });
+$3Dmol.getbin = function(uri, callback, request) {
+    var promise = new Promise(function(resolve, reject) {
+        request = (request == undefined)?"GET":request;
+        $.ajax({url:uri, 
+            type: request,
+            dataType: "binary",
+            responseType: "arraybuffer",
+            processData: false})
+        .done(function(ret, txt, response) {
+            resolve(ret);
+        })
+        .fail(function(e,txt) { 
+            console.log(txt);
+            reject();
+        });
+    });
+    if (callback) return promise.then(callback);
+    else return promise;
 };
 
 /**
@@ -5121,7 +8753,7 @@ $3Dmol.getbin = function(uri, callback) {
  *                           pdbUri: URI to retrieve PDB files, default URI is http://www.rcsb.org/pdb/files/
  * @param {Function} callback - Function to call with model as argument after data is loaded.
   
- * @return {$3Dmol.GLModel} GLModel
+ * @return {$3Dmol.GLModel} GLModel, Promise if callback is not provided
  * @example
  viewer.setBackgroundColor(0xffffffff);
        $3Dmol.download('pdb:2nbd',viewer,{onemol: true,multimodel: true},function(m) {
@@ -5136,7 +8768,6 @@ $3Dmol.download = function(query, viewer, options, callback) {
     var pdbUri = "";
     var mmtfUri = "";
     var m = viewer.addModel();
-    
     if (query.substr(0, 5) === 'mmtf:') {
         pdbUri = options && options.pdbUri ? options.pdbUri : "https://mmtf.rcsb.org/v1.0/full/";
         query = query.substr(5).toUpperCase();
@@ -5145,14 +8776,15 @@ $3Dmol.download = function(query, viewer, options, callback) {
                 //when fetch directly from pdb, trust structure annotations
                 options.noComputeSecondaryStructure = true;
         }
-            
-        $3Dmol.getbin(uri,
-                function(ret) {
-                    m.addMolData(ret, 'mmtf',options);
-                    viewer.zoomTo();
-                    viewer.render();
-                    if(callback) callback(m);
-                });
+        var promise = new Promise(function(resolve, reject) {
+            $3Dmol.getbin(uri)
+            .then(function(ret) {
+                m.addMolData(ret, 'mmtf',options);
+                viewer.zoomTo();
+                viewer.render();
+                resolve(m);
+            });
+        });
     }
     else {
         if (query.substr(0, 4) === 'pdb:') {
@@ -5192,23 +8824,35 @@ $3Dmol.download = function(query, viewer, options, callback) {
         }
     
         var handler = function(ret) {
-          m.addMolData(ret, type, options);
-          viewer.zoomTo();
-          viewer.render();
-          if(callback) callback(m);
+            m.addMolData(ret, type, options);
+            viewer.zoomTo();
+            viewer.render();
         };
-        
-        if(type == 'mmtf') { //binary data
-            $3Dmol.getbin(uri, handler);
-        }
-        else {        
-           $.get(uri, handler).fail(function(e) {
-            console.log("fetch of "+uri+" failed: "+e.statusText);
-           });
-        }
-   }
-   
-   return m;
+        var promise = new Promise(function(resolve, reject) {
+            if(type == 'mmtf') { //binary data
+                $3Dmol.getbin(uri)
+                .then(function(ret) {
+                    handler(ret);
+                    resolve(m);
+                });
+            }
+            else {        
+               $.get(uri, function(ret) {
+                   handler(ret);
+                   resolve(m);
+               }).fail(function(e) {
+                   console.log("fetch of "+uri+" failed: "+e.statusText);
+               });
+            }
+        });
+    }
+    if (callback) {
+        promise.then(function(m){
+            callback(m);
+        });
+        return m;
+    }
+    else return promise;
 };
        
 
@@ -5256,7 +8900,7 @@ $3Dmol.multiLineString = function(f) {
 $3Dmol.syncSurface = false;
 
 // Internet Explorer refuses to allow webworkers in data blobs.  I can find
-// no way of checking for this feature directly, so must do a brower check
+// no way of checking for this feature directly, so must do a browser check
 if(window.navigator.userAgent.indexOf('MSIE ') >= 0 ||
         window.navigator.userAgent.indexOf('Trident/') >= 0) {
     $3Dmol.syncSurface = true; // can't use webworkers
@@ -5296,7 +8940,7 @@ $3Dmol.specStringToObject = function(str) {
            else if(val.indexOf('.') >= 0) {
                return parseFloat(val); // ".7" for example, does not parseInt
            }
-           else {
+           else{
                return parseInt(val);
            }
         }
@@ -5339,7 +8983,7 @@ $3Dmol.specStringToObject = function(str) {
         ret[f] = val;
     }
 
-return ret;
+  return ret;
 }
 
 
@@ -9095,7 +12739,10 @@ $3Dmol.Sprite.prototype.clone = function(object) {
 $3Dmol.Renderer = function(parameters) {
 
     parameters = parameters || {};
-
+    this.row = parameters.row;
+    this.col = parameters.col;
+    this.rows = parameters.rows;
+    this.cols = parameters.cols;
     var _canvas = parameters.canvas !== undefined ? parameters.canvas
             : document.createElement('canvas'),
 
@@ -9114,7 +12761,7 @@ $3Dmol.Renderer = function(parameters) {
             _outlineStickImposterMaterial = new $3Dmol.StickImposterOutlineMaterial(parameters.outline),
             _outlineEnabled = !!parameters.outline
             ;
-    this.domElement = _canvas;
+    this.domElement = _canvas;    
     this.context = null;
     this.devicePixelRatio = parameters.devicePixelRatio !== undefined ? parameters.devicePixelRatio
             : (self.devicePixelRatio !== undefined) ? self.devicePixelRatio : 1;
@@ -9240,6 +12887,8 @@ $3Dmol.Renderer = function(parameters) {
     };
 
     this.setClearColorHex = function(hex, alpha) {
+        clearColor = _clearColor;
+        clearAlpha = _clearAlpha;
         _clearColor.setHex(hex);
         _clearAlpha = alpha;
 
@@ -9257,22 +12906,51 @@ $3Dmol.Renderer = function(parameters) {
     this.disableOutline = function() {
         _outlineEnabled = false;
     };
+    this.setViewport = function(){
+        if(this.rows != undefined && this.cols != undefined && this.row != undefined && this.col != undefined){
 
+            var wid = _canvas.width/this.cols;
+            var hei = _canvas.height/this.rows;
+           
+            _viewportWidth =  wid * this.devicePixelRatio;
+            _viewportHeight = hei * this.devicePixelRatio;
+
+             _gl.drawingBufferWidth = _viewportWidth*3;
+              _gl.drawingBufferHeight = _viewportHeight;
+            _gl.enable(_gl.SCISSOR_TEST);
+            _gl.scissor(wid*this.col,hei * this.row, wid, hei);
+            _gl.viewport(wid * this.col , hei * this.row, wid, hei);
+
+        }
+    }
     this.setSize = function(width, height) {
+        if(this.rows != undefined && this.cols != undefined && this.row != undefined && this.col != undefined){
+            var wid = width/this.cols;
+            var hei = height/this.rows;
+            _canvas.width =width* this.devicePixelRatio;
+            _canvas.height = height*this.devicePixelRatio;
 
-        _viewportWidth = _canvas.width = width * this.devicePixelRatio;
-        _viewportHeight =  _canvas.height = height * this.devicePixelRatio;
+            _viewportWidth =  wid * this.devicePixelRatio;
+            _viewportHeight = hei * this.devicePixelRatio;
 
-        _canvas.style.width = width + 'px';
-        _canvas.style.height = height + 'px';
+            _canvas.style.width = width + 'px';
+            _canvas.style.height = height + 'px';
 
-        _gl.viewport(0, 0, _gl.drawingBufferWidth, _gl.drawingBufferHeight);
+            this.setViewport();
+        }else{
+            _viewportWidth = _canvas.width = width * this.devicePixelRatio;
+            _viewportHeight =  _canvas.height = height * this.devicePixelRatio;
+
+            _canvas.style.width = width + 'px';
+            _canvas.style.height = height + 'px';
+
+            _gl.viewport(0, 0, _gl.drawingBufferWidth, _gl.drawingBufferHeight);
+        }
     };
 
     this.clear = function(color, depth, stencil) {
 
         var bits = 0;
-
         if (color === undefined || color)
             bits |= _gl.COLOR_BUFFER_BIT;
         if (depth === undefined || depth)
@@ -10157,7 +13835,7 @@ $3Dmol.Renderer = function(parameters) {
 
         _currentWidth = _viewportWidth;
         _currentHeight = _viewportHeight;
-
+        this.setViewport();
         if (this.autoClear || forceClear) {
             this.clear(this.autoClearColor, this.autoClearDepth,
                     this.autoClearStencil);
@@ -10611,6 +14289,27 @@ $3Dmol.Renderer = function(parameters) {
 
         }
 
+    }
+    this.getXYRatio = function(){
+       if(this.rows != undefined && this.cols != undefined && this.row != undefined && this.col != undefined){
+            return [this.cols,this.rows];
+       }else{
+            return [1,1];
+       }
+    }
+    this.getAspect = function(width,height){
+        if(width == undefined || height == undefined){
+            width = _canvas.width;
+            height = _canvas.height;
+        }
+        var aspect = width/height;
+        if(this.rows != undefined && this.cols != undefined && this.row != undefined && this.col != undefined){
+            console.log("divide")
+            var wid = width/this.cols;
+            var hei = height/this.rows;
+            aspect = wid/hei;
+        }
+        return aspect;
     }
 
     this.setTexture = function(texture, slot) {
@@ -12675,51 +16374,55 @@ $3Dmol.ProteinSurface = function() {
 };
 //auto-initialization
 //Create embedded viewer from HTML attributes if true
-$3Dmol.autoload=function(viewer){
+//viewer and callback are used by the testing harness
+$3Dmol.autoload=function(viewer,callback){
     if ($(".viewer_3Dmoljs")[0] !== undefined)
         $3Dmol.autoinit = true;
 
     if ($3Dmol.autoinit) {
-        viewer =(viewer!= undefined) ?
-            viewer :null;
+        viewer =(viewer!= undefined) ? viewer :null;
         
         $3Dmol.viewers = {};
         var nviewers = 0;
         $(".viewer_3Dmoljs").each( function() {
             var viewerdiv = $(this);
             var datauri = [];
+            var datatypes = []
             if(viewerdiv.css('position') == 'static') {
                 //slight hack - canvas needs this element to be positioned
                 viewerdiv.css('position','relative');
             }
-            var callback = (typeof(window[viewerdiv.data("callback")]) === 'function') ? 
-                    window[viewerdiv.data("callback")] : null;
+
             var type = null;
             if (viewerdiv.data("pdb")) {
                 datauri.push("https://files.rcsb.org/view/" + viewerdiv.data("pdb") + ".pdb");
-                type = "pdb";
+                datatypes.push("pdb");
             } else if(viewerdiv.data("cid")) {
                 //this doesn't actually work since pubchem does have CORS enabled
-                type = "sdf";
+                datatypes.push("sdf");
                 datauri.push("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + viewerdiv.data("cid") + 
                 "/SDF?record_type=3d");
             }
             else if (viewerdiv.data("href")){
-                datauri.push(viewerdiv.data("href"));
-
+                var uri = viewerdiv.data("href");
+                datauri.push(uri);
+                var type = uri.substr(uri.lastIndexOf('.')+1);                
+                datatypes.push(type);
             }
             
             var divdata=viewerdiv.data();
             for(var i in divdata){
                 if((i.substring(0,3) ==="pdb" && !(i === "pdb"))){
                     datauri.push("https://files.rcsb.org/view/" +divdata[i]+".pdb")
+                    datatypes.push('pdb');
 
                 }else if(i.substring(0,4) ==="href" && !(i==="href")){
-                    datauri.push(divdata[i]);
-
+                    var uri = divdata[i];
+                    datauri.push(uri);
+                    datatypes.push(uri.substr(uri.lastIndexOf('.')+1));
                 }else if(i.substring(0,3)==="cid" && !(i==="cid")){
-                datauri.push("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + divdata[i] + 
-                "/SDF?record_type=3d");
+                    datauri.push("https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + divdata[i] +  "/SDF?record_type=3d");
+                    datatypes.push('sdf');
                 }
             }
             var options = {}
@@ -12809,25 +16512,33 @@ $3Dmol.autoload=function(viewer){
             }           
             
             if (datauri.length!=0) {
-                for(var i=0;i<datauri.length;i++){
-                    val=i;
-                    uri=datauri[i];
-                    type = viewerdiv.data("type") || viewerdiv.data("datatype") || type;
-                    if(!type) {
-                        type = uri.substr(uri.lastIndexOf('.')+1);
+                //load multiple data elements in serial
+                var i = 0;
+                var process = function(moldata) {
+                    //add moldata to viewer and load next model
+                    uri = datauri[i]; //this is where the moldata came from
+                    var type = viewerdiv.data("type") || viewerdiv.data("datatype") || datatypes[i]; 
+                    glviewer.addModel(moldata, type, options);
+                    i += 1;
+                    if(i < datauri.length) {
+                        $.get(datauri[i], process);
                     }
-                                
-                    $.get(uri, function(ret) {
-                        glviewer.addModel(ret, type, options);
-                        applyStyles(glviewer);       
-                        if (callback) {
-                            if(val==datauri.length-1){
-
-                                callback(glviewer);
+                    else {
+                        // or finalize if this is the last model
+                        applyStyles(glviewer);
+                        if(viewerdiv.data("callback")) {
+                            //evaluate javascript in the string, if it resolves to a function,
+                            //call it with the viewer
+                            var runres = eval(viewerdiv.data("callback"));
+                            if(typeof(runres) == 'function') {
+                                runres(glviewer);
                             }
                         }
-                    }, 'text');        
+                        if(callback) callback(glviewer);
+                    }
                 }
+                $.get(datauri[0], process);
+         
             }           
             else {
                 
@@ -12846,7 +16557,15 @@ $3Dmol.autoload=function(viewer){
                     glviewer.addModel(moldata, type, options);        
                 }
 
-                applyStyles(glviewer);              
+                applyStyles(glviewer);
+                if(viewerdiv.data("callback")) {
+                    //evaluate javascript in the string, if it resolves to a function,
+                    //call it with the viewer
+                    var runres = eval(viewerdiv.data("callback"));
+                    if(typeof(runres) == 'function') {
+                        runres(glviewer);
+                    }
+                }                
                 if (callback) 
                     callback(glviewer);
             }
@@ -12914,46 +16633,6 @@ $3Dmol.elementColors.blueCarbon['C'] = 0x0000ff;
  * @typedef ColorschemeSpec
  * Built in colorschemes
  *
- * @example 
- 
-              $.get('../test_structs/benzene-homo.cube', function(data){
-                  var voldata = new $3Dmol.VolumeData(data, "cube");
-                  viewer.addIsosurface(voldata, {isoval: 0.01,
-                                                 color: "blue",
-                                                 alpha: 0.5,
-                                                 smoothness: 10});
-                  viewer.addIsosurface(voldata, {isoval: -0.01,
-                                                 color: "red",
-                                                 smoothness: 5,
-                                                 opacity:0.5,
-                                                 wireframe:true,
-                                                 linewidth:0.1,
-                                                 clickable:true,
-                                                 callback:
-                                                 function() {
-                                                     this.opacity = 0.0;
-                                                 }});
-                  viewer.setStyle({}, {stick:{}});
-                  viewer.zoomTo();
-                  
-                                                  viewer.render();
-                 
-                });
-
- * @example //Using a gradient with colorscheme.
-     viewer.setViewStyle({style:"outline"});
-             
-
-              viewer.setViewStyle({style:"outline"});
-              $.get('volData/1fas.pqr', function(data){
-                  viewer.addModel(data, "pqr");
-                  $.get("volData/1fas.cube",function(volumedata){
-                      viewer.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.85,voldata: new $3Dmol.VolumeData(volumedata, "cube"), volscheme: new $3Dmol.Gradient.RWB(-10,10)},{});
-                      
-                  viewer.render(callback);
-                  });
-                  viewer.zoomTo();
-              });
  * @example //Using a function in order to define the colors. 
   $3Dmol.download("pdb:4UAA",viewer,{},function(){
                   viewer.setBackgroundColor(0xffffffff);
@@ -12961,7 +16640,8 @@ $3Dmol.elementColors.blueCarbon['C'] = 0x0000ff;
                     return atom.resi % 2 ? 'white': 'green'
                   };
 
-                  viewer.setStyle( {}, { cartoon: {colorfunc: colorAsSnake }});
+                  viewer.setStyle( {chain:'A'}, { cartoon: {colorfunc: colorAsSnake }});
+                  viewer.setStyle( {chain:'B'}, { stick: {colorscheme: 'yellowCarbon'}});
 
                   viewer.render();
               });
@@ -13218,57 +16898,55 @@ $3Dmol.residues = {};
 
 /** @property standard amino acid color scheme*/
 $3Dmol.residues.amino ={
-'Ala' : 0xC8C8C8,        
-'Arg' : 0x145AFF,              
-'Asn' : 0x00DCDC,              
-'Asp' : 0xE60A0A,             
-'Cys' : 0xE6E600,             
-'Gln' : 0x00DCDC,            
-'Glu' : 0xE60A0A,              
-'Gly' : 0xEBEBEB,        
-'His' :  0x8282D2,       
-'Ile' :0x0F820F,             
-'Leu':0x0F820F,              
-'Lys' :0x145AFF,              
-'Met' :0xE6E600,             
-'Phe':0x3232AA,            
-'Pro' :  0xDC9682,    
-'Ser': 0xFA9600,           
-'Thr': 0xFA9600,          
-'Trp' :   0xB45AB4,    
-'Tyr' :0x3232AA,            
-'Val' :0x0F820F,            
-'Asx'  :0xFF69B4,     
-'Glx'  :0xFF69B4,       
-'other' :0xBEA06E,
+'ALA' : 0xC8C8C8,        
+'ARG' : 0x145AFF,              
+'ASN' : 0x00DCDC,              
+'ASP' : 0xE60A0A,             
+'CYS' : 0xE6E600,             
+'GLN' : 0x00DCDC,            
+'GLU' : 0xE60A0A,              
+'GLY' : 0xEBEBEB,        
+'HIS' :  0x8282D2,       
+'ILE' :0x0F820F,             
+'LEU':0x0F820F,              
+'LYS' :0x145AFF,              
+'MET' :0xE6E600,             
+'PHE':0x3232AA,            
+'PRO' :  0xDC9682,    
+'SER': 0xFA9600,           
+'THR': 0xFA9600,          
+'TRP' :   0xB45AB4,    
+'TYR' :0x3232AA,            
+'VAL' :0x0F820F,            
+'ASX'  :0xFF69B4,     
+'GLX'  :0xFF69B4,   
 
 };
 
 /** @property shapely amino acid color scheme*/
 $3Dmol.residues.shapely ={
-'Ala' : 0x8CFF8C,         
-'Arg' : 0x00007C,              
-'Asn' : 0xFF7C70,              
-'Asp' : 0xA00042,             
-'Cys' : 0xFFFF70,             
-'Gln' : 0xFF4C4C,            
-'Glu' : 0x660000,              
-'Gly' : 0xFFFFFF,        
-'His' :  0x7070FF,       
-'Ile' :0x004C00,             
-'Leu':0x455E45,              
-'Lys' :0x4747B8,              
-'Met' :0xB8A042,             
-'Phe':0x534C52,            
-'Pro' :  0x525252,    
-'Ser': 0xFF7042,           
-'Thr': 0xB84C00,          
-'Trp' :   0x4F4600,    
-'Tyr' :0x8C704C,            
-'Val' :0xFF8CFF,            
-'Asx'  :0xFF00FF,     
-'Glx'  :0xFF00FF,       
-'other' :0xFF00FF,
+'ALA' : 0x8CFF8C,         
+'ARG' : 0x00007C,              
+'ASN' : 0xFF7C70,              
+'ASP' : 0xA00042,             
+'CYS' : 0xFFFF70,             
+'GLN' : 0xFF4C4C,            
+'GLU' : 0x660000,              
+'GLY' : 0xFFFFFF,        
+'HIS' :  0x7070FF,       
+'ILE' :0x004C00,             
+'LEU':0x455E45,              
+'LYS' :0x4747B8,              
+'MET' :0xB8A042,             
+'PHE':0x534C52,            
+'PRO' :  0x525252,    
+'SER': 0xFF7042,           
+'THR': 0xB84C00,          
+'TRP' :   0x4F4600,    
+'TYR' :0x8C704C,            
+'VAL' :0xFF8CFF,            
+'ASX'  :0xFF00FF,     
+'GLX'  :0xFF00FF,    
 
 };
 
@@ -13360,9 +17038,9 @@ $3Dmol.builtinColorSchemes = {
         'orangeCarbon' : {'prop':'elem', map:$3Dmol.elementColors.orangeCarbon},
         'purpleCarbon' : {'prop':'elem', map:$3Dmol.elementColors.purpleCarbon},
         'blueCarbon' : {'prop':'elem', map:$3Dmol.elementColors.blueCarbon},
-        'amino' : {'prop':'resAmino', map:$3Dmol.residues.amino},
-        'shapely' :{'prop':'resShapely', map:$3Dmol.residues.shapely},
-        'nucleic' :{'prop':'resNucleic', map:$3Dmol.residues.nucleic},
+        'amino' : {'prop':'resn', map:$3Dmol.residues.amino},
+        'shapely' :{'prop':'resn', map:$3Dmol.residues.shapely},
+        'nucleic' :{'prop':'resn', map:$3Dmol.residues.nucleic},
         'chain' :{'prop':'chain', map:$3Dmol.chains.atom},
         'chainHetatm' :{'prop':'chain', map:$3Dmol.chains.hetatm},
         
@@ -13383,13 +17061,7 @@ $3Dmol.getColorFromStyle = function(atom, style) {
     if (typeof (style.color) != "undefined" && style.color != "spectrum")
         color = style.color;
     if(typeof(scheme) != "undefined") {
-        if(typeof($3Dmol.builtinColorSchemes[scheme]) != "undefined") {
-            //name of builtin colorscheme
-            if(typeof(scheme[atom[scheme.prop]]) != "undefined") {
-                color = scheme.map[atom[scheme.prop]];
-            }
-        } 
-        else if(typeof($3Dmol.elementColors[scheme]) != "undefined") {
+        if(typeof($3Dmol.elementColors[scheme]) != "undefined") {
             //name of builtin colorscheme
             var scheme = $3Dmol.elementColors[scheme];
             if(typeof(scheme[atom[scheme.prop]]) != "undefined") {
@@ -13445,7 +17117,7 @@ var $3Dmol = $3Dmol || {};
 
 /**
  * @typedef CartoonStyleSpec
- * @prop {ColorSpec} color - strand color, may specify as 'spectrum'
+ * @prop {ColorSpec} color - strand color, may specify as 'spectrum' which will apply reversed gradient based on residue number
  * @prop {string} style - style of cartoon rendering (trace, oval, rectangle
  *       (default), parabola, edged)
  * @prop {boolean} ribbon - whether to use constant strand width, disregarding
@@ -14134,7 +17806,7 @@ $3Dmol.drawCartoon = (function() {
             // all pieces of the half-edge data structure
             edges = [];
 
-            // a hash table to hold the adjaceney info
+            // a hash table to hold the adjacency info
             // - Keys are pairs of vertex indices
             // - Values are pointers to half-edge
             var edgeTable = {};
@@ -14346,7 +18018,8 @@ $3Dmol.drawCartoon = (function() {
         var gradients = {};
         for(var g in $3Dmol.Gradient.builtinGradients) {
             if($3Dmol.Gradient.builtinGradients.hasOwnProperty(g)) {
-                gradients[g] = new $3Dmol.Gradient.builtinGradients[g](gradientrange[0],gradientrange[1]);
+                //COUNTER INTUITIVE - spectrum reverses direction to gradient to match other tools
+                gradients[g] = new $3Dmol.Gradient.builtinGradients[g](gradientrange[1],gradientrange[0]);
             }
         }
         
@@ -14457,7 +18130,7 @@ $3Dmol.drawCartoon = (function() {
                 outline = curr.style.cartoon.outline;
             
             // create a new geometry when opacity changes
-            //the should work fine if opacity is set by chain, but will
+            //this should work fine if opacity is set by chain, but will
             //break if it changes within the chain
             if (curr && curr.style.cartoon && (!next.style.cartoon ||
                     curr.style.cartoon.opacity != next.style.cartoon.opacity)) {
@@ -15122,7 +18795,7 @@ $3Dmol.GLDraw = (function() {
      *            radius
      * @param {$3Dmol.Color}
      *            color
-     * @param {integer} fromCap - 0 for none, 1 for flat, 2 for round; Note: currently does not support different styles of caps on the same cylinder.
+     * @param {integer} fromCap - 0 for none, 1 for flat, 2 for round
      * @param {integer} toCap = 0 for none, 1 for flat, 2 for round
      *            
      * */
@@ -15422,6 +19095,14 @@ $3Dmol.GLDraw = (function() {
         geoGroup.vertices += n_verts;
     };
 
+    //returns the center of the selection that is passed to this function
+    var getCenter = function(sel){
+        //todo: look in zoomto at how it is done there
+        //this may just take a list of all of the selected 
+        //atoms and generate an average coordinate and return that
+
+    }
+
     /** Create a cone 
      * @function $3Dmol.GLDraw.drawCone
      * @param {geometry}
@@ -15438,6 +19119,9 @@ $3Dmol.GLDraw = (function() {
     draw.drawCone = function(geo, from, to, radius, color) {
         if (!from || !to)
             return;
+        console.log(from)
+        console.log(to)
+        //check if from and to do not contain x,y,z and if  so generate a center based on the passed selections
 
         color = color || {r:0, g:0, b:0};
 
@@ -15834,60 +19518,211 @@ $3Dmol.GLModel = (function() {
         "NI" : 1.63,
         "Ni" : 1.63
     };
+    /*
+        The dictioanries are for dropdown menus and validation of the viewer
+    */
 
-    var validAtomSpecs = [
-        "resn", // Parent residue name
-        "x", // Atom's x coordinate
-        "y", // Atom's y coordinate
-        "z", // Atom's z coordinate
-        "color", // Atom's color, as hex code
-        "surfaceColor", // Hex code for color to be used for surface patch over this atom
-        "elem", // Element abbreviation (e.g. 'H', 'Ca', etc)
-        "hetflag", // Set to true if atom is a heteroatom
-        "chain", // Chain this atom belongs to, if specified in input file (e.g 'A' for chain A)
-        "resi", // Residue number 
-        "icode",
-        "rescode",
-        "serial", // Atom's serial id numbermodels
-        "atom", // Atom name; may be more specific than 'elem' (e.g 'CA' for alpha carbon)
-        "bonds", // Array of atom ids this atom is bonded to
-        "ss", // Secondary structure identifier (for cartoon render; e.g. 'h' for helix)
-        "singleBonds", // true if this atom forms only single bonds or no bonds at all
-        "bondOrder", // Array of this atom's bond orders, corresponding to bonds identfied by 'bonds'
-        "properties", // Optional mapping of additional properties
-        "b", // Atom b factor data
-        "pdbline", // If applicable, this atom's record entry from the input PDB file (used to output new PDB from models)
-        "clickable", // Set this flag to true to enable click selection handling for this atom
-        "callback", // Callback click handler function to be executed on this atom and its parent viewer
-        "invert", // for selection, inverts the meaning of the selection
-        "reflectivity", //for describing the reflectivity of a model
-        "altLoc"
-    ];
+     GLModel.validElements = [
+        "H",
+        "Li",
+        "LI",
+        "Na",
+        "NA",
+        "K",
+        "C",
+        "N",
+        "O",
+        "F",
+        "P",
+        "S",
+        "CL",
+        "Cl",
+        "BR",
+        "Br",
+        "SE",
+        "Se",
+        "ZN",
+        "Zn",
+        "CU",
+        "Cu",
+        "NI",
+        "Ni"
+    ]
 
-    var validAtomSelectionSpecs = validAtomSpecs.concat([  // valid atom specs are ok too
-        "model", // a single model or list of models from which atoms should be selected
-        "bonds", // overloaded to select number of bonds, e.g. {bonds: 0} will select all nonbonded atoms
-        "predicate", // user supplied function that gets passed an {AtomSpec} and should return true if the atom should be selected
-        "invert", // if set, inverts the meaning of the selection
-        "byres", // if set, expands the selection to include all atoms of any residue that has any atom selected
-        "expand", // expands the selection to include all atoms within a given distance from the selection
-        "within", // intersects the selection with the set of atoms within a given distance from another selection
-        "and", // and boolean logic
-        "or", // or boolean logic
-        "not", // not boolean logic
-    ]);
+    GLModel.validColorSpecs=[
+        "white",
+        "silver",
+        "gray",
+        "grey",
+        "black",
+        "red",
+        "maroon",
+        "yellow",
+        "orange",
+        "olive",
+        "lime",
+        "green",
+        "aqua",
+        "cyan",
+        "teal",
+        "blue",
+        "navy",
+        "fuchsia",
+        "magenta",
+        "purple",
+        "spectrum",
+    ]
 
-    var validAtomStyleSpecs = [
-        "line", // draw bonds as lines
-        "cross", // draw atoms as crossed lines (aka stars)
-        "stick", // draw bonds as capped cylinders
-        "sphere", // draw atoms as spheres
-        "cartoon", // draw cartoon representation of secondary structure
-        "colorfunc",
-    ];
+    GLModel.validColorschemeSpecs =[
+        "whiteCarbon",
+        "greenCarbon",
+        "cyanCarbon",
+        "magentaCarbon",
+        "yellowCarbon",
+        "orangeCarbon",
+        "purpleCarbon",
+        "blueCarbon",
+        "ssPyMOL",
+        "ssJmol",
+        "Jmol",
+        "default",
+        "amino",
+        "shapely",
+        "nucleic",
+        "chain",
+        "chainHetatm",
+    ]
 
+    GLModel.validAtomSpecs = {
+        "resn":{type:"string",valid :true}, // Parent residue name
+        "x":{type:"number",valid:false,step:.1}, // Atom's x coordinate
+        "y":{type:"number",valid:false,step:.1}, // Atom's y coordinate
+        "z":{type:"number",valid:false,step:.1}, // Atom's z coordinate
+        "color":{type:"color",gui:true}, // Atom's color, as hex code
+        "surfaceColor":{type:"color",gui:true}, // Hex code for color to be used for surface patch over this atom
+        "elem":{type:"element",gui:true}, // Element abbreviation (e.g. 'H', 'Ca', etc)
+        "hetflag":{type:"boolean",valid:false}, // Set to true if atom is a heteroatom
+        "chain":{type:"string",gui:true}, // Chain this atom belongs to, if specified in input file (e.g 'A' for chain A)
+        "resi":{type:"number",gui:true}, // Residue number 
+        "icode":{type:"number",valid:false,step:.1},
+        "rescode":{type:"number",valid:false,step:.1},
+        "serial":{type:"number",valid:false,step:.1}, // Atom's serial id numbermodels
+        "atom":{type:"string",valid:false}, // Atom name; may be more specific than 'elem' (e.g 'CA' for alpha carbon)
+        "bonds":{type:"array",valid:false}, // Array of atom ids this atom is bonded to
+        "ss":{type:"string",valid:false}, // Secondary structure identifier (for cartoon render; e.g. 'h' for helix)
+        "singleBonds":{type:"boolean",valid:false}, // true if this atom forms only single bonds or no bonds at all
+        "bondOrder":{type:"array",valid:false}, // Array of this atom's bond orders, corresponding to bonds identfied by 'bonds'
+        "properties":{type:"properties",valid:false}, // Optional mapping of additional properties
+        "b":{type:"number",valid:false,step:.1}, // Atom b factor data
+        "pdbline":{type:"string",valid:false}, // If applicable, this atom's record entry from the input PDB file (used to output new PDB from models)
+        "clickable":{type:"boolean",valid:false}, // Set this flag to true to enable click selection handling for this atom
+        "callback":{type:"function",valid:false}, // Callback click handler function to be executed on this atom and its parent viewer
+        "invert":{type:"boolean",valid:false}, // for selection, inverts the meaning of the selection
+        //unsure about this
+        "reflectivity":{type:"number",gui:true,step:.1}, //for describing the reflectivity of a model
+        "altLoc":{type:"invalid",valid:false}
+    };
+    function extend(obj1, src1) {
+        for (var key in src1) {
+            if (src1.hasOwnProperty(key)) obj1[key] = src1[key];
+        }   
+        return obj1;
+    }   
+    //type is irrelivent here becuase htey are are invalid
+    var validExtras ={  // valid atom specs are ok too
+        "model":{type:"string",valid :false}, // a single model or list of models from which atoms should be selected
+        "bonds":{type:"string",valid :false}, // overloaded to select number of bonds, e.g. {bonds: 0} will select all nonbonded atoms
+        "predicate":{type:"string",valid :false}, // user supplied function that gets passed an {AtomSpec} and should return true if the atom should be selected
+        "invert":{type:"string",valid :false}, // if set, inverts the meaning of the selection
+        "byres":{type:"string",valid :false}, // if set, expands the selection to include all atoms of any residue that has any atom selected
+        "expand":{type:"string",valid :false}, // expands the selection to include all atoms within a given distance from the selection
+        "within":{type:"string",valid :false}, // intersects the selection with the set of atoms within a given distance from another selection
+        "and":{type:"string",valid :false}, // and boolean logic
+        "or":{type:"string",valid :false}, // or boolean logic
+        "not":{type:"string",valid :false}, // not boolean logic
+    }
+    GLModel.validAtomSelectionSpecs = extend(GLModel.validAtomSpecs,validExtras);
+
+    var validLineSpec = {
+        "hidden":{type:"boolean",gui:true},
+        "linewidth":{type:"number",gui:true,step:.1,default:defaultlineWidth},
+        "colorscheme":{type:"colorscheme",gui:true},
+        "color":{type:"color",gui:true},
+    };
+
+    var validCrossSpec = {
+        "hidden":{type:"boolean",gui:true},
+        "linewidth":{type:"number",gui:false,step:.1,default:defaultlineWidth,min:0},//deprecated
+        "colorscheme":{type:"colorscheme",gui:true},
+        "color":{type:"color",gui:true},
+        "radius":{type:"number",gui:true,step:.1,default:1,min:.1},
+        "scale":{type:"number",gui:true,step:.1,default:1,min:0},
+    }
+
+    var validStickSpec = {
+        "hidden":{type:"boolean",gui:true},
+        "colorscheme":{type:"colorscheme",gui:true},
+        "color":{type:"color",gui:true},
+        "radius":{type:"number",gui:true,step:.1,default:.25,min:.1},
+        "singleBonds":{type:"boolean",gui:true},
+    }
+
+    var validSphereSpec = {
+        "hidden":{type:"boolean",gui:true},
+        "singleBonds":{type:"boolean",gui:true},
+        "colorscheme":{type:"colorscheme",gui:true},
+        "color":{type:"color",gui:true},
+        "radius":{type:"number",gui:true,step:.1,default:1.5,min:0},
+    }
+
+    var validCartoonSpec = {
+        "style":{validItems:["trace","oval","rectangle","parabola","edged"],gui:true},
+        "color":{type:"color",gui:true},
+        "arrows":{type:"boolean",gui:true},
+        "ribbon":{type:"boolean",gui:true},
+        "hidden":{type:"boolean",gui:true},
+        "tubes":{type:"boolean",gui:true},
+        "thickness":{type:"number",gui:true,step:.1,default:1,min:0},
+        "width":{type:"number",gui:true,step:.1,default:1,min:0},
+        "opacity":{type:"number",gui:true,step:.1,default:1,min:0,max:1},
+    }
+
+    GLModel.validAtomStyleSpecs = {
+        "line":{validItems:validLineSpec,gui:true}, // draw bonds as lines
+        "cross":{validItems:validCrossSpec,gui:true}, // draw atoms as crossed lines (aka stars)
+        "stick":{validItems:validStickSpec,gui:true}, // draw bonds as capped cylinders
+        "sphere":{validItems:validSphereSpec,gui:true}, // draw atoms as spheres
+        "cartoon":{validItems:validCartoonSpec,gui:true}, // draw cartoon representation of secondary structure
+        "colorfunc":{validItems:null,valid:false}
+    };
+
+    GLModel.validSurfaceSpecs = {
+        "opacity":{type:"number",gui:true,step:.1,default:1,min:0,max:1},
+        "colorscheme":{type:"colorscheme",gui:true},
+        "color":{type:"color",gui:true},
+        "voldata":{type:"number",gui:false},
+        "volscheme":{type:"number",gui:false},
+        "map":{type:"number",gui:false}
+    }
+
+    GLModel.validLabelResSpecs = {
+        "font":{type:"string",gui:true},
+        "fontSize":{type:"number",gui:true,step:1,default:12,min:1},
+        "fontColor":{type:"color",gui:true},
+        "fontOpacity":{type:"number",gui:true,step:.1,default:1,min:0,max:1},
+        "borderThickness":{type:"number",gui:true,step:.1,default:1,min:0},
+        "borderColor":{type:"color",gui:true},
+        "borderOpacity":{type:"number",gui:true,step:.1,default:1,min:0,max:1},
+        "backgroundColor":{type:"color",gui:true},
+        "backgroundOpacity":{type:"number",gui:true,step:.1,default:1,min:0,max:1},
+        "position":{type:"array",valid:false},
+        "inFront":{type:"boolean",gui:true},
+        "showBackground":{type:"boolean",gui:true},
+        "fixed":{type:"boolean",gui:true},
+        "alignment":{validItems:["topLeft","topCenter","topRight","centerLeft","center","centerRight","bottomLeft","bottomCenter","bottomRight"],gui:true},
+        "scale":{type:"boolean",gui:false},
+    }
     // class functions
-
     // return true if a and b represent the same style
     var sameObj = function(a,b) {
         if(a && b)
@@ -15895,7 +19730,6 @@ $3Dmol.GLModel = (function() {
         else
             return a == b;
     };    
-
    
     function GLModel(mid, defaultcolors) {
         // private variables
@@ -15912,7 +19746,6 @@ $3Dmol.GLModel = (function() {
         var defaultColor = $3Dmol.elementColors.defaultColor;
         
         var ElementColors = (defaultcolors) ? defaultcolors : $3Dmol.elementColors.defaultColors;
-
 
         // drawing functions must be associated with model object since
         // geometries can't span multiple canvases
@@ -15943,13 +19776,12 @@ $3Dmol.GLModel = (function() {
         // cross drawing
         /** @typedef CrossStyleSpec
          * @prop {boolean} hidden - do not show 
-         * @prop {number} linewidth 
+         * @prop {number} linewidth *deprecated due to vanishing browser support* 
          * @prop {number} radius 
          * @prop {number} scale - scale radius by specified amount
          * @prop {ColorschemeSpec} colorscheme - element based coloring
          * @prop {ColorSpec} color - fixed coloring, overrides colorscheme
          */
-        
         /**
          * 
          * @param {AtomSpec} atom
@@ -16098,7 +19930,7 @@ $3Dmol.GLModel = (function() {
         
         /**@typedef LineStyleSpec
          * @prop {boolean} hidden - do not show line
-         * @prop {number} linewidth 
+         * @prop {number} linewidth *deprecated due to vanishing browser support* 
          * @prop {ColorschemeSpec} colorscheme - element based coloring
          * @prop {ColorSpec} color - fixed coloring, overrides colorscheme
          */
@@ -17056,11 +20888,11 @@ $3Dmol.GLModel = (function() {
         /**
          * Returns model's frames property, a list of atom lists
          * 
-         * @function $3Dmol.GLModel#getFrames
-         * @return {Array.<Object>}
+         * @function $3Dmol.GLModel#getNumFrames
+         * @return {number}
          */
-        this.getFrames = function() {
-            return frames;
+        this.getNumFrames = function() {
+            return (frames.numFrames != undefined)?frames.numFrames:frames.length;
         };
         
         /**
@@ -17069,18 +20901,36 @@ $3Dmol.GLModel = (function() {
          * 
          * @function $3Dmol.GLModel#setFrame
          * @param {number} framenum - model's atoms are set to this index in frames list
+         * @return {Promise}
          */
         this.setFrame = function(framenum) {
-            if (frames.length == 0) {
-                return;
-            }
-            if (framenum >= 0 && framenum < frames.length) {
-                atoms = frames[framenum];
-            }
-            else {
-                atoms = frames[frames.length-1];
-            }
-            molObj = null;
+            var numFrames = this.getNumFrames();
+            return new Promise(function(resolve, reject) {
+                if (numFrames == 0) {
+                    //return;
+                    resolve();
+                }
+                if (framenum < 0 || framenum >= numFrames) {
+                    framenum = numFrames - 1;
+                }
+                if (frames.url != undefined) {
+                     $3Dmol.getbin("http://"+frames.url+"/traj/frame/"+framenum+"/"+frames.path, function (buffer) {
+                        var values = new Float32Array(buffer,44);
+                        var count = 0;
+                        for (var i = 0; i < atoms.length; i++) {
+                            atoms[i].x = values[count++];
+                            atoms[i].y = values[count++];
+                            atoms[i].z = values[count++];
+                        }
+                        resolve();
+                    },"POST");
+                }
+                else {
+                    atoms = frames[framenum];
+                    resolve();
+                }
+                molObj = null;
+            });
         };
         
         /**
@@ -17107,7 +20957,8 @@ $3Dmol.GLModel = (function() {
           $3Dmol.download("pdb:4UAA",viewer,{},function(){  
             viewer.setStyle({},{stick:{}});
             viewer.vibrate(10, 1);
-            viewer.animate({loop: "backAndForth"});
+            viewer.animate({loop: "forward",reps: 1});
+
             viewer.zoomTo();
                   viewer.render();
               });            
@@ -17218,6 +21069,23 @@ $3Dmol.GLModel = (function() {
             modelData = mData;
         }
         
+        //return true if atom value matches property val
+        var propertyMatches = function(atomval, val) {
+            if (atomval == val) {
+                return true;                
+            } else if(typeof(val) == 'string' && typeof(atomval) == 'number'){
+                //support numerical integer ranges, e.g. resi: 3-7
+               var match = val.match(/(-?\d+)\s*-\s*(-?\d+)/);
+               if(match) {
+                   var lo = parseInt(match[1]);
+                   var hi = parseInt(match[2]);
+                   if(match && atomval >= lo && atomval <= hi) {
+                       return true;                   
+                   }
+               }
+            }
+            return false;
+        }
         /** given a selection specification, return true if atom is selected
          * 
          * @function $3Dmol.GLModel#atomIsSelected
@@ -17299,11 +21167,12 @@ $3Dmol.GLModel = (function() {
                     else if ($.isArray(sel[key])) {
                         // can be any of the listed values
                         var valarr = sel[key];
+                        var atomval = atom[key];
                         for ( var i = 0; i < valarr.length; i++) {
-                            if (atom[key] == valarr[i]) {
+                            if(propertyMatches(atomval, valarr[i])) {
                                 isokay = true;
                                 break;
-                            }
+                            }                        
                         }
                         if (!isokay) {
                             ret = false;
@@ -17311,7 +21180,7 @@ $3Dmol.GLModel = (function() {
                         }
                     } else { // single match
                         var val = sel[key];
-                        if (atom[key] != val) {
+                        if(!propertyMatches(atom[key], val)) {
                             ret = false;
                             break;
                         }
@@ -17329,17 +21198,12 @@ $3Dmol.GLModel = (function() {
          * @param {AtomSelectionSpec} sel
          * @return {Array.<Object>}
          * @example
-         *$3Dmol.download("pdb:4UB9",viewer,{},function(){
-                  viewer.setBackgroundColor(0xffffffff);
-
-                  viewer.setStyle({chain:'A'},{line:{hidden:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'B'},{line:{linewidth:2.0,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'C'},{cross:{hidden:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'D'},{cross:{linewidth:2.0,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'E'},{cross:{radius:2.0,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'F'},{stick:{hidden:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'G'},{stick:{radius:0.8,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.ROYGB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'H'},{stick:{singleBonds:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.ROYGB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
+         *$3Dmol.download("pdb:4wwy",viewer,{},function(){
+                  var atoms = viewer.selectedAtoms({chain:'A'});
+                  for(var i = 0, n = atoms.length; i < n; i++) {
+                     atoms[i].b = 0.0;
+                  }
+                  viewer.setStyle({cartoon:{colorscheme:{prop:'b',gradient: 'roygb',min:0,max:30}}});
                   viewer.render();
               });
          */
@@ -17589,9 +21453,9 @@ $3Dmol.GLModel = (function() {
                   viewer.setBackgroundColor(0xffffffff);
 
                   viewer.setStyle({chain:'A'},{line:{hidden:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'B'},{line:{linewidth:2.0,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
+                  viewer.setStyle({chain:'B'},{line:{colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
                   viewer.setStyle({chain:'C'},{cross:{hidden:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.Sinebow($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
-                  viewer.setStyle({chain:'D'},{cross:{linewidth:2.0,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
+                  viewer.setStyle({chain:'D'},{cross:{colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
                   viewer.setStyle({chain:'E'},{cross:{radius:2.0,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
                   viewer.setStyle({chain:'F'},{stick:{hidden:true,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.RWB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
                   viewer.setStyle({chain:'G'},{stick:{radius:0.8,colorscheme:{prop:'b',gradient: new $3Dmol.Gradient.ROYGB($3Dmol.getPropertyRange(viewer.selectedAtoms(),'b'))}}});
@@ -17610,13 +21474,13 @@ $3Dmol.GLModel = (function() {
             // report to console if this is not a valid selector
             var s;
             for (s in sel) {
-                if(validAtomSelectionSpecs.indexOf(s) === -1) {
+                if(!GLModel.validAtomSelectionSpecs.hasOwnProperty(s)) {
                     console.log('Unknown selector ' + s);
                 }
             }
             // report to console if this is not a valid style
             for (s in style) {
-                if(validAtomStyleSpecs.indexOf(s) === -1) {
+                if(!GLModel.validAtomStyleSpecs.hasOwnProperty(s)) {
                     console.log('Unknown style ' + s);
                 }
             }
@@ -17653,7 +21517,7 @@ $3Dmol.GLModel = (function() {
             var that = this;
             setStyleHelper(atoms);
             for (var i = 0; i < frames.length; i++) {
-                setStyleHelper(frames[i]);
+                if(frames[i] !== atoms) setStyleHelper(frames[i]);
             }
             
             if (changedAtoms)
@@ -17677,9 +21541,9 @@ $3Dmol.GLModel = (function() {
                                   color:'red',
                                   hoverable:true,
                                   clickable:true,
-                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render();},
-                                  hover_callback: function(){ viewer.render();},
-                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render();}
+                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render( );},
+                                  hover_callback: function(){ viewer.render( );},
+                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render( );}
                                  });
               viewer.addCylinder({start:{x:0.0,y:2.0,z:0.0},
                                   end:{x:0.0,y:10.0,z:0.0},
@@ -17700,7 +21564,7 @@ $3Dmol.GLModel = (function() {
             // report to console if this is not a valid selector
             var s;
             for (s in sel) {
-                if (validAtomSelectionSpecs.indexOf(s) === -1) {
+                if (!GLModel.validAtomSelectionSpecs.hasOwnProperty(s)) {
                     console.log('Unknown selector ' + s);
                 }
             }
@@ -17744,9 +21608,9 @@ $3Dmol.GLModel = (function() {
                                   color:'red',
                                   hoverable:true,
                                   clickable:true,
-                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render();},
-                                  hover_callback: function(){ viewer.render();},
-                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render();}
+                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render( );},
+                                  hover_callback: function(){ viewer.render( );},
+                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render( );}
                                  });
               viewer.addCylinder({start:{x:0.0,y:2.0,z:0.0},
                                   end:{x:0.0,y:10.0,z:0.0},
@@ -17765,7 +21629,7 @@ $3Dmol.GLModel = (function() {
         this.setHoverable = function(sel, hoverable, hover_callback,unhover_callback){
             var s;
             for (s in sel) {
-                if (validAtomSelectionSpecs.indexOf(s) === -1) {
+                if (!GLModel.validAtomSelectionSpecs.hasOwnProperty(s)) {
                     console.log('Unknown selector ' + s);
                 }
             }
@@ -17985,11 +21849,11 @@ $3Dmol.GLModel = (function() {
         };
         
         /**@function hide
-             Don't show this model is future renderings.  Keep all styles and state
+         * Don't show this model in future renderings. Keep all styles and state
          * so it can be efficiencly shown again.
          * @example
-         var element=$('#gldiv');
-         var viewer = $3Dmol.createViewer(element);
+            var element=$('#gldiv');
+            var viewer = $3Dmol.createViewer(element);
             var m = viewer.addModel();
             m.hide();
             viewer.render(callback);
@@ -18055,12 +21919,40 @@ $3Dmol.GLModel = (function() {
             }
         }
 
+
+    /**
+    * Set coordinates for the atoms parsed from various topology files. 
+    * @function $3Dmol.GLModel#setCoordinatesFromURL
+    * @param {string} url - contains the url where mdsrv has been hosted
+    * @param {string} path - contains the path of the file (<root>/filename)
+    * @return {Promise}
+    */
+
+        this.setCoordinatesFromURL = function (url, path) {
+            var atomCount = atoms.length;
+            frames = [];
+            var self = this;
+            return new Promise(function(resolve,reject){
+                $.get("http://"+url+"/traj/numframes/"+path,function(numFrames){
+                    if (!isNaN(parseInt(numFrames))) {
+                        frames.push(atoms);
+                        frames.numFrames = numFrames;
+                        frames.url = url;
+                        frames.path = path;
+                        self.setFrame(0)
+                        .then(function() {
+                            resolve();
+                        });
+                    }
+                });
+            });
+        }
+
     /**
     * Set coordinates for the atoms parsed from the prmtop file. 
     * @function $3Dmol.GLModel#setCoordinates
     * @param {string} str - contains the data of the file
     * @param {string} format - contains the format of the file
-    * @param {function} callback - function called when a inpcrd or a mdcrd file is uploaded
     */
 
         this.setCoordinates = function(str, format) {
@@ -18079,7 +21971,8 @@ $3Dmol.GLModel = (function() {
                     console.log(err);
                 }
             }
-            if (format == "mdcrd" || format == "inpcrd" || format == "pdb") {
+            var supportedFormats = {"mdcrd":"","inpcrd":"","pdb":"","netcdf":""};
+            if (supportedFormats.hasOwnProperty(format)) {
                 frames = [];
                 var atomCount = atoms.length;
                 var values = GLModel.parseCrd(str, format);
@@ -18115,8 +22008,8 @@ $3Dmol.GLModel = (function() {
 
         this.addAtomSpecs = function(customAtomSpecs) {
             for (var i = 0; i < customAtomSpecs.length; i++) {
-                if (validAtomSelectionSpecs.indexOf(customAtomSpecs[i]) == -1) {
-                    validAtomSelectionSpecs.push(customAtomSpecs[i]);
+                if (GLModel.validAtomSelectionSpecs.hasOwnProperty(customAtomSpecs[i])) {
+                    GLModel.validAtomSelectionSpecs.push(customAtomSpecs[i]);
                 }
             }
         }
@@ -18143,7 +22036,11 @@ $3Dmol.GLModel = (function() {
                 }
                 index = data.indexOf("\nATOM", index);
             }
-            return values;
+
+        } else if (format == "netcdf") {
+            var reader = new netcdfjs(data);
+            values = [].concat.apply([],reader.getDataVariable('coordinates'));
+
         } else {
             var index = data.indexOf("\n"); // remove the first line containing title
             if(format == 'inpcrd') {
@@ -18152,13 +22049,12 @@ $3Dmol.GLModel = (function() {
 
             data = data.slice(index + 1);
             values = data.match(/\S+/g).map(parseFloat);
-            return values;
         }
+        return values;
     }
 
     GLModel.parseMolData = function(data, format, options) {
         format = format || "";
-
         if (!data)
             return []; //leave an empty model
 
@@ -18182,6 +22078,8 @@ $3Dmol.GLModel = (function() {
                     format = "mol2";
                 } else if (data.match(/^HETATM/gm) || data.match(/^ATOM/gm)) {
                     format = "pdb";
+                } else if (data.match(/ITEM: TIMESTEP/gm)) {
+                    format = "lammpstrj";
                 } else if (data.match(/^.*\n.*\n.\s*(\d+)\s+(\d+)/gm)) {
                     format = "sdf"; // could look at line 3 
                 } else if (data.match(/^%VERSION\s+\VERSION_STAMP/gm)) {
@@ -18959,9 +22857,9 @@ $3Dmol.GLShape = (function() {
                                   color:'red',
                                   hoverable:true,
                                   clickable:true,
-                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render();},
-                                  hover_callback: function(){ viewer.render();},
-                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render();}
+                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render( );},
+                                  hover_callback: function(){ viewer.render( );},
+                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render( );}
                                  });
               viewer.addCylinder({start:{x:0.0,y:2.0,z:0.0},
                                   end:{x:0.0,y:10.0,z:0.0},
@@ -19007,7 +22905,6 @@ $3Dmol.GLShape = (function() {
         };
 
         this.addDashedCylinder = function(cylinderSpec){
-            console.log("addDashedCylinder");
             cylinderSpec.start = cylinderSpec.start || {};
             cylinderSpec.end = cylinderSpec.end || {};
             cylinderSpec.dashLength=cylinderSpec.dashLength || .25;
@@ -19097,6 +22994,13 @@ $3Dmol.GLShape = (function() {
             lineArray[li+1] = vstart+1;
             geoGroup.lineidx += 2;
             
+            var centroid = new $3Dmol.Vector3();
+            components.push({
+                centroid : centroid.addVectors(start,end).multiplyScalar(0.5)
+            });
+            var geoGroup = geo.updateGeoGroup(0);
+            updateBoundingFromPoints(this.boundingSphere, components,
+                    geoGroup.vertexArray);            
         }
         /**
          * Creates an arrow shape
@@ -19115,7 +23019,7 @@ $3Dmol.GLShape = (function() {
                       clickable:true,
                       callback:function(){
                           this.color.setHex(0xFF0000FF);
-                          viewer.render();
+                          viewer.render( );
                       }
                   });
                   viewer.render();
@@ -19180,18 +23084,16 @@ $3Dmol.GLShape = (function() {
                                                  smoothness: 5,
                                                  opacity:0.5,
                                                  wireframe:true,
-                                                 linewidth:0.1,
                                                  clickable:true,
                                                  callback:
                                                  function() {
                                                      this.opacity = 0.0;
-                                                     viewer.render(callback);
+                                                     viewer.render( );
                                                  }});
                   viewer.setStyle({}, {stick:{}});
                   viewer.zoomTo();
-                  viewer.render(callback);
+                  viewer.render();
                 });
-         //this specific example selects every atom in the
          */
         this.addIsosurface = function(data, volSpec, callback) {//may want to cache the arrays geneerated when selectedRegion ==true
            
@@ -19242,39 +23144,44 @@ $3Dmol.GLShape = (function() {
 
             if (volSpec.selectedRegion !== undefined) {
 
-                var xmax = volSpec.selectedRegion[0], ymax = volSpec.selectedRegion[0], zmax = volSpec.selectedRegion[0], xmin = volSpec.selectedRegion[0], ymin = volSpec.selectedRegion[0], zmin = volSpec.selectedRegion[0];
+                var xmax = volSpec.selectedRegion[0].x, 
+                    ymax = volSpec.selectedRegion[0].y, 
+                    zmax = volSpec.selectedRegion[0].z, 
+                    xmin = volSpec.selectedRegion[0].x, 
+                    ymin = volSpec.selectedRegion[0].y, 
+                    zmin = volSpec.selectedRegion[0].z;
 
                 for (var i = 0; i < volSpec.selectedRegion.length; i++) {
-                    if (volSpec.selectedRegion[i].x > xmax.x)
-                        xmax = volSpec.selectedRegion[i];
-                    else if (volSpec.selectedRegion[i].x < xmin.x)
-                        xmin = volSpec.selectedRegion[i];
-                    if (volSpec.selectedRegion[i].y > ymax.y)
-                        ymax = volSpec.selectedRegion[i];
-                    else if (volSpec.selectedRegion[i].y < ymin.y)
-                        ymin = volSpec.selectedRegion[i];
-                    if (volSpec.selectedRegion[i].z > zmax.z)
-                        zmax = volSpec.selectedRegion[i];
-                    else if (volSpec.selectedRegion[i].z < zmin.z)
-                        zmin = volSpec.selectedRegion[i];
+                    if (volSpec.selectedRegion[i].x > xmax)
+                        xmax = volSpec.selectedRegion[i].x;
+                    else if (volSpec.selectedRegion[i].x < xmin)
+                        xmin = volSpec.selectedRegion[i].x;
+                    if (volSpec.selectedRegion[i].y > ymax)
+                        ymax = volSpec.selectedRegion[i].y;
+                    else if (volSpec.selectedRegion[i].y < ymin)
+                        ymin = volSpec.selectedRegion[i].y;
+                    if (volSpec.selectedRegion[i].z > zmax)
+                        zmax = volSpec.selectedRegion[i].z;
+                    else if (volSpec.selectedRegion[i].z < zmin)
+                        zmin = volSpec.selectedRegion[i].z;
                 }
 
                 var rad = volSpec.radius;
-                xmax.x = xmax.x + rad;
-                xmin.x = xmin.x - rad;
-                ymin.y = ymin.y - rad;
-                ymax.y = ymax.y + rad;
-                zmin.z = zmin.z - rad;
-                zmax.z = zmax.z + rad;
+                xmin -= rad;
+                xmax += rad;
+                ymin -= rad;
+                ymax += rad;
+                zmin -= rad;
+                zmax += rad;
 
                 // accounts for radius
                 for (var i = 0; i < verts.length; i++) {
-                    if (verts[i].x > xmin.x
-                            && verts[i].x < xmax.x
-                            && verts[i].y > ymin.y
-                            && verts[i].y < ymax.y
-                            && verts[i].z > zmin.z
-                            && verts[i].z < zmax.z
+                    if (verts[i].x > xmin
+                            && verts[i].x < xmax
+                            && verts[i].y > ymin
+                            && verts[i].y < ymax
+                            && verts[i].z > zmin
+                            && verts[i].z < zmax
                             && inSelectedRegion(verts[i],
                                     volSpec.selectedRegion,
                                     volSpec.selectedOffset, volSpec.radius)) {
@@ -19592,18 +23499,22 @@ $3Dmol.GLViewer = (function() {
         // $(container).width(WIDTH);
         // $(container).height(HEIGHT);
 
-        var ASPECT = WIDTH / HEIGHT;
+       
         var NEAR = 1, FAR = 800;
         var CAMERA_Z = 150;
         var fov = 20;
 
         var linkedViewers = [];
-
         var renderer = new $3Dmol.Renderer({
             antialias : true,
             preserveDrawingBuffer: true, //so we can export images
             premultipliedAlpha : false,/* more traditional compositing with background */
-            id:config.id
+            id:config.id,
+            row:config.row,
+            col:config.col,
+            rows:config.rows,
+            cols:config.cols,
+            canvas:config.canvas
         });
         renderer.domElement.style.width = "100%";
         renderer.domElement.style.height = "100%";
@@ -19612,6 +23523,15 @@ $3Dmol.GLViewer = (function() {
         renderer.domElement.style.top = "0px";
         renderer.domElement.style.left = "0px";
         renderer.domElement.style.zIndex = "0";
+
+        var row = config.row;
+        var col = config.col;
+        var cols = config.cols;
+        var rows = config.rows;
+        var viewers = config.viewers;
+        var control_all = config.control_all;
+
+        var ASPECT =renderer.getAspect(WIDTH,HEIGHT);
 
         var camera = new $3Dmol.Camera(fov, ASPECT, NEAR, FAR, config.orthographic);
         camera.position = new $3Dmol.Vector3(camerax, 0, CAMERA_Z);
@@ -19634,7 +23554,7 @@ $3Dmol.GLViewer = (function() {
         // UI variables
         var cq = new $3Dmol.Quaternion(0, 0, 0, 1);
         var dq = new $3Dmol.Quaternion(0, 0, 0, 1);
-        var animated = false;
+        var animated = 0;
         var isDragging = false;
         var mouseStartX = 0;
         var mouseStartY = 0;
@@ -19644,6 +23564,14 @@ $3Dmol.GLViewer = (function() {
         var cslabNear = 0;
         var cslabFar = 0;      
         
+        var decAnim = function() {
+            //decrement the number of animations currently
+            animated--;
+            if(animated < 0) animated = 0;
+        }
+        var incAnim = function() {
+            animated++;
+        }
         var nextSurfID = function() {
             //compute the next highest surface id directly from surfaces
             //this is necessary to support linking of model data
@@ -19654,6 +23582,21 @@ $3Dmol.GLViewer = (function() {
             }
             return max+1;
         };
+
+        //updates font size of labels based on camera zoom
+        var setLabelStyles = function(scaleFactor){
+            for(var label in labels){
+                var label = labels[label];
+                if(label.stylespec.scale){
+                    modelGroup.remove(label.sprite);
+                    label.dispose();
+                    //change font size here
+                    label.stylespec.fontSize*=(1+scaleFactor);
+                    label.setContext();
+                    modelGroup.add(label.sprite);
+                }
+            }
+        }
 
         var setSlabAndFog = function() {
             
@@ -19688,6 +23631,7 @@ $3Dmol.GLViewer = (function() {
         // display scene
         //if nolink is set/true, don't propagate changes to linked viewers
         var show = function(nolink) {
+            renderer.setViewport();
             if (!scene)
                 return;
             // var time = new Date();
@@ -19695,7 +23639,8 @@ $3Dmol.GLViewer = (function() {
             renderer.render(scene, camera);
             // console.log("rendered in " + (+new Date() - time) + "ms");
             
-            if(!nolink && linkedViewers.length > 0) {                var view = _viewer.getView();
+            if(!nolink && linkedViewers.length > 0) {                
+                var view = _viewer.getView();
                 for(var i = 0; i < linkedViewers.length; i++) {
                     var other = linkedViewers[i];
                     other.setView(view, true);
@@ -19725,7 +23670,6 @@ $3Dmol.GLViewer = (function() {
         };
 
         initializeScene();
-
         renderer.setClearColorHex(bgColor, 1.0);
         scene.fog.color = $3Dmol.CC.color(bgColor);
 
@@ -19935,12 +23879,36 @@ $3Dmol.GLViewer = (function() {
             currentModelPos = modelGroup.position.clone();
             cslabNear = slabNear;
             cslabFar = slabFar;
+            console.log(row)
+
+
+
         };
         
         var _handleMouseScroll  = this._handleMouseScroll = function(ev) { // Zoom
             ev.preventDefault();
             if (!scene)
                 return;
+
+            WIDTH = container.width();
+            HEIGHT = container.height(); 
+
+            var xy = getXY(ev);
+            var x = xy[0];
+            var y = xy[1];
+            if (x === undefined)
+                return;
+            if(viewers != undefined && !control_all){
+                var width = WIDTH/cols;
+                var height = HEIGHT/rows;
+                var r =Math.floor(xy[1]/height);
+                var c=Math.floor(xy[0]/width);
+
+                if(r != row || c != col)
+                    return;
+
+            }
+
             var scaleFactor = (CAMERA_Z - rotationGroup.position.z) * 0.85;
             var mult = 1.0;
             if(ev.originalEvent.ctrlKey) {
@@ -19954,10 +23922,9 @@ $3Dmol.GLViewer = (function() {
                         * ev.originalEvent.wheelDelta / 400;
             }
             if(rotationGroup.position.z > CAMERA_Z) rotationGroup.position.z = CAMERA_Z*0.999; //avoid getting stuck
-
+            //setLabelStyles(scaleFactor/originalPosition);
             show();
-        };
-        
+        };        
         /**
          * Return image URI of viewer contents (base64 encoded).
          * @function $3Dmol.GLViewer#pngURI
@@ -19981,22 +23948,21 @@ $3Dmol.GLViewer = (function() {
         var hoverTimeout;
         var _handleMouseMove = this._handleMouseMove = function(ev) { // touchmove
 
-            clearTimeout(hoverTimeout);
+            WIDTH = container.width();
+            HEIGHT = container.height();
 
-            
+            clearTimeout(hoverTimeout);
             var offset = $('canvas',container).offset();
             var mouseX = ((getXY(ev)[0] - offset.left) / WIDTH) * 2 - 1;
             var mouseY = -((getXY(ev)[1] - offset.top) / HEIGHT) * 2 + 1;
             if(current_hover !== null)
                 handleHoverContinue(mouseX,mouseY,ev);
-            hoverTimeout=setTimeout(
-                function(){
-                    handleHoverSelection(mouseX,mouseY,ev);
-                }
+                hoverTimeout=setTimeout(
+                    function(){
+                        handleHoverSelection(mouseX,mouseY,ev);
+                    }
                 ,hoverDuration);
 
-            WIDTH = container.width();
-            HEIGHT = container.height();
             ev.preventDefault();
             if (!scene)
                 return;
@@ -20010,6 +23976,18 @@ $3Dmol.GLViewer = (function() {
             if (x === undefined)
                 return;
             //hover timeout
+
+            if(viewers != undefined && ! control_all){
+                var width = WIDTH/cols;
+                var height = HEIGHT/rows;
+                var r =Math.floor(xy[1]/height);
+                var c=Math.floor(xy[0]/width);
+
+                if(r != row || c != col)
+                    return;
+
+            }
+
 
             var dx = (x - mouseStartX) / WIDTH;
             var dy = (y - mouseStartY) / HEIGHT;
@@ -20028,7 +24006,11 @@ $3Dmol.GLViewer = (function() {
                 // translate
                 mode = 1;
             }
-
+            var xyRatio = renderer.getXYRatio();
+            var ratioX = xyRatio[0];
+            var ratioY = xyRatio[1];
+            dx*=ratioX;
+            dy*=ratioY;
             var r = Math.sqrt(dx * dx + dy * dy);
             var scaleFactor;
             if (mode == 3
@@ -20044,7 +24026,7 @@ $3Dmol.GLViewer = (function() {
                 if(rotationGroup.position.z > CAMERA_Z) rotationGroup.position.z = CAMERA_Z*0.999; //avoid getting stuck
             } else if (mode == 1 || mouseButton == 2
                     || ev.ctrlKey) { // Translate
-                var t = screenXY2model(x-mouseStartX, y-mouseStartY);
+                var t = screenXY2model(ratioX*(x-mouseStartX), ratioY*(y-mouseStartY));
                 modelGroup.position.addVectors(currentModelPos,t);
                 
             } else if ((mode === 0 || mouseButton == 1)
@@ -20066,7 +24048,7 @@ $3Dmol.GLViewer = (function() {
             container = element;
             WIDTH = container.width();
             HEIGHT = container.height();
-            ASPECT = WIDTH / HEIGHT;
+            ASPECT = renderer.getAspect(WIDTH,HEIGHT);
             renderer.setSize(WIDTH, HEIGHT);
             container.append(renderer.domElement);
             glDOM = $(renderer.domElement);
@@ -20089,7 +24071,7 @@ $3Dmol.GLViewer = (function() {
          * Change the viewer's container element 
          * Also useful if the original container element was removed from the DOM.
          * 
-         * @function $3Dmol.GLViewer#resetContainer
+         * @function $3Dmol.GLViewer#setContainer
          *
          * @param {Object | string} element
          *            Either HTML element or string identifier. Defaults to the element used to initialize the viewer.
@@ -20133,6 +24115,7 @@ $3Dmol.GLViewer = (function() {
             bgColor = c.getHex();
             renderer.setClearColorHex(c.getHex(), a);
             show();
+            
             return this;
         };
         
@@ -20228,7 +24211,7 @@ $3Dmol.GLViewer = (function() {
         this.resize = function() {
             WIDTH = container.width();
             HEIGHT = container.height();
-            ASPECT = WIDTH / HEIGHT;
+            ASPECT = renderer.getAspect(WIDTH,HEIGHT);
             renderer.setSize(WIDTH, HEIGHT);
             camera.aspect = ASPECT;
             camera.updateProjectionMatrix();
@@ -20248,24 +24231,15 @@ $3Dmol.GLViewer = (function() {
          * @return {GLModel}
          * 
          * @example // Retrieve reference to first GLModel added var m =
-         *      $.get('volData/4csv.pdb', function(data) {
-      viewer.addModel(data,'pdb');
-      viewer.setStyle({cartoon:{},stick:{}});
-      viewer.getModel(0);
-      viewer.zoomTo();
-      viewer.render(callback);
-
-    });
-    
-    //can't use jquery with binary data
-    var req = new XMLHttpRequest();
-    req.open('GET', 'volData/4csv.ccp4.gz', true);
-    req.responseType = "arraybuffer";
-    req.onload = function (aEvt) {      
-       var voldata = new $3Dmol.VolumeData(req.response, 'ccp4.gz');
-                          
-      viewer.render(callback);
-    };
+         *    $3Dmol.download("pdb:1UBQ",viewer,{},function(m1){
+                  $3Dmol.download("pdb:1UBI", viewer,{}, function(m2) {
+                    viewer.zoomTo();
+                    m1.setStyle({cartoon: {color:'green'}});
+                    //could use m2 here as well
+                    viewer.getModel().setStyle({cartoon: {color:'blue'}});
+                    viewer.render();
+                })
+              });     
          */
         this.getModel = function(id) {
             if(!(id in models)) {
@@ -20289,29 +24263,16 @@ $3Dmol.GLViewer = (function() {
          *            Default "y"
          * @param {number}
          *            [animationDuration] - an optional parameter that denotes
-         *            the duration of a zoom animation
+         *            the duration of the rotation animation. Default 0 (no animation)
          * @param {boolean} [fixedPath] - if true animation is constrained to 
          *      requested motion, overriding updates that happen during the animation         *            
-         * @example     $.get('volData/4csv.pdb', function(data) {
-      viewer.addModel(data,'pdb');
-      viewer.setStyle({cartoon:{},stick:{}});
+         * @example     $3Dmol.download('cid:4000', viewer, {}, function() {
+      viewer.setStyle({stick:{}});
       viewer.zoomTo();
+      viewer.rotate(90,'y',1);
       viewer.render(callback);
     });
-    
-    //can't use jquery with binary data
-    var req = new XMLHttpRequest();
-    req.open('GET', 'volData/4csv.ccp4.gz', true);
-    req.responseType = "arraybuffer";
-    req.onload = function (aEvt) {      
-       var voldata = new $3Dmol.VolumeData(req.response, 'ccp4.gz');
-                          
-      //viewer.translate(10,10);         
-      //viewer.zoomTo({resn:'STI'});
-      //viewer.zoom(10);
-      viewer.rotate(90,"y");
-      viewer.render(callback);
-    };
+
          *  
          */
         this.rotate = function(angle, axis, animationDuration, fixedPath) {
@@ -20320,18 +24281,22 @@ $3Dmol.GLViewer = (function() {
             if (typeof (axis) === "undefined") {
                 axis = "y";
             }
-            
+
+            if(axis == "x"){
+                axis = {x:1,y:0,z:0}
+            }if(axis =="y"){
+                axis = {x:0,y:1,z:0}
+            }if(axis =="z"){
+                axis = {x:0,y:0,z:1}
+            }
             var qFromAngle = function(rangle) {
                 var s = Math.sin(rangle / 2.0);
                 var c = Math.cos(rangle / 2.0);
                 var i = 0, j = 0, k = 0;
 
-                if (axis == "x")
-                    i = s;
-                if (axis == "y")
-                    j = s;
-                if (axis == "z")
-                    k = s;
+                i = axis.x * s 
+                j = axis.y * s 
+                k = axis.z * s
 
                 return new $3Dmol.Quaternion(i, j, k, c).normalize();
             }
@@ -20417,6 +24382,7 @@ $3Dmol.GLViewer = (function() {
          * @function $3Dmol.GLViewer#render
          */
         this.render = function(callback) {
+            renderer.setViewport();
             var time1 = new Date();
             updateClickables(); //must render for clickable styles to take effect
             var view = this.getView();
@@ -20576,10 +24542,6 @@ $3Dmol.GLViewer = (function() {
             return false;
         }
 
-        
-        this.autoload = function(callback,viewer){
-            $3Dmol.autoload(callback,viewer);
-        }
 
         /** return list of atoms selected by sel
          * 
@@ -20590,6 +24552,30 @@ $3Dmol.GLViewer = (function() {
         this.selectedAtoms = function(sel) {
             return getAtomsFromSel(sel);
         };
+
+        /**
+        * Returns valid values for the specified attribute in the given selection
+        * @function $3Dmol.GlViewer#getUniqueValues 
+        * @param {string} attribute
+        * @param {AtomSelectionSpec} sel
+        * @return {Array.<Object>}
+        *
+        */
+        this.getUniqueValues = function(attribute, sel){
+            if (typeof (sel) === "undefined")
+                sel = {};            
+            var atoms = getAtomsFromSel(sel);
+            var values = {};
+
+            for(var atom in atoms){
+                if(atoms[atom].hasOwnProperty(attribute)){
+                    var value = atoms[atom][attribute];
+                    values[value] = true;
+                }
+            }
+
+            return Object.keys(values);
+        }
         
         /**
          * Return pdb output of selected atoms (if atoms from pdb input)
@@ -20657,6 +24643,32 @@ $3Dmol.GLViewer = (function() {
             ret.normalize();
             return ret;
         };
+        var spinInterval;
+        this.spin = function(spin,axis,interval){
+
+
+            spin = spin != undefined ? spin : true;
+            axis = axis != undefined ? axis : [1,0,0];
+            interval = interval != undefined ? interval : 50;
+            clearInterval(spinInterval)
+            if(!spin)
+                return
+
+            if(Array.isArray(axis)){
+               axis = {x:axis[0],y:axis[1],z:axis[2]} 
+            }
+
+            var viewer = this;
+
+            
+            spinInterval = setInterval(
+                function(){
+                    console.log("rotating")
+                    viewer.rotate(1,axis)
+                }
+            ,interval);            
+            
+        }
         
         //animate motion between current position and passed position
         // can set some parameters to null
@@ -20670,6 +24682,7 @@ $3Dmol.GLViewer = (function() {
             var interval = 20;
             var steps = Math.ceil(duration/interval);
             if(steps < 1) steps = 1;
+            incAnim();
             
             var curr = {mpos:modelGroup.position.clone(),
                     rz: rotationGroup.position.z,
@@ -20717,6 +24730,8 @@ $3Dmol.GLViewer = (function() {
                     
                     if(step < steps.length) {
                         setTimeout(callback, interval);
+                    } else {
+                        decAnim();
                     }
                     show();
                 }
@@ -20758,6 +24773,8 @@ $3Dmol.GLViewer = (function() {
                     
                     if(step < steps) {
                         setTimeout(callback, interval);
+                    } else {
+                        decAnim();
                     }
                     show();
                 }
@@ -20784,17 +24801,7 @@ $3Dmol.GLViewer = (function() {
       viewer.render(callback);
     });
     
-    //can't use jquery with binary data
-    var req = new XMLHttpRequest();
-    req.open('GET', 'volData/4csv.ccp4.gz', true);
-    req.responseType = "arraybuffer";
-    req.onload = function (aEvt) {      
-       var voldata = new $3Dmol.VolumeData(req.response, 'ccp4.gz');
-                          
-      viewer.zoom(10);
-      viewer.render(callback);
-    };
-         */
+             */
         this.zoom = function(factor,animationDuration,fixedPath) {
             var factor = factor || 2;
             var animationDuration = animationDuration!==undefined ? animationDuration : 0;
@@ -20830,22 +24837,10 @@ $3Dmol.GLViewer = (function() {
       viewer.addModel(data,'pdb');
       viewer.setStyle({cartoon:{},stick:{}});
       viewer.zoomTo();
+      viewer.translate(100,10);         
+
       viewer.render(callback);
     });
-    
-    //can't use jquery with binary data
-    var req = new XMLHttpRequest();
-    req.open('GET', 'volData/4csv.ccp4.gz', true);
-    req.responseType = "arraybuffer";
-    req.onload = function (aEvt) {      
-       var voldata = new $3Dmol.VolumeData(req.response, 'ccp4.gz');
-                          
-      viewer.translate(10,10);         
-      //viewer.zoomTo({resn:'STI'});
-      //viewer.zoom(10);
-      //viewer.rotate(90,"y");
-      viewer.render(callback);
-    };
          */
         this.translate = function(x, y, animationDuration, fixedPath) {
             var animationDuration = animationDuration!==undefined ? animationDuration : 0;
@@ -20925,24 +24920,9 @@ $3Dmol.GLViewer = (function() {
     $.get('volData/4csv.pdb', function(data) {
       viewer.addModel(data,'pdb');
       viewer.setStyle({cartoon:{},stick:{}});
-      viewer.zoomTo();
-      viewer.render(callback);
-    });
-    
-    //can't use jquery with binary data
-    var req = new XMLHttpRequest();
-    req.open('GET', 'volData/4csv.ccp4.gz', true);
-    req.responseType = "arraybuffer";
-    req.onload = function (aEvt) {      
-       var voldata = new $3Dmol.VolumeData(req.response, 'ccp4.gz');
-                          
-      //viewer.translate(10,10);         
-      //viewer.zoomTo({resn:'STI'});
-      //viewer.zoom(10);
-      //viewer.rotate(90,"y");
       viewer.center();
       viewer.render(callback);
-    };
+    });
          */
         this.center = function(sel,animationDuration,fixedPath){
              animationDuration=animationDuration!==undefined ? animationDuration : 0;
@@ -21332,10 +25312,6 @@ $3Dmol.GLViewer = (function() {
 
         };
 
-        var scale_labels= function(factor){
-
-        }
-
         /**
          * Add shape object to viewer 
          * @see {@link $3Dmol.GLShape}
@@ -21385,6 +25361,18 @@ $3Dmol.GLViewer = (function() {
             return this;
         }
 
+        //gets the center of the selection 
+        var getSelectionCenter = function(spec){
+            if(spec.hasOwnProperty("x") && spec.hasOwnProperty("y") && spec.hasOwnProperty("z"))
+                return spec;
+            var atoms = getAtomsFromSel(spec);
+            if(atoms.length == 0)
+                return {x:0,y:0,z:0};
+
+            var extent = $3Dmol.getExtent(atoms)
+            return {x:extent[0][0]+(extent[1][0]-extent[0][0])/2,y:extent[0][1]+(extent[1][1]-extent[0][1])/2,z:extent[0][2]+(extent[1][2]-extent[0][2])/2};
+        }
+
         /**
          * Create and add sphere shape. This method provides a shorthand 
          * way to create a spherical shape object
@@ -21400,6 +25388,9 @@ $3Dmol.GLViewer = (function() {
          */
         this.addSphere = function(spec) {
             spec = spec || {};
+
+            spec.center = getSelectionCenter(spec.center);
+
             var s = new $3Dmol.GLShape(spec);
             s.shapePosition = shapes.length;
             s.addSphere(spec);
@@ -21416,6 +25407,7 @@ $3Dmol.GLViewer = (function() {
          * @return {$3Dmol.GLShape}
          @example
         $3Dmol.download("pdb:4DM7",viewer,{},function(){
+
                   viewer.setBackgroundColor(0xffffffff);
                   viewer.addArrow({
                       start: {x:-10.0, y:0.0, z:0.0},
@@ -21426,7 +25418,7 @@ $3Dmol.GLViewer = (function() {
                       clickable:true,
                       callback:function(){
                           this.color.setHex(0xFF0000FF);
-                          viewer.render();
+                          viewer.render( );
                       }
                   });
                   viewer.render();
@@ -21434,6 +25426,10 @@ $3Dmol.GLViewer = (function() {
          */
         this.addArrow = function(spec) {
             spec = spec || {};
+            
+            spec.start = getSelectionCenter(spec.start)
+            spec.end = getSelectionCenter(spec.end)           
+            
             var s = new $3Dmol.GLShape(spec);
             s.shapePosition = shapes.length;
             s.addArrow(spec);
@@ -21459,9 +25455,9 @@ $3Dmol.GLViewer = (function() {
                                   color:'red',
                                   hoverable:true,
                                   clickable:true,
-                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render();},
-                                  hover_callback: function(){ viewer.render();},
-                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render();}
+                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render( );},
+                                  hover_callback: function(){ viewer.render( );},
+                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render( );}
                                  });
               viewer.addCylinder({start:{x:0.0,y:2.0,z:0.0},
                                   end:{x:0.0,y:10.0,z:0.0},
@@ -21479,6 +25475,10 @@ $3Dmol.GLViewer = (function() {
          */
         this.addCylinder = function(spec) {
             spec = spec || {};
+
+            spec.start = getSelectionCenter(spec.start)
+            spec.end = getSelectionCenter(spec.end)   
+
             var s = new $3Dmol.GLShape(spec);
             s.shapePosition = shapes.length;
             if(spec.dashed)
@@ -21512,6 +25512,10 @@ $3Dmol.GLViewer = (function() {
          */
         this.addLine = function(spec) {
             spec = spec || {};
+
+            spec.start = getSelectionCenter(spec.start)
+            spec.end = getSelectionCenter(spec.end)    
+
             spec.wireframe = true;
             var s = new $3Dmol.GLShape(spec);
             s.shapePosition = shapes.length;
@@ -21731,22 +25735,9 @@ $3Dmol.GLViewer = (function() {
          $.get('../test_structs/benzene-homo.cube', function(data){
                   var voldata = new $3Dmol.VolumeData(data, "cube");
                   viewer.addIsosurface(voldata, {isoval: 0.01,
-                                                 color: "blue",
-                                                 alpha: 0.5,
-                                                 smoothness: 10});
+                                                 color: "blue"});
                   viewer.addIsosurface(voldata, {isoval: -0.01,
-                                                 color: "red",
-                                                 smoothness: 5,
-                                                 opacity:0.5,
-                                                 wireframe:true,
-                                                 linewidth:0.1,
-                                                 clickable:true,
-                                                 callback:
-                                                 function() {
-                                                     this.opacity = 0.0;
-                                                     viewer.render(callback);
-                                                 }});
-                  viewer.setStyle({}, {stick:{}});
+                                                 color: "red"});
                   viewer.zoomTo();
                   viewer.render();
                 });
@@ -21776,27 +25767,31 @@ $3Dmol.GLViewer = (function() {
          * 
          * @function $3Dmol.GLViewer#setFrame
          * @param {number} framenum - each model in viewer has their atoms set to this index in frames list
+         * @return {Promise}
          */
-        this.setFrame = function(framenum) {
-            for (var i = 0; i < models.length; i++) {
-                models[i].setFrame(framenum);
-            }
-            return this;
-        };
+        this.setFrame = function (framenum) {
+            return new Promise(function (resolve, reject) {
+                var modelMap = models.map(function (model) {
+                    return model.setFrame(framenum);
+                });
+                Promise.all(modelMap)
+                    .then(function() {resolve()});
+            });
+        }
         
         /**
          * Returns the number of frames that the model with the most frames in the viewer has
          * 
-         * @function $3Dmol.GLViewer#getFrames
+         * @function $3Dmol.GLViewer#getNumFrames
          * @return {number}
          */
-        this.getFrames = function() {
+        this.getNumFrames = function() {
             var mostFrames = 0;
             var modelNum = 0;
             for (var i = 0; i < models.length; i++) {
-                if (models[i].getFrames().length > mostFrames) {
+                if (models[i].getNumFrames() > mostFrames) {
                     modelNum = i;
-                    mostFrames = models[i].getFrames().length;
+                    mostFrames = models[i].getNumFrames();
                 }
             }
             return mostFrames;
@@ -21812,7 +25807,7 @@ $3Dmol.GLViewer = (function() {
          */
          
         this.animate = function(options) {
-            animated = true;
+            incAnim();
             var interval = 100;
             var loop = "forward";
             var reps = 0;
@@ -21826,32 +25821,51 @@ $3Dmol.GLViewer = (function() {
             if (options.reps) {
                 reps = options.reps;
             }
-            var mostFrames = this.getFrames();
+            var mostFrames = this.getNumFrames();
             var that = this;
             var currFrame = 0;
             var inc = 1;
             var displayCount = 0;
             var displayMax = mostFrames * reps;
-            var display = function(direction) {
-                if (direction == "forward") {
-                    that.setFrame(currFrame);
-                    currFrame = (currFrame + inc) % mostFrames;
-                }
-                else if (direction == "backward") {
-                    that.setFrame((mostFrames-1) - currFrame);
-                    currFrame = (currFrame + inc) % mostFrames;
-                }
-                else { //back and forth
-                    that.setFrame(currFrame);
-                    currFrame += inc;
-                    inc *= (((currFrame % (mostFrames-1)) == 0) ? -1 : 1);
-                }
+            var time = new Date();
+            var resolve = function() {
                 that.render();
                 if (++displayCount == displayMax || !that.isAnimated()) {
-                    clearInterval(intervalID);
+                    clearTimeout(intervalID);
+                    decAnim(); 
+                }
+                else {
+                    var newInterval = interval - (new Date() - time);
+                    newInterval = (newInterval>0)?newInterval:0;
+                    setTimeout(display, newInterval, loop);
+                }
+            }
+            var display = function(direction) {
+                time = new Date();
+                if (direction == "forward") {
+                    that.setFrame(currFrame)
+                    .then(function () {
+                        currFrame = (currFrame + inc) % mostFrames;
+                        resolve();
+                    });
+                }
+                else if (direction == "backward") {
+                    that.setFrame((mostFrames-1) - currFrame)
+                    .then(function () {
+                        currFrame = (currFrame + inc) % mostFrames;
+                        resolve();
+                    });
+                }
+                else { //back and forth
+                    that.setFrame(currFrame)
+                    .then(function () {
+                        currFrame += inc;
+                        inc *= (((currFrame % (mostFrames-1)) == 0) ? -1 : 1);
+                        resolve();
+                    });          
                 }
             };
-            var intervalID = setInterval( function() { display(loop); }, interval);
+            var intervalID = setTimeout(display, 0, loop);
             return this;
         };
         
@@ -21860,7 +25874,7 @@ $3Dmol.GLViewer = (function() {
          * @function $3Dmol.GLViewer#stopAnimate
          */
         this.stopAnimate = function() {
-            animated = false;
+            animated = 0;
             return this;
         };
         
@@ -21870,7 +25884,7 @@ $3Dmol.GLViewer = (function() {
          * @return {boolean}
          */
         this.isAnimated = function() {
-            return animated;
+            return animated > 0;
         };
         
 
@@ -22076,7 +26090,7 @@ $3Dmol.GLViewer = (function() {
             
             
             for (var i = 0; i < ms.length; i++) {
-                if (ms[i]) {
+                if (ms[i] || typeof ms[i] === 'number') {
                     //allow referencing models by order of creation
                     if(typeof ms[i] === 'number') {
                         models[ms[i]][func](sel, value1, value2, value3);
@@ -22161,9 +26175,9 @@ $3Dmol.GLViewer = (function() {
                                   color:'red',
                                   hoverable:true,
                                   clickable:true,
-                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render();},
-                                  hover_callback: function(){ viewer.render();},
-                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render();}
+                                  callback:function(){ this.color.setHex(0x00FFFF00);viewer.render( );},
+                                  hover_callback: function(){ viewer.render( );},
+                                  unhover_callback: function(){ this.color.setHex(0xFF000000);viewer.render( );}
                                  });
               viewer.addCylinder({start:{x:0.0,y:2.0,z:0.0},
                                   end:{x:0.0,y:10.0,z:0.0},
@@ -22620,7 +26634,6 @@ $3Dmol.GLViewer = (function() {
             // if focusSele is specified, will start rending surface around the
             
             //surfacecallback gets called when done
-            
             var surfid = nextSurfID();
 
             if(typeof type =="string"){
@@ -22742,6 +26755,7 @@ $3Dmol.GLViewer = (function() {
                     // to keep the browser from locking up, call through setTimeout
                     var callSyncHelper = function callSyncHelper(i) {
                         if (i >= extents.length) {
+                            surfobj.done = true;
                             if(surfacecallback && typeof(surfacecallback) == "function") {
                                 surfacecallback(surfid);
                             }
@@ -23078,6 +27092,21 @@ $3Dmol.Gradient.valueToHex = function(val, range) {};
 $3Dmol.Gradient.range = function() {};
 
 
+//if lo > hi, flip, also cap
+$3Dmol.Gradient.normalizeValue = function(lo, hi, val) {
+    if(hi>=lo){
+        if(val < lo) val = lo;
+        if(val > hi) val = hi;
+        return {lo: lo, hi: hi, val: val};
+    }
+    else{
+        if(val>lo) val=lo;
+        if(val < hi) val = hi;
+        //flip the meaning of val, lo, hi
+        val = (lo-val)+hi;
+        return {lo: hi, hi: lo, val: val};
+    }
+};
 
 /**
  * Color scheme red to white to blue, for charges
@@ -23108,14 +27137,12 @@ $3Dmol.Gradient.RWB = function(min, max,mid) {
     
         if(val === undefined)
             return 0xffffff;
-        if(hi>lo){
-            if(val < lo) val = lo;
-            if(val > hi) val = hi;
-        }
-        else{
-            if(val>lo) val=lo;
-            if(val < hi) val = hi;
-        }
+        
+        var norm = $3Dmol.Gradient.normalizeValue(lo, hi, val);
+        lo = norm.lo;
+        hi = norm.hi;
+        val = norm.val;
+        
         var middle = (hi+lo)/2;
         if(range && typeof(range[2]) != "undefined")
             middle = range[2];
@@ -23126,32 +27153,15 @@ $3Dmol.Gradient.RWB = function(min, max,mid) {
         var scale, color;
         
         //scale bottom from red to white
-        if(lo<hi){
-            if(val <= middle) {
-                scale = Math.floor(255*Math.sqrt((val-lo)/(middle-lo)));
-                color = 0xff0000 + 0x100*scale + scale;
-                return color;
-            }
-            else { //form white to blue
-                scale = Math.floor(255*Math.sqrt((1-(val-middle)/(hi-middle))));
-                color =  0x10000*scale+0x100*scale+0xff;
-                return color;
-            }
+        if(val <= middle) {
+            scale = Math.floor(255*Math.sqrt((val-lo)/(middle-lo)));
+            color = 0xff0000 + 0x100*scale + scale;
+            return color;
         }
-        else if(lo>hi){
-            //val=min-val;
-             if(val <= middle) {
-
-                scale = Math.floor(255*Math.sqrt((1-(val-middle)/(hi-middle))));
-                color =  0x10000*scale+0x100*scale+0xff;
-                return color;
-            }
-            else { //from white to blue
-
-                scale = Math.floor(255*Math.sqrt((val-lo)/(middle-lo)));
-                color = 0xff0000 + 0x100*scale + scale;
-                return color;
-            }
+        else { //form white to blue
+            scale = Math.floor(255*Math.sqrt((1-(val-middle)/(hi-middle))));
+            color =  0x10000*scale+0x100*scale+0xff;
+            return color;
         }
     };
     
@@ -23197,19 +27207,10 @@ $3Dmol.Gradient.ROYGB = function(min, max) {
         if(typeof(val) == "undefined")
             return 0xffffff;
         
-        if(hi>lo){
-            if(val < lo) val = lo;
-            if(val > hi) val = hi;
-        }
-        else{
-            if(val>lo) val=lo;
-            if(val < hi) val = hi;
-            //flip the meaning of val, lo, hi
-            val = lo-val;
-            var tmp = lo;
-            lo = hi;
-            hi = tmp;
-        }
+        var norm = $3Dmol.Gradient.normalizeValue(lo, hi, val);
+        lo = norm.lo;
+        hi = norm.hi;
+        val = norm.val;
         
         var mid = (lo+hi)/2;
         var q1 = (lo+mid)/2;
@@ -23282,14 +27283,11 @@ $3Dmol.Gradient.Sinebow = function(min, max) {
     
         if(typeof(val) == "undefined")
             return 0xffffff;
-        if(hi>lo){
-            if(val < lo) val = lo;
-            if(val > hi) val = hi;
-        }
-        else{
-            if(val>lo) val=lo;
-            if(val < hi) val = hi;
-        }
+        var norm = $3Dmol.Gradient.normalizeValue(lo, hi, val);
+        lo = norm.lo;
+        hi = norm.hi;
+        val = norm.val;
+        
         var scale = (val-lo)/(hi-lo);
         var h = (5*scale/6.0+0.5);
         var r = Math.sin(Math.PI*h);
@@ -24438,7 +28436,7 @@ $3Dmol.Parsers = (function() {
 
         // compute, per residue, what the secondary structure is
         var chres = {}; // lookup by chain and resid
-        var i, il, c, r;
+        var i, il, c, r; // i: used in for loop, il: length of atomsarray
         var atom, val;
 
         //identify helices first
@@ -24625,7 +28623,7 @@ $3Dmol.Parsers = (function() {
 
         var coords = new Float32Array(lines[atomCounter + j].replace(/^\s+/, "").split(/\s+/));
 
-        atom={};
+        var atom={};
         atom.elem = atomSymbol;
         if (vaspMode == "cartesian") {
           atom.x = lattice.length*coords[0];
@@ -25394,6 +29392,7 @@ $3Dmol.Parsers = (function() {
 
     };
 
+    //Covalent radii
     var bondTable = {
             H :0.37,                                                                                                                                He:0.32,
             Li:1.34,Be:0.90,                                                                                B :0.82,C :0.77,N :0.75,O :0.73,F :0.71,Ne:0.69,
@@ -25402,7 +29401,7 @@ $3Dmol.Parsers = (function() {
             Rb:2.11,Sr:1.92,Y :1.62,Zr:1.48,Nb:1.37,Mo:1.45,Tc:1.56,Ru:1.26,Rh:1.35,Pd:1.31,Ag:1.53,Cd:1.48,In:1.44,Sn:1.41,Sb:1.38,Te:1.35,I :1.33,Xe:1.30,
             Cs:2.25,Ba:1.98,Lu:1.60,Hf:1.50,Ta:1.38,W :1.46,Re:1.59,Os:1.44,Ir:1.37,Pt:1.28,Au:1.44,Hg:1.49,Tl:1.48,Pb:1.47,Bi:1.46,/* Po *//* At */Rn:1.45,
 
-            // None of the boottom row or any of the Lanthanides have bond lengths
+            // None of the bottom row or any of the Lanthanides have bond lengths
     }
     var bondLength = function(elem) {
         return bondTable[elem] || 1.6;
@@ -25445,7 +29444,7 @@ $3Dmol.Parsers = (function() {
     var processSymmetries = function(copyMatrices, copyMatrix, atoms) {
         var end = atoms.length;
         var offset = end;
-        var t, l, n;
+        var t, l, n; // Used in for loops
         if (!copyMatrix) { // do full assembly
             for (t = 0; t < copyMatrices.length; t++) {
                 if (!copyMatrices[t].isIdentity()) {
@@ -25520,7 +29519,7 @@ $3Dmol.Parsers = (function() {
             
             if(recordName.indexOf("END") == 0) {
                 remainingLines = lines.slice(i+1);
-                if(recordName == "END") { //ass opposed to ENDMDL
+                if(recordName == "END") { //as opposed to ENDMDL
                     //reset secondary structure
                     for (var prop in sslookup) {
                         if (sslookup.hasOwnProperty(prop)) {
@@ -26216,10 +30215,10 @@ $3Dmol.Parsers = (function() {
 		return [];
 	    col = getColEleSize(index);
 	    var noOfCol = col[0];
-	    for (i = 0; i < atomCount/col[0]; i++){
+	    for (var i = 0; i < atomCount/col[0]; i++){
 		if (i == parseInt(atomCount/col[0]))
-		    noOfCol = atomCount % col[0]; 
-		for(j=0; j < noOfCol; j++){
+		    noOfCol = atomCount % col[0];
+		for(var j=0; j < noOfCol; j++){
 		    var atom = {};
 		    var properties = {"charge":"", "radii":""};
 	    	    atom.serial = count;
@@ -26245,7 +30244,7 @@ $3Dmol.Parsers = (function() {
 		    if (i == parseInt(atomCount/col[0]))
 			noOfCol = atomCount % col[0];
 		    for(j = 0; j < noOfCol; j++){
-		       atoms[count].properties["charge"] = lines[index+1].slice(col[1]*j, col[1]*(j+1));	
+		        atoms[count].properties["charge"] = parseFloat(lines[index+1].slice(col[1]*j, col[1]*(j+1)));	
 		        count++;
 		    }
 		    index++;
@@ -26260,7 +30259,7 @@ $3Dmol.Parsers = (function() {
 		    if (i == parseInt(atomCount/col[0]))
 			noOfCol = atomCount % col[0];
 		    for(j = 0; j < noOfCol; j++){
-			atoms[count].properties.radii = lines[index+1].slice(col[1]*j, col[1]*(j+1));
+			atoms[count].properties.radii = parseFloat(lines[index+1].slice(col[1]*j, col[1]*(j+1)));
 			count++;
 		    }
 		    index++;
@@ -26272,43 +30271,45 @@ $3Dmol.Parsers = (function() {
 		count = 0;
 		noOfCol = col[0];
 		var atomIndex;
-		for (i = 0; i < atomCount/col[0]; i++){
-		    if (i == parseInt(atomCount/col[0]))
+                index = index + 1;
+                while (!lines[index].match(/^%FLAG/)){
+                    if (lines[index+1].match(/^%FLAG/)) //its the last line
 			noOfCol = atomCount % col[0];	
 		    for (j = 0; j < noOfCol; j++){
 			if (count%3 == 0){
-			    atomIndex = parseInt(lines[index+1].slice(col[1]*j, col[1]*(j+1))/3 + 1);
+			    atomIndex = parseInt(lines[index].slice(col[1]*j, col[1]*(j+1))/3);
 			}
 			if (count%3 == 1){
-			    atoms[atomIndex].bonds.push(parseInt(lines[index+1].slice(col[1]*j, col[1]*(j+1))/3 + 1));
+			    atoms[atomIndex].bonds.push(parseInt(lines[index].slice(col[1]*j, col[1]*(j+1))/3));
 			}
-		    count++;
+		        count++;
 		    }
-		index++;
+		    index++;
 		}
 	    }
-	    index = getIndex("BONDS_INC_HYDROGEN");
-	    if (index != -1){
-		col = getColEleSize(index);
-		count = 0;
-		noOfCol = col[0];
-		var atomIndex;
-		for (i = 0; i < atomCount/col[0]; i++){
-		    if (i == parseInt(atomCount/col[0]))
-			noOfCol = atomCount % col[0];	
+            index = getIndex("BONDS_INC_HYDROGEN");
+            if (index != -1){
+                col = getColEleSize(index);
+                count = 0;
+                noOfCol = col[0];
+                var atomIndex;
+                index = index + 1;
+                while (!lines[index].match(/^%FLAG/)){
+                    if (lines[index+1].match(/^%FLAG/)) //its the last line
+                        noOfCol = atomCount % col[0];	
 		    for (j = 0; j < noOfCol; j++){
-			if (count%3 == 0){
-			    atomIndex = parseInt(lines[index+1].slice(col[1]*j, col[1]*(j+1))/3 + 1);
-			}
-			if (count%3 == 1){
-			    atoms[atomIndex].bonds.push(parseInt(lines[index+1].slice(col[1]*j, col[1]*(j+1))/3 + 1));
-			}
-		    count++;
-		    }
-		index++;
-		}
-	    }
-	}
+                        if (count%3 == 0){
+                            atomIndex = parseInt(lines[index].slice(col[1]*j, col[1]*(j+1))/3);
+                        }
+                        if (count%3 == 1){
+                            atoms[atomIndex].bonds.push(parseInt(lines[index].slice(col[1]*j, col[1]*(j+1))/3));
+                        }
+                        count++;
+                    }
+                    index++;
+                }
+            }
+        }
 	else{
 	    return [];
 	}
@@ -26332,7 +30333,7 @@ $3Dmol.Parsers = (function() {
 		elementSize = lines[i].match(/[a-zA-Z](\d*)\.\d*\)\s*/); //stores the element size
 	    }
 	    return [numberOfCol[1], elementSize[1]];	
-	}       
+	} 
         return [atoms];
     };
 
@@ -26383,6 +30384,61 @@ $3Dmol.Parsers = (function() {
 	    assignBonds(atoms[i]);
 	}
         return atoms;
+    }
+
+    /**
+     * Parse a lammps trajectory file from str and create atoms
+     */
+    parsers.lammpstrj = parsers.LAMMPSTRJ = function(str, options){
+ 	var atoms = [];
+        var dic = {'id':'serial','type':'atom','element':'elem','q':'charge','radius':'radius',
+                         'x':'x','xu':'x','xs':'x','xsu':'x',
+                         'y':'y','yu':'y','ys':'y','ysu':'y',
+                         'z':'z','zu':'z','zs':'z','zsu':'z'};
+        var lines = str.split(/\r?\n|\r/);
+        var offset = 0;
+        var atomCount = 0;
+        var start = 0;
+        while (start<lines.length-9){
+            for (var j=start; j<lines.length; j++){
+               if (lines[j].match(/ITEM: NUMBER OF ATOMS/))
+                    atomCount = parseInt(lines[j+1]);
+               if (lines[j].match(/ITEM: ATOMS/)){
+                    offset = j+1;
+                    break;
+                }
+            }
+            var types = lines[offset-1].replace('ITEM: ATOMS ','').split(' ');
+            atoms.push([]);
+            for (var j=offset; j<offset+atomCount; j++){
+                var atom = {};
+                var properties = {};
+                var tokens = lines[j].split(' ');
+                for (var k=0; k<tokens.length; k++){
+                    var prop = dic[types[k]];
+                    if (prop != undefined){
+                        if (prop == 'serial')
+                            atom[prop] = parseInt(tokens[k]);
+                        else if (prop == 'x' || prop == 'y' || prop === 'z')
+                            atom[prop] = parseFloat(tokens[k]);
+                        else if (prop == 'charge' || prop == 'radius')
+                            properties[prop] = parseFloat(tokens[k]);
+                        else
+                            atom[prop] = tokens[k];
+                    }
+                    atom.properties = properties;
+                    atom.bonds = [];
+                    atom.bondOrder = [];
+                }
+                atoms[atoms.length-1][j-offset] = atom;   
+            }
+            start = offset+atomCount-1;
+        }
+        if (options.assignbonds){
+ 	    for (var i=0; i<atoms.length; i++)
+	        assignBonds(atoms[i]);          
+        }
+        return atoms;       
     }
     return parsers;
 })();
@@ -26592,7 +30648,7 @@ $3Dmol.applyPartialCharges = function(atom, keepexisting) {
  * @prop {string} elem - Element abbreviation (e.g. 'H', 'Ca', etc)
  * @prop {boolean} hetflag - Set to true if atom is a heteroatom
  * @prop {string} chain - Chain this atom belongs to, if specified in input file (e.g 'A' for chain A)
- * @prop {number} resi - Residue number 
+ * @prop {number} resi - Residue number
  * @prop {number} icode
  * @prop {number} rescode
  * @prop {number} serial - Atom's serial id number
@@ -26620,7 +30676,7 @@ $3Dmol.applyPartialCharges = function(atom, keepexisting) {
   * @prop {boolean} multimodel - specifies weather or not multiple models are being defined ; supported by xyz,sdf, or mol2
   * @prop {boolean} onemol -specifies weather or not the model is of one molecule ; Supported by xyz , sdf , mol2
   * @prop {boolean} keepH - do not strip hydrogens ; supported by sdf,mol2
-  * @prop {object} parseStyle - used to define ChemDoodle styles ; upported by cdjson
+  * @prop {object} parseStyle - used to define ChemDoodle styles ; supported by cdjson
   * @prop {boolean} doAssembly - boolean dictating weather or not to do assembly ; supported by mcif
   * @prop {boolean} noSecondaryStructure - boolean dictating the presence of a secondary structure ; supported by pdb
   * @prob {boolean} noComputeSecondaryStructure - do not compute ss ; supported by pdb
@@ -26645,7 +30701,7 @@ $3Dmol.applyPartialCharges = function(atom, keepexisting) {
  * are provided as a list, then only one value of the list must match.
  * 
  * @typedef AtomSelectionSpec
- * @prop {AtomSpec} ... - any field from {@link AtomSpec}, values may be singletons or lists
+ * @prop {AtomSpec} ... - any field from {@link AtomSpec}, values may be singletons or lists. Integer numerical ranges are supported as strings.
  * @prop {GLModel} model - a single model or list of models from which atoms should be selected
  * @prop {number} bonds - overloaded to select number of bonds, e.g. {bonds: 0} will select all nonbonded atoms
  * @prop {function} predicate - user supplied function that gets passed an {AtomSpec} and should return true if the atom should be selected
@@ -26654,21 +30710,12 @@ $3Dmol.applyPartialCharges = function(atom, keepexisting) {
  * @prop {number} expand - expands the selection to include all atoms within a given distance from the selection
  * @prop {WithinSelectionSpec} within - intersects the selection with the set of atoms within a given distance from another selection
  * @example
- * $3Dmol.download("pdb:2EJ0",viewer,{},function(){
-                  
-                  viewer.addLabel("Aromatic", {position: {x:-6.89, y:0.75, z:0.35}, backgroundColor: 0x800080, backgroundOpacity: 0.8});
-                  viewer.addLabel("Label",{font:'sans-serif',fontSize:18,fontColor:'white',fontOpacity:1,borderThickness:1.0,
-                                           borderColor:'red',borderOpacity:0.5,backgroundColor:'black',backgroundOpacity:0.5,
-                                           position:{x:50.0,y:0.0,z:0.0},inFront:true,showBackground:true});
-                  viewer.setStyle({chain:'A'},{cross:{hidden:true}});
-                  viewer.setStyle({chain:'B'},{cross:{hidden:false,
-                                                      colorscheme:'greenCarbon'}});
-                  viewer.setStyle({chain:'C'},{cross:{hidden:false,
-                                                      radius:.5}});
-                  viewer.setStyle({chain:'D'},{cross:{hidden:false}});
-                  viewer.setStyle({chain:'E'},{cross:{hidden:false,
-                                                      color:'black'}});
-                  
+ * $3Dmol.download("pdb:2EJ0",viewer,{},function(){                     
+                  viewer.setStyle({chain:'B'},{cartoon:{color:'spectrum'}});
+                  viewer.setStyle({chain:'B',invert:true},{cartoon:{}});
+                  viewer.setStyle({bonds: 0},{sphere:{radius:0.5}}); //water molecules
+                  viewer.setStyle({resn:'PMP',byres:true,expand:5},{stick:{colorscheme:"greenCarbon"}});
+                  viewer.setStyle({resi:["91-95","42-50"]},{cartoon:{color:"green",thickness:1.0}});                  
                   viewer.render();
 
                   
@@ -26684,17 +30731,9 @@ $3Dmol.applyPartialCharges = function(atom, keepexisting) {
  * @typedef WithinSelectionSpec
  * @example
  $3Dmol.download("pdb:2EJ0",viewer,{},function(){
-                  
-                  viewer.addLabel("Aromatic", {position: {x:-6.89, y:0.75, z:0.35}, backgroundColor: 0x800080, backgroundOpacity: 0.8});
-                  viewer.addLabel("Label",{font:'sans-serif',fontSize:18,fontColor:'white',fontOpacity:1,borderThickness:1.0,
-                                           borderColor:'red',borderOpacity:0.5,backgroundColor:'black',backgroundOpacity:0.5,
-                                           position:{x:50.0,y:0.0,z:0.0},inFront:true,showBackground:true});
-            
- * viewer.setStyle({chain: 'A', within:{distance: 10, sel:{chain: 'B'}}}, {sphere:{}}); 
-                  
-                  viewer.render();
-
-                  
+                            
+                  viewer.setStyle({chain: 'A', within:{distance: 10, sel:{chain: 'B'}}}, {sphere:{}});                   
+                  viewer.render();                  
                 });// stylizes atoms in chain A that are within 10 angstroms of an atom in chain B
  *
  * @prop {number} distance - the distance in angstroms away from the atom selection to include atoms in the parent selection
@@ -26806,8 +30845,8 @@ $3Dmol.applyPartialCharges = function(atom, keepexisting) {
  * @prop {$3Dmol.Vector3} start
  * @prop {$3Dmol.Vector3} end
  * @prop {number} radius
- * @prop {boolean} fromCap
- * @prop {boolean} toCap
+ * @prop {boolean} fromCap - 0 for none, 1 for flat, 2 for round
+ * @prop {boolean} toCap - 0 for none, 1 for flat, 2 for round
  */
 
 /**
@@ -26906,7 +30945,7 @@ $3Dmol.VolumeData = function(str, format, options) {
                 total += diff*diff; //variance is ave of squared difference with mean
             }
             var variance = total/this.data.length;
-            console.log("Computed variance: "+variance);
+            //console.log("Computed variance: "+variance);
             //now normalize
             for(var i = 0, n = this.data.length; i < n; i++) {
                 this.data[i] = (this.data[i]-mean)/variance;
@@ -26921,14 +30960,26 @@ $3Dmol.VolumeData = function(str, format, options) {
  * @returns - value closest to provided coordinate; zero if coordinate invalid
  */
 $3Dmol.VolumeData.prototype.getVal = function(x,y,z) {
-    x -= this.origin.x;
-    y -= this.origin.y;
-    z -= this.origin.z;
     
-    x /= this.unit.x;
-    y /= this.unit.y;
-    z /= this.unit.z;
-    
+    if(this.matrix) {
+        //all transformation is done through matrix multiply
+        if(!this.inversematrix) {
+            this.inversematrix = new $3Dmol.Matrix4().getInverse(this.matrix);
+        }
+        var pt = new $3Dmol.Vector3(x,y,z);
+        pt = pt.applyMatrix4(this.inversematrix);
+        x = pt.x;
+        y = pt.y;
+        z = pt.z;        
+    } else { //use simple origin/unit transform            
+        x -= this.origin.x;
+        y -= this.origin.y;
+        z -= this.origin.z;
+        
+        x /= this.unit.x;
+        y /= this.unit.y;
+        z /= this.unit.z;
+    }
     x = Math.round(x);
     y = Math.round(y);
     z = Math.round(z);
@@ -26937,7 +30988,7 @@ $3Dmol.VolumeData.prototype.getVal = function(x,y,z) {
     if(y < 0 || y >= this.size.y) return 0;
     if(z < 0 || z >= this.size.z) return 0;
     
-    return this.data[x*this.size.y*this.size.z + y*this.size.z + z];
+    return this.data[x*this.size.y*this.size.z + y*this.size.z + z];    
 };
 
 $3Dmol.VolumeData.prototype.getCoordinates = function(index){
@@ -27319,7 +31370,7 @@ $3Dmol.VolumeData.prototype.ccp4 = function(bin) {
 
     // 56      NLABL           Number of labels being used
     // 57-256  LABEL(20,10)    10  80 character text labels (ie. A4 format)
-    console.log("Map has min,mean,average,rmsddv: "+header.DMIN+","+header.DMAX+","+header.DMEAN+","+header.ARMS);
+    //console.log("Map has min,mean,average,rmsddv: "+header.DMIN+","+header.DMAX+","+header.DMEAN+","+header.ARMS);
 
     //create transformation matrix, code mostly copied from ngl
     var h = header;

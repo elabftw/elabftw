@@ -71,7 +71,13 @@
                 <!-- CATEGORIES (status for exp and itemstypes for items) -->
                 <div class='col-md-4'>
                     <img src='app/img/status.png' alt='category' />
-                    <label for='category_select'>{{ 'Category'|trans }}</label>
+                    <label for='category_select'>
+                    {% if Entity.type == 'experiments' %}
+                    {{ 'Status'|trans }}
+                    {% else %}
+                    {{ 'Category'|trans }}
+                    {% endif %}
+                    </label>
                     <select id='category_select'>
                         {% for category in Categories.readAll %}
                             <option value='{{ category.category_id }}'

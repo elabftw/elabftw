@@ -38,14 +38,15 @@ try {
         $Entity->canOrExplode('read');
         $permissions = $Entity->getPermissions();
 
-        // READ ONLY MESSAGE
+        // show message if the current user doesn't own the experiment
         $ownerName = '';
-        $isReadOnly = false;
-        if ($permissions['read'] && !$permissions['write']) {
+        $isOwned = true;
+        if (($permissions['read'] && !$permissions['write']) ||
+            ($Entity->entityData['userid'] != $Entity->Users->userid)) {
             // we need to get the fullname of the user who owns the experiment to display the RO message
             $Owner = new Users($Entity->entityData['userid']);
             $ownerName = $Owner->userData['fullname'];
-            $isReadOnly = true;
+            $isOwned = false;
         }
 
         // TIMESTAMP
@@ -69,7 +70,7 @@ try {
             'commentsArr' => $commentsArr,
             'mode' => 'view',
             'ownerName' => $ownerName,
-            'isReadOnly' => $isReadOnly
+            'isOwned' => $isOwned
         ));
 
     // EDIT
@@ -82,6 +83,18 @@ try {
         if ($EntityView->Entity->entityData['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
+
+        // show message if the current user doesn't own the experiment
+        $ownerName = '';
+        $isOwned = true;
+        if (($permissions['read'] && !$permissions['write']) ||
+            ($Entity->entityData['userid'] != $Entity->Users->userid)) {
+            // we need to get the fullname of the user who owns the experiment to display the RO message
+            $Owner = new Users($Entity->entityData['userid']);
+            $ownerName = $Owner->userData['fullname'];
+            $isOwned = false;
+        }
+
 
         $Revisions = new Revisions($EntityView->Entity);
         // Uploads
@@ -97,7 +110,9 @@ try {
             'Categories' => $Status,
             'TeamGroups' => $TeamGroups,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
-            'maxUploadSize' => Tools::returnMaxUploadSize()
+            'isOwned' => $isOwned,
+            'maxUploadSize' => Tools::returnMaxUploadSize(),
+            'ownerName' => $ownerName
         ));
 
     // DEFAULT MODE IS SHOW

@@ -9,6 +9,10 @@
     <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
 </a>
 
+{% if not isOwned %}
+    {{ 'Experiment of %s'|trans|format(ownerName)|msg('ok', false) }}
+{% endif %}
+
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
     <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
 

@@ -8,8 +8,8 @@
     <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
 </a>
 
-{% if isReadOnly %}
-    {{ 'Read-only mode. Experiment of %s.'|trans|format(ownerName)|msg('ok', false) }}
+{% if not isOwned %}
+    {{ 'Experiment of %s'|trans|format(ownerName)|msg('ok', false) }}
 {% endif %}
 
 {% if Entity.type == 'experiments' %}

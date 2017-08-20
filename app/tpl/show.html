@@ -29,7 +29,7 @@
             </option>
 
             {% for category in Category.readAll() %}
-                <option value='{{ category['category_id'] }}'>{{ category['category'] }}</option>
+                <option value='{{ category.category_id }}'>{{ category.category }}</option>
             {% endfor %}
         </select>
     {% endif %}
@@ -85,7 +85,7 @@
                 {% endif %}
 
                 {% if Ev.Entity.type == 'items' %}
-                    {{ Ev.showStars(item.rating)|raw }}
+                    {{ item.rating|stars|raw }}
                 {% endif %}
 
                 {% if item.tags is not null %}
@@ -103,10 +103,10 @@
     {% endfor %}
     </div>
 
-    {% if count > Ev.limit %}
+    {% if count > Ev.Entity.Users.userData.limit_nb %}
         {# show load more button if there are more results than the default display number #}
         <div class='center'>
-            <button class='button' id='loadButton'>{{ 'Show %s more'|trans|format(Ev.limit) }}</button>
+            <button class='button' id='loadButton'>{{ 'Show %s more'|trans|format(Ev.Entity.Users.userData.limit_nb) }}</button>
             <button class='button button-neutral' id='loadAllButton'>{{ 'Show all'|trans }}</button>
         </div>
     {% endif %}
@@ -114,5 +114,5 @@
 {% endif %}
 
 <div id='shortcuts' data-create='{{ Ev.Entity.Users.userData.sc_create }}'></div>
-<div id='limit' data-limit='{{ Ev.limit }}'></div>
+<div id='limit' data-limit='{{ Ev.Entity.Users.userData.limit_nb }}'></div>
 <script src='app/js/show.min.js'></script>

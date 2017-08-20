@@ -405,4 +405,23 @@ class Tools
             return " selected";
         }
     }
+
+    /**
+     * Display the stars rating for a DB item
+     *
+     * @param int $rating The number of stars to display
+     * @return string HTML of the stars
+     */
+    public static function showStars($rating)
+    {
+        $html = "";
+
+        $green = "<img src='app/img/star-green.png' alt='☻' />";
+        $gray = "<img src='app/img/star-gray.png' alt='☺' />";
+
+        $html .= str_repeat($green, $rating);
+        $html .= str_repeat($gray, (5 - $rating));
+
+        return $html;
+    }
 }

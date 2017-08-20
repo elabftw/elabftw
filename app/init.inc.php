@@ -84,10 +84,12 @@ try {
     $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
     $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
     $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
+    $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
 
     $Twig->addFilter($msgFilter);
     $Twig->addFilter($dateFilter);
     $Twig->addFilter($mdFilter);
+    $Twig->addFilter($starsFilter);
 
     // i18n for twig
     $Twig->addExtension(new \Twig_Extensions_Extension_I18n());

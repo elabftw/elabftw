@@ -1,26 +1,29 @@
-{% if Ev.Entity.Users.userData.chem_editor %}
+{% if Entity.Users.userData.chem_editor %}
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
 {% endif %}
 <script src='app/js/tinymce-dropzone.min.js'></script>
 
-{{ Ev.backToLink(Ev.Entity.type)|raw }}
+{# back to link #}
+<a href='?mode=show'>
+    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
+</a>
 
-<section class='box' id='main_section' style='border-left: 6px solid #{{ Ev.Entity.entityData['color'] }}'>
-    <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Ev.Entity.type }}' data-id='{{ Ev.Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
+<section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData['color'] }}'>
+    <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
 
     <!-- TAGS -->
     <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
     <div class='tags'>
         <span id='tags_div'>
             <!--  build the tag array -->
-            {% if Ev.Entity.entityData['tags']|length > 0 %}
-                {% set tagsIdArr = Ev.Entity.entityData['tags_id']|split(',') %}
-                {% set tagsValueArr = Ev.Entity.entityData['tags']|split('|') %}
+            {% if Entity.entityData['tags']|length > 0 %}
+                {% set tagsIdArr = Entity.entityData['tags_id']|split(',') %}
+                {% set tagsValueArr = Entity.entityData['tags']|split('|') %}
                 {% for key, tag in tagsValueArr %}
                     {# the key allows to get the id stored in tagsIdArr #}
                     <span class='tag'>
-                        <a class='tagDestroy' data-type='{{ Ev.Entity.type }}' data-id='{{ Ev.Entity.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                        <a class='tagDestroy' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
                             {{ tag|raw }}
                         </a>
                     </span>
@@ -33,8 +36,8 @@
     <!--  MAIN FORM -->
     <form id='main_form' method='post' action='app/controllers/EntityController.php' enctype='multipart/form-data'>
         <input name='update' type='hidden' value='true' />
-        <input name='id' type='hidden' value='{{ Ev.Entity.id }}' />
-        <input name='type' type='hidden' value='{{ Ev.Entity.type }}' />
+        <input name='id' type='hidden' value='{{ Entity.id }}' />
+        <input name='type' type='hidden' value='{{ Entity.type }}' />
 
         <!-- DATE -->
             <div class='row'>
@@ -43,26 +46,26 @@
                     <label for='datepicker'>{{ 'Date'|trans }}</label>
                     <!-- if firefox has support for it: type = date -->
                     <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
-                    <input name='date' id='datepicker' size='8' type='text' value='{{ Ev.Entity.entityData['date'] }}' />
+                    <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData['date'] }}' />
                 </div>
-                {% if Ev.Entity.type == 'items' %}
+                {% if Entity.type == 'items' %}
                     <!-- STAR RATING -->
                     <div class='align_right'>
                         {% for i in range(1, 5) %}
-                        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Ev.Entity.entityData['rating'] == i ? ' checked=checked' }} />
+                        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData['rating'] == i ? ' checked=checked' }} />
                         {% endfor %}
                     </div>
                 {% endif %}
 
-            {% if Ev.Entity.type == 'experiments' %}
+            {% if Entity.type == 'experiments' %}
                 <!-- VISIBILITY -->
                 <div class='col-md-4'>
                     <img src='app/img/eye.png' alt='visibility' />
                     <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
                     <select id='visibility_select'>
-                        {% for key, value in Ev.TeamGroups.getVisibilityList %}
+                        {% for key, value in TeamGroups.getVisibilityList %}
                             <option value='{{ key }}'
-                            {{ Ev.Entity.entityData['visibility'] == key ? ' selected' }}
+                            {{ Entity.entityData.visibility == key ? ' selected' }}
                             >{{ value|trans }}</option>
                         {% endfor %}
                     </select>
@@ -73,9 +76,9 @@
                     <img src='app/img/status.png' alt='status' />
                     <label for='status_select'>{{ 'Status'|trans }}</label>
                     <select id='status_select'>
-                        {% for status in Status.readAll() %}
-                            <option value='{{ status['category_id'] }}'
-                            {{ Ev.Entity.entityData['category_id'] == status['category_id'] ? ' selected' }}>{{ status['category'] }}</option>
+                        {% for status in Status.readAll %}
+                            <option value='{{ status.category_id }}'
+                            {{ Entity.entityData.category_id == status.category_id ? ' selected' }}>{{ status.category }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -84,16 +87,16 @@
 
             <!-- TITLE -->
             <h4>{{ 'Title'|trans }}</h4>
-            <input id='title_input' name='title' rows='1' value='{{ Ev.Entity.entityData['title']|raw }}' required />
+            <input id='title_input' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
 
             <!-- BODY -->
-            {% if Ev.Entity.type == 'experiments' %}
+            {% if Entity.type == 'experiments' %}
                 <h4>{{ 'Experiment'|trans }}</h4>
             {% else %}
                 <h4>{{ 'Infos'|trans }}</h4>
             {% endif %}
 
-            <textarea id='body_area' class='{{ not Ev.Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Ev.Entity.entityData['body']|raw }}</textarea>
+            <textarea id='body_area' class='{{ not Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Entity.entityData['body']|raw }}</textarea>
 
             <div class='submitButtonDiv'>
                 <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>
@@ -103,13 +106,13 @@
     <!-- REVISIONS -->
     {{ Revisions.showCount|raw }}
 
-    {% if Ev.Entity.type == 'experiments' %}
+    {% if Entity.type == 'experiments' %}
         <!-- STEPS -->
         <section>
             <img src='app/img/step.png' alt='steps' /> <h4 style='display:inline'>{{ 'Experiments steps'|trans }}</h4>
             <br>
             <div class='list' id='steps_div'>
-                {% set stepsArr = Ev.Entity.Steps.read %}
+                {% set stepsArr = Entity.Steps.read %}
                 {% if stepsArr|length > 0 %}
                 <ul class='list-group'>
                     {% for step in stepsArr %}
@@ -131,7 +134,7 @@
             <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
             <br>
             <div class='list' id='links_div'>
-                {% set linksArr = Ev.Entity.Links.read %}
+                {% set linksArr = Entity.Links.read %}
                 {% if linksArr|length > 0 %}
                 <ul class='list-group'>
                     {% for link in linksArr %}
@@ -202,13 +205,13 @@ Dropzone.options.elabftwDropzone = {
     <div class='canvasDiv togglable-hidden'>
         <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
         <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
-        <button class='button saveCanvas' data-type='{{ Ev.Entity.type }}' data-id='{{ Ev.Entity.id }}'>{{ 'Save'|trans }}</button>
+        <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
     </div>
 </section>
 <script src='app/js/doodle.js'></script>
 
 <!-- CHEM EDITOR -->
-{% if Ev.Entity.Users.userData['chem_editor'] %}
+{% if Entity.Users.userData['chem_editor'] %}
     <div class='box chemdoodle'>
         <h3>{{ 'Molecule drawer'|trans }}</h3>
         <div class='center'>
@@ -217,19 +220,19 @@ Dropzone.options.elabftwDropzone = {
     </div>
 {% endif %}
 
-{% if Ev.Entity.Users.userData['close_warning'] %}
+{% if Entity.Users.userData['close_warning'] %}
     <script src='app/js/closeWarning.js'></script>
 {% endif %}
 <div id='entityInfos'
-    data-type='{{ Ev.Entity.type }}'
-    data-id='{{ Ev.Entity.id }}'
+    data-type='{{ Entity.type }}'
+    data-id='{{ Entity.id }}'
     data-title='{{ cleanTitle }}'
     data-confirm="{{ 'Delete this?'|trans }}"
     data-untitled="{{ 'Untitled'|trans }}"
-    data-lang="{{ Ev.Entity.Users.userData.lang }}">
+    data-lang="{{ Entity.Users.userData.lang }}">
 </div>
 <div id='shortcuts'
-    data-create='{{ Ev.Entity.Users.userData.sc_create }}'
-    data-submit='{{ Ev.Entity.Users.userData.sc_submit }}'>
+    data-create='{{ Entity.Users.userData.sc_create }}'
+    data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
 <script src='app/js/edit.min.js'></script>

@@ -27,37 +27,49 @@ try {
         $Users = new Users($Session->get('userid'));
     }
 
-    $EntityView = new ExperimentsView(new Experiments($Users));
-    $Status = new Status($EntityView->Entity->Users);
+    $Entity = new Experiments($Users);
+    $EntityView = new ExperimentsView($Entity);
+    $Status = new Status($Entity->Users);
 
     // VIEW
     if ($Request->query->get('mode') === 'view') {
 
-        $EntityView->Entity->setId($Request->query->get('id'));
-        $Comments = new Comments($EntityView->Entity);
-        $commentsArr = $Comments->read();
+        $Entity->setId($Request->query->get('id'));
+        $Entity->canOrExplode('read');
+        $permissions = $Entity->getPermissions();
 
+        // READ ONLY MESSAGE
         $ownerName = '';
-        if ($EntityView->isReadOnly()) {
+        $isReadOnly = false;
+        if ($permissions['read'] && !$permissions['write']) {
             // we need to get the fullname of the user who owns the experiment to display the RO message
-            $Owner = new Users($EntityView->Entity->entityData['userid']);
+            $Owner = new Users($Entity->entityData['userid']);
             $ownerName = $Owner->userData['fullname'];
+            $isReadOnly = true;
         }
 
-        if ($EntityView->Entity->entityData['timestamped']) {
+        // TIMESTAMP
+        if ($Entity->entityData['timestamped']) {
             echo $EntityView->showTimestamp();
         }
-        // Uploads
+        // UPLOADS
         $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
 
+        // COMMENTS
+        $Comments = new Comments($Entity);
+        $commentsArr = $Comments->read();
+
+        // RENDER
         echo $Twig->render('view.html', array(
             'Ev' => $EntityView,
+            'Entity' => $Entity,
             'Uv' => $UploadsView,
-            'mode' => 'view',
             'Status' => $Status,
+            'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
             'commentsArr' => $commentsArr,
+            'mode' => 'view',
             'ownerName' => $ownerName,
-            'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title'])
+            'isReadOnly' => $isReadOnly
         ));
 
     // EDIT
@@ -74,13 +86,16 @@ try {
         $Revisions = new Revisions($EntityView->Entity);
         // Uploads
         $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
+        $TeamGroups = new TeamGroups($Entity->Users);
 
         echo $Twig->render('edit.html', array(
             'Ev' => $EntityView,
+            'Entity' => $Entity,
             'Uv' => $UploadsView,
             'mode' => 'edit',
             'Revisions' => $Revisions,
             'Status' => $Status,
+            'TeamGroups' => $TeamGroups,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
             'maxUploadSize' => Tools::returnMaxUploadSize()
         ));

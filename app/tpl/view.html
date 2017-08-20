@@ -1,51 +1,54 @@
-{% if Ev.Entity.Users.userData['chem_editor'] %}
+{% if Entity.Users.userData.chem_editor %}
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
 {% endif %}
 
-{% if Ev.isReadOnly %}
+{# back to link #}
+<a href='?mode=show'>
+    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
+</a>
+
+{% if isReadOnly %}
     {{ 'Read-only mode. Experiment of %s.'|trans|format(ownerName)|msg('ok', false) }}
 {% endif %}
 
-{{ Ev.backToLink(Ev.Entity.type)|raw }}
-
-{% if Ev.Entity.type == 'experiments' %}
-    <section class='item' style='padding:15px;border-left: 6px solid #{{ Ev.Entity.entityData['color'] }}'>
-        <span class='top_right_status'><img src='app/img/status.png'>{{ Ev.Entity.entityData['category'] }}
-            <img src='app/img/eye.png' alt='eye' />{{ Ev.getVisibility }}
+{% if Entity.type == 'experiments' %}
+    <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
+        <span class='top_right_status'><img src='app/img/status.png'>{{ Entity.entityData.category }}
+            <img src='app/img/eye.png' alt='eye' />{{ getVisibility }}
         </span>
 {% else %}
     <section class='box'>
-    {{ Ev.showStars(Ev.Entity.entityData['rating'])|raw }}
+        <span class='align_right'>{{ Entity.entityData.rating|stars|raw }}</span>
 {% endif %}
 
 <!-- DATE -->
 <div>
-    <img src='app/img/calendar.png' title='date' alt='Date :' />{{ Ev.Entity.entityData['date']|kdate }}
+    <img src='app/img/calendar.png' title='date' alt='Date :' />{{ Entity.entityData.date|kdate }}
 </div>
 <!-- begin action buttons row -->
-<a class='elab-tooltip' href='?mode=edit&id={{ Ev.Entity.id }}'>
+<a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
     <span>{{ 'Edit'|trans }}</span>
     <img src='app/img/pen-blue.png' alt={{ 'Edit'|trans }} />
 </a>
 
-<a class='elab-tooltip' href='app/controllers/EntityController.php?duplicateId={{ Ev.Entity.id }}&type={{ Ev.Entity.type }}'>
+<a class='elab-tooltip' href='app/controllers/EntityController.php?duplicateId={{ Entity.id }}&type={{ Entity.type }}'>
     <span>{{ 'Duplicate'|trans }}</span>
     <img src='app/img/duplicate.png' alt='Duplicate' />
 </a>
 
-<a class='elab-tooltip' href='make.php?what=pdf&id={{ Ev.Entity.id }}&type={{ Ev.Entity.type }}'>
+<a class='elab-tooltip' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
     <span>Make a PDF</span>
     <img src='app/img/pdf.png' alt='PDF' />
 </a>
 
-<a class='elab-tooltip' href='make.php?what=zip&id={{ Ev.Entity.id }}&type={{ Ev.Entity.type }}'>
+<a class='elab-tooltip' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
     <span>Make a ZIP</span>
     <img src='app/img/zip.png' alt='ZIP' />
 </a>
 
-{% if Ev.Entity.type == 'items' %}
-<a class='elab-tooltip' href='experiments.php?mode=show&related={{ Ev.Entity.id }}'>
+{% if Entity.type == 'items' %}
+<a class='elab-tooltip' href='experiments.php?mode=show&related={{ Entity.id }}'>
     <span>Show related</span>
     <img src='app/img/link.png' alt='Related' />
 </a>
@@ -54,7 +57,7 @@
 <!-- LOCK -->
 {% set imgSrc = 'unlock.png' %}
 {% set alt = 'Lock/Unlock item'|trans %}
-{% if Ev.Entity.entityData['locked'] != 0 %}
+{% if Entity.entityData['locked'] != 0 %}
     {% set imgSrc = 'lock-gray.png' %}
 {% endif %}
 <a class='elab-tooltip' href='#'>
@@ -63,7 +66,7 @@
 </a>
 
 <!-- show timestamp button if not timestamped already -->
-{% if not Ev.Entity.entityData.timestamped and Ev.Entity.isTimestampable() and Ev.Entity.type == 'experiments' %}
+{% if not Entity.entityData.timestamped and Entity.isTimestampable() and Entity.type == 'experiments' %}
     <a class='elab-tooltip'>
         <span>{{ 'Timestamp Experiment' }}</span>
         <img id='confirmTimestamp' src='app/img/stamp.png' alt='Timestamp' />
@@ -77,10 +80,10 @@
 {% endif %}
 
 <!-- build the tag array -->
-{% if Ev.Entity.entityData.tags|length > 0 %}
+{% if Entity.entityData.tags|length > 0 %}
     <span class='tags'><img src='app/img/tags.png' alt='tags' />
-    {% set tagsIdArr = Ev.Entity.entityData.tags_id|split(',') %}
-    {% set tagsValueArr = Ev.Entity.entityData.tags|split('|') %}
+    {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+    {% set tagsValueArr = Entity.entityData.tags|split('|') %}
     {% for key, tag in tagsValueArr %}
         {# the key allows to get the id stored in tagsIdArr #}
         <a href='?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
@@ -88,20 +91,20 @@
 {% endif %}
 
 <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-{% if not Ev.ro and not Ev.Entity.entityData.locked %}
+{% if not isReadOnly and not Entity.entityData.locked %}
     {% set click2Edit = 'click2Edit clickable' %}
 {% else %}
     {% set click2Edit = '' %}
 {% endif %}
 <div class='{{ click2Edit }} title_view'>
-    {% if Ev.Entity.type == 'items' %}
-        <span style='color:#{{ Ev.Entity.entityData['color'] }}'>{{ Ev.Entity.entityData.category }}</span>
+    {% if Entity.type == 'items' %}
+        <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
     {% endif %}
-    {{ Ev.Entity.entityData.title|raw }}
+    {{ Entity.entityData.title|raw }}
 </div>
 
 <!-- SHOW NEXT STEP -->
-{% set next_step = Ev.Entity.entityData.next_step %}
+{% set next_step = Entity.entityData.next_step %}
 {% if next_step|length > 0 %}
     {% set stepsArr = next_step|split('|') %}
     {% set next = stepsArr|first %}
@@ -111,18 +114,18 @@
 {% endif %}
 
 <!--  BODY (show only if not empty -->
-{% set body = Ev.Entity.entityData.body %}
+{% set body = Entity.entityData.body %}
 {% if body != '' %}
-    {% if Ev.Entity.Users.userData.use_markdown %}
-        {% set body = Ev.Entity.entityData.body|md2html %}
+    {% if Entity.Users.userData.use_markdown %}
+        {% set body = Entity.entityData.body|md2html %}
     {% endif %}
     <div id='body_view' class='txt'>{{ body|raw }}</div>
     <br>
 {% endif %}
 
-{% if Ev.Entity.type == 'experiments' %}
+{% if Entity.type == 'experiments' %}
     <!-- LINKS -->
-    {% set linksArr = Ev.Entity.Links.read %}
+    {% set linksArr = Entity.Links.read %}
     {% if linksArr|length > 0 %}
         <ul class='list-group'>
             {% for link in linksArr %}
@@ -133,19 +136,19 @@
     {% endif %}
 
     <!-- eLabID -->
-    <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Ev.Entity.entityData['elabid'] }}</p>
+    <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData['elabid'] }}</p>
 {% endif %}
 
-{% if Ev.Entity.type == 'items' %}
+{% if Entity.type == 'items' %}
     <!-- SHOW USER -->
-    {{ 'Last modified by'|trans }} {{ Ev.Entity.entityData['fullname'] }}
+    {{ 'Last modified by'|trans }} {{ Entity.entityData['fullname'] }}
 {% endif %}
 
 </section>
 
 {{ include('uploads.html') }}
 
-{% if Ev.Entity.type == 'experiments' %}
+{% if Entity.type == 'experiments' %}
     <section id='expcomment_container'>
         <div id='expcomment' class='box'>
             <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>
@@ -153,7 +156,7 @@
             {% if commentsArr|length > 0 %}
                 {% for comment in commentsArr %}
                     <div class='expcomment_box'>
-                        <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Ev.Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
+                        <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
                         <span>On {{ comment.datetime }} {{ comment.fullname }} wrote :</span>
                         <!-- .editable uses the id of the element to send to the controller -->
                         <p class='editable' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
@@ -163,7 +166,7 @@
 
             <textarea id='commentsCreateArea' placeholder='{{ 'Add a comment'|trans }}'></textarea>
             <div id='commentsCreateButtonDiv' class='submitButtonDiv'>
-                <button class='button' id='commentsCreateButton' data-expid='{{ Ev.Entity.id }}'>{{ 'Save'|trans }}</button>
+                <button class='button' id='commentsCreateButton' data-expid='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
             </div>
         </div>
     </section>
@@ -172,12 +175,12 @@
 
 <div id='entityInfos'
     data-title='{{ cleanTitle }}'
-    data-type='{{ Ev.Entity.type }}'
-    data-id='{{ Ev.Entity.id }}'
+    data-type='{{ Entity.type }}'
+    data-id='{{ Entity.id }}'
     data-confirm="{{ 'Delete this?'|trans }}">
 </div>
 <div id='shortcuts'
-    data-create='{{ Ev.Entity.Users.userData.sc_create }}'
-    data-edit='{{ Ev.Entity.Users.userData.sc_edit }}'>
+    data-create='{{ Entity.Users.userData.sc_create }}'
+    data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <script src='app/js/view.min.js'></script>

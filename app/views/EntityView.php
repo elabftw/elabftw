@@ -51,7 +51,7 @@ class EntityView
      * Check if the entity is read only
      *
      * @return bool
-     */
+     *
     public function isReadOnly()
     {
         $permissions = $this->Entity->getPermissions();

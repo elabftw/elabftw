@@ -15,6 +15,9 @@ namespace Elabftw\Elabftw;
  */
 class DatabaseView extends EntityView
 {
+    /** @var Database $Entity the database entity */
+    public $Entity;
+
     /**
      * Constructor
      *
@@ -23,25 +26,5 @@ class DatabaseView extends EntityView
     public function __construct(Entity $entity)
     {
         $this->Entity = $entity;
-        $this->limit = $this->Entity->Users->userData['limit_nb'];
-    }
-
-    /**
-     * Display the stars rating for a DB item
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public function showStars($rating)
-    {
-        $html = "";
-
-        $green = "<img src='app/img/star-green.png' alt='☻' />";
-        $gray = "<img src='app/img/star-gray.png' alt='☺' />";
-
-        $html .= str_repeat($green, $rating);
-        $html .= str_repeat($gray, (5 - $rating));
-
-        return $html;
     }
 }

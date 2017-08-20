@@ -23,15 +23,19 @@ try {
     $selectedMenu = 'Database';
     require_once 'app/head.inc.php';
 
-    $EntityView = new DatabaseView(new Database($Users));
+    $Entity = new Database($Users);
 
     // VIEW
     if ($Request->query->get('mode') === 'view') {
 
-        $EntityView->Entity->setId($Request->query->get('id'));
-        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
+        // set id
+        $Entity->setId($Request->query->get('id'));
+        // check permissions
+        $Entity->canOrExplode('read');
+        $UploadsView = new UploadsView(new Uploads($Entity));
+        // the mode parameter is for the uploads tpl
         echo $Twig->render('view.html', array(
-            'Ev' => $EntityView,
+            'Entity' => $Entity,
             'Uv' => $UploadsView,
             'mode' => 'view'
         ));
@@ -39,20 +43,21 @@ try {
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {
 
-        $EntityView->Entity->setId($Request->query->get('id'));
+        // set id
+        $Entity->setId($Request->query->get('id'));
         // check permissions
-        $EntityView->Entity->canOrExplode('write');
+        $Entity->canOrExplode('write');
         // a locked item cannot be edited
-        if ($EntityView->Entity->entityData['locked']) {
+        if ($Entity->entityData['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
 
-        $Revisions = new Revisions($EntityView->Entity);
-        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
-        $Tags = new Tags($EntityView->Entity);
+        $Revisions = new Revisions($Entity);
+        $UploadsView = new UploadsView(new Uploads($Entity));
+        $Tags = new Tags($Entity);
 
         echo $Twig->render('edit.html', array(
-            'Ev' => $EntityView,
+            'Entity' => $Entity,
             'Uv' => $UploadsView,
             'mode' => 'edit',
             'Revisions' => $Revisions,
@@ -62,6 +67,7 @@ try {
 
     // DEFAULT MODE IS SHOW
     } else {
+        $EntityView = new DatabaseView($Entity);
         // CATEGORY FILTER
         if (Tools::checkId($Request->query->get('cat'))) {
             $EntityView->Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('cat');

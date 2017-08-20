@@ -23,10 +23,6 @@ try {
     $selectedMenu = 'Experiments';
     require_once 'app/head.inc.php';
 
-    if (!isset($Users)) {
-        $Users = new Users($Session->get('userid'));
-    }
-
     $Entity = new Experiments($Users);
     $EntityView = new ExperimentsView($Entity);
     $Status = new Status($Entity->Users);
@@ -37,10 +33,6 @@ try {
         $Entity->setId($Request->query->get('id'));
         $Entity->canOrExplode('read');
 
-        // TIMESTAMP
-        if ($Entity->entityData['timestamped']) {
-            echo $EntityView->showTimestamp();
-        }
         // UPLOADS
         $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
 

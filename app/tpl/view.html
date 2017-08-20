@@ -13,6 +13,9 @@
 {% endif %}
 
 {% if Entity.type == 'experiments' %}
+    {% if Entity.entityData.timestamped %}
+        {{ Ev.showTimestamp()|raw }}
+    {% endif %}
     <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
         <span class='top_right_status'><img src='app/img/status.png'>{{ Entity.entityData.category }}
             <img src='app/img/eye.png' alt='eye' />{{ getVisibility }}

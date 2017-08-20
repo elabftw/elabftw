@@ -45,10 +45,13 @@ try {
 
     require_once $configFilePath;
 
+    // the config table from mysql
+    $Config = new Config();
+
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $Update = new Update(new Config);
+        $Update = new Update($Config);
     } catch (Exception $e) {
         header('Location: install');
         throw new Exception('Redirecting to install folder');
@@ -56,7 +59,7 @@ try {
 
     // i18n (gettext)
     if ($Session->has('auth')) {
-        $Users = new Users($Session->get('userid'), new Config());
+        $Users = new Users($Session->get('userid'), $Config);
         $locale = $Users->userData['lang'] . '.utf8';
     } else {
         $locale = $Update->Config->configArr['lang'] . '.utf8';

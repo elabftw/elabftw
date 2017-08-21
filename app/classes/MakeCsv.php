@@ -15,9 +15,6 @@ namespace Elabftw\Elabftw;
  */
 class MakeCsv extends Make
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
-
     /** @var string $fileName a sha512 sum */
     public $fileName;
 

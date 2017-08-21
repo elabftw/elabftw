@@ -19,9 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MakePdf extends Make
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
-
     /** @var string $fileName a sha512 sum */
     public $fileName;
 

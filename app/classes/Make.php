@@ -21,6 +21,9 @@ abstract class Make
     /** @var Entity $Entity instance of Experiments or Database */
     protected $Entity;
 
+    /** @var Db $pdo SQL Database */
+    protected $pdo;
+
     /**
      * Constructor
      *
@@ -28,8 +31,8 @@ abstract class Make
      */
     public function __construct(Entity $entity)
     {
-        $this->pdo = Db::getConnection();
         $this->Entity = $entity;
+        $this->pdo = Db::getConnection();
     }
 
 

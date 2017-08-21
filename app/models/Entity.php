@@ -93,7 +93,7 @@ abstract class Entity
      * Constructor
      *
      * @param Users $users
-     * @param int $id the id of the entity
+     * @param int|null $id the id of the entity
      */
     public function __construct(Users $users, $id = null)
     {

@@ -18,9 +18,6 @@ use Exception;
  */
 class MakeZip extends Make
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
-
     /** @var ZipArchive $Zip the Zip object */
     private $Zip;
 

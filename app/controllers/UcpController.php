@@ -89,12 +89,9 @@ try {
     }
 
     // TEMPLATES DESTROY
+    /*
     if ($Request->request->has('templatesDestroy')) {
-        if (Tools::checkId($Request->request->get('id')) === false) {
-            throw new Exception('The id parameter is invalid!');
-        }
-
-        $Templates = new Templates($Users);
+        $Templates = new Templates($Users, $Request->request->get('id'));
         $Response = new JsonResponse();
 
         if ($Templates->destroy($Request->request->get('id'), $Session->get('userid'))) {
@@ -109,6 +106,7 @@ try {
             ));
         }
     }
+     */
 
 } catch (Exception $e) {
     $Logs = new Logs();

@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '30';
+    const REQUIRED_SCHEMA = '31';
 
     /**
      * Init Update with Config and pdo
@@ -226,6 +226,12 @@ class Update
             // 20170818
             $this->schema30();
             $this->updateSchema(30);
+        }
+
+        if ($current_schema < 31) {
+            // 20170821
+            $this->schema31();
+            $this->updateSchema(31);
         }
         // place new schema functions above this comment
 
@@ -762,6 +768,23 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             if (!$this->pdo->q($sql)) {
                 throw new Exception('Cannot add saml_lastname to config!');
             }
+        }
+    }
+
+    /**
+     * Add tags to experiments_templates
+     *
+     */
+    private function schema31()
+    {
+        $sql = "CREATE TABLE `elabftw`.`experiments_tpl_tags` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `tag` VARCHAR(255) NOT NULL,
+            `item_id` INT UNSIGNED NOT NULL,
+            `userid` INT UNSIGNED NOT NULL,
+            PRIMARY KEY (`id`));";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot create experiments_tpl_tags table');
         }
     }
 }

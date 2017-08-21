@@ -252,14 +252,37 @@
     </div>
 
     {% for template in templatesArr %}
-        <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+    <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+    <!-- TAGS -->
+    <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
+    <div class='tags'>
+        <span id='tags_div_{{ template.id }}'>
+            <!--  build the tag array -->
+            {% if template.tags|length > 0 %}
+                {% set tagsIdArr = template.tags_id|split(',') %}
+                {% set tagsValueArr = template.tags|split('|') %}
+                {% for key, tag in tagsValueArr %}
+                    {# the key allows to get the id stored in tagsIdArr #}
+                    <span class='tag'>
+                        <a class='tagDestroy' data-type='experiments_template' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                            {{ tag|raw }}
+                        </a>
+                    </span>
+                {% endfor %}
+            {% endif %}
+        </span>
+        <input type='text' style='width:auto' class='createTagInput' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+    </div>
             <img class='align_right save-to-file' src='app/img/download.png' title='Export Template' alt='Export' data-name='{{ template.name }}' data-id='e{{ template.id }}' />
             <img class='align_right destroy-template' src='app/img/small-trash.png' title='Delete' alt='Delete' data-id='{{ template.id }}' />
+
             <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />
                 <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
+                <label class='block'>{{ 'Name'|trans }}</label>
                 <input name='tpl_name[]' value='{{ template.name }}' style='width:90%' /><br />
                 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+                <label class='block'>{{ 'Template content'|trans }}</label>
                 <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
                 <div class='center'>
                     <button type='submit' name='Submit' class='button'>{{ 'Edit template'|trans }}</button>
@@ -275,4 +298,5 @@
 <script src='app/js/file-saver.min.js'></script>
 <script src='app/js/tabs.min.js'></script>
 <div id='language' data-lang='{{ Users.userData.lang }}'></div>
-<script src='app/js/ucp.min.js'></script>
+<div id='entityInfos' data-confirm="{{ 'Delete this?'|trans }}"></div>
+<script src='app/js/ucp.js'></script>

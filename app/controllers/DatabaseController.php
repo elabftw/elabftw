@@ -52,6 +52,7 @@ try {
     }
 
     // DESTROY
+    /*
     if ($Request->request->has('destroy')) {
         $Response = new JsonResponse();
         if ($Entity->destroy()) {
@@ -66,6 +67,7 @@ try {
             ));
         }
     }
+     */
 
 
 } catch (Exception $e) {

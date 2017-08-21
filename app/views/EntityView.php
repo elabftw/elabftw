@@ -124,7 +124,7 @@ class EntityView
                 $templates .= "<li class='dropdown-item disabled'><a href='#'>" . _('No templates found') . "</a></li>";
             }
             $templates .= "<li role='separator' class='divider'></li>";
-            $templates .= "<li class='dropdown-item'><a href='ucp.php?tab=3'>" . _('Add template') . "</a></li>";
+            $templates .= "<li class='dropdown-item'><a href='ucp.php?tab=3'>" . _('Manage templates') . "</a></li>";
 
             // FILTER BY
             $filterTitle = _('Filter status');

@@ -1,9 +1,74 @@
 // READY ? GO !!
 $(document).ready(function() {
+    var confirmText = $('#entityInfos').data('confirm');
+    var Tag = {
+        controller: 'app/controllers/EntityController.php',
+        // the argument here is the event (needed to detect which key is pressed)
+        create: function(e, id) {
+            var keynum;
+            if (e.which) {
+                keynum = e.which;
+            }
+            if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
+                // get tag
+                var tag = $('#createTagInput_' + id).val();
+                // POST request
+                $.post(this.controller, {
+                    createTag: true,
+                    tag: tag,
+                    id: id,
+                    type: 'tpl'
+                }).done(function () {
+                    $('#tags_div_' + id).load(' #tags_div_' + id);
+                    // clear input field
+                    $('#createTagInput_' + id).val('');
+                });
+            } // end if key is enter
+        },
+        destroy: function(tag, id) {
+            if (confirm(confirmText)) {
+                $.post(this.controller, {
+                    destroyTag: true,
+                    type: 'tpl',
+                    id: id,
+                    tag_id: tag
+                }).done(function() {
+                    $('#tags_div_' + id).load(' #tags_div_' + id);
+                });
+            }
+        }
+    };
+
+    // CREATE TAG
+    // listen keypress, add tag when it's enter
+    $(document).on('keypress', '.createTagInput', function(e) {
+        var id = $(this).data('id');
+        Tag.create(e, id);
+    });
+    // DESTROY TAG
+    $(document).on('click', '.tagDestroy', function() {
+        var id = $(this).data('id');
+        Tag.destroy($(this).data('tagid'), id);
+    });
+    // AUTOCOMPLETE THE TAGS
+    var cache = {};
+    $('.createTagInput').autocomplete({
+        source: function(request, response) {
+            var term = request.term;
+            if (term in cache) {
+                response(cache[term]);
+                return;
+            }
+            $.getJSON("app/controllers/EntityController.php?tag=1&type=experiments&id=1", request, function(data, status, xhr) {
+                cache[term] = data;
+                response(data);
+            });
+        }
+    });
 
 
     var Templates = {
-        controller: 'app/controllers/UcpController.php',
+        controller: 'app/controllers/EntityController.php',
         saveToFile: function(id, name) {
         // we have the name of the template used for filename
         // and we have the id of the editor to get the content from
@@ -15,15 +80,14 @@ $(document).ready(function() {
         destroy: function(id) {
             if (confirm('Delete this ?')) {
                 $.post(this.controller, {
-                    templatesDestroy: true,
+                    destroy: true,
                     id: id
                 }).done(function(data) {
-                    var json = JSON.parse(data);
-                    if (json.res) {
-                        notif(json.msg, 'ok');
-                        window.location.replace('ucp.php?tab=3');
+                    if (data.res) {
+                        notif(data.msg, 'ok');
+                        window.location.replace('?tab=3');
                     } else {
-                        notif(json.msg, 'ko');
+                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -36,6 +100,7 @@ $(document).ready(function() {
     $(document).on('click', '.destroy-template', function() {
         Templates.destroy($(this).data('id'));
     });
+
 
     // hide the file input
     $('#import_tpl').hide();

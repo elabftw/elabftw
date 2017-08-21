@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 /**
  * All about the templates
  */
-class Templates
+class Templates extends Entity
 {
     use EntityTrait;
 
@@ -22,6 +22,8 @@ class Templates
 
     /** instance of Users */
     public $Users;
+
+    public $type = 'experiments_tpl';
 
     /**
      * Give me the team on init
@@ -89,7 +91,7 @@ class Templates
      */
     public function read()
     {
-        $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
+        $sql = "SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id);
         $req->bindParam(':team', $this->Users->userData['team']);
@@ -105,7 +107,13 @@ class Templates
      */
     public function readFromUserid()
     {
-        $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
+        $sql = "SELECT experiments_templates.id,
+            experiments_templates.body,
+            experiments_templates.name,
+            GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id
+            FROM experiments_templates
+            LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
+            WHERE experiments_templates.userid = :userid group by experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
@@ -186,16 +194,19 @@ class Templates
      * Delete template
      *
      * @param int $id ID of the template
-     * @param int $userid
      * @return bool
      */
-    public function destroy($id, $userid)
+    public function destroy($id)
     {
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->Users->userid);
+        $res1 = $req->execute();
 
-        return $req->execute();
+        $tags = new Tags($this);
+        $res2 = $tags->destroyAll();
+
+        return $res1 && $res2;
     }
 }

@@ -17,12 +17,13 @@ class Templates extends Entity
 {
     use EntityTrait;
 
-    /** pdo object */
+    /** @var Db $pdo our pdo object */
     protected $pdo;
 
-    /** instance of Users */
+    /** @var Users $Users instance of Users */
     public $Users;
 
+    /** @var string $type almost the database table… */
     public $type = 'experiments_tpl';
 
     /**
@@ -33,11 +34,7 @@ class Templates extends Entity
      */
     public function __construct(Users $users, $id = null)
     {
-        $this->pdo = Db::getConnection();
-        $this->Users = $users;
-        if (!is_null($id)) {
-            $this->setId($id);
-        }
+        parent::__construct($users, $id);
     }
 
     /**
@@ -209,14 +206,27 @@ class Templates extends Entity
         return $res1 && $res2;
     }
 
+    /**
+     * No category for templates
+     *
+     * @param int $category
+     */
     public function updateCategory($category)
     {
     }
 
+    /**
+     * No duplication for templates (yet!)
+     *
+     */
     public function duplicate()
     {
     }
 
+    /**
+     * No locking option for templates
+     *
+     */
     public function toggleLock()
     {
     }

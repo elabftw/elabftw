@@ -90,6 +90,23 @@ abstract class Entity
     public $ownerName = '';
 
     /**
+     * Constructor
+     *
+     * @param Users $users
+     * @param int $id the id of the entity
+     */
+    public function __construct(Users $users, $id = null)
+    {
+        $this->pdo = Db::getConnection();
+
+        $this->Users = $users;
+
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
+
+    }
+    /**
      * Update status or item type
      *
      * @param int $category

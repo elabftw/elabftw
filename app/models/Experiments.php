@@ -46,14 +46,9 @@ class Experiments extends Entity
      */
     public function __construct(Users $users, $id = null)
     {
-        $this->pdo = Db::getConnection();
+        parent::__construct($users, $id);
 
         $this->type = 'experiments';
-        $this->Users = $users;
-
-        if (!is_null($id)) {
-            $this->setId($id);
-        }
 
         $this->Steps = new Steps($this);
         $this->Links = new Links($this);

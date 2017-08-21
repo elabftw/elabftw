@@ -405,6 +405,16 @@ CREATE TABLE IF NOT EXISTS `idps` (
 
 -- --------------------------------------------------------
 
+--
+-- experiments_tpl_tags
+--
+CREATE TABLE IF NOT EXISTS `experiments_tpl_tags` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `tag` VARCHAR(255) NOT NULL,
+    `item_id` INT UNSIGNED NOT NULL,
+    `userid` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ELABFTW
 /* the default item_types */
@@ -473,4 +483,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_lastname', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '30');
+('schema', '31');

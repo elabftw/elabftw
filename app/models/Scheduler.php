@@ -15,6 +15,8 @@ namespace Elabftw\Elabftw;
  */
 class Scheduler
 {
+    use EntityTrait;
+
     /** pdo object */
     protected $pdo;
 

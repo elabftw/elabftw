@@ -22,6 +22,17 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `phpunit` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `phpunit`;
 
+--
+-- experiments_tpl_tags
+--
+CREATE TABLE `experiments_tpl_tags` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `tag` VARCHAR(255) NOT NULL,
+    `item_id` INT UNSIGNED NOT NULL,
+    `userid` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 --
 -- Table structure for table `experiments_steps`
@@ -82,7 +93,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '30'),
+('schema', '31'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),

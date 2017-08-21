@@ -16,7 +16,7 @@ use PDO;
 /**
  * The mother class of Experiments and Database
  */
-class Entity
+abstract class Entity
 {
     use EntityTrait;
 
@@ -88,6 +88,35 @@ class Entity
 
     /** @var string $ownerName the name of the owner of the entity */
     public $ownerName = '';
+
+    /**
+     * Update status or item type
+     *
+     * @param int $category
+     * @return bool
+     */
+    abstract public function updateCategory($category);
+
+    /**
+     * Duplicate an item
+     *
+     * @return int the new item id
+     */
+    abstract public function duplicate();
+
+    /**
+     * Destroy an item
+     *
+     * @return bool
+     */
+    abstract public function destroy();
+
+    /**
+     * Lock or unlock
+     *
+     * @return bool
+     */
+    abstract public function toggleLock();
 
     /**
      * Now that we have an id, we can read the data and set the permissions

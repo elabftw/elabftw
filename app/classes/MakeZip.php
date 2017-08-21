@@ -57,8 +57,7 @@ class MakeZip extends Make
      */
     public function __construct(Entity $entity, $idList)
     {
-        $this->pdo = Db::getConnection();
-        $this->Entity = $entity;
+        parent::__construct($entity);
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {

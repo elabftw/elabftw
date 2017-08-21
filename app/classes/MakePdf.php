@@ -49,8 +49,8 @@ class MakePdf extends Make
      */
     public function __construct(Entity $entity, $toFile = false, $timestamp = false)
     {
-        $this->pdo = Db::getConnection();
-        $this->Entity = $entity;
+        parent::__construct($entity);
+
         $this->Entity->canOrExplode('read');
 
         // build the pdf content

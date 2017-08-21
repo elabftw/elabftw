@@ -38,8 +38,7 @@ class MakeCsv extends Make
      */
     public function __construct(Entity $entity, $idList)
     {
-        $this->pdo = Db::getConnection();
-        $this->Entity = $entity;
+        parent::__construct($entity);
 
         $this->fileName = $this->getUniqueString();
         $this->filePath = $this->getFilePath($this->fileName, true);

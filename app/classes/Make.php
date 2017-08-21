@@ -22,6 +22,18 @@ abstract class Make
     protected $Entity;
 
     /**
+     * Constructor
+     *
+     * @param Entity $entity
+     */
+    public function __construct(Entity $entity)
+    {
+        $this->pdo = Db::getConnection();
+        $this->Entity = $entity;
+    }
+
+
+    /**
      * The filename for what we are making
      *
      * @return string

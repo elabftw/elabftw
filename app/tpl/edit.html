@@ -21,9 +21,9 @@
     <div class='tags'>
         <span id='tags_div'>
             <!--  build the tag array -->
-            {% if Entity.entityData['tags']|length > 0 %}
-                {% set tagsIdArr = Entity.entityData['tags_id']|split(',') %}
-                {% set tagsValueArr = Entity.entityData['tags']|split('|') %}
+            {% if Entity.entityData.tags|length > 0 %}
+                {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+                {% set tagsValueArr = Entity.entityData.tags|split('|') %}
                 {% for key, tag in tagsValueArr %}
                     {# the key allows to get the id stored in tagsIdArr #}
                     <span class='tag'>
@@ -148,7 +148,7 @@
                 {% if linksArr|length > 0 %}
                 <ul class='list-group'>
                     {% for link in linksArr %}
-                    <li class='list-group-item'>{{ link['name']|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                    <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
                             {{ link['title']|raw }}</a>
                         <a class='linkDestroy' data-linkid='{{ link.linkid }}'>
                         <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' /></a>
@@ -221,7 +221,7 @@ Dropzone.options.elabftwDropzone = {
 <script src='app/js/doodle.js'></script>
 
 <!-- CHEM EDITOR -->
-{% if Entity.Users.userData['chem_editor'] %}
+{% if Entity.Users.userData.chem_editor %}
     <div class='box chemdoodle'>
         <h3>{{ 'Molecule drawer'|trans }}</h3>
         <div class='center'>
@@ -230,7 +230,7 @@ Dropzone.options.elabftwDropzone = {
     </div>
 {% endif %}
 
-{% if Entity.Users.userData['close_warning'] %}
+{% if Entity.Users.userData.close_warning %}
     <script src='app/js/closeWarning.js'></script>
 {% endif %}
 <div id='entityInfos'

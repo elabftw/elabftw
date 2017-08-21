@@ -42,7 +42,7 @@ class Tags
      */
     public function create($tag)
     {
-        if ($this->Entity->type === 'experiments') {
+        if ($this->Entity->type === 'experiments' || $this->Entity->type === 'experiments_tpl') {
             $userOrTeam = 'userid';
             $userOrTeamValue = $this->Entity->Users->userid;
         } else {
@@ -100,7 +100,6 @@ class Tags
      */
     public function copyTags($newId)
     {
-        // TAGS
         $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
@@ -108,14 +107,14 @@ class Tags
         if ($req->rowCount() > 0) {
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newId is the new exp created
-                if ($this->Entity->type === 'experiments') {
-                    $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+                if ($this->Entity->type === 'experiments' || $this->Entity->type === 'experiments_tpl') {
+                    $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
                     $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
                     $reqtag->bindParam(':userid', $this->Entity->Users->userid);
                 } else {
-                    $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
+                    $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
                     $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
@@ -188,11 +187,7 @@ class Tags
      */
     public function destroyAll()
     {
-        if ($this->Entity->type === 'experiments') {
-            $sql = "DELETE FROM experiments_tags WHERE item_id = :id";
-        } else {
-            $sql = "DELETE FROM items_tags WHERE item_id = :id";
-        }
+        $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);

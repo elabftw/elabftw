@@ -34,6 +34,8 @@ try {
     if ($Request->request->get('type')  === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($Users, $id);
+    } elseif ($Request->request->get('type') === 'tpl') {
+        $Entity = new Templates($Users, $id);
     } else {
         $Entity = new Database($Users, $id);
     }
@@ -307,6 +309,23 @@ try {
             ));
         }
     }
+
+    // DESTROY ENTITY
+    if ($Request->request->has('destroy')) {
+        $Response = new JsonResponse();
+        if ($Entity->destroy()) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Item deleted successfully')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
 
     $Response->send();
 

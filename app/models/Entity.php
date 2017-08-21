@@ -128,7 +128,7 @@ abstract class Entity
             throw new Exception('No id provided.');
         }
 
-        if ($this instanceof Experiments || $this instanceof Database) {
+        if ($this instanceof Experiments || $this instanceof Database || $this instanceof Templates) {
             $this->entityData = $this->read();
             $permissions = $this->getPermissions();
 
@@ -403,6 +403,12 @@ abstract class Entity
                         $permissions['read'] = true;
                     }
                 }
+            }
+
+        } elseif ($this->type === 'experiments_tpl') {
+            if ($item['userid'] === $this->Users->userid) {
+                $permissions['read'] = true;
+                $permissions['write'] = true;
             }
 
         } else {

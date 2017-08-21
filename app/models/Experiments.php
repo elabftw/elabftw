@@ -100,8 +100,15 @@ class Experiments extends Entity
             'visibility' => $visibility,
             'userid' => $this->Users->userid
         ));
+        $newId = $this->pdo->lastInsertId();
 
-        return $this->pdo->lastInsertId();
+        // insert the tags from the template
+        if ($tpl != null) {
+            $Tags = new Tags(new Templates($this->Users, $tpl));
+            $Tags->copyTags($newId);
+        }
+
+        return $newId;
     }
 
     /**
@@ -298,8 +305,8 @@ class Experiments extends Entity
             'userid' => $this->Users->userid));
         $newId = $this->pdo->lastInsertId();
 
-        $tags = new Tags($this);
-        $tags->copyTags($newId);
+        $Tags = new Tags($this);
+        $Tags->copyTags($newId);
 
         $this->Steps->duplicate($this->id, $newId);
         $this->Links->duplicate($this->id, $newId);

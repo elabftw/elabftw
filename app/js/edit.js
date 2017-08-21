@@ -15,6 +15,9 @@ $(document).ready(function() {
     var Entity = {
         destroy: function() {
             if (confirm(confirmText)) {
+                if (type === 'items') {
+                    controller = 'app/controllers/EntityController.php';
+                }
                 $.post(controller, {
                     destroy: true,
                     id: id

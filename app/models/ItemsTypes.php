@@ -16,7 +16,7 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes
+class ItemsTypes extends Category
 {
     use EntityTrait;
 
@@ -172,7 +172,7 @@ class ItemsTypes
      * @param int $id of the type
      * @return int
      */
-    private function countItems($id)
+    protected function countItems($id)
     {
         $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
         $req = $this->pdo->prepare($sql);

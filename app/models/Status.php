@@ -16,7 +16,7 @@ use Exception;
 /**
  * Things related to status in admin panel
  */
-class Status
+class Status extends Category
 {
     use EntityTrait;
 
@@ -108,14 +108,14 @@ class Status
     /**
      * Get the color of a status
      *
-     * @param int $status ID of the status
+     * @param int $id ID of the category
      * @return string
      */
-    public function readColor($status)
+    public function readColor($id)
     {
         $sql = "SELECT color FROM status WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $status, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchColumn();
@@ -198,7 +198,7 @@ class Status
      * @param int $id
      * @return int
      */
-    private function countExperiments($id)
+    protected function countItems($id)
     {
         $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
         $req = $this->pdo->prepare($sql);
@@ -217,7 +217,7 @@ class Status
     public function destroy($id)
     {
         // don't allow deletion of a status with experiments
-        if ($this->countExperiments($id) > 0) {
+        if ($this->countItems($id) > 0) {
             throw new Exception(_("Remove all experiments with this status before deleting this status."));
         }
 

@@ -16,7 +16,7 @@ use Gmagick;
 /**
  * All about the file uploads
  */
-class Uploads extends Entity
+class Uploads
 {
     /** pdo object */
     protected $pdo;

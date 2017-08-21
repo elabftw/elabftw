@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 /**
  * All about the team's scheduler
  */
-class Scheduler extends Entity
+class Scheduler
 {
     /** pdo object */
     protected $pdo;

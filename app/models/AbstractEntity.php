@@ -32,6 +32,9 @@ abstract class AbstractEntity
     /** @var string $type experiments or items */
     public $type;
 
+    /** @var string $page will be defined in children classes */
+    public $page;
+
     /** @var Users $Users instance of Users */
     public $Users;
 

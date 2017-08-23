@@ -63,7 +63,7 @@
 {% if not Entity.isReadOnly %}
     {% set imgSrc = 'unlock.png' %}
     {% set alt = 'Lock/Unlock item'|trans %}
-    {% if Entity.entityData['locked'] != 0 %}
+    {% if Entity.entityData.locked %}
         {% set imgSrc = 'lock-gray.png' %}
     {% endif %}
     <a class='elab-tooltip' href='#'>
@@ -132,23 +132,23 @@
 
 {% if Entity.type == 'experiments' %}
     <!-- LINKS -->
-    {% set linksArr = Entity.Links.read %}
-    {% if linksArr|length > 0 %}
+    {% set linksArr = Entity.Links.readAll %}
+    {% if linksArr %}
         <ul class='list-group'>
             {% for link in linksArr %}
-            <li class='list-group-item'><img src='app/img/link.png'> {{ link['name']|raw }} - <a href='database.php?mode=view&id={{ link['itemid'] }}'>
-                    {{ link['title']|raw }}</a></li>
+            <li class='list-group-item'><img src='app/img/link.png'> {{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                    {{ link.title|raw }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}
 
     <!-- eLabID -->
-    <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData['elabid'] }}</p>
+    <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
 {% endif %}
 
 {% if Entity.type == 'items' %}
     <!-- SHOW USER -->
-    {{ 'Last modified by'|trans }} {{ Entity.entityData['fullname'] }}
+    {{ 'Last modified by'|trans }} {{ Entity.entityData.fullname }}
 {% endif %}
 
 </section>

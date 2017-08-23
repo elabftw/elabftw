@@ -50,7 +50,7 @@
                     <label for='datepicker'>{{ 'Date'|trans }}</label>
                     <!-- if firefox has support for it: type = date -->
                     <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
-                    <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData['date'] }}' />
+                    <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
                 </div>
 
             {% if Entity.type == 'experiments' %}
@@ -106,7 +106,7 @@
                 <h4>{{ 'Infos'|trans }}</h4>
             {% endif %}
 
-            <textarea id='body_area' class='{{ not Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Entity.entityData['body']|raw }}</textarea>
+            <textarea id='body_area' class='{{ not Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
 
             <div class='submitButtonDiv'>
                 <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>
@@ -144,12 +144,12 @@
             <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
             <br>
             <div class='list' id='links_div'>
-                {% set linksArr = Entity.Links.read %}
-                {% if linksArr|length > 0 %}
+                {% set linksArr = Entity.Links.readAll %}
+                {% if linksArr %}
                 <ul class='list-group'>
                     {% for link in linksArr %}
                     <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                            {{ link['title']|raw }}</a>
+                            {{ link.title|raw }}</a>
                         <a class='linkDestroy' data-linkid='{{ link.linkid }}'>
                         <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' /></a>
                     </li>

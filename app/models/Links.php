@@ -20,18 +20,18 @@ class Links
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** @var Experiments $Experiments instance of Experiments */
-    public $Experiments;
+    /** @var Experiments $Entity instance of Experiments */
+    public $Entity;
 
     /**
      * Constructor
      *
      * @param Experiments $experiments
      */
-    public function __construct(Experiments $experiments)
+    public function __construct(Experiments $entity)
     {
         $this->Db = Db::getConnection();
-        $this->Experiments = $experiments;
+        $this->Entity = $entity;
     }
 
     /**
@@ -45,7 +45,7 @@ class Links
     {
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':link_id', $link);
 
         return $req->execute();
@@ -54,9 +54,9 @@ class Links
     /**
      * Get links for an experiments
      *
-     * @return array
+     * @return array|false
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT items.id AS itemid,
             experiments_links.id AS linkid,
@@ -68,10 +68,13 @@ class Links
             LEFT JOIN items_types ON (items.type = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
+        if ($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
 
-        return $req->fetchAll();
+        return false;
     }
 
     /**
@@ -123,7 +126,7 @@ class Links
     {
         $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id);
+        $req->bindParam(':item_id', $this->Entity->id);
 
         return $req->execute();
     }

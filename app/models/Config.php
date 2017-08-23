@@ -121,6 +121,7 @@ class Config
 
     /**
      * Reset the config to default values
+     * TODO do we want to remove insert into from the sql file and call such function to get init ?
      *
      * @return bool
      */
@@ -147,7 +148,7 @@ class Config
             "stampprovider" => 'http://zeitstempel.dfn.de/',
             "stampcert" => 'app/dfn-cert/pki.dfn.pem',
             "stamphash" => 'sha256',
-            "schema" => '14');
+            "schema" => $this->configArr['schema']);
 
         return $this->Update($defaultConf);
     }

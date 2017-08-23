@@ -24,9 +24,6 @@ abstract class AbstractMake
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** @var string $page will be defined in children classes */
-    public $page;
-
     /**
      * Constructor
      *

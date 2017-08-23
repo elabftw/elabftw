@@ -94,7 +94,7 @@ class MakeZip extends AbstractMake
      */
     private function createZipArchive()
     {
-        $this->Zip = new \ZipArchive;
+        $this->Zip = new ZipArchive;
 
         if (!$this->Zip->open($this->filePath, ZipArchive::CREATE)) {
             throw new Exception('Could not open zip file!');
@@ -122,7 +122,7 @@ class MakeZip extends AbstractMake
      */
     private function addTimestampFiles($id)
     {
-        if ($this->Entity->type === 'experiments' && $this->Entity->entityData['timestamped'] === '1') {
+        if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
             // SQL to get the path of the token
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
                 type = 'timestamp-token'
@@ -147,7 +147,7 @@ class MakeZip extends AbstractMake
      */
     private function nameFolder()
     {
-        if ($this->Entity->type === 'experiments') {
+        if ($this->Entity instanceof Experiments) {
             $this->folder = $this->Entity->entityData['date'] . "-" . $this->cleanTitle;
         } else { // items
             $this->folder = $this->Entity->entityData['category'] . " - " . $this->cleanTitle;
@@ -196,9 +196,9 @@ class MakeZip extends AbstractMake
      */
     private function addCsv($id)
     {
-        $csv = new MakeCsv($this->Entity, $id);
-        $this->Zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
-        $this->trash[] = $csv->filePath;
+        $MakCsv = new MakeCsv($this->Entity, $id);
+        $this->Zip->addFile($MakeCsv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
+        $this->trash[] = $MakeCsv->filePath;
     }
 
     /**
@@ -213,7 +213,7 @@ class MakeZip extends AbstractMake
         $this->setCleanTitle();
         if ($permissions['read']) {
             $uploadedFilesArr = $this->Entity->Uploads->readAll();
-            $entityArr = $this->Entity->read();
+            $entityArr = $this->Entity->entityData;
             $entityArr['uploads'] = $uploadedFilesArr;
 
             $this->nameFolder();

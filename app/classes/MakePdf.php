@@ -128,6 +128,40 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Add the linked item if we are in an experiment
+     */
+    private function addLinkedItems()
+    {
+        $html = '';
+        $linksArr = $this->Entity->Links->readAll();
+        if ($linksArr === false) {
+            return $html;
+        }
+
+        $html .= "<section class='no-break'>";
+        if ($linkNb === 1) {
+            $html .= "<h3>Linked item:</h3>";
+        } else {
+            $html .= "<h3>Linked items:</h3>";
+        }
+        // add the item with a link
+
+        // create Request object
+        $Request = Request::createFromGlobals();
+        $url = 'https://' . $Request->getHttpHost() . '/database.php';
+
+        foreach ($linksArr as $link) {
+            $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];
+            $html .= "<p class='pdf-ul'>";
+            $html .= "<span style='color:#" . $link['color'] . "'>" .
+                $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
+        }
+        $html .= "</section>";
+
+        return $html;
+    }
+
+    /**
      * Add the comments (if any)
      *
      * @return string
@@ -220,43 +254,6 @@ class MakePdf extends AbstractMake
     {
         $full_url = $this->getUrl();
         return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
-    }
-
-    /**
-     * Add the linked item if we are in an experiment
-     */
-    private function addLinkedItems()
-    {
-        $html = '';
-
-        if ($this->Entity->type === 'experiments') {
-            $linksArr = $this->Entity->Links->read();
-            $linkNb = count($linksArr);
-
-
-            if ($linkNb > 0) {
-                $html .= "<section class='no-break'>";
-                if ($linkNb === 1) {
-                    $html .= "<h3>Linked item:</h3>";
-                } else {
-                    $html .= "<h3>Linked items:</h3>";
-                }
-                // add the item with a link
-
-                // create Request object
-                $Request = Request::createFromGlobals();
-                $url = 'https://' . $Request->getHttpHost() . '/database.php';
-
-                foreach ($linksArr as $link) {
-                    $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];
-                    $html .= "<p class='pdf-ul'>";
-                    $html .= "<span style='color:#" . $link['color'] . "'>" .
-                        $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
-                }
-                $html .= "</section>";
-            }
-        }
-        return $html;
     }
 
     /**

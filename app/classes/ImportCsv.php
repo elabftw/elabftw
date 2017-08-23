@@ -15,7 +15,7 @@ use Exception;
 /**
  * Import items from a csv file.
  */
-class ImportCsv extends Import
+class ImportCsv extends AbstractImport
 {
     /** @var Users $Users the current user */
     private $Users;

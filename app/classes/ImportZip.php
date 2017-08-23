@@ -19,7 +19,7 @@ use FileSystemIterator;
 /**
  * Import a .elabftw.zip file into the database.
  */
-class ImportZip extends Import
+class ImportZip extends AbstractImport
 {
     /** @var Users $Users instance of Users */
     private $Users;

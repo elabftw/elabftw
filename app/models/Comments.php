@@ -21,15 +21,15 @@ class Comments
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** @var AbstractEntity $Entity instance of Entity */
+    /** @var Experiments $Entity instance of Experiments */
     public $Entity;
 
     /**
      * Constructor
      *
-     * @param AbstractEntity $entity
+     * @param Experiments $entity
      */
-    public function __construct(AbstractEntity $entity)
+    public function __construct(Experiments $entity)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;

@@ -393,20 +393,6 @@ class Tools
     }
 
     /**
-     * Used when generating options for select menus
-     *
-     * @param string $getParam
-     * @param string $value
-     * @return string|null
-     */
-    public static function addSelected($getParam, $value)
-    {
-        if ($getParam === $value) {
-            return " selected";
-        }
-    }
-
-    /**
      * Display the stars rating for a DB item
      *
      * @param int $rating The number of stars to display

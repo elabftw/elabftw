@@ -13,12 +13,12 @@ namespace Elabftw\Elabftw;
 /**
  * All about the templates
  */
-class Templates extends Entity
+class Templates extends AbstractEntity
 {
     use EntityTrait;
 
-    /** @var Db $pdo our pdo object */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var Users $Users instance of Users */
     public $Users;
@@ -55,7 +55,7 @@ class Templates extends Entity
         $body = Tools::checkBody($body);
 
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
@@ -89,7 +89,7 @@ class Templates extends Entity
     public function read()
     {
         $sql = "SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
@@ -111,7 +111,7 @@ class Templates extends Entity
             FROM experiments_templates
             LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
             WHERE experiments_templates.userid = :userid group by experiments_templates.id ORDER BY experiments_templates.ordering ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
 
@@ -132,7 +132,7 @@ class Templates extends Entity
         }
 
         $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
@@ -153,7 +153,7 @@ class Templates extends Entity
             team = :team,
             body = :body
             WHERE userid = 0 AND team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->bindParam(':body', $body);
 
@@ -178,7 +178,7 @@ class Templates extends Entity
             name = :name,
             body = :body
             WHERE userid = :userid AND id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userid);
@@ -195,13 +195,12 @@ class Templates extends Entity
     public function destroy()
     {
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id);
         $req->bindParam(':userid', $this->Users->userid);
         $res1 = $req->execute();
 
-        $tags = new Tags($this);
-        $res2 = $tags->destroyAll();
+        $res2 = $this->Tags->destroyAll();
 
         return $res1 && $res2;
     }

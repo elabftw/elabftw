@@ -16,7 +16,7 @@ use Exception;
 /**
  * Make a zip archive from experiment or db item
  */
-class MakeZip extends Make
+class MakeZip extends AbstractMake
 {
     /** @var ZipArchive $Zip the Zip object */
     private $Zip;
@@ -48,11 +48,11 @@ class MakeZip extends Make
     /**
      * Give me an id list and a type, I make good zip for you
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      * @param string $idList 1+3+5+8
      * @throws Exception if we don't have ZipArchive extension
      */
-    public function __construct(Entity $entity, $idList)
+    public function __construct(AbstractEntity $entity, $idList)
     {
         parent::__construct($entity);
 
@@ -127,7 +127,7 @@ class MakeZip extends Make
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND (
                 type = 'timestamp-token'
                 OR type = 'exp-pdf-timestamp') LIMIT 2";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':id', $id);
             $req->execute();
             $uploads = $req->fetchAll();
@@ -183,9 +183,10 @@ class MakeZip extends Make
      */
     private function addPdf()
     {
-        $pdf = new MakePdf($this->Entity, true);
-        $this->Zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());
-        $this->trash[] = $pdf->filePath;
+        $MakePdf = new MakePdf($this->Entity);
+        $MakePdf->output(true);
+        $this->Zip->addFile($MakePdf->filePath, $this->folder . '/' . $MakePdf->getCleanName());
+        $this->trash[] = $MakePdf->filePath;
     }
 
     /**
@@ -208,12 +209,10 @@ class MakeZip extends Make
     private function addToZip($id)
     {
         $this->Entity->setId($id);
-        $this->Entity->populate();
-        $this->setCleanTitle();
         $permissions = $this->Entity->getPermissions();
+        $this->setCleanTitle();
         if ($permissions['read']) {
-            $Uploads = new Uploads($this->Entity);
-            $uploadedFilesArr = $Uploads->readAll();
+            $uploadedFilesArr = $this->Entity->Uploads->readAll();
             $entityArr = $this->Entity->read();
             $entityArr['uploads'] = $uploadedFilesArr;
 

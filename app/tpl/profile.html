@@ -69,12 +69,13 @@
     <hr>
     <div>
         {# handle minimum tag count #}
-        {% if TagCloud.cloudArr|length <= 10 %}
+        {% set cloudArr = TagCloud.getCloudArr %}
+        {% if cloudArr|length <= 10 %}
             {% trans %}
                 Not enough tags to make a tagcloud
             {% endtrans %}
         {% else %}
-        {% for tag, class in TagCloud.cloudArr %}
+        {% for tag, class in cloudArr %}
             <a href='experiments.php?mode=show&tag={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
         {% endfor %}
 

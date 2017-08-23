@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 try {
     require_once '../../app/init.inc.php';
 
-    $Comments = new Comments(new Experiments($Users));
+    $Entity = new Experiments($Users);
     $Response = new JsonResponse();
 
     $res = false;
@@ -28,8 +28,8 @@ try {
 
     // CREATE
     if ($Request->request->has('create')) {
-        $Comments->Entity->setId($Request->request->get('id'));
-        if ($Comments->create($Request->request->get('comment'))) {
+        $Entity->setId($Request->request->get('id'));
+        if ($Entity->Comments->create($Request->request->get('comment'))) {
             $res = true;
             $msg = _('Saved');
         }
@@ -37,7 +37,7 @@ try {
 
     // UPDATE
     if ($Request->request->has('update')) {
-        if ($Comments->update($Request->request->get('commentsUpdate'), $Request->request->get('id'))) {
+        if ($Entity->Comments->update($Request->request->get('commentsUpdate'), $Request->request->get('id'))) {
             $res = true;
             $msg = _('Saved');
         }
@@ -45,7 +45,7 @@ try {
 
     // DESTROY
     if ($Request->request->has('destroy')) {
-        if ($Comments->destroy($Request->request->get('id'), $Session->get('userid'))) {
+        if ($Entity->Comments->destroy($Request->request->get('id'))) {
             $res = true;
             $msg = _('Comment successfully deleted');
         }

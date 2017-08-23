@@ -9,7 +9,6 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     {
         $this->Users = new Users(1);
         $this->Users->generateApiKey();
-        $this->Users->populate();
     }
 
     public function testCreateExperiment()
@@ -37,5 +36,12 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $Api = new Api($Entity);
         $content = $Api->updateEntity('New title', '20170817', 'New body');
         $this->assertEquals('Success', $content[1]);
+        // update an entity without write access
+        /* TODO
+        $Entity = new Experiments(new Users(2), $id);
+        $Api = new Api($Entity);
+        $content = $Api->updateEntity('New title', '20170817', 'New body');
+        $this->assertEquals('Error', $content[1]);
+         */
     }
 }

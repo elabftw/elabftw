@@ -126,10 +126,8 @@ if (isset($_GET['type']) && $_GET['type'] === 'database' && isset($_GET['tag_db'
     $tagsArr = $_GET['tag_db'];
 }
 
-$Tags = new Tags($Experiments);
-$tag_exp_options = $Tags->generateTagList($tagsArr);
-$Tags = new Tags($Database);
-$tag_db_options = $Tags->generateTagList($tagsArr);
+$tag_exp_options = $Experiments->Tags->generateTagList($tagsArr);
+$tag_db_options = $Database->Tags->generateTagList($tagsArr);
 ?>
             <div class='col-md-3' id='tag_exp'>
                 <label for='tag_exp'><?php echo _('With the tag'); ?></label>

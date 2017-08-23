@@ -37,13 +37,13 @@ try {
 
         // check if there are users registered
         require_once '../config.php';
-        $pdo = Db::getConnection();
+        $Db = Db::getConnection();
         // ok so we are connected, now count the number of tables before trying to count the users
         // if we are in docker, the number of tables might be 0
         // so we will need to import the structure before going further
         $sql = "SELECT COUNT(DISTINCT `table_name`) AS tablesCount
             FROM `information_schema`.`columns` WHERE `table_schema` = :db_name";
-        $req = $pdo->prepare($sql);
+        $req = $Db->prepare($sql);
         $req->bindValue(':db_name', DB_NAME);
         $req->execute();
         $res = $req->fetch();
@@ -66,7 +66,7 @@ try {
                 // If it has a semicolon at the end, it's the end of the query
                 if (substr(trim($line), -1, 1) == ';') {
                     // Perform the query
-                    $pdo->q($queryline);
+                    $Db->q($queryline);
                     // Reset temp variable to empty
                     $queryline = '';
                 }
@@ -76,7 +76,7 @@ try {
         }
 
         $sql = "SELECT * FROM users";
-        $req = $pdo->prepare($sql);
+        $req = $Db->prepare($sql);
         $req->execute();
         // redirect to register page if no users are in the database
         if ($req->rowCount() === 0) {

@@ -17,8 +17,8 @@ use Exception;
  */
 class Logs
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -27,7 +27,7 @@ class Logs
      */
     public function __construct()
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -41,7 +41,7 @@ class Logs
     public function create($type, $user, $body)
     {
         $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $type);
         $req->bindParam(':user', $user);
         $req->bindParam(':body', $body);
@@ -57,7 +57,7 @@ class Logs
     public function read()
     {
         $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();
@@ -71,7 +71,7 @@ class Logs
     public function destroy()
     {
         $sql = "DELETE FROM logs";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
 
         return $req->execute();
     }

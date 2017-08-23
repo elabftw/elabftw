@@ -766,6 +766,8 @@ ALTER TABLE `team_groups`
 --
 ALTER TABLE `uploads`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `idps`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `users`
 --
@@ -782,3 +784,33 @@ ALTER TABLE `todolist`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- elabftw
+-- now let's add some stuff to the default db
+-- create a second team
+INSERT INTO teams (team_name, link_name, link_href) VALUES ('Tata team', 'doc', 'http://doc.example.org');
+-- create a second user
+INSERT INTO users(
+    `email`,
+    `password`,
+    `firstname`,
+    `lastname`,
+    `team`,
+    `usergroup`,
+    `salt`,
+    `register_date`,
+    `validated`,
+    `lang`
+        ) VALUES (
+    'tata@yopmail.com',
+    'osef',
+    'tata',
+    'TATA',
+    '2',
+    '1',
+    'osef',
+    '1503372272',
+    '1',
+    'en-GB');
+
+

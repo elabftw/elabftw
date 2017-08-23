@@ -20,8 +20,8 @@ class ImportCsv extends Import
     /** @var Users $Users the current user */
     private $Users;
 
-    /** @var Db $pdo SQL Database */
-    private $pdo;
+    /** @var Db $Db SQL Database */
+    private $Db;
 
     /** @var int $itemType the category in which we do the import */
     private $itemType;
@@ -39,7 +39,7 @@ class ImportCsv extends Import
      */
     public function __construct(Users $users)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Users = $users;
 
         $this->checkFileReadable();
@@ -99,7 +99,7 @@ class ImportCsv extends Import
             // SQL for importing
             $sql = "INSERT INTO items(team, title, date, body, userid, type)
                 VALUES(:team, :title, :date, :body, :userid, :type)";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $result = $req->execute(array(
                 'team' => $this->Users->userData['team'],
                 'title' => $title,

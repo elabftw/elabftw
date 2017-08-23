@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Create a pdf given an id and a type
  */
-class MakePdf extends Make
+class MakePdf extends AbstractMake
 {
     /** @var string $fileName a sha512 sum */
     public $fileName;
@@ -25,36 +25,24 @@ class MakePdf extends Make
     /** @var string $filePath the full path of the file */
     public $filePath;
 
-    /** @var string $author firstname + lastname */
-    public $author;
-
-    /** @var string $title raw title */
-    public $title;
-
-    /** @var string $tags list of tags */
-    public $tags = '';
-
-    /** @var string $content the whole html string to write */
-    public $content;
-
     /**
      * Everything is done in the constructor
      *
-     * @param Entity $entity Experiments or Database
+     * @param AbstractEntity $entity Experiments or Database
+     */
+    public function __construct(AbstractEntity $entity)
+    {
+        parent::__construct($entity);
+    }
+
+    /**
+     * Build content and output something
+     *
      * @param bool|null $toFile Do we want to write it to a file ?
      * @param bool $timestamp Is it a timestamp pdf we are doing ? If yes save it in normal path, not tmp
      */
-    public function __construct(Entity $entity, $toFile = false, $timestamp = false)
+    public function output($toFile = false, $timestamp = false)
     {
-        parent::__construct($entity);
-
-        $this->Entity->canOrExplode('read');
-
-        // build the pdf content
-        $this->setAuthor();
-        $this->setTags();
-        $this->buildContent();
-
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
         $tmpDir = ELAB_ROOT . 'uploads/tmp/mpdf/';
         if (!is_dir($tmpDir)) {
@@ -66,17 +54,17 @@ class MakePdf extends Make
         define("_MPDF_TTFONTDATAPATH", $tmpDir);
 
         // create the pdf
-        $mpdf = new \mPDF('utf-8', 'A4');
+        $mpdf = new mPDF('utf-8', 'A4');
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';
         $mpdf->setAutoBottomMargin = 'stretch';
         // set meta data
-        $mpdf->SetAuthor($this->author);
+        $mpdf->SetAuthor($this->Entity->entityData['fullname']);
         $mpdf->SetTitle($this->Entity->entityData['title']);
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords($this->tags);
+        $mpdf->SetKeywords(strtr($this->Entity->entityData['tags'], '|', ' '));
         $mpdf->SetCreator('www.elabftw.net');
-        $mpdf->WriteHTML($this->content);
+        $mpdf->WriteHTML($this->getContent());
         $mpdf->PDFA = true;
 
         // output
@@ -96,106 +84,84 @@ class MakePdf extends Make
     }
 
     /**
-     * Cleantitle.pdf
+     * Replace weird characters by underscores
      *
      * @return string The file name of the pdf
      */
     public function getCleanName()
     {
         return $this->Entity->entityData['date'] . "-" .
-            preg_replace('/[^A-Za-z0-9]/', '_', $this->Entity->entityData['title'] . '.pdf');
-    }
-
-    /**
-     * Get firstname and lastname to put in pdf
-     */
-    private function setAuthor()
-    {
-        // SQL to get firstname + lastname
-        $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->entityData['userid'], \PDO::PARAM_INT);
-        $req->execute();
-        $data = $req->fetch();
-
-        $this->author = $data['firstname'] . ' ' . $data['lastname'];
-    }
-
-    /**
-     * Get the tags
-     */
-    private function setTags()
-    {
-        // SQL to get tags
-        $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :item_id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
-        $req->execute();
-        if ($req->rowCount() > 0) {
-            while ($data = $req->fetch()) {
-                $this->tags .= $data['tag'] . ' ';
-            }
-        }
+            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
     }
 
     /**
      * Add the elabid block for an experiment
+     *
+     * @return string
      */
     private function addElabid()
     {
-        if ($this->Entity->type === 'experiments') {
+        if ($this->Entity instanceof Experiments) {
             return "<p class='elabid'>elabid : " . $this->Entity->entityData['elabid'] . "</p>";
         }
+        return "";
     }
 
     /**
      * Add information about the lock state
+     *
+     * @return string
      */
     private function addLockinfo()
     {
-        if ($this->Entity->entityData['locked'] == '1' && $this->Entity->type == 'experiments') {
+        if ($this->Entity instanceof Experiments && $this->Entity->entityData['locked']) {
             // get info about the locker
-            $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
-            $reqlock = $this->pdo->prepare($sql);
-            $reqlock->bindParam(':userid', $this->Entity->entityData['lockedby']);
-            $reqlock->execute();
-            $lockuser = $reqlock->fetch();
+            $Locker = new Users($this->Entity->entityData['lockedby']);
 
             // separate the date and time
             $lockdate = explode(' ', $this->Entity->entityData['lockedwhen']);
-            return "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
+
+            return "<p class='elabid'>locked by " . $Locker->userData['fullname'] . " on " .
+                $lockdate[0] . " at " . $lockdate[1] . "</p>";
         }
+        return "";
     }
 
     /**
      * Add the comments (if any)
+     *
+     * @return string
      */
     private function addComments()
     {
-        $Comments = new Comments($this->Entity);
+        $html = '';
         // will return false if empty
-        $commentsArr = $Comments->read();
+        $commentsArr = $this->Entity->Comments->readAll();
         if ($commentsArr === false) {
-            return true;
+            return $html;
         }
-        $this->content .= "<section class='no-break'>";
+        $html .= "<section class='no-break'>";
 
         if (count($commentsArr) === 1) {
-            $this->content .= "<h3>Comment:</h3>";
+            $html .= "<h3>Comment:</h3>";
         } else {
-            $this->content .= "<h3>Comments:</h3>";
+            $html .= "<h3>Comments:</h3>";
         }
 
         foreach ($commentsArr as $comment) {
-            $this->content .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
-            $this->content .= $comment['comment'] . "</p>";
+            $html .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
+            $html .= $comment['comment'] . "</p>";
         }
 
-        $this->content .= "</section>";
+        $html .= "</section>";
+
+        return $html;
     }
 
     /**
      * Load the contents of app/css/pdf.min.css and add to the content.
+     *
+     * @return string
      */
     private function addCss()
     {
@@ -205,43 +171,46 @@ class MakePdf extends Make
     /**
      * Reference the attached files (if any) in the pdf
      * Add also the hash sum
+     *
+     * @return string
      */
     private function addAttachedFiles()
     {
-        $Uploads = new Uploads($this->Entity);
-        $uploadsArr = $Uploads->readAll();
+        $html = '';
+        $uploadsArr = $this->Entity->Uploads->readAll();
         $fileNb = count($uploadsArr);
         if ($fileNb > 0) {
-            $this->content .= "<section class='no-break'>";
+            $html .= "<section class='no-break'>";
             if ($fileNb === 1) {
-                $this->content .= "<h3>Attached file:</h3>";
+                $html .= "<h3>Attached file:</h3>";
             } else {
-                $this->content .= "<h3>Attached files:</h3>";
+                $html .= "<h3>Attached files:</h3>";
             }
 
             foreach ($uploadsArr as $upload) {
                 // the name of the file
-                $this->content .= "<p class='pdf-ul'>" . $upload['real_name'];
+                $html .= "<p class='pdf-ul'>" . $upload['real_name'];
                 // add a comment ? don't add if it's the default text
                 if ($upload['comment'] != 'Click to add a comment') {
-                    $this->content .= " (" . $upload['comment'] . ")";
+                    $html .= " (" . $upload['comment'] . ")";
                 }
                 // add hash ? don't add if we don't have it
                 // length must be greater (sha2 hashes) or equal (md5) 32 bits
                 if (strlen($upload['hash']) >= 32) { // we have hash
-                    $this->content .= "<br>" . $upload['hash_algorithm'] . " : " . $upload['hash'];
+                    $html .= "<br>" . $upload['hash_algorithm'] . " : " . $upload['hash'];
                 }
                 // if this is an image file, add the thumbnail picture
                 $ext = filter_var(Tools::getExt($upload['real_name']), FILTER_SANITIZE_STRING);
                 $filePath = 'uploads/' . $upload['long_name'];
                 if (file_exists($filePath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
-                    $this->content .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
+                    $html .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
                 }
 
-                $this->content .= "</p>";
+                $html .= "</p>";
             }
-            $this->content .= "</section>";
+            $html .= "</section>";
         }
+        return $html;
     }
 
     /**
@@ -258,17 +227,19 @@ class MakePdf extends Make
      */
     private function addLinkedItems()
     {
+        $html = '';
+
         if ($this->Entity->type === 'experiments') {
-            $Links = new Links($this->Entity);
-            $linksArr = $Links->read();
+            $linksArr = $this->Entity->Links->read();
             $linkNb = count($linksArr);
 
+
             if ($linkNb > 0) {
-                $this->content .= "<section class='no-break'>";
+                $html .= "<section class='no-break'>";
                 if ($linkNb === 1) {
-                    $this->content .= "<h3>Linked item:</h3>";
+                    $html .= "<h3>Linked item:</h3>";
                 } else {
-                    $this->content .= "<h3>Linked items:</h3>";
+                    $html .= "<h3>Linked items:</h3>";
                 }
                 // add the item with a link
 
@@ -278,16 +249,20 @@ class MakePdf extends Make
 
                 foreach ($linksArr as $link) {
                     $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];
-                    $this->content .= "<p class='pdf-ul'>";
-                    $this->content .= "<span style='color:#" . $link['color'] . "'>" . $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
+                    $html .= "<p class='pdf-ul'>";
+                    $html .= "<span style='color:#" . $link['color'] . "'>" .
+                        $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
                 }
-                $this->content .= "</section>";
+                $html .= "</section>";
             }
         }
+        return $html;
     }
 
     /**
      * Add the body
+     *
+     * @return string
      */
     private function buildBody()
     {
@@ -298,18 +273,22 @@ class MakePdf extends Make
             $body = Tools::md2html($body);
         }
         // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
-        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $body);
+        return str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $body);
     }
 
     /**
      * Build info box containing elabid and permalink
+     *
+     * @return string
      */
     private function buildInfoBlock()
     {
-        $this->content .= "<table id='infoblock'><tr><td class='noborder'>
+        return "<table id='infoblock'><tr><td class='noborder'>
                            <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
-                           </td><td class='noborder'>" . $this->addElabid() . $this->addLockinfo() . $this->addUrl() . "</td></tr>
-                           </table>";
+                           </td><td class='noborder'>" .
+                           $this->addElabid() .
+                           $this->addLockinfo() .
+                           $this->addUrl() . "</td></tr></table>";
     }
 
     /**
@@ -327,45 +306,51 @@ class MakePdf extends Make
             $cjkFlag = " style='font-family:sun-extA;'";
         }
 
-        $header = '
-                <html>
-                    <head>
-                        <style>' . $this->addCss() . '</style>
-                    </head>
-                <body' . $cjkFlag . '>
-                <htmlpageheader name="header">
-                    <div id="header">
-                        <h1>' . $this->Entity->entityData['title'] . '</h1>
-                        <p style="float:left; width:90%;">
-                            <strong>Date:</strong> ' . $date_str . '<br />
-                            <strong>Tags:</strong> <em>' . $this->tags . '</em> <br />
-                            <strong>Created by:</strong> ' . $this->author . '
-                        </p>
-                        <p style="float:right; width:10%;"><br /><br />
-                            {PAGENO} / {nbpg}
-                        </p>
-                    </div>
-                </htmlpageheader>
-                <htmlpagefooter name="footer">
-                    <div id="footer">
-                        PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-                        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
-                    </div>
-                </htmlpagefooter>';
-
-        $this->content .= $header;
+        return '
+<html>
+    <head>
+        <style>' . $this->addCss() . '</style>
+    </head>
+<body' . $cjkFlag . '>
+<htmlpageheader name="header">
+    <div id="header">
+        <h1>' . $this->Entity->entityData['title'] . '</h1>
+        <p style="float:left; width:90%;">
+            <strong>Date:</strong> ' . $date_str . '<br />
+            <strong>Tags:</strong> <em>' .
+                strtr($this->Entity->entityData['tags'], '|', ' ') . '</em> <br />
+            <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
+        </p>
+        <p style="float:right; width:10%;"><br /><br />
+            {PAGENO} / {nbpg}
+        </p>
+    </div>
+</htmlpageheader>
+<htmlpagefooter name="footer">
+    <div id="footer">
+        PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
+        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
+    </div>
+</htmlpagefooter>
+';
     }
 
     /**
      * Build HTML content that will be fed to mpdf->WriteHTML()
+     *
+     * @return string
      */
-    private function buildContent()
+    private function getContent()
     {
-        $this->buildHeader();
-        $this->buildBody();
-        $this->addLinkedItems();
-        $this->addAttachedFiles();
-        $this->addComments();
-        $this->buildInfoBlock();
+        $content = $this->buildHeader();
+        $content .= $this->buildBody();
+        if ($this->Entity instanceof Experiments) {
+            $content .= $this->addLinkedItems();
+            $content .= $this->addComments();
+        }
+        $content .= $this->addAttachedFiles();
+        $content .= $this->buildInfoBlock();
+
+        return $content;
     }
 }

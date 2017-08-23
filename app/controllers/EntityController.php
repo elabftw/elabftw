@@ -47,9 +47,8 @@ try {
 
     // GET TAG LIST
     if ($Request->query->has('term') && $Request->query->has('tag')) {
-        $Tags = new Tags($Entity);
         $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
-        $Response->setData($Tags->getList($term));
+        $Response->setData($Entity->Tags->getList($term));
     }
 
     // GET MENTION LIST
@@ -68,7 +67,7 @@ try {
         $Entity->canOrExplode('read');
 
         $id = $Entity->duplicate();
-        $Response = new RedirectResponse("../../" . $Entity::PAGE . ".php?mode=edit&id=" . $id);
+        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
     }
 
 
@@ -126,7 +125,7 @@ try {
             $Request->request->get('body')
         )) {
             $Response = new RedirectResponse(
-                "../../" . $Entity::PAGE . ".php?mode=view&id=" . $Request->request->get('id')
+                "../../" . $Entity->page . ".php?mode=view&id=" . $Request->request->get('id')
             );
         } else {
             throw new Exception('Error during save.');
@@ -189,8 +188,7 @@ try {
             throw new Exception(_('Tag is too short!'));
         }
 
-        $Tags = new Tags($Entity);
-        $Tags->create($tag);
+        $Entity->Tags->create($tag);
     }
 
     // DELETE TAG
@@ -199,8 +197,7 @@ try {
             throw new Exception('Bad id value');
         }
         $Entity->canOrExplode('write');
-        $Tags = new Tags($Entity);
-        $Tags->destroy($Request->request->get('tag_id'));
+        $Entity->Tags->destroy($Request->request->get('tag_id'));
     }
 
     // UPDATE FILE COMMENT
@@ -218,8 +215,7 @@ try {
             }
             $id = $id_arr[1];
 
-            $Upload = new Uploads($Entity);
-            if ($Upload->updateComment($id, $comment)) {
+            if ($Entity->Uploads->updateComment($id, $comment)) {
                 $Response->setData(array(
                     'res' => true,
                     'msg' => _('Saved')
@@ -241,8 +237,7 @@ try {
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
         try {
-            $Uploads = new Uploads($Entity);
-            if ($Uploads->create($Request)) {
+            if ($Entity->Uploads->create($Request)) {
                 $Response->setData(array(
                     'res' => true,
                     'msg' => _('Saved')
@@ -263,9 +258,8 @@ try {
 
     // ADD MOL FILE OR PNG
     if ($Request->request->has('addFromString')) {
-        $Uploads = new Uploads($Entity);
         $Entity->canOrExplode('write');
-        if ($Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
+        if ($Entity->Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
             $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -281,11 +275,10 @@ try {
 
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
-        $Uploads = new Uploads($Entity);
-        $upload = $Uploads->readFromId($Request->request->get('upload_id'));
+        $upload = $Entity->Uploads->readFromId($Request->request->get('upload_id'));
         $permissions = $Entity->getPermissions();
         if ($permissions['write']) {
-            if ($Uploads->destroy($Request->request->get('upload_id'))) {
+            if ($Entity->Uploads->destroy($Request->request->get('upload_id'))) {
                 // check that the filename is not in the body. see #432
                 $msg = "";
                 if (strpos($Entity->entityData['body'], $upload['long_name'])) {

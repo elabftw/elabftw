@@ -34,20 +34,14 @@ try {
         $Entity->canOrExplode('read');
 
         // UPLOADS
-        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
-
-        // COMMENTS
-        $Comments = new Comments($Entity);
-        $commentsArr = $Comments->read();
+        $UploadsView = new UploadsView($Entity->Uploads);
 
         // RENDER
         echo $Twig->render('view.html', array(
             'Ev' => $EntityView,
             'Entity' => $Entity,
             'Uv' => $UploadsView,
-            'Status' => $Status,
             'cleanTitle' => $EntityView->getCleanTitle($EntityView->Entity->entityData['title']),
-            'commentsArr' => $commentsArr,
             'mode' => 'view'
         ));
 
@@ -62,9 +56,9 @@ try {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
 
-        $Revisions = new Revisions($EntityView->Entity);
+        $Revisions = new Revisions($Entity);
         // Uploads
-        $UploadsView = new UploadsView(new Uploads($EntityView->Entity));
+        $UploadsView = new UploadsView($Entity->Uploads);
         $TeamGroups = new TeamGroups($Entity->Users);
 
         echo $Twig->render('edit.html', array(

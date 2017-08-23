@@ -20,19 +20,19 @@ use Defuse\Crypto\Key as Key;
  */
 class Config
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var array $configArr the array with all config */
     public $configArr;
 
     /**
-     * Get pdo and load the configArr
+     * Get Db and load the configArr
      *
      */
     public function __construct()
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->configArr = $this->read();
     }
 
@@ -46,7 +46,7 @@ class Config
         $configArr = array();
 
         $sql = "SELECT * FROM config";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         foreach ($config as $name => $value) {
@@ -97,7 +97,7 @@ class Config
         // loop the array and update config
         foreach ($post as $name => $value) {
             $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $result[] = $req->execute();
@@ -115,7 +115,7 @@ class Config
     public function destroyStamppass()
     {
         $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         return $req->execute();
     }
 

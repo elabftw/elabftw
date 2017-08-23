@@ -19,8 +19,8 @@ use Exception;
  */
 trait EntityTrait {
 
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var Users $Users our user */
     public $Users;
@@ -69,10 +69,10 @@ trait EntityTrait {
             $id = $id[1];
             // the table param is whitelisted here
             $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':ordering', $ordering);
             $req->bindParam(':team', $this->Users->userData['team']);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $req->bindParam(':id', $id);
             $success[] = $req->execute();
         }
 

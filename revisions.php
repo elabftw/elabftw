@@ -38,7 +38,7 @@ try {
     $Revisions = new Revisions($Entity);
 
     // BEGIN PAGE
-    echo "<a href='" . $Entity::PAGE . ".php?mode=view&id=" . $_GET['item_id'] .
+    echo "<a href='" . $Entity->page . ".php?mode=view&id=" . $_GET['item_id'] .
         "'><h4><img src='app/img/undo.png' alt='<--' /> " . _('Go back') . "</h4></a>";
     $revisionArr = $Revisions->read();
     foreach ($revisionArr as $revision) {

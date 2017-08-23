@@ -17,8 +17,8 @@ use Exception;
  */
 class Steps
 {
-    /** pdo object */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** instance of Experiments */
     public $Experiments;
@@ -30,7 +30,7 @@ class Steps
      */
     public function __construct(Experiments $experiments)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Experiments = $experiments;
     }
 
@@ -45,7 +45,7 @@ class Steps
         // remove any | as they are used in the group_concat
         $body = strtr($body, '|', ' ');
         $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);
         $req->bindParam(':body', $body);
 
@@ -63,7 +63,7 @@ class Steps
         $sql = "UPDATE experiments_steps SET finished = !finished,
             finished_time = NOW()
             WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $stepid);
 
         return $req->execute();
@@ -77,7 +77,7 @@ class Steps
     public function read()
     {
         $sql = "SELECT * FROM experiments_steps WHERE item_id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Experiments->id);
         $req->execute();
 
@@ -94,13 +94,13 @@ class Steps
     public function duplicate($id, $newId)
     {
         $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
-        $stepreq = $this->pdo->prepare($stepsql);
+        $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id);
         $stepreq->execute();
 
         while ($steps = $stepreq->fetch()) {
             $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->execute(array(
                 'item_id' => $newId,
                 'body' => $steps['body']
@@ -117,7 +117,7 @@ class Steps
     public function destroy($stepId)
     {
         $sql = "DELETE FROM experiments_steps WHERE id= :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $stepId);
 
         return $req->execute();
@@ -131,7 +131,7 @@ class Steps
     public function destroyAll()
     {
         $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);
 
         return $req->execute();

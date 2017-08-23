@@ -16,12 +16,15 @@ use Exception;
 /**
  * All about the database items
  */
-class Database extends Entity
+class Database extends AbstractEntity
 {
     use EntityTrait;
 
-    /** the page.php */
-    const PAGE = 'database';
+    /** @var string $page The page name */
+    public $page = 'database';
+
+    /** @var string $type The table/type name */
+    public $type = 'items';
 
     /**
      * Constructor
@@ -32,8 +35,6 @@ class Database extends Entity
     public function __construct(Users $users, $id = null)
     {
         parent::__construct($users, $id);
-
-        $this->type = 'items';
     }
 
     /**
@@ -49,7 +50,7 @@ class Database extends Entity
         // SQL for create DB item
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
@@ -59,7 +60,7 @@ class Database extends Entity
             'type' => $itemType
         ));
 
-        return $this->pdo->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -71,8 +72,8 @@ class Database extends Entity
     public function updateRating($rating)
     {
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':rating', $rating);
         $req->bindParam(':id', $this->id);
 
         return $req->execute();
@@ -87,9 +88,9 @@ class Database extends Entity
     public function updateCategory($category)
     {
         $sql = "UPDATE items SET type = :type WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $category);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id);
 
         return $req->execute();
     }
@@ -104,7 +105,7 @@ class Database extends Entity
     {
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $this->entityData['title'],
@@ -113,10 +114,9 @@ class Database extends Entity
             'userid' => $this->Users->userid,
             'type' => $this->entityData['category_id']
         ));
-        $newId = $this->pdo->lastInsertId();
+        $newId = $this->Db->lastInsertId();
 
-        $tags = new Tags($this);
-        $tags->copyTags($newId);
+        $this->Tags->copyTags($newId);
 
         return $newId;
     }
@@ -134,26 +134,24 @@ class Database extends Entity
 
         // delete the database item
         $sql = "DELETE FROM items WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id);
         $result[] = $req->execute();
 
-        $tags = new Tags($this);
-        $result[] = $tags->destroyAll();
+        $result[] = $this->Tags->destroyAll();
 
-        $uploads = new Uploads($this);
-        $result[] = $uploads->destroyAll();
+        $result[] = $this->Uploads->destroyAll();
 
         // delete links of this item in experiments with this item linked
         // get all experiments with that item linked
         $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id);
         $result[] = $req->execute();
 
         while ($links = $req->fetch()) {
             $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
-            $delete_req = $this->pdo->prepare($delete_sql);
+            $delete_req = $this->Db->prepare($delete_sql);
             $delete_req->bindParam(':links_id', $links['id']);
             $result[] = $delete_req->execute();
         }
@@ -175,7 +173,7 @@ class Database extends Entity
     {
         // get what is the current state
         $sql = "SELECT locked FROM items WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id);
         $req->execute();
         $locked = (int) $req->fetchColumn();
@@ -187,7 +185,7 @@ class Database extends Entity
 
         // toggle
         $sql = "UPDATE items SET locked = :locked WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', $locked);
         $req->bindParam(':id', $this->id);
 

@@ -19,15 +19,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Api
 {
-    /** @var Entity $Entity Experiments or Database */
+    /** @var AbstractEntity $Entity Experiments or Database */
     private $Entity;
 
     /**
      * Get data for user from the API key
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(AbstractEntity $entity)
     {
         $this->Entity = $entity;
     }
@@ -51,12 +51,11 @@ class Api
      */
     public function getEntity()
     {
-        $Uploads = new Uploads($this->Entity);
-        $uploadedFilesArr = $Uploads->readAll();
-        $entityArr = $this->Entity->read();
-        $entityArr['uploads'] = $uploadedFilesArr;
+        $this->Entity->canOrExplode('read');
+        $uploadedFilesArr = $this->Entity->Uploads->readAll();
+        $this->Entity->entityData['uploads'] = $uploadedFilesArr;
 
-        return $entityArr;
+        return $this->Entity->entityData;
     }
 
     /**
@@ -88,9 +87,7 @@ class Api
     {
         $this->Entity->canOrExplode('write');
 
-        $Uploads = new Uploads($this->Entity);
-
-        if ($Uploads->create($request)) {
+        if ($this->Entity->Uploads->create($request)) {
             return array('Result', 'Success');
         }
 

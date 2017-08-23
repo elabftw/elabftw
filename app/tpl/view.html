@@ -5,11 +5,11 @@
 
 {# back to link #}
 <a href='?mode=show'>
-    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
+    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(Entity.page) }}
 </a>
 
-{% if not Entity.isOwned and Entity.type == 'experiments' %}
-    {{ 'Experiment of %s'|trans|format(Entity.ownerName)|msg('ok', false) }}
+{% if Entity.entityData.userid != Entity.Users.userid and Entity.type == 'experiments' %}
+    {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
 {% endif %}
 
 {% if Entity.type == 'experiments' %}
@@ -160,6 +160,7 @@
         <div id='expcomment' class='box'>
             <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>
 
+            {% set commentsArr = Entity.Comments.readAll %}
             {% if commentsArr|length > 0 %}
                 {% for comment in commentsArr %}
                     <div class='expcomment_box'>

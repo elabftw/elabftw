@@ -14,7 +14,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $new = $this->Experiments->create();
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Experiments->setId($new);
-        $this->Experiments->populate();
+        $this->Experiments->canOrExplode('write');
         $this->Experiments->toggleLock();
         $this->assertTrue($this->Experiments->destroy());
         $this->Templates = new Templates($this->Users);
@@ -34,7 +34,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     public function testRead()
     {
         $this->Experiments->setId('1');
-        $this->Experiments->populate();
+        $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
@@ -46,8 +46,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     public function testReadRelated()
     {
         $this->Experiments->setId(1);
-        $Links = new Links($this->Experiments);
-        $Links->create(1);
+        $this->Experiments->Links->create(1);
         $this->assertTrue(is_array($this->Experiments->readRelated(1)));
     }
 
@@ -55,7 +54,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     {
         $new = $this->Experiments->create();
         $this->Experiments->setId($new);
-        $this->Experiments->populate();
+        $this->Experiments->canOrExplode('write');
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userid);
         $this->assertTrue($this->Experiments->update('Untitled', '20160729', '<p>Body</p>'));
@@ -64,7 +63,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     public function testUpdateVisibility()
     {
         $this->Experiments->setId(1);
-        $this->Experiments->populate();
+        $this->Experiments->canOrExplode('write');
         $this->assertTrue($this->Experiments->updateVisibility('public'));
         $this->assertTrue($this->Experiments->updateVisibility('organization'));
         $this->assertTrue($this->Experiments->updateVisibility('team'));
@@ -75,14 +74,14 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     public function testUpdateCategory()
     {
         $this->Experiments->setId(1);
-        $this->Experiments->populate();
+        $this->Experiments->canOrExplode('write');
         $this->assertTrue($this->Experiments->updateCategory(3));
     }
 
     public function testDuplicate()
     {
         $this->Experiments->setId(1);
-        $this->Experiments->populate();
+        $this->Experiments->canOrExplode('read');
         $this->assertInternalType("int", $this->Experiments->duplicate());
     }
 }

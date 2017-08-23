@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\Entity
+ * \Elabftw\Elabftw\AbstractEntity
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -16,12 +16,18 @@ use PDO;
 /**
  * The mother class of Experiments and Database
  */
-abstract class Entity
+abstract class AbstractEntity
 {
     use EntityTrait;
 
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    /** @var Tags $Tags instance of Tags */
+    public $Tags;
+
+    /** @var Uploads $Uploads instance of Uploads */
+    public $Uploads;
 
     /** @var string $type experiments or items */
     public $type;
@@ -83,12 +89,6 @@ abstract class Entity
     /** @var bool isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
 
-    /** @var bool isOwned true if we own the entity */
-    public $isOwned = true;
-
-    /** @var string $ownerName the name of the owner of the entity */
-    public $ownerName = '';
-
     /**
      * Constructor
      *
@@ -97,8 +97,10 @@ abstract class Entity
      */
     public function __construct(Users $users, $id = null)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
 
+        $this->Tags = new Tags($this);
+        $this->Uploads = new Uploads($this);
         $this->Users = $users;
 
         if (!is_null($id)) {
@@ -136,32 +138,17 @@ abstract class Entity
     abstract public function toggleLock();
 
     /**
-     * Now that we have an id, we can read the data and set the permissions
+     * Now that we have an id, load the data in entityData array
      *
      */
-    public function populate()
+    protected function populate()
     {
         if (is_null($this->id)) {
-            throw new Exception('No id provided.');
+            throw new Exception('No id was set.');
         }
 
-        if ($this instanceof Experiments || $this instanceof Database || $this instanceof Templates) {
-            $this->entityData = $this->read();
-            $permissions = $this->getPermissions();
-
-            // READ ONLY?
-            if ($permissions['read'] && !$permissions['write']) {
-                $this->isReadOnly = true;
-            }
-
-            // OWNED?
-            if ($this->entityData['userid'] != $this->Users->userid) {
-                // we need to get the fullname of the user who owns the experiment to display the RO message
-                $Owner = new Users($this->entityData['userid']);
-                $this->ownerName = $Owner->userData['fullname'];
-                $this->isOwned = false;
-            }
-        }
+        // load the entity in entityData array
+        $this->entityData = $this->read();
     }
 
     /**
@@ -186,18 +173,19 @@ abstract class Entity
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
-        $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id";
+        $tagsSelect = ", GROUP_CONCAT(DISTINCT tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
                 status.color, status.name AS category, status.id AS category_id,
                 uploads.up_item_id, uploads.has_attachment,
-                GROUP_CONCAT(stepst.next_step SEPARATOR '|') AS next_step,
-                experiments_comments.recent_comment";
+                experiments_comments.recent_comment,
+                SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
             $from = "FROM experiments";
 
-            //experiments_steps.item_id, next_step, experiments_steps.body, experiments_steps.finished
+            $usersJoin = "LEFT JOIN users ON (experiments.userid = users.userid)";
             $stepsJoin = "LEFT JOIN (
                 SELECT experiments_steps.item_id AS steps_item_id,
                 experiments_steps.body AS next_step,
@@ -218,6 +206,7 @@ abstract class Entity
             $sql = $select . ' ' .
                 $tagsSelect . ' ' .
                 $from . ' ' .
+                $usersJoin . ' ' .
                 $stepsJoin . ' ' .
                 $tagsJoin . ' ' .
                 $statusJoin . ' ' .
@@ -256,8 +245,7 @@ abstract class Entity
             $this->visibilityFilter . ' ' .
             " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
-        //var_dump($sql);die;
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
@@ -290,7 +278,9 @@ abstract class Entity
      */
     public function update($title, $date, $body)
     {
-        $this->populate();
+        if (empty($this->entityData)) {
+            $this->populate();
+        }
         // don't update if locked
         if ($this->entityData['locked']) {
             return false;
@@ -315,7 +305,7 @@ abstract class Entity
                 WHERE id = :id";
         }
 
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
@@ -356,14 +346,22 @@ abstract class Entity
      *
      * @param string $rw read or write
      * @throws Exception
+     * @return array
      */
     public function canOrExplode($rw)
     {
         $permissions = $this->getPermissions();
 
+        // READ ONLY?
+        if ($permissions['read'] && !$permissions['write']) {
+            $this->isReadOnly = true;
+        }
+
         if (!$permissions[$rw]) {
             throw new Exception(Tools::error(true));
         }
+
+        return $permissions;
     }
 
     /**
@@ -375,68 +373,71 @@ abstract class Entity
      */
     public function getPermissions($item = null)
     {
-        $permissions = array('read' => false, 'write' => false);
-
         if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
         }
+        // don't try to read() again if we have the item (for show where there are several items to check)
         if (!isset($item)) {
             $item = $this->entityData;
         }
 
-        if ($this->type === 'experiments') {
+        if ($this instanceof Experiments) {
             // if we own the experiment, we have read/write rights on it for sure
             if ($item['userid'] == $this->Users->userid) {
-                $permissions['read'] = true;
-                $permissions['write'] = true;
+                return array('read' => true, 'write' => true);
 
-            // admin can view and write any experiment
-            } elseif (($item['userid'] != $this->Users->userid) && $this->Users->userData['is_admin']) {
-                $permissions['read'] = true;
-                $permissions['write'] = true;
+            // it's not our experiment
+            } else {
+                // check if we're admin because admin can read/write all experiments of the team
+                if ($this->Users->userData['is_admin']) {
+                    // only admin of the same team can have write access
+                    // check the team of the owner of the experiment
+                    if ($item['team'] === $this->Users->userData['team']) {
+                        return array('read' => true, 'write' => true);
+                    }
 
-            // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($item['userid'] != $this->Users->userid) && !$this->Users->userData['is_admin']) {
-                $validArr = array(
-                    'public',
-                    'organization'
-                );
+                // if we don't own the experiment (and we are not admin), we need to check the visibility
+                } else {
 
-                // if the vis. setting is public or organization, we can see it for sure
-                if (in_array($item['visibility'], $validArr)) {
-                    $permissions['read'] = true;
-                }
+                    $validArr = array(
+                        'public',
+                        'organization'
+                    );
 
-                // if the vis. setting is team, check we are in the same team than the item
-                if (($item['visibility'] === 'team') &&
-                    ($item['team'] == $this->Users->userData['team'])) {
-                    $permissions['read'] = true;
-                }
+                    // if the vis. setting is public or organization, we can see it for sure
+                    if (in_array($item['visibility'], $validArr)) {
+                        return array('read' => true, 'write' => false);
+                    }
 
-                // if the vis. setting is a team group, check we are in the group
-                if (Tools::checkId($item['visibility'])) {
-                    $TeamGroups = new TeamGroups($this->Users);
-                    if ($TeamGroups->isInTeamGroup($this->Users->userid, $item['visibility'])) {
-                        $permissions['read'] = true;
+                    // if the vis. setting is team, check we are in the same team than the $item
+                    if (($item['visibility'] === 'team') &&
+                        ($item['team'] == $this->Users->userData['team'])) {
+                            return array('read' => true, 'write' => false);
+                    }
+
+                    // if the vis. setting is a team group, check we are in the group
+                    if (Tools::checkId($item['visibility'])) {
+                        $TeamGroups = new TeamGroups($this->Users);
+                        if ($TeamGroups->isInTeamGroup($this->Users->userid, $item['visibility'])) {
+                            return array('read' => true, 'write' => false);
+                        }
                     }
                 }
             }
 
-        } elseif ($this->type === 'experiments_tpl') {
+        } elseif ($this instanceof Templates) {
             if ($item['userid'] === $this->Users->userid) {
-                $permissions['read'] = true;
-                $permissions['write'] = true;
+                return array('read' => true, 'write' => true);
             }
 
-        } else {
+        } elseif ($this instanceof Database) {
             // for DB items, we only need to be in the same team
             if ($item['team'] === $this->Users->userData['team']) {
-                $permissions['read'] = true;
-                $permissions['write'] = true;
+                return array('read' => true, 'write' => true);
             }
         }
 
-        return $permissions;
+        return array('read' => false, 'write' => false);
     }
 
     /**

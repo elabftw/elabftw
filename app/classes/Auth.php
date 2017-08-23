@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use PDO;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -21,8 +22,8 @@ class Auth
     /** the minimum password length */
     const MIN_PASSWORD_LENGTH = 8;
 
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var array $userData All the user data for a user */
     private $userData;
@@ -36,7 +37,7 @@ class Auth
      */
     public function __construct()
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -48,7 +49,7 @@ class Auth
     private function getSalt($email)
     {
         $sql = "SELECT salt FROM users WHERE email = :email";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
         return $req->fetchColumn();
@@ -66,7 +67,7 @@ class Auth
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
         $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
         //Check whether the query was successful or not
@@ -99,7 +100,7 @@ class Auth
     {
         if ($email !== null) {
             $sql = "SELECT * FROM users WHERE email = :email";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':email', $email);
             //Check whether the query was successful or not
             if ($req->execute() && $req->rowCount() === 1) {
@@ -119,10 +120,10 @@ class Auth
 
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-        $perm_req = $this->pdo->prepare($perm_sql);
+        $perm_req = $this->Db->prepare($perm_sql);
         $perm_req->bindParam(':group_id', $this->userData['usergroup']);
         $perm_req->execute();
-        $group = $perm_req->fetch(\PDO::FETCH_ASSOC);
+        $group = $perm_req->fetch(PDO::FETCH_ASSOC);
 
         $Session->set('is_admin', $group['is_admin']);
         $Session->set('is_sysadmin', $group['is_sysadmin']);
@@ -145,7 +146,7 @@ class Auth
         setcookie('token', $this->token, time() + 2592000, '/', null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $this->token);
         $req->bindParam(':userid', $this->userData['userid']);
 
@@ -203,7 +204,7 @@ class Auth
         $token = $Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
         // Get token from SQL
         $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
         $req->execute();
 

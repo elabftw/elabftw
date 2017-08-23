@@ -40,7 +40,7 @@ class Users extends Auth
      */
     public function __construct($userid = null, Config $config = null)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         if (!is_null($userid)) {
             $this->setId($userid);
         }
@@ -67,7 +67,7 @@ class Users extends Auth
      * Populate userData with read()
      *
      */
-    public function populate()
+    private function populate()
     {
         $this->userData = $this->read($this->userid);
     }
@@ -135,7 +135,7 @@ class Users extends Auth
             :register_date,
             :validated,
             :lang);";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
         $req->bindParam(':team', $team);
@@ -239,7 +239,7 @@ class Users extends Auth
     public function isDuplicateEmail($email)
     {
         $sql = "SELECT email FROM users WHERE email = :email";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
 
@@ -254,7 +254,7 @@ class Users extends Auth
     private function isFirstUser()
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
         $test = $req->fetch();
 
@@ -270,7 +270,7 @@ class Users extends Auth
     private function isFirstUserInTeam($team)
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team);
         $req->execute();
         $test = $req->fetch();
@@ -290,7 +290,7 @@ class Users extends Auth
         $arr = array();
 
         $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team);
         $req->execute();
 
@@ -318,7 +318,7 @@ class Users extends Auth
             groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
             LEFT JOIN groups ON groups.group_id = users.usergroup
             WHERE users.userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
         $req->execute();
 
@@ -334,7 +334,7 @@ class Users extends Auth
     public function readFromEmail($email)
     {
         $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE email = :email";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
 
@@ -349,7 +349,7 @@ class Users extends Auth
     public function readFromApiKey($apiKey)
     {
         $sql = "SELECT userid FROM users WHERE api_key = :key";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':key', $apiKey);
         $req->execute();
 
@@ -377,7 +377,7 @@ class Users extends Auth
             FROM users
             LEFT JOIN teams ON (users.team = teams.team_id)
             WHERE users.validated = :validated AND users.team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindValue(':validated', $validated);
         $req->bindValue(':team', $team);
         $req->execute();
@@ -396,7 +396,7 @@ class Users extends Auth
             FROM users
             LEFT JOIN teams ON (users.team = teams.team_id)
             ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();
@@ -410,7 +410,7 @@ class Users extends Auth
     public function getAllEmails()
     {
         $sql = "SELECT email FROM users WHERE validated = 1";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();
@@ -464,7 +464,7 @@ class Users extends Auth
             usergroup = :usergroup,
             validated = :validated
             WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':email', $email);
@@ -590,7 +590,7 @@ class Users extends Auth
             cjk_fonts = :new_cjk_fonts,
             use_markdown = :new_use_markdown
             WHERE userid = :userid;";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
         $req->bindParam(':new_orderby', $new_orderby);
         $req->bindParam(':new_sort', $new_sort);
@@ -660,7 +660,7 @@ class Users extends Auth
             skype = :skype,
             website = :website
             WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $params['email']);
         $req->bindParam(':firstname', $params['firstname']);
@@ -698,7 +698,7 @@ class Users extends Auth
         $passwordHash = hash("sha512", $salt . $password);
 
         $sql = "UPDATE users SET salt = :salt, password = :password WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
         $req->bindParam(':userid', $userid);
@@ -720,7 +720,7 @@ class Users extends Auth
     private function invalidateToken($userid)
     {
         $sql = "UPDATE users SET token = null WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
 
         return $req->execute();
@@ -737,7 +737,7 @@ class Users extends Auth
         $this->setId($userid);
 
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid);
 
         // validate the user
@@ -804,23 +804,23 @@ class Users extends Auth
         $result = array();
 
         $sql = "DELETE FROM users WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
         // get all filenames
         $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute(array(
             'userid' => $useridToDelete,
             'type' => 'experiments'
@@ -832,7 +832,7 @@ class Users extends Auth
         }
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $useridToDelete);
         $result[] = $req->execute();
 
@@ -849,7 +849,7 @@ class Users extends Auth
     private function emailInTeam($email, $team)
     {
         $sql = "SELECT userid FROM users WHERE email = :email AND team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':team', $team);
         $req->execute();
@@ -871,7 +871,7 @@ class Users extends Auth
         }
 
         $sql = "UPDATE users SET usergroup = 1 WHERE email = :email";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
 
         return $req->execute();
@@ -887,7 +887,7 @@ class Users extends Auth
         $apiKey = bin2hex(openssl_random_pseudo_bytes(42));
 
         $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':api_key', $apiKey);
         $req->bindParam(':userid', $this->userid);
 

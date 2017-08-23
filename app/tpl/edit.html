@@ -6,11 +6,11 @@
 
 {# back to link #}
 <a href='?mode=show'>
-    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(constant('PAGE', Entity)) }}
+    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to %s listing'|format(Entity.page) }}
 </a>
 
-{% if not Entity.isOwned and Entity.type == 'experiments' %}
-    {{ 'Experiment of %s'|trans|format(Entity.ownerName)|msg('ok', false) }}
+{% if Entity.entityData.userid != Entity.Users.userid and Entity.type == 'experiments' %}
+    {{ 'Experiment of %s'|trans|format(Entity.fullname)|msg('ok', false) }}
 {% endif %}
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
@@ -127,7 +127,7 @@
                 <ul class='list-group'>
                     {% for step in stepsArr %}
                     <li class='list-group-item {{ step.finished ? 'finished' }}'>
-                        <input type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' /> {{ step['body']|raw }}
+                        <input type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' /> {{ step.body|raw }}
                         <span class='align_right'>{{ step.finished ? step.finished_time }}
                         <a class='stepDestroy' data-stepid='{{ step.id }}'>
                         <img src='app/img/small-trash.png' title='Delete' alt='Delete' /></a></span>

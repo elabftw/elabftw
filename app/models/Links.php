@@ -17,8 +17,8 @@ use Exception;
  */
 class Links
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var Experiments $Experiments instance of Experiments */
     public $Experiments;
@@ -30,7 +30,7 @@ class Links
      */
     public function __construct(Experiments $experiments)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Experiments = $experiments;
     }
 
@@ -44,7 +44,7 @@ class Links
     public function create($link)
     {
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);
         $req->bindParam(':link_id', $link);
 
@@ -67,7 +67,7 @@ class Links
             LEFT JOIN items ON (experiments_links.link_id = items.id)
             LEFT JOIN items_types ON (items.type = items_types.id)
             WHERE experiments_links.item_id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Experiments->id);
         $req->execute();
 
@@ -85,13 +85,13 @@ class Links
     {
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
-        $linkreq = $this->pdo->prepare($linksql);
+        $linkreq = $this->Db->prepare($linksql);
         $linkreq->bindParam(':id', $id);
         $linkreq->execute();
 
         while ($links = $linkreq->fetch()) {
             $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->execute(array(
                 'link_id' => $links['link_id'],
                 'item_id' => $newId
@@ -108,7 +108,7 @@ class Links
     public function destroy($link)
     {
         $sql = "DELETE FROM experiments_links WHERE id= :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $link);
 
         return $req->execute();
@@ -122,7 +122,7 @@ class Links
     public function destroyAll()
     {
         $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);
 
         return $req->execute();

@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv extends Make
+class MakeCsv extends AbstractMake
 {
     /** @var string $fileName a sha512 sum */
     public $fileName;
@@ -30,10 +30,10 @@ class MakeCsv extends Make
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      * @param string $idList 1+4+5+2
      */
-    public function __construct(Entity $entity, $idList)
+    public function __construct(AbstractEntity $entity, $idList)
     {
         parent::__construct($entity);
 
@@ -79,7 +79,6 @@ class MakeCsv extends Make
         $idArr = explode(" ", $this->idList);
         foreach ($idArr as $id) {
             $this->Entity->setId($id);
-            $this->Entity->populate();
             $permissions = $this->Entity->getPermissions();
             if ($permissions['read']) {
                 $this->addLine();

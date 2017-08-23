@@ -18,20 +18,20 @@ use Swift_Message;
  */
 class Comments
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
-    /** @var Entity $Entity instance of Entity */
+    /** @var AbstractEntity $Entity instance of Entity */
     public $Entity;
 
     /**
      * Constructor
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(AbstractEntity $entity)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Entity = $entity;
     }
 
@@ -47,7 +47,7 @@ class Comments
 
         $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid)
             VALUES(:datetime, :exp_id, :comment, :userid)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindValue(':datetime', date("Y-m-d H:i:s"));
         $req->bindParam(':exp_id', $this->Entity->id);
         $req->bindParam(':comment', $comment);
@@ -72,7 +72,7 @@ class Comments
 
         // get the first and lastname of the commenter
         $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->execute();
         $commenter = $req->fetch();
@@ -80,7 +80,7 @@ class Comments
         // get email of the XP owner
         $sql = "SELECT email, userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users
             WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         $users = $req->fetch();
@@ -120,14 +120,14 @@ class Comments
      *
      * @return array|false results or false if no comments
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT experiments_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM experiments_comments
             LEFT JOIN users ON (experiments_comments.userid = users.userid)
             WHERE exp_id = :id ORDER BY experiments_comments.datetime ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         if ($req->rowCount() > 0) {
@@ -155,7 +155,7 @@ class Comments
         $sql = "UPDATE experiments_comments SET
             comment = :comment
             WHERE id = :id AND userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':comment', $comment);
         $req->bindParam(':id', $id);
         $req->bindParam(':userid', $this->Entity->Users->userid);
@@ -167,15 +167,14 @@ class Comments
      * Destroy a comment
      *
      * @param int $id id of the comment
-     * @param int $userid
      * @return bool
      */
-    public function destroy($id, $userid)
+    public function destroy($id)
     {
         $sql = "DELETE FROM experiments_comments WHERE id = :id AND userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
 
         return $req->execute();
     }
@@ -188,7 +187,7 @@ class Comments
     public function destroyAll()
     {
         $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
 
         return $req->execute();

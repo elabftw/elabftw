@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\Make
+ * \Elabftw\Elabftw\AbstractMake
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -16,23 +16,26 @@ use Symfony\Component\HttpFoundation\Request;
  * Mother class of MakeCsv, MakePdf and MakeZip
  *
  */
-abstract class Make
+abstract class AbstractMake
 {
-    /** @var Entity $Entity instance of Experiments or Database */
+    /** @var AbstractEntity $Entity instance of Experiments or Database */
     protected $Entity;
 
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    /** @var string $page will be defined in children classes */
+    public $page;
 
     /**
      * Constructor
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(AbstractEntity $entity)
     {
         $this->Entity = $entity;
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
     }
 
 
@@ -41,7 +44,7 @@ abstract class Make
      *
      * @return string
      */
-    abstract protected function getCleanName();
+    abstract public function getCleanName();
 
     /**
      * Generate a long and unique string
@@ -78,7 +81,7 @@ abstract class Make
     protected function getUrl()
     {
         $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/' . $this->Entity::PAGE . '.php';
+        $url = 'https://' . $Request->getHttpHost() . '/' . $this->Entity->page . '.php';
 
         return $url . "?mode=view&id=" . $this->Entity->id;
     }

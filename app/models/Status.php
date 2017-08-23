@@ -31,7 +31,7 @@ class Status extends Category
     public function __construct(Users $users)
     {
         $this->Users = $users;
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -59,7 +59,7 @@ class Status extends Category
 
         $sql = "INSERT INTO status(name, color, team, is_timestampable, is_default)
             VALUES(:name, :color, :team, :is_timestampable, :is_default)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $team);
@@ -68,7 +68,7 @@ class Status extends Category
 
         $req->execute();
 
-        return $this->pdo->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -98,7 +98,7 @@ class Status extends Category
             status.is_timestampable,
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
@@ -114,7 +114,7 @@ class Status extends Category
     public function readColor($id)
     {
         $sql = "SELECT color FROM status WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
 
@@ -130,7 +130,7 @@ class Status extends Category
     public function isTimestampable($status)
     {
          $sql = "SELECT is_timestampable FROM status WHERE id = :id";
-         $req = $this->pdo->prepare($sql);
+         $req = $this->Db->prepare($sql);
          $req->bindParam(':id', $status, PDO::PARAM_INT);
          $req->execute();
 
@@ -147,7 +147,7 @@ class Status extends Category
     private function setDefaultFalse()
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
 
         return $req->execute();
@@ -181,7 +181,7 @@ class Status extends Category
             is_default = :is_default
             WHERE id = :id AND team = :team";
 
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
         $req->bindParam(':is_timestampable', $isTimestampable);
@@ -201,7 +201,7 @@ class Status extends Category
     protected function countItems($id)
     {
         $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $id, PDO::PARAM_INT);
         $req->execute();
 
@@ -222,7 +222,7 @@ class Status extends Category
         }
 
         $sql = "DELETE FROM status WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
 
         return $req->execute();

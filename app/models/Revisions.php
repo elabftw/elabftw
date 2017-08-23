@@ -18,22 +18,21 @@ use Exception;
  */
 class Revisions
 {
-    /** pdo object */
-    private $pdo;
+    /** @var Db $Db SQL Database */
+    private $Db;
 
-    /** an instance of Experiments or Database */
+    /** @var AbstractEntity $Entity an instance of Experiments or Database */
     private $Entity;
 
     /**
      * Constructor
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(AbstractEntity $entity)
     {
-        $this->pdo = Db::getConnection();
-
         $this->Entity = $entity;
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -47,7 +46,7 @@ class Revisions
         $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid)
             VALUES(:item_id, :body, :userid)";
 
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Entity->Users->userid);
@@ -63,7 +62,7 @@ class Revisions
     {
         $sql = "SELECT COUNT(*) FROM " . $this->Entity->type . "_revisions
              WHERE item_id = :item_id ORDER BY savedate DESC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
 
@@ -100,7 +99,7 @@ class Revisions
     {
         $sql = "SELECT * FROM " . $this->Entity->type . "_revisions
             WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->execute();
@@ -117,7 +116,7 @@ class Revisions
     private function readRev($revId)
     {
         $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id AND userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $revId);
         $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->execute();
@@ -134,7 +133,7 @@ class Revisions
     private function isLocked()
     {
         $sql = "SELECT locked FROM " . $this->Entity->type . " WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
         $locked = $req->fetch();
@@ -159,7 +158,7 @@ class Revisions
         $body = $this->readRev($revId);
 
         $sql = "UPDATE " . $this->Entity->type . " SET body = :body WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 

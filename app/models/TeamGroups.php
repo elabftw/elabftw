@@ -18,10 +18,10 @@ use Exception;
  */
 class TeamGroups
 {
-    /** The PDO object */
-    private $pdo;
+    /** @var Db $Db SQL Database */
+    private $Db;
 
-    /** instance of Users */
+    /** @var Users $Users instance of Users */
     private $Users;
 
     /**
@@ -32,7 +32,7 @@ class TeamGroups
     public function __construct(Users $users)
     {
         $this->Users = $users;
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -44,7 +44,7 @@ class TeamGroups
     public function create($name)
     {
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':team', $this->Users->userData['team']);
 
@@ -61,7 +61,7 @@ class TeamGroups
         $fullGroups = array();
 
         $sql = "SELECT id, name FROM team_groups WHERE team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
@@ -70,7 +70,7 @@ class TeamGroups
         $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users CROSS JOIN users2team_groups
             ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
 
         foreach ($groups as $group) {
             $req->bindParam(':groupid', $group['id']);
@@ -128,7 +128,7 @@ class TeamGroups
     public function readName($id)
     {
         $sql = "SELECT name FROM team_groups WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
         return $req->fetchColumn();
@@ -148,7 +148,7 @@ class TeamGroups
         $idArr = explode('_', $id);
         if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1])) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':name', $name);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
@@ -179,9 +179,9 @@ class TeamGroups
         } else {
             throw new Exception('Bad action keyword');
         }
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $userId, \PDO::PARAM_INT);
-        $req->bindParam(':groupid', $groupId, \PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userId, PDO::PARAM_INT);
+        $req->bindParam(':groupid', $groupId, PDO::PARAM_INT);
         return $req->execute();
     }
 
@@ -197,18 +197,18 @@ class TeamGroups
         $success = array();
 
         $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $groupId);
         $success[] = $req->execute();
 
         $sql = "DELETE FROM team_groups WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $groupId, \PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $groupId, PDO::PARAM_INT);
         $success[] = $req->execute();
 
         $sql = "DELETE FROM users2team_groups WHERE groupid = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $groupId, \PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $groupId, PDO::PARAM_INT);
         $success[] = $req->execute();
 
         if (in_array(false, $success)) {
@@ -227,7 +227,7 @@ class TeamGroups
     public function isInTeamGroup($userid, $groupid)
     {
         $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':groupid', $groupid);
         $req->execute();
         $authUsersArr = array();

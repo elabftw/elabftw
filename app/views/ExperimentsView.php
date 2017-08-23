@@ -56,9 +56,8 @@ class ExperimentsView extends EntityView
      */
     public function showTimestamp()
     {
-        $Users = new Users();
-        $UploadsView = new UploadsView(new Uploads($this->Entity));
-        $timestamper = $Users->read($this->Entity->entityData['timestampedby']);
+        $UploadsView = new UploadsView($this->Entity->Uploads);
+        $timestamper = $this->Entity->Users->read($this->Entity->entityData['timestampedby']);
 
         $UploadsView->Uploads->Entity->type = 'exp-pdf-timestamp';
         $pdf = $UploadsView->Uploads->readAll();

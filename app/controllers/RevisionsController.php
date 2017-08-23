@@ -41,7 +41,7 @@ try {
 
         $Revisions->restore($revId);
 
-        header("Location: ../../" . $Entity::PAGE . ".php?mode=view&id=" . $Request->query->get('item_id'));
+        header("Location: ../../" . $Entity->page . ".php?mode=view&id=" . $Request->query->get('item_id'));
     }
 } catch (Exception $e) {
     $Logs = new Logs();

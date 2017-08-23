@@ -17,20 +17,20 @@ use PDO;
  */
 class Tags
 {
-    /** an instance of Experiments or Database */
-    public $Entity;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
-    /** pdo object */
-    protected $pdo;
+    /** @var AbstractEntity $Entity an instance of AbstractEntity */
+    public $Entity;
 
     /**
      * Constructor
      *
-     * @param Entity $entity
+     * @param AbstractEntity $entity
      */
-    public function __construct(Entity $entity)
+    public function __construct(AbstractEntity $entity)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Entity = $entity;
     }
 
@@ -38,7 +38,7 @@ class Tags
      * Create a tag
      *
      * @param string $tag
-     * @return bool
+     * @return string id of the tag
      */
     public function create($tag)
     {
@@ -51,12 +51,14 @@ class Tags
         }
         $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, " . $userOrTeam . ")
             VALUES(:tag, :item_id, :userOrTeam)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag, PDO::PARAM_STR);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userOrTeam', $userOrTeamValue);
 
-        return $req->execute();
+        $req->execute();
+
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -85,7 +87,7 @@ class Tags
                 $tagFilter
                 GROUP BY tag ORDER BY tag ASC";
         }
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Entity->Users->userData['team']);
         $req->execute();
 
@@ -101,7 +103,7 @@ class Tags
     public function copyTags($newId)
     {
         $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         if ($req->rowCount() > 0) {
@@ -109,13 +111,13 @@ class Tags
                 // Put them in the new one. here $newId is the new exp created
                 if ($this->Entity->type === 'experiments' || $this->Entity->type === 'experiments_tpl') {
                     $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-                    $reqtag = $this->pdo->prepare($sql);
+                    $reqtag = $this->Db->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
                     $reqtag->bindParam(':userid', $this->Entity->Users->userid);
                 } else {
                     $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
-                    $reqtag = $this->pdo->prepare($sql);
+                    $reqtag = $this->Db->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
                 }
@@ -174,7 +176,7 @@ class Tags
     public function destroy($id)
     {
         $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
 
         return $req->execute();
@@ -189,7 +191,7 @@ class Tags
     {
         $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
 
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
 
         return $req->execute();

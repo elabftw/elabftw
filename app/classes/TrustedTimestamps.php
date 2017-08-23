@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use DateTime;
 use Exception;
+use PDO;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 use GuzzleHttp\Psr7;
@@ -24,16 +25,16 @@ use GuzzleHttp\Exception\RequestException;
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
-class TrustedTimestamps extends Make
+class TrustedTimestamps extends AbstractMake
 {
     /** default hash algo for file */
     const HASH_ALGORITHM = 'sha256';
 
-    /** @var Entity $Entity instance of Entity */
+    /** @var Experiments $Entity instance of Entity */
     protected $Entity;
 
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var Config $Config instance of Config*/
     private $Config;
@@ -70,15 +71,15 @@ class TrustedTimestamps extends Make
      *
      * @param Config $config
      * @param Teams $teams
-     * @param Entity $entity
+     * @param Experiments $entity
      */
-    public function __construct(Config $config, Teams $teams, Entity $entity)
+    public function __construct(Config $config, Teams $teams, Experiments $entity)
     {
         $this->Config = $config;
         $this->Entity = $entity;
         $this->teamConfigArr = $teams->read();
 
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
 
         // initialize with info from config
         $this->stampParams = $this->getTimestampParameters();
@@ -96,9 +97,10 @@ class TrustedTimestamps extends Make
     private function generatePdf()
     {
         try {
-            $pdf = new MakePdf($this->Entity, true, true);
-            $this->pdfPath = $pdf->filePath;
-            $this->pdfLongName = $pdf->fileName;
+            $MakePdf = new MakePdf($this->Entity);
+            $MakePdf->output(true, true);
+            $this->pdfPath = $MakePdf->filePath;
+            $this->pdfLongName = $MakePdf->fileName;
         } catch (Exception $e) {
             throw new Exception('Failed at making the pdf : ' . $e->getMessage());
         }
@@ -355,7 +357,7 @@ class TrustedTimestamps extends Make
         // keep a trace of where we put the token
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
             VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':real_name', $realName);
         $req->bindParam(':long_name', $longName);
         $req->bindValue(':comment', "Timestamp token");
@@ -456,15 +458,15 @@ class TrustedTimestamps extends Make
      * The realname is elabid-timestamped.pdf
      *
      */
-    protected function getCleanName()
+    public function getCleanName()
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         if (!$req->execute()) {
             throw new Exception('Cannot get elabid!');
         }
-        return $req->fetch(\PDO::FETCH_COLUMN) . "-timestamped.pdf";
+        return $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
     }
 
     /**
@@ -477,7 +479,7 @@ class TrustedTimestamps extends Make
         $hash = $this->getHash($this->pdfPath);
 
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");

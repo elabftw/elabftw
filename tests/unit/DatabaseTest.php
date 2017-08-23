@@ -27,7 +27,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
     {
         $new = $this->Database->create(1);
         $this->Database->setId($new);
-        $this->Database->populate();
+        $this->Database->canOrExplode('read');
         $this->assertTrue(is_array($this->Database->entityData));
         $this->assertEquals('Untitled', $this->Database->entityData['title']);
         $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
@@ -50,7 +50,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
     public function testDuplicate()
     {
         $this->Database->setId(1);
-        $this->Database->populate();
+        $this->Database->canOrExplode('read');
         $this->assertTrue((bool) Tools::checkId($this->Database->duplicate(1)));
     }
 

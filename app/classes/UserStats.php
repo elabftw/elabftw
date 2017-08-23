@@ -21,8 +21,8 @@ class UserStats
     /** @var int $count count of experiments */
     private $count = 0;
 
-    /** @var Db $pdo SQL Database */
-    private $pdo;
+    /** @var Db $Db SQL Database */
+    private $Db;
 
     /** @var array $countArr status id and count */
     private $countArr = array();
@@ -46,7 +46,7 @@ class UserStats
     {
         $this->Users = $users;
         $this->count = $count;
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->countStatus();
         $this->makePercent();
     }
@@ -73,7 +73,7 @@ class UserStats
                 FROM experiments
                 WHERE userid = :userid
                 AND status = :status";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->Users->userid);
             $req->bindParam(':status', $key);
             $req->execute();

@@ -18,8 +18,8 @@ use Exception;
  */
 class Todolist
 {
-    /** pdo object */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** our user */
     private $userid;
@@ -31,7 +31,7 @@ class Todolist
      */
     public function __construct($userid)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->userid = $userid;
     }
 
@@ -45,7 +45,7 @@ class Todolist
     {
         $sql = "INSERT INTO todolist(body, userid)
             VALUES(:body, :userid)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->userid);
 
@@ -53,7 +53,7 @@ class Todolist
             throw new Exception('Error inserting todoitem!');
         }
 
-        return $this->pdo->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -64,7 +64,7 @@ class Todolist
     public function readAll()
     {
         $sql = "SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid);
         $req->execute();
 
@@ -81,7 +81,7 @@ class Todolist
     public function update($id, $body)
     {
         $sql = "UPDATE todolist SET body = :body WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':body', $body);
 
@@ -103,7 +103,7 @@ class Todolist
             $id = $id[1];
             // update the ordering
             $sql = "UPDATE todolist SET ordering = :ordering WHERE id = :id AND userid = :userid";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $req->bindParam(':userid', $this->userid);
@@ -122,7 +122,7 @@ class Todolist
     public function destroy($id)
     {
         $sql = "DELETE FROM todolist WHERE id = :id AND userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid);
 
@@ -137,7 +137,7 @@ class Todolist
     public function destroyAll()
     {
         $sql = "DELETE FROM todolist WHERE userid = :userid";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid);
 
         return $req->execute();

@@ -18,25 +18,24 @@ use Gmagick;
  */
 class Uploads
 {
-    /** pdo object */
-    protected $pdo;
-
-    /** what algo for hashing */
-    private $hashAlgorithm = 'sha256';
-
-    /** instance of Experiments or Database */
+    /** @var AbstractEntity $Entity an entity */
     public $Entity;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    /** @var string $hashAlgorithm what algo for hashing */
+    private $hashAlgorithm = 'sha256';
 
     /**
      * Constructor
      *
-     * @param Entity $entity instance of Experiments or Database
+     * @param AbstractEntity $entity instance of Experiments or Database
      */
-    public function __construct(Entity $entity)
+    public function __construct(AbstractEntity $entity)
     {
-        $this->pdo = Db::getConnection();
-
         $this->Entity = $entity;
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -226,7 +225,7 @@ class Uploads
             :hash_algorithm
         )";
 
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':real_name', $realName);
         $req->bindParam(':long_name', $longName);
         // comment can be edited after upload
@@ -251,7 +250,7 @@ class Uploads
     public function readFromId($id)
     {
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->Entity->type);
         $req->execute();
@@ -267,7 +266,7 @@ class Uploads
     public function readAll()
     {
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->bindParam(':type', $this->Entity->type);
         $req->execute();
@@ -286,7 +285,7 @@ class Uploads
     {
         // SQL to update single file comment
         $sql = "UPDATE uploads SET comment = :comment WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':comment', $comment);
 
@@ -416,7 +415,7 @@ class Uploads
         // Delete SQL entry (and verify the type)
         // to avoid someone deleting files saying it's DB whereas it's exp
         $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->Entity->type);
 

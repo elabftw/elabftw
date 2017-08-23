@@ -32,7 +32,7 @@ try {
         $Entity->setId($Request->query->get('id'));
         // check permissions
         $Entity->canOrExplode('read');
-        $UploadsView = new UploadsView(new Uploads($Entity));
+        $UploadsView = new UploadsView($Entity->Uploads);
         // the mode parameter is for the uploads tpl
         echo $Twig->render('view.html', array(
             'Entity' => $Entity,
@@ -54,15 +54,13 @@ try {
 
         $ItemsTypes = new ItemsTypes($Entity->Users);
         $Revisions = new Revisions($Entity);
-        $UploadsView = new UploadsView(new Uploads($Entity));
-        $Tags = new Tags($Entity);
+        $UploadsView = new UploadsView($Entity->Uploads);
 
         echo $Twig->render('edit.html', array(
             'Entity' => $Entity,
             'Categories' => $ItemsTypes,
             'Revisions' => $Revisions,
             'Uv' => $UploadsView,
-            'Tags' => $Tags,
             'mode' => 'edit',
             'maxUploadSize' => Tools::returnMaxUploadSize()
         ));

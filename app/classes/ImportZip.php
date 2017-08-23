@@ -24,14 +24,11 @@ class ImportZip extends Import
     /** @var Users $Users instance of Users */
     private $Users;
 
-    /** @var Uploads $Uploads instance of Uploads */
-    private $Uploads;
+    /** @var AbstractEntity $Entity instance of Entity */
+    private $Entity;
 
-    /** @var Tags $Tags instance of Tags */
-    private $Tags;
-
-    /** @var Db $pdo SQL Database */
-    private $pdo;
+    /** @var Db $Db SQL Database */
+    private $Db;
 
     /** @var int $inserted number of item we have inserted */
     public $inserted = 0;
@@ -48,9 +45,6 @@ class ImportZip extends Import
     /** @var string $type experiments or items */
     private $type = 'items';
 
-    /** @var int $newItemId the newly created id of the imported item */
-    private $newItemId;
-
     /**
      * Constructor
      *
@@ -58,7 +52,7 @@ class ImportZip extends Import
      */
     public function __construct(Users $users)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Users = $users;
 
         $this->checkFileReadable();
@@ -109,7 +103,7 @@ class ImportZip extends Import
     private function getDefaultStatus()
     {
         $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
         return $req->fetchColumn();
@@ -131,7 +125,7 @@ class ImportZip extends Import
             $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid)
                 VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
@@ -150,17 +144,15 @@ class ImportZip extends Import
         if (!$req->execute()) {
             throw new Exception('Cannot import in database!');
         }
-        // needed in importFile()
-        $this->newItemId = (int) $this->pdo->lastInsertId();
+
+        $newItemId = (int) $this->Db->lastInsertId();
 
         // create necessary objects
         if ($this->type === 'experiments') {
-            $Entity = new Experiments($this->Users, $this->newItemId);
+            $this->Entity = new Experiments($this->Users, $newItemId);
         } else {
-            $Entity = new Database($this->Users, $this->newItemId);
+            $this->Entity = new Database($this->Users, $newItemId);
         }
-        $this->Uploads = new Uploads($Entity);
-        $this->Tags = new Tags($Entity);
 
         if (strlen($item['tags']) > 1) {
             $this->tagsDbInsert($item['tags']);
@@ -176,7 +168,7 @@ class ImportZip extends Import
     {
         $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
-            $this->Tags->create($tag);
+            $this->Entity->Tags->create($tag);
         }
     }
 
@@ -208,7 +200,7 @@ class ImportZip extends Import
                      * import but this should be handled. One day. Maybe.
                      */
                     if (is_readable($filePath)) {
-                        $this->Uploads->createFromLocalFile($filePath, $file['comment']);
+                        $this->Entity->Uploads->createFromLocalFile($filePath, $file['comment']);
                     }
                 }
             }

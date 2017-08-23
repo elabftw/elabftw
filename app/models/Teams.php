@@ -20,8 +20,8 @@ use Defuse\Crypto\Key as Key;
  */
 class Teams
 {
-    /** pdo object */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** our team id */
     public $team;
@@ -33,7 +33,7 @@ class Teams
      */
     public function __construct($team = null)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         if (!is_null($team)) {
             $this->team = $team;
         }
@@ -48,7 +48,7 @@ class Teams
     public function initializeIfNeeded($name)
     {
         $sql = 'SELECT team_id, team_name, team_orgid FROM teams';
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
         $teamsArr = $req->fetchAll();
         foreach ($teamsArr as $team) {
@@ -71,13 +71,13 @@ class Teams
 
         // add to the teams table
         $sql = 'INSERT INTO teams (team_name, link_name, link_href) VALUES (:team_name, :link_name, :link_href)';
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team_name', $name);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
         $result1 = $req->execute();
         // grab the team ID
-        $newId = $this->pdo->lastInsertId();
+        $newId = $this->Db->lastInsertId();
 
         // create default status
         $Users = new Users();
@@ -113,7 +113,7 @@ class Teams
     public function readAll()
     {
         $sql = "SELECT * FROM teams ORDER BY team_name ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();
@@ -128,7 +128,7 @@ class Teams
     public function read($column = null)
     {
         $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team_id', $this->team);
         $req->execute();
         $teamConfig = $req->fetch();
@@ -184,7 +184,7 @@ class Teams
             stampprovider = :stampprovider,
             stampcert = :stampcert
             WHERE team_id = :team_id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':stampprovider', $post['stampprovider']);
         $req->bindParam(':stampcert', $post['stampcert']);
         $req->bindParam(':stamplogin', $post['stamplogin']);
@@ -212,7 +212,7 @@ class Teams
             SET team_name = :name,
                 team_orgid = :orgid
             WHERE team_id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':orgid', $orgid);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
@@ -234,22 +234,22 @@ class Teams
         if ($count['totxp'] === '0' && $count['totdb'] === '0' && $count['totusers'] === '0') {
 
             $sql = "DELETE FROM teams WHERE team_id = :team_id";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result1 = $req->execute();
 
             $sql = "DELETE FROM status WHERE team = :team_id";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result2 = $req->execute();
 
             $sql = "DELETE FROM items_types WHERE team = :team_id";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result3 = $req->execute();
 
             $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
-            $req = $this->pdo->prepare($sql);
+            $req = $this->Db->prepare($sql);
             $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result4 = $req->execute();
 
@@ -267,7 +267,7 @@ class Teams
     public function destroyStamppass()
     {
         $sql = "UPDATE teams SET stamppass = NULL WHERE team_id = :team_id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team_id', $this->team);
 
         return $req->execute();
@@ -286,10 +286,10 @@ class Teams
         (SELECT COUNT(teams.team_id) FROM teams) AS totteams,
         (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
         (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
 
-        return $req->fetch(\PDO::FETCH_NAMED);
+        return $req->fetch(PDO::FETCH_NAMED);
     }
 
     /**
@@ -306,10 +306,10 @@ class Teams
         (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp,
         (SELECT COUNT(experiments.id) FROM experiments
             WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();
 
-        return $req->fetch(\PDO::FETCH_NAMED);
+        return $req->fetch(PDO::FETCH_NAMED);
     }
 }

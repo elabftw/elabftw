@@ -15,8 +15,8 @@ namespace Elabftw\Elabftw;
  */
 class Idps
 {
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -24,7 +24,7 @@ class Idps
      */
     public function __construct()
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -37,13 +37,13 @@ class Idps
      * @param string $sloUrl Single Log Out URL
      * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
-     * @return bool
+     * @return string last insert id
      */
     public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
     {
         $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509)
             VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
         $req->bindParam(':sso_url', $ssoUrl);
@@ -52,7 +52,9 @@ class Idps
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
 
-        return $req->execute();
+        $req->execute();
+
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -64,7 +66,7 @@ class Idps
     public function read($id)
     {
         $sql = "SELECT * FROM idps WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
 
@@ -79,7 +81,7 @@ class Idps
     public function readAll()
     {
         $sql = "SELECT * FROM idps";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();
@@ -109,7 +111,7 @@ class Idps
             slo_binding = :slo_binding,
             x509 = :x509
             WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -131,7 +133,7 @@ class Idps
     public function destroy($id)
     {
         $sql = "DELETE FROM idps WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
 
         return $req->execute();

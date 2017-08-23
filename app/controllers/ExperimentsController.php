@@ -188,7 +188,7 @@ try {
         $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        $Teams = new Teams($Entity->team);
+        $Teams = new Teams($Entity->entityData['team']);
 
         if (($Teams->read('deletable_xp') == '0') && !$Session->get('is_admin')) {
             $Response->setData(array(

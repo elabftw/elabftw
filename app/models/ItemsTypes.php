@@ -20,8 +20,8 @@ class ItemsTypes extends Category
 {
     use EntityTrait;
 
-    /** @var Db $pdo SQL Database */
-    protected $pdo;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /** @var Users $Users instance of Users */
     public $Users;
@@ -35,7 +35,7 @@ class ItemsTypes extends Category
      */
     public function __construct(Users $users, $id = null)
     {
-        $this->pdo = Db::getConnection();
+        $this->Db = Db::getConnection();
         $this->Users = $users;
         if (!is_null($id)) {
             $this->setId($id);
@@ -66,10 +66,10 @@ class ItemsTypes extends Category
         $template = Tools::checkBody($template);
         $sql = "INSERT INTO items_types(name, color, bookable, template, team)
             VALUES(:name, :color, :bookable, :template, :team)";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
-        $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
+        $req->bindParam(':bookable', $bookable);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $team);
 
@@ -84,7 +84,7 @@ class ItemsTypes extends Category
     public function read()
     {
         $sql = "SELECT template FROM items_types WHERE id = :id AND team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
@@ -110,7 +110,7 @@ class ItemsTypes extends Category
             items_types.template,
             items_types.ordering
             from items_types WHERE team = :team ORDER BY ordering ASC";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
@@ -126,8 +126,8 @@ class ItemsTypes extends Category
     public function readColor($id)
     {
         $sql = "SELECT color FROM items_types WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id);
         $req->execute();
 
         return $req->fetchColumn();
@@ -155,13 +155,13 @@ class ItemsTypes extends Category
             bookable = :bookable,
             template = :template
             WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
-        $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
+        $req->bindParam(':bookable', $bookable);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->Users->userData['team']);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $id);
 
         return $req->execute();
     }
@@ -175,7 +175,7 @@ class ItemsTypes extends Category
     protected function countItems($id)
     {
         $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $id);
         $req->execute();
         return (int) $req->fetchColumn();
@@ -194,7 +194,7 @@ class ItemsTypes extends Category
             throw new Exception(_("Remove all database items with this type before deleting this type."));
         }
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
-        $req = $this->pdo->prepare($sql);
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':team', $this->Users->userData['team']);
 

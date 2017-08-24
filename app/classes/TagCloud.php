@@ -18,7 +18,7 @@ class TagCloud
     /** @var Db $Db SQL Database */
     private $Db;
 
-    /** @var int $userid id of our user */
+    /** @var string $userid id of our user */
     private $userid;
 
     /**

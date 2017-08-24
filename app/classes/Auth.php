@@ -188,17 +188,17 @@ class Auth
     /**
      * We are not auth, but maybe we have a cookie, try to login with that
      *
-     * @param Request $Request
+     * @param Request $request
      * @return bool True if we have a valid cookie and it is the same token as in the DB
      */
-    public function loginWithCookie($Request)
+    public function loginWithCookie($request)
     {
         // the token is a md5 sum
-        if (!$Request->cookies->has('token') || strlen($Request->cookies->get('token')) != 32) {
+        if (!$request->cookies->has('token') || strlen($request->cookies->get('token')) != 32) {
             return false;
         }
         // If user has a cookie; check cookie is valid
-        $token = $Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+        $token = $request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
         // Get token from SQL
         $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
         $req = $this->Db->prepare($sql);

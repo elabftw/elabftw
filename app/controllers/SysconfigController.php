@@ -95,7 +95,7 @@ try {
     // DESTROY LOGS
     if ($Request->request->has('logsDestroy')) {
         $Logs = new Logs();
-        if ($Logs->destroy()) {
+        if ($Logs->destroyAll()) {
             $res = true;
             $msg = _('Logs cleared');
         }

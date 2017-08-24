@@ -20,6 +20,7 @@ abstract class AbstractImport
     /**
      * Read the file input
      *
+     * @return void
      */
     abstract protected function openFile();
 

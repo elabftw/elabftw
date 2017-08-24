@@ -16,7 +16,7 @@ use Exception;
 /**
  * All about the revisions
  */
-class Revisions
+class Revisions implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     private $Db;
@@ -95,7 +95,7 @@ class Revisions
      *
      * @return array
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT * FROM " . $this->Entity->type . "_revisions
             WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
@@ -163,5 +163,22 @@ class Revisions
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
         return $req->execute();
+    }
+
+    /**
+     * Not implemented
+     *
+     * @param int $id
+     */
+    public function destroy($id)
+    {
+    }
+
+    /**
+     * Not implemented
+     *
+     */
+    public function destroyAll()
+    {
     }
 }

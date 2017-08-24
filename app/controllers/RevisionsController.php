@@ -39,7 +39,9 @@ try {
             throw new Exception(_('The id parameter is not valid!'));
         }
 
-        $Revisions->restore($revId);
+        if ($Revisions->restore($revId)) {
+            $Session->getFlashBag()->add('ok', _('Revision restored successfully.'));
+        }
 
         header("Location: ../../" . $Entity->page . ".php?mode=view&id=" . $Request->query->get('item_id'));
     }

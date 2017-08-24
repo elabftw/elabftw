@@ -35,12 +35,13 @@ try {
 
     $Entity->setId($Request->query->get('item_id'));
     $Entity->canOrExplode('write');
+
     $Revisions = new Revisions($Entity);
+    $revisionArr = $Revisions->readAll();
 
     // BEGIN PAGE
     echo "<a href='" . $Entity->page . ".php?mode=view&id=" . $_GET['item_id'] .
         "'><h4><img src='app/img/undo.png' alt='<--' /> " . _('Go back') . "</h4></a>";
-    $revisionArr = $Revisions->read();
     foreach ($revisionArr as $revision) {
         echo "<div class='item'>" . _('Saved on:') . " " . $revision['savedate'] .
             " <a href='app/controllers/RevisionsController.php?item_id=" . $_GET['item_id'] .

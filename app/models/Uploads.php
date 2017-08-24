@@ -16,7 +16,7 @@ use Gmagick;
 /**
  * All about the file uploads
  */
-class Uploads
+class Uploads implements CrudInterface
 {
     /** @var AbstractEntity $Entity an entity */
     public $Entity;

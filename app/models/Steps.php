@@ -15,7 +15,7 @@ use Exception;
 /**
  * All about the experiments steps
  */
-class Steps
+class Steps implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;
@@ -74,7 +74,7 @@ class Steps
      *
      * @return array
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT * FROM experiments_steps WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
@@ -111,14 +111,14 @@ class Steps
     /**
      * Delete a step
      *
-     * @param int $stepId
+     * @param int $id ID of the step
      * @return bool
      */
-    public function destroy($stepId)
+    public function destroy($id)
     {
         $sql = "DELETE FROM experiments_steps WHERE id= :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $stepId);
+        $req->bindParam(':id', $id);
 
         return $req->execute();
     }

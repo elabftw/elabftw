@@ -16,7 +16,7 @@ use Exception;
 /**
  * Things related to status in admin panel
  */
-class Status extends Category
+class Status extends AbstractCategory
 {
     use EntityTrait;
 

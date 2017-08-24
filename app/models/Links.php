@@ -15,7 +15,7 @@ use Exception;
 /**
  * All about the experiments links
  */
-class Links
+class Links implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;
@@ -105,14 +105,14 @@ class Links
     /**
      * Delete a link
      *
-     * @param int $link ID of our link
+     * @param int $id ID of our link
      * @return bool
      */
-    public function destroy($link)
+    public function destroy($id)
     {
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $link);
+        $req->bindParam(':id', $id);
 
         return $req->execute();
     }

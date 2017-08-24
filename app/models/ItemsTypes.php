@@ -16,7 +16,7 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends Category
+class ItemsTypes extends AbstractCategory
 {
     use EntityTrait;
 

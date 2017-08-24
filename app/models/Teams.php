@@ -18,7 +18,7 @@ use Defuse\Crypto\Key as Key;
 /**
  * All about the teams
  */
-class Teams
+class Teams implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;
@@ -223,34 +223,34 @@ class Teams
     /**
      * Delete a team on if all the stats are at zero
      *
-     * @param int $team
+     * @param int $id ID of the team
      * @return bool true if success, false if the team is not brand new
      */
-    public function destroy($team)
+    public function destroy($id)
     {
         // check for stats, should be 0
-        $count = $this->getStats($team);
+        $count = $this->getStats($id);
 
         if ($count['totxp'] === '0' && $count['totdb'] === '0' && $count['totusers'] === '0') {
 
             $sql = "DELETE FROM teams WHERE team_id = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result1 = $req->execute();
 
             $sql = "DELETE FROM status WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result2 = $req->execute();
 
             $sql = "DELETE FROM items_types WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result3 = $req->execute();
 
             $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result4 = $req->execute();
 
             return $result1 && $result2 && $result3 && $result4;

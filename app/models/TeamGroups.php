@@ -16,7 +16,7 @@ use Exception;
 /**
  * Everything related to the team groups
  */
-class TeamGroups
+class TeamGroups implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     private $Db;
@@ -188,27 +188,27 @@ class TeamGroups
     /**
      * Delete a team group
      *
-     * @param string $groupId Id of the group to destroy
+     * @param string $id Id of the group to destroy
      * @throws Exception if it fails to delete
      * @return bool true on success
      */
-    public function destroy($groupId)
+    public function destroy($id)
     {
         $success = array();
 
         $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $groupId);
+        $req->bindParam(':id', $id);
         $success[] = $req->execute();
 
         $sql = "DELETE FROM team_groups WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $groupId, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $success[] = $req->execute();
 
         $sql = "DELETE FROM users2team_groups WHERE groupid = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $groupId, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $success[] = $req->execute();
 
         if (in_array(false, $success)) {

@@ -122,7 +122,7 @@
             <img src='app/img/step.png' alt='steps' /> <h4 style='display:inline'>{{ 'Experiments steps'|trans }}</h4>
             <br>
             <div class='list' id='steps_div'>
-                {% set stepsArr = Entity.Steps.read %}
+                {% set stepsArr = Entity.Steps.readAll %}
                 {% if stepsArr|length > 0 %}
                 <ul class='list-group'>
                     {% for step in stepsArr %}

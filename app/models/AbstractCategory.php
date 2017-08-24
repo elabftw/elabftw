@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\Category
+ * \Elabftw\Elabftw\AbstractCategory
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 /**
  * A category is a status for experiments and item type for db item
  */
-abstract class Category
+abstract class AbstractCategory implements CrudInterface
 {
     /**
      * SQL to get all categories for current team

@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 /**
  * Store informations about different identity providers for auth with SAML
  */
-class Idps
+class Idps implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;

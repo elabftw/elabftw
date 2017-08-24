@@ -16,7 +16,7 @@ use Swift_Message;
 /**
  * All about the comments
  */
-class Comments
+class Comments implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;

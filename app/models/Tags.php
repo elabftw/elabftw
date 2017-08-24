@@ -15,7 +15,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags
+class Tags implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;

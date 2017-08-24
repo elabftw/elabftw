@@ -115,8 +115,6 @@ class Auth
         $Session->migrate();
         $Session->set('auth', 1);
         $Session->set('userid', $this->userData['userid']);
-        $Session->set('team', $this->userData['team']);
-        $Session->set('firstname', $this->userData['firstname']);
 
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
@@ -127,10 +125,9 @@ class Auth
 
         $Session->set('is_admin', $group['is_admin']);
         $Session->set('is_sysadmin', $group['is_sysadmin']);
-        // Make a unique token and store it in sql AND cookie
+        // create a token
         $this->token = md5(uniqid(rand(), true));
-        // and session
-        $Session->set('token', $this->token);
+
         return true;
     }
 

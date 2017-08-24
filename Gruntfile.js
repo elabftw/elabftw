@@ -64,6 +64,7 @@ module.exports = function(grunt) {
           'app/js/change-pass.min.js': 'app/js/change-pass.js',
           'app/js/show.min.js': 'app/js/show.js',
           'app/js/edit.min.js': 'app/js/edit.js',
+          'app/js/search.min.js': 'app/js/search.js',
           'app/js/ucp.min.js': 'app/js/ucp.js'
 
         }

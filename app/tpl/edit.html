@@ -211,8 +211,9 @@ Dropzone.options.elabftwDropzone = {
 <!-- DOODLE -->
 <section class='box'>
     <img src='app/img/pencil.png' />
-    <h3 class='clickable togglable-next'>{{ 'Draw something'|trans }}</h3>
-    <div class='canvasDiv togglable-hidden'>
+    <h3 class='inline'>{{ 'Draw something'|trans }}</h3>
+    <button class='button' id='show_doodle_canvas'>{{ 'Show canvas'|trans }}</button>
+    <div class='canvasDiv'>
         <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
         <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
         <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
@@ -223,8 +224,10 @@ Dropzone.options.elabftwDropzone = {
 <!-- CHEM EDITOR -->
 {% if Entity.Users.userData.chem_editor %}
     <div class='box chemdoodle'>
-        <h3>{{ 'Molecule drawer'|trans }}</h3>
-        <div class='center'>
+        <img src='app/img/atom.png' />
+        <h3 class='inline'>{{ 'Molecule drawer'|trans }}</h3>
+        <button class='button' id='show_chem_editor'>{{ 'Show editor'|trans }}</button>
+        <div class='center' style='display:none' id='chem_editor'>
             <script src='app/js/sketcher.js'></script>
         </div>
     </div>
@@ -245,4 +248,4 @@ Dropzone.options.elabftwDropzone = {
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
-<script src='app/js/edit.min.js'></script>
+<script src='app/js/edit.js'></script>

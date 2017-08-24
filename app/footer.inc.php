@@ -27,9 +27,13 @@ $pdo = Db::getConnection();
 $sqlNb = $pdo->getNumberOfQueries();
 $generationTime = round((microtime(true) - $Request->server->get("REQUEST_TIME_FLOAT")), 5);
 
+$memoryUsage = Tools::formatBytes(memory_get_usage()) . ' (' . memory_get_usage() . ')';
+
 echo $Twig->render('footer.html', array(
     'Session' => $Session,
     'Users' => $Users,
     'sqlNb' => $sqlNb,
-    'generationTime' => ' ' . $generationTime . ' '
+    'generationTime' => $generationTime,
+    'memoryUsage' => $memoryUsage,
+    'debug' => $Update->Config->configArr['debug']
 ));

@@ -21,7 +21,7 @@ $actionTarget = 'experiments.php';
 $teamConfigArr = array();
 
 if ($Session->has('auth')) {
-    $Teams = new Teams($Session->get('team'));
+    $Teams = new Teams($Users->userData['team']);
     $teamConfigArr = $Teams->read();
 
     // to redirect to the right page
@@ -38,6 +38,7 @@ if ($Session->has('auth')) {
 //header("Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-eval' https://www.google.com/; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://ajax.googleapis.com/ https://www.google.com/; font-src 'self'; object-src 'self';");
 echo $Twig->render('head.html', array(
     'Session' => $Session,
+    'Users' => $Users,
     'pageTitle' => $pageTitle,
     'selectedMenu' => $selectedMenu,
     'actionTarget' => $actionTarget,

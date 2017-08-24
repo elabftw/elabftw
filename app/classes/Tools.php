@@ -405,4 +405,16 @@ class Tools
 
         return str_repeat($green, $rating) . str_repeat($gray, (5 - $rating));
     }
+
+    /**
+     * This is used to include the title in the page name (see #324)
+     * It removes #, ' and " and appends "- eLabFTW"
+     *
+     * @param $title string
+     * @return string
+     */
+    public static function getCleanTitle($title)
+    {
+        return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
+    }
 }

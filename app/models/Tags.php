@@ -147,7 +147,7 @@ class Tags
     /**
      * Get the tag list as option html tag for the search page. Will disappear in search.html once it exists...
      *
-     * @param string $selected the selected tag(s)
+     * @param array $selected the selected tag(s)
      * @return string html for include in a select input
      */
     public function generateTagList($selected)

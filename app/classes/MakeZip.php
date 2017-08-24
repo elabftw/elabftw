@@ -196,7 +196,7 @@ class MakeZip extends AbstractMake
      */
     private function addCsv($id)
     {
-        $MakCsv = new MakeCsv($this->Entity, $id);
+        $MakeCsv = new MakeCsv($this->Entity, $id);
         $this->Zip->addFile($MakeCsv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->trash[] = $MakeCsv->filePath;
     }

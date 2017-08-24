@@ -30,7 +30,7 @@
     <img src='app/img/calendar.png' title='date' alt='Date :' />{{ Entity.entityData.date|kdate }}
 </div>
 <!-- begin action buttons row -->
-{% if not Entity.isReadOnly %}
+{% if not Entity.isReadOnly and not Entity.entityData.locked %}
     <a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
         <span>{{ 'Edit'|trans }}</span>
         <img src='app/img/pen-blue.png' alt={{ 'Edit'|trans }} />
@@ -98,12 +98,7 @@
 {% endif %}
 
 <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
-{% if not isReadOnly and not Entity.entityData.locked %}
-    {% set click2Edit = 'click2Edit clickable' %}
-{% else %}
-    {% set click2Edit = '' %}
-{% endif %}
-<div class='{{ click2Edit }} title_view'>
+<div class='{{ not Entity.isReadOnly and not Entity.entityData.locked ? 'click2Edit clickable' }} title_view'>
     {% if Entity.type == 'items' %}
         <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
     {% endif %}
@@ -120,7 +115,7 @@
     </p>
 {% endif %}
 
-<!--  BODY (show only if not empty -->
+<!--  BODY (show only if not empty) -->
 {% set body = Entity.entityData.body %}
 {% if body != '' %}
     {% if Entity.Users.userData.use_markdown %}

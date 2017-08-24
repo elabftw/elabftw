@@ -254,6 +254,30 @@ $(document).ready(function() {
         tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
     });
 
+    // SHOW THE DOODLE CANVAS
+    $(document).on('click', '#show_doodle_canvas',  function() {
+        if ($(this).html() == 'Show canvas') {
+            $(this).html('Hide canvas');
+            $(this).addClass('button-neutral');
+        } else {
+            $(this).html('Show canvas');
+            $(this).removeClass('button-neutral');
+        }
+        $('.canvasDiv').toggle();
+    });
+
+    // SHOW THE CHEM EDITOR
+    $(document).on('click', '#show_chem_editor',  function() {
+        if ($(this).html() == 'Show editor') {
+            $(this).html('Hide editor');
+            $(this).addClass('button-neutral');
+        } else {
+            $(this).html('Show editor');
+            $(this).removeClass('button-neutral');
+        }
+        $('#chem_editor').toggle();
+    });
+
     // MAKE THE FILE COMMENT FIELD EDITABLE
     $('.thumbnail').on('mouseover', '.editable', function(){
         makeEditableFileComment($(this).data('type'), $(this).data('id'));

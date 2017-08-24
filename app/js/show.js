@@ -148,10 +148,7 @@ $(document).ready(function(){
         $(this).attr('disabled', 'disabled');
         // also display a wait text
         $(this).html('Please wait…');
-        var type = 'items';
-        if (page === 'experiments.php') {
-            type = 'experiments';
-        }
+        var type = $('#type').data('type');
         var checked = getCheckedBoxes();
         var what = $(this).data('what');
         window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+');

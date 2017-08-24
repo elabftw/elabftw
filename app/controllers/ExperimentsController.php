@@ -161,7 +161,7 @@ try {
             $Response = new JsonResponse();
             $Entity->canOrExplode('write');
             if ($Entity->isTimestampable()) {
-                $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Session->get('team')), $Entity);
+                $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Users->userData['team']), $Entity);
                 if ($TrustedTimestamps->timeStamp()) {
                     $Response->setData(array(
                         'res' => true
@@ -213,7 +213,7 @@ try {
     // DECODE ASN1 TOKEN
     if ($Request->request->has('asn1') && is_readable(ELAB_ROOT . "uploads/" . $Request->request->get('asn1'))) {
         $Response = new JsonResponse();
-        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Session->get('team')), $Entity);
+        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Users->userData['team']), $Entity);
 
         $Response->setData(array(
             'res' => true,

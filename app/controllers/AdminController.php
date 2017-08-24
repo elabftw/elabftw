@@ -54,7 +54,7 @@ try {
 
     // UPDATE TEAM SETTINGS
     if ($Request->request->has('teamsUpdateFull')) {
-        $Teams = new Teams($Session->get('team'));
+        $Teams = new Teams($Users->userData['team']);
         if ($Teams->update($Request->request->all())) {
             $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
         } else {
@@ -65,7 +65,7 @@ try {
 
     // CLEAR STAMP PASS
     if ($Request->request->get('clearStamppass')) {
-        $Teams = new Teams($Session->get('team'));
+        $Teams = new Teams($Users->userData['team']);
         if (!$Teams->destroyStamppass()) {
             throw new Exception('Error clearing the timestamp password');
         }

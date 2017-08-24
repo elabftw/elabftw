@@ -33,6 +33,11 @@ class MakePdf extends AbstractMake
     public function __construct(AbstractEntity $entity)
     {
         parent::__construct($entity);
+        // suppress the "A non-numeric value encountered" error from mpdf
+        // see https://github.com/baselbers/mpdf/commit
+        // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
+        error_reporting(E_ERROR);
+
     }
 
     /**
@@ -139,11 +144,11 @@ class MakePdf extends AbstractMake
         }
 
         $html .= "<section class='no-break'>";
-        if ($linkNb === 1) {
-            $html .= "<h3>Linked item:</h3>";
-        } else {
-            $html .= "<h3>Linked items:</h3>";
+        $html .= "<h3>Linked item";
+        if (count($linksArr) > 1) {
+            $html .= 's';
         }
+        $html .= ":</h3>";
         // add the item with a link
 
         // create Request object

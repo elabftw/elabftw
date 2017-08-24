@@ -26,7 +26,7 @@ class Links
     /**
      * Constructor
      *
-     * @param Experiments $experiments
+     * @param Experiments $entity
      */
     public function __construct(Experiments $entity)
     {

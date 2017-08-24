@@ -16,8 +16,11 @@ use Datetime;
 /**
  * Experiments View
  */
-class ExperimentsView extends EntityView
+class ExperimentsView
 {
+    /** @var Experiments $Entity our Experiments instance */
+    public $Entity;
+
     /** @var TeamGroups $TeamGroups instance of TeamGroups */
     public $TeamGroups;
 
@@ -30,9 +33,6 @@ class ExperimentsView extends EntityView
     public function __construct(Experiments $entity)
     {
         $this->Entity = $entity;
-        $this->limit = $this->Entity->Users->userData['limit_nb'];
-        $this->showTeam = $this->Entity->Users->userData['show_team'];
-
         $this->TeamGroups = new TeamGroups($this->Entity->Users);
     }
 

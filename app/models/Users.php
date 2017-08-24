@@ -366,11 +366,10 @@ class Users extends Auth
     /**
      * Read all users from the team
      *
-     * @param int $team
      * @param int $validated
      * @return array
      */
-    public function readAllFromTeam($team, $validated = 1)
+    public function readAllFromTeam($validated = 1)
     {
         $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
             teams.team_name AS teamname
@@ -379,7 +378,7 @@ class Users extends Auth
             WHERE users.validated = :validated AND users.team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':validated', $validated);
-        $req->bindValue(':team', $team);
+        $req->bindValue(':team', $this->userData['team']);
         $req->execute();
 
         return $req->fetchAll();

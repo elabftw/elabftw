@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
  * Experiments View
  * @deprecated should be a twig template
  */
-class UploadsView extends EntityView
+class UploadsView
 {
     /** the Uploads object */
     public $Uploads;

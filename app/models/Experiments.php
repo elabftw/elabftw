@@ -346,7 +346,7 @@ class Experiments extends AbstractEntity
             throw new Exception(
                 _('This experiment was locked by') .
                 ' ' . $req->fetchColumn() . '. ' .
-                _("You don't have the rights to lock/unlock this.")
+                _("You don't have the rights to unlock this.")
             );
         }
 

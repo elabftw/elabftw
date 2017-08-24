@@ -67,35 +67,33 @@ try {
 
     // DEFAULT MODE IS SHOW
     } else {
-        $EntityView = new DatabaseView($Entity);
         // CATEGORY FILTER
         if (Tools::checkId($Request->query->get('cat'))) {
-            $EntityView->Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('cat');
-            $EntityView->searchType = 'category';
+            $Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('cat');
+            $searchType = 'category';
         }
         // TAG FILTER
         if ($Request->query->get('tag') != '') {
             $tag = filter_var($Request->query->get('tag'), FILTER_SANITIZE_STRING);
-            $EntityView->tag = $tag;
-            $EntityView->Entity->tagFilter = "AND tagt.tag LIKE '" . $tag . "'";
-            $EntityView->searchType = 'tag';
+            $tag = $tag;
+            $Entity->tagFilter = "AND tagt.tag LIKE '" . $tag . "'";
+            $searchType = 'tag';
         }
         // QUERY FILTER
         if ($Request->query->get('q') != '') {
             $query = filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING);
-            $EntityView->query = $query;
-            $EntityView->Entity->queryFilter = "AND (
+            $Entity->queryFilter = "AND (
                 title LIKE '%$query%' OR
                 date LIKE '%$query%' OR
                 body LIKE '%$query%')";
-            $EntityView->searchType = 'query';
+            $searchType = 'query';
         }
         // ORDER
         $order = '';
 
         // load the pref from the user
-        if (isset($EntityView->Entity->Users->userData['orderby'])) {
-            $order = $EntityView->Entity->Users->userData['orderby'];
+        if (isset($Entity->Users->userData['orderby'])) {
+            $order = $Entity->Users->userData['orderby'];
         }
 
         // now get pref from the filter-order-sort menu
@@ -104,17 +102,17 @@ try {
         }
 
         if ($order === 'cat') {
-            $EntityView->Entity->order = 'items_types.ordering';
+            $Entity->order = 'items_types.ordering';
         } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
-            $EntityView->Entity->order = 'items.' . $order;
+            $Entity->order = 'items.' . $order;
         }
 
         // SORT
         $sort = '';
 
         // load the pref from the user
-        if (isset($EntityView->Entity->Users->userData['sort'])) {
-            $sort = $EntityView->Entity->Users->userData['sort'];
+        if (isset($Entity->Users->userData['sort'])) {
+            $sort = $Entity->Users->userData['sort'];
         }
 
         // now get pref from the filter-order-sort menu
@@ -123,24 +121,27 @@ try {
         }
 
         if ($sort === 'asc' || $sort === 'desc') {
-            $EntityView->Entity->sort = $sort;
+            $Entity->sort = $sort;
         }
-
-        echo $EntityView->buildShowMenu('database');
 
         // limit the number of items to show if there is no search parameters
         // because with a big database this can be expensive
         if (!$Request->query->has('q') &&
             !$Request->query->has('tag') &&
             !$Request->query->has('filter')) {
-            $EntityView->Entity->setLimit(50);
+            $Entity->setLimit(50);
         }
 
         $ItemsTypes = new ItemsTypes($Users);
-        echo $EntityView->buildShow();
+        $categoryArr = $ItemsTypes->readAll();
+
+        $itemsArr = $Entity->read();
+
         echo $Twig->render('show.html', array(
-            'Ev' => $EntityView,
-            'Category' => $ItemsTypes
+            'Entity' => $Entity,
+            'Request' => $Request,
+            'categoryArr' => $categoryArr,
+            'itemsArr' => $itemsArr
         ));
     }
 } catch (Exception $e) {

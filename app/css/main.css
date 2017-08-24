@@ -615,6 +615,9 @@ tr:nth-child(odd) {
 }
 
 /* SEARCH.PHP */
+.searchform {
+    margin-bottom: 20px;
+}
 .searchform #title, .searchform #body {
     width: 100%;
 }

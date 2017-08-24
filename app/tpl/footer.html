@@ -17,8 +17,8 @@
             {% if Session.has('auth') and (Session.get('is_admin') == 1) %}
                 <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-                    {% if Users.readAllFromTeam(Session.get('team_id'), 0)|length > 0 %}
-                        <span class='badge'>{{ Users.readAllFromTeam(Session.get('team_id'), 0)|length }}</span>
+                    {% if Users.readAllFromTeam(0)|length > 0 %}
+                        <span class='badge'>{{ Users.readAllFromTeam(0)|length }}</span>
                     {% endif %}
                 </a>
             {% endif %}
@@ -28,8 +28,11 @@
     <p class='footer_right'>
         {{ 'Powered by'|trans }}
         <a href='https://www.elabftw.net'>eLabFTW</a><br>
-        {{ 'Page generated in'|trans ~ generationTime ~ 'seconds'|trans }}
-        ({{ sqlNb }} SQL)
+            {{ 'Page generated in'|trans }} {{ generationTime }} {{ 'seconds'|trans }}
+        {% if debug %}
+            ({{ sqlNb }} SQL)
+            <br>{{ memoryUsage }}
+        {% endif %}
     </p>
 </footer>
 

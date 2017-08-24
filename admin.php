@@ -33,15 +33,15 @@ try {
     $Status = new Status($Users);
     $TeamGroups = new TeamGroups($Users);
     $Templates = new Templates($Users);
-    $Teams = new Teams($Session->get('team'));
+    $Teams = new Teams($Users->userData['team']);
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
     $teamConfigArr = $Teams->read();
     $teamGroupsArr = $TeamGroups->readAll();
     $commonTplBody = $Templates->readCommonBody();
-    $unvalidatedUsersArr = $Users->readAllFromTeam($Session->get('team'), 0);
-    $usersArr = $Users->readAllFromTeam($Session->get('team'));
+    $unvalidatedUsersArr = $Users->readAllFromTeam(0);
+    $usersArr = $Users->readAllFromTeam();
 
     echo $Twig->render('admin.html', array(
         'Auth' => $Auth,

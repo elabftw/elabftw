@@ -58,7 +58,7 @@ try {
             // the user doesn't exist yet in the db
             // check if the team exists
             $Teams = new Teams();
-            $Users = new Users(null, $Saml->Config);
+            $Users = new Users(null, $Auth, $Saml->Config);
 
             // GET TEAM
             $teamAttribute = $Saml->Config->configArr['saml_team'];

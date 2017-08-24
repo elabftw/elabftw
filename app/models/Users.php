@@ -18,10 +18,13 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Users
  */
-class Users extends Auth
+class Users
 {
     /** @var Config $Config instance of Config */
     public $Config;
+
+    /** @var Auth $Auth instance of Auth */
+    private $Auth;
 
     /** @var bool $needValidation flag to check if we need validation or not */
     public $needValidation = false;
@@ -38,11 +41,14 @@ class Users extends Auth
      * @param int|null $userid
      * @param Config|null $config
      */
-    public function __construct($userid = null, Config $config = null)
+    public function __construct($userid = null, Auth $auth = null, Config $config = null)
     {
         $this->Db = Db::getConnection();
         if (!is_null($userid)) {
             $this->setId($userid);
+        }
+        if (!is_null($auth)) {
+            $this->Auth = $auth;
         }
         if (!is_null($config)) {
             $this->Config = $config;
@@ -89,7 +95,7 @@ class Users extends Auth
             throw new Exception(_('Someone is already using that email address!'));
         }
 
-        if (!$this->checkPasswordLength($password) && strlen($password) > 0) {
+        if (!$this->Auth->checkPasswordLength($password) && strlen($password) > 0) {
             $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
             throw new Exception($error);
         }
@@ -619,7 +625,7 @@ class Users extends Auth
     public function updateAccount($params)
     {
         // check that we got the good password
-        if (!$this->checkCredentials($this->userData['email'], $params['currpass'])) {
+        if (!$this->Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
@@ -688,7 +694,7 @@ class Users extends Auth
             $userid = $this->userid;
         }
 
-        if (!$this->checkPasswordLength($password)) {
+        if (!$this->Auth->checkPasswordLength($password)) {
             $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
             throw new Exception($error);
         }
@@ -790,7 +796,7 @@ class Users extends Auth
     public function destroy($email, $password)
     {
         // check that we got the good password
-        if (!$this->checkCredentials($this->userData['email'], $password)) {
+        if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
         // check the user is in our team and also get the userid

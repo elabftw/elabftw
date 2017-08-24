@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 try {
     require_once '../init.inc.php';
 
-    $Users = new Users(null, new Config);
+    $Users = new Users(null, $Auth, $Config);
 
     // default location to redirect to
     $location = '../../login.php';

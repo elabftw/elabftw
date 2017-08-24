@@ -48,6 +48,9 @@ try {
     // the config table from mysql
     $Config = new Config();
 
+    // Methods for login
+    $Auth = new Auth();
+
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
@@ -59,9 +62,10 @@ try {
 
     // i18n (gettext)
     if ($Session->has('auth')) {
-        $Users = new Users($Session->get('userid'), $Config);
+        $Users = new Users($Session->get('userid'), $Auth, $Config);
         $locale = $Users->userData['lang'] . '.utf8';
     } else {
+        $Users = new Users();
         $locale = $Update->Config->configArr['lang'] . '.utf8';
     }
     $domain = 'messages';
@@ -123,7 +127,6 @@ try {
 
     if (!$Session->has('auth') && !in_array(basename($Request->getScriptName()), $nologinArr)) {
         // try to login with the cookie
-        $Auth = new Auth();
         if (!$Auth->loginWithCookie($Request)) {
             // maybe we clicked an email link and we want to be redirected to the page upon successful login
             // so we store the url in a cookie expiring in 5 minutes to redirect to it after login

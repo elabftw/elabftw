@@ -20,7 +20,7 @@ try {
     require_once '../../app/init.inc.php';
     $Config = new Config();
     $Email = new Email($Config);
-    $Users = new Users(null, $Config);
+    $Users = new Users(null, $Auth, $Config);
     $Logs = new Logs();
 
     if ($Request->request->has('email')) {

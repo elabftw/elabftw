@@ -16,7 +16,7 @@ use Exception;
 /**
  * All about the todolist
  */
-class Todolist
+class Todolist implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;

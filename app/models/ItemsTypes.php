@@ -200,4 +200,12 @@ class ItemsTypes extends AbstractCategory
 
         return $req->execute();
     }
+
+    /**
+     * Not implemented
+     *
+     */
+    public function destroyAll()
+    {
+    }
 }

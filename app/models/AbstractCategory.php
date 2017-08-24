@@ -16,13 +16,6 @@ namespace Elabftw\Elabftw;
 abstract class AbstractCategory implements CrudInterface
 {
     /**
-     * SQL to get all categories for current team
-     *
-     * @return array all the items types for the team
-     */
-    abstract public function readAll();
-
-    /**
      * Get the color of an item type
      *
      * @param int $id ID of the category
@@ -37,12 +30,4 @@ abstract class AbstractCategory implements CrudInterface
      * @return int
      */
     abstract protected function countItems($id);
-
-    /**
-     * Destroy a category
-     *
-     * @param int $id
-     * @return bool
-     */
-    abstract public function destroy($id);
 }

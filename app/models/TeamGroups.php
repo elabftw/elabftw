@@ -237,4 +237,12 @@ class TeamGroups implements CrudInterface
 
         return in_array($userid, $authUsersArr);
     }
+
+    /**
+     * Not implemented
+     *
+     */
+    public function destroyAll()
+    {
+    }
 }

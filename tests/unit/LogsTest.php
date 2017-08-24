@@ -13,7 +13,7 @@ class LogsTest extends \PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $this->assertTrue($this->Logs->create('Error', 1, 'Something bad happened!'));
-        $this->assertTrue(is_array($this->Logs->read()));
-        $this->assertTrue($this->Logs->destroy());
+        $this->assertTrue(is_array($this->Logs->readAll()));
+        $this->assertTrue($this->Logs->destroyAll());
     }
 }

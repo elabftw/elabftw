@@ -92,7 +92,7 @@ try {
 
     $phpInfos = array(PHP_OS, PHP_VERSION, PHP_INT_MAX, PHP_SYSCONFDIR);
 
-    $logsArr = $Logs->read();
+    $logsArr = $Logs->readAll();
 
     $idpsArr = $Idps->readAll();
 

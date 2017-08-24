@@ -15,7 +15,7 @@ use Exception;
 /**
  * All about the teams
  */
-class Logs
+class Logs implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     protected $Db;
@@ -54,7 +54,7 @@ class Logs
      *
      * @return array
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
         $req = $this->Db->prepare($sql);
@@ -64,11 +64,20 @@ class Logs
     }
 
     /**
+     * Not implemented
+     *
+     * @param $id
+     */
+    public function destroy($id)
+    {
+    }
+
+    /**
      * Clear the logs
      *
      * @return bool
      */
-    public function destroy()
+    public function destroyAll()
     {
         $sql = "DELETE FROM logs";
         $req = $this->Db->prepare($sql);

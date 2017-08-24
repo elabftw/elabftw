@@ -260,6 +260,14 @@ class Teams implements CrudInterface
     }
 
     /**
+     * Not implemented
+     *
+     */
+    public function destroyAll()
+    {
+    }
+
+    /**
      * Clear the timestamp password
      *
      * @return bool

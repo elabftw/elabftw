@@ -138,4 +138,12 @@ class Idps implements CrudInterface
 
         return $req->execute();
     }
+
+    /**
+     * Not implemented
+     *
+     */
+    public function destroyAll()
+    {
+    }
 }

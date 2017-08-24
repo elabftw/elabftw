@@ -42,6 +42,7 @@ class Users
      * Constructor
      *
      * @param int|null $userid
+     * @param Auth|null $auth
      * @param Config|null $config
      */
     public function __construct($userid = null, Auth $auth = null, Config $config = null)

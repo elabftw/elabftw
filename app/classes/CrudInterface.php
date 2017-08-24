@@ -26,6 +26,7 @@ interface CrudInterface
     /**
      * Destroy with id
      *
+     * @param int $id
      * @return bool
      */
     public function destroy($id);

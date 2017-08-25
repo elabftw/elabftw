@@ -15,9 +15,9 @@ class RevisionsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->Revisions->create('Ohai'));
     }
 
-    public function testRead()
+    public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Revisions->read()));
+        $this->assertTrue(is_array($this->Revisions->readAll()));
     }
 
     public function testReadCount()

@@ -11,6 +11,7 @@
 namespace Elabftw\Core;
 
 use Elabftw\Core\Db;
+use Elabftw\Elabftw\Experiments;
 use Elabftw\Elabftw\Tools;
 use PDO;
 use Exception;

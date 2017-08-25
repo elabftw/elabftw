@@ -2,6 +2,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Core\Logs;
 
 class LogsTest extends \PHPUnit_Framework_TestCase
 {

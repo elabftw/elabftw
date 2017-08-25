@@ -34,8 +34,14 @@ class App
     /** @var Logs $Logs instance of Logs */
     public $Logs;
 
+    /** @var Users $Users instance of Users */
+    public $Users;
+
     /** @var Db $Db SQL Database */
     public $Db;
+
+    /** @var \Twig_Environment $Twig instance of Twig */
+    public $Twig;
 
     /** @var string $pageTitle the title for the current page */
     public $pageTitle = "Lab manager";

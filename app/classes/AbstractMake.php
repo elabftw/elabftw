@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Symfony\Component\HttpFoundation\Request;
+use Elabftw\Core\Db;
 
 /**
  * Mother class of MakeCsv, MakePdf and MakeZip

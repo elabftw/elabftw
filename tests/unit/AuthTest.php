@@ -2,6 +2,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Core\Auth;
 
 class AuthTest extends \PHPUnit_Framework_TestCase
 {

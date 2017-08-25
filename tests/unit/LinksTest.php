@@ -2,6 +2,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Core\Users;
 
 class LinksTest extends \PHPUnit_Framework_TestCase
 {

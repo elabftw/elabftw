@@ -2,6 +2,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Core\Config;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {

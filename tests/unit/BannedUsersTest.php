@@ -2,6 +2,8 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Core\Users;
+use Elabftw\Core\Config;
 
 class BannedUsersTest extends \PHPUnit_Framework_TestCase
 {

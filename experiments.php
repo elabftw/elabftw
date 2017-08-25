@@ -12,6 +12,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use InvalidArgumentException;
 
 /**
  * Entry point for all experiment stuff
@@ -172,6 +173,9 @@ try {
             'query' => $query
         ));
     }
+
+} catch (InvalidArgumentException $e) {
+    echo Tools::displayMessage('Invalid argument supplied: ' . $e->getMessage(), 'ko');
 
 } catch (Exception $e) {
     $debug = false;

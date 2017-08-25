@@ -11,7 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Exception;
+use InvalidArgumentException;
 
 /**
  * For things that are used by experiments, database, status, item types, templates, …
@@ -36,7 +36,7 @@ trait EntityTrait {
     public function setId($id)
     {
         if (Tools::checkId($id) === false) {
-            throw new Exception(_('The id parameter is not valid!'));
+            throw new InvalidArgumentException(_('The id parameter is not valid!'));
         }
         $this->id = $id;
         // prevent reusing of old data from previous id
@@ -61,7 +61,7 @@ trait EntityTrait {
         );
 
         if (!in_array($post['table'], $whitelist)) {
-            throw new Exception('Wrong table.');
+            throw new InvalidArgumentException('Wrong table.');
         }
 
         foreach ($post['ordering'] as $ordering => $id) {

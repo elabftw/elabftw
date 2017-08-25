@@ -43,18 +43,18 @@
 </a>
 
 <a class='elab-tooltip' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
-    <span>Make a PDF</span>
+    <span>{{ 'Make a PDF'|trans }}</span>
     <img src='app/img/pdf.png' alt='PDF' />
 </a>
 
 <a class='elab-tooltip' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
-    <span>Make a ZIP</span>
+    <span>{{ 'Make a ZIP'|trans }}</span>
     <img src='app/img/zip.png' alt='ZIP' />
 </a>
 
 {% if Entity.type == 'items' %}
 <a class='elab-tooltip' href='experiments.php?mode=show&related={{ Entity.id }}'>
-    <span>Show related</span>
+    <span>{{ 'Show related'|trans }}</span>
     <img src='app/img/link.png' alt='Related' />
 </a>
 {% endif %}
@@ -75,7 +75,7 @@
 <!-- show timestamp button if not timestamped already -->
 {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' %}
     <a class='elab-tooltip'>
-        <span>{{ 'Timestamp Experiment' }}</span>
+        <span>{{ 'Timestamp Experiment'|trans }}</span>
         <img id='confirmTimestamp' src='app/img/stamp.png' alt='Timestamp' />
     </a>
     <div id='confirmTimestampDiv' data-wait='{{ 'Please wait…' }}' title='{{ 'Timestamp this experiment?'|trans }}'>
@@ -160,7 +160,7 @@
                 {% for comment in commentsArr %}
                     <div class='expcomment_box'>
                         <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
-                        <span>On {{ comment.datetime }} {{ comment.fullname }} wrote :</span>
+                        <span>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname) }}</span>
                         <!-- .editable uses the id of the element to send to the controller -->
                         <p class='editable' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
                     </div>

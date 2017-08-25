@@ -212,7 +212,7 @@ Dropzone.options.elabftwDropzone = {
 <section class='box'>
     <img src='app/img/pencil.png' />
     <h3 class='inline'>{{ 'Draw something'|trans }}</h3>
-    <button class='button' id='show_doodle_canvas'>{{ 'Show canvas'|trans }}</button>
+    <button class='button show-hide' data-type='doodle'>+</button>
     <div class='canvasDiv'>
         <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
         <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
@@ -226,7 +226,7 @@ Dropzone.options.elabftwDropzone = {
     <div class='box chemdoodle'>
         <img src='app/img/atom.png' />
         <h3 class='inline'>{{ 'Molecule drawer'|trans }}</h3>
-        <button class='button' id='show_chem_editor'>{{ 'Show editor'|trans }}</button>
+        <button class='button show-hide' data-type='chem'>+</button>
         <div class='center' style='display:none' id='chem_editor'>
             <script src='app/js/sketcher.js'></script>
         </div>

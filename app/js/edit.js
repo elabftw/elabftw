@@ -254,28 +254,23 @@ $(document).ready(function() {
         tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
     });
 
-    // SHOW THE DOODLE CANVAS
-    $(document).on('click', '#show_doodle_canvas',  function() {
-        if ($(this).html() == 'Show canvas') {
-            $(this).html('Hide canvas');
-            $(this).addClass('button-neutral');
-        } else {
-            $(this).html('Show canvas');
-            $(this).removeClass('button-neutral');
-        }
-        $('.canvasDiv').toggle();
-    });
+    // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
+    $(document).on('click', '.show-hide',  function() {
+        var elem;
 
-    // SHOW THE CHEM EDITOR
-    $(document).on('click', '#show_chem_editor',  function() {
-        if ($(this).html() == 'Show editor') {
-            $(this).html('Hide editor');
+        if ($(this).data('type') === 'doodle') {
+            elem = $('.canvasDiv');
+        } else {
+            elem = $('#chem_editor');
+        }
+        if (elem.is(':hidden')) {
+            $(this).html('-');
             $(this).addClass('button-neutral');
         } else {
-            $(this).html('Show editor');
+            $(this).html('+');
             $(this).removeClass('button-neutral');
         }
-        $('#chem_editor').toggle();
+        elem.toggle();
     });
 
     // MAKE THE FILE COMMENT FIELD EDITABLE

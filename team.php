@@ -20,8 +20,8 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Team');
 
 try {
-    $TeamsView = new TeamsView(new Teams($Users->userData['team']));
-    $Database = new Database($Users);
+    $TeamsView = new TeamsView(new Teams($App->Users->userData['team']));
+    $Database = new Database($App->Users);
     // we only want the bookable type of items
     $Database->bookableFilter = " AND bookable = 1";
     $itemsArr = $Database->read();
@@ -44,7 +44,7 @@ try {
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
         'selectedItem' => $selectedItem,
-        'lang' => Tools::getCalendarLang($Users->userData['lang'])
+        'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
     );
 
 } catch (Exception $e) {
@@ -52,5 +52,4 @@ try {
     $renderArr = array('error' => $e->getMessage());
 }
 
-$renderArr = array_merge($baseRenderArr, $renderArr);
-echo $Twig->render($template, $renderArr);
+echo $App->render($template, $renderArr);

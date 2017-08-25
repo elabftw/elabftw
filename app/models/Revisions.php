@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
+use Elabftw\Core\Db;
 
 /**
  * All about the revisions

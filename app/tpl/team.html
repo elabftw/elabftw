@@ -50,7 +50,7 @@
             <th>{{ 'Website'|trans }}</th>
             <th>{{ 'Skype'|trans }}</th>
         </tr>
-        {% for user in Users.readAllFromTeam %}
+        {% for user in App.Users.readAllFromTeam %}
         <tr>
             <td><a href='mailto:{{ user.email }}'>
                     <span

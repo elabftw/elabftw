@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Elabftw\Core\Db;
 
 /**
  * All about the experiments steps

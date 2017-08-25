@@ -10,6 +10,11 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Elabftw\Core\App;
+use Elabftw\Core\Auth;
+use Elabftw\Core\Config;
+use Elabftw\Core\Users;
+use Elabftw\Core\Logs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -45,15 +50,11 @@ try {
 
     require_once $configFilePath;
 
-    // the config table from mysql
-    $Config = new Config();
-
-    $Logs = new Logs();
-
     // Methods for login
     $Auth = new Auth();
 
-    $App = new App($Request, $Session, $Config, $Logs);
+    // the config table from mysql
+    $Config = new Config();
 
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
@@ -69,18 +70,15 @@ try {
         $Users = new Users($Session->get('userid'), $Auth, $Config);
         // set lang based on user pref
         $locale = $Users->userData['lang'] . '.utf8';
-        // TODOLIST
-        $Todolist = new Todolist($Session->get('userid'));
-        $App->todoItems = $Todolist->readAll();
-
-        $Teams = new Teams($Users->userData['team']);
-        $App->teamConfigArr = $Teams->read();
-
     } else {
         $Users = new Users();
         // load server configured lang if logged out
-        $locale = $Update->Config->configArr['lang'] . '.utf8';
+        $locale = $Config->configArr['lang'] . '.utf8';
     }
+
+
+    // INIT APP OBJECT
+    $App = new App($Request, $Session, $Config, new Logs(), $Users);
 
     // CONFIGURE GETTEXT
     $domain = 'messages';
@@ -89,42 +87,6 @@ try {
     bindtextdomain($domain, ELAB_ROOT . "app/locale");
     textdomain($domain);
     // END i18n
-
-    // TWIG
-    $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
-    $cache = ELAB_ROOT . 'uploads/tmp';
-    $options = array();
-
-    // enable cache if not in debug (dev) mode
-    if (!$Config->configArr['debug']) {
-        $options = array('cache' => $cache);
-    }
-    $Twig = new \Twig_Environment($loader, $options);
-
-    // custom twig filters
-    $filterOptions = array('is_safe' => array('html'));
-    $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-    $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-    $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-    $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
-    $bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
-
-    $Twig->addFilter($msgFilter);
-    $Twig->addFilter($dateFilter);
-    $Twig->addFilter($mdFilter);
-    $Twig->addFilter($starsFilter);
-    $Twig->addFilter($bytesFilter);
-
-    // i18n for twig
-    $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
-
-    // this is the variables needed to generate the base template
-    $baseRenderArr = array(
-        'App' => $App,
-        'Users' => $Users
-    );
-
-    // END TWIG
 
     // UPDATE SQL SCHEMA
     if ($Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {

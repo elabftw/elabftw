@@ -191,5 +191,4 @@ try {
     $renderArr = array('error' => $message);
 }
 
-$renderArr = array_merge($baseRenderArr, $renderArr);
-echo $Twig->render($template, $renderArr);
+echo $App->render($template, $renderArr);

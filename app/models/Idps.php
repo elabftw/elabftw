@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Core\Db;
+
 /**
  * Store informations about different identity providers for auth with SAML
  */

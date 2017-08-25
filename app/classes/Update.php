@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Core\Config;
+use Elabftw\Core\Db;
 use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

@@ -21,8 +21,7 @@ try {
     $location = '../../login.php';
 
     $FormKey = new FormKey($Session);
-    $Auth = new Auth();
-    $Saml = new Saml(new Config, new Idps);
+    $Saml = new Saml($Config, new Idps);
 
     if ($Request->request->has('idp_id')) { // login with SAML
         $idpId = $Request->request->get('idp_id');

@@ -114,8 +114,7 @@ $renderArr = array(
     'andor' => $andor,
     'tagsArr' => $tagsArr
 );
-$renderArr = array_merge($baseRenderArr, $renderArr);
-echo $Twig->render($template, $renderArr);
+echo $App->render($template, $renderArr);
 
 /**
  * Here the search begins
@@ -258,9 +257,6 @@ if (isset($_GET)) {
             }
         }
 
-        // we are on the search page, so we don't want any "click here to create your first..."
-        $searchType = 'something';
-
         // common filters for XP and DB
         $Entity->bodyFilter = $sqlBody;
         $Entity->dateFilter = $sqlDate;
@@ -270,12 +266,15 @@ if (isset($_GET)) {
 
         $itemsArr = $Entity->read();
 
-        // DISPLAY RESULTS
-        echo $Twig->render('show.html', array(
+        // RENDER THE SECOND PART OF THE PAGE
+        // with a subpart of show.html (no create new/filter menu, and no head)
+        echo $App->render('show.html', array(
             'Entity' => $Entity,
             'itemsArr' => $itemsArr,
             'categoryArr' => $categoryArr,
-            'searchType' => $searchType,
+            // we are on the search page, so we don't want any "click here to create your first..."
+            'searchType' => 'something',
+            // generate light show page
             'searchPage' => true
         ));
     }

@@ -26,10 +26,9 @@ try {
         throw new Exception('Already logged in');
     }
 
-    $Config = new Config();
     $Idps = new Idps();
     $FormKey = new FormKey($Session);
-    $BannedUsers = new BannedUsers($Config);
+    $BannedUsers = new BannedUsers($App->Config);
 
     // if we are not in https, die saying we work only in https
     if (!$Request->isSecure()) {
@@ -40,26 +39,25 @@ try {
         throw new Exception($message);
     }
 
-    // Check if we are banned after too much failed login attempts
-    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll())) {
-        throw new Exception(_('You cannot login now because of too many failed login attempts.'));
-    }
-
     // disable login if too much failed_attempts
-    if ($Session->has('failed_attempt') && $Session->get('failed_attempt') >= $Config->configArr['login_tries']) {
+    if ($Session->has('failed_attempt') && $Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
         // get user infos
         $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list
         $BannedUsers->create($fingerprint);
 
         $Session->remove('failed_attempt');
+    }
+
+    // Check if we are banned after too much failed login attempts
+    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll())) {
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 
     // don't show the local login form if it's disabled
     $showLocal = true;
     // if there is a ?letmein in the url, we still show it.
-    if (!$Config->configArr['local_login'] && !$Request->query->has('letmein')) {
+    if (!$App->Config->configArr['local_login'] && !$Request->query->has('letmein')) {
         $showLocal = false;
     }
 
@@ -68,7 +66,6 @@ try {
     $template = 'login.html';
     $renderArr = array(
         'BannedUsers' => $BannedUsers,
-        'Config' => $Config,
         'FormKey' => $FormKey,
         'Session' => $Session,
         'idpsArr' => $idpsArr,
@@ -80,5 +77,4 @@ try {
     $renderArr = array('error' => $e->getMessage());
 }
 
-$renderArr = array_merge($baseRenderArr, $renderArr);
-echo $Twig->render($template, $renderArr);
+echo $App->render($template, $renderArr);

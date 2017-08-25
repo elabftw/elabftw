@@ -8,7 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Elabftw;
+namespace Elabftw\Core;
 
 use PDO;
 use Exception;

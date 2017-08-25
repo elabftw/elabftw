@@ -8,8 +8,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Elabftw;
+namespace Elabftw\Core;
 
+use Elabftw\Core\Db;
+use Elabftw\Elabftw\Tools;
 use PDO;
 use Exception;
 use Swift_Message;

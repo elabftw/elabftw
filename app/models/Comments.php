@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Swift_Message;
+use Elabftw\Core\Db;
 
 /**
  * All about the comments

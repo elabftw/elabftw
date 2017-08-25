@@ -12,6 +12,8 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
+use Elabftw\Core\Db;
+use Elabftw\Core\Users;
 
 /**
  * Things related to status in admin panel

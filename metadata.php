@@ -18,8 +18,9 @@ use Exception;
 use OneLogin_Saml2_Error;
 use OneLogin_Saml2_Settings;
 
+require_once 'app/init.inc.php';
+
 try {
-    require_once 'app/init.inc.php';
 
     $Saml = new Saml(new Config, new Idps);
     $settingsArr = $Saml->getSettings();

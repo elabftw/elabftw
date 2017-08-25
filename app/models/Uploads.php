@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Gmagick;
+use Elabftw\Core\Db;
 
 /**
  * All about the file uploads

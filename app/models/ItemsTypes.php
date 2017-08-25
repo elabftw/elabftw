@@ -12,6 +12,8 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
+use Elabftw\Core\Db;
+use Elabftw\Core\Users;
 
 /**
  * The kind of items you can have in the database for a team

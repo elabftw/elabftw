@@ -96,7 +96,7 @@ try {
     $options = array();
 
     // enable cache if not in debug (dev) mode
-    if (!$Update->Config->configArr['debug']) {
+    if (!$Config->configArr['debug']) {
         $options = array('cache' => $cache);
     }
     $Twig = new \Twig_Environment($loader, $options);
@@ -118,6 +118,7 @@ try {
     // i18n for twig
     $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
+    // this is the variables needed to generate the base template
     $baseRenderArr = array(
         'App' => $App,
         'Users' => $Users
@@ -126,7 +127,7 @@ try {
     // END TWIG
 
     // UPDATE SQL SCHEMA
-    if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
+    if ($Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
         try {
             // run the update script if we have the wrong schema version
             foreach ($Update->runUpdateScript() as $msg) {

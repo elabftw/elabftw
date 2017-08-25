@@ -69,8 +69,7 @@ try {
     }
 
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     // we can show error message to sysadmin
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {

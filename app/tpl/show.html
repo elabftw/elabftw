@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
 {% if not searchPage %}
 <div class='row'>
     <!-- LEFT MENU - CREATE NEW -->
@@ -208,3 +212,4 @@
 <div id='limit' data-limit='{{ Entity.Users.userData.limit_nb }}'></div>
 <div id='type' data-type='{{ Entity.type }}'></div>
 <script src='app/js/show.min.js'></script>
+{% endblock body %}

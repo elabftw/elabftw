@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
 {% include('view-edit.html') %}
 <script src='app/js/tinymce-dropzone.min.js'></script>
 
@@ -237,3 +241,4 @@ Dropzone.options.elabftwDropzone = {
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
 <script src='app/js/edit.js'></script>
+{% endblock body %}

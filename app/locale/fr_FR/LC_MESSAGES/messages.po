@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-25 15:49+0200\n"
-"PO-Revision-Date: 2017-08-25 15:49+0200\n"
+"PO-Revision-Date: 2017-08-25 19:10+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -1481,7 +1481,7 @@ msgstr "Retourner à la liste"
 #: /tmp/elabftw-twig-cache/ff/ffc7e1e69eea85dee163295c274c4ef3544f210d49571f049a42802dac0ea7d1.php:40
 #, php-format
 msgid "Experiment of %s"
-msgstr "Expériences pour %s"
+msgstr "Expérience de %s"
 
 #: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:27
 msgid "Create new"

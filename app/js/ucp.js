@@ -81,7 +81,8 @@ $(document).ready(function() {
             if (confirm('Delete this ?')) {
                 $.post(this.controller, {
                     destroy: true,
-                    id: id
+                    id: id,
+                    type: 'tpl'
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

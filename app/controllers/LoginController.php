@@ -58,8 +58,7 @@ try {
             }
         } else {
             // log the attempt if the login failed
-            $Logs = new Logs();
-            $Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
+            $App->Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
             // inform the user
             $Session->getFlashBag()->add(
                 'ko',

@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block body %}
 <script src="app/js/tinymce-dropzone.min.js"></script>
 
 <menu>
@@ -300,3 +303,4 @@
 <div id='language' data-lang='{{ Users.userData.lang }}'></div>
 <div id='entityInfos' data-confirm="{{ 'Delete this?'|trans }}"></div>
 <script src='app/js/ucp.js'></script>
+{% endblock body %}

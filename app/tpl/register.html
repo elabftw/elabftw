@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block body %}
 <menu class='border'>
     <a href='login.php'>
         <img src='app/img/arrow-left-blue.png' alt='' />{{ 'go back to login page'|trans }}
@@ -64,3 +67,4 @@
     data-wtf='{{ 'No way that is your real password!'|trans }}'></div>
 
 <script src='app/js/register.min.js'></script>
+{% endblock body %}

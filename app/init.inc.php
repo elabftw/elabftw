@@ -48,8 +48,12 @@ try {
     // the config table from mysql
     $Config = new Config();
 
+    $Logs = new Logs();
+
     // Methods for login
     $Auth = new Auth();
+
+    $App = new App($Request, $Session, $Config, $Logs);
 
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
@@ -60,14 +64,25 @@ try {
         throw new Exception('Redirecting to install folder');
     }
 
-    // i18n (gettext)
     if ($Session->has('auth')) {
+        // generate full Users object with current userid
         $Users = new Users($Session->get('userid'), $Auth, $Config);
+        // set lang based on user pref
         $locale = $Users->userData['lang'] . '.utf8';
+        // TODOLIST
+        $Todolist = new Todolist($Session->get('userid'));
+        $App->todoItems = $Todolist->readAll();
+
+        $Teams = new Teams($Users->userData['team']);
+        $App->teamConfigArr = $Teams->read();
+
     } else {
         $Users = new Users();
+        // load server configured lang if logged out
         $locale = $Update->Config->configArr['lang'] . '.utf8';
     }
+
+    // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");
     $res = setlocale(LC_ALL, $locale);
@@ -92,14 +107,22 @@ try {
     $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
     $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
     $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
+    $bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
 
     $Twig->addFilter($msgFilter);
     $Twig->addFilter($dateFilter);
     $Twig->addFilter($mdFilter);
     $Twig->addFilter($starsFilter);
+    $Twig->addFilter($bytesFilter);
 
     // i18n for twig
     $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
+
+    $baseRenderArr = array(
+        'App' => $App,
+        'Users' => $Users
+    );
+
     // END TWIG
 
     // UPDATE SQL SCHEMA
@@ -138,6 +161,7 @@ try {
             exit;
         }
     }
+
 } catch (Exception $e) {
     echo $e->getMessage();
 }

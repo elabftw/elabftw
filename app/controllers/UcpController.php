@@ -88,29 +88,8 @@ try {
         $Session->getFlashBag()->add('ok', _('Template successfully edited.'));
     }
 
-    // TEMPLATES DESTROY
-    /*
-    if ($Request->request->has('templatesDestroy')) {
-        $Templates = new Templates($Users, $Request->request->get('id'));
-        $Response = new JsonResponse();
-
-        if ($Templates->destroy($Request->request->get('id'), $Session->get('userid'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Template deleted successfully')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
-     */
-
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     if ($redirect) {

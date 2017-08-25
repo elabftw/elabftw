@@ -16,11 +16,10 @@ use Exception;
  * Create an account
  *
  */
-try {
-    require_once 'app/init.inc.php';
-    $pageTitle = _('Register');
-    require_once 'app/head.inc.php';
+require_once 'app/init.inc.php';
+$App->pageTitle = _('Register');
 
+try {
     // Check if we're logged in
     if ($Session->has('auth')) {
         throw new Exception(sprintf(
@@ -30,21 +29,21 @@ try {
         ));
     }
 
-    $Config = new Config();
     // local register might be disabled
-    if ($Config->configArr['local_register'] === '0') {
+    if ($App->Config->configArr['local_register'] === '0') {
         throw new Exception(_('No local account creation is allowed!'));
     }
 
     $Teams = new Teams();
     $teamsArr = $Teams->readAll();
 
-    echo $Twig->render('register.html', array(
-        'teamsArr' => $teamsArr
-    ));
+    $template = 'register.html';
+    $renderArr = array('teamsArr' => $teamsArr);
 
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko', false);
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 }
+
+$renderArr = array_merge($baseRenderArr, $renderArr);
+echo $Twig->render($template, $renderArr);

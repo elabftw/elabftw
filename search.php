@@ -16,9 +16,7 @@ namespace Elabftw\Elabftw;
  *
  */
 require_once 'app/init.inc.php';
-$pageTitle = _('Search');
-$selectedMenu = 'Search';
-require_once 'app/head.inc.php';
+$App->pageTitle = _('Search');
 
 $Experiments = new Experiments($Users);
 $Database = new Database($Users);
@@ -102,7 +100,8 @@ if (isset($_GET['to']) && !empty($_GET['to'])) {
 }
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
-echo $Twig->render('search.html', array(
+$template = 'search.html';
+$renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
@@ -114,7 +113,9 @@ echo $Twig->render('search.html', array(
     'body' => $body,
     'andor' => $andor,
     'tagsArr' => $tagsArr
-));
+);
+$renderArr = array_merge($baseRenderArr, $renderArr);
+echo $Twig->render($template, $renderArr);
 
 /**
  * Here the search begins
@@ -279,5 +280,3 @@ if (isset($_GET)) {
         ));
     }
 }
-
-require_once 'app/footer.inc.php';

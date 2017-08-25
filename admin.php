@@ -16,50 +16,46 @@ use Exception;
  * Administration panel of a team
  *
  */
+require_once 'app/init.inc.php';
+$App->pageTitle = _('Admin panel');
+
 try {
-
-    require_once 'app/init.inc.php';
-    $pageTitle = _('Admin panel');
-    require_once 'app/head.inc.php';
-
     if (!$Session->get('is_admin')) {
         throw new Exception(Tools::error(true));
     }
 
-    $Auth = new Auth();
     $FormKey = new FormKey($Session);
 
     $ItemsTypes = new ItemsTypes($Users);
     $Status = new Status($Users);
     $TeamGroups = new TeamGroups($Users);
     $Templates = new Templates($Users);
-    $Teams = new Teams($Users->userData['team']);
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
-    $teamConfigArr = $Teams->read();
     $teamGroupsArr = $TeamGroups->readAll();
     $commonTplBody = $Templates->readCommonBody();
     $unvalidatedUsersArr = $Users->readAllFromTeam(0);
     $usersArr = $Users->readAllFromTeam();
 
-    echo $Twig->render('admin.html', array(
+    $template = 'admin.html';
+    $renderArr = array(
         'Auth' => $Auth,
-        'Config' => $Config,
         'FormKey' => $FormKey,
         'fromSysconfig' => false,
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
-        'Session' => $Session,
-        'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
         'commonTplBody' => $commonTplBody,
         'Users' => $Users,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr
-    ));
+    );
+
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 }
+
+$renderArr = array_merge($baseRenderArr, $renderArr);
+echo $Twig->render($template, $renderArr);

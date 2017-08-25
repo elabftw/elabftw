@@ -174,8 +174,7 @@ try {
                 ));
             }
         } catch (Exception $e) {
-            $Logs = new Logs();
-            $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+            $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
             $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
@@ -224,8 +223,7 @@ try {
     $Response->send();
 
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     $Session->getFlashBag()->add('ko', Tools::error());
     header('Location: ../../experiments.php');
 }

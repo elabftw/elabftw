@@ -16,12 +16,10 @@ use Exception;
  * The team page
  *
  */
-try {
-    require_once 'app/init.inc.php';
-    $pageTitle = _('Team');
-    $selectedMenu = 'Team';
-    require_once 'app/head.inc.php';
+require_once 'app/init.inc.php';
+$App->pageTitle = _('Team');
 
+try {
     $TeamsView = new TeamsView(new Teams($Users->userData['team']));
     $Database = new Database($Users);
     // we only want the bookable type of items
@@ -40,17 +38,19 @@ try {
         }
     }
 
-    echo $Twig->render('team.html', array(
-        'Users' => $Users,
+    $template = 'team.html';
+    $renderArr = array(
         'TeamsView' => $TeamsView,
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
         'selectedItem' => $selectedItem,
         'lang' => Tools::getCalendarLang($Users->userData['lang'])
-    ));
+    );
 
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 }
+
+$renderArr = array_merge($baseRenderArr, $renderArr);
+echo $Twig->render($template, $renderArr);

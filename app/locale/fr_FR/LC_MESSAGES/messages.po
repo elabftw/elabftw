@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-25 08:24+0200\n"
-"PO-Revision-Date: 2017-08-25 08:25+0200\n"
+"POT-Creation-Date: 2017-08-25 12:16+0200\n"
+"PO-Revision-Date: 2017-08-25 12:17+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -285,9 +285,9 @@ msgid "No"
 msgstr "Non"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:189
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:446
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:472
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:533
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:453
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:479
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:530
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:517
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:584
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:634
@@ -521,15 +521,31 @@ msgstr "Editer"
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:168
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:133
+msgid "Make a PDF"
+msgstr ""
+
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:146
+msgid "Make a ZIP"
+msgstr "Faire un Zip"
+
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:160
+msgid "Show related"
+msgstr "Montrer les expériences liées"
+
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:177
 msgid "Lock/Unlock item"
 msgstr "Vérouiller/Déverouiller"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:211
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:212
+msgid "Timestamp Experiment"
+msgstr "Horodater l'expérience"
+
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:220
 msgid "Timestamp this experiment?"
 msgstr "Horodater cette expérience ?"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:217
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:226
 msgid ""
 "Once timestamped an experiment cannot be edited anymore! Are you sure you "
 "want to do this?"
@@ -537,28 +553,28 @@ msgstr ""
 "Une expérience horodatée ne peut plus être éditée ! Êtes-vous sûr(e) de "
 "vouloir faire ça ?"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:296
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:423
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:305
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:426
 msgid "Next step"
 msgstr "Étape suivante"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:371
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:380
 msgid "Unique eLabID:"
 msgstr "ELabID unique :"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:386
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:395
 msgid "Last modified by"
 msgstr "Dernière modification par"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:409
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:418
 msgid "Comments"
 msgstr "Commentaires"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:431
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:497
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:440
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:504
 #: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:58
 #: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:95
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:585
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:579
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:455
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:618
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:708
@@ -566,14 +582,19 @@ msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
 #: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:444
+#, php-format
+msgid "On %s %s wrote:"
+msgstr ""
+
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:451
 msgid "Saving"
 msgstr "Enregistrement"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:448
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:455
 msgid "Cancel"
 msgstr "Annuler"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:465
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:472
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
@@ -652,23 +673,15 @@ msgstr "Déposez ici les fichiers à uploader"
 msgid "Draw something"
 msgstr "Dessiner quelquechose"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:519
-msgid "Show canvas"
-msgstr "Afficher le canevas"
-
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:525
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:522
 msgid "Clear"
 msgstr "Effacer"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:548
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:545
 msgid "Molecule drawer"
 msgstr "Éditeur de molécule"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:552
-msgid "Show editor"
-msgstr "Afficher l'éditeur"
-
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:589
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:583
 msgid "Untitled"
 msgstr "Sans titre"
 
@@ -882,7 +895,7 @@ msgstr "Statut par défaut"
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:591
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:714
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:242
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:344
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:347
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -1532,28 +1545,32 @@ msgstr "Tout déselectionner"
 msgid "Invert selection"
 msgstr "Inverser la sélection"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:301
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:291
+msgid "With selected:"
+msgstr ""
+
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:304
 msgid "Change status"
 msgstr "Changer le statut"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:307
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:310
 msgid "Change item type"
 msgstr "Changer le type d'objet"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:336
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:339
 msgid "Make Zip"
 msgstr "Faire un Zip"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:340
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:343
 msgid "Make Csv"
 msgstr "Faire un Csv"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:551
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:554
 #, php-format
 msgid "Show %s more"
 msgstr "Voir %s de plus"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:555
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:558
 msgid "Show all"
 msgstr "Montrer tout"
 
@@ -1636,6 +1653,12 @@ msgstr "Réinitialiser le mot de passe"
 msgid "Invalid link. Reset links are only valid for one hour."
 msgstr ""
 "Lien périmé. Les liens de réinitialisation ne sont valides que pour 1 heure."
+
+#~ msgid "Show canvas"
+#~ msgstr "Afficher le canevas"
+
+#~ msgid "Show editor"
+#~ msgstr "Afficher l'éditeur"
 
 #~ msgid "Experiments"
 #~ msgstr "Expériences"

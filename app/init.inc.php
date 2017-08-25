@@ -86,7 +86,7 @@ try {
     }
     $Twig = new \Twig_Environment($loader, $options);
 
-    // custom twig filters |msg and |kdate
+    // custom twig filters
     $filterOptions = array('is_safe' => array('html'));
     $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
     $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
@@ -100,10 +100,12 @@ try {
 
     // i18n for twig
     $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
+    // END TWIG
 
-    // run the update script if we have the wrong schema version
+    // UPDATE SQL SCHEMA
     if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
         try {
+            // run the update script if we have the wrong schema version
             foreach ($Update->runUpdateScript() as $msg) {
                 $Session->getFlashBag()->add('ok', $msg);
             }
@@ -113,7 +115,7 @@ try {
     }
 
     // pages where you don't need to be logged in
-    // reset.php is in fact app/reset.php but we use basename so...
+    // only the script name, not the path because we use basename() on it
     $nologinArr = array(
         'change-pass.php',
         'index.php',

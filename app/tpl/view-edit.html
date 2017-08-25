@@ -1,0 +1,13 @@
+{% if Entity.Users.userData.chem_editor %}
+    <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
+    <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
+{% endif %}
+
+<!-- BACK TO LINK -->
+<a href='?mode=show'>
+    <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to listing'|trans }}
+</a>
+
+{% if Entity.entityData.userid != Entity.Users.userid and Entity.type == 'experiments' %}
+    {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
+{% endif %}

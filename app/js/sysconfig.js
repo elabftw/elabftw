@@ -115,6 +115,7 @@ $(document).ready(function() {
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');
+                $('#massSend').text('Sent!');
             } else {
                 notif(data.msg, 'ko');
                 $('#massSend').prop('disabled', false);
@@ -135,6 +136,7 @@ $(document).ready(function() {
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');
+                $('#massSend').text('Sent!');
                 document.getElementById('testemailButton').disabled = false;
             } else {
                 notif(data.msg, 'ko');

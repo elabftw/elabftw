@@ -31,7 +31,6 @@ try {
     $msg = Tools::error();
 
     $Teams = new Teams();
-    $Config = new Config();
     $Response = new JsonResponse();
 
     // PROMOTE SYSADMIN
@@ -76,8 +75,8 @@ try {
 
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
-        $Sysconfig = new Sysconfig(new Email($Config));
-        if ($Sysconfig->testemailSend($Request->request->get('testemailEmail'))) {
+        $Email = new Email($Config);
+        if ($Email->testemailSend($Request->request->get('testemailEmail'))) {
             $res = true;
             $msg = _('Email sent');
         }
@@ -85,8 +84,8 @@ try {
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Sysconfig = new Sysconfig(new Email($Config));
-        if ($Sysconfig->massEmail($Request->request->get('subject'), $Request->request->get('body'))) {
+        $Email = new Email($Config);
+        if ($Email->massEmail($Request->request->get('subject'), $Request->request->get('body'))) {
             $res = true;
             $msg = _('Email sent');
         }

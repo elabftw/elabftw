@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-25 12:16+0200\n"
-"PO-Revision-Date: 2017-08-25 12:17+0200\n"
+"POT-Creation-Date: 2017-08-25 12:32+0200\n"
+"PO-Revision-Date: 2017-08-25 12:39+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:280
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:268
 #: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:37
-#: experiments.php:22
+#: app/views/TeamsView.php:48 experiments.php:23
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Expérience"
@@ -523,7 +523,7 @@ msgstr "Dupliquer"
 
 #: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:133
 msgid "Make a PDF"
-msgstr ""
+msgstr "Faire un PDF"
 
 #: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:146
 msgid "Make a ZIP"
@@ -578,13 +578,14 @@ msgstr "Commentaires"
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:455
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:618
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:708
+#: app/views/UploadsView.php:71
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
 #: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:444
 #, php-format
 msgid "On %s %s wrote:"
-msgstr ""
+msgstr "Le %s %s a écrit :"
 
 #: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:451
 msgid "Saving"
@@ -682,6 +683,8 @@ msgid "Molecule drawer"
 msgstr "Éditeur de molécule"
 
 #: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:583
+#: app/classes/ImportCsv.php:88 app/classes/Tools.php:92
+#: app/models/Experiments.php:70 app/models/Database.php:56
 msgid "Untitled"
 msgstr "Sans titre"
 
@@ -1195,6 +1198,7 @@ msgid "Please finalize install: %slink to documentation%s."
 msgstr "L'installation n'est pas terminée ! %sLien vers la documentation%s."
 
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:105
+#: app/views/TeamsView.php:43
 msgid "Teams"
 msgstr "Équipes"
 
@@ -1239,10 +1243,12 @@ msgid "Archive"
 msgstr "Archive"
 
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:262
+#: app/views/TeamsView.php:47
 msgid "Members"
 msgstr "Membres"
 
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:276
+#: app/views/TeamsView.php:49
 msgid "Items"
 msgstr "Items"
 
@@ -1466,6 +1472,7 @@ msgstr "Complexité"
 
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:73
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:104
+#: app/models/Users.php:638
 msgid "The passwords do not match!"
 msgstr "Les mots de passe entrés diffèrent !"
 
@@ -1547,7 +1554,7 @@ msgstr "Inverser la sélection"
 
 #: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:291
 msgid "With selected:"
-msgstr ""
+msgstr "Avec sélection :"
 
 #: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:304
 msgid "Change status"
@@ -1578,11 +1585,436 @@ msgstr "Montrer tout"
 msgid "Your file is ready:"
 msgstr "Le fichier est prêt :"
 
+#: app/controllers/IdpsController.php:38 app/controllers/IdpsController.php:56
+#: app/controllers/IdpsController.php:65
+#: app/controllers/SysconfigController.php:155
+#: app/controllers/AdminController.php:59
+#: app/controllers/UsersController.php:73
+msgid "Configuration updated successfully."
+msgstr "Configuration mise à jour avec succès."
+
+#: app/controllers/DatabaseController.php:44
+#: app/controllers/SysconfigController.php:48
+#: app/controllers/SysconfigController.php:64
+#: app/controllers/SysconfigController.php:72
+#: app/controllers/SysconfigController.php:129
+#: app/controllers/SysconfigController.php:139
+#: app/controllers/StatusController.php:40
+#: app/controllers/StatusController.php:54
+#: app/controllers/EntityController.php:108
+#: app/controllers/EntityController.php:144
+#: app/controllers/EntityController.php:168
+#: app/controllers/EntityController.php:221
+#: app/controllers/EntityController.php:243
+#: app/controllers/EntityController.php:265
+#: app/controllers/ExperimentsController.php:52
+#: app/controllers/ExperimentsController.php:70
+#: app/controllers/ExperimentsController.php:88
+#: app/controllers/ExperimentsController.php:124
+#: app/controllers/ItemsTypesController.php:41
+#: app/controllers/ItemsTypesController.php:55
+#: app/controllers/AdminController.php:45
+#: app/controllers/AdminController.php:81
+#: app/controllers/CommentsController.php:34
+#: app/controllers/CommentsController.php:42
+#: app/controllers/SchedulerController.php:38
+#: app/controllers/SchedulerController.php:55
+#: app/controllers/SchedulerController.php:63
+#: app/controllers/UsersController.php:36
+#: app/controllers/TodolistController.php:54
+#: app/controllers/TodolistController.php:65
+msgid "Saved"
+msgstr "Enregistré"
+
+#: app/controllers/SysconfigController.php:40
+msgid "User promoted"
+msgstr "Utilisateur promu"
+
+#: app/controllers/SysconfigController.php:81
+#: app/controllers/SysconfigController.php:90
+msgid "Email sent"
+msgstr "Email envoyé"
+
+#: app/controllers/SysconfigController.php:99
+msgid "Logs cleared"
+msgstr "Logs nettoyés"
+
+#: app/controllers/StatusController.php:63
+msgid "Status deleted successfully"
+msgstr "Le statut a été supprimé avec succès"
+
+#: app/controllers/EntityController.php:96
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
+
+#: app/controllers/EntityController.php:188
+msgid "Tag is too short!"
+msgstr "Le tag est trop court!"
+
+#: app/controllers/EntityController.php:209
+msgid "Comment is too short"
+msgstr "Le commentaire est trop court"
+
+#: app/controllers/EntityController.php:214
+#: app/controllers/TodolistController.php:48
+msgid "The id parameter is invalid"
+msgstr "Le paramètre id n'est pas valide"
+
+#: app/controllers/EntityController.php:286
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "Soyez sûr de retirer toute référence à ce fichier dans l'expérience !"
+
+#: app/controllers/EntityController.php:290
+msgid "File deleted successfully"
+msgstr "Le fichier a été supprimé avec succès"
+
+#: app/controllers/EntityController.php:312
+#: app/controllers/TodolistController.php:73
+#: app/controllers/TodolistController.php:81
+msgid "Item deleted successfully"
+msgstr "L'item a été supprimé avec succès"
+
+#: app/controllers/ExperimentsController.php:106
+msgid "Step deleted successfully"
+msgstr "Étape supprimée avec succès"
+
+#: app/controllers/ExperimentsController.php:142
+msgid "Link deleted successfully"
+msgstr "Lien supprimé avec succès"
+
+#: app/controllers/ExperimentsController.php:173
+msgid "This experiment cannot be timestamped!"
+msgstr "Cette expérience ne peut pas être horodatée!"
+
+#: app/controllers/ExperimentsController.php:196
+msgid "You don't have the rights to delete this experiment."
+msgstr "Vous n'avez pas les droits suffisants pour supprimer cette expérience."
+
+#: app/controllers/ExperimentsController.php:202
+msgid "Experiment successfully deleted"
+msgstr "Expérience supprimée avec succès"
+
+#: app/controllers/LoginController.php:38
+msgid "Your session expired. Please retry."
+msgstr "Votre session a expiré. Merci de réessayer."
+
+#: app/controllers/LoginController.php:43
+#: app/controllers/RegisterController.php:40
+msgid "A mandatory field is missing!"
+msgstr "Un champs obligatoire est manquant!"
+
+#: app/controllers/LoginController.php:66
+msgid ""
+"Login failed. Either you mistyped your password or your account isn't "
+"activated yet."
+msgstr ""
+"Identification échouée. Soit vous avez mal tapé votre mot de passe soit "
+"votre compte n'est pas encore activé."
+
+#: app/controllers/ItemsTypesController.php:64
+msgid "Item type deleted successfully"
+msgstr "La catégorie d'item a été supprimée avec succès"
+
+#: app/controllers/ResetPasswordController.php:40
+msgid "Email not found in database!"
+msgstr "Cette adresse email n'est pas dans la base de données !"
+
+#: app/controllers/ResetPasswordController.php:73
+#, php-format
+msgid ""
+"Hi. Someone (probably you) with the IP address: %s and user agent %s "
+"requested a new password on eLabFTW. Please follow this link to reset your "
+"password : %s"
+msgstr ""
+"Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le "
+"navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
+"pour réinitialiser votre mot de passe : %s"
+
+#: app/controllers/ResetPasswordController.php:78 app/models/Users.php:787
+msgid "There was a problem sending the email! Error was logged."
+msgstr ""
+"Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
+
+#: app/controllers/ResetPasswordController.php:81
+msgid "Email sent. Check your INBOX."
+msgstr "Email envoyé. Consultez votre boîte de réception."
+
+#: app/controllers/ResetPasswordController.php:99 change-pass.php:40
+msgid "Invalid link. Reset links are only valid for one hour."
+msgstr ""
+"Lien périmé. Les liens de réinitialisation ne sont valides que pour 1 heure."
+
+#: app/controllers/ResetPasswordController.php:108
+msgid "New password inserted. You can now login."
+msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
+
+#: app/controllers/UcpController.php:31
+msgid "Preferences updated."
+msgstr "Vos préférences on été mises à jour."
+
+#: app/controllers/UcpController.php:44
+msgid "Profile updated."
+msgstr "Profil mis à jour."
+
+#: app/controllers/UcpController.php:60
+msgid "You must specify a name for the template!"
+msgstr "Il faut spécifier un nom pour le modèle !"
+
+#: app/controllers/UcpController.php:64
+msgid "The template name must be 3 characters long."
+msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
+
+#: app/controllers/UcpController.php:74
+msgid "Experiment template successfully added."
+msgstr "Modèle d'expérience ajouté avec succès."
+
+#: app/controllers/UcpController.php:88
+msgid "Template successfully edited."
+msgstr "Modèle d'expérience édité avec succès."
+
+#: app/controllers/ImportController.php:33
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "item importé avec succès."
+msgstr[1] "items importés avec succès."
+
+#: app/controllers/CommentsController.php:50
+msgid "Comment successfully deleted"
+msgstr "Commentaire supprimé avec succès"
+
+#: app/controllers/RegisterController.php:55
+msgid ""
+"Registration successful :)<br>Your account must now be validated by an admin."
+"<br>You will receive an email when it is done."
+msgstr ""
+"Enregistrement réussi :)<br>Votre compte doit maintenant être validé par un "
+"admin.<br>Vous recevrez un email lorsque cela sera fait."
+
+#: app/controllers/RegisterController.php:57
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW ! o/"
+
+#: app/controllers/SchedulerController.php:73
+msgid "Event deleted successfully"
+msgstr "Événement supprimé avec succès"
+
+#: app/controllers/UsersController.php:90
+msgid "Everything was purged successfully."
+msgstr "Tout a été supprimé avec succès."
+
+#: app/controllers/RevisionsController.php:39 app/classes/EntityTrait.php:39
+#: app/models/Users.php:440 app/models/Users.php:457
+msgid "The id parameter is not valid!"
+msgstr "Le paramètre id n'est pas valide !"
+
+#: app/controllers/RevisionsController.php:43
+msgid "Revision restored successfully."
+msgstr "Révision restaurée avec succès."
+
+#: app/views/ExperimentsView.php:74
+msgid "Experiment was timestamped by"
+msgstr "Cette expérience a été horodatée par"
+
+#: app/views/ExperimentsView.php:74
+msgid "on"
+msgstr "le"
+
+#: app/views/ExperimentsView.php:75
+msgid "at"
+msgstr "à"
+
+#: app/views/ExperimentsView.php:79
+msgid "Download timestamped pdf"
+msgstr "Télécharger le pdf horodaté"
+
+#: app/views/ExperimentsView.php:80
+msgid "Download token"
+msgstr "Télécharger le jeton d'horodatage"
+
+#: app/views/ExperimentsView.php:82
+msgid "Decode token"
+msgstr "Lire le jeton d'horodatage"
+
+#: app/views/UploadsView.php:147
+msgid "Insert in text at cursor position"
+msgstr "Insérer dans le texte à la position du curseur"
+
+#: app/classes/TrustedTimestamps.php:123
+msgid "Please configure Timestamping in the admin panel."
+msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
+
+#: app/classes/Email.php:99
+msgid "[eLabFTW] Test email"
+msgstr "[eLabFTW] Email de test"
+
+#: app/classes/Email.php:105
+msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
+msgstr ""
+"Bravo, vous avez configuré eLabFTW correctement pour envoyer des emails :)"
+
+#: app/classes/AbstractImport.php:61
+msgid "Could not open the file."
+msgstr "Impossible d'ouvrir le fichier."
+
+#: app/classes/AbstractImport.php:80
+msgid "This doesn't look like the right kind of file. Import aborted."
+msgstr "Mauvais type de fichier. Importation arrêtée."
+
+#: app/classes/MakeZip.php:62
+msgid ""
+"You are missing the ZipArchive class in php. Uncomment the line "
+"extension=zip.so in php.ini file."
+msgstr ""
+"L'extension ZipArchive n'est pas activée. Décommentez la line exension=zip."
+"so dans le fichier php.ini."
+
+#: app/classes/MakeZip.php:250
+msgid "Error making the zip archive!"
+msgstr "Une erreur s'est produite durant la génération de l'archive zip !"
+
+#: app/classes/Tools.php:270
+msgid "This section is out of your reach!"
+msgstr "Cette section est hors de votre portée !"
+
+#: app/classes/Tools.php:272
+msgid "An error occured!"
+msgstr "Une erreur est survenue!"
+
+#: app/classes/MolViewer.php:107
+msgid "Cartoon"
+msgstr "Cartoon"
+
+#: app/classes/MolViewer.php:108
+msgid "Stick"
+msgstr "Bâton"
+
+#: app/classes/MolViewer.php:109
+msgid "Solid Surface"
+msgstr "Surface solide"
+
+#: app/classes/MolViewer.php:110
+msgid "Transparent Surface"
+msgstr "Surface transparente"
+
+#: app/classes/MolViewer.php:114
+msgid "Style"
+msgstr "Style"
+
+#: app/classes/MolViewer.php:115
+msgid "Remove Surfaces"
+msgstr "Retirer les surfaces"
+
+#: app/models/Users.php:99 app/models/Users.php:650
+msgid "Someone is already using that email address!"
+msgstr "Cette adresse email est déjà enregistrée !"
+
+#: app/models/Users.php:103 app/models/Users.php:702
+#, php-format
+msgid "Password must contain at least %s characters."
+msgstr "Le mot de passe doit contenir au moins %s charactères."
+
+#: app/models/Users.php:224
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Nouvel utilisateur enregistré"
+
+#: app/models/Users.php:230
+msgid ""
+"Hi. A new user registered on elabftw. Head to the admin panel to validate "
+"the account: "
+msgstr ""
+"Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
+"dans le panneau d'administration pour valider le compte: "
+
+#: app/models/Users.php:239
+msgid ""
+"Could not send email to inform admin. Error was logged. Contact an admin "
+"directly to validate your account."
+msgstr ""
+"Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été "
+"enregistrée. Contactez un administrateur directement pour valider votre "
+"compte."
+
+#: app/models/Users.php:462
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "Seul un sysadmin peut nommer un autre sysadmin."
+
+#: app/models/Users.php:633
+msgid "Please input your current password!"
+msgstr "Entrez votre mot de passe!"
+
+#: app/models/Users.php:755
+#, php-format
+msgid "User %s (%s) now has an active account."
+msgstr "L'utilisateur %s (%s) a désormais un compte actif."
+
+#: app/models/Users.php:804
+msgid "Wrong password!"
+msgstr "Mauvais mot de passe !"
+
+#: app/models/Users.php:810
+msgid "No user with this email or user not in your team"
+msgstr ""
+"Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre équipe"
+
+#: app/models/Experiments.php:347
+msgid "This experiment was locked by"
+msgstr "Cette expérience a été vérouillée par"
+
+#: app/models/Experiments.php:349
+msgid "You don't have the rights to unlock this."
+msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
+
+#: app/models/Experiments.php:355
+msgid "You cannot unlock or edit in any way a timestamped experiment."
+msgstr ""
+"Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit une "
+"expérience horodatée."
+
+#: app/models/Comments.php:101
+msgid "[eLabFTW] New comment posted"
+msgstr "[eLabFTW] Nouveau commentaire ajouté"
+
+#: app/models/Comments.php:108
+#, php-format
+msgid "Hi. %s left a comment on your experiment. Have a look: %s"
+msgstr ""
+"Bonjour. %s a laissé un commentaire sur votre expérience. Aller au "
+"commentaire : %s"
+
+#: app/models/Status.php:221
+msgid "Remove all experiments with this status before deleting this status."
+msgstr ""
+"Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
+
+#: app/models/Revisions.php:84
+msgid "revision available."
+msgid_plural "revisions available."
+msgstr[0] "révision disponible."
+msgstr[1] "révisions disponibles."
+
+#: app/models/Revisions.php:86
+msgid "Show history"
+msgstr "Afficher l'historique"
+
+#: app/models/Revisions.php:155
+msgid "You cannot restore a revision of a locked item!"
+msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
+
+#: app/models/ItemsTypes.php:93 team.php:39
+msgid "Nothing to show with this id"
+msgstr "Rien à afficher avec cet ID"
+
+#: app/models/ItemsTypes.php:194
+msgid "Remove all database items with this type before deleting this type."
+msgstr ""
+"Supprimez tous les items de la base de données de cette catégorie avant de "
+"supprimer cette catégorie."
+
 #: profile.php:21
 msgid "Profile"
 msgstr "Profil"
 
-#: database.php:52 experiments.php:56
+#: database.php:52 experiments.php:57
 msgid "<strong>This item is locked.</strong> You cannot edit it."
 msgstr "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer."
 
@@ -1616,10 +2048,6 @@ msgstr "Enregistré le :"
 msgid "Restore"
 msgstr "Restaurer"
 
-#: team.php:39
-msgid "Nothing to show with this id"
-msgstr "Rien à afficher avec cet ID."
-
 #: register.php:21
 msgid "Register"
 msgstr "Enregistrement"
@@ -1649,118 +2077,17 @@ msgstr "Configuration d'eLabFTW"
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
 
-#: change-pass.php:40
-msgid "Invalid link. Reset links are only valid for one hour."
-msgstr ""
-"Lien périmé. Les liens de réinitialisation ne sont valides que pour 1 heure."
-
 #~ msgid "Show canvas"
 #~ msgstr "Afficher le canevas"
 
-#~ msgid "Show editor"
-#~ msgstr "Afficher l'éditeur"
-
 #~ msgid "Experiments"
 #~ msgstr "Expériences"
-
-#~ msgid "Saved"
-#~ msgstr "Enregistré !"
-
-#~ msgid "Item deleted successfully"
-#~ msgstr "L'item a été supprimé avec succès."
-
-#~ msgid "User promoted"
-#~ msgstr "Utilisateur promu"
-
-#~ msgid "Email sent"
-#~ msgstr "Email envoyé"
-
-#~ msgid "Logs cleared"
-#~ msgstr "Logs nettoyés"
-
-#~ msgid "Configuration updated successfully."
-#~ msgstr "Configuration mise à jour avec succès."
-
-#~ msgid "Status deleted successfully"
-#~ msgstr "Le statut a été supprimé avec succès."
-
-#~ msgid "Comment is too short"
-#~ msgstr "Le commentaire est trop court"
-
-#~ msgid "The id parameter is invalid"
-#~ msgstr "Le paramètre id n'est pas valide !"
-
-#~ msgid "File deleted successfully"
-#~ msgstr "Le fichier a été supprimé avec succès"
-
-#~ msgid "Link deleted successfully"
-#~ msgstr "Lien supprimé avec succès"
-
-#~ msgid "You don't have the rights to delete this experiment."
-#~ msgstr ""
-#~ "Vous n'avez pas les droits suffisants pour supprimer cette expérience."
-
-#~ msgid "Experiment successfully deleted"
-#~ msgstr "Expérience supprimée avec succès"
-
-#~ msgid "Item type deleted successfully"
-#~ msgstr "La catégorie d'item a été supprimée avec succès"
-
-#~ msgid "Email not found in database!"
-#~ msgstr "Cette adresse email n'est pas dans la base de données !"
-
-#~ msgid ""
-#~ "Hi. Someone (probably you) with the IP address: %s and user agent %s "
-#~ "requested a new password on eLabFTW. Please follow this link to reset "
-#~ "your password : %s"
-#~ msgstr ""
-#~ "Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le "
-#~ "navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce "
-#~ "lien pour réinitialiser votre mot de passe : %s"
-
-#~ msgid "There was a problem sending the email! Error was logged."
-#~ msgstr ""
-#~ "Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
-
-#~ msgid "Email sent. Check your INBOX."
-#~ msgstr "Email envoyé. Consultez votre boîte de réception."
-
-#~ msgid "New password inserted. You can now login."
-#~ msgstr ""
-#~ "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
 #~ msgid "An error occurred!"
 #~ msgstr "Une erreur est survenue!"
 
 #~ msgid "Template deleted successfully"
 #~ msgstr "Le modèle a été supprimé avec succès"
-
-#~ msgid "item imported successfully."
-#~ msgid_plural "items imported successfully."
-#~ msgstr[0] "item importé avec succès."
-#~ msgstr[1] "items importés avec succès."
-
-#~ msgid "Comment successfully deleted"
-#~ msgstr "Commentaire supprimé avec succès"
-
-#~ msgid "Event deleted successfully"
-#~ msgstr "Événement supprimé avec succès"
-
-#~ msgid "Everything was purged successfully."
-#~ msgstr "Tout a été supprimé avec succès."
-
-#~ msgid "A mandatory field is missing!"
-#~ msgstr "Un champs obligatoire est manquant."
-
-#~ msgid ""
-#~ "Registration successful :)<br>Your account must now be validated by an "
-#~ "admin.<br>You will receive an email when it is done."
-#~ msgstr ""
-#~ "Enregistrement réussi :)<br>Votre compte doit maintenant être validé par "
-#~ "un admin.<br>Vous recevrez un email lorsque cela sera fait."
-
-#~ msgid "Registration successful :)<br>Welcome to eLabFTW o/"
-#~ msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW!"
 
 #~ msgid ""
 #~ "Welcome to eLabFTW. Head to the %sAdmin Panel%s to create a new type of "
@@ -1785,21 +2112,6 @@ msgstr ""
 #~ msgid "Only the team"
 #~ msgstr "Seulement l'équipe"
 
-#~ msgid "Experiment was timestamped by"
-#~ msgstr "Cette expérience a été horodatée par"
-
-#~ msgid "on"
-#~ msgstr "le"
-
-#~ msgid "at"
-#~ msgstr "à"
-
-#~ msgid "Download timestamped pdf"
-#~ msgstr "Télécharger le pdf horodaté"
-
-#~ msgid "Download token"
-#~ msgstr "Télécharger le jeton d'horodatage"
-
 #~ msgid "Read-only mode. Experiment of %s."
 #~ msgstr "Mode lecture seule. Expérience appartenant à %s."
 
@@ -1818,40 +2130,6 @@ msgstr ""
 #~ msgid "Back to Database Listing"
 #~ msgstr "Retourner à la liste de la base de données"
 
-#~ msgid "Preferences updated."
-#~ msgstr "Vos préférences on été mises à jour."
-
-#~ msgid "Please input your current password!"
-#~ msgstr "Entrez votre mot de passe!"
-
-#~ msgid "Someone is already using that email address!"
-#~ msgstr "Cette adresse email est déjà enregistrée !"
-
-#~ msgid "Profile updated."
-#~ msgstr "Profil mis à jour."
-
-#~ msgid "You must specify a name for the template!"
-#~ msgstr "Il faut spécifier un nom pour le modèle !"
-
-#~ msgid "The template name must be 3 characters long."
-#~ msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
-
-#~ msgid "Experiment template successfully added."
-#~ msgstr "Modèle d'expérience ajouté avec succès."
-
-#~ msgid "Template successfully edited."
-#~ msgstr "Modèle d'expérience édité avec succès."
-
-#~ msgid "Please configure Timestamping in the admin panel."
-#~ msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
-
-#~ msgid ""
-#~ "You are missing the ZipArchive class in php. Uncomment the line "
-#~ "extension=zip.so in php.ini file."
-#~ msgstr ""
-#~ "L'extension ZipArchive n'est pas activée. Décommentez la line "
-#~ "exension=zip.so dans le fichier php.ini."
-
 #~ msgid "You are trying to download an experiment you don't own!"
 #~ msgstr ""
 #~ "Vous ne pouvez pas télécharger une expérience qui ne vous appartient pas!"
@@ -1859,134 +2137,11 @@ msgstr ""
 #~ msgid "You are trying to download an item you don't own!"
 #~ msgstr "Vous ne pouvez pas télécharger un item qui ne vous appartient pas!"
 
-#~ msgid "Error making the zip archive!"
-#~ msgstr "Une erreur s'est produite durant la génération de l'archive zip !"
-
-#~ msgid "This section is out of your reach!"
-#~ msgstr "Cette section est hors de votre portée !"
-
-#~ msgid "An error occured!"
-#~ msgstr "Une erreur est survenue!"
-
-#~ msgid "Could not open the file."
-#~ msgstr "Impossible d'ouvrir le fichier."
-
-#~ msgid "This doesn't look like the right kind of file. Import aborted."
-#~ msgstr "Mauvais type de fichier. Importation arrêtée."
-
-#~ msgid "Cartoon"
-#~ msgstr "Cartoon"
-
-#~ msgid "Stick"
-#~ msgstr "Bâton"
-
-#~ msgid "Solid Surface"
-#~ msgstr "Surface solide"
-
-#~ msgid "Transparent Surface"
-#~ msgstr "Surface transparente"
-
-#~ msgid "Style"
-#~ msgstr "Style"
-
-#~ msgid "Remove Surfaces"
-#~ msgstr "Retirer les surfaces"
-
-#~ msgid "Password must contain at least %s characters."
-#~ msgstr "Le mot de passe doit contenir au moins %s charactères."
-
-#~ msgid "[eLabFTW] New user registered"
-#~ msgstr "[eLabFTW] Nouvel utilisateur enregistré"
-
-#~ msgid ""
-#~ "Hi. A new user registered on elabftw. Head to the admin panel to validate "
-#~ "the account."
-#~ msgstr ""
-#~ "Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
-#~ "dans le panneau d'administration pour valider le compte."
-
-#~ msgid ""
-#~ "Could not send email to inform admin. Error was logged. Contact an admin "
-#~ "directly to validate your account."
-#~ msgstr ""
-#~ "Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été "
-#~ "enregistrée. Contactez un administrateur directement pour valider votre "
-#~ "compte."
-
-#~ msgid "The id parameter is not valid!"
-#~ msgstr "Le paramètre id n'est pas valide !"
-
-#~ msgid "Only a sysadmin can put someone sysadmin."
-#~ msgstr "Seul un sysadmin peut nommer un autre sysadmin."
-
 #~ msgid "Validated user with ID :"
 #~ msgstr "Utilisateur validé avec l'ID :"
 
-#~ msgid "Wrong password!"
-#~ msgstr "Mauvais mot de passe !"
-
-#~ msgid "No user with this email or user not in your team"
-#~ msgstr ""
-#~ "Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre "
-#~ "équipe."
-
-#~ msgid "Tag is too short!"
-#~ msgstr "Le tag est trop court!"
-
-#~ msgid "You don't have the rights to lock/unlock this."
-#~ msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
-
-#~ msgid "This experiment was locked by"
-#~ msgstr "Cette expérience a été vérouillée par"
-
-#~ msgid "You cannot unlock or edit in any way a timestamped experiment."
-#~ msgstr ""
-#~ "Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit "
-#~ "une expérience horodatée."
-
-#~ msgid "[eLabFTW] New comment posted"
-#~ msgstr "[eLabFTW] Nouveau commentaire ajouté"
-
-#~ msgid "Hi. %s %s left a comment on your experiment. Have a look: %s"
-#~ msgstr ""
-#~ "Bonjour. %s %s a laissé un commentaire sur votre expérience. Aller au "
-#~ "commentaire : %s"
-
-#~ msgid "Remove all experiments with this status before deleting this status."
-#~ msgstr ""
-#~ "Supprimez toutes les expériences avec ce statut avant de supprimer ce "
-#~ "statut."
-
-#~ msgid "[eLabFTW] Test email"
-#~ msgstr "[eLabFTW] Email de test"
-
-#~ msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
-#~ msgstr ""
-#~ "Bravo, vous avez configuré eLabFTW correctement pour envoyer des emails :)"
-
-#~ msgid "revision available."
-#~ msgid_plural "revisions available."
-#~ msgstr[0] "révision disponible."
-#~ msgstr[1] "révisions disponibles."
-
-#~ msgid "You cannot restore a revision of a locked item!"
-#~ msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
-
-#~ msgid "Remove all database items with this type before deleting this type."
-#~ msgstr ""
-#~ "Supprimez tous les items de la base de données de cette catégorie avant "
-#~ "de supprimer cette catégorie."
-
 #~ msgid "milliseconds"
 #~ msgstr "millisecondes"
-
-#~ msgid "Your session expired. Please retry."
-#~ msgstr "Votre session a expiré. Merci de réessayer."
-
-#~ msgid ""
-#~ "Login failed. Either you mistyped your password or your account isn't "
-#~ "activated yet."
-#~ msgstr "Identification échouée. Soit vous avez mal tapé votre mot de p"
 
 #~ msgid "Please enable cookies in your navigator to continue."
 #~ msgstr "Merci d'autoriser les cookies dans votre navigateur pour continuer."
@@ -2184,9 +2339,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Créez un compte avec %sUniversign%s pour commencer à horodater des "
 #~ "expériences."
-
-#~ msgid "Only a locked experiment can be timestamped."
-#~ msgstr "Seule une expérience vérouillée peut être horodatée."
 
 #~ msgid "DISPLAY"
 #~ msgstr "AFFICHAGE"

@@ -3,10 +3,14 @@
 
 # first generate the cache files of twig templates
 php app/locale/genCache.php
+# add it to the list
+find /tmp/elabftw-twig-cache -name '*.php' >> /tmp/list
+
+# add normal php files to the list too
+find app -name '*.php' >> /tmp/list
+find . -maxdepth 1 -name '*.php' >> /tmp/list
 
 # convert with xgettext
-find /tmp/elabftw-twig-cache -name '*.php' >> /tmp/list
-find . -maxdepth 1 -name '*.php' >> /tmp/list
 xgettext -f /tmp/list -o /tmp/xgettext.out -L PHP --from-code UTF-8
 
 # merge with existing translations

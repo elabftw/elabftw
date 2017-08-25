@@ -23,16 +23,17 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
+require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+
 try {
-    require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
     // create Request object
     $Request = Request::createFromGlobals();
 
     $Session = new Session();
-    if (!$Request->hasPreviousSession()) {
-        $Session->start();
-    }
+
+    $Session->start();
+    $Request->setSession($Session);
 
     // add check for php version here also
     if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
@@ -48,6 +49,7 @@ try {
         throw new Exception('Redirecting to install folder');
     }
 
+    // load config.php
     require_once $configFilePath;
 
     // Methods for login
@@ -65,9 +67,9 @@ try {
         throw new Exception('Redirecting to install folder');
     }
 
-    if ($Session->has('auth')) {
+    if ($Request->getSession()->has('auth')) {
         // generate full Users object with current userid
-        $Users = new Users($Session->get('userid'), $Auth, $Config);
+        $Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
         // set lang based on user pref
         $locale = $Users->userData['lang'] . '.utf8';
     } else {
@@ -78,7 +80,7 @@ try {
 
 
     // INIT APP OBJECT
-    $App = new App($Request, $Session, $Config, new Logs(), $Users);
+    $App = new App($Request, $Config, new Logs(), $Users);
 
     // CONFIGURE GETTEXT
     $domain = 'messages';
@@ -93,10 +95,10 @@ try {
         try {
             // run the update script if we have the wrong schema version
             foreach ($Update->runUpdateScript() as $msg) {
-                $Session->getFlashBag()->add('ok', $msg);
+                $App->Session->getFlashBag()->add('ok', $msg);
             }
         } catch (Exception $e) {
-            $Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
+            $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
         }
     }
 
@@ -113,7 +115,7 @@ try {
         'ResetPasswordController.php'
     );
 
-    if (!$Session->has('auth') && !in_array(basename($Request->getScriptName()), $nologinArr)) {
+    if (!$App->Session->has('auth') && !in_array(basename($Request->getScriptName()), $nologinArr)) {
         // try to login with the cookie
         if (!$Auth->loginWithCookie($Request)) {
             // maybe we clicked an email link and we want to be redirected to the page upon successful login

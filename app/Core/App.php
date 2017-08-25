@@ -62,24 +62,23 @@ class App
      * Constructor
      *
      * @param Request $request
-     * @param Session $session
      * @param Config $config
      * @param Logs $logs
+     * @param Users $users
      */
     public function __construct(
         Request $request,
-        Session $session,
         Config $config,
         Logs $logs,
         Users $users
     ) {
-        $this->Db = Db::getConnection();
         $this->Request = $request;
-        $this->Session = $session;
         $this->Config = $config;
         $this->Logs = $logs;
         $this->Users = $users;
 
+        $this->Db = Db::getConnection();
+        $this->Session = $this->Request->getSession();
         $this->Twig = $this->getTwig();
 
         $this->ok = $this->Session->getFlashBag()->get('ok', array());

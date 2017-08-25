@@ -50,7 +50,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
                 <li {{ selectedMenu == 'Experiments' ? "class='active'" }}>
-                    <a href='experiments.php?mode=show'>{{ 'Experiments'|trans }}</a>
+                    <a href='experiments.php?mode=show'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
                 </li>
                 <li {{ selectedMenu == 'Database' ? "class='active'" }}>
                     <a href='database.php?mode=show'>{{ 'Database'|trans }}</a>

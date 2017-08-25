@@ -101,7 +101,7 @@
 
             <!-- BODY -->
             {% if Entity.type == 'experiments' %}
-                <h4>{{ 'Experiment'|trans }}</h4>
+            <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
             {% else %}
                 <h4>{{ 'Infos'|trans }}</h4>
             {% endif %}

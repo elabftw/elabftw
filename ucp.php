@@ -16,26 +16,27 @@ use Exception;
  * User Control Panel
  *
  */
-try {
-    require_once 'app/init.inc.php';
-    $pageTitle = _('User Control Panel');
-    require_once 'app/head.inc.php';
+require_once 'app/init.inc.php';
+$App->pageTitle = _('User Control Panel');
 
+try {
     $TeamGroups = new TeamGroups($Users);
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($Users);
     $templatesArr = $Templates->readFromUserid();
 
-    echo $Twig->render('ucp.html', array(
+    $template = 'ucp.html';
+    $renderArr = array(
         'Users' => $Users,
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr
-    ));
+    );
 
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 }
+
+echo $App->render($template, $renderArr);

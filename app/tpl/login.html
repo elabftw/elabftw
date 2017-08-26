@@ -1,3 +1,14 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<!-- show message if there is a failed_attempt -->
+{% if Session.has('failed_attempt') and Session.get('failed_attempt') < App.Config.configArr.login_tries %}
+    {% set number_of_tries_left = App.Config.configArr.login_tries - Session.get('failed_attempt') %}
+    {{ 'Number of login attempt left before being banned for %s minutes: %s'|trans|format(
+        App.Config.configArr.ban_time,
+        number_of_tries_left)|msg('ko') }}
+{% endif %}
+
 <menu class='border' style='color:#29AEB9'>{{ 'Note: You need cookies enabled to log in.'|trans }}</menu>
 
 <section class='center'>
@@ -51,5 +62,5 @@
     </div>
 
 </section>
-
 <script src='app/js/login.min.js'></script>
+{% endblock body %}

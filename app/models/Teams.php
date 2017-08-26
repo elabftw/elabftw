@@ -23,20 +23,18 @@ class Teams implements CrudInterface
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** our team id */
-    public $team;
+    /** @var Users $Users instance of Users */
+    public $Users;
 
     /**
      * Constructor
      *
-     * @param int|null $team
+     * @param Users $users
      */
-    public function __construct($team = null)
+    public function __construct(Users $users)
     {
         $this->Db = Db::getConnection();
-        if (!is_null($team)) {
-            $this->team = $team;
-        }
+        $this->Users = $users;
     }
 
     /**
@@ -129,7 +127,7 @@ class Teams implements CrudInterface
     {
         $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team_id', $this->team);
+        $req->bindParam(':team_id', $this->Users->userData['team']);
         $req->execute();
         $teamConfig = $req->fetch();
         if (is_null($column)) {
@@ -192,7 +190,7 @@ class Teams implements CrudInterface
         $req->bindParam(':deletable_xp', $deletableXp);
         $req->bindParam(':link_name', $linkName);
         $req->bindParam(':link_href', $linkHref);
-        $req->bindParam(':team_id', $this->team);
+        $req->bindParam(':team_id', $this->Users->userData['team']);
 
         return $req->execute();
     }
@@ -276,7 +274,7 @@ class Teams implements CrudInterface
     {
         $sql = "UPDATE teams SET stamppass = NULL WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team_id', $this->team);
+        $req->bindParam(':team_id', $this->Users->userData['team']);
 
         return $req->execute();
     }

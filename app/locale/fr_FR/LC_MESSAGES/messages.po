@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-25 15:49+0200\n"
-"PO-Revision-Date: 2017-08-25 15:49+0200\n"
+"POT-Creation-Date: 2017-08-26 18:38+0200\n"
+"PO-Revision-Date: 2017-08-26 18:38+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -18,73 +18,89 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: elabftw/vendor\n"
 "X-Poedit-SearchPathExcluded-1: elabftw/js\n"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:87
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:32
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:119
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:255
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:268
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:37
-#: app/views/TeamsView.php:48 experiments.php:23
+#: /tmp/elabftw-twig-cache/f6/f6ecc2c0b1593b6a8aeda88b030ab44548aad69f7d60d4b876831d108db3bd64.php:38
+msgid "Go back"
+msgstr "Revenir en arrière"
+
+#: /tmp/elabftw-twig-cache/f6/f6ecc2c0b1593b6a8aeda88b030ab44548aad69f7d60d4b876831d108db3bd64.php:48
+msgid "Saved on:"
+msgstr "Enregistré le :"
+
+#: /tmp/elabftw-twig-cache/f6/f6ecc2c0b1593b6a8aeda88b030ab44548aad69f7d60d4b876831d108db3bd64.php:58
+msgid "Restore"
+msgstr "Restaurer"
+
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:88
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:37
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:131
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:270
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:280
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:52
+#: app/views/TeamsView.php:48 experiments.php:22
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Expérience"
 msgstr[1] "Expériences"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:96
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:39
-#: database.php:22
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:97
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:44
+#: database.php:21
 msgid "Database"
 msgstr "Base de données"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:106
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:124
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:43
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:80
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:322
-#: team.php:21
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:107
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:129
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:55
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:92
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:334
+#: team.php:20
 msgid "Team"
 msgstr "Équipe"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:116
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:117
 #: search.php:19
 msgid "Search"
 msgstr "Recherche"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:156
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:157
 msgid "Howdy,"
 msgstr "Salutations,"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:162
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:164
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:159
+msgid "My Profile"
+msgstr "Profil"
+
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:165
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:167
 msgid "Settings"
 msgstr "Paramètres"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:168
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:171
 msgid "Help"
 msgstr "Aide"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:172
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:174
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:175
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:177
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:183
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:186
 #, php-format
 msgid "There is a manual available %shere%s."
 msgstr "Un manuel d'utilisation est disponible %sici%s."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:189
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:192
 msgid "You can use a TODOlist by pressing 't'."
 msgstr "Vous pouvez afficher une TODO list liste en pressant 't'."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:195
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:198
 #, php-format
 msgid "You can have experiments templates (%sControl Panel%s)."
 msgstr ""
 "Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle "
 "utilisateur%s)."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:201
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:204
 msgid ""
 "You can make links inside the text by typing # and an autocomplete menu will "
 "spawn with a list of Experiments/Items."
@@ -92,7 +108,7 @@ msgstr ""
 "Vous pouvez ajouter des liens dans le texte en tapant # et un menu "
 "d'autocomplétion va apparaître avec une liste d'expériences/objets."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:207
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:210
 #, php-format
 msgid ""
 "The admin of a team can edit the status and the types of items available "
@@ -101,7 +117,7 @@ msgstr ""
 "L'administrateur d'une équipe peut éditer les statuts et les types d'items "
 "disponibles (%sPanneau d'administration%s)."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:213
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:216
 msgid ""
 "If you press Ctrl Shift D in the editor, the date will appear under the "
 "cursor."
@@ -109,22 +125,22 @@ msgstr ""
 "Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra sous "
 "le curseur."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:219
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:222
 #, php-format
 msgid "Custom shortcuts are available (%sControl Panel%s)."
 msgstr ""
 "Des raccourcis claviers personnalisables sont disponibles (%sPanneau de "
 "contrôle utilisateur%s)."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:225
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:228
 msgid "You can duplicate experiments in one click."
 msgstr "Vous pouvez dupliquer des expériences en un seul clic."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:231
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:234
 msgid "Click a tag to list all items with this tag."
 msgstr "Cliquez un tag pour lister tous les items avec ce tag."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:237
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:240
 msgid ""
 "Once timestamped an experiment cannot be unlocked or modified. Only comments "
 "can be added."
@@ -132,100 +148,100 @@ msgstr ""
 "Une fois vérouillée, une expérience ne peut plus être dévérouillée ou "
 "modifiée, seuls des commentaires peuvent être ajoutés."
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:27
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:32
 msgid "Search in"
 msgstr "Chercher dans"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:79
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:92
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:84
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:97
 msgid "With the tag"
 msgstr "Avec le tag"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:107
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:112
 msgid "And visibility is:"
 msgstr "Et la visibilité est :"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:112
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:117
 msgid "Select visibility"
 msgstr "Sélectionner la visibilité"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:118
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:313
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:123
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:325
 msgid "Organization"
 msgstr "Organisme"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:130
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:135
 msgid "Only me"
 msgstr "Seulement moi"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:145
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:150
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:103
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:348
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:360
 msgid "Group"
 msgstr "Groupe"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:165
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:170
 msgid "Search only in experiments owned by:"
 msgstr "Rechercher uniquement dans les expériences de :"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:171
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:176
 msgid "Yourself"
 msgstr "Vous-même"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:178
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:183
 msgid "All the team"
 msgstr "Toute l'équipe"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:216
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:221
 msgid "Where date is between"
 msgstr "Où la date est entre"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:224
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:312
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:229
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:317
 msgid "and"
 msgstr "et"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:241
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:246
 msgid "And title contains"
 msgstr "Et le titre contient"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:254
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:259
 msgid "And status is"
 msgstr "Et le statut est"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:259
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:264
 msgid "select status"
 msgstr "choisir un statut"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:295
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:300
 msgid "And body contains"
 msgstr "Et le corps contient"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:306
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:311
 msgid "Space means"
 msgstr "Espace signifie"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:318
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:323
 msgid "or"
 msgstr "ou"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:328
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:333
 msgid "And rating is"
 msgstr "Et l'évaluation est"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:333
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:338
 msgid "select number of stars"
 msgstr "choisir le nombre d'étoiles"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:337
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:342
 msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:364
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:369
 msgid "Tip: you can use '%' as wildcard."
 msgstr "Conseil : vous pouvez utiliser '%' comme joker."
 
-#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:371
+#: /tmp/elabftw-twig-cache/8e/8e35fcd38bec9be37f937124d6bc993db0092d42190b2ec94e1bbcffbe657e91.php:376
 msgid "Launch search"
 msgstr "Lancer la recherche"
 
@@ -234,22 +250,22 @@ msgid "Edit Users"
 msgstr "Éditer les utilisateurs"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:58
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:89
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:422
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:101
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:434
 msgid "Firstname"
 msgstr "Prénom"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:73
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:97
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:435
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:109
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:447
 msgid "Lastname"
 msgstr "Nom"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:88
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:38
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:72
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:445
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:125
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:68
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:84
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:457
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:137
 msgid "Email"
 msgstr "Email"
 
@@ -267,43 +283,45 @@ msgid "Has an active account?"
 msgstr "Compte activé ?"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:174
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:134
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:383
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:402
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:477
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:569
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:146
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:395
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:414
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:489
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:581
 msgid "Yes"
 msgstr "Oui"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:180
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:140
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:389
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:408
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:483
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:575
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:152
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:401
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:420
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:495
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:587
 msgid "No"
 msgstr "Non"
 
 #: /tmp/elabftw-twig-cache/15/157abe2856fb2fba2a342d6f88ea0c6744d07d808f0f235ebd5c7072e5a2172a.php:189
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:428
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:454
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:505
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:517
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:584
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:634
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:706
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:799
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:367
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:162
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:176
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:228
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:419
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:543
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:611
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:773
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:940
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:981
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:1049
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:443
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:469
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:520
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:536
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:603
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:653
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:725
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:818
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:379
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:580
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:696
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:174
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:188
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:240
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:431
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:555
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:623
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:794
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:961
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:1002
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:1070
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -312,7 +330,7 @@ msgid "Sysadmin panel"
 msgstr "Panneau du sysadmin"
 
 #: /tmp/elabftw-twig-cache/d2/d2e3ad71ec1b58c7f6c55dcc86da9992f4ef2aa558b31544546c25f53a477bb2.php:47
-#: admin.php:22
+#: admin.php:20
 msgid "Admin panel"
 msgstr "Panneau d'administration"
 
@@ -328,29 +346,42 @@ msgstr "Page générée en"
 msgid "seconds"
 msgstr "secondes"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:20
+#: /tmp/elabftw-twig-cache/d2/d2e3ad71ec1b58c7f6c55dcc86da9992f4ef2aa558b31544546c25f53a477bb2.php:90
+msgid "Memory usage:"
+msgstr "Utilisation mémoire :"
+
+#: /tmp/elabftw-twig-cache/d2/d2e3ad71ec1b58c7f6c55dcc86da9992f4ef2aa558b31544546c25f53a477bb2.php:98
+msgid "bytes"
+msgstr "octets"
+
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:40
+#, php-format
+msgid "Number of login attempt left before being banned for %s minutes: %s"
+msgstr "Nombre d'essais avant d'être banni pour %s minutes : %s"
+
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:50
 msgid "Note: You need cookies enabled to log in."
 msgstr "Note : il vous faut accepter les cookies pour vous connecter."
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:32
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:62
 msgid "Sign in to your account"
 msgstr "Connectez-vous à votre compte"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:46
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:79
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:76
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:91
 msgid "Password"
 msgstr "Mot de passe"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:57
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:87
 msgid "Remember me"
 msgstr "Rester connecté"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:63
-#: login.php:21
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:93
+#: login.php:20
 msgid "Login"
 msgstr "Connexion"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:70
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:100
 #, php-format
 msgid ""
 "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
@@ -358,188 +389,188 @@ msgstr ""
 "Pas de compte ? %sCréez un compte%s maintenant !<br>Mot de passe oublié ? "
 "%sRéinitialisez-le%s !"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:85
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:115
 msgid "Login through your institution"
 msgstr "Se connecter avec l'institution"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:118
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:148
 msgid "Enter your email address"
 msgstr "Entrez votre adresse email"
 
-#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:122
+#: /tmp/elabftw-twig-cache/4a/4a8ec7d8a3445c7087e2f90c740becdfe6a02f48acee963afcad59316492b21d.php:152
 msgid "Send new password"
 msgstr "Envoyer le lien de réinitialisation"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:25
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:37
 msgid "Scheduler"
 msgstr "Planificateur"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:29
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:23
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:261
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:41
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:35
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:276
 msgid "Infos"
 msgstr "Infos"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:41
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:53
 msgid "No bookable items."
 msgstr "Pas d'équipement réservable."
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:48
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:60
 msgid "Change item"
 msgstr "Changer d'item"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:68
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:80
 msgid "Select an equipment"
 msgstr "Choisir un équipement"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:110
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:122
 #, php-format
 msgid "You belong to the %s team. %s"
 msgstr "Vous appartenez à l'équipe %s. %s"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:117
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:505
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:543
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:617
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:659
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:664
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:956
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:129
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:524
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:562
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:636
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:678
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:676
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:977
 msgid "Name"
 msgstr "Nom"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:121
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:463
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:133
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:475
 msgid "Phone"
 msgstr "Téléphone"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:125
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:473
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:137
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:485
 msgid "Mobile"
 msgstr "Mobile"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:129
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:495
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:141
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:507
 msgid "Website"
 msgstr "Site web"
 
-#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:133
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:485
+#: /tmp/elabftw-twig-cache/b3/b351a8700a60d498ddd2c795aa622e68b75831dad8df0a715a7bbe01bc7bf994.php:145
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:497
 msgid "Skype"
 msgstr "Skype"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:39
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:51
 msgid "experiments done since"
 msgstr "expériences réalisées depuis"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:46
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:58
 msgid "Go to user control panel"
 msgstr "Aller au panneau utilisateur"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:50
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:62
 msgid "API key"
 msgstr "Clé API"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:63
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:75
 msgid "Generate an API Key"
 msgstr "Générer une clé pour l'API"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:77
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:89
 msgid "No statistics available yet."
 msgstr "Pas de statistiques disponibles."
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:85
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:97
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:155
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:167
 msgid "Tag cloud"
 msgstr "Nuage de tags"
 
-#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:169
+#: /tmp/elabftw-twig-cache/ce/ce8c9a6a8952ab17e73a19a0d1923579eaf7fb5a100e8866cc349ee5b1cbc664.php:181
 msgid "Not enough tags to make a tagcloud"
 msgstr "Pas assez de tags pour faire un nuage"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:23
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:35
 msgid "go back to login page"
 msgstr "retour à la page de connexion"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:31
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:43
 msgid "Create your account"
 msgstr "Créez votre compte"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:48
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:60
 msgid "------ Select a team ------"
 msgstr "------ Choisissez une équipe ------"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:105
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:117
 msgid "Password complexity"
 msgstr "Complexité du mot de passe"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:114
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:126
 msgid "create"
 msgstr "créer"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:124
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:136
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:83
 msgid "Weak password"
 msgstr "Mot de passe faible"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:128
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:140
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:87
 msgid "Average password"
 msgstr "Mot de passe passable"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:132
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:144
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:91
 msgid "Good password"
 msgstr "Bon mot de passe"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:136
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:148
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:95
 msgid "Strong password"
 msgstr "Mot de passe fort"
 
-#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:140
+#: /tmp/elabftw-twig-cache/eb/eb3c31811cce475571de10467982e45df78ca2cfeb1558db6dbf14c4fefe2583.php:152
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:99
 msgid "No way that is your real password!"
 msgstr "Pas moyen que ce soit votre vrai mot de passe !"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:76
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:80
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:206
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:762
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:91
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:95
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:218
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:783
 msgid "Edit"
 msgstr "Editer"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:95
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:110
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:108
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:123
 msgid "Make a PDF"
 msgstr "Faire un PDF"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:121
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:136
 msgid "Make a ZIP"
 msgstr "Faire un Zip"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:135
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:150
 msgid "Show related"
 msgstr "Montrer les expériences liées"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:152
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:167
 msgid "Lock/Unlock item"
 msgstr "Vérouiller/Déverouiller"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:187
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:202
 msgid "Timestamp Experiment"
 msgstr "Horodater l'expérience"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:195
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:210
 msgid "Timestamp this experiment?"
 msgstr "Horodater cette expérience ?"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:201
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:216
 msgid ""
 "Once timestamped an experiment cannot be edited anymore! Are you sure you "
 "want to do this?"
@@ -547,136 +578,136 @@ msgstr ""
 "Une expérience horodatée ne peut plus être éditée ! Êtes-vous sûr(e) de "
 "vouloir faire ça ?"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:280
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:426
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:295
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:441
 msgid "Next step"
 msgstr "Étape suivante"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:355
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:370
 msgid "Unique eLabID:"
 msgstr "ELabID unique :"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:370
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:385
 msgid "Last modified by"
 msgstr "Dernière modification par"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:393
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:408
 msgid "Comments"
 msgstr "Commentaires"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:415
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:479
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:33
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:70
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:554
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:455
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:618
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:708
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:430
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:494
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:48
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:85
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:569
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:474
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:630
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:720
 #: app/views/UploadsView.php:71
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:419
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:434
 #, php-format
 msgid "On %s %s wrote:"
 msgstr "Le %s %s a écrit :"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:426
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:441
 msgid "Saving"
 msgstr "Enregistrement"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:430
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:445
 msgid "Cancel"
 msgstr "Annuler"
 
-#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:447
+#: /tmp/elabftw-twig-cache/da/da2f49cdd1c5854a7de63e3e37e57303e51d2fb2312be2e110802d6e1559f0f4.php:462
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:39
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:586
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:54
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:598
 msgid "Tags"
 msgstr "Tags"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:90
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:642
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:105
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:654
 msgid "Add a tag"
 msgstr "Ajouter un tag"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:112
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:117
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:175
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:127
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:129
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:190
 msgid "Date"
 msgstr "Date"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:131
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:146
 msgid "Visibility"
 msgstr "Visibilité"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:172
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:92
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:187
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:104
 msgid "Status"
 msgid_plural "Status"
 msgstr[0] "Statut"
 msgstr[1] "Statuts"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:178
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:111
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:169
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:193
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:123
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:184
 msgid "Category"
 msgstr "Catégorie"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:242
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:123
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:200
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:257
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:135
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:215
 msgid "Title"
 msgstr "Titre"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:277
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:292
 msgid "Save and go back"
 msgstr "Enregistrer et revenir en arrière"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:296
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:311
 msgid "Experiments steps"
 msgstr "Étapes"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:348
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:363
 msgid "Add a step"
 msgstr "Ajouter une étape"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:356
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:371
 msgid "Linked items"
 msgstr "Items liés"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:402
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:417
 msgid "Add a link"
 msgstr "Ajouter un lien"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:406
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:421
 msgid "from the database"
 msgstr "depuis la base de données"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:419
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:434
 msgid "Attach a file"
 msgstr "Joindre un fichier"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:430
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:445
 msgid "Drop files here to upload"
 msgstr "Déposez ici les fichiers à uploader"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:490
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:505
 msgid "Draw something"
 msgstr "Dessiner quelquechose"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:497
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:512
 msgid "Clear"
 msgstr "Effacer"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:520
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:535
 msgid "Molecule drawer"
 msgstr "Éditeur de molécule"
 
-#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:558
+#: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:573
 #: app/classes/ImportCsv.php:88 app/classes/Tools.php:92
 #: app/models/Experiments.php:70 app/models/Database.php:56
 msgid "Untitled"
@@ -688,84 +719,84 @@ msgid_plural "Attached files"
 msgstr[0] "Fichier attaché"
 msgstr[1] "Fichiers attachés"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:34
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:46
 msgid "There are users waiting for validation of their account:"
 msgstr "Il y a des utilisateurs en attente de validation :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:66
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:78
 msgid "Validate"
 msgstr "Valider"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:84
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:109
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:96
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:121
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:88
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:100
 msgid "Groups"
 msgstr "Groupes"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:96
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:108
 msgid "Types of items"
 msgstr "Catégories d'items"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:100
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:112
 msgid "Experiments template"
 msgstr "Modèle d'expériences"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:104
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:860
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:116
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:879
 msgid "Import CSV"
 msgstr "Importer un CSV"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:108
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:942
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:120
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:961
 msgid "Import ZIP"
 msgstr "Importer un ZIP"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:118
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:130
 msgid "Configure your Team"
 msgstr "Configurez votre équipe"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:127
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:139
 msgid "Users can delete experiments:"
 msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:145
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:157
 msgid "An admin account will always be able to delete experiments."
 msgstr "Un compte administrateur pourra toujours supprimer des expériences."
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:152
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:164
 msgid "Name of the link in the top menu:"
 msgstr "Nom du lien dans le menu du haut :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:163
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:175
 msgid "Address where this link should point:"
 msgstr "Adresse vers laquelle ce lien pointe :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:174
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:186
 msgid "Override general timestamping config"
 msgstr "Outrepasser les préférences générales d'horodatage"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:181
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:493
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:193
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:505
 msgid "URL for external timestamping service:"
 msgstr "URL pour le service de timestamping :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:189
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:501
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:201
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:513
 #, php-format
 msgid ""
 "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
 msgstr "URL utilisée pour les requêtes %sRFC 3161%s."
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:196
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:507
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:208
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:519
 msgid "Chain of certificates of the external timestamping service:"
 msgstr "Certificat pour le service externe de timestamping :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:204
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:515
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:216
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:527
 #, php-format
 msgid ""
 "This should point to the chain of certificates used by your external "
@@ -777,34 +808,45 @@ msgstr ""
 "%sChemin relatif au dossier racine d'eLabFTW. Le fichier doit être dans le "
 "format %sPEM-encoded (ASCII)%s!"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:209
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:520
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:221
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:532
 msgid "Login for external timestamping service:"
 msgstr "Identifiant pour le service externe d'horodatage :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:217
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:229
 msgid ""
 "This should be the login associated with your timestamping service provider"
 msgstr "Votre login pour le service d'horodatage"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:224
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:528
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:236
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:540
 msgid "Password for external timestamping service:"
 msgstr "Mot de passe pour le service externe d'horodatage :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:239
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:243
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:772
+msgid "A password is already set."
+msgstr "Un mot de passe existe déjà."
+
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:247
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:776
+#, php-format
+msgid "%sClear it%s or change it below:"
+msgstr "%sEffacer%s ou modifier ci-dessous :"
+
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:258
 msgid "Your timestamping service provider password"
 msgstr "Votre mot de passe pour le service d'horodatage"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:263
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:282
 msgid "DANGER ZONE"
 msgstr "ZONE DE DANGER"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:267
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:286
 msgid "Delete an account"
 msgstr "Supprimer un compte"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:278
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:297
 msgid ""
 "Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
 "files forever:"
@@ -812,129 +854,129 @@ msgstr ""
 "Taper l'ADRESSE Email d'un membre pour le supprimer ainsi que toutes ses "
 "expériences pour toujours :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:283
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:302
 msgid "Type your password:"
 msgstr "Tapez votre mot de passe :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:289
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:308
 msgid "Delete this user!"
 msgstr "Supprimer cet utilisateur !"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:302
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:321
 msgid "Manage Groups of Users"
 msgstr "Gérez des groupes d'utilisateurs"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:309
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:328
 msgid "Create a group"
 msgstr "Créer un groupe"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:314
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:196
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:333
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:208
 msgid "Create"
 msgstr "Créer"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:325
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:344
 msgid "Add this user"
 msgstr "Ajouter cet utilisateur"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:349
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:368
 msgid "to this group"
 msgstr "à ce groupe"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:372
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:391
 msgid "Add"
 msgstr "Ajouter"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:381
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:400
 msgid "Remove this user"
 msgstr "Retirer cet utilisateur"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:405
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:424
 msgid "from this group"
 msgstr "de ce groupe"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:428
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:447
 msgid "Remove"
 msgstr "Retirer"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:437
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:456
 msgid "Existing groups"
 msgstr "Groupes existants"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:449
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:468
 msgid "Remove this Group"
 msgstr "Retirer ce groupe"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:497
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:516
 msgid "Add a New Status"
 msgstr "Ajouter un nouveau statut"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:509
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:553
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:621
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:672
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:528
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:572
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:640
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:691
 msgid "Color"
 msgstr "Couleur"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:513
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:562
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:532
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:581
 msgid "Allow timestamp"
 msgstr "Autoriser l'horodatage"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:527
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:546
 msgid "Edit an Existing Status"
 msgstr "Éditer un statut existant"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:576
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:595
 msgid "Default status"
 msgstr "Statut par défaut"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:591
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:714
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:242
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:347
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:610
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:733
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:254
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:362
 msgid "Delete"
 msgstr "Supprimer"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:611
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:630
 msgid "Add a new type of item"
 msgstr "Ajouter une nouvelle catégorie d'items"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:625
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:690
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:644
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:709
 msgid "Bookable"
 msgstr "Réservable"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:627
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:646
 #, php-format
 msgid "in the %sscheduler%s"
 msgstr "dans le %splanificateur%s"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:642
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:661
 msgid "Database Items Types"
 msgstr "Catégories d'items de la base de données"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:698
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:717
 msgid "Edit the template"
 msgstr "Éditer le modèle"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:743
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:762
 msgid "Modify ordering"
 msgstr "Modifier l'ordre"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:781
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:800
 msgid "Common Experiment Template"
 msgstr "Modèle d'expérience commun"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:785
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:804
 msgid "This is the default text when someone creates an experiment."
 msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:810
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:829
 msgid "Import a CSV File"
 msgstr "Importer un fichier CSV"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:816
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:835
 msgid ""
 "This page will allow you to import a .csv (Excel spreadsheet) file into the "
 "database.<br>First you need to open your .xls/.xlsx file in Excel or "
@@ -950,8 +992,8 @@ msgstr ""
 "avec un petit nombre de lignes pour voir si tout se passe bien avant "
 "d'importer un gros fichier. La troisième colonne doit être le titre."
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:820
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:883
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:839
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:902
 msgid ""
 "You should make a backup of your database before importing thousands of "
 "items!"
@@ -959,128 +1001,128 @@ msgstr ""
 "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des "
 "milliers d'items !"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:826
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:845
 msgid "1. Select a type of item to import to:"
 msgstr "1. Choisissez une catégorie d'item dans laquelle importer :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:853
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:872
 msgid "2. Select a CSV file to import:"
 msgstr "2. Choisissez un fichier CSV :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:873
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:892
 msgid "Import a ZIP File"
 msgstr "Importer un fichier ZIP"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:879
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:898
 msgid "This page will allow you to import a .elabftw.zip archive."
 msgstr "Cette page permet l'import d'archive .elabftw.zip."
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:889
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:908
 msgid "1. Select where to import:"
 msgstr "1. Choisissez où importer :"
 
-#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:935
+#: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:954
 msgid "2. Select a ZIP file to import:"
 msgstr "2. Choisissez un fichier ZIP :"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:25
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:37
 msgid "Preferences"
 msgstr "Préférences"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:29
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:41
 msgid "Account"
 msgstr "Compte"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:33
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:45
 msgid "Templates"
 msgstr "Modèles"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:46
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:336
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:58
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:348
 msgid "Language"
 msgstr "Langage"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:82
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:94
 msgid "Display"
 msgstr "Affichage"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:88
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:100
 msgid "Items per page:"
 msgstr "Items par page :"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:98
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:110
 msgid "Order by:"
 msgstr "Ordre basé sur :"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:105
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:143
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:117
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:155
 msgid "Use default"
 msgstr "Utiliser la valeur par défaut"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:129
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:192
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:141
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:207
 msgid "Comment"
 msgstr "Commentaire"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:136
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:148
 msgid "Sort:"
 msgstr "Ordre:"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:149
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:220
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:161
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:235
 msgid "ASC"
 msgstr "ASC"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:155
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:214
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:167
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:229
 msgid "DESC"
 msgstr "DESC"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:162
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:174
 msgid "Use single column layout:"
 msgstr "Utiliser la disposition mono-colonne:"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:176
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:188
 msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:180
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:192
 msgid "Only lowercase letters are allowed."
 msgstr "Seules les lettres minuscules sont acceptées."
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:187
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:199
 msgid "Action"
 msgstr "Action"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:191
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:203
 msgid "Shortcut"
 msgstr "Raccourci"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:216
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:228
 msgid "Submit"
 msgstr "Valider"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:226
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:238
 msgid "TODO list"
 msgstr "TODO liste"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:240
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:252
 msgid "Miscellaneous"
 msgstr "Divers"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:252
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:264
 msgid "Show experiments from the team on the Experiments page?"
 msgstr "Montrer les expériences de l'équipe sur la page d'Expériences ?"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:263
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:275
 msgid "Display a warning before closing an edit window/tab?"
 msgstr "Afficher un avertissement avant de fermer un onglet d'édition ?"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:274
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:286
 msgid "Display the molecule drawer in edit mode?"
 msgstr "Afficher l'éditeur de molécule en mode édition ?"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:285
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:297
 msgid ""
 "Enable Chinese, Japonese and Korean fonts in PDF generation. WARNING: "
 "enabling CJK fonts will make the PDF size very big!"
@@ -1089,81 +1131,73 @@ msgstr ""
 "génération des PDF. ATTENTION : cela grossit la taille des fichiers PDF de "
 "manière non négligeable !"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:296
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:308
 msgid "Disable the rich text editor and write Markdown directly"
 msgstr "Désactiver l'éditeur de texte riche et écrire du Markdown directement"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:303
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:315
 msgid "Default visibility for new experiments"
 msgstr "Visibilité par défaut pour les nouvelles expériences"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:331
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:343
 msgid "User"
 msgstr "Utilisateur"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:385
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:397
 msgid "Modify your personal informations"
 msgstr "Modifier vos informations personnelles"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:389
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:401
 msgid "Enter your password to edit infos."
 msgstr "Entrez votre mot de passe pour éditer ces informations."
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:396
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:408
 msgid "Modify your password"
 msgstr "Modifier votre mot de passe"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:400
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:412
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:50
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:405
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:417
 msgid "Confirm new password"
 msgstr "Confirmer le nouveau mot de passe"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:415
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:427
 msgid "Modify your identity"
 msgstr "Modifier votre identité"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:457
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:469
 msgid "Modify your contact information"
 msgstr "Modifier vos informations de contact"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:507
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:519
 msgid "Update profile"
 msgstr "Mettre à jour le profil"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:520
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:532
 msgid "Experiments Templates"
 msgstr "Modèles d'expériences"
 
-# Feminine form
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:525
-msgid "Create New"
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:537
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:42
+msgid "Create new"
 msgstr "Créer"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:550
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:562
 msgid "Import from File"
 msgstr "Importer un fichier"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:557
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:569
 msgid "Name of the Template"
 msgstr "Nom du modèle"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:568
-msgid "Add template"
-msgstr "Ajouter un modèle"
-
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:673
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:685
 msgid "Template content"
 msgstr "Contenu du modèle"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:684
-msgid "Edit template"
-msgstr "Éditer un modèle"
-
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:25
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:37
 msgid ""
 "Error getting latest version information from server! Check the proxy "
 "setting."
@@ -1171,111 +1205,111 @@ msgstr ""
 "Erreur lors de l'obtention des informations sur la dernière version depuis "
 "le serveur distant. Vérifiez la configuration du proxy."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:41
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:53
 msgid "Installed version:"
 msgstr "Version installée :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:69
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:81
 msgid "Latest version:"
 msgstr "Dernière version :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:80
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:92
 #, php-format
 msgid "%s - A new version is available! %sUpdate elabftw%sRead changelog%s"
 msgstr ""
 "%s - Une nouvelle version est disponible ! %sMettre à jour elabftw%sLire les "
 "changements%s"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:94
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:106
 #, php-format
 msgid "Please finalize install: %slink to documentation%s."
 msgstr "L'installation n'est pas terminée ! %sLien vers la documentation%s."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:105
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:117
 #: app/views/TeamsView.php:43
 msgid "Teams"
 msgstr "Équipes"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:113
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:125
 msgid "Server"
 msgstr "Serveur"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:117
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:129
 msgid "Timestamp"
 msgstr "Horodatage"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:121
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:133
 msgid "Security"
 msgstr "Securité"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:129
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:141
 msgid "Logs"
 msgstr "Logs"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:133
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:145
 msgid "SAML"
 msgstr "SAML"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:144
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:156
 msgid "Usage Statistics"
 msgstr "Statistiques d'utilisation"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:156
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:168
 msgid "Promote Someone to Sysadmin"
 msgstr "Ajouter un sysadmin"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:170
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:182
 msgid "Add a New Team"
 msgstr "Ajouter une nouvelle équipe"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:184
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:196
 msgid "Edit Existing Teams"
 msgstr "Éditer les équipes existantes"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:255
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:267
 msgid "Archive"
 msgstr "Archive"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:262
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:274
 #: app/views/TeamsView.php:47
 msgid "Members"
 msgstr "Membres"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:276
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:288
 #: app/views/TeamsView.php:49
 msgid "Items"
 msgstr "Items"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:280
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:292
 msgid "Created"
 msgstr "Créée"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:296
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:308
 msgid "Send a Mass Email"
 msgstr "Envoyer un email en masse"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:300
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:312
 msgid "Email Subject"
 msgstr "Sujet de l'email"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:305
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:317
 msgid "Email Body"
 msgstr "Corps de l'email"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:310
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:788
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:322
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:809
 msgid "Send"
 msgstr "Envoyer"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:330
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:342
 msgid "Under the Hood"
 msgstr "Paramètres avancés"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:362
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:374
 msgid "Address of the Proxy:"
 msgstr "Adresse du proxy :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:370
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:382
 msgid ""
 "If you are behind a firewall/proxy, enter the address here. Example: http://"
 "proxy.example.com:3128"
@@ -1283,15 +1317,15 @@ msgstr ""
 "Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://"
 "proxy.example.cm:3128"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:376
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:388
 msgid "Enable local account creation:"
 msgstr "Autoriser la création de comptes locaux:"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:395
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:407
 msgid "Show local login form:"
 msgstr "Afficher le formulaire d'authentification locale:"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:413
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:425
 msgid ""
 "You can still show the local login form by appending ?letmein to the login "
 "page URL."
@@ -1299,35 +1333,35 @@ msgstr ""
 "Vous pourrez toujours afficher le formulaire en ajoutant ?letmein à l'URL de "
 "la page de login."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:427
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:439
 msgid "Informations"
 msgstr "Informations"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:433
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:445
 msgid "Operating System"
 msgstr "Système d'exploitation"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:439
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:451
 msgid "PHP Version"
 msgstr "Version PHP"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:445
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:457
 msgid "Largest integer supported"
 msgstr "Plus grand entier pris en charge"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:451
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:463
 msgid "PHP configuration directory"
 msgstr "Répertoire de configuration de PHP"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:464
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:476
 msgid "Timestamping Configuration"
 msgstr "Configuration de l'horodatage"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:470
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:482
 msgid "The teams can use the credentials below to timestamp:"
 msgstr "Les équipes peuvent utiliser les informations de connexion suivantes :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:488
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:500
 msgid ""
 "You can control if the teams can use the global timestamping account. If set "
 "to <em>no</em> the team admin must add login infos in the admin panel."
@@ -1337,31 +1371,31 @@ msgstr ""
 "l'équipe devra renseigner ses informations de connexion dans le panneau "
 "d'administration."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:554
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:566
 msgid "Security Settings"
 msgstr "Paramètres de sécurité"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:562
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:574
 msgid "Users need validation by admin after registration:"
 msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:580
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:592
 msgid "Set to yes for added security."
 msgstr "Mettez oui pour plus de sécurité."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:584
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:596
 msgid "Number of allowed login attempts:"
 msgstr "Nombre d'essais de connexion autorisés :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:592
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:604
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 n'est peut-être pas assez. À vous de voir :)"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:596
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:608
 msgid "Time of the ban after failed login attempts (in minutes):"
 msgstr "Temps de bannissement (en minutes) :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:605
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:617
 msgid ""
 "To identify an user we use an md5 of user agent + IP. Because doing it only "
 "based on IP address would surely cause problems."
@@ -1370,11 +1404,11 @@ msgstr ""
 "utilisé. Car se baser seulement sur l'adresse IP pourrait causer des "
 "problèmes."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:623
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:635
 msgid "E-mail Settings"
 msgstr "Paramètres email"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:630
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:642
 msgid ""
 "Without a valid way to send emails users won't be able to reset their "
 "password. It is recommended to create a specific smtp2go.com account and add "
@@ -1384,75 +1418,71 @@ msgstr ""
 "réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte "
 "spécifique Mailgun.com."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:635
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:647
 msgid "Send e-mails via:"
 msgstr "Envoyer les emails via :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:643
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:655
 msgid "Select mailing method..."
 msgstr "Choisir une méthode d'envoi…"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:650
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:662
 msgid "Local MTA (default)"
 msgstr "MTA local (defaut)"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:656
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:668
 msgid "SMTP"
 msgstr "SMTP"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:662
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:674
 msgid "PHP"
 msgstr "PHP"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:672
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:684
 msgid "Sender address:"
 msgstr "Adresse de l'expéditeur:"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:684
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:696
 msgid "Path to sendmail:"
 msgstr "Chemin du binaire sendmail :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:696
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:708
 msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:705
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:717
 msgid "SMTP encryption:"
 msgstr "Encryption :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:723
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:735
 msgid "Probably TLS"
 msgstr "Probablement TLS"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:727
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:739
 msgid "SMTP Port:"
 msgstr "Port SMTP :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:735
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:747
 msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:739
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:751
 msgid "SMTP username:"
 msgstr "Nom d'utilisateur SMTP :"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:747
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:759
 msgid "SMTP password"
 msgstr "Mot de passe SMTP"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:758
-msgid "A password is set."
-msgstr "Un mot de passe existe déjà."
-
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:783
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:804
 msgid "Send a test email"
 msgstr "Envoyer un email de test"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:827
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:848
 msgid "Nothing to display"
 msgstr "Rien à montrer"
 
-#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:837
+#: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:858
 msgid "Clear all logs"
 msgstr "Supprimer tous les messages loggués"
 
@@ -1481,117 +1511,115 @@ msgstr "Retourner à la liste"
 #: /tmp/elabftw-twig-cache/ff/ffc7e1e69eea85dee163295c274c4ef3544f210d49571f049a42802dac0ea7d1.php:40
 #, php-format
 msgid "Experiment of %s"
-msgstr "Expériences pour %s"
+msgstr "Expérience de %s"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:27
-msgid "Create new"
-msgstr "Créer un nouveau"
-
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:68
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:83
 msgid "No templates found"
 msgstr "Pas de modèles"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:76
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:91
 msgid "Manage templates"
 msgstr "Gérer les modèles"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:128
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:143
 msgid "Filter status"
 msgstr "Filtrer les statuts"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:128
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:143
 msgid "Filter by type"
 msgstr "Filtrer les catégories"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:156
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:171
 msgid "Filter"
 msgstr "Filtrer"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:163
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:178
 msgid "Order by"
 msgstr "Classer par"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:184
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:199
 msgid "Rating"
 msgstr "Note"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:208
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:223
 msgid "Sort"
 msgstr "Ordre"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:225
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:240
 msgid "Order"
 msgstr "Classer par"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:230
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:245
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:254
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:269
 msgid "Sorry. I couldn't find anything :("
 msgstr "Désolé, aucun résultat pour ces critères :("
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:261
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:276
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
 msgstr ""
 "Bienvenue sur eLabFTW. Cliquez le bouton 'Créer une expérience' pour "
 "démarrer!"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:273
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:288
 msgid "result found"
 msgid_plural "results found"
 msgstr[0] "résultat trouvé"
 msgstr[1] "résultats trouvés"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:277
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:292
 msgid "Select all"
 msgstr "Sélectionner tout"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:281
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:296
 msgid "Clear selection"
 msgstr "Tout déselectionner"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:285
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:300
 msgid "Invert selection"
 msgstr "Inverser la sélection"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:291
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:306
 msgid "With selected:"
 msgstr "Avec sélection :"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:304
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:319
 msgid "Change status"
 msgstr "Changer le statut"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:310
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:325
 msgid "Change item type"
 msgstr "Changer le type d'objet"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:339
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:354
 msgid "Make Zip"
 msgstr "Faire un Zip"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:343
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:358
 msgid "Make Csv"
 msgstr "Faire un Csv"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:554
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:569
 #, php-format
 msgid "Show %s more"
 msgstr "Voir %s de plus"
 
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:558
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:573
 msgid "Show all"
 msgstr "Montrer tout"
 
-#: /tmp/elabftw-twig-cache/19/19026bab3a9e4844cee5962a5817c497bdefea4db26a30f0015ebabacbffcf42.php:22
+#: /tmp/elabftw-twig-cache/19/19026bab3a9e4844cee5962a5817c497bdefea4db26a30f0015ebabacbffcf42.php:34
 msgid "Your file is ready:"
 msgstr "Le fichier est prêt :"
 
 #: app/controllers/IdpsController.php:38 app/controllers/IdpsController.php:56
 #: app/controllers/IdpsController.php:65
-#: app/controllers/SysconfigController.php:155
+#: app/controllers/SysconfigController.php:107
+#: app/controllers/SysconfigController.php:162
 #: app/controllers/AdminController.php:59
+#: app/controllers/AdminController.php:72
 #: app/controllers/UsersController.php:73
 msgid "Configuration updated successfully."
 msgstr "Configuration mise à jour avec succès."
@@ -1600,8 +1628,8 @@ msgstr "Configuration mise à jour avec succès."
 #: app/controllers/SysconfigController.php:48
 #: app/controllers/SysconfigController.php:64
 #: app/controllers/SysconfigController.php:72
-#: app/controllers/SysconfigController.php:129
-#: app/controllers/SysconfigController.php:139
+#: app/controllers/SysconfigController.php:137
+#: app/controllers/SysconfigController.php:147
 #: app/controllers/StatusController.php:40
 #: app/controllers/StatusController.php:54
 #: app/controllers/EntityController.php:108
@@ -1617,9 +1645,9 @@ msgstr "Configuration mise à jour avec succès."
 #: app/controllers/ItemsTypesController.php:41
 #: app/controllers/ItemsTypesController.php:55
 #: app/controllers/AdminController.php:45
-#: app/controllers/AdminController.php:81
-#: app/controllers/CommentsController.php:34
-#: app/controllers/CommentsController.php:42
+#: app/controllers/AdminController.php:82
+#: app/controllers/CommentsController.php:35
+#: app/controllers/CommentsController.php:43
 #: app/controllers/SchedulerController.php:38
 #: app/controllers/SchedulerController.php:55
 #: app/controllers/SchedulerController.php:63
@@ -1638,7 +1666,7 @@ msgstr "Utilisateur promu"
 msgid "Email sent"
 msgstr "Email envoyé"
 
-#: app/controllers/SysconfigController.php:99
+#: app/controllers/SysconfigController.php:98
 msgid "Logs cleared"
 msgstr "Logs nettoyés"
 
@@ -1689,24 +1717,24 @@ msgstr "Lien supprimé avec succès"
 msgid "This experiment cannot be timestamped!"
 msgstr "Cette expérience ne peut pas être horodatée!"
 
-#: app/controllers/ExperimentsController.php:196
+#: app/controllers/ExperimentsController.php:195
 msgid "You don't have the rights to delete this experiment."
 msgstr "Vous n'avez pas les droits suffisants pour supprimer cette expérience."
 
-#: app/controllers/ExperimentsController.php:202
+#: app/controllers/ExperimentsController.php:201
 msgid "Experiment successfully deleted"
 msgstr "Expérience supprimée avec succès"
 
-#: app/controllers/LoginController.php:38
+#: app/controllers/LoginController.php:37
 msgid "Your session expired. Please retry."
 msgstr "Votre session a expiré. Merci de réessayer."
 
-#: app/controllers/LoginController.php:43
+#: app/controllers/LoginController.php:42
 #: app/controllers/RegisterController.php:40
 msgid "A mandatory field is missing!"
 msgstr "Un champs obligatoire est manquant!"
 
-#: app/controllers/LoginController.php:66
+#: app/controllers/LoginController.php:64
 msgid ""
 "Login failed. Either you mistyped your password or your account isn't "
 "activated yet."
@@ -1718,11 +1746,11 @@ msgstr ""
 msgid "Item type deleted successfully"
 msgstr "La catégorie d'item a été supprimée avec succès"
 
-#: app/controllers/ResetPasswordController.php:40
+#: app/controllers/ResetPasswordController.php:38
 msgid "Email not found in database!"
 msgstr "Cette adresse email n'est pas dans la base de données !"
 
-#: app/controllers/ResetPasswordController.php:73
+#: app/controllers/ResetPasswordController.php:71
 #, php-format
 msgid ""
 "Hi. Someone (probably you) with the IP address: %s and user agent %s "
@@ -1733,21 +1761,21 @@ msgstr ""
 "navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
 "pour réinitialiser votre mot de passe : %s"
 
-#: app/controllers/ResetPasswordController.php:78 app/models/Users.php:787
+#: app/controllers/ResetPasswordController.php:76 app/models/Users.php:787
 msgid "There was a problem sending the email! Error was logged."
 msgstr ""
 "Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
 
-#: app/controllers/ResetPasswordController.php:81
+#: app/controllers/ResetPasswordController.php:79
 msgid "Email sent. Check your INBOX."
 msgstr "Email envoyé. Consultez votre boîte de réception."
 
-#: app/controllers/ResetPasswordController.php:99 change-pass.php:40
+#: app/controllers/ResetPasswordController.php:97 change-pass.php:37
 msgid "Invalid link. Reset links are only valid for one hour."
 msgstr ""
 "Lien périmé. Les liens de réinitialisation ne sont valides que pour 1 heure."
 
-#: app/controllers/ResetPasswordController.php:108
+#: app/controllers/ResetPasswordController.php:106
 msgid "New password inserted. You can now login."
 msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
@@ -1781,7 +1809,7 @@ msgid_plural "items imported successfully."
 msgstr[0] "item importé avec succès."
 msgstr[1] "items importés avec succès."
 
-#: app/controllers/CommentsController.php:50
+#: app/controllers/CommentsController.php:51
 msgid "Comment successfully deleted"
 msgstr "Commentaire supprimé avec succès"
 
@@ -1846,11 +1874,11 @@ msgstr "Insérer dans le texte à la position du curseur"
 msgid "Please configure Timestamping in the admin panel."
 msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
 
-#: app/classes/Email.php:99
+#: app/classes/Email.php:102
 msgid "[eLabFTW] Test email"
 msgstr "[eLabFTW] Email de test"
 
-#: app/classes/Email.php:105
+#: app/classes/Email.php:108
 msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
 msgstr ""
 "Bravo, vous avez configuré eLabFTW correctement pour envoyer des emails :)"
@@ -1984,7 +2012,7 @@ msgstr ""
 "Bonjour. %s a laissé un commentaire sur votre expérience. Aller au "
 "commentaire : %s"
 
-#: app/models/Status.php:221
+#: app/models/Status.php:224
 msgid "Remove all experiments with this status before deleting this status."
 msgstr ""
 "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
@@ -2003,7 +2031,7 @@ msgstr "Afficher l'historique"
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
 
-#: app/models/ItemsTypes.php:93 team.php:39
+#: app/models/ItemsTypes.php:93 team.php:37
 msgid "Nothing to show with this id"
 msgstr "Rien à afficher avec cet ID"
 
@@ -2013,58 +2041,38 @@ msgstr ""
 "Supprimez tous les items de la base de données de cette catégorie avant de "
 "supprimer cette catégorie."
 
-#: profile.php:21
+#: profile.php:20
 msgid "Profile"
 msgstr "Profil"
 
-#: database.php:52 experiments.php:57
+#: database.php:52 experiments.php:55
 msgid "<strong>This item is locked.</strong> You cannot edit it."
 msgstr "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer."
 
-#: login.php:46 login.php:65
+#: login.php:54
 msgid "You cannot login now because of too many failed login attempts."
 msgstr ""
 "Vous ne pouvez pas vous connecter en raison d'un trop grand nombre d'échec "
 "de connection."
 
-#: login.php:52
-msgid "Number of login attempt left before being banned for"
-msgstr "Nombre d'essais avant d'être banni pour"
-
-#: login.php:53
-msgid "minutes:"
-msgstr "minutes :"
-
-#: revisions.php:21
+#: revisions.php:20
 msgid "Revisions"
 msgstr "Révisions"
 
-#: revisions.php:44
-msgid "Go back"
-msgstr "Revenir en arrière"
-
-#: revisions.php:46
-msgid "Saved on:"
-msgstr "Enregistré le :"
-
-#: revisions.php:48
-msgid "Restore"
-msgstr "Restaurer"
-
-#: register.php:21
+#: register.php:20
 msgid "Register"
 msgstr "Enregistrement"
 
-#: register.php:27
+#: register.php:26
 #, php-format
 msgid "Please %slogout%s before you register another account."
 msgstr "%sDéconnectez-vous%s avant d'enregistrer un autre compte."
 
-#: register.php:36
+#: register.php:34
 msgid "No local account creation is allowed!"
 msgstr "La création de compte local est interdite!"
 
-#: ucp.php:21
+#: ucp.php:20
 msgid "User Control Panel"
 msgstr "Panneau de contrôle utilisateur"
 
@@ -2072,13 +2080,26 @@ msgstr "Panneau de contrôle utilisateur"
 msgid "Export"
 msgstr "Exporter"
 
-#: sysconfig.php:23
+#: sysconfig.php:21
 msgid "eLabFTW Configuration"
 msgstr "Configuration d'eLabFTW"
 
-#: change-pass.php:23
+#: change-pass.php:22
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
+
+# Feminine form
+#~ msgid "Create New"
+#~ msgstr "Créer"
+
+#~ msgid "Add template"
+#~ msgstr "Ajouter un modèle"
+
+#~ msgid "Edit template"
+#~ msgstr "Éditer un modèle"
+
+#~ msgid "minutes:"
+#~ msgstr "minutes :"
 
 #~ msgid "Show canvas"
 #~ msgstr "Afficher le canevas"

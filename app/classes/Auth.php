@@ -11,8 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provide methods to login a user
@@ -25,6 +24,9 @@ class Auth
     /** @var Db $Db SQL Database */
     protected $Db;
 
+    /** @var Request $Request current request with Session */
+    private $Request;
+
     /** @var array $userData All the user data for a user */
     private $userData;
 
@@ -34,10 +36,12 @@ class Auth
     /**
      * Just give me the Db object and I'm good to go
      *
+     * @param Request $request
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
         $this->Db = Db::getConnection();
+        $this->Request = $request;
     }
 
     /**
@@ -111,10 +115,9 @@ class Auth
             }
         }
 
-        $Session = new Session();
-        $Session->migrate();
-        $Session->set('auth', 1);
-        $Session->set('userid', $this->userData['userid']);
+        $this->Request->getSession()->migrate(true);
+        $this->Request->getSession()->set('auth', 1);
+        $this->Request->getSession()->set('userid', $this->userData['userid']);
 
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
@@ -123,8 +126,8 @@ class Auth
         $perm_req->execute();
         $group = $perm_req->fetch(PDO::FETCH_ASSOC);
 
-        $Session->set('is_admin', $group['is_admin']);
-        $Session->set('is_sysadmin', $group['is_sysadmin']);
+        $this->Request->getSession()->set('is_admin', $group['is_admin']);
+        $this->Request->getSession()->set('is_sysadmin', $group['is_sysadmin']);
         // create a token
         $this->token = md5(uniqid(rand(), true));
 
@@ -171,6 +174,34 @@ class Auth
     }
 
     /**
+     * Login with the cookie
+     *
+     * @return bool true if token in cookie is found in database
+     */
+    private function loginWithCookie()
+    {
+        // If user has a cookie; check cookie is valid
+        // the token is a md5 sum: 32 char
+        if (!$this->Request->cookies->has('token') || strlen($this->Request->cookies->get('token')) != 32) {
+            return false;
+        }
+        $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+        // Now compare current cookie with the token from SQL
+        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':token', $token);
+        $req->execute();
+
+
+        if ($req->rowCount() === 1) {
+            $this->userData = $req->fetch();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Login with SAML
      *
      * @param string $email
@@ -186,28 +217,42 @@ class Auth
     }
 
     /**
-     * We are not auth, but maybe we have a cookie, try to login with that
+     * Check authentication of current user
+     *     ____          _
+     *    / ___|___ _ __| |__   ___ _ __ _   _ ___
+     *   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|
+     *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
+     *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
      *
-     * @param Request $request
-     * @return bool True if we have a valid cookie and it is the same token as in the DB
+     * @return bool True if we are authentified (or if we don't need to be)
      */
-    public function loginWithCookie($request)
+    public function isAuth()
     {
-        // the token is a md5 sum
-        if (!$request->cookies->has('token') || strlen($request->cookies->get('token')) != 32) {
-            return false;
+        // pages where you don't need to be logged in
+        // only the script name, not the path because we use basename() on it
+        $nologinArr = array(
+            'change-pass.php',
+            'index.php',
+            'login.php',
+            'LoginController.php',
+            'metadata.php',
+            'register.php',
+            'RegisterController.php',
+            'ResetPasswordController.php'
+        );
+
+        if (in_array(basename($this->Request->getScriptName()), $nologinArr)) {
+            return true;
         }
-        // If user has a cookie; check cookie is valid
-        $token = $request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
-        // Get token from SQL
-        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-        $req->execute();
 
-        $this->userData = $req->fetch();
+        // if we are already logged in with the session, skip everything
+        if ($this->Request->getSession()->has('auth')) {
+            return true;
+        }
 
-        if ($req->rowCount() === 1) {
+        // now try to login with the cookie
+        if ($this->loginWithCookie()) {
+            // successful login thanks to our cookie friend
             $this->populateSession();
             return true;
         }

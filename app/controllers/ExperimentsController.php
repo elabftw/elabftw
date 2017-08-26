@@ -161,7 +161,7 @@ try {
             $Response = new JsonResponse();
             $Entity->canOrExplode('write');
             if ($Entity->isTimestampable()) {
-                $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Users->userData['team']), $Entity);
+                $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Users), $Entity);
                 if ($TrustedTimestamps->timeStamp()) {
                     $Response->setData(array(
                         'res' => true
@@ -174,8 +174,7 @@ try {
                 ));
             }
         } catch (Exception $e) {
-            $Logs = new Logs();
-            $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+            $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
             $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
@@ -188,7 +187,7 @@ try {
         $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
-        $Teams = new Teams($Entity->entityData['team']);
+        $Teams = new Teams($Users);
 
         if (($Teams->read('deletable_xp') == '0') && !$Session->get('is_admin')) {
             $Response->setData(array(
@@ -213,7 +212,7 @@ try {
     // DECODE ASN1 TOKEN
     if ($Request->request->has('asn1') && is_readable(ELAB_ROOT . "uploads/" . $Request->request->get('asn1'))) {
         $Response = new JsonResponse();
-        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Users->userData['team']), $Entity);
+        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($Users), $Entity);
 
         $Response->setData(array(
             'res' => true,
@@ -224,8 +223,7 @@ try {
     $Response->send();
 
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     $Session->getFlashBag()->add('ko', Tools::error());
     header('Location: ../../experiments.php');
 }

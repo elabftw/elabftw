@@ -18,56 +18,66 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
+require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+
 try {
-    require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
-
-    // create Request object
-    $Request = Request::createFromGlobals();
-
-    $Session = new Session();
-    if (!$Request->hasPreviousSession()) {
-        $Session->start();
-    }
-
-    // add check for php version here also
+    // CHECK PHP VERSION
     if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
         $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
         throw new Exception($message);
     }
 
-    // load the config file with info to connect to DB
+    // CREATE REQUEST OBJECT
+    $Request = Request::createFromGlobals();
+
+    // CREATE SESSION
+    $Session = new Session();
+    $Session->start();
+    // and attach it to Request
+    $Request->setSession($Session);
+
+    // LOAD CONFIG.PHP
     $configFilePath = dirname(dirname(__FILE__)) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
-        header('Location: install');
+        $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
+        header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }
-
     require_once $configFilePath;
+    // END LOAD CONFIG.PHP
+
+    // Methods for login
+    $Auth = new Auth($Request);
 
     // the config table from mysql
     $Config = new Config();
-
-    // Methods for login
-    $Auth = new Auth();
 
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
         $Update = new Update($Config);
     } catch (Exception $e) {
-        header('Location: install');
+        $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
+        header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }
 
-    // i18n (gettext)
-    if ($Session->has('auth')) {
-        $Users = new Users($Session->get('userid'), $Auth, $Config);
+    if ($Request->getSession()->has('auth')) {
+        // generate full Users object with current userid
+        $Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
+        // set lang based on user pref
         $locale = $Users->userData['lang'] . '.utf8';
     } else {
         $Users = new Users();
-        $locale = $Update->Config->configArr['lang'] . '.utf8';
+        // load server configured lang if logged out
+        $locale = $Config->configArr['lang'] . '.utf8';
     }
+
+    // INIT APP OBJECT
+    $App = new App($Request, $Config, new Logs(), $Users);
+
+    // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");
     $res = setlocale(LC_ALL, $locale);
@@ -75,69 +85,30 @@ try {
     textdomain($domain);
     // END i18n
 
-    // TWIG
-    $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
-    $cache = ELAB_ROOT . 'uploads/tmp';
-    $options = array();
-
-    // enable cache if not in debug (dev) mode
-    if (!$Update->Config->configArr['debug']) {
-        $options = array('cache' => $cache);
-    }
-    $Twig = new \Twig_Environment($loader, $options);
-
-    // custom twig filters
-    $filterOptions = array('is_safe' => array('html'));
-    $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-    $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-    $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-    $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
-
-    $Twig->addFilter($msgFilter);
-    $Twig->addFilter($dateFilter);
-    $Twig->addFilter($mdFilter);
-    $Twig->addFilter($starsFilter);
-
-    // i18n for twig
-    $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
-    // END TWIG
-
     // UPDATE SQL SCHEMA
-    if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
-        try {
-            // run the update script if we have the wrong schema version
-            foreach ($Update->runUpdateScript() as $msg) {
-                $Session->getFlashBag()->add('ok', $msg);
+    try {
+        $messages = $Update->runUpdateScript();
+        if (is_array($messages)) {
+            foreach ($messages as $msg) {
+                $App->Session->getFlashBag()->add('ok', $msg);
             }
-        } catch (Exception $e) {
-            $Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
         }
+    } catch (Exception $e) {
+        $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
     }
 
-    // pages where you don't need to be logged in
-    // only the script name, not the path because we use basename() on it
-    $nologinArr = array(
-        'change-pass.php',
-        'index.php',
-        'login.php',
-        'LoginController.php',
-        'metadata.php',
-        'register.php',
-        'RegisterController.php',
-        'ResetPasswordController.php'
-    );
+    // CERBERUS
+    if (!$Auth->isAuth()) {
+        // maybe we clicked an email link and we want to be redirected to the page upon successful login
+        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+        setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
-    if (!$Session->has('auth') && !in_array(basename($Request->getScriptName()), $nologinArr)) {
-        // try to login with the cookie
-        if (!$Auth->loginWithCookie($Request)) {
-            // maybe we clicked an email link and we want to be redirected to the page upon successful login
-            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
-
-            header('location: app/logout.php');
-            exit;
-        }
+        $url = 'https://' . $Request->getHttpHost() . '/app/logout.php';
+        header('Location: ' . $url);
+        exit;
     }
+
 } catch (Exception $e) {
-    echo $e->getMessage();
+    // if something went wrong here it should stop whatever is after
+    die($e->getMessage());
 }

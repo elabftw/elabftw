@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name='referrer' content='origin'>
     <link rel="icon" type="image/ico" href="app/img/favicon.ico" />
-    <title>{{ pageTitle }}</title>
+    <title>{{ block('title') }}</title>
     <!-- see Gruntfile.js to see what gets inside these files -->
     <!-- CSS -->
     <link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
@@ -32,7 +32,7 @@
     <div class='container-fluid'>
 
     <div class="navbar-header">
-        {% if Session.has('auth') %}
+        {% if App.Session.has('auth') %}
         <!-- hamburger menu -->
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
@@ -45,33 +45,33 @@
         <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
     </div>
 
-    {% if Session.has('auth') %}
+    {% if App.Session.has('auth') %}
     <!-- everything in there will be part of the burger -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-                <li {{ selectedMenu == 'Experiments' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName == '/experiments.php' ? "class='active'" }}>
                     <a href='experiments.php?mode=show'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
                 </li>
-                <li {{ selectedMenu == 'Database' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName == '/database.php' ? "class='active'" }}>
                     <a href='database.php?mode=show'>{{ 'Database'|trans }}</a>
                 </li>
 
-                <li {{ selectedMenu == 'Team' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName == '/team.php' ? "class='active'" }}>
                     <a href='team.php'>{{ 'Team'|trans }}</a>
                 </li>
 
-                <li {{ selectedMenu == 'Search' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName == '/search.php' ? "class='active'" }}>
                     <a href='search.php'>{{ 'Search'|trans }}</a>
                 </li>
 
                 <li>
-                    <a href='{{ teamConfigArr.link_href }}' target='_blank'>{{ teamConfigArr.link_name }}</a>
+                    <a href='{{ App.teamConfigArr.link_href }}' target='_blank'>{{ App.teamConfigArr.link_name }}</a>
                 </li>
         </ul>
 
-            <form class="navbar-form navbar-right" id='big_search' method='get' action='{{ actionTarget }}'>
+            <form class="navbar-form navbar-right" id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
                 <div class="form-group">
-                    <input id='big_search_input' class="form-control" type='search' name='q' size='50' value='{{ getQ }}' />
+                    <input id='big_search_input' class="form-control" type='search' name='q' size='50' value='{{ App.Request.query.filter('q', null, FILTER_SANITIZE_STRING) }}' />
                 </div>
             </form>
         </div>
@@ -80,9 +80,9 @@
 </nav>
 
 <div id='real_container'>
-    {% if Session.has('auth') %}
+    {% if App.Session.has('auth') %}
     <div class="user-nav">
-        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>My Profile</span> {{ Users.userData.firstname }}</a><br>
+        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>{{ 'My Profile'|trans }}</span> {{ App.Users.userData.firstname }}</a><br>
         <a class="elab-tooltip" href='ucp.php'><span>{{ 'Settings'|trans }}</span><img src='app/img/settings.png' alt='{{ 'Settings'|trans }}' /></a> |
         <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>{{ 'Help'|trans }}</span>?</strong></a> |
         <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><img src='app/img/logout.png' alt='{{ 'Logout'|trans }}' /></a>
@@ -131,4 +131,12 @@
     </div>
 </noscript>
 <!-- TITLE -->
-<h2>{{ pageTitle }}</h2>
+<h2>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
+
+<!-- INFO BOX (FLASH MESSAGES) -->
+{% for ok in App.ok %}
+    {{ ok|msg('ok') }}
+{% endfor %}
+{% for ko in App.ko %}
+    {{ ko|msg('ko') }}
+{% endfor %}

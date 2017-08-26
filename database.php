@@ -17,12 +17,10 @@ use Exception;
  * Entry point for database things
  *
  */
-try {
-    require_once 'app/init.inc.php';
-    $pageTitle = _('Database');
-    $selectedMenu = 'Database';
-    require_once 'app/head.inc.php';
+require_once 'app/init.inc.php';
+$App->pageTitle = _('Database');
 
+try {
     $Entity = new Database($Users);
 
     // VIEW
@@ -34,11 +32,13 @@ try {
         $Entity->canOrExplode('read');
         $UploadsView = new UploadsView($Entity->Uploads);
         // the mode parameter is for the uploads tpl
-        echo $Twig->render('view.html', array(
+        $template = 'view.html';
+
+        $renderArr = array(
             'Entity' => $Entity,
             'Uv' => $UploadsView,
             'mode' => 'view'
-        ));
+        );
 
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {
@@ -56,14 +56,16 @@ try {
         $Revisions = new Revisions($Entity);
         $UploadsView = new UploadsView($Entity->Uploads);
 
-        echo $Twig->render('edit.html', array(
+        $template = 'edit.html';
+
+        $renderArr = array(
             'Entity' => $Entity,
             'Categories' => $ItemsTypes,
             'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'mode' => 'edit',
             'maxUploadSize' => Tools::returnMaxUploadSize()
-        ));
+        );
 
     // DEFAULT MODE IS SHOW
     } else {
@@ -137,15 +139,18 @@ try {
 
         $itemsArr = $Entity->read();
 
-        echo $Twig->render('show.html', array(
+        $template = 'show.html';
+
+        $renderArr = array(
             'Entity' => $Entity,
             'Request' => $Request,
             'categoryArr' => $categoryArr,
             'itemsArr' => $itemsArr
-        ));
+        );
     }
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 }
+
+echo $App->render($template, $renderArr);

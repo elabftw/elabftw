@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block body %}
 <script src="app/js/tinymce-dropzone.min.js"></script>
 
 <menu>
@@ -160,14 +163,14 @@
             <div class='col-md-6'>
                 <h4>{{ 'Modify your personal informations'|trans }}</h4>
                 <label class='block' for='currpass'>{{ 'Enter your password to edit infos.'|trans }}</label>
-                <input id='currpass' name="currpass" type="password" required />
+                <input id='currpass' name="currpass" type="password" pattern=".{8,}" required />
             </div>
             <div class='col-md-6'>
                 <h4>{{ 'Modify your password'|trans }}</h4>
                 <label class='block' for='newpass'>{{ 'New password'|trans }}</label>
-                <input name="newpass" type="password" />
+                <input name="newpass" type="password" pattern=".{8,}" />
                 <label class='block' for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-                <input name="cnewpass" type="password" />
+                <input name="cnewpass" type="password" pattern=".{8,}" />
             </div>
         </div>
 
@@ -229,7 +232,7 @@
 <div class='box new-tpl-box'>
     <h3>{{ 'Experiments Templates'|trans }}</h3>
     <ul class='nav nav-pills' role='tablist'>
-        <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create New'|trans }}</li>
+        <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
             <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name }}</li>
         {% endfor %}
@@ -246,7 +249,7 @@
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
             <div class='center'>
-                <button type="submit" name="Submit" class='button'>{{ 'Add template'|trans }}</button>
+                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
             </div>
         </form>
     </div>
@@ -285,7 +288,7 @@
                 <label class='block'>{{ 'Template content'|trans }}</label>
                 <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
                 <div class='center'>
-                    <button type='submit' name='Submit' class='button'>{{ 'Edit template'|trans }}</button>
+                    <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
                 </div>
             </form>
         </div>
@@ -299,4 +302,5 @@
 <script src='app/js/tabs.min.js'></script>
 <div id='language' data-lang='{{ Users.userData.lang }}'></div>
 <div id='entityInfos' data-confirm="{{ 'Delete this?'|trans }}"></div>
-<script src='app/js/ucp.js'></script>
+<script src='app/js/ucp.min.js'></script>
+{% endblock body %}

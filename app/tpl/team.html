@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block body %}
 <script src='app/js/scheduler.min.js'></script>
 
 <menu>
@@ -47,7 +50,7 @@
             <th>{{ 'Website'|trans }}</th>
             <th>{{ 'Skype'|trans }}</th>
         </tr>
-        {% for user in Users.readAllFromTeam %}
+        {% for user in App.Users.readAllFromTeam %}
         <tr>
             <td><a href='mailto:{{ user.email }}'>
                     <span
@@ -74,3 +77,4 @@
     data-item="{{ selectedItem }}"></div>
 <script src='app/js/tabs.min.js'></script>
 <script src='app/js/team.min.js'></script>
+{% endblock body %}

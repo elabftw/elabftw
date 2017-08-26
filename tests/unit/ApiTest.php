@@ -15,7 +15,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     {
         $Api = new Api(new Experiments($this->Users, null));
         $content = $Api->createExperiment();
-        $this->assertTrue((bool) \Elabftw\Elabftw\Tools::checkId($content['id']));
+        $this->assertTrue((bool) Tools::checkId($content['id']));
     }
 
     public function testGetEntity()

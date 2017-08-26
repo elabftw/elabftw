@@ -7,7 +7,8 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Teams= new Teams(1);
+        $Users = new Users(1);
+        $this->Teams= new Teams($Users);
     }
 
     public function testCreate()

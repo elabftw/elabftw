@@ -16,9 +16,7 @@ namespace Elabftw\Elabftw;
  *
  */
 require_once 'app/init.inc.php';
-$pageTitle = _('Search');
-$selectedMenu = 'Search';
-require_once 'app/head.inc.php';
+$App->pageTitle = _('Search');
 
 $Experiments = new Experiments($Users);
 $Database = new Database($Users);
@@ -102,7 +100,8 @@ if (isset($_GET['to']) && !empty($_GET['to'])) {
 }
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
-echo $Twig->render('search.html', array(
+$template = 'search.html';
+$renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
@@ -114,7 +113,8 @@ echo $Twig->render('search.html', array(
     'body' => $body,
     'andor' => $andor,
     'tagsArr' => $tagsArr
-));
+);
+echo $App->render($template, $renderArr);
 
 /**
  * Here the search begins
@@ -257,9 +257,6 @@ if (isset($_GET)) {
             }
         }
 
-        // we are on the search page, so we don't want any "click here to create your first..."
-        $searchType = 'something';
-
         // common filters for XP and DB
         $Entity->bodyFilter = $sqlBody;
         $Entity->dateFilter = $sqlDate;
@@ -269,15 +266,16 @@ if (isset($_GET)) {
 
         $itemsArr = $Entity->read();
 
-        // DISPLAY RESULTS
-        echo $Twig->render('show.html', array(
+        // RENDER THE SECOND PART OF THE PAGE
+        // with a subpart of show.html (no create new/filter menu, and no head)
+        echo $App->render('show.html', array(
             'Entity' => $Entity,
             'itemsArr' => $itemsArr,
             'categoryArr' => $categoryArr,
-            'searchType' => $searchType,
+            // we are on the search page, so we don't want any "click here to create your first..."
+            'searchType' => 'something',
+            // generate light show page
             'searchPage' => true
         ));
     }
 }
-
-require_once 'app/footer.inc.php';

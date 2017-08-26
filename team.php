@@ -16,14 +16,12 @@ use Exception;
  * The team page
  *
  */
-try {
-    require_once 'app/init.inc.php';
-    $pageTitle = _('Team');
-    $selectedMenu = 'Team';
-    require_once 'app/head.inc.php';
+require_once 'app/init.inc.php';
+$App->pageTitle = _('Team');
 
-    $TeamsView = new TeamsView(new Teams($Users->userData['team']));
-    $Database = new Database($Users);
+try {
+    $TeamsView = new TeamsView(new Teams($App->Users));
+    $Database = new Database($App->Users);
     // we only want the bookable type of items
     $Database->bookableFilter = " AND bookable = 1";
     $itemsArr = $Database->read();
@@ -40,17 +38,18 @@ try {
         }
     }
 
-    echo $Twig->render('team.html', array(
-        'Users' => $Users,
+    $template = 'team.html';
+    $renderArr = array(
         'TeamsView' => $TeamsView,
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
         'selectedItem' => $selectedItem,
-        'lang' => Tools::getCalendarLang($Users->userData['lang'])
-    ));
+        'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
+    );
 
 } catch (Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko');
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 }
+
+echo $App->render($template, $renderArr);

@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
 {% include('view-edit.html') %}
 
 {% if Entity.type == 'experiments' %}
@@ -174,4 +178,6 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
+
 <script src='app/js/view.min.js'></script>
+{% endblock body %}

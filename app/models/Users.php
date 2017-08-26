@@ -104,10 +104,8 @@ class Users
             throw new Exception($error);
         }
 
-        // Put firstname lowercase and first letter uppercase
-        $firstname = Tools::purifyFirstname($firstname);
-        // lastname is uppercase
-        $lastname = Tools::purifyLastname($lastname);
+        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
@@ -163,7 +161,9 @@ class Users
         }
 
         if ($validated == '0') {
-            $this->alertAdmin($team);
+            $Email = new Email($this->Config);
+            $Email->alertAdmin($team);
+            // set a flag to show correct message to user
             $this->needValidation = true;
         }
 
@@ -202,42 +202,6 @@ class Users
             return 2;
         }
         return 4;
-    }
-
-    /**
-     * Send an email to the admin of a team
-     *
-     * @param int $team
-     * @throws Exception
-     */
-    private function alertAdmin($team)
-    {
-        $Email = new Email($this->Config);
-
-        $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/admin.php';
-
-        // Create the message
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
-        // Give the message a subject
-        ->setSubject(_('[eLabFTW] New user registered'))
-        // Set the From address with an associative array
-        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To
-        ->setTo($this->getAdminEmail($team))
-        // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
-        // generate Swift_Mailer instance
-        $mailer = $Email->getMailer();
-        // SEND EMAIL
-        try {
-            $mailer->send($message);
-        } catch (Exception $e) {
-            $Logs = new Logs();
-            $Logs->create('Error', 'smtp', $e->getMessage());
-            throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
-        }
     }
 
     /**
@@ -289,34 +253,6 @@ class Users
     }
 
     /**
-     * Fetch the email(s) of the admin(s) for a team
-     *
-     * @param int $team
-     * @return array
-     */
-    private function getAdminEmail($team)
-    {
-        // array for storing email adresses of admin(s)
-        $arr = array();
-
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team);
-        $req->execute();
-
-        while ($email = $req->fetchColumn()) {
-            $arr[] = $email;
-        }
-
-        // if we have only one admin, we need to have an associative array
-        if (count($arr) === 1) {
-            return array($arr[0] => 'Admin eLabFTW');
-        }
-
-        return $arr;
-    }
-
-    /**
      * Get info about a user
      *
      * @param int $userid
@@ -343,7 +279,7 @@ class Users
      */
     public function readFromEmail($email)
     {
-        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE email = :email";
+        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users WHERE email = :email";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
@@ -440,11 +376,8 @@ class Users
             throw new Exception(_('The id parameter is not valid!'));
         }
 
-        // Put everything lowercase and first letter uppercase
-        $firstname = Tools::purifyFirstname($params['firstname']);
-        // Lastname in uppercase
-        $lastname = Tools::purifyLastname($params['lastname']);
-
+        $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
+        $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($params['validated'] == 1) {
@@ -633,7 +566,7 @@ class Users
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
-        if (strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
+        if (strlen($params['newpass']) >= $this->Auth::MIN_PASSWORD_LENGTH) {
             if ($params['newpass'] != $params['cnewpass']) {
                 throw new Exception(_('The passwords do not match!'));
             }
@@ -641,9 +574,8 @@ class Users
             $this->updatePassword($params['newpass']);
         }
 
-        $params['firstname'] = Tools::purifyFirstname($params['firstname']);
-        $params['lastname'] = Tools::purifyLastname($params['lastname']);
-
+        $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
+        $params['lastname'] = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {
@@ -691,7 +623,7 @@ class Users
      * @throws Exception if invalid character length
      * @return bool True if password is updated
      */
-    public function updatePassword($password, $userid = null)
+    private function updatePassword($password, $userid = null)
     {
 
         if (is_null($userid)) {
@@ -699,7 +631,7 @@ class Users
         }
 
         if (!$this->Auth->checkPasswordLength($password)) {
-            $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+            $error = sprintf(_('Password must contain at least %s characters.'), $this->Auth::MIN_PASSWORD_LENGTH);
             throw new Exception($error);
         }
 
@@ -760,32 +692,9 @@ class Users
             $msg = Tools::error();
         }
 
+        // send an email to the user
         $Email = new Email($this->Config);
-
-        // now let's get the URL so we can have a nice link in the email
-        $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/login.php';
-        // we send an email to each validated new user
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        // Create the message
-        $message = Swift_Message::newInstance()
-        // Give the message a subject
-        // no i18n here
-        ->setSubject('[eLabFTW] Account validated')
-        // Set the From address with an associative array
-        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($this->userData['email'] => 'eLabFTW'))
-        // Give it a body
-        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ' . $url . $footer);
-        // generate Swift_Mailer instance
-        $mailer = $Email->getMailer();
-        // now we try to send the email
-        try {
-            $mailer->send($message);
-        } catch (Exception $e) {
-            throw new Exception(_('There was a problem sending the email! Error was logged.'));
-        }
+        $Email->alertUserIsValidated($this->userData['email']);
 
         return $msg;
     }
@@ -803,10 +712,11 @@ class Users
         if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
-        // check the user is in our team and also get the userid
-        $useridToDelete = $this->emailInTeam($email, $this->userData['team']);
 
-        if (Tools::checkId($useridToDelete) === false) {
+        // load data on the user to delete
+        $userToDelete = $this->readFromEmail($email);
+        // check we are in same team
+        if ($this->userData['team'] !== $userToDelete['team']) {
             throw new Exception(_('No user with this email or user not in your team'));
         }
 
@@ -814,24 +724,24 @@ class Users
 
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         // get all filenames
         $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
-            'userid' => $useridToDelete,
+            'userid' => $userToDelete['userid'],
             'type' => 'experiments'
         ));
         while ($uploads = $req->fetch()) {
@@ -842,28 +752,10 @@ class Users
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         return !in_array(0, $result);
-    }
-
-    /**
-     * Check if a user is in our team
-     *
-     * @param string $email
-     * @param int $team
-     * @return string|null
-     */
-    private function emailInTeam($email, $team)
-    {
-        $sql = "SELECT userid FROM users WHERE email = :email AND team = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $req->bindParam(':team', $team);
-        $req->execute();
-
-        return $req->fetchColumn();
     }
 
     /**

@@ -18,12 +18,10 @@ use InvalidArgumentException;
  * Entry point for all experiment stuff
  *
  */
-try {
-    require_once 'app/init.inc.php';
-    $pageTitle = ngettext('Experiment', 'Experiments', 2);
-    $selectedMenu = 'Experiments';
-    require_once 'app/head.inc.php';
+require_once 'app/init.inc.php';
+$App->pageTitle = ngettext('Experiment', 'Experiments', 2);
 
+try {
     $Entity = new Experiments($Users);
     $EntityView = new ExperimentsView($Entity);
     $Status = new Status($Entity->Users);
@@ -37,14 +35,14 @@ try {
         // UPLOADS
         $UploadsView = new UploadsView($Entity->Uploads);
 
-        // RENDER
-        echo $Twig->render('view.html', array(
-            'Ev' => $EntityView,
+        $template = 'view.html';
+
+        $renderArr = array(
             'Entity' => $Entity,
             'Uv' => $UploadsView,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'mode' => 'view'
-        ));
+        );
 
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {
@@ -62,7 +60,9 @@ try {
         $UploadsView = new UploadsView($Entity->Uploads);
         $TeamGroups = new TeamGroups($Entity->Users);
 
-        echo $Twig->render('edit.html', array(
+        $template = 'edit.html';
+
+        $renderArr = array(
             'Entity' => $Entity,
             'Uv' => $UploadsView,
             'mode' => 'edit',
@@ -71,7 +71,7 @@ try {
             'TeamGroups' => $TeamGroups,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'maxUploadSize' => Tools::returnMaxUploadSize()
-        ));
+        );
 
     // DEFAULT MODE IS SHOW
     } else {
@@ -162,20 +162,24 @@ try {
 
             $itemsArr = $Entity->read();
         }
-        echo $Twig->render('show.html', array(
+
+        $template = 'show.html';
+
+        $renderArr = array(
             'Entity' => $Entity,
-            'Request' => $Request,
+            'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'itemsArr' => $itemsArr,
             'searchType' => $searchType,
             'categoryArr' => $categoryArr,
             'templatesArr' => $templatesArr,
             'tag' => $tag,
             'query' => $query
-        ));
+        );
     }
 
 } catch (InvalidArgumentException $e) {
-    echo Tools::displayMessage('Invalid argument supplied: ' . $e->getMessage(), 'ko');
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
 
 } catch (Exception $e) {
     $debug = false;
@@ -183,7 +187,8 @@ try {
     if ($debug) {
         $message .= ' ' . $e->getFile() . '(' . $e->getLine() . ')';
     }
-    echo Tools::displayMessage($message, 'ko');
-} finally {
-    require_once 'app/footer.inc.php';
+    $template = 'error.html';
+    $renderArr = array('error' => $message);
 }
+
+echo $App->render($template, $renderArr);

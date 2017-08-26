@@ -30,7 +30,7 @@ try {
     $res = false;
     $msg = Tools::error();
 
-    $Teams = new Teams();
+    $Teams = new Teams($Users);
     $Response = new JsonResponse();
 
     // PROMOTE SYSADMIN
@@ -93,11 +93,19 @@ try {
 
     // DESTROY LOGS
     if ($Request->request->has('logsDestroy')) {
-        $Logs = new Logs();
-        if ($Logs->destroyAll()) {
+        if ($App->Logs->destroyAll()) {
             $res = true;
             $msg = _('Logs cleared');
         }
+    }
+
+    // CLEAR SMTP PASS
+    if ($Request->query->get('clearSmtppass')) {
+        if (!$Config->update(array('smtp_password' => null))) {
+            throw new Exception('Error clearing the SMTP password');
+        }
+        $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+        $Response = new RedirectResponse("../../sysconfig.php?tab=6");
     }
 
     // TAB 3 to 6 + 8
@@ -146,8 +154,7 @@ try {
     ));
 
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     // we can show error message to sysadmin
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {

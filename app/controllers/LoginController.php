@@ -21,8 +21,7 @@ try {
     $location = '../../login.php';
 
     $FormKey = new FormKey($Session);
-    $Auth = new Auth();
-    $Saml = new Saml(new Config, new Idps);
+    $Saml = new Saml($Config, new Idps);
 
     if ($Request->request->has('idp_id')) { // login with SAML
         $idpId = $Request->request->get('idp_id');
@@ -58,8 +57,7 @@ try {
             }
         } else {
             // log the attempt if the login failed
-            $Logs = new Logs();
-            $Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
+            $App->Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
             // inform the user
             $Session->getFlashBag()->add(
                 'ko',

@@ -12,10 +12,11 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 
+require_once '../app/init.inc.php';
+
 try {
     // we disable errors to avoid having notice and warning polluting our file
     error_reporting(E_ERROR);
-    require_once '../app/init.inc.php';
 
     // Check for LONG_NAME
     if (!isset($_GET['f']) || empty($_GET['f'])) {
@@ -103,7 +104,6 @@ try {
     }
 
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     header('Location: ../experiments.php');
 }

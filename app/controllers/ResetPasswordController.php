@@ -18,10 +18,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 try {
     require_once '../../app/init.inc.php';
-    $Config = new Config();
     $Email = new Email($Config);
     $Users = new Users(null, $Auth, $Config);
-    $Logs = new Logs();
 
     if ($Request->request->has('email')) {
 
@@ -104,14 +102,13 @@ try {
             throw new Exception('Error updating password');
         }
 
-        $Logs->create('Info', $Users->userData['email'], 'Password was changed for this user.');
+        $App->Logs->create('Info', $Users->userData['email'], 'Password was changed for this user.');
         $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 
 } catch (Exception $e) {
     // log the error
-    $Logs = new Logs();
-    $Logs->create('Error', $Request->server->get('REMOTE_ADDR'), $e->getMessage());
+    $App->Logs->create('Error', $Request->server->get('REMOTE_ADDR'), $e->getMessage());
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     $Response = new RedirectResponse("../../login.php");

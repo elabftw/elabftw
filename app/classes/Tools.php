@@ -203,28 +203,6 @@ class Tools
     }
 
     /**
-     * Put firstname lowercase and first letter uppercase
-     *
-     * @param string $firstname
-     * @return string
-     */
-    public static function purifyFirstname($firstname)
-    {
-        return ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
-    }
-
-    /**
-     * Put lastname in capital letters
-     *
-     * @param string $lastname
-     * @return string
-     */
-    public static function purifyLastname($lastname)
-    {
-        return strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
-    }
-
-    /**
      * Get the extension of a file.
      *
      * @param string $filename path of the file

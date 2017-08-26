@@ -24,11 +24,13 @@ $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessa
 $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
 $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
 $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
+$bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
 
 $Twig->addFilter($msgFilter);
 $Twig->addFilter($dateFilter);
 $Twig->addFilter($mdFilter);
 $Twig->addFilter($starsFilter);
+$Twig->addFilter($bytesFilter);
 $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // iterate over all your templates

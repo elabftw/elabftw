@@ -18,7 +18,7 @@ use Exception;
  */
 
 require_once 'app/init.inc.php';
-$pageTitle = _('Export');
+$App->pageTitle = _('Export');
 
 try {
     if ($Request->query->get('type') === 'experiments') {
@@ -53,15 +53,17 @@ try {
         $filesize = Tools::formatBytes(filesize($Make->filePath));
         require_once 'app/head.inc.php';
 
-        echo $Twig->render('make.html', array(
+        $template = 'make.html';
+        $renderArr = array(
             'what' => $Request->query->get('what'),
             'Make' => $Make,
             'filesize' => $filesize
-        ));
-        require_once 'app/footer.inc.php';
+        );
+        echo $App->render($template, $renderArr);
     }
 
 } catch (Exception $e) {
-    require_once 'app/head.inc.php';
-    echo Tools::displayMessage($e->getMessage(), 'ko');
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    echo $App->render($template, $renderArr);
 }

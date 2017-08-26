@@ -1,5 +1,8 @@
+{% extends 'base.html' %}
+
+{% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
-{% if unvalidatedUsersArr|length > 0 and (Config.configArr.mail_from != 'notconfigured@example.com') %}
+{% if unvalidatedUsersArr|length > 0 and (App.Config.configArr.mail_from != 'notconfigured@example.com') %}
     <form method='post' action='app/controllers/UsersController.php'>
         <input type='hidden' name='usersValidate' value='true' />
         {{ FormKey.getFormkey|raw }}
@@ -48,20 +51,20 @@
             <p>
                 <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
                 <select class='clean-form' name='deletable_xp' id='deletable_xp'>
-                    <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                    <option value='0'{{ not teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                    <option value='1'{{ App.teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                    <option value='0'{{ not App.teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'No'|trans }}</option>
                 </select>
                 <span class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</span>
             </p>
 
             <p>
                 <label class="block" for='link_name'>{{ 'Name of the link in the top menu:'|trans }}</label>
-                <input class="clean-form col-3-form" type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
+                <input class="clean-form col-3-form" type='text' value='{{ App.teamConfigArr.link_name }}' name='link_name' id='link_name' />
             </p>
 
             <p>
                 <label class="block" for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
-                <input class="clean-form col-3-form" type='text' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
+                <input class="clean-form col-3-form" type='text' value='{{ App.teamConfigArr.link_href }}' name='link_href' id='link_href' />
             </p>
 
             <br>
@@ -70,25 +73,28 @@
                 <p>
                     <br>
                     <label class='block' for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
-                    <input class='clean-form col-3-form' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
+                    <input class='clean-form col-3-form' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ App.teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
                     <span class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</span>
                 </p>
 
                 <p>
                     <label class='block' for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
-                    <input class='clean-form col-3-form' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ teamConfigArr.stampcert }}' name='stampcert' id='stampcert' />
+                    <input class='clean-form col-3-form' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ App.teamConfigArr.stampcert }}' name='stampcert' id='stampcert' />
                     <span class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>")|raw }}</span>
                 </p>
                     <label class='block' for='stamplogin'>{{ 'Login for external timestamping service:'|trans }}</label>
-                    <input class='clean-form col-3-form' autocomplete='off' type='text' value='{{ teamConfigArr.stamplogin }}' name='stamplogin' id='stamplogin' />
+                    <input class='clean-form col-3-form' autocomplete='off' type='text' value='{{ App.teamConfigArr.stamplogin }}' name='stamplogin' id='stamplogin' />
                     <span class='smallgray'>{{ 'This should be the login associated with your timestamping service provider'|trans }}</span>
                 </p>
 
                 <p>
                     <label class='block' for='stamppass'>{{ 'Password for external timestamping service:'|trans }}</label>
-                    {% if teamConfigArr.stamppass|length > 1 %}
-                        <p>A password is already set.
-                        <a href='app/controllers/AdminController.php?clearStamppass=1'>Clear it</a> or change it below:
+                    {% if App.teamConfigArr.stamppass|length > 1 %}
+                        <p>{{ 'A password is already set.'|trans }}
+                        {{ '%sClear it%s or change it below:'|trans|format("
+                            <a href='app/controllers/AdminController.php?clearStamppass=1'>",
+                            "</a>"
+                        )|raw }}
                         </p>
                     {% endif %}
                     <input class='clean-form col-3-form' autocomplete='off' type='password' name='stamppass' id='stamppass' />
@@ -395,3 +401,4 @@
 <script src='app/js/tinymce-dropzone.min.js'></script>
 <script src='app/js/admin.min.js'></script>
 <script src='app/js/tabs.min.js'></script>
+{% endblock body %}

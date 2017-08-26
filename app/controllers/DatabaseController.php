@@ -51,28 +51,8 @@ try {
         }
     }
 
-    // DESTROY
-    /*
-    if ($Request->request->has('destroy')) {
-        $Response = new JsonResponse();
-        if ($Entity->destroy()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Item deleted successfully')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
-     */
-
-
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     $Session->getFlashBag()->add('ko', Tools::error());
     $Response = new RedirectResponse("../../database.php");
 } finally {

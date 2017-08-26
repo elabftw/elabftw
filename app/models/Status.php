@@ -20,7 +20,10 @@ class Status extends AbstractCategory
 {
     use EntityTrait;
 
-    /** instance of Users */
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    /** @var Users $Users instance of Users */
     public $Users;
 
     /**

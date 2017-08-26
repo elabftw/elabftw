@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+
 /**
  * Generate and display a tag cloud for a given user
  */

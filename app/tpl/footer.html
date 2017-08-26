@@ -10,15 +10,15 @@
             <img src='app/img/github.png' alt='github' />
         </a>
         <span>
-            {% if Session.has('auth') and (Session.get('is_sysadmin') == 1) %}
+            {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}
                 <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
             {% endif %}
 
-            {% if Session.has('auth') and (Session.get('is_admin') == 1) %}
+            {% if App.Session.has('auth') and (App.Session.get('is_admin') == 1) %}
                 <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-                    {% if Users.readAllFromTeam(0)|length > 0 %}
-                        <span class='badge'>{{ Users.readAllFromTeam(0)|length }}</span>
+                    {% if App.Users.readAllFromTeam(0)|length > 0 %}
+                        <span class='badge'>{{ App.Users.readAllFromTeam(0)|length }}</span>
                     {% endif %}
                 </a>
             {% endif %}
@@ -28,15 +28,18 @@
     <p class='footer_right'>
         {{ 'Powered by'|trans }}
         <a href='https://www.elabftw.net'>eLabFTW</a><br>
-            {{ 'Page generated in'|trans }} {{ generationTime }} {{ 'seconds'|trans }}
-        {% if debug %}
-            ({{ sqlNb }} SQL)
-            <br>{{ memoryUsage }}
+            {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
+        {% if App.Config.configArr.debug %}
+            ({{ App.Db.getNumberOfQueries }} SQL)
+            <br>{{ 'Memory usage:'|trans }}
+            {{ App.getMemoryUsage|formatBytes }} ({{ App.getMemoryUsage }} {{ 'bytes'|trans }})
         {% endif %}
     </p>
 </footer>
 
-<script src='app/js/footer.min.js'></script>
 </section><!-- end container section -->
+
+<script src='app/js/footer.min.js'></script>
+
 </body>
 </html>

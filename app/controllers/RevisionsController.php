@@ -46,6 +46,5 @@ try {
         header("Location: ../../" . $Entity->page . ".php?mode=view&id=" . $Request->query->get('item_id'));
     }
 } catch (Exception $e) {
-    $Logs = new Logs();
-    $Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
 }

@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+
 /**
  * Generate and display experiments statistics for a user
  */

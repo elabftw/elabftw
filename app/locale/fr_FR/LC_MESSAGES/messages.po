@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-26 13:01+0200\n"
-"PO-Revision-Date: 2017-08-26 15:26+0200\n"
+"POT-Creation-Date: 2017-08-26 18:13+0200\n"
+"PO-Revision-Date: 2017-08-26 18:13+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -66,37 +66,41 @@ msgstr "Recherche"
 msgid "Howdy,"
 msgstr "Salutations,"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:163
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:159
+msgid "My Profile"
+msgstr "Profil"
+
 #: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:165
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:167
 msgid "Settings"
 msgstr "Paramètres"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:169
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:171
 msgid "Help"
 msgstr "Aide"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:173
 #: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:175
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:177
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:184
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:186
 #, php-format
 msgid "There is a manual available %shere%s."
 msgstr "Un manuel d'utilisation est disponible %sici%s."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:190
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:192
 msgid "You can use a TODOlist by pressing 't'."
 msgstr "Vous pouvez afficher une TODO list liste en pressant 't'."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:196
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:198
 #, php-format
 msgid "You can have experiments templates (%sControl Panel%s)."
 msgstr ""
 "Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle "
 "utilisateur%s)."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:202
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:204
 msgid ""
 "You can make links inside the text by typing # and an autocomplete menu will "
 "spawn with a list of Experiments/Items."
@@ -104,7 +108,7 @@ msgstr ""
 "Vous pouvez ajouter des liens dans le texte en tapant # et un menu "
 "d'autocomplétion va apparaître avec une liste d'expériences/objets."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:208
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:210
 #, php-format
 msgid ""
 "The admin of a team can edit the status and the types of items available "
@@ -113,7 +117,7 @@ msgstr ""
 "L'administrateur d'une équipe peut éditer les statuts et les types d'items "
 "disponibles (%sPanneau d'administration%s)."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:214
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:216
 msgid ""
 "If you press Ctrl Shift D in the editor, the date will appear under the "
 "cursor."
@@ -121,22 +125,22 @@ msgstr ""
 "Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra sous "
 "le curseur."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:220
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:222
 #, php-format
 msgid "Custom shortcuts are available (%sControl Panel%s)."
 msgstr ""
 "Des raccourcis claviers personnalisables sont disponibles (%sPanneau de "
 "contrôle utilisateur%s)."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:226
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:228
 msgid "You can duplicate experiments in one click."
 msgstr "Vous pouvez dupliquer des expériences en un seul clic."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:232
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:234
 msgid "Click a tag to list all items with this tag."
 msgstr "Cliquez un tag pour lister tous les items avec ce tag."
 
-#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:238
+#: /tmp/elabftw-twig-cache/2e/2eb5296122d989a7c3634277a68a2c4cbbf9052700d7916bc0845cbd20c54720.php:240
 msgid ""
 "Once timestamped an experiment cannot be unlocked or modified. Only comments "
 "can be added."
@@ -703,7 +707,7 @@ msgstr "Éditeur de molécule"
 
 #: /tmp/elabftw-twig-cache/c1/c127a9fef5016167f452c7da5f923edcee55b50cd25e82a044f6a44ccf16fddb.php:573
 #: app/classes/ImportCsv.php:88 app/classes/Tools.php:92
-#: app/models/Experiments.php:71 app/models/Database.php:57
+#: app/models/Experiments.php:70 app/models/Database.php:56
 msgid "Untitled"
 msgstr "Sans titre"
 
@@ -1498,7 +1502,7 @@ msgstr "Complexité"
 
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:73
 #: /tmp/elabftw-twig-cache/86/865b25aa09ffd64afce23fcd7dd853a31c30c475a60b73ca7e6731e8481fc78d.php:104
-#: app/Core/Users.php:641
+#: app/models/Users.php:638
 msgid "The passwords do not match!"
 msgstr "Les mots de passe entrés diffèrent !"
 
@@ -1767,7 +1771,7 @@ msgstr ""
 "navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
 "pour réinitialiser votre mot de passe : %s"
 
-#: app/controllers/ResetPasswordController.php:76 app/Core/Users.php:790
+#: app/controllers/ResetPasswordController.php:76 app/models/Users.php:787
 msgid "There was a problem sending the email! Error was logged."
 msgstr ""
 "Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
@@ -1839,8 +1843,8 @@ msgstr "Événement supprimé avec succès"
 msgid "Everything was purged successfully."
 msgstr "Tout a été supprimé avec succès."
 
-#: app/controllers/RevisionsController.php:39 app/Core/Users.php:443
-#: app/Core/Users.php:460 app/classes/EntityTrait.php:39
+#: app/controllers/RevisionsController.php:39 app/classes/EntityTrait.php:39
+#: app/models/Users.php:440 app/models/Users.php:457
 msgid "The id parameter is not valid!"
 msgstr "Le paramètre id n'est pas valide !"
 
@@ -1875,58 +1879,6 @@ msgstr "Lire le jeton d'horodatage"
 #: app/views/UploadsView.php:147
 msgid "Insert in text at cursor position"
 msgstr "Insérer dans le texte à la position du curseur"
-
-#: app/Core/Users.php:102 app/Core/Users.php:653
-msgid "Someone is already using that email address!"
-msgstr "Cette adresse email est déjà enregistrée !"
-
-#: app/Core/Users.php:106 app/Core/Users.php:705
-#, php-format
-msgid "Password must contain at least %s characters."
-msgstr "Le mot de passe doit contenir au moins %s charactères."
-
-#: app/Core/Users.php:227
-msgid "[eLabFTW] New user registered"
-msgstr "[eLabFTW] Nouvel utilisateur enregistré"
-
-#: app/Core/Users.php:233
-msgid ""
-"Hi. A new user registered on elabftw. Head to the admin panel to validate "
-"the account: "
-msgstr ""
-"Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
-"dans le panneau d'administration pour valider le compte: "
-
-#: app/Core/Users.php:242
-msgid ""
-"Could not send email to inform admin. Error was logged. Contact an admin "
-"directly to validate your account."
-msgstr ""
-"Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été "
-"enregistrée. Contactez un administrateur directement pour valider votre "
-"compte."
-
-#: app/Core/Users.php:465
-msgid "Only a sysadmin can put someone sysadmin."
-msgstr "Seul un sysadmin peut nommer un autre sysadmin."
-
-#: app/Core/Users.php:636
-msgid "Please input your current password!"
-msgstr "Entrez votre mot de passe!"
-
-#: app/Core/Users.php:758
-#, php-format
-msgid "User %s (%s) now has an active account."
-msgstr "L'utilisateur %s (%s) a désormais un compte actif."
-
-#: app/Core/Users.php:807
-msgid "Wrong password!"
-msgstr "Mauvais mot de passe !"
-
-#: app/Core/Users.php:813
-msgid "No user with this email or user not in your team"
-msgstr ""
-"Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre équipe"
 
 #: app/classes/TrustedTimestamps.php:123
 msgid "Please configure Timestamping in the admin panel."
@@ -1993,55 +1945,107 @@ msgstr "Style"
 msgid "Remove Surfaces"
 msgstr "Retirer les surfaces"
 
-#: app/models/Experiments.php:348
+#: app/models/Users.php:99 app/models/Users.php:650
+msgid "Someone is already using that email address!"
+msgstr "Cette adresse email est déjà enregistrée !"
+
+#: app/models/Users.php:103 app/models/Users.php:702
+#, php-format
+msgid "Password must contain at least %s characters."
+msgstr "Le mot de passe doit contenir au moins %s charactères."
+
+#: app/models/Users.php:224
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Nouvel utilisateur enregistré"
+
+#: app/models/Users.php:230
+msgid ""
+"Hi. A new user registered on elabftw. Head to the admin panel to validate "
+"the account: "
+msgstr ""
+"Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
+"dans le panneau d'administration pour valider le compte: "
+
+#: app/models/Users.php:239
+msgid ""
+"Could not send email to inform admin. Error was logged. Contact an admin "
+"directly to validate your account."
+msgstr ""
+"Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été "
+"enregistrée. Contactez un administrateur directement pour valider votre "
+"compte."
+
+#: app/models/Users.php:462
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "Seul un sysadmin peut nommer un autre sysadmin."
+
+#: app/models/Users.php:633
+msgid "Please input your current password!"
+msgstr "Entrez votre mot de passe!"
+
+#: app/models/Users.php:755
+#, php-format
+msgid "User %s (%s) now has an active account."
+msgstr "L'utilisateur %s (%s) a désormais un compte actif."
+
+#: app/models/Users.php:804
+msgid "Wrong password!"
+msgstr "Mauvais mot de passe !"
+
+#: app/models/Users.php:810
+msgid "No user with this email or user not in your team"
+msgstr ""
+"Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre équipe"
+
+#: app/models/Experiments.php:347
 msgid "This experiment was locked by"
 msgstr "Cette expérience a été vérouillée par"
 
-#: app/models/Experiments.php:350
+#: app/models/Experiments.php:349
 msgid "You don't have the rights to unlock this."
 msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
 
-#: app/models/Experiments.php:356
+#: app/models/Experiments.php:355
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr ""
 "Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit une "
 "expérience horodatée."
 
-#: app/models/Comments.php:103
+#: app/models/Comments.php:101
 msgid "[eLabFTW] New comment posted"
 msgstr "[eLabFTW] Nouveau commentaire ajouté"
 
-#: app/models/Comments.php:110
+#: app/models/Comments.php:108
 #, php-format
 msgid "Hi. %s left a comment on your experiment. Have a look: %s"
 msgstr ""
 "Bonjour. %s a laissé un commentaire sur votre expérience. Aller au "
 "commentaire : %s"
 
-#: app/models/Status.php:226
+#: app/models/Status.php:224
 msgid "Remove all experiments with this status before deleting this status."
 msgstr ""
 "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
 
-#: app/models/Revisions.php:85
+#: app/models/Revisions.php:84
 msgid "revision available."
 msgid_plural "revisions available."
 msgstr[0] "révision disponible."
 msgstr[1] "révisions disponibles."
 
-#: app/models/Revisions.php:87
+#: app/models/Revisions.php:86
 msgid "Show history"
 msgstr "Afficher l'historique"
 
-#: app/models/Revisions.php:156
+#: app/models/Revisions.php:155
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
 
-#: app/models/ItemsTypes.php:95 team.php:37
+#: app/models/ItemsTypes.php:93 team.php:37
 msgid "Nothing to show with this id"
 msgstr "Rien à afficher avec cet ID"
 
-#: app/models/ItemsTypes.php:196
+#: app/models/ItemsTypes.php:194
 msgid "Remove all database items with this type before deleting this type."
 msgstr ""
 "Supprimez tous les items de la base de données de cette catégorie avant de "

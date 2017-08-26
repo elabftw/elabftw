@@ -290,7 +290,13 @@
             {% if App.Config.configArr.smtp_password|length == 0 %}
                 <input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' />
             {% else %}
-            {{ 'A password is set.'|trans }}
+            <p>
+            {{ 'A password is already set.'|trans }}
+            {{ '%sClear it%s or change it below:'|trans|format("
+                <a href='app/controllers/SysconfigController.php?clearSmtppass=1'>",
+                "</a>"
+            )|raw }}
+            </p>
             <span class='button' id='editSmtpPassword'>{{ 'Edit'|trans }}</span>
             <input class='clean-form col-3-form' type='password' name='smtp_password' style='display:none' id='hidden_smtp_password' />
             {% endif %}

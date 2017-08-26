@@ -64,11 +64,12 @@ try {
     }
 
     // CLEAR STAMP PASS
-    if ($Request->request->get('clearStamppass')) {
+    if ($Request->query->get('clearStamppass')) {
         $Teams = new Teams($Users->userData['team']);
         if (!$Teams->destroyStamppass()) {
             throw new Exception('Error clearing the timestamp password');
         }
+        $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
         $Response = new RedirectResponse("../../admin.php?tab=1");
     }
 

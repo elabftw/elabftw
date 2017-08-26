@@ -60,11 +60,13 @@ class Email
                     );
                 }
 
-                $transport->setUsername($this->Config->configArr['smtp_username'])
-                ->setPassword(Crypto::decrypt(
-                    $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(SECRET_KEY)
-                ));
+                if ($this->Config->configArr['smtp_password']) {
+                    $transport->setUsername($this->Config->configArr['smtp_username'])
+                    ->setPassword(Crypto::decrypt(
+                        $this->Config->configArr['smtp_password'],
+                        Key::loadFromAsciiSafeString(SECRET_KEY)
+                    ));
+                }
                 break;
 
             // Use php mail function

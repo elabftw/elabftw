@@ -99,6 +99,15 @@ try {
         }
     }
 
+    // CLEAR SMTP PASS
+    if ($Request->query->get('clearSmtppass')) {
+        if (!$Config->update(array('smtp_password' => null))) {
+            throw new Exception('Error clearing the SMTP password');
+        }
+        $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+        $Response = new RedirectResponse("../../sysconfig.php?tab=6");
+    }
+
     // TAB 3 to 6 + 8
     if ($Request->request->has('updateConfig')) {
         $redirect = true;

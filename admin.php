@@ -57,5 +57,4 @@ try {
     $renderArr = array('error' => $e->getMessage());
 }
 
-$renderArr = array_merge($baseRenderArr, $renderArr);
-echo $Twig->render($template, $renderArr);
+echo $App->render($template, $renderArr);

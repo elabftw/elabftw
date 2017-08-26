@@ -90,8 +90,9 @@ class Config
         // encrypt password
         if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
             $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
-        // we might receive a set but empty smtp_password, so ignore it
-        } elseif (empty($post['smtp_password'])) {
+            // we might receive a set but empty smtp_password, so ignore it
+            // unless it is null, then it's because we want to clear it
+        } elseif (empty($post['smtp_password']) && !is_null($post['smtp_password'])) {
             unset($post['smtp_password']);
         }
 

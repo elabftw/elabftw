@@ -104,10 +104,8 @@ class Users
             throw new Exception($error);
         }
 
-        // Put firstname lowercase and first letter uppercase
-        $firstname = Tools::purifyFirstname($firstname);
-        // lastname is uppercase
-        $lastname = Tools::purifyLastname($lastname);
+        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
@@ -378,11 +376,8 @@ class Users
             throw new Exception(_('The id parameter is not valid!'));
         }
 
-        // Put everything lowercase and first letter uppercase
-        $firstname = Tools::purifyFirstname($params['firstname']);
-        // Lastname in uppercase
-        $lastname = Tools::purifyLastname($params['lastname']);
-
+        $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
+        $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($params['validated'] == 1) {
@@ -579,9 +574,8 @@ class Users
             $this->updatePassword($params['newpass']);
         }
 
-        $params['firstname'] = Tools::purifyFirstname($params['firstname']);
-        $params['lastname'] = Tools::purifyLastname($params['lastname']);
-
+        $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
+        $params['lastname'] = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {

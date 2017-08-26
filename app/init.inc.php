@@ -53,7 +53,7 @@ try {
     require_once $configFilePath;
 
     // Methods for login
-    $Auth = new Auth();
+    $Auth = new Auth($Request);
 
     // the config table from mysql
     $Config = new Config();
@@ -91,40 +91,25 @@ try {
     // END i18n
 
     // UPDATE SQL SCHEMA
-    if ($Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
-        try {
-            // run the update script if we have the wrong schema version
-            foreach ($Update->runUpdateScript() as $msg) {
+    try {
+        $messages = $Update->runUpdateScript();
+        if (is_array($messages)) {
+            foreach ($messages as $msg) {
                 $App->Session->getFlashBag()->add('ok', $msg);
             }
-        } catch (Exception $e) {
-            $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
         }
+    } catch (Exception $e) {
+        $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
     }
 
-    // pages where you don't need to be logged in
-    // only the script name, not the path because we use basename() on it
-    $nologinArr = array(
-        'change-pass.php',
-        'index.php',
-        'login.php',
-        'LoginController.php',
-        'metadata.php',
-        'register.php',
-        'RegisterController.php',
-        'ResetPasswordController.php'
-    );
+    // CERBERUS
+    if (!$Auth->checkAuth()) {
+        // maybe we clicked an email link and we want to be redirected to the page upon successful login
+        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+        setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
-    if (!$App->Session->has('auth') && !in_array(basename($Request->getScriptName()), $nologinArr)) {
-        // try to login with the cookie
-        if (!$Auth->loginWithCookie($Request)) {
-            // maybe we clicked an email link and we want to be redirected to the page upon successful login
-            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
-
-            header('location: app/logout.php');
-            exit;
-        }
+        header('location: app/logout.php');
+        exit;
     }
 
 } catch (Exception $e) {

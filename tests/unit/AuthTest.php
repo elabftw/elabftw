@@ -3,12 +3,19 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Elabftw\Core\Auth;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class AuthTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Auth = new Auth();
+        $Request = Request::createFromGlobals();
+
+        $Session = new Session();
+
+        $Request->setSession($Session);
+        $this->Auth = new Auth($Request);
     }
 
     public function testCheckCredentials()

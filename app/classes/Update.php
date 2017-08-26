@@ -53,14 +53,20 @@ class Update
 
     /**
      * Update the database schema if needed.
+     * Returns true if there is no need to update
      *
-     * @return string[] $msg_arr
+     * @return string[]|true $msg_arr
      */
     public function runUpdateScript()
     {
+        $current_schema = $this->Config->configArr['schema'];
+
+        if ($current_schema === self::REQUIRED_SCHEMA) {
+            return true;
+        }
+
         $msg_arr = array();
 
-        $current_schema = $this->Config->configArr['schema'];
 
         if ($current_schema < 2) {
             // 20150727

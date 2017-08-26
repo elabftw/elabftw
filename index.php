@@ -44,7 +44,6 @@ try {
             throw new Exception("Not authenticated!");
         }
 
-        $Auth = new Auth();
         $Session->set('samlUserdata', $SamlAuth->getAttributes());
 
         // GET EMAIL

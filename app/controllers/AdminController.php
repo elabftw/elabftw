@@ -33,10 +33,12 @@ try {
             $Entity = new Status($Users);
         } elseif ($Request->request->get('table') === 'items_types') {
             $Entity = new ItemsTypes($Users);
+            /*
         } elseif ($Request->request->get('table') === 'experiments_templates') {
             // remove the create new entry
             unset($Request->request->get('ordering')[0]);
             $Entity = new Templates($Users);
+             */
         }
 
         if ($Entity->updateOrdering($Request->request->all())) {

@@ -129,16 +129,15 @@ $(document).ready(function() {
             // send the orders as an array
             var ordering = $(".nav-pills").sortable("toArray");
 
-            $.post("app/controllers/AdminController.php", {
+            $.post("app/controllers/UcpController.php", {
                 'updateOrdering': true,
                 'table': 'experiments_templates',
                 'ordering': ordering
             }).done(function(data) {
-                var json = JSON.parse(data);
-                if (json.res) {
-                    notif(json.msg, 'ok');
+                if (data.res) {
+                    notif(data.msg, 'ok');
                 } else {
-                    notif(json.msg, 'ko');
+                    notif(data.msg, 'ko');
                 }
             });
         }

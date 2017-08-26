@@ -88,6 +88,28 @@ try {
         $Session->getFlashBag()->add('ok', _('Template successfully edited.'));
     }
 
+    // UPDATE ORDERING
+    // TODO this code is copy pasted from admin controller
+    if ($Request->request->has('updateOrdering')) {
+        if ($Request->request->get('table') === 'experiments_templates') {
+            // remove the create new entry
+            unset($Request->request->get('ordering')[0]);
+            $Entity = new Templates($Users);
+        }
+
+        if ($Entity->updateOrdering($Request->request->all())) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
 } catch (Exception $e) {
     $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     $Session->getFlashBag()->add('ko', $e->getMessage());

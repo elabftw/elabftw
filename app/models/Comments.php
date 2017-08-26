@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Swift_Message;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the comments
@@ -91,8 +92,9 @@ class Comments implements CrudInterface
         }
 
         // Create the message
+        $Request = Request::createFromGlobals();
         $url = 'https://' . $Request->getHttpHost() . '/experiments.php';
-        $$url .= "?mode=view&id=" . $this->Entity->id;
+        $url .= "?mode=view&id=" . $this->Entity->id;
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 

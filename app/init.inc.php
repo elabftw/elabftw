@@ -104,7 +104,7 @@ try {
         setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
         $url = 'https://' . $Request->getHttpHost() . '/app/logout.php';
-        header('location: ' .$url);
+        header('Location: ' . $url);
         exit;
     }
 

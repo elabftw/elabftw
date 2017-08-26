@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Elabftw\Core\Db;
 
 /**
  * The default path in Docker is to automatically install the database schema
@@ -83,7 +84,7 @@ try {
             header('Location: ../register.php');
             throw new Exception('Redirecting to register page');
         } else {
-            $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
+            $message = 'It looks like eLabFTW is already installed. Delete the config.php file if you wish to reinstall it.';
             throw new Exception($message);
         }
     }

@@ -11,7 +11,6 @@
 namespace Elabftw\Core;
 
 use PDO;
-//use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -175,21 +174,11 @@ class Auth
     }
 
     /**
-     * Login with SAML
+     * Login with the cookie
      *
-     * @param string $email
-     * @return bool
+     * @return bool true if token in cookie is found in database
      */
-    public function loginWithSaml($email)
-    {
-        if (!$this->populateSession($email)) {
-            return false;
-        }
-        $this->setToken();
-        return true;
-    }
-
-    public function loginWithCookie()
+    private function loginWithCookie()
     {
         // If user has a cookie; check cookie is valid
         // the token is a md5 sum: 32 char
@@ -212,13 +201,32 @@ class Auth
         return false;
     }
 
+    /**
+     * Login with SAML
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function loginWithSaml($email)
+    {
+        if (!$this->populateSession($email)) {
+            return false;
+        }
+        $this->setToken();
+        return true;
+    }
 
     /**
      * Check authentication of current user
+     *     ____          _
+     *    / ___|___ _ __| |__   ___ _ __ _   _ ___
+     *   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|
+     *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
+     *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
      *
-     * @return bool True if we are authentified
+     * @return bool True if we are authentified (or if we don't need to be)
      */
-    public function checkAuth()
+    public function isAuth()
     {
         // pages where you don't need to be logged in
         // only the script name, not the path because we use basename() on it

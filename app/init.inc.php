@@ -26,31 +26,31 @@ use Symfony\Component\HttpFoundation\Session\Session;
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
 try {
-
-    // create Request object
-    $Request = Request::createFromGlobals();
-
-    $Session = new Session();
-
-    $Session->start();
-    $Request->setSession($Session);
-
-    // add check for php version here also
+    // CHECK PHP VERSION
     if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
         $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
         throw new Exception($message);
     }
 
-    // load the config file with info to connect to DB
+    // CREATE REQUEST OBJECT
+    $Request = Request::createFromGlobals();
+
+    // CREATE SESSION
+    $Session = new Session();
+    $Session->start();
+    // and attach it to Request
+    $Request->setSession($Session);
+
+    // LOAD CONFIG.PHP
     $configFilePath = dirname(dirname(__FILE__)) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
-        header('Location: install');
+        $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
+        header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }
-
-    // load config.php
     require_once $configFilePath;
+    // END LOAD CONFIG.PHP
 
     // Methods for login
     $Auth = new Auth($Request);
@@ -63,7 +63,8 @@ try {
     try {
         $Update = new Update($Config);
     } catch (Exception $e) {
-        header('Location: install');
+        $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
+        header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }
 
@@ -77,7 +78,6 @@ try {
         // load server configured lang if logged out
         $locale = $Config->configArr['lang'] . '.utf8';
     }
-
 
     // INIT APP OBJECT
     $App = new App($Request, $Config, new Logs(), $Users);
@@ -103,15 +103,17 @@ try {
     }
 
     // CERBERUS
-    if (!$Auth->checkAuth()) {
+    if (!$Auth->isAuth()) {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
-        header('location: app/logout.php');
+        $url = 'https://' . $Request->getHttpHost() . '/app/logout.php';
+        header('location: ' .$url);
         exit;
     }
 
 } catch (Exception $e) {
-    echo $e->getMessage();
+    // if something went wrong here it should stop whatever is after
+    die($e->getMessage());
 }

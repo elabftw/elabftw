@@ -55,7 +55,7 @@ class Update
      * Update the database schema if needed.
      * Returns true if there is no need to update
      *
-     * @return string[]|true $msg_arr
+     * @return bool|string[] $msg_arr
      */
     public function runUpdateScript()
     {

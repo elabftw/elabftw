@@ -135,7 +135,8 @@ $(document).ready(function(){
             $.post('app/controllers/EntityController.php', {
                 updateCategory : true,
                 id : value,
-                categoryId : $('#catChecked').val()
+                categoryId : $('#catChecked').val(),
+                type : $('#type').data('type')
             });
         });
         // reload the page once it's done

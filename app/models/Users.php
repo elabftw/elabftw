@@ -281,7 +281,7 @@ class Users
      */
     public function readFromEmail($email)
     {
-        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE email = :email";
+        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users WHERE email = :email";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
@@ -718,10 +718,11 @@ class Users
         if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
-        // check the user is in our team and also get the userid
-        $useridToDelete = $this->emailInTeam($email, $this->userData['team']);
 
-        if (Tools::checkId($useridToDelete) === false) {
+        // load data on the user to delete
+        $userToDelete = $this->readFromEmail($email);
+        // check we are in same team
+        if ($this->userData['team'] !== $userToDelete['team']) {
             throw new Exception(_('No user with this email or user not in your team'));
         }
 
@@ -729,24 +730,24 @@ class Users
 
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         // get all filenames
         $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
-            'userid' => $useridToDelete,
+            'userid' => $userToDelete['userid'],
             'type' => 'experiments'
         ));
         while ($uploads = $req->fetch()) {
@@ -757,28 +758,10 @@ class Users
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $useridToDelete);
+        $req->bindParam(':userid', $userToDelete['userid']);
         $result[] = $req->execute();
 
         return !in_array(0, $result);
-    }
-
-    /**
-     * Check if a user is in our team
-     *
-     * @param string $email
-     * @param int $team
-     * @return string|null
-     */
-    private function emailInTeam($email, $team)
-    {
-        $sql = "SELECT userid FROM users WHERE email = :email AND team = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $req->bindParam(':team', $team);
-        $req->execute();
-
-        return $req->fetchColumn();
     }
 
     /**

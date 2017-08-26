@@ -51,7 +51,6 @@ try {
     if ($Request->query->get('what') === 'csv' || $Request->query->get('what') === 'zip') {
 
         $filesize = Tools::formatBytes(filesize($Make->filePath));
-        require_once 'app/head.inc.php';
 
         $template = 'make.html';
         $renderArr = array(

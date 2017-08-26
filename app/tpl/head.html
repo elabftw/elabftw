@@ -71,7 +71,7 @@
 
             <form class="navbar-form navbar-right" id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
                 <div class="form-group">
-                    <input id='big_search_input' class="form-control" type='search' name='q' size='50' value='{{ App.Request.query.filter('q', null, FILTER_SANITIZE_STRING) }}' />
+                    <input id='big_search_input' class="form-control" type='search' name='q' size='50' value='{{ App.Request.query.get('q') }}' />
                 </div>
             </form>
         </div>

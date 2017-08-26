@@ -145,7 +145,8 @@ try {
             'Entity' => $Entity,
             'Request' => $Request,
             'categoryArr' => $categoryArr,
-            'itemsArr' => $itemsArr
+            'itemsArr' => $itemsArr,
+            'searchType' => $searchType
         );
     }
 } catch (Exception $e) {

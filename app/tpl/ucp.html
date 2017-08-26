@@ -163,14 +163,14 @@
             <div class='col-md-6'>
                 <h4>{{ 'Modify your personal informations'|trans }}</h4>
                 <label class='block' for='currpass'>{{ 'Enter your password to edit infos.'|trans }}</label>
-                <input id='currpass' name="currpass" type="password" required />
+                <input id='currpass' name="currpass" type="password" pattern=".{8,}" required />
             </div>
             <div class='col-md-6'>
                 <h4>{{ 'Modify your password'|trans }}</h4>
                 <label class='block' for='newpass'>{{ 'New password'|trans }}</label>
-                <input name="newpass" type="password" />
+                <input name="newpass" type="password" pattern=".{8,}" />
                 <label class='block' for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-                <input name="cnewpass" type="password" />
+                <input name="cnewpass" type="password" pattern=".{8,}" />
             </div>
         </div>
 

@@ -571,7 +571,7 @@ class Users
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
-        if (strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
+        if (strlen($params['newpass']) >= $this->Auth::MIN_PASSWORD_LENGTH) {
             if ($params['newpass'] != $params['cnewpass']) {
                 throw new Exception(_('The passwords do not match!'));
             }
@@ -629,7 +629,7 @@ class Users
      * @throws Exception if invalid character length
      * @return bool True if password is updated
      */
-    public function updatePassword($password, $userid = null)
+    private function updatePassword($password, $userid = null)
     {
 
         if (is_null($userid)) {
@@ -637,7 +637,7 @@ class Users
         }
 
         if (!$this->Auth->checkPasswordLength($password)) {
-            $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+            $error = sprintf(_('Password must contain at least %s characters.'), $this->Auth::MIN_PASSWORD_LENGTH);
             throw new Exception($error);
         }
 

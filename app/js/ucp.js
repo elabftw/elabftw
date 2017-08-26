@@ -111,6 +111,7 @@ $(document).ready(function() {
     $('#import_tpl').on('change', function(e) {
         var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "").replace("C:\\fakepath\\", "");
         readFile(this.files[0], function(e) {
+            // FIXME if the user is using markdown there will be no tinymce to get
             tinyMCE.get('new_tpl_txt').setContent(e.target.result);
             $('#new_tpl_name').val(title);
             $('#import_tpl').hide();

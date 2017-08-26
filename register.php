@@ -34,7 +34,7 @@ try {
         throw new Exception(_('No local account creation is allowed!'));
     }
 
-    $Teams = new Teams();
+    $Teams = new Teams($Users);
     $teamsArr = $Teams->readAll();
 
     $template = 'register.html';

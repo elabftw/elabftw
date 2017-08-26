@@ -30,7 +30,7 @@ try {
     $res = false;
     $msg = Tools::error();
 
-    $Teams = new Teams();
+    $Teams = new Teams($Users);
     $Response = new JsonResponse();
 
     // PROMOTE SYSADMIN

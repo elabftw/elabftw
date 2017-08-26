@@ -56,7 +56,7 @@ try {
         if (!$Auth->loginWithSaml($email)) {
             // the user doesn't exist yet in the db
             // check if the team exists
-            $Teams = new Teams();
+            $Teams = new Teams($Users);
             $Users = new Users(null, $Auth, $Saml->Config);
 
             // GET TEAM

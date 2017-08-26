@@ -28,7 +28,7 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
     $logsArr = $App->Logs->readAll();
-    $TeamsView = new TeamsView(new Teams());
+    $TeamsView = new TeamsView(new Teams($Users));
     $teamsArr = $TeamsView->Teams->readAll();
     $usersArr = $Users->readAll();
     $ReleaseCheck = new ReleaseCheck($Config);

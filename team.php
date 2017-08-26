@@ -20,7 +20,7 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Team');
 
 try {
-    $TeamsView = new TeamsView(new Teams($App->Users->userData['team']));
+    $TeamsView = new TeamsView(new Teams($App->Users));
     $Database = new Database($App->Users);
     // we only want the bookable type of items
     $Database->bookableFilter = " AND bookable = 1";

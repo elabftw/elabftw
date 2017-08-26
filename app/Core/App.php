@@ -90,7 +90,7 @@ class App
             $this->todoItems = $Todolist->readAll();
 
             // team config
-            $Teams = new Teams($this->Users->userData['team']);
+            $Teams = new Teams($this->Users);
             $this->teamConfigArr = $Teams->read();
         }
     }

@@ -319,7 +319,6 @@ try {
         }
     }
 
-
     $Response->send();
 
 } catch (Exception $e) {

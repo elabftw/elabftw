@@ -94,7 +94,7 @@ class Experiments extends AbstractEntity
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($tpl != null) {
+        if ($tpl !== null) {
             $Tags = new Tags(new Templates($this->Users, $tpl));
             $Tags->copyTags($newId);
         }

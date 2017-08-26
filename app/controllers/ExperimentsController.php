@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Elabftw\Core\Config;
 
 /**
  * Experiments

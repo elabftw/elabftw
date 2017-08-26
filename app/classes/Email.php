@@ -15,8 +15,10 @@ use Swift_SmtpTransport;
 use Swift_MailTransport;
 use Swift_SendmailTransport;
 use Elabftw\Core\Config;
+use Elabftw\Core\Users;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
+use Exception;
 
 /**
  * Email service
@@ -134,7 +136,7 @@ class Email
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
+        $message = \Swift_Message::newInstance()
         ->setSubject($subject)
         ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         ->setTo($to)

@@ -19,6 +19,8 @@ use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
+use Elabftw\Core\Config;
+use Elabftw\Core\Db;
 
 /**
  * Timestamp an experiment with RFC 3161

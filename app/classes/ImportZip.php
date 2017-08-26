@@ -15,6 +15,8 @@ use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use FileSystemIterator;
+use Elabftw\Core\Users;
+use Elabftw\Core\Db;
 
 /**
  * Import a .elabftw.zip file into the database.

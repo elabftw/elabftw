@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 use mPDF;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Elabftw\Core\Users;
 
 /**
  * Create a pdf given an id and a type

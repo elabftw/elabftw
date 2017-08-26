@@ -163,7 +163,9 @@ class Users
         }
 
         if ($validated == '0') {
-            $this->alertAdmin($team);
+            $Email = new Email($this->Config);
+            $Email->alertAdmin($team);
+            // set a flag to show correct message to user
             $this->needValidation = true;
         }
 
@@ -202,42 +204,6 @@ class Users
             return 2;
         }
         return 4;
-    }
-
-    /**
-     * Send an email to the admin of a team
-     *
-     * @param int $team
-     * @throws Exception
-     */
-    private function alertAdmin($team)
-    {
-        $Email = new Email($this->Config);
-
-        $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/admin.php';
-
-        // Create the message
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
-        // Give the message a subject
-        ->setSubject(_('[eLabFTW] New user registered'))
-        // Set the From address with an associative array
-        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To
-        ->setTo($this->getAdminEmail($team))
-        // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
-        // generate Swift_Mailer instance
-        $mailer = $Email->getMailer();
-        // SEND EMAIL
-        try {
-            $mailer->send($message);
-        } catch (Exception $e) {
-            $Logs = new Logs();
-            $Logs->create('Error', 'smtp', $e->getMessage());
-            throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
-        }
     }
 
     /**
@@ -286,34 +252,6 @@ class Users
         $test = $req->fetch();
 
         return $test['usernb'] === '0';
-    }
-
-    /**
-     * Fetch the email(s) of the admin(s) for a team
-     *
-     * @param int $team
-     * @return array
-     */
-    private function getAdminEmail($team)
-    {
-        // array for storing email adresses of admin(s)
-        $arr = array();
-
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team);
-        $req->execute();
-
-        while ($email = $req->fetchColumn()) {
-            $arr[] = $email;
-        }
-
-        // if we have only one admin, we need to have an associative array
-        if (count($arr) === 1) {
-            return array($arr[0] => 'Admin eLabFTW');
-        }
-
-        return $arr;
     }
 
     /**
@@ -760,32 +698,9 @@ class Users
             $msg = Tools::error();
         }
 
+        // send an email to the user
         $Email = new Email($this->Config);
-
-        // now let's get the URL so we can have a nice link in the email
-        $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/login.php';
-        // we send an email to each validated new user
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        // Create the message
-        $message = Swift_Message::newInstance()
-        // Give the message a subject
-        // no i18n here
-        ->setSubject('[eLabFTW] Account validated')
-        // Set the From address with an associative array
-        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($this->userData['email'] => 'eLabFTW'))
-        // Give it a body
-        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ' . $url . $footer);
-        // generate Swift_Mailer instance
-        $mailer = $Email->getMailer();
-        // now we try to send the email
-        try {
-            $mailer->send($message);
-        } catch (Exception $e) {
-            throw new Exception(_('There was a problem sending the email! Error was logged.'));
-        }
+        $Email->alertUserIsValidated($this->userData['email']);
 
         return $msg;
     }

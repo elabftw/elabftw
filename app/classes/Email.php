@@ -10,13 +10,15 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
 use Swift_Mailer;
+use Swift_Message;
 use Swift_SmtpTransport;
 use Swift_MailTransport;
 use Swift_SendmailTransport;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
-use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Email service
@@ -97,7 +99,7 @@ class Email
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = \Swift_Message::newInstance()
+        $message = Swift_Message::newInstance()
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
         // Set the From address with an associative array
@@ -134,7 +136,7 @@ class Email
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = \Swift_Message::newInstance()
+        $message = Swift_Message::newInstance()
         ->setSubject($subject)
         ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         ->setTo($to)
@@ -142,5 +144,102 @@ class Email
         $mailer = $this->getMailer();
 
         return $mailer->send($message);
+    }
+
+    /**
+     * Send an email to the admin of a team
+     *
+     * @param int $team
+     * @throws Exception
+     */
+    public function alertAdmin($team)
+    {
+        // get url
+        $Request = Request::createFromGlobals();
+        $url = 'https://' . $Request->getHttpHost() . '/admin.php';
+
+        // Create the message
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+        $message = Swift_Message::newInstance()
+        // Give the message a subject
+        ->setSubject(_('[eLabFTW] New user registered'))
+        // Set the From address with an associative array
+        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
+        // Set the To
+        ->setTo($this->getAdminEmail($team))
+        // Give it a body
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
+        // generate Swift_Mailer instance
+        $mailer = $this->getMailer();
+        // SEND EMAIL
+        try {
+            $mailer->send($message);
+        } catch (Exception $e) {
+            $Logs = new Logs();
+            $Logs->create('Error', 'smtp', $e->getMessage());
+            throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
+        }
+    }
+
+    /**
+     * Fetch the email(s) of the admin(s) for a team
+     *
+     * @param int $team
+     * @return array
+     */
+    private function getAdminEmail($team)
+    {
+        // array for storing email adresses of admin(s)
+        $arr = array();
+        $Db = Db::getConnection();
+
+        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
+        $req = $Db->prepare($sql);
+        $req->bindParam(':team', $team);
+        $req->execute();
+
+        while ($email = $req->fetchColumn()) {
+            $arr[] = $email;
+        }
+
+        // if we have only one admin, we need to have an associative array
+        if (count($arr) === 1) {
+            return array($arr[0] => 'Admin eLabFTW');
+        }
+
+        return $arr;
+    }
+
+    /**
+     * Alert a user that he is validated
+     *
+     * @param string $email
+     */
+    public function alertUserIsValidated($email)
+    {
+        // now let's get the URL so we can have a nice link in the email
+        $Request = Request::createFromGlobals();
+        $url = 'https://' . $Request->getHttpHost() . '/login.php';
+
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+        // Create the message
+        $message = Swift_Message::newInstance()
+        // Give the message a subject
+        // no i18n here
+        ->setSubject('[eLabFTW] Account validated')
+        // Set the From address with an associative array
+        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
+        // Set the To addresses with an associative array
+        ->setTo(array($email => 'eLabFTW'))
+        // Give it a body
+        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ' . $url . $footer);
+        // generate Swift_Mailer instance
+        $mailer = $this->getMailer();
+        // now we try to send the email
+        try {
+            $mailer->send($message);
+        } catch (Exception $e) {
+            throw new Exception(_('There was a problem sending the email! Error was logged.'));
+        }
     }
 }

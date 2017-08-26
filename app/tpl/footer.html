@@ -17,8 +17,8 @@
             {% if App.Session.has('auth') and (App.Session.get('is_admin') == 1) %}
                 <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-                    {% if Users.readAllFromTeam(0)|length > 0 %}
-                        <span class='badge'>{{ Users.readAllFromTeam(0)|length }}</span>
+                    {% if App.Users.readAllFromTeam(0)|length > 0 %}
+                        <span class='badge'>{{ App.Users.readAllFromTeam(0)|length }}</span>
                     {% endif %}
                 </a>
             {% endif %}

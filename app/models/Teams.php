@@ -24,7 +24,7 @@ class Teams implements CrudInterface
     protected $Db;
 
     /** @var Users $Users instance of Users */
-    private $Users;
+    public $Users;
 
     /**
      * Constructor

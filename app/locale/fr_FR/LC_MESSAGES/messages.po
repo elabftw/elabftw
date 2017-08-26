@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-26 18:13+0200\n"
-"PO-Revision-Date: 2017-08-26 18:13+0200\n"
+"POT-Creation-Date: 2017-08-26 18:38+0200\n"
+"PO-Revision-Date: 2017-08-26 18:38+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -310,6 +310,8 @@ msgstr "Non"
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:725
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:818
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:379
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:580
+#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:696
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:174
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:188
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:240
@@ -1178,9 +1180,9 @@ msgstr "Mettre à jour le profil"
 msgid "Experiments Templates"
 msgstr "Modèles d'expériences"
 
-# Feminine form
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:537
-msgid "Create New"
+#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:42
+msgid "Create new"
 msgstr "Créer"
 
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:562
@@ -1191,17 +1193,9 @@ msgstr "Importer un fichier"
 msgid "Name of the Template"
 msgstr "Nom du modèle"
 
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:580
-msgid "Add template"
-msgstr "Ajouter un modèle"
-
 #: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:685
 msgid "Template content"
 msgstr "Contenu du modèle"
-
-#: /tmp/elabftw-twig-cache/df/dfa23f7a483d5898025ad984ce590aa552b89fbece6bdea450e574e2102fcc58.php:696
-msgid "Edit template"
-msgstr "Éditer un modèle"
 
 #: /tmp/elabftw-twig-cache/ad/ad954867c6ba2cdf2e4f2585f7c1cba4b14cf24775340543a6f8775deaf2ba3e.php:37
 msgid ""
@@ -1518,10 +1512,6 @@ msgstr "Retourner à la liste"
 #, php-format
 msgid "Experiment of %s"
 msgstr "Expérience de %s"
-
-#: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:42
-msgid "Create new"
-msgstr "Créer"
 
 #: /tmp/elabftw-twig-cache/f1/f1e123c3db1e29892352f0ad963c03f9a95bf05cba97d56538dc9b8f46dbe41b.php:83
 msgid "No templates found"
@@ -2097,6 +2087,16 @@ msgstr "Configuration d'eLabFTW"
 #: change-pass.php:22
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
+
+# Feminine form
+#~ msgid "Create New"
+#~ msgstr "Créer"
+
+#~ msgid "Add template"
+#~ msgstr "Ajouter un modèle"
+
+#~ msgid "Edit template"
+#~ msgstr "Éditer un modèle"
 
 #~ msgid "minutes:"
 #~ msgstr "minutes :"

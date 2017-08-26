@@ -232,7 +232,7 @@
 <div class='box new-tpl-box'>
     <h3>{{ 'Experiments Templates'|trans }}</h3>
     <ul class='nav nav-pills' role='tablist'>
-        <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create New'|trans }}</li>
+        <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
             <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name }}</li>
         {% endfor %}
@@ -249,7 +249,7 @@
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
             <div class='center'>
-                <button type="submit" name="Submit" class='button'>{{ 'Add template'|trans }}</button>
+                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
             </div>
         </form>
     </div>
@@ -288,7 +288,7 @@
                 <label class='block'>{{ 'Template content'|trans }}</label>
                 <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
                 <div class='center'>
-                    <button type='submit' name='Submit' class='button'>{{ 'Edit template'|trans }}</button>
+                    <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
                 </div>
             </form>
         </div>

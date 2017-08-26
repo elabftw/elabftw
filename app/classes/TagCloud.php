@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Db;
-use Elabftw\Core\Users;
 
 /**
  * Generate and display a tag cloud for a given user

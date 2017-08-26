@@ -15,7 +15,6 @@ use Exception;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Elabftw\Core\Users;
 
 try {
     require_once '../../app/init.inc.php';

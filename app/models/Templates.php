@@ -10,9 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Db;
-use Elabftw\Core\Users;
-
 /**
  * All about the templates
  */

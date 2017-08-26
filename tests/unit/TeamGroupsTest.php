@@ -2,7 +2,6 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Elabftw\Core\Users;
 
 class TeamGroupsTest extends \PHPUnit_Framework_TestCase
 {

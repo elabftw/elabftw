@@ -2,8 +2,6 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Elabftw\Core\Users;
-use Elabftw\Core\Config;
 
 class EmailTest extends \PHPUnit_Framework_TestCase
 {

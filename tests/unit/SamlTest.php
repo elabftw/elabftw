@@ -1,9 +1,6 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Users;
-use Elabftw\Core\Config;
-
 class SamlTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()

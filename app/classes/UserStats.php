@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Db;
-use Elabftw\Core\Users;
 
 /**
  * Generate and display experiments statistics for a user

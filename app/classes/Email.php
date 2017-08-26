@@ -14,8 +14,6 @@ use Swift_Mailer;
 use Swift_SmtpTransport;
 use Swift_MailTransport;
 use Swift_SendmailTransport;
-use Elabftw\Core\Config;
-use Elabftw\Core\Users;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 use Exception;

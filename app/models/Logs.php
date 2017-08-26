@@ -8,10 +8,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Core;
+namespace Elabftw\Elabftw;
 
 use Exception;
-use Elabftw\Elabftw\CrudInterface;
 
 /**
  * All about the teams

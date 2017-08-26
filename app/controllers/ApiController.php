@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Elabftw\Core\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 

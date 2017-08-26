@@ -10,11 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Elabftw\Core\App;
-use Elabftw\Core\Auth;
-use Elabftw\Core\Config;
-use Elabftw\Core\Users;
-use Elabftw\Core\Logs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 

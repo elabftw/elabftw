@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Elabftw\Core\Users;
 
 try {
     require_once '../init.inc.php';

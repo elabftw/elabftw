@@ -1,8 +1,6 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Users;
-
 class RevisionsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()

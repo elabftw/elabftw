@@ -2,7 +2,6 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Elabftw\Core\Auth;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 

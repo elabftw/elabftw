@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Config;
-
 /**
  * Saml settings
  */

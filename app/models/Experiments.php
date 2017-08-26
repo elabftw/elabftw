@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
-use Elabftw\Core\Users;
 
 /**
  * All about the experiments

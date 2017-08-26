@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Elabftw\Core\Db;
-
 /**
  * All about the team's scheduler
  */

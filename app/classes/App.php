@@ -8,11 +8,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Core;
+namespace Elabftw\Elabftw;
 
 use Exception;
-use Elabftw\Elabftw\Todolist;
-use Elabftw\Elabftw\Teams;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 

@@ -8,7 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Core;
+namespace Elabftw\Elabftw;
 
 use PDO;
 use Symfony\Component\HttpFoundation\Request;

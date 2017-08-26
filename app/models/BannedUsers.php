@@ -11,8 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Elabftw\Core\Db;
-use Elabftw\Core\Config;
 
 /**
  * Deal with login rate limiter

@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
-use Elabftw\Core\Db;
 
 /**
  * All about the tag

@@ -28,8 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Elabftw\\Elabftw\\" : ["app/classes", "app/models", "app/views"],
-            "Elabftw\\Core\\" : ["app/Core"]
+            "Elabftw\\Elabftw\\" : ["app/classes", "app/models", "app/views"]
         }
     },
     "license": "AGPL-3.0"

@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
-use Elabftw\Core\Db;
 
 /**
  * The default path in Docker is to automatically install the database schema

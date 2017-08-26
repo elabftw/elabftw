@@ -14,8 +14,6 @@ namespace Elabftw\Elabftw;
 use Exception;
 use OneLogin_Saml2_Auth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Elabftw\Core\Config;
-use Elabftw\Core\Users;
 
 try {
     require_once 'app/init.inc.php';

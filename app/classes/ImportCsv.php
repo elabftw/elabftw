@@ -11,8 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Elabftw\Core\Users;
-use Elabftw\Core\Db;
 
 /**
  * Import items from a csv file.

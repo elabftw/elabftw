@@ -12,8 +12,6 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
-use Elabftw\Core\Db;
-use Elabftw\Elabftw\CrudInterface;
 
 /**
  * All about the todolist

@@ -8,11 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Core;
+namespace Elabftw\Elabftw;
 
-use Elabftw\Elabftw\Experiments;
-use Elabftw\Elabftw\Tools;
-use Elabftw\Elabftw\Email;
 use PDO;
 use Exception;
 use Swift_Message;

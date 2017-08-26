@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Elabftw\Core\Config;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 

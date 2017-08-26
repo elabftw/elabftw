@@ -12,8 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use PDO;
-use Elabftw\Core\Users;
-use Elabftw\Core\Db;
 
 /**
  * The mother class of Experiments and Database

@@ -12,8 +12,6 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 use Exception;
-use Elabftw\Core\Db;
-use Elabftw\Core\Users;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 

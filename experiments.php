@@ -38,6 +38,7 @@ try {
         $template = 'view.html';
 
         $renderArr = array(
+            'Ev' => $EntityView,
             'Entity' => $Entity,
             'Uv' => $UploadsView,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),

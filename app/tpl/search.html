@@ -69,7 +69,7 @@
                     <option disabled>----------------</option>
                     {% for user in usersArr %}
                         <option value='{{ user.userid }}' {{ Request.query.get('owner') == user.userid ? 'selected' }}>
-                            {{ user.fullname }}
+                            {{ user.fullname|raw }}
                         </option>
                     {% endfor %}
                 </select>

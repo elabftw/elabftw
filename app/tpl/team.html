@@ -58,7 +58,7 @@
                     {% if user.usergroup in range(1, 3) %}
                         style='font-weight:bold'
                     {% endif %}
-                    >{{ user.fullname }}
+                    >{{ user.fullname|raw }}
                     </span>
                 </a>
             </td>

@@ -180,14 +180,14 @@
 
         <div class='row'>
             <div class='col-md-6'>
-                <label class='block' for='firstname'>{{ 'Firstname'|trans }}</label>
+                <label class='block' for='firstname'>{{ 'Firstname'|trans|raw }}</label>
                 <input name="firstname" value='{{ Users.userData.firstname }}' cols='20' rows='1' />
             </div>
         </div>
 
         <div class='row'>
             <div class='col-md-6'>
-                <label class='block' for='lastname'>{{ 'Lastname'|trans }}</label>
+                <label class='block' for='lastname'>{{ 'Lastname'|trans|raw }}</label>
                 <input name="lastname" value='{{ Users.userData.lastname }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>

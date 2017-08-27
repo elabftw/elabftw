@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\Formkey
+ * \Elabftw\Elabftw\FormKey
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi

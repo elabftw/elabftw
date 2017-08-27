@@ -154,6 +154,9 @@ class Email
      */
     public function alertAdmin($team)
     {
+        if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
+            return null;
+        }
         // get url
         $Request = Request::createFromGlobals();
         $url = 'https://' . $Request->getHttpHost() . '/admin.php';
@@ -213,10 +216,14 @@ class Email
     /**
      * Alert a user that he is validated
      *
-     * @param string $email
+     * @param string|null $email
      */
     public function alertUserIsValidated($email)
     {
+        if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
+            return null;
+        }
+
         // now let's get the URL so we can have a nice link in the email
         $Request = Request::createFromGlobals();
         $url = 'https://' . $Request->getHttpHost() . '/login.php';

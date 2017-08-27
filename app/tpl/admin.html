@@ -2,7 +2,7 @@
 
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
-{% if unvalidatedUsersArr|length > 0 and (App.Config.configArr.mail_from != 'notconfigured@example.com') %}
+{% if unvalidatedUsersArr|length > 0 %} 
     <form method='post' action='app/controllers/UsersController.php'>
         <input type='hidden' name='usersValidate' value='true' />
         {{ FormKey.getFormkey|raw }}

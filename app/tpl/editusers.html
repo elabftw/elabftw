@@ -4,7 +4,7 @@
     <ul class='list-group'>
 
         {% for user in usersArr %}
-        <li><p>Team: {{ user.teamname }}</p></li>
+        <li><p>Team: {{ user.teamname|raw }}</p></li>
         <li>
             <form method='post' action='app/controllers/UsersController.php'>
                 <input type='hidden' value='true' name='usersUpdate' />

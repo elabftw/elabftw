@@ -35,7 +35,9 @@ try {
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
     $commonTplBody = $Templates->readCommonBody();
+    // only the unvalidated ones
     $unvalidatedUsersArr = $Users->readAllFromTeam(0);
+    // all users
     $usersArr = $Users->readAllFromTeam();
 
     $template = 'admin.html';

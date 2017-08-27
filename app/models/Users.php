@@ -312,18 +312,24 @@ class Users
     /**
      * Read all users from the team
      *
-     * @param int $validated
+     * @param int|null $validated
      * @return array
      */
-    public function readAllFromTeam($validated = 1)
+    public function readAllFromTeam($validated = null)
     {
+        $valSql = '';
+        if (is_int($validated)) {
+            $valSql = " users.validated = :validated AND ";
+        }
         $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
             teams.team_name AS teamname
             FROM users
             LEFT JOIN teams ON (users.team = teams.team_id)
-            WHERE users.validated = :validated AND users.team = :team";
+            WHERE " . $valSql . " users.team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':validated', $validated);
+        if (is_int($validated)) {
+            $req->bindValue(':validated', $validated);
+        }
         $req->bindValue(':team', $this->userData['team']);
         $req->execute();
 
@@ -681,7 +687,6 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid);
 
-        // validate the user
         if ($req->execute()) {
             $msg = sprintf(
                 _('User %s (%s) now has an active account.'),

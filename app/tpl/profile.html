@@ -6,14 +6,14 @@
     <img src='app/img/user.png' alt='user' /> <h4 style='display:inline'>{% trans %}Infos{% endtrans %}</h4>
     <hr>
     <div>
-        <p>{{ Users.userData['firstname'] }} {{ Users.userData['lastname'] }} ({{ Users.userData['email'] }})</p>
+        <p>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</p>
     <p>{{ count }} {% trans %}
         experiments done since
-        {% endtrans %} {{ Users.userData['register_date']|date("l jS \\of F Y") }}</p>
+        {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
         <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
         <div id='api_div'><h4>{% trans %}API key{% endtrans %}</h4>
-            {% if Users.userData['api_key']|length > 0 %}
-            <input value='{{ Users.userData['api_key'] }}'></input>
+            {% if App.Users.userData.api_key|length > 0 %}
+            <input value='{{ App.Users.userData.api_key }}'></input>
             {% endif %}
             <button class='button' onClick='generateApiKey()'>{% trans %}Generate an API Key{% endtrans %}</button></p>
         </div>

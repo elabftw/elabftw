@@ -31,7 +31,6 @@ try {
 
     $template = 'profile.html';
     $renderArr = array(
-        'Users' => $Users,
         'UserStats' => $UserStats,
         'TagCloud' => $TagCloud,
         'count' => $count

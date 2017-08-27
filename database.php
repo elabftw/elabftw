@@ -69,6 +69,9 @@ try {
 
     // DEFAULT MODE IS SHOW
     } else {
+        // if this variable is not empty the error message shown will be different if there are no results
+        $searchType = null;
+
         // CATEGORY FILTER
         if (Tools::checkId($Request->query->get('cat'))) {
             $Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('cat');

@@ -14,7 +14,7 @@
                 <li>
                     <label>
                     <input type='checkbox' name='usersValidateIdArr[]'
-                    value='{{ user.userid }}'> {{ user.fullname }} ({{ user.email }})
+                    value='{{ user.userid }}'> {{ user.fullname|raw }} ({{ user.email }})
                     </label>
                 </li>
             {% endfor %}
@@ -154,7 +154,7 @@
                     <label class='block' for='teamGroupUserAdd'>{{ 'Add this user'|trans }}</label>
                     <select class='clean-form col-3-form' id='teamGroupUserAdd'>
                         {% for user in usersArr %}
-                            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+                            <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
                         {% endfor %}
                     </select>
 
@@ -173,7 +173,7 @@
                     <label class='block' for='teamGroupUserRm'>{{ 'Remove this user'|trans }}</label>
                     <select class="clean-form col-3-form" id='teamGroupUserRm'>
                         {% for user in usersArr %}
-                            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+                            <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
                         {% endfor %}
                     </select>
 
@@ -198,7 +198,7 @@
                     <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
                     <ul class='group-list'>
                         {% for user in teamGroup.users %}
-                        <li>{{ user.fullname }}</li>
+                        <li>{{ user.fullname|raw }}</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -382,7 +382,7 @@
             <option class='disabled-input' value='' disabled>Import experiments</option>
 
             {% for user in usersArr %}
-                <option value='{{ user.userid }}' name='type'>{{ user.fullname }}</option>
+                <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>
             {% endfor %}
         </select><br>
         <div class='import_block'>

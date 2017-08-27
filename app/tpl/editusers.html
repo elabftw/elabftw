@@ -17,12 +17,12 @@
                     <li>
                         {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
                         <label class='block' for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
-                        <input class='clean-form' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname }}' name='firstname' />
+                        <input class='clean-form' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
                     </li>
 
                     <li>
                         <label class='block' for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
-                        <input class='clean-form' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname }}' name='lastname' />
+                        <input class='clean-form' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
                     </li>
 
                     <li>

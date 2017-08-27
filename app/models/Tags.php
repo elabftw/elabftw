@@ -116,10 +116,11 @@ class Tags implements CrudInterface
                     $reqtag->bindParam(':item_id', $newId);
                     $reqtag->bindParam(':userid', $this->Entity->Users->userid);
                 } else {
-                    $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
+                    $sql = "INSERT INTO items_tags (tag, item_id, team_id) VALUES(:tag, :item_id, :team_id)";
                     $reqtag = $this->Db->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
+                    $reqtag->bindParam(':team_id', $this->Entity->Users->userData['team']);
                 }
                 $reqtag->execute();
             }

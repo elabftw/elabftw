@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * Generate and validate keys for input forms.
  * **Note** : for a page with several *form* elements this will work only for 1 *form*!
  */
-class Formkey
+class FormKey
 {
     /** @var Session $Session the session object */
     private $Session;

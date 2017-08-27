@@ -164,13 +164,13 @@ $(document).ready(function(){
         var checked = getCheckedBoxes();
         // loop on it and delete stuff
         $.each(checked, function(index, value) {
-            $.post(controller, {
+            $.post('app/controllers/EntityController.php', {
                 destroy: true,
                 id: value
             });
         });
         // reload the page once it's done
-        location.reload();
+        window.location.reload();
     });
 
 });

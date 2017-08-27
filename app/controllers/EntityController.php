@@ -62,14 +62,11 @@ try {
     }
 
     // DUPLICATE
-    if ($Request->query->has('duplicateId')) {
-        $Entity->setId($Request->query->get('duplicateId'));
+    if ($Request->query->has('duplicate')) {
         $Entity->canOrExplode('read');
-
         $id = $Entity->duplicate();
         $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
     }
-
 
     /**
      * POST REQUESTS

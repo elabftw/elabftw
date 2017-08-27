@@ -89,7 +89,6 @@ try {
     }
 
     // UPDATE ORDERING
-    // TODO this code is copy pasted from admin controller
     if ($Request->request->has('updateOrdering')) {
         if ($Request->request->get('table') === 'experiments_templates') {
             // remove the create new entry

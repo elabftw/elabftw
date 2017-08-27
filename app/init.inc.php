@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -51,18 +52,18 @@ try {
     $Auth = new Auth($Request);
 
     // the config table from mysql
-    $Config = new Config();
-
-    // this will throw an exception if the SQL structure is not imported yet
+    // It's the first SQL request
+    // PDO will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $Update = new Update($Config);
-    } catch (Exception $e) {
+        $Config = new Config();
+    } catch (PDOException $e) {
         $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
         header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }
 
+    // GET THE LANG
     if ($Request->getSession()->has('auth')) {
         // generate full Users object with current userid
         $Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
@@ -74,9 +75,6 @@ try {
         $locale = $Config->configArr['lang'] . '.utf8';
     }
 
-    // INIT APP OBJECT
-    $App = new App($Request, $Config, new Logs(), $Users);
-
     // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");
@@ -85,7 +83,12 @@ try {
     textdomain($domain);
     // END i18n
 
+
+    // INIT APP OBJECT
+    $App = new App($Request, $Config, new Logs(), $Users);
+
     // UPDATE SQL SCHEMA
+    $Update = new Update($App->Config);
     try {
         $messages = $Update->runUpdateScript();
         if (is_array($messages)) {

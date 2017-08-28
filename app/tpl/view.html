@@ -135,7 +135,7 @@
 
 {% if Entity.type == 'items' %}
     <!-- SHOW USER -->
-    {{ 'Last modified by'|trans }} {{ Entity.entityData.fullname }}
+    {{ 'Last modified by'|trans }} {{ Entity.entityData.fullname|raw }}
 {% endif %}
 
 </section>
@@ -154,7 +154,7 @@
                         {% if comment.userid == Entity.Users.userid %}
                         <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
                         {% endif %}
-                        <span>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname) }}</span>
+                        <span>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname)|raw }}</span>
                         <!-- .editable uses the id of the element to send to the controller -->
                         <p {{ comment.userid == Entity.Users.userid ? "class='editable'" }} id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
                     </div>

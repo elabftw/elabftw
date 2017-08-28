@@ -113,7 +113,7 @@ try {
     <h3>Preliminary checks</h3>
     <?php
     // if we are not in https, die saying we work only in https
-    if (!$Request->isSecure()) {
+    if (!$Request->isSecure() && !$Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click (without the port)
         $url = 'https://' . $Request->getHttpHost();
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .

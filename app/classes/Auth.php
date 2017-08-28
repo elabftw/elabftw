@@ -91,7 +91,8 @@ class Auth
      */
     public function checkPasswordLength($password)
     {
-        return strlen($password) >= self::MIN_PASSWORD_LENGTH;
+        $min = self::MIN_PASSWORD_LENGTH;
+        return strlen($password) >= $min;
     }
 
     /**

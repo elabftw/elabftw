@@ -59,7 +59,9 @@ class Update
     {
         $current_schema = $this->Config->configArr['schema'];
 
-        if ($current_schema === self::REQUIRED_SCHEMA) {
+        // fix for php56
+        $required_schema = self::REQUIRED_SCHEMA;
+        if ($current_schema === $required_schema) {
             return true;
         }
 

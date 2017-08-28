@@ -572,6 +572,7 @@ class Users
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
+        // fix for php56
         $min = Auth::MIN_PASSWORD_LENGTH;
         if (strlen($params['newpass']) >= $min) {
             if ($params['newpass'] != $params['cnewpass']) {
@@ -638,6 +639,7 @@ class Users
         }
 
         if (!$this->Auth->checkPasswordLength($password)) {
+            // fix for php56
             $min = Auth::MIN_PASSWORD_LENGTH;
             $error = sprintf(_('Password must contain at least %s characters.'), $min);
             throw new Exception($error);

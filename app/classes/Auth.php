@@ -91,6 +91,7 @@ class Auth
      */
     public function checkPasswordLength($password)
     {
+        // fix for php56
         $min = self::MIN_PASSWORD_LENGTH;
         return strlen($password) >= $min;
     }

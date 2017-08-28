@@ -49,18 +49,18 @@
     <!-- everything in there will be part of the burger -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-                <li {{ App.Request.getScriptName == '/experiments.php' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName|split('/')|last == 'experiments.php' ? "class='active'" }}>
                     <a href='experiments.php?mode=show'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
                 </li>
-                <li {{ App.Request.getScriptName == '/database.php' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName|split('/')|last == 'database.php' ? "class='active'" }}>
                     <a href='database.php?mode=show'>{{ 'Database'|trans }}</a>
                 </li>
 
-                <li {{ App.Request.getScriptName == '/team.php' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName|split('/')|last == 'team.php' ? "class='active'" }}>
                     <a href='team.php'>{{ 'Team'|trans }}</a>
                 </li>
 
-                <li {{ App.Request.getScriptName == '/search.php' ? "class='active'" }}>
+                <li {{ App.Request.getScriptName|split('/')|last == 'search.php' ? "class='active'" }}>
                     <a href='search.php'>{{ 'Search'|trans }}</a>
                 </li>
 

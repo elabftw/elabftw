@@ -785,7 +785,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
      */
     private function schema31()
     {
-        $sql = "CREATE TABLE `elabftw`.`experiments_tpl_tags` (
+        $sql = "CREATE TABLE `experiments_tpl_tags` (
             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
             `tag` VARCHAR(255) NOT NULL,
             `item_id` INT UNSIGNED NOT NULL,

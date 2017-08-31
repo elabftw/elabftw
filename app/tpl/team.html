@@ -6,7 +6,7 @@
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Infos'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Information'|trans }}</li>
     </ul>
 </menu>
 
@@ -38,7 +38,7 @@
     {% endif %}
 </div>
 
-<!-- TAB 2 INFOS -->
+<!-- TAB 2 INFORMATION -->
 <div class='divhandle' id='tab2div'>
     {{ 'You belong to the %s team. %s'|trans|format(TeamsView.Teams.read('team_name'),TeamsView.showStats(true))|msg('ok', false) }}
 
@@ -72,7 +72,7 @@
 
 </div>
 
-<div id='infos'
+<div id='information'
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"></div>
 <script src='app/js/tabs.min.js'></script>

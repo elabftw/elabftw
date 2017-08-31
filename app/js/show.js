@@ -166,7 +166,8 @@ $(document).ready(function(){
         $.each(checked, function(index, value) {
             $.post('app/controllers/EntityController.php', {
                 destroy: true,
-                id: value
+                id: value,
+                type: 'experiments'
             });
         });
         // reload the page once it's done

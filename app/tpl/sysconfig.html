@@ -183,7 +183,7 @@
             <option value='1' {{ App.Config.configArr.stampshare ? ' selected' }}>{{ 'Yes'|trans }}</option>
             <option value='0' {{ not App.Config.configArr.stampshare ? 'selected' }}>{{ 'No'|trans }}</option>
         </select>
-        <p class='smallgray'>{{ 'You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.'|trans|raw }}</p>
+        <p class='smallgray'>{{ 'You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel.'|trans|raw }}</p>
         <p>
         <label class="block" for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
         <input class="clean-form col-3-form" type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ App.Config.configArr.stampprovider }}' name='stampprovider' id='stampprovider' />
@@ -244,7 +244,7 @@
         <hr>
     <form method='post' action='app/controllers/SysconfigController.php'>
         <input type='hidden' name='updateConfig' value='true' />
-        <p>{{ "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific smtp2go.com account and add the infos here."|trans }}</p>
+        <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific smtp2go.com account and add the information here."|trans }}</p>
         <p>
         <label class="block" for='selectMailMethod'>{{ 'Send e-mails via:'|trans }}</label>
         <select class="clean-form col-3-form" data-mailmethod='{{ App.Config.configArr.mail_method }}' name='mail_method' id='selectMailMethod'>

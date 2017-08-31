@@ -95,7 +95,7 @@
             {% if Entity.type == 'experiments' %}
             <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
             {% else %}
-                <h4>{{ 'Infos'|trans }}</h4>
+                <h4>{{ 'Information'|trans }}</h4>
             {% endif %}
 
             <textarea id='body_area' class='{{ not Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>

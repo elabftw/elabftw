@@ -146,7 +146,7 @@
             {% else %}
                 <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
             {% endif %}
-            <section class='item' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+            <section class='item' id='parent_{{ item.id }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
 
                 <p class='title'>
                 {% if item.locked %}
@@ -191,7 +191,7 @@
                     {% endfor %}
                 {% endif %}
                 </p>
-                <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='display:none; margin: 10px 0 0 20px'></div>
+                <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
             </section>
             </div>
         {% endif %}

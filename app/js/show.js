@@ -25,8 +25,12 @@ $(document).ready(function(){
         // and put it in the div and show the div
         }).done(function(data) {
             $('#bodyToggle_' + id).html(data.msg);
+            // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+            var width = $('#parent_' + id).width() - 30;
+            // adjust the width of the children
+            $('#bodyToggle_' + id).css('width', width);
+            // display div
             $('#bodyToggle_' + id).toggle();
-
         });
     });
 

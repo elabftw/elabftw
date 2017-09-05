@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '31';
+    const REQUIRED_SCHEMA = '32';
 
     /**
      * Init Update with Config and Db
@@ -240,6 +240,14 @@ class Update
             // 20170821
             $this->schema31();
             $this->updateSchema(31);
+        }
+
+        if ($current_schema < 32) {
+            // 20170905
+            // here we only want to empty the twig cache
+            // maybe I should think of a better way than abusing the schema stuff
+            // but for now it'll do. I mean it works, so why not.
+            $this->updateSchema(32);
         }
         // place new schema functions above this comment
 

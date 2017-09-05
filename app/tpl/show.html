@@ -165,7 +165,7 @@
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
                 <p style='padding-left:20px'>
                     {% if searchPage %}
-                        {{ item.fullname }}
+                        {{ item.fullname|raw }}
                     {% endif %}
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' style='width:15px;vertical-align:-3px;' />
                 {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items') %}

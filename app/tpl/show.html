@@ -164,6 +164,9 @@
                 {% endif %}
 <img id='bodyToggleImg_{{ item.id }}' data-type='{{ Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
                 <p style='padding-left:20px'>
+                    {% if searchPage %}
+                        {{ item.fullname }}
+                    {% endif %}
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' style='width:15px;vertical-align:-3px;' />
                 {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items') %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>

@@ -51,7 +51,13 @@ class Api
      */
     public function getEntity()
     {
+        if (Tools::checkId($this->Entity->id) === false) {
+            return $this->Entity->read();
+        }
+
+        // now id is set
         $this->Entity->canOrExplode('read');
+        // add the uploaded files
         $uploadedFilesArr = $this->Entity->Uploads->readAll();
         $this->Entity->entityData['uploads'] = $uploadedFilesArr;
 

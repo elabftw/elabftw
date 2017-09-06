@@ -166,7 +166,6 @@ try {
         $Templates = new Templates($Entity->Users);
         $templatesArr = $Templates->readFromUserid();
 
-
         // READ ALL ITEMS
 
         // related filter

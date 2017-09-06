@@ -10,23 +10,20 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * Toolbelt full of useful functions
  */
 class Tools
 {
     /**
-     * Return the date as YYYYMMDD format if no input
-     * return input if it is valid
+     * Return the current date as YYYYMMDD format if no input
+     * return input if it is a valid date
      *
      * @param string|null $input 20160521
      * @return string
      */
     public static function kdate($input = null)
     {
-        // Check DATE (is != null ? is 8 in length ? is int ? is valable ?)
         if (!is_null($input)
             && ((strlen($input) == '8'))
             && self::checkId($input)) {
@@ -44,12 +41,11 @@ class Tools
         return date('Ymd');
     }
 
-
     /**
-     * For displaying messages using jquery ui highlight/error messages
+     * For displaying messages using bootstrap alerts
      *
      * @param string $message The message to display
-     * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross
+     * @param string $type Can be 'ok', 'ko' or 'warning'
      * @param bool $cross do we display a cross or not?
      * @return string the HTML of the message
      */
@@ -224,7 +220,6 @@ class Tools
      * Check ID is valid (pos int)
      *
      * @param int $id
-     * @throws Exception if input is not valid
      * @return int $id if pos int
      */
     public static function checkId($id)
@@ -248,54 +243,6 @@ class Tools
             return _("This section is out of your reach!");
         }
         return _("An error occured!");
-    }
-
-    /**
-     * Return a value for the signification of FTW
-     *
-     * @return string
-     */
-    public static function getFtw()
-    {
-        $ftwArr = array();
-        // Lots of 'For The World' so the other ones appear more rarely
-        for ($i = 0; $i < 200; $i++) {
-            $ftwArr[] = 'For The World';
-        }
-        // Now the fun ones
-        $ftwArr[] = 'For Those Wondering';
-        $ftwArr[] = 'For The Worms';
-        $ftwArr[] = 'Forever Two Wheels';
-        $ftwArr[] = 'Free The Wookies';
-        $ftwArr[] = 'Forward The Word';
-        $ftwArr[] = 'Forever Together Whenever';
-        $ftwArr[] = 'Face The World';
-        $ftwArr[] = 'Forget The World';
-        $ftwArr[] = 'Free To Watch';
-        $ftwArr[] = 'Feed The World';
-        $ftwArr[] = 'Feel The Wind';
-        $ftwArr[] = 'Feel The Wrath';
-        $ftwArr[] = 'Fight To Win';
-        $ftwArr[] = 'Find The Waldo';
-        $ftwArr[] = 'Finding The Way';
-        $ftwArr[] = 'Flying Training Wing';
-        $ftwArr[] = 'Follow The Way';
-        $ftwArr[] = 'For The Wii';
-        $ftwArr[] = 'For The Win';
-        $ftwArr[] = 'For The Wolf';
-        $ftwArr[] = 'Free The Weed';
-        $ftwArr[] = 'Free The Whales';
-        $ftwArr[] = 'From The Wilderness';
-        $ftwArr[] = 'Freedom To Work';
-        $ftwArr[] = 'For The Warriors';
-        $ftwArr[] = 'Full Time Workers';
-        $ftwArr[] = 'Fabricated To Win';
-        $ftwArr[] = 'Furiously Taunted Wookies';
-        $ftwArr[] = 'Find The Wally';
-
-        shuffle($ftwArr);
-
-        return $ftwArr[0];
     }
 
     /**
@@ -350,6 +297,7 @@ class Tools
 
     /**
      * A better print_r()
+     * Used for debugging only
      *
      * @param array $arr
      * @return string

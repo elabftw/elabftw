@@ -18,21 +18,17 @@ use Exception;
  */
 class Todolist implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
-    /** our user */
-    private $userid;
+    use EntityTrait;
 
     /**
      * Gimme a userid
      *
      * @param int $userid
      */
-    public function __construct($userid)
+    public function __construct(Users $users)
     {
         $this->Db = Db::getConnection();
-        $this->userid = $userid;
+        $this->Users = $users;
     }
 
     /**
@@ -47,7 +43,7 @@ class Todolist implements CrudInterface
             VALUES(:body, :userid)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Users->userid);
 
         if (!$req->execute()) {
             throw new Exception('Error inserting todoitem!');
@@ -65,7 +61,7 @@ class Todolist implements CrudInterface
     {
         $sql = "SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
 
         return $req->fetchAll();
@@ -89,31 +85,6 @@ class Todolist implements CrudInterface
     }
 
     /**
-     * Update the order of the todoitems
-     *
-     * @param array $post
-     * @return bool
-     */
-    public function updateOrdering($post)
-    {
-        $success = array();
-
-        foreach ($post['ordering'] as $ordering => $id) {
-            $id = explode('_', $id);
-            $id = $id[1];
-            // update the ordering
-            $sql = "UPDATE todolist SET ordering = :ordering WHERE id = :id AND userid = :userid";
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $req->bindParam(':userid', $this->userid);
-            $success[] = $req->execute();
-        }
-
-        return !in_array(false, $success);
-    }
-
-    /**
      * Remove a todoitem
      *
      * @param int $id
@@ -124,7 +95,7 @@ class Todolist implements CrudInterface
         $sql = "DELETE FROM todolist WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Users->userid);
 
         return $req->execute();
     }
@@ -138,7 +109,7 @@ class Todolist implements CrudInterface
     {
         $sql = "DELETE FROM todolist WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Users->userid);
 
         return $req->execute();
     }

@@ -84,7 +84,7 @@ class App
 
         if ($this->Session->has('auth')) {
             // todolist
-            $Todolist = new Todolist($this->Session->get('userid'));
+            $Todolist = new Todolist($this->Users);
             $this->todoItems = $Todolist->readAll();
 
             // team config

@@ -36,10 +36,14 @@ final class Db
     {
         try {
             $pdo_options = array();
+            // throw exception if error
             $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+            // use persistent mode for connection to MySQL
             $pdo_options[PDO::ATTR_PERSISTENT] = true;
+            // only return a named array
             $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-            $this->connection = new \PDO(
+
+            $this->connection = new PDO(
                 'mysql:host=' . DB_HOST . ';dbname=' .
                 DB_NAME,
                 DB_USER,
@@ -115,6 +119,7 @@ final class Db
     {
         return false;
     }
+
     /**
      * Disallow wakeup also
      */

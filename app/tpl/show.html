@@ -172,7 +172,7 @@
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>
                 {% endif %}
                 <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
-                <span class='date'><img class='image' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
+                <span class='date'><img class='image' alt='Date' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
                 {% if item.timestamped %}
                     <img src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
                 {% endif %}

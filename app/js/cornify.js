@@ -4,7 +4,7 @@
 var cornifyCount = 0;
 cornifyAdd = function() {
 	cornifyCount += 1;
-	var cornifyUrl = 'http://www.cornify.com/';
+	var cornifyUrl = 'https://www.cornify.com/';
 	var div = document.createElement('div');
 	div.style.position = 'fixed';
 

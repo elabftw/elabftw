@@ -58,7 +58,7 @@ try {
     try {
         $Config = new Config();
     } catch (PDOException $e) {
-        $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
+        $url = $Request->getUri() . 'install/index.php';
         header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }

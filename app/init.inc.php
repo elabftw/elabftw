@@ -101,7 +101,12 @@ try {
     }
 
     // CERBERUS
-    if (!$Auth->isAuth()) {
+    if ($Auth->isAuth()) {
+        // make sure we load the global Users with good userid
+        // fix issue on first page load with cookie and no session
+        // TODO refactor all of that, maybe remove the global Users and use the one in App
+        $Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
+    } else {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);

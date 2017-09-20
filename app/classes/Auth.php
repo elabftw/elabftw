@@ -34,7 +34,7 @@ class Auth
     private $token;
 
     /**
-     * Just give me the Db object and I'm good to go
+     * Constructor
      *
      * @param Request $request
      */
@@ -117,7 +117,7 @@ class Auth
             }
         }
 
-        $this->Request->getSession()->migrate(true);
+        //$this->Request->getSession()->migrate(true);
         $this->Request->getSession()->set('auth', 1);
         $this->Request->getSession()->set('userid', $this->userData['userid']);
 

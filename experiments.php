@@ -168,7 +168,6 @@ try {
 
         $renderArr = array(
             'Entity' => $Entity,
-            'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'itemsArr' => $itemsArr,
             'searchType' => $searchType,
             'categoryArr' => $categoryArr,

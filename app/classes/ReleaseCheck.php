@@ -43,7 +43,7 @@ class ReleaseCheck
      * UPDATE IT ALSO IN package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.7.5';
+    const INSTALLED_VERSION = '1.7.6';
 
     /**
      * Fetch the update info on object creation

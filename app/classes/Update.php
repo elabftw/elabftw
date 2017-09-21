@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '32';
+    const REQUIRED_SCHEMA = '33';
 
     /**
      * Init Update with Config and Db
@@ -248,6 +248,12 @@ class Update
             // maybe I should think of a better way than abusing the schema stuff
             // but for now it'll do. I mean it works, so why not.
             $this->updateSchema(32);
+        }
+
+        if ($current_schema < 33) {
+            // 20170921
+            // I think now it's time to find a better way to clean cache on update…
+            $this->updateSchema(33);
         }
         // place new schema functions above this comment
 

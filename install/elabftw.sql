@@ -483,4 +483,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_lastname', NULL),
 ('local_login', '1'),
 ('local_register', '1'),
-('schema', '32');
+('schema', '33');

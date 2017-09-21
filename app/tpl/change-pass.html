@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
 <section class='center'>
     <form method="post" class='loginform' action="app/controllers/ResetPasswordController.php">
         <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
@@ -36,3 +40,4 @@
 
 <script src='app/js/change-pass.min.js'></script>
 <script src='app/js/register.min.js'></script>
+{% endblock %}

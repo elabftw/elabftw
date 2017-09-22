@@ -107,7 +107,8 @@ $('#todoItems-list').sortable({
 
         $.post("app/controllers/TodolistController.php", {
             'updateOrdering': true,
-            'ordering': ordering
+            'ordering': ordering,
+            'table' : 'todolist'
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');

@@ -128,7 +128,7 @@ class UploadsView
         // now display the name + comment with icons
         $html .= "<div class='caption'><img src='app/img/attached.png' alt='attached' /> ";
         $linkUrl = "app/download.php?f=" . $upload['long_name'] . "&name=" . $upload['real_name'];
-        $html .= "<a href='" . $linkUrl . "' target='_blank'>" . $upload['real_name'] . "</a>";
+        $html .= "<a href='" . $linkUrl . "' target='_blank' rel='noopener'>" . $upload['real_name'] . "</a>";
         $html .= "<span class='smallgray' style='display:inline'> " .
             Tools::formatBytes(filesize('uploads/' . $upload['long_name'])) . "</span><br>";
         // if we are in view mode, we don't show the comment if it's the default text

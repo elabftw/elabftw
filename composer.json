@@ -11,7 +11,7 @@
         "ext-gd":"*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "defuse/php-encryption": "2.0.*",
+        "defuse/php-encryption": "2.1.*",
         "mpdf/mpdf": "^6.1",
         "swiftmailer/swiftmailer":"^5.4",
         "twig/extensions": "^1.4",

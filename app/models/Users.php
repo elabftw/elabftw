@@ -288,7 +288,7 @@ class Users
     }
 
     /**
-     * Get a user from his API key
+     * Get a user from their API key
      *
      * @param string $apiKey
      */

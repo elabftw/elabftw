@@ -848,7 +848,7 @@ msgstr "Supprimer un compte"
 
 #: /tmp/elabftw-twig-cache/cb/cb8dd7b931549d47fe7ea10f0585db82828815a192420990911cc487d7c768ab.php:297
 msgid ""
-"Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
+"Type EMAIL ADDRESS of a member to delete this user and all their experiments/"
 "files forever:"
 msgstr ""
 "Taper l'ADRESSE Email d'un membre pour le supprimer ainsi que toutes ses "

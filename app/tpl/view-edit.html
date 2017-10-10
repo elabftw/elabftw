@@ -3,6 +3,11 @@
     <script src='app/js/chemdoodle/chemdoodle.min.js'></script>
 {% endif %}
 
+{% if Entity.Users.userData.use_markdown %}
+    <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
+    <script src='app/js/bootstrap-markdown.min.js'></script>
+{% endif %}
+
 <!-- BACK TO LINK -->
 <a href='?mode=show'>
     <img src='app/img/arrow-left-blue.png' alt='' />{{ 'Back to listing'|trans }}

@@ -28,7 +28,6 @@ try {
 
     // VIEW
     if ($Request->query->get('mode') === 'view') {
-
         $Entity->setId($Request->query->get('id'));
         $Entity->canOrExplode('read');
 
@@ -55,7 +54,6 @@ try {
 
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {
-
         $Entity->setId($Request->query->get('id'));
         // check permissions
         $Entity->canOrExplode('write');
@@ -91,7 +89,8 @@ try {
             'linksArr' => $linksArr,
             'stepsArr' => $stepsArr,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
-            'maxUploadSize' => Tools::returnMaxUploadSize()
+            'maxUploadSize' => Tools::returnMaxUploadSize(),
+            'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
         );
 
     // DEFAULT MODE IS SHOW
@@ -172,9 +171,7 @@ try {
         if (Tools::checkId($Request->query->get('related'))) {
             $searchType = 'related';
             $itemsArr = $Entity->readRelated($Request->query->get('related'));
-
         } else {
-
             // filter by user only if we are not making a search
             if (!$Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {
                 $Entity->setUseridFilter();
@@ -195,11 +192,9 @@ try {
             'query' => $query
         );
     }
-
 } catch (InvalidArgumentException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
 } catch (Exception $e) {
     $debug = false;
     $message = $e->getMessage();

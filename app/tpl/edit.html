@@ -98,7 +98,11 @@
                 <h4>{{ 'Infos'|trans }}</h4>
             {% endif %}
 
-            <textarea id='body_area' class='{{ not Entity.Users.userData.use_markdown ? 'mceditable' }}' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+            {% if not Entity.Users.userData.use_markdown %}
+            <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+            {% else %}
+            <textarea id='body_area' data-provide='markdown' data-language='{{ lang }}' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+            {% endif %}
 
             <div class='submitButtonDiv'>
                 <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>

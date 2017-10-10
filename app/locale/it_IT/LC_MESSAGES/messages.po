@@ -3,7 +3,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 "Project-Id-Version: elabftw\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -28,7 +28,7 @@ msgstr "Configurazione completata con successo"
 
 #: app/models/Users.php:472
 msgid "Wrong password!"
-msgstr "Password incorretta"
+msgstr "Password incorretta!"
 
 #: app/models/Users.php:479
 msgid "No user with this email or user not in your team"
@@ -278,9 +278,8 @@ msgid "Default status"
 msgstr "Stato predefinito"
 
 #: app/models/ItemsTypes.php:159
-#, fuzzy
 msgid "Remove all database items with this type before deleting this type."
-msgstr "E' necessario rimuovere tutti gli elementi di questo tipo prima di poter eliminare questo tipo"
+msgstr "E' necessario rimuovere tutti gli elementi di questo tipo prima di poter eliminare questo tipo."
 
 #: admin.php:252
 msgid "This is the default text when someone creates an experiment."

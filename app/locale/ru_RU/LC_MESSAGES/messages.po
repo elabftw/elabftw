@@ -248,7 +248,7 @@ msgid "Delete an account"
 msgstr "Удалить аккаунт"
 
 #: admin.php:220
-msgid "Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:"
+msgid "Type EMAIL ADDRESS of a member to delete this user and all their experiments/files forever:"
 msgstr "Введите адрес электронной почты участника для  окончательного удаления данного пользователя и всех его экспериментов"
 
 #: admin.php:222

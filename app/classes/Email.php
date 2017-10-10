@@ -215,7 +215,7 @@ class Email
     }
 
     /**
-     * Alert a user that he is validated
+     * Alert a user that they are validated
      *
      * @param string|null $email
      */

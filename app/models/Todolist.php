@@ -23,7 +23,7 @@ class Todolist implements CrudInterface
     /**
      * Gimme a userid
      *
-     * @param int $userid
+     * @param Users $users
      */
     public function __construct(Users $users)
     {

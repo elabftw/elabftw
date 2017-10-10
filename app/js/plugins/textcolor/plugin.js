@@ -1,297 +1,619 @@
+(function () {
+
+var defs = {}; // id -> {dependencies, definition, instance (possibly undefined)}
+
+// Used when there is no 'main' module.
+// The name is probably (hopefully) unique so minification removes for releases.
+var register_3795 = function (id) {
+  var module = dem(id);
+  var fragments = id.split('.');
+  var target = Function('return this;')();
+  for (var i = 0; i < fragments.length - 1; ++i) {
+    if (target[fragments[i]] === undefined)
+      target[fragments[i]] = {};
+    target = target[fragments[i]];
+  }
+  target[fragments[fragments.length - 1]] = module;
+};
+
+var instantiate = function (id) {
+  var actual = defs[id];
+  var dependencies = actual.deps;
+  var definition = actual.defn;
+  var len = dependencies.length;
+  var instances = new Array(len);
+  for (var i = 0; i < len; ++i)
+    instances[i] = dem(dependencies[i]);
+  var defResult = definition.apply(null, instances);
+  if (defResult === undefined)
+     throw 'module [' + id + '] returned undefined';
+  actual.instance = defResult;
+};
+
+var def = function (id, dependencies, definition) {
+  if (typeof id !== 'string')
+    throw 'module id must be a string';
+  else if (dependencies === undefined)
+    throw 'no dependencies for ' + id;
+  else if (definition === undefined)
+    throw 'no definition function for ' + id;
+  defs[id] = {
+    deps: dependencies,
+    defn: definition,
+    instance: undefined
+  };
+};
+
+var dem = function (id) {
+  var actual = defs[id];
+  if (actual === undefined)
+    throw 'module [' + id + '] was undefined';
+  else if (actual.instance === undefined)
+    instantiate(id);
+  return actual.instance;
+};
+
+var req = function (ids, callback) {
+  var len = ids.length;
+  var instances = new Array(len);
+  for (var i = 0; i < len; ++i)
+    instances[i] = dem(ids[i]);
+  callback.apply(null, instances);
+};
+
+var ephox = {};
+
+ephox.bolt = {
+  module: {
+    api: {
+      define: def,
+      require: req,
+      demand: dem
+    }
+  }
+};
+
+var define = def;
+var require = req;
+var demand = dem;
+// this helps with minification when using a lot of global references
+var defineGlobal = function (id, ref) {
+  define(id, [], function () { return ref; });
+};
+/*jsc
+["tinymce.plugins.textcolor.Plugin","tinymce.core.PluginManager","tinymce.plugins.textcolor.ui.Buttons","global!tinymce.util.Tools.resolve","tinymce.core.dom.DOMUtils","tinymce.core.util.Tools","tinymce.plugins.textcolor.api.Settings","tinymce.plugins.textcolor.core.TextColor","tinymce.plugins.textcolor.ui.ColorPickerHtml","tinymce.core.util.I18n"]
+jsc*/
+defineGlobal("global!tinymce.util.Tools.resolve", tinymce.util.Tools.resolve);
 /**
- * plugin.js
+ * ResolveGlobal.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
  */
 
-/*global tinymce:true */
-/*eslint consistent-this:0 */
+define(
+  'tinymce.core.PluginManager',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.PluginManager');
+  }
+);
 
-tinymce.PluginManager.add('textcolor', function(editor) {
-	var cols, rows;
+/**
+ * ResolveGlobal.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-	rows = {
-		forecolor: editor.settings.forecolor_rows || editor.settings.textcolor_rows || 5,
-		backcolor: editor.settings.backcolor_rows || editor.settings.textcolor_rows || 5
-	};
-	cols = {
-		forecolor: editor.settings.forecolor_cols || editor.settings.textcolor_cols || 8,
-		backcolor: editor.settings.backcolor_cols || editor.settings.textcolor_cols || 8
-	};
+define(
+  'tinymce.core.dom.DOMUtils',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.dom.DOMUtils');
+  }
+);
 
-	function getCurrentColor(format) {
-		var color;
+/**
+ * ResolveGlobal.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		editor.dom.getParents(editor.selection.getStart(), function(elm) {
-			var value;
+define(
+  'tinymce.core.util.Tools',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.util.Tools');
+  }
+);
 
-			if ((value = elm.style[format == 'forecolor' ? 'color' : 'background-color'])) {
-				color = value;
-			}
-		});
+/**
+ * Settings.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		return color;
-	}
+define(
+  'tinymce.plugins.textcolor.api.Settings',
+  [
+  ],
+  function () {
+    var defaultColorMap = [
+      "000000", "Black",
+      "993300", "Burnt orange",
+      "333300", "Dark olive",
+      "003300", "Dark green",
+      "003366", "Dark azure",
+      "000080", "Navy Blue",
+      "333399", "Indigo",
+      "333333", "Very dark gray",
+      "800000", "Maroon",
+      "FF6600", "Orange",
+      "808000", "Olive",
+      "008000", "Green",
+      "008080", "Teal",
+      "0000FF", "Blue",
+      "666699", "Grayish blue",
+      "808080", "Gray",
+      "FF0000", "Red",
+      "FF9900", "Amber",
+      "99CC00", "Yellow green",
+      "339966", "Sea green",
+      "33CCCC", "Turquoise",
+      "3366FF", "Royal blue",
+      "800080", "Purple",
+      "999999", "Medium gray",
+      "FF00FF", "Magenta",
+      "FFCC00", "Gold",
+      "FFFF00", "Yellow",
+      "00FF00", "Lime",
+      "00FFFF", "Aqua",
+      "00CCFF", "Sky blue",
+      "993366", "Red violet",
+      "FFFFFF", "White",
+      "FF99CC", "Pink",
+      "FFCC99", "Peach",
+      "FFFF99", "Light yellow",
+      "CCFFCC", "Pale green",
+      "CCFFFF", "Pale cyan",
+      "99CCFF", "Light sky blue",
+      "CC99FF", "Plum"
+    ];
 
-	function mapColors(type) {
-		var i, colors = [], colorMap;
+    var getTextColorMap = function (editor) {
+      return editor.getParam('textcolor_map', defaultColorMap);
+    };
 
-		colorMap = [
-			"000000", "Black",
-			"993300", "Burnt orange",
-			"333300", "Dark olive",
-			"003300", "Dark green",
-			"003366", "Dark azure",
-			"000080", "Navy Blue",
-			"333399", "Indigo",
-			"333333", "Very dark gray",
-			"800000", "Maroon",
-			"FF6600", "Orange",
-			"808000", "Olive",
-			"008000", "Green",
-			"008080", "Teal",
-			"0000FF", "Blue",
-			"666699", "Grayish blue",
-			"808080", "Gray",
-			"FF0000", "Red",
-			"FF9900", "Amber",
-			"99CC00", "Yellow green",
-			"339966", "Sea green",
-			"33CCCC", "Turquoise",
-			"3366FF", "Royal blue",
-			"800080", "Purple",
-			"999999", "Medium gray",
-			"FF00FF", "Magenta",
-			"FFCC00", "Gold",
-			"FFFF00", "Yellow",
-			"00FF00", "Lime",
-			"00FFFF", "Aqua",
-			"00CCFF", "Sky blue",
-			"993366", "Red violet",
-			"FFFFFF", "White",
-			"FF99CC", "Pink",
-			"FFCC99", "Peach",
-			"FFFF99", "Light yellow",
-			"CCFFCC", "Pale green",
-			"CCFFFF", "Pale cyan",
-			"99CCFF", "Light sky blue",
-			"CC99FF", "Plum"
-		];
+    var getForeColorMap = function (editor) {
+      return editor.getParam('forecolor_map', getTextColorMap(editor));
+    };
 
-		colorMap = editor.settings.textcolor_map || colorMap;
-		colorMap = editor.settings[type + '_map'] || colorMap;
+    var getBackColorMap = function (editor) {
+      return editor.getParam('backcolor_map', getTextColorMap(editor));
+    };
 
-		for (i = 0; i < colorMap.length; i += 2) {
-			colors.push({
-				text: colorMap[i + 1],
-				color: '#' + colorMap[i]
-			});
-		}
+    var getTextColorRows = function (editor) {
+      return editor.getParam('textcolor_rows', 5);
+    };
 
-		return colors;
-	}
+    var getTextColorCols = function (editor) {
+      return editor.getParam('textcolor_cols', 8);
+    };
 
-	function renderColorPicker() {
-		var ctrl = this, colors, color, html, last, x, y, i, id = ctrl._id, count = 0, type;
+    var getForeColorRows = function (editor) {
+      return editor.getParam('forecolor_rows', getTextColorRows(editor));
+    };
 
-		type = ctrl.settings.origin;
+    var getBackColorRows = function (editor) {
+      return editor.getParam('backcolor_rows', getTextColorRows(editor));
+    };
 
-		function getColorCellHtml(color, title) {
-			var isNoColor = color == 'transparent';
+    var getForeColorCols = function (editor) {
+      return editor.getParam('forecolor_cols', getTextColorCols(editor));
+    };
 
-			return (
-				'<td class="mce-grid-cell' + (isNoColor ? ' mce-colorbtn-trans' : '') + '">' +
-					'<div id="' + id + '-' + (count++) + '"' +
-						' data-mce-color="' + (color ? color : '') + '"' +
-						' role="option"' +
-						' tabIndex="-1"' +
-						' style="' + (color ? 'background-color: ' + color : '') + '"' +
-						' title="' + tinymce.translate(title) + '">' +
-						(isNoColor ? '&#215;' : '') +
-					'</div>' +
-				'</td>'
-			);
-		}
+    var getBackColorCols = function (editor) {
+      return editor.getParam('backcolor_cols', getTextColorCols(editor));
+    };
 
-		colors = mapColors(type);
-		colors.push({
-			text: tinymce.translate("No color"),
-			color: "transparent"
-		});
+    var getColorPickerCallback = function (editor) {
+      return editor.getParam('color_picker_callback', null);
+    };
 
-		html = '<table class="mce-grid mce-grid-border mce-colorbutton-grid" role="list" cellspacing="0"><tbody>';
-		last = colors.length - 1;
+    var hasColorPicker = function (editor) {
+      return typeof getColorPickerCallback(editor) === 'function';
+    };
 
-		for (y = 0; y < rows[type]; y++) {
-			html += '<tr>';
+    return {
+      getForeColorMap: getForeColorMap,
+      getBackColorMap: getBackColorMap,
+      getForeColorRows: getForeColorRows,
+      getBackColorRows: getBackColorRows,
+      getForeColorCols: getForeColorCols,
+      getBackColorCols: getBackColorCols,
+      getColorPickerCallback: getColorPickerCallback,
+      hasColorPicker: hasColorPicker
+    };
+  }
+);
 
-			for (x = 0; x < cols[type]; x++) {
-				i = y * cols[type] + x;
+/**
+ * TextColor.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-				if (i > last) {
-					html += '<td></td>';
-				} else {
-					color = colors[i];
-					html += getColorCellHtml(color.color, color.text);
-				}
-			}
+define(
+  'tinymce.plugins.textcolor.core.TextColor',
+  [
+  ],
+  function () {
+    var getCurrentColor = function (editor, format) {
+      var color;
 
-			html += '</tr>';
-		}
+      editor.dom.getParents(editor.selection.getStart(), function (elm) {
+        var value;
 
-		if (editor.settings.color_picker_callback) {
-			html += (
-				'<tr>' +
-					'<td colspan="' + cols[type] + '" class="mce-custom-color-btn">' +
-						'<div id="' + id + '-c" class="mce-widget mce-btn mce-btn-small mce-btn-flat" ' +
-							'role="button" tabindex="-1" aria-labelledby="' + id + '-c" style="width: 100%">' +
-							'<button type="button" role="presentation" tabindex="-1">' + tinymce.translate('Custom...') + '</button>' +
-						'</div>' +
-					'</td>' +
-				'</tr>'
-			);
+        if ((value = elm.style[format === 'forecolor' ? 'color' : 'background-color'])) {
+          color = value;
+        }
+      });
 
-			html += '<tr>';
+      return color;
+    };
 
-			for (x = 0; x < cols[type]; x++) {
-				html += getColorCellHtml('', 'Custom color');
-			}
+    var mapColors = function (colorMap) {
+      var i, colors = [];
 
-			html += '</tr>';
-		}
+      for (i = 0; i < colorMap.length; i += 2) {
+        colors.push({
+          text: colorMap[i + 1],
+          color: '#' + colorMap[i]
+        });
+      }
 
-		html += '</tbody></table>';
+      return colors;
+    };
 
-		return html;
-	}
+    var applyFormat = function (editor, format, value) {
+      editor.undoManager.transact(function () {
+        editor.focus();
+        editor.formatter.apply(format, { value: value });
+        editor.nodeChanged();
+      });
+    };
 
-	function applyFormat(format, value) {
-		editor.undoManager.transact(function() {
-			editor.focus();
-			editor.formatter.apply(format, {value: value});
-			editor.nodeChanged();
-		});
-	}
+    var removeFormat = function (editor, format) {
+      editor.undoManager.transact(function () {
+        editor.focus();
+        editor.formatter.remove(format, { value: null }, null, true);
+        editor.nodeChanged();
+      });
+    };
 
-	function removeFormat(format) {
-		editor.undoManager.transact(function() {
-			editor.focus();
-			editor.formatter.remove(format, {value: null}, null, true);
-			editor.nodeChanged();
-		});
-	}
+    return {
+      getCurrentColor: getCurrentColor,
+      mapColors: mapColors,
+      applyFormat: applyFormat,
+      removeFormat: removeFormat
+    };
+  }
+);
+/**
+ * ResolveGlobal.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-	function onPanelClick(e) {
-		var buttonCtrl = this.parent(), value, type;
+define(
+  'tinymce.core.util.I18n',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.util.I18n');
+  }
+);
 
-		type = buttonCtrl.settings.origin;
+/**
+ * ColorPickerHtml.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		function selectColor(value) {
-			buttonCtrl.hidePanel();
-			buttonCtrl.color(value);
-			applyFormat(buttonCtrl.settings.format, value);
-		}
+define(
+  'tinymce.plugins.textcolor.ui.ColorPickerHtml',
+  [
+    'tinymce.core.dom.DOMUtils',
+    'tinymce.core.util.I18n',
+    'tinymce.plugins.textcolor.api.Settings',
+    'tinymce.plugins.textcolor.core.TextColor'
+  ],
+  function (DOMUtils, I18n, Settings, TextColor) {
+    var getHtml = function (cols, rows, colorMap, hasColorPicker) {
+      var colors, color, html, last, x, y, i, count = 0, id = DOMUtils.DOM.uniqueId('mcearia');
 
-		function resetColor() {
-			buttonCtrl.hidePanel();
-			buttonCtrl.resetColor();
-			removeFormat(buttonCtrl.settings.format);
-		}
+      var getColorCellHtml = function (color, title) {
+        var isNoColor = color === 'transparent';
 
-		function setDivColor(div, value) {
-			div.style.background = value;
-			div.setAttribute('data-mce-color', value);
-		}
+        return (
+          '<td class="mce-grid-cell' + (isNoColor ? ' mce-colorbtn-trans' : '') + '">' +
+          '<div id="' + id + '-' + (count++) + '"' +
+          ' data-mce-color="' + (color ? color : '') + '"' +
+          ' role="option"' +
+          ' tabIndex="-1"' +
+          ' style="' + (color ? 'background-color: ' + color : '') + '"' +
+          ' title="' + I18n.translate(title) + '">' +
+          (isNoColor ? '&#215;' : '') +
+          '</div>' +
+          '</td>'
+        );
+      };
 
-		if (tinymce.DOM.getParent(e.target, '.mce-custom-color-btn')) {
-			buttonCtrl.hidePanel();
+      colors = TextColor.mapColors(colorMap);
+      colors.push({
+        text: I18n.translate("No color"),
+        color: "transparent"
+      });
 
-			editor.settings.color_picker_callback.call(editor, function(value) {
-				var tableElm = buttonCtrl.panel.getEl().getElementsByTagName('table')[0];
-				var customColorCells, div, i;
+      html = '<table class="mce-grid mce-grid-border mce-colorbutton-grid" role="list" cellspacing="0"><tbody>';
+      last = colors.length - 1;
 
-				customColorCells = tinymce.map(tableElm.rows[tableElm.rows.length - 1].childNodes, function(elm) {
-					return elm.firstChild;
-				});
+      for (y = 0; y < rows; y++) {
+        html += '<tr>';
 
-				for (i = 0; i < customColorCells.length; i++) {
-					div = customColorCells[i];
-					if (!div.getAttribute('data-mce-color')) {
-						break;
-					}
-				}
+        for (x = 0; x < cols; x++) {
+          i = y * cols + x;
 
-				// Shift colors to the right
-				// TODO: Might need to be the left on RTL
-				if (i == cols[type]) {
-					for (i = 0; i < cols[type] - 1; i++) {
-						setDivColor(customColorCells[i], customColorCells[i + 1].getAttribute('data-mce-color'));
-					}
-				}
+          if (i > last) {
+            html += '<td></td>';
+          } else {
+            color = colors[i];
+            html += getColorCellHtml(color.color, color.text);
+          }
+        }
 
-				setDivColor(div, value);
-				selectColor(value);
-			}, getCurrentColor(buttonCtrl.settings.format));
-		}
+        html += '</tr>';
+      }
 
-		value = e.target.getAttribute('data-mce-color');
-		if (value) {
-			if (this.lastId) {
-				document.getElementById(this.lastId).setAttribute('aria-selected', false);
-			}
+      if (hasColorPicker) {
+        html += (
+          '<tr>' +
+          '<td colspan="' + cols + '" class="mce-custom-color-btn">' +
+          '<div id="' + id + '-c" class="mce-widget mce-btn mce-btn-small mce-btn-flat" ' +
+          'role="button" tabindex="-1" aria-labelledby="' + id + '-c" style="width: 100%">' +
+          '<button type="button" role="presentation" tabindex="-1">' + I18n.translate('Custom...') + '</button>' +
+          '</div>' +
+          '</td>' +
+          '</tr>'
+        );
 
-			e.target.setAttribute('aria-selected', true);
-			this.lastId = e.target.id;
+        html += '<tr>';
 
-			if (value == 'transparent') {
-				resetColor();
-			} else {
-				selectColor(value);
-			}
-		} else if (value !== null) {
-			buttonCtrl.hidePanel();
-		}
-	}
+        for (x = 0; x < cols; x++) {
+          html += getColorCellHtml('', 'Custom color');
+        }
 
-	function onButtonClick() {
-		var self = this;
+        html += '</tr>';
+      }
 
-		if (self._color) {
-			applyFormat(self.settings.format, self._color);
-		} else {
-			removeFormat(self.settings.format);
-		}
-	}
+      html += '</tbody></table>';
 
-	editor.addButton('forecolor', {
-		type: 'colorbutton',
-		tooltip: 'Text color',
-		format: 'forecolor',
-		panel: {
-			origin: 'forecolor',
-			role: 'application',
-			ariaRemember: true,
-			html: renderColorPicker,
-			onclick: onPanelClick
-		},
-		onclick: onButtonClick
-	});
+      return html;
+    };
 
-	editor.addButton('backcolor', {
-		type: 'colorbutton',
-		tooltip: 'Background color',
-		format: 'hilitecolor',
-		panel: {
-			origin: 'backcolor',
-			role: 'application',
-			ariaRemember: true,
-			html: renderColorPicker,
-			onclick: onPanelClick
-		},
-		onclick: onButtonClick
-	});
-});
+    return {
+      getHtml: getHtml
+    };
+  }
+);
+/**
+ * Buttons.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define(
+  'tinymce.plugins.textcolor.ui.Buttons',
+  [
+    'tinymce.core.dom.DOMUtils',
+    'tinymce.core.util.Tools',
+    'tinymce.plugins.textcolor.api.Settings',
+    'tinymce.plugins.textcolor.core.TextColor',
+    'tinymce.plugins.textcolor.ui.ColorPickerHtml'
+  ],
+  function (DOMUtils, Tools, Settings, TextColor, ColorPickerHtml) {
+    var setDivColor = function setDivColor(div, value) {
+      div.style.background = value;
+      div.setAttribute('data-mce-color', value);
+    };
+
+    var onButtonClick = function (editor) {
+      return function (e) {
+        var ctrl = e.control;
+
+        if (ctrl._color) {
+          TextColor.applyFormat(editor, ctrl.settings.format, ctrl._color);
+        } else {
+          TextColor.removeFormat(editor, ctrl.settings.format);
+        }
+      };
+    };
+
+    var onPanelClick = function (editor, cols) {
+      return function (e) {
+        var buttonCtrl = this.parent(), value;
+        var currentColor = TextColor.getCurrentColor(editor, buttonCtrl.settings.format);
+
+        var selectColor = function (value) {
+          buttonCtrl.hidePanel();
+          buttonCtrl.color(value);
+          TextColor.applyFormat(editor, buttonCtrl.settings.format, value);
+        };
+
+        var resetColor = function () {
+          buttonCtrl.hidePanel();
+          buttonCtrl.resetColor();
+          TextColor.removeFormat(editor, buttonCtrl.settings.format);
+        };
+
+        if (DOMUtils.DOM.getParent(e.target, '.mce-custom-color-btn')) {
+          buttonCtrl.hidePanel();
+
+          var colorPickerCallback = Settings.getColorPickerCallback(editor);
+
+          colorPickerCallback.call(editor, function (value) {
+            var tableElm = buttonCtrl.panel.getEl().getElementsByTagName('table')[0];
+            var customColorCells, div, i;
+
+            customColorCells = Tools.map(tableElm.rows[tableElm.rows.length - 1].childNodes, function (elm) {
+              return elm.firstChild;
+            });
+
+            for (i = 0; i < customColorCells.length; i++) {
+              div = customColorCells[i];
+              if (!div.getAttribute('data-mce-color')) {
+                break;
+              }
+            }
+
+            // Shift colors to the right
+            // TODO: Might need to be the left on RTL
+            if (i === cols) {
+              for (i = 0; i < cols - 1; i++) {
+                setDivColor(customColorCells[i], customColorCells[i + 1].getAttribute('data-mce-color'));
+              }
+            }
+
+            setDivColor(div, value);
+            selectColor(value);
+          }, currentColor);
+        }
+
+        value = e.target.getAttribute('data-mce-color');
+        if (value) {
+          if (this.lastId) {
+            DOMUtils.DOM.get(this.lastId).setAttribute('aria-selected', false);
+          }
+
+          e.target.setAttribute('aria-selected', true);
+          this.lastId = e.target.id;
+
+          if (value === 'transparent') {
+            resetColor();
+          } else {
+            selectColor(value);
+          }
+        } else if (value !== null) {
+          buttonCtrl.hidePanel();
+        }
+      };
+    };
+
+    var renderColorPicker = function (editor, foreColor) {
+      return function () {
+        var cols = foreColor ? Settings.getForeColorCols(editor) : Settings.getBackColorCols(editor);
+        var rows = foreColor ? Settings.getForeColorRows(editor) : Settings.getBackColorRows(editor);
+        var colorMap = foreColor ? Settings.getForeColorMap(editor) : Settings.getBackColorMap(editor);
+        var hasColorPicker = Settings.hasColorPicker(editor);
+
+        return ColorPickerHtml.getHtml(cols, rows, colorMap, hasColorPicker);
+      };
+    };
+
+    var register = function (editor) {
+      editor.addButton('forecolor', {
+        type: 'colorbutton',
+        tooltip: 'Text color',
+        format: 'forecolor',
+        panel: {
+          role: 'application',
+          ariaRemember: true,
+          html: renderColorPicker(editor, true),
+          onclick: onPanelClick(editor, Settings.getForeColorCols(editor))
+        },
+        onclick: onButtonClick(editor)
+      });
+
+      editor.addButton('backcolor', {
+        type: 'colorbutton',
+        tooltip: 'Background color',
+        format: 'hilitecolor',
+        panel: {
+          role: 'application',
+          ariaRemember: true,
+          html: renderColorPicker(editor, false),
+          onclick: onPanelClick(editor, Settings.getBackColorCols(editor))
+        },
+        onclick: onButtonClick(editor)
+      });
+    };
+
+    return {
+      register: register
+    };
+  }
+);
+/**
+ * Plugin.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define(
+  'tinymce.plugins.textcolor.Plugin',
+  [
+    'tinymce.core.PluginManager',
+    'tinymce.plugins.textcolor.ui.Buttons'
+  ],
+  function (PluginManager, Buttons) {
+    PluginManager.add('textcolor', function (editor) {
+      Buttons.register(editor);
+    });
+
+    return function () { };
+  }
+);
+dem('tinymce.plugins.textcolor.Plugin')();
+})();

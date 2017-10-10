@@ -1,6 +1,33 @@
-/*global tinymce, jQuery */
+/*global tinymce, module, require, define, global, self */
 
-(function (tinymce, $) {
+;(function (f) {
+  'use strict';
+
+  // CommonJS
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    module.exports = f(require('jquery'));
+
+  // RequireJS
+  } else if (typeof define === 'function'  && define.amd) {
+    define(['jquery'], f);
+
+  // <script>
+  } else {
+    var g;
+    if (typeof window !== 'undefined') {
+      g = window;
+    } else if (typeof global !== 'undefined') {
+      g = global;
+    } else if (typeof self !== 'undefined') {
+      g = self;
+    } else {
+      g = this;
+    }
+    
+    f(g.jQuery);
+  }
+
+})(function ($) {
     'use strict';
 
     var AutoComplete = function (ed, options) {
@@ -377,5 +404,5 @@
     });
 
     tinymce.PluginManager.add('mention', tinymce.plugins.Mention);
-
-}(tinymce, jQuery));
+  
+});

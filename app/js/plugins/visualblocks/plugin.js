@@ -1,86 +1,458 @@
+(function () {
+
+var defs = {}; // id -> {dependencies, definition, instance (possibly undefined)}
+
+// Used when there is no 'main' module.
+// The name is probably (hopefully) unique so minification removes for releases.
+var register_3795 = function (id) {
+  var module = dem(id);
+  var fragments = id.split('.');
+  var target = Function('return this;')();
+  for (var i = 0; i < fragments.length - 1; ++i) {
+    if (target[fragments[i]] === undefined)
+      target[fragments[i]] = {};
+    target = target[fragments[i]];
+  }
+  target[fragments[fragments.length - 1]] = module;
+};
+
+var instantiate = function (id) {
+  var actual = defs[id];
+  var dependencies = actual.deps;
+  var definition = actual.defn;
+  var len = dependencies.length;
+  var instances = new Array(len);
+  for (var i = 0; i < len; ++i)
+    instances[i] = dem(dependencies[i]);
+  var defResult = definition.apply(null, instances);
+  if (defResult === undefined)
+     throw 'module [' + id + '] returned undefined';
+  actual.instance = defResult;
+};
+
+var def = function (id, dependencies, definition) {
+  if (typeof id !== 'string')
+    throw 'module id must be a string';
+  else if (dependencies === undefined)
+    throw 'no dependencies for ' + id;
+  else if (definition === undefined)
+    throw 'no definition function for ' + id;
+  defs[id] = {
+    deps: dependencies,
+    defn: definition,
+    instance: undefined
+  };
+};
+
+var dem = function (id) {
+  var actual = defs[id];
+  if (actual === undefined)
+    throw 'module [' + id + '] was undefined';
+  else if (actual.instance === undefined)
+    instantiate(id);
+  return actual.instance;
+};
+
+var req = function (ids, callback) {
+  var len = ids.length;
+  var instances = new Array(len);
+  for (var i = 0; i < len; ++i)
+    instances[i] = dem(ids[i]);
+  callback.apply(null, instances);
+};
+
+var ephox = {};
+
+ephox.bolt = {
+  module: {
+    api: {
+      define: def,
+      require: req,
+      demand: dem
+    }
+  }
+};
+
+var define = def;
+var require = req;
+var demand = dem;
+// this helps with minification when using a lot of global references
+var defineGlobal = function (id, ref) {
+  define(id, [], function () { return ref; });
+};
+/*jsc
+["tinymce.plugins.visualblocks.Plugin","ephox.katamari.api.Cell","tinymce.core.PluginManager","tinymce.plugins.visualblocks.api.Commands","tinymce.plugins.visualblocks.core.Bindings","tinymce.plugins.visualblocks.ui.Buttons","global!tinymce.util.Tools.resolve","tinymce.plugins.visualblocks.core.VisualBlocks","tinymce.plugins.visualblocks.api.Settings","tinymce.plugins.visualblocks.api.Events","tinymce.plugins.visualblocks.core.LoadCss","tinymce.core.dom.DOMUtils","tinymce.core.util.Tools"]
+jsc*/
+define(
+  'ephox.katamari.api.Cell',
+
+  [
+  ],
+
+  function () {
+    var Cell = function (initial) {
+      var value = initial;
+
+      var get = function () {
+        return value;
+      };
+
+      var set = function (v) {
+        value = v;
+      };
+
+      var clone = function () {
+        return Cell(get());
+      };
+
+      return {
+        get: get,
+        set: set,
+        clone: clone
+      };
+    };
+
+    return Cell;
+  }
+);
+
+defineGlobal("global!tinymce.util.Tools.resolve", tinymce.util.Tools.resolve);
 /**
- * plugin.js
+ * ResolveGlobal.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
  */
 
-/*global tinymce:true */
+define(
+  'tinymce.core.PluginManager',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.PluginManager');
+  }
+);
 
-tinymce.PluginManager.add('visualblocks', function(editor, url) {
-	var cssId, visualBlocksMenuItem, enabled;
+/**
+ * Events.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-	// We don't support older browsers like IE6/7 and they don't provide prototypes for DOM objects
-	if (!window.NodeList) {
-		return;
-	}
+define(
+  'tinymce.plugins.visualblocks.api.Events',
+  [
+  ],
+  function () {
+    var fireVisualBlocks = function (editor, state) {
+      editor.fire('VisualBlocks', { state: state });
+    };
 
-	function toggleActiveState() {
-		var self = this;
+    return {
+      fireVisualBlocks: fireVisualBlocks
+    };
+  }
+);
+/**
+ * Settings.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		self.active(enabled);
+define(
+  'tinymce.plugins.visualblocks.api.Settings',
+  [
+  ],
+  function () {
+    var isEnabledByDefault = function (editor) {
+      return editor.getParam('visualblocks_default_state', false);
+    };
 
-		editor.on('VisualBlocks', function() {
-			self.active(editor.dom.hasClass(editor.getBody(), 'mce-visualblocks'));
-		});
-	}
+    var getContentCss = function (editor) {
+      return editor.settings.visualblocks_content_css;
+    };
 
-	editor.addCommand('mceVisualBlocks', function() {
-		var dom = editor.dom, linkElm;
+    return {
+      isEnabledByDefault: isEnabledByDefault,
+      getContentCss: getContentCss
+    };
+  }
+);
+/**
+ * ResolveGlobal.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		if (!cssId) {
-			cssId = dom.uniqueId();
-			linkElm = dom.create('link', {
-				id: cssId,
-				rel: 'stylesheet',
-				href: url + '/css/visualblocks.css'
-			});
+define(
+  'tinymce.core.dom.DOMUtils',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.dom.DOMUtils');
+  }
+);
 
-			editor.getDoc().getElementsByTagName('head')[0].appendChild(linkElm);
-		}
+/**
+ * ResolveGlobal.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		// Toggle on/off visual blocks while computing previews
-		editor.on("PreviewFormats AfterPreviewFormats", function(e) {
-			if (enabled) {
-				dom.toggleClass(editor.getBody(), 'mce-visualblocks', e.type == "afterpreviewformats");
-			}
-		});
+define(
+  'tinymce.core.util.Tools',
+  [
+    'global!tinymce.util.Tools.resolve'
+  ],
+  function (resolve) {
+    return resolve('tinymce.util.Tools');
+  }
+);
 
-		dom.toggleClass(editor.getBody(), 'mce-visualblocks');
-		enabled = editor.dom.hasClass(editor.getBody(), 'mce-visualblocks');
+/**
+ * LoadCss.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-		if (visualBlocksMenuItem) {
-			visualBlocksMenuItem.active(dom.hasClass(editor.getBody(), 'mce-visualblocks'));
-		}
+define(
+  'tinymce.plugins.visualblocks.core.LoadCss',
+  [
+    'tinymce.core.dom.DOMUtils',
+    'tinymce.core.util.Tools'
+  ],
+  function (DOMUtils, Tools) {
+    var cssId = DOMUtils.DOM.uniqueId();
 
-		editor.fire('VisualBlocks');
-	});
+    var load = function (doc, url) {
+      var linkElements = Tools.toArray(doc.getElementsByTagName('link'));
+      var matchingLinkElms = Tools.grep(linkElements, function (head) {
+        return head.id === cssId;
+      });
 
-	editor.addButton('visualblocks', {
-		title: 'Show blocks',
-		cmd: 'mceVisualBlocks',
-		onPostRender: toggleActiveState
-	});
+      if (matchingLinkElms.length === 0) {
+        var linkElm = DOMUtils.DOM.create('link', {
+          id: cssId,
+          rel: 'stylesheet',
+          href: url
+        });
 
-	editor.addMenuItem('visualblocks', {
-		text: 'Show blocks',
-		cmd: 'mceVisualBlocks',
-		onPostRender: toggleActiveState,
-		selectable: true,
-		context: 'view',
-		prependToContext: true
-	});
+        doc.getElementsByTagName('head')[0].appendChild(linkElm);
+      }
+    };
 
-	editor.on('init', function() {
-		if (editor.settings.visualblocks_default_state) {
-			editor.execCommand('mceVisualBlocks', false, null, {skip_focus: true});
-		}
-	});
+    return {
+      load: load
+    };
+  }
+);
+/**
+ * VisualBlocks.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
-	editor.on('remove', function() {
-		editor.dom.removeClass(editor.getBody(), 'mce-visualblocks');
-	});
-});
+define(
+  'tinymce.plugins.visualblocks.core.VisualBlocks',
+  [
+    'tinymce.plugins.visualblocks.api.Events',
+    'tinymce.plugins.visualblocks.api.Settings',
+    'tinymce.plugins.visualblocks.core.LoadCss'
+  ],
+  function (Events, Settings, LoadCss) {
+    var toggleVisualBlocks = function (editor, pluginUrl, enabledState) {
+      var dom = editor.dom;
+      var contentCss = Settings.getContentCss(editor);
+
+      LoadCss.load(editor.getDoc(), contentCss ? contentCss : pluginUrl + '/css/visualblocks.css');
+      dom.toggleClass(editor.getBody(), 'mce-visualblocks');
+      enabledState.set(!enabledState.get());
+
+      Events.fireVisualBlocks(editor, enabledState.get());
+    };
+
+    return {
+      toggleVisualBlocks: toggleVisualBlocks
+    };
+  }
+);
+/**
+ * Commands.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define(
+  'tinymce.plugins.visualblocks.api.Commands',
+  [
+    'tinymce.plugins.visualblocks.core.VisualBlocks'
+  ],
+  function (VisualBlocks) {
+    var register = function (editor, pluginUrl, enabledState) {
+      editor.addCommand('mceVisualBlocks', function () {
+        VisualBlocks.toggleVisualBlocks(editor, pluginUrl, enabledState);
+      });
+    };
+
+    return {
+      register: register
+    };
+  }
+);
+/**
+ * Bindings.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define(
+  'tinymce.plugins.visualblocks.core.Bindings',
+  [
+    'tinymce.plugins.visualblocks.api.Settings',
+    'tinymce.plugins.visualblocks.core.VisualBlocks'
+  ],
+  function (Settings, VisualBlocks) {
+    var setup = function (editor, pluginUrl, enabledState) {
+      // Prevents the visualblocks from being presented in the preview of formats when that is computed
+      editor.on('PreviewFormats AfterPreviewFormats', function (e) {
+        if (enabledState.get()) {
+          editor.dom.toggleClass(editor.getBody(), 'mce-visualblocks', e.type === 'afterpreviewformats');
+        }
+      });
+
+      editor.on('init', function () {
+        if (Settings.isEnabledByDefault(editor)) {
+          VisualBlocks.toggleVisualBlocks(editor, pluginUrl, enabledState);
+        }
+      });
+
+      editor.on('remove', function () {
+        editor.dom.removeClass(editor.getBody(), 'mce-visualblocks');
+      });
+    };
+
+    return {
+      setup: setup
+    };
+  }
+);
+/**
+ * Buttons.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define(
+  'tinymce.plugins.visualblocks.ui.Buttons',
+  [
+    'tinymce.plugins.visualblocks.core.VisualBlocks'
+  ],
+  function (VisualBlocks) {
+    var toggleActiveState = function (editor, enabledState) {
+      return function (e) {
+        var ctrl = e.control;
+
+        ctrl.active(enabledState.get());
+
+        editor.on('VisualBlocks', function (e) {
+          ctrl.active(e.state);
+        });
+      };
+    };
+
+    var register = function (editor, enabledState) {
+      editor.addButton('visualblocks', {
+        title: 'Show blocks',
+        cmd: 'mceVisualBlocks',
+        onPostRender: toggleActiveState(editor, enabledState)
+      });
+
+      editor.addMenuItem('visualblocks', {
+        text: 'Show blocks',
+        cmd: 'mceVisualBlocks',
+        onPostRender: toggleActiveState(editor, enabledState),
+        selectable: true,
+        context: 'view',
+        prependToContext: true
+      });
+    };
+
+    return {
+      register: register
+    };
+  }
+);
+/**
+ * Plugin.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2017 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define(
+  'tinymce.plugins.visualblocks.Plugin',
+  [
+    'ephox.katamari.api.Cell',
+    'tinymce.core.PluginManager',
+    'tinymce.plugins.visualblocks.api.Commands',
+    'tinymce.plugins.visualblocks.core.Bindings',
+    'tinymce.plugins.visualblocks.ui.Buttons'
+  ],
+  function (Cell, PluginManager, Commands, Bindings, Buttons) {
+    PluginManager.add('visualblocks', function (editor, pluginUrl) {
+      var enabledState = Cell(false);
+
+      Commands.register(editor, pluginUrl, enabledState);
+      Buttons.register(editor, enabledState);
+      Bindings.setup(editor, pluginUrl, enabledState);
+    });
+
+    return function () { };
+  }
+);
+dem('tinymce.plugins.visualblocks.Plugin')();
+})();

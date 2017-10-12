@@ -157,10 +157,9 @@ class Experiments extends AbstractEntity
      */
     public function updateVisibility($visibility)
     {
-        $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
+        $sql = "UPDATE experiments SET visibility = :visibility WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':visibility', $visibility);
-        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
@@ -174,10 +173,9 @@ class Experiments extends AbstractEntity
      */
     public function updateCategory($status)
     {
-        $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
+        $sql = "UPDATE experiments SET status = :status WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $status);
-        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();

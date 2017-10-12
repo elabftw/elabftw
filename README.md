@@ -52,4 +52,8 @@ Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if y
 
 [Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out!
 
+# Funding
+
+This project is sponsored by [Institut Curie](https://science.curie.fr/).
+
 Thank you for using **eLabFTW**, I hope it will bring happiness in your lab ;)

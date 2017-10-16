@@ -110,9 +110,7 @@
 <!--  BODY (show only if not empty) -->
 {% set body = Entity.entityData.body %}
 {% if body != '' %}
-    {% if Entity.Users.userData.use_markdown %}
-        {% set body = Entity.entityData.body|md2html %}
-    {% endif %}
+    {% set body = Entity.entityData.body|md2html %}
     <div id='body_view' class='txt'>{{ body|raw }}</div>
     <br>
 {% endif %}

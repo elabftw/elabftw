@@ -73,10 +73,10 @@ class ReleaseCheck
                 'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION
             ],
             // add proxy if there is one
-            ['proxy' => $this->Config->configArr['proxy']],
+            'proxy' => $this->Config->configArr['proxy'],
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
-            ['timeout' => 5]
+            'timeout' => 5
 
         ]);
     }

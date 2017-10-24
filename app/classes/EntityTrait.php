@@ -57,21 +57,30 @@ trait EntityTrait {
         $whitelist = array(
             'status',
             'experiments_templates',
-            'items_types'
+            'items_types',
+            'todolist'
         );
 
         if (!in_array($post['table'], $whitelist)) {
             throw new InvalidArgumentException('Wrong table.');
         }
 
+        if ($post['table'] === 'todolist') {
+            $userOrTeam = 'userid';
+            $userOrTeamValue = $this->Users->userid;
+        } else {
+            $userOrTeam = 'team';
+            $userOrTeamValue = $this->Users->userData['team'];
+        }
+
         foreach ($post['ordering'] as $ordering => $id) {
             $id = explode('_', $id);
             $id = $id[1];
             // the table param is whitelisted here
-            $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
+            $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND " . $userOrTeam . " = :userOrTeam";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':ordering', $ordering);
-            $req->bindParam(':team', $this->Users->userData['team']);
+            $req->bindParam(':userOrTeam', $userOrTeamValue);
             $req->bindParam(':id', $id);
             $success[] = $req->execute();
         }

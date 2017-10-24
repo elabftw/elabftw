@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 try {
     require_once '../../app/init.inc.php';
 
-    $Todolist = new Todolist($Session->get('userid'));
+    $Todolist = new Todolist($Users);
     $Response = new JsonResponse();
 
     $res = false;

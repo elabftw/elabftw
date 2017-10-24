@@ -32,6 +32,12 @@ try {
         $Entity->setId($Request->query->get('id'));
         $Entity->canOrExplode('read');
 
+        // LINKS
+        $linksArr = $Entity->Links->readAll();
+
+        // COMMENTS
+        $commentsArr = $Entity->Comments->readAll();
+
         // UPLOADS
         $UploadsView = new UploadsView($Entity->Uploads);
 
@@ -41,6 +47,8 @@ try {
             'Ev' => $EntityView,
             'Entity' => $Entity,
             'Uv' => $UploadsView,
+            'linksArr' => $linksArr,
+            'commentsArr' => $commentsArr,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'mode' => 'view'
         );
@@ -56,10 +64,20 @@ try {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
 
+        // REVISIONS
         $Revisions = new Revisions($Entity);
-        // Uploads
+
+        // UPLOADS
         $UploadsView = new UploadsView($Entity->Uploads);
+
+        // TEAM GROUPS
         $TeamGroups = new TeamGroups($Entity->Users);
+
+        // LINKS
+        $linksArr = $Entity->Links->readAll();
+
+        // STEPS
+        $stepsArr = $Entity->Steps->readAll();
 
         $template = 'edit.html';
 
@@ -70,6 +88,8 @@ try {
             'Revisions' => $Revisions,
             'Categories' => $Status,
             'TeamGroups' => $TeamGroups,
+            'linksArr' => $linksArr,
+            'stepsArr' => $stepsArr,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'maxUploadSize' => Tools::returnMaxUploadSize()
         );
@@ -145,7 +165,6 @@ try {
 
         $Templates = new Templates($Entity->Users);
         $templatesArr = $Templates->readFromUserid();
-
 
         // READ ALL ITEMS
 

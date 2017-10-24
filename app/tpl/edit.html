@@ -114,8 +114,7 @@
             <img src='app/img/step.png' alt='steps' /> <h4 style='display:inline'>{{ 'Experiments steps'|trans }}</h4>
             <br>
             <div class='list' id='steps_div'>
-                {% set stepsArr = Entity.Steps.readAll %}
-                {% if stepsArr|length > 0 %}
+                {% if stepsArr %}
                 <ul class='list-group'>
                     {% for step in stepsArr %}
                     <li class='list-group-item {{ step.finished ? 'finished' }}'>
@@ -136,7 +135,6 @@
             <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
             <br>
             <div class='list' id='links_div'>
-                {% set linksArr = Entity.Links.readAll %}
                 {% if linksArr %}
                 <ul class='list-group'>
                     {% for link in linksArr %}

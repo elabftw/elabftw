@@ -38,7 +38,8 @@ class Email
         $this->Config = $config;
     }
     /**
-     * Returns Swift_Mailer instance and chooses between sendmail and smtp
+     * Return Swift_Mailer instance and choose between sendmail and smtp
+     *
      * @return Swift_Mailer
      */
     public function getMailer()

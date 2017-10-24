@@ -119,7 +119,6 @@
 
 {% if Entity.type == 'experiments' %}
     <!-- LINKS -->
-    {% set linksArr = Entity.Links.readAll %}
     {% if linksArr %}
         <ul class='list-group'>
             {% for link in linksArr %}
@@ -147,8 +146,7 @@
         <div id='expcomment' class='box'>
             <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>
 
-            {% set commentsArr = Entity.Comments.readAll %}
-            {% if commentsArr|length > 0 %}
+            {% if commentsArr %}
                 {% for comment in commentsArr %}
                     <div class='expcomment_box'>
                         {% if comment.userid == Entity.Users.userid %}

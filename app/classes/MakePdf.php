@@ -303,17 +303,21 @@ class MakePdf extends AbstractMake
         $date_str = date_format($date, 'Y-m-d');
 
         // add a CJK font for the body if we want CJK fonts
-        $cjkFlag = "";
+        $cjkStyle = "";
+        $cjkFont = "";
         if ($this->Entity->Users->userData['cjk_fonts']) {
-            $cjkFlag = " style='font-family:sun-extA;'";
+            $cjkFont = "font-family:sun-extA;";
+            $cjkStyle = " style='" . $cjkFont . "'";
         }
 
+        // we add a custom style for td for bug #350
         return '
 <html>
     <head>
         <style>' . $this->addCss() . '</style>
+        <style>td { ' . $cjkFont . ' }</style>
     </head>
-<body' . $cjkFlag . '>
+<body' . $cjkStyle . '>
 <htmlpageheader name="header">
     <div id="header">
         <h1>' . $this->Entity->entityData['title'] . '</h1>

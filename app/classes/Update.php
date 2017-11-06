@@ -255,6 +255,12 @@ class Update
             // I think now it's time to find a better way to clean cache on update…
             $this->updateSchema(33);
         }
+
+        if ($current_schema < 34) {
+            // 20171106
+            // I think now it's time to find a better way to clean cache on update…
+            $this->updateSchema(34);
+        }
         // place new schema functions above this comment
 
         // remove files in uploads/tmp

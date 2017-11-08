@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '33';
+    const REQUIRED_SCHEMA = '34';
 
     /**
      * Init Update with Config and Db

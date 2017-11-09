@@ -568,6 +568,13 @@ github issue #52 */
     color:black;
 }
 
+/* add some css for details/summary html5 */
+summary:before {
+    content: "► ";
+    font-size:120%;
+    color: #29AEB9;
+}
+
 /* fix the list in the body */
 div.txt ol li {
     /* !important because there is a list-style-type:none in jquery-ui */

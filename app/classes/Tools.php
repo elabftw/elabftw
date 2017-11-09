@@ -101,7 +101,8 @@ class Tools
     public static function checkBody($input)
     {
         $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
-            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>";
+            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
+            <details><summary>";
         return strip_tags($input, $whitelist);
     }
 

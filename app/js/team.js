@@ -6,14 +6,14 @@ $(document).ready(function() {
 				center: 'title',
 				right: 'agendaWeek'
 			},
+            // i18n
+            locale: $('#infos').data('lang'),
             defaultView: 'agendaWeek',
             // allow selection of range
 			selectable: true,
             // draw an event while selecting
 			selectHelper: true,
             editable: true,
-            // i18n
-            lang: $('#infos').data('lang'),
             // allow "more" link when too many events
 			eventLimit: true,
             // load the events as JSON

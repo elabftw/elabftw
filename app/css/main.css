@@ -883,13 +883,15 @@ input[type='checkbox']{
 
 /* END COMMENTS */
 
+/* TITLE */
 .title {
     font-size:  160%;
     margin: 0 20px 0 0;
     padding-left: 20px;
+    /* FIXME this is not working; see #517 */
+    overflow-wrap: break-word;
 }
 
-/* TITLE */
 .title a {
     color: #888;
 }
@@ -901,6 +903,7 @@ input[type='checkbox']{
 
 .title_view {
     font-size:  160%;
+    overflow-wrap: break-word;
 }
 
 .date {

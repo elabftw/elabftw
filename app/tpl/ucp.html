@@ -164,6 +164,8 @@
                 <h4>{{ 'Modify your personal informations'|trans }}</h4>
                 <label class='block' for='currpass'>{{ 'Enter your password to edit infos.'|trans }}</label>
                 <input id='currpass' name="currpass" type="password" pattern=".{8,}" required />
+                <label class='block' for='email'>{{ 'Email'|trans }}</label>
+                <input name="email" type="email" value='{{ Users.userData.email }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <h4>{{ 'Modify your password'|trans }}</h4>
@@ -183,16 +185,10 @@
                 <label class='block' for='firstname'>{{ 'Firstname'|trans|raw }}</label>
                 <input name="firstname" value='{{ Users.userData.firstname }}' cols='20' rows='1' />
             </div>
-        </div>
 
-        <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='lastname'>{{ 'Lastname'|trans|raw }}</label>
                 <input name="lastname" value='{{ Users.userData.lastname }}' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='email'>{{ 'Email'|trans }}</label>
-                <input name="email" type="email" value='{{ Users.userData.email }}' cols='20' rows='1' />
             </div>
         </div>
 

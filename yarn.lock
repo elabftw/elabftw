@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@fancyapps/fancybox@^3.1.25":
-  version "3.1.25"
-  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.1.25.tgz#c418d783ae0252c0f748efb0e828e487dfc7de2d"
+"@fancyapps/fancybox@^3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.2.2.tgz#119f5a7df719339c481b4d07c5ad34d2817f58f8"
 
 abbrev@1:
   version "1.1.0"

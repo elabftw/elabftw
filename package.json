@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "@fancyapps/fancybox": "^3.2.0",
+    "@fancyapps/fancybox": "^3.2.5",
     "bootstrap": "^3.3.7",
     "bootstrap-markdown": "^2.10.0",
     "dropzone": "^5.2.0",

@@ -1,3 +1,38 @@
+// UPLOAD FORM
+// config for dropzone, id is camelCased.
+Dropzone.options.elabftwDropzone = {
+    // i18n message to user
+    dictDefaultMessage: $('#entityInfos').data('upmsg'),
+    maxFilesize: $('#entityInfos').data('maxsize'), // MB
+    init: function() {
+
+        // add additionnal parameters (id and type)
+        this.on('sending', function(file, xhr, formData) {
+            formData.append('upload', true);
+            formData.append('id', $('#entityInfos').data('id'));
+            formData.append('type', $('#entityInfos').data('type'));
+        });
+
+        // once it is done
+        this.on('complete', function(answer) {
+            // check the answer we get back from app/controllers/EntityController.php
+            var json = JSON.parse(answer.xhr.responseText);
+            if (json.res) {
+                notif(json.msg, 'ok');
+            } else {
+                notif(json.msg, 'ko');
+            }
+            // reload the #filesdiv once the file is uploaded
+            if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
+                    // make the comment zone editable (fix issue #54)
+                    makeEditableFileComment($('#entityInfos').data('type'), $('#entityInfos').data('id'));
+                });
+            }
+        });
+    }
+};
+
 $(document).ready(function() {
     // add the title in the page name (see #324)
     document.title = $('#entityInfos').data('title');
@@ -447,40 +482,4 @@ $(document).ready(function() {
         ]
     });
 
-    /*
-    // UPLOAD FORM
-    // config for dropzone, id is camelCased.
-    Dropzone.options.elabftwDropzone = {
-        // i18n message to user
-        dictDefaultMessage: $('#entityInfos').data('upmsg'),
-        maxFilesize: $('#entityInfos').data('maxsize'), // MB
-        init: function() {
-
-            // add additionnal parameters (id and type)
-            this.on('sending', function(file, xhr, formData) {
-                formData.append('upload', true);
-                formData.append('id', $('#entityInfos').data('id'));
-                formData.append('type', $('#entityInfos').data('type'));
-            });
-
-            // once it is done
-            this.on('complete', function(answer) {
-                // check the answer we get back from app/controllers/EntityController.php
-                var json = JSON.parse(answer.xhr.responseText);
-                if (json.res) {
-                    notif(json.msg, 'ok');
-                } else {
-                    notif(json.msg, 'ko');
-                }
-                // reload the #filesdiv once the file is uploaded
-                if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                    $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
-                        // make the comment zone editable (fix issue #54)
-                        makeEditableFileComment($('#entityInfos').data('type'), $('#entityInfos').data('id'));
-                    });
-                }
-            });
-        }
-    };
-    */
 });

@@ -1,5 +1,10 @@
 $(document).ready(function(){
 
+    // the reset button
+    $('.submit-reset').on('click', function() {
+        window.location.href = '?mode=show';
+    });
+
     // validate the form upon change. fix #451
     $('.form-control').on('change', function() {
         $('#filter-order-sort').submit();

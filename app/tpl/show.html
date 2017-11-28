@@ -81,7 +81,7 @@
     <option value='asc' {{ Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
 </select>
 <button class='btn btn-elab submit-order'>{{ 'Order'|trans }}</button>
-<button type='reset' class='btn btn-danger submit-reset' onClick="javascript:location.href='?mode=show'">
+<button type='reset' class='btn btn-danger submit-reset'>
     {{ 'Reset'|trans }}
 </button>
 </div>

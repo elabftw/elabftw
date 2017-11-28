@@ -886,9 +886,9 @@ tinymce-mention@^4.0.2:
   dependencies:
     jquery ">=1.8.3"
 
-tinymce@^4.7.2:
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.7.2.tgz#24bf64ff1d1e68190e15461a658dc257a426c5ee"
+tinymce@^4.7.3:
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.7.3.tgz#3ac7a3d44daab61814e560132f596cc47d0147ac"
 
 trim-newlines@^1.0.0:
   version "1.0.0"

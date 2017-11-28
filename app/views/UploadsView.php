@@ -67,8 +67,8 @@ class UploadsView
             "' data-id='" . $this->Uploads->Entity->id . "'>";
         // show the delete button only in edit mode, not in view mode
         if ($mode === 'edit') {
-            $html .= "<a class='align_right' onClick=\"uploadsDestroy(" . $upload['id'] . "
-                , '" . $upload['type'] . "', " . $upload['item_id'] . ", '" . _('Delete this?') . "')\">";
+            $html .= "<a class='align_right uploadsDestroy' data-id='" . $upload['id'] . "' data-type='" . $upload['type'] . "'
+                data-itemid='" . $upload['item_id'] . "' data-msg='" . _('Delete this?') . "'>";
             $html .= "<img src='app/img/small-trash.png' title='delete' alt='delete' /></a>";
         } // end if it is in edit mode
 
@@ -105,6 +105,7 @@ class UploadsView
         } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
             // we need to escape \n in the mol file or we get unterminated string literal error in JS
             $mol = str_replace("\n", "\\n", file_get_contents($filepath));
+            // TODO fix for CSP
             $html .= "<div class='center'><script>
                   showMol('" . $mol . "');
                   </script></div>";

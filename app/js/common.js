@@ -163,29 +163,6 @@ function makeEditableFileComment(type, itemId) {
     });
 }
 
-// UPLOADS DESTROY
-function uploadsDestroy(id, type, itemId, confirmText) {
-    var youSure = confirm(confirmText);
-    if (youSure === true) {
-        $.post('app/controllers/EntityController.php', {
-            uploadsDestroy: true,
-            upload_id: id,
-            id: itemId,
-            type: type
-        }).done(function(data) {
-            if (data.res) {
-                notif(data.msg, 'ok');
-                if (type === 'items') {
-                    type = 'database';
-                }
-                $("#filesdiv").load(type + ".php?mode=edit&id=" + itemId + " #filesdiv");
-            } else {
-                notif(data.msg, 'ko');
-            }
-        });
-    }
-}
-
 // SEARCH PAGE
 function insertParamAndReload(key, value) {
     key = escape(key); value = escape(value);

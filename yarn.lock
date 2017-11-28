@@ -242,9 +242,9 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
 
-fullcalendar@^3.6.2:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-3.6.2.tgz#64956e7431be394b3d505b327f6b2e8f629c91da"
+fullcalendar@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-3.7.0.tgz#74309943790a0085647ef7671c81c852f68b4a28"
   dependencies:
     jquery "2 - 3"
     moment "^2.9.0"

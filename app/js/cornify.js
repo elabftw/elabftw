@@ -110,7 +110,10 @@ cornifyReplace = function() {
 var cornami = {
 	input:"",
 	pattern:"38384040373937396665",
-	clear:setTimeout('cornami.clearInput()',5000),
+	clear: function() {
+        var _this = this;
+        setTimeout(_this.clearInput(), 5000);
+    },
 	load: function() {
 		window.document.onkeydown = function(e) {
 			if (cornami.input === cornami.pattern) {
@@ -120,9 +123,12 @@ var cornami = {
 			}
 			else {
 				cornami.input += e ? e.keyCode : event.keyCode;
-				if (cornami.input === cornami.pattern) cornifyAdd();
+				if (cornami.input === cornami.pattern) {
+                    cornifyAdd();
+                }
 				clearTimeout(cornami.clear);
-				cornami.clear = setTimeout("cornami.clearInput()", 5000);
+                var _this = this;
+				cornami.clear = _this.clear();
 			}
 		};
 	},

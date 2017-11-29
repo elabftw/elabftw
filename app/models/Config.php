@@ -150,6 +150,6 @@ class Config
             "stamphash" => 'sha256',
             "schema" => $this->configArr['schema']);
 
-        return $this->Update($defaultConf);
+        return $this->update($defaultConf);
     }
 }

@@ -11,7 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Datetime;
+use DateTime;
 
 /**
  * Experiments View

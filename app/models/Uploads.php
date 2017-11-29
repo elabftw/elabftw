@@ -41,7 +41,7 @@ class Uploads implements CrudInterface
     /**
      * Main method for normal file upload
      *
-     * @param Request $request
+     * @param Symfony\Component\HttpFoundation\Request $request
      * @return bool
      */
     public function create($request)

@@ -14,7 +14,7 @@ use Exception;
 use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
-use FileSystemIterator;
+use FilesystemIterator;
 
 /**
  * Import a .elabftw.zip file into the database.
@@ -215,8 +215,8 @@ class ImportZip extends AbstractImport
     public function __destruct()
     {
         // first remove content
-        $di = new \RecursiveDirectoryIterator($this->tmpPath, \FilesystemIterator::SKIP_DOTS);
-        $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
+        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($ri as $file) {
             $file->isDir() ? rmdir($file) : unlink($file);
         }

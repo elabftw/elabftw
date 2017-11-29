@@ -100,7 +100,8 @@ class Users
         }
 
         if (!$this->Auth->checkPasswordLength($password) && strlen($password) > 0) {
-            $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+            $min = $this->Auth::MIN_PASSWORD_LENGTH;
+            $error = sprintf(_('Password must contain at least %s characters.'), $min);
             throw new Exception($error);
         }
 

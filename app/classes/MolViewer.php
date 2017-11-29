@@ -19,19 +19,19 @@ use Exception;
 class MolViewer
 {
     /** @var int $id the id of the molecule's file and the resulting viewer */
-    private $id;
+    //private $id;
 
     /** @var bool $isPdb if true, $id is handled as a PDB ID */
-    private $isPdb;
+    //private $isPdb;
 
     /** @var string $divId the generated <div> will have this id */
     private $divId;
 
     /** @var string $dataStyle style of the molecule */
-    private $dataStyle;
+    //private $dataStyle;
 
     /** @var string $backgroundColor background color of canvas */
-    private $backgroundColor;
+    //private $backgroundColor;
 
     /** @var string $filePath path to data file */
     private $filePath;
@@ -46,23 +46,25 @@ class MolViewer
      * @param str $dataStyle Representation of molecule. Defaults to "cartoon:color=spectrum"
      * @param str $backgroundColor Background color in hex notation
      */
-    public function __construct(
-        $id,
-        $filePath = '',
-        $isPdb = false,
-        $dataStyle = 'cartoon:color=spectrum',
-        $backgroundColor = '0xffffff'
+    public function __construct($id, $filePath = '') {
+        //$isPdb = false,
+        //$dataStyle = 'stick',
+        //$backgroundColor = '0xffffff'
+        /*
     ) {
+         */
         // Check for proper use:
         // We always want either is_pdb to be true or a valid filepath!
+        /*
         if ($filePath === "" && !$isPdb) {
             throw new Exception('If $id is not a PDB ID ($isPdb=false) then a valid file path must be passed!');
         }
-        $this->id = (int) $id;
-        $this->isPdb = $isPdb;
-        $this->divId = '3Dmol_' . $this->id;
-        $this->dataStyle = $dataStyle;
-        $this->backgroundColor = $backgroundColor;
+         */
+        //$this->id = (int) $id;
+        //$this->isPdb = $isPdb;
+        $this->divId = '3Dmol_' . $id;
+        //$this->dataStyle = $dataStyle;
+        //$this->backgroundColor = $backgroundColor;
         $this->filePath = $filePath;
     }
 
@@ -74,23 +76,28 @@ class MolViewer
      */
     private function getDataString()
     {
+        /*
         // If we deal with a PDB code, just pass data=$this->id to 3Dmol.js.
         // It will handle it just fine.
         if ($this->isPdb) {
             $dataString = "data={$this->id}";
         // Otherwise we need to pass the filepath with data-href
         } elseif ($this->filePath != "") {
-            $dataString = "data-href='{$this->filePath}'";
+*/
+        //$dataString = "data-href='{$this->filePath}'";
+        /*
         // This is triggered if the function is not properly used:
         // We always want either is_pdb to be true or a valid filepath!
         } else {
             throw new Exception('If $id is not a PDB ID ($isPdb=False) then a valid file path must be passed!');
         }
+         */
 
         // assemble and return the final expression
-        $dataString .= " data-style='{$this->dataStyle}' data-backgroundcolor='{$this->backgroundColor}' ";
+        //$dataString .= " data-style='stick' data-backgroundcolor='0xffffff' ";
 
-        return $dataString;
+        return "data-href='" . $this->filePath . "' data-style='stick' data-backgroundcolor='0xffffff' ";
+
     }
 
     /**
@@ -100,6 +107,7 @@ class MolViewer
      */
     private function buildControls()
     {
+        /*
         // Array holding list of styles for the dropdown list.
         // Each item consists of its label als translatable string and a corresponding javascript function
         // that is executed if the item is clicked.
@@ -109,21 +117,28 @@ class MolViewer
             'surface_solid' => array(_('Solid Surface'), 'show_surface(\'' . $this->divId . '\');'),
             'surface_transparent' => array(_('Transparent Surface'), 'show_surface(\'' . $this->divId . '\', .7, \'0xffffff\');')
         );
+         */
 
         // Label of dropdown list and clean button
         $styleText = _('Style');
-        $removeSurfacesText = _('Remove Surfaces');
+        //$removeSurfacesText = _('Remove Surfaces');
 
-        $controls = "<div style=\"padding-bottom: 5px\" class=\"btn-group\">\n";
-        $controls .= "<button type=\"button\" class=\"btn btn-default btn-xs dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">{$styleText}<span class=\"caret\"></span></button>\n";
-        $controls .= "<ul class=\"dropdown-menu\">\n";
+        $controls = "<div style='padding-bottom: 5px' class='btn-group'>";
+        $controls .= "<button type='button' class='btn btn-default btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" . $styleText . " <span class='caret'></span></button>";
+        $controls .= "<ul class='dropdown-menu clickable'>";
 
         // Build dropdown menu
-        foreach ($styles as $style => $props) {
-            $controls .= "<li><a href=\"#{$this->divId}\" onClick=\"{$props[1]}\">{$props[0]}</a></li>\n";
-        }
-        $controls .= "</ul>\n";
-        $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$removeSurfacesText}' onClick=\"remove_surfaces('{$this->divId}');\"><span class='glyphicon glyphicon-erase'></span></button></div>\n";
+        //$controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-cartoon'>" . _('Cartoon') . "</a></li>";
+        $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-cross'>" . _('Cross') . "</a></li>";
+        $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-line'>" . _('Line') . "</a></li>";
+        $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-sphere'>" . _('Sphere') . "</a></li>";
+        $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-stick'>" . _('Stick') . "</a></li>";
+        //$controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-solid'>" . _('Solid Surface') . "</a></li>";
+        //$controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-trans'>" . _('Transparent Surface') . "</a></li>";
+
+        $controls .= "</ul>";
+        //$controls .= "<button class='btn btn-default btn-xs align_left rmSurface' data-toggle='tooltip' data-placement='bottom' title='{$removeSurfacesText}' data-divid='{$this->divId}'><span class='glyphicon glyphicon-erase'></span></button>";
+        $controls .= "</div>";
 
         return $controls;
     }
@@ -135,7 +150,6 @@ class MolViewer
      */
     public function getViewerDiv()
     {
-        $output = "{$this->buildControls()}<div style='margin-left: 25px;' class='center'><div style='height: 250px; width: 100%; position: relative;' class='row viewer_3Dmoljs' {$this->getDataString()} id={$this->divId}></div></div>";
-        return $output;
+        return $this->buildControls() . "<div style='margin-left: 25px;' class='center'><div style='height: 250px; width: 100%; position: relative;' class='row viewer_3Dmoljs' " . $this->getDataString() . " id='" . $this->divId . "'></div></div>";
     }
 }

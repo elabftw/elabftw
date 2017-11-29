@@ -114,11 +114,13 @@ class UploadsView
         } elseif (in_array($ext, $molExtensions)) {
             // try to be clever and choose stick representation for
             // all files that are not in pdb format
+            /*
             $style = 'stick';
             if ($ext === 'pdb') {
                 $style = 'cartoon:color=spectrum';
             }
-            $molviewer = new MolViewer($upload['id'], $filepath, false, $style);
+             */
+            $molviewer = new MolViewer($upload['id'], $filepath);
             $html .= $molviewer->getViewerDiv();
 
         } else {

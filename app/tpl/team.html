@@ -15,7 +15,7 @@
     {% if itemsArr|length == 0 %}
         {{ 'No bookable items.'|trans|msg('warning', false) }}
     {% elseif Scheduler.Database.id is not null %}
-        <a href='#' onClick="insertParamAndReload('item', '')">{{ 'Change item'|trans }}</a>
+        <a href='#' id='change-item'>{{ 'Change item'|trans }}</a>
         <h4><span style='color:#{{ Scheduler.itemData.color }}'>{{ Scheduler.itemData.category }}</span> - {{ Scheduler.itemData.title }}</h4>
         <div id='scheduler'></div>
     {% else %}

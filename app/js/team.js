@@ -85,6 +85,11 @@ $(document).ready(function() {
 		});
 });
 
+// change item link
+$(document).on('click', '#change-item', function() {
+    insertParamAndReload('item', '');
+});
+
 function schedulerCreate(start, end) {
     var title = prompt('Comment:');
     if (title) {

@@ -103,12 +103,8 @@ class UploadsView
 
         // special case for mol files, only in view mode
         } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
-            // we need to escape \n in the mol file or we get unterminated string literal error in JS
-            $mol = str_replace("\n", "\\n", file_get_contents($filepath));
-            // TODO fix for CSP
-            $html .= "<div class='center'><script>
-                  showMol('" . $mol . "');
-                  </script></div>";
+            $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
+                "' data-molpath='" . $filepath . "'></canvas></div>";
 
         // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $molExtensions)) {

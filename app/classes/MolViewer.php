@@ -40,11 +40,8 @@ class MolViewer
      * Simple Molecule Viewer
      * Give me some data and I will do a nice 3D representation
      *
-     * @param str $id The id of an attached structure file or PDB code
-     * @param str $filePath Path to data file
-     * @param bool $isPdb True if $id is a PDB ID. Defaults to False
-     * @param str $dataStyle Representation of molecule. Defaults to "cartoon:color=spectrum"
-     * @param str $backgroundColor Background color in hex notation
+     * @param string $id The id of an attached structure file or PDB code
+     * @param string $filePath Path to data file
      */
     public function __construct($id, $filePath = '') {
         //$isPdb = false,
@@ -72,9 +69,9 @@ class MolViewer
      * Return a data string that can be digested by 3DMol.js according to
      * the given type of data: Either uploaded file or PDB code.
      *
-     * @return str Representation of the data for 3Dmol.js
+     * @return string HTML with the div for 3dmol.js
      */
-    private function getDataString()
+    private function getDiv()
     {
         /*
         // If we deal with a PDB code, just pass data=$this->id to 3Dmol.js.
@@ -96,16 +93,16 @@ class MolViewer
         // assemble and return the final expression
         //$dataString .= " data-style='stick' data-backgroundcolor='0xffffff' ";
 
-        return "data-href='" . $this->filePath . "' data-style='stick' data-backgroundcolor='0xffffff' ";
-
+        return "<div class='row viewer_3Dmoljs' data-href='" . $this->filePath .
+            "' data-style='stick' data-backgroundcolor='0xffffff' id='" . $this->divId . "'></div>";
     }
 
     /**
      * Builds a basic control panel for the viewer
      *
-     * @return str HTML code of the control panel
+     * @return string HTML code of the control panel
      */
-    private function buildControls()
+    private function getControls()
     {
         /*
         // Array holding list of styles for the dropdown list.
@@ -146,10 +143,10 @@ class MolViewer
     /**
      * Generated HTML code of the viewer
      *
-     * @return str HTML code of the viewer div
+     * @return string HTML code of the viewer div
      */
     public function getViewerDiv()
     {
-        return $this->buildControls() . "<div style='margin-left: 25px;' class='center'><div style='height: 250px; width: 100%; position: relative;' class='row viewer_3Dmoljs' " . $this->getDataString() . " id='" . $this->divId . "'></div></div>";
+        return $this->getControls() . $this->getDiv();
     }
 }

@@ -1037,6 +1037,19 @@ code {
     background-color:#eee;
 }
 
+/* 3Dmol.js */
+.viewer_3Dmoljs {
+    height: 250px;
+    width: 100%;
+    position: relative;
+}
+
+.molFile {
+    height: 250px;
+    width: 100%;
+    position: relative;
+}
+
 /* TODOLIST */
 #todoList{
     text-align:center;

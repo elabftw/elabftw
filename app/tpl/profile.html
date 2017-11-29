@@ -15,7 +15,7 @@
             {% if App.Users.userData.api_key|length > 0 %}
             <input value='{{ App.Users.userData.api_key }}'></input>
             {% endif %}
-            <button class='button' onClick='generateApiKey()'>{% trans %}Generate an API Key{% endtrans %}</button></p>
+            <button class='button generateApiKey'>{% trans %}Generate an API Key{% endtrans %}</button></p>
         </div>
     </div>
 </section>
@@ -87,4 +87,6 @@
         {% endif %}
     </div>
 </section>
+
+<script src='app/js/profile.js'></script>
 {% endblock body %}

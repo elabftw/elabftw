@@ -66,6 +66,7 @@ module.exports = function(grunt) {
           'app/js/edit.min.js': 'app/js/edit.js',
           'app/js/search.min.js': 'app/js/search.js',
           'app/js/ucp.min.js': 'app/js/ucp.js',
+          'app/js/profile.min.js': 'app/js/profile.js',
           'app/js/uploads.min.js': 'app/js/uploads.js',
           'app/js/doodle.min.js': 'app/js/doodle.js',
           'app/js/bootstrap-markdown.min.js': [

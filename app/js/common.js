@@ -212,11 +212,3 @@ function decodeAsn1(path, expId) {
         $('#decodedDiv').html(data.msg);
     });
 }
-
-function generateApiKey() {
-    $.post('app/controllers/UsersController.php', {
-        generateApiKey: true
-    }).done(function() {
-        $("#api_div").load("profile.php #api_div");
-    });
-}

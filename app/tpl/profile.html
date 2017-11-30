@@ -11,7 +11,7 @@
         experiments done since
         {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
         <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
-        <div id='api_div'><h4>{% trans %}API key{% endtrans %}</h4>
+        <div id='api_div'><h4>{{ 'API key'|trans }}</h4>
             {% if App.Users.userData.api_key|length > 0 %}
             <input value='{{ App.Users.userData.api_key }}'></input>
             {% endif %}
@@ -23,54 +23,29 @@
 <!-- STATUS STAT -->
 <section class='box'>
     {% if count == 0 %} {# fix division by zero #}
-        {% trans %}No statistics available yet.{% endtrans %}
+        {{ 'No statistics available yet.'|trans }}
     {% else %}
-        <img src='app/img/statistics.png' alt='' /> <h4 style='display:inline'>
-            {% trans %}
-                Statistics
-            {% endtrans %}
-        </h4>
+    <img src='app/img/statistics.png' alt='' /> <h4 style='display:inline'>{{ 'Statistics'|trans }}</h4>
         <hr>
-        <script src='https://www.google.com/jsapi'></script>
-        <script>
-          google.load('visualization', '1', {packages:['corechart']});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'status');
-            data.addColumn('number', 'Experiments number');
-            data.addRows([
-                {% for name, percent in UserStats.percentArr %}
-                    ['{{name|raw}}', {{percent}}],
-                {% endfor %}
-            ]);
-            var options = {
-                title: '{% trans %}
-                      Experiment
+        <!-- BEGIN TEMPORARY DOWNGRADE -->
+        <p>No pretty pie chart until this issue is resolved: <a href='https://github.com/google/google-visualization-issues/issues/1356'>https://github.com/google/google-visualization-issues/issues/1356</a></p>
+        {% for status, percent in UserStats.percentArr %}
+        {{ status }} => {{ percent }}% <br>
+        {% endfor %}
+        <!-- END TEMPORARY DOWNGRADE -->
+        <div id='stats' data-stats='{{ statsJson|raw }}' data-title='{% trans %}
+                Experiment
                 {% plural 2 %}
                 Experiments
-                      {% endtrans %}',
-            backgroundColor: '#fff',
-            colors: [
-                {% for color in UserStats.colorsArr %}
-                    '#{{color}}',
-                {% endfor %}
-            ]};
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-          }
-        </script>
+                {% endtrans %}'
+        data-colors='{{ colorsJson|raw }}'></div>
         <div id='chart_div' class='center'></div>
     {% endif %}
 </section>
 
 <!-- TAG CLOUD -->
 <section class='box'>
-    <img src='app/img/cloud.png' alt='' /> <h4 style='display:inline'>
-        {% trans %}
-            Tag cloud
-        {% endtrans %}
-    </h4>
+    <img src='app/img/cloud.png' alt='' /> <h4 style='display:inline'>{{ 'Tag cloud'|trans }}</h4>
     <hr>
     <div>
         {# handle minimum tag count #}
@@ -88,5 +63,6 @@
     </div>
 </section>
 
-<script src='app/js/profile.js'></script>
+<!--script src='https://www.google.com/jsapi'></script-->
+<script src='app/js/profile.min.js'></script>
 {% endblock body %}

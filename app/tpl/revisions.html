@@ -5,7 +5,7 @@
     <h4><img src='app/img/undo.png' alt='<--' /> {{ 'Go back'|trans }}</h4>
 </a>
 {% for revision in revisionsArr %}
-<div class='item'>{{ 'Saved on:'|trans }} {{ revision.savedate }} <a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a><br>
+<div class='item'>{{ 'Saved on:'|trans }} {{ revision.savedate }} {% if not Entity.entityData.locked %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
     {{ revision.body|raw }}</div>
 {% endfor %}
 

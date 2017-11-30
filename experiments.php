@@ -40,11 +40,15 @@ try {
         // UPLOADS
         $UploadsView = new UploadsView($Entity->Uploads);
 
+        // REVISIONS
+        $Revisions = new Revisions($Entity);
+
         $template = 'view.html';
 
         $renderArr = array(
             'Ev' => $EntityView,
             'Entity' => $Entity,
+            'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'linksArr' => $linksArr,
             'commentsArr' => $commentsArr,

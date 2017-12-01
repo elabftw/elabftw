@@ -18,20 +18,8 @@ use Exception;
  */
 class MolViewer
 {
-    /** @var int $id the id of the molecule's file and the resulting viewer */
-    //private $id;
-
-    /** @var bool $isPdb if true, $id is handled as a PDB ID */
-    //private $isPdb;
-
     /** @var string $divId the generated <div> will have this id */
     private $divId;
-
-    /** @var string $dataStyle style of the molecule */
-    //private $dataStyle;
-
-    /** @var string $backgroundColor background color of canvas */
-    //private $backgroundColor;
 
     /** @var string $filePath path to data file */
     private $filePath;

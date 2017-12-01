@@ -25,7 +25,7 @@ class MolViewer
     private $filePath;
 
     /** @var string $defaultStyle for 3d view; e.g. "stick" or "cartoon" */
-    private $defaultStyle;
+    private $defaultStyle = "stick";
 
     /**
      * Simple Molecule Viewer
@@ -41,8 +41,6 @@ class MolViewer
         $this->filePath = $filePath;
         if ($isProtein) {
             $this->defaultStyle = "cartoon:color=spectrum";
-        } else {
-            $this->defaultStyle = "stick";
         }
     }
 

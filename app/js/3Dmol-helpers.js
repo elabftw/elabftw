@@ -13,34 +13,10 @@ $(document).on('click', '.rmSurface', function() {
 });
 */
 
-// Show molecule as cartoon representation and re-render. Color can be passed
-// optionally. If no color is given, spectrum is assumed.
-// CARTOON NOT WORKING
-/*
+// CARTOON (only working for protein structures!)
 $(document).on('click', '.3dmol-cartoon', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({resn:'PMP',byres:true,expand:5},{cartoon:{}}).render();
-    /*
-    var id = $(this).data('divid');
-    var view = $3Dmol.viewers[id];
-    //view.setStyle({}, {cartoon:{}});
-    view.addSurface($3Dmol.SurfaceType.VDW, {opacity:0.85,voldata: new $3Dmol.VolumeData(volumedata, "cube"), volscheme: new $3Dmol.Gradient.RWB(-10,10)},{});
-    /*
-    if (typeof color !== 'string') {
-        color = 'spectrum';
-    }
-
-    view.setStyle({
-        hetflag:false
-    }, {
-        cartoon: {
-            color:'spectrum'
-        }
-    });
-    view.render();
-    */
-/*
+    $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();
 });
-*/
 
 // CROSS
 $(document).on('click', '.3dmol-cross', function() {

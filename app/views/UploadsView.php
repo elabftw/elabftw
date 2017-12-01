@@ -97,28 +97,25 @@ class UploadsView
             }
             $html .= "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
 
-        // not an image
+            // not an image
         } elseif (in_array($ext, $commonExtensions)) {
             $html .= "<img class='thumb' src='app/img/thumb-" . $ext . ".png' alt='' />";
 
-        // special case for mol files, only in view mode
+            // special case for mol files, only in view mode
         } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
             $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
                 "' data-molpath='" . $filepath . "'></canvas></div>";
 
-        // if this is something 3Dmol.js can handle
+            // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $molExtensions)) {
-            // try to be clever and choose stick representation for
-            // all files that are not in pdb format
-            /*
-            $style = 'stick';
+            // try to be clever and use cartoon representation for pdb files
             if ($ext === 'pdb') {
-                $style = 'cartoon:color=spectrum';
+                $isProtein = true;
+            } else {
+                $isProtein = false;
             }
-             */
-            $molviewer = new MolViewer($upload['id'], $filepath);
+            $molviewer = new MolViewer($upload['id'], $filepath, $isProtein);
             $html .= $molviewer->getViewerDiv();
-
         } else {
             // uncommon extension without a nice image to display
             $html .= "<img class='thumb' src='app/img/thumb.png' alt='' />";

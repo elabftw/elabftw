@@ -216,6 +216,12 @@ class MakePdf extends AbstractMake
     private function addAttachedFiles()
     {
         $html = '';
+
+        // do nothing if we don't want the attached files
+        if (!$this->Entity->Users->userData['inc_files_pdf']) {
+            return $html;
+        }
+
         $uploadsArr = $this->Entity->Uploads->readAll();
         $fileNb = count($uploadsArr);
         if ($fileNb > 0) {

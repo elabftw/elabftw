@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '34';
+    const REQUIRED_SCHEMA = '35';
 
     /**
      * Init Update with Config and Db
@@ -260,6 +260,11 @@ class Update
             // 20171106
             // I think now it's time to find a better way to clean cache on update…
             $this->updateSchema(34);
+        }
+        if ($current_schema < 35) {
+            // 20171201
+            $this->schema35();
+            $this->updateSchema(35);
         }
         // place new schema functions above this comment
 
@@ -813,6 +818,14 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             PRIMARY KEY (`id`));";
         if (!$this->Db->q($sql)) {
             throw new Exception('Cannot create experiments_tpl_tags table');
+        }
+    }
+
+    private function schema35()
+    {
+        $sql = "ALTER TABLE `users` ADD `inc_files_pdf` TINYINT(1) NOT NULL DEFAULT '1';";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Cannot add inc_files_pdf to Users table');
         }
     }
 }

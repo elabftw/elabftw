@@ -120,6 +120,11 @@
               {{ Users.userData.use_markdown == '1' ? " checked='checked'" }}
             />
             <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
+            <br>
+            <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
+              {{ Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
+            />
+            <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf.'|trans }}</label>
             </p>
 
             <p>

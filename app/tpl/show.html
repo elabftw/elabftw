@@ -127,6 +127,16 @@
                 <option value='{{ category.category_id }}'>{{ category.category }}</option>
             {% endfor %}
         </select>
+
+        {% if Entity.type == 'experiments' %}
+        <select id='visChecked'>
+            <option selected disabled>{{ 'Change visibility'|trans }}</option>
+            {% for key, value in visibilityArr %}
+                <option value='{{ key }}'>{{ value }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
     {% endif %}
         <button data-what = 'zip' class='button csvzip'>{{ 'Make Zip'|trans }}</button>
         <button data-what='csv' class='button csvzip'>{{ 'Make Csv'|trans }}</button>

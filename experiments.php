@@ -166,6 +166,9 @@ try {
         $Status = new Status($Entity->Users);
         $categoryArr = $Status->readAll();
 
+        $TeamGroups = new TeamGroups($Entity->Users);
+        $visibilityArr = $TeamGroups->getVisibilityList();
+
         $Templates = new Templates($Entity->Users);
         $templatesArr = $Templates->readFromUserid();
 
@@ -192,6 +195,7 @@ try {
             'searchType' => $searchType,
             'categoryArr' => $categoryArr,
             'templatesArr' => $templatesArr,
+            'visibilityArr' => $visibilityArr,
             'tag' => $tag,
             'query' => $query
         );

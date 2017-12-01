@@ -503,6 +503,12 @@ class Users
             $new_use_markdown = 1;
         }
 
+        // INCLUDE FILES IN PDF
+        $new_inc_files_pdf = 0;
+        if (isset($params['inc_files_pdf']) && $params['inc_files_pdf'] === 'on') {
+            $new_inc_files_pdf = 1;
+        }
+
         // CHEM EDITOR
         $new_chem_editor = 0;
         if (isset($params['chem_editor']) && $params['chem_editor'] === 'on') {
@@ -537,7 +543,8 @@ class Users
             default_vis = :new_default_vis,
             single_column_layout = :new_layout,
             cjk_fonts = :new_cjk_fonts,
-            use_markdown = :new_use_markdown
+            use_markdown = :new_use_markdown,
+            inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
@@ -555,6 +562,7 @@ class Users
         $req->bindParam(':new_layout', $new_layout);
         $req->bindParam(':new_cjk_fonts', $new_cjk_fonts);
         $req->bindParam(':new_use_markdown', $new_use_markdown);
+        $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
         $req->bindParam(':userid', $this->userid);
 
         return $req->execute();

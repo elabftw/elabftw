@@ -67,8 +67,10 @@ $(document).ready(function() {
                     start: calEvent.start.format(),
                     end: calEvent.end.format(),
                     id: calEvent.id
-                }).done(function() {
-                    notif('Saved', 'ok');
+                }).done(function(data) {
+                    if (data.res) {
+                        notif(data.msg, 'ok');
+                    }
                 });
             },
             // a resize means we change end date

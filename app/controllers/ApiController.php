@@ -68,18 +68,24 @@ try {
     // POST request
     } else {
 
-        // file upload
+        // FILE UPLOAD
         if ($Request->files->count() > 0) {
             $content = $Api->uploadFile($Request);
-        // title date body update
+
+        // TITLE DATE BODY UPDATE
         } elseif ($Request->request->has('title')) {
             $content = $Api->updateEntity(
                 $Request->request->get('title'),
                 $Request->request->get('date'),
                 $Request->request->get('body')
             );
+
+        // ADD TAG
+        } elseif ($Request->request->has('tag')) {
+            $content = $Api->addTag($Request->request->get('tag'));
+
+        // CREATE AN EXPERIMENT
         } else {
-            // create an experiment
             if ($endpoint === 'experiments') {
                 $content = $Api->createExperiment();
             } else {

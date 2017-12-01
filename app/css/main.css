@@ -888,8 +888,12 @@ input[type='checkbox']{
     font-size:  160%;
     margin: 0 20px 0 0;
     padding-left: 20px;
-    /* FIXME this is not working; see #517 */
+    /* add several rules, see https://stackoverflow.com/a/36555643 */
     overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 .title a {
@@ -1135,10 +1139,6 @@ h3.togglable-next {
 .bodyToggleImg {
     float: right;
     margin-top: 3px;
-}
-
-p.title {
-    cursor: pointer;
 }
 
 .itemsTypesEditor {

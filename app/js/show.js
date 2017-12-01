@@ -157,6 +157,29 @@ $(document).ready(function(){
         });
     });
 
+    // UPDATE THE VISIBILTY OF AN EXPERIMENT ON SELECT CHANGE
+    $('#visChecked').on('change', function() {
+        var ajaxs = [];
+        // get the item id of all checked boxes
+        var checked = getCheckedBoxes();
+        // loop on it and update the status/item type
+        $.each(checked, function(index, value) {
+            ajaxs.push($.post('app/controllers/ExperimentsController.php', {
+                updateVisibility : true,
+                id : value,
+                visibility : $('#visChecked').val(),
+                type : $('#type').data('type')
+            }));
+        });
+        // reload the page once it's done
+        // a simple reload would not work here
+        // we need to use when/then
+        $.when.apply(null, ajaxs).then(function (){
+            window.location.reload();
+        });
+        notif('Saved', 'ok');
+    });
+
     // MAKE ZIP/CSV
     $('.csvzip').on('click', function() {
         // grey out the box to signal it has been clicked

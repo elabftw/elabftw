@@ -36,6 +36,9 @@ class MolViewer
     /** @var string $filePath path to data file */
     private $filePath;
 
+    /** @var string $defaultStyle for 3d view; e.g. "stick" or "cartoon" */
+    private $defaultStyle;
+
     /**
      * Simple Molecule Viewer
      * Give me some data and I will do a nice 3D representation
@@ -49,9 +52,9 @@ class MolViewer
         $this->divId = '3Dmol_' . $id;
         $this->filePath = $filePath;
         if ($isProtein) {
-            $this->style = "cartoon:color=spectrum";
+            $this->defaultStyle = "cartoon:color=spectrum";
         } else {
-            $this->style = "stick";
+            $this->defaultStyle = "stick";
         }
     }
 
@@ -64,7 +67,7 @@ class MolViewer
     private function getDiv()
     {
         return "<div class='row viewer_3Dmoljs' data-href='" . $this->filePath .
-            "' data-style='" . $this->style . "' data-backgroundcolor='0xffffff' id='" . $this->divId . "'></div>";
+            "' data-style='" . $this->defaultStyle . "' data-backgroundcolor='0xffffff' id='" . $this->divId . "'></div>";
     }
 
     /**

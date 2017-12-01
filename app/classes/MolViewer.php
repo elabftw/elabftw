@@ -42,6 +42,7 @@ class MolViewer
      *
      * @param string $id The id of an attached structure file or PDB code
      * @param string $filePath Path to data file
+     * @param bool $isProtein Whether this file contains a protein structure. If true, default style will be 'cartoon'
      */
     public function __construct($id, $filePath = '', $isProtein = false)
     {

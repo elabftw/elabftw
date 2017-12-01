@@ -84,6 +84,23 @@ class Api
     }
 
     /**
+     * Add a tag to an entity
+     *
+     * @param string $tag
+     * @return string[]
+     */
+    public function addTag($tag)
+    {
+        $this->Entity->canOrExplode('write');
+
+        if ($this->Entity->Tags->create($tag)) {
+            return array('Result', 'Success');
+        }
+
+        return array('error', Tools::error());
+    }
+
+    /**
      * Add a file to an entity
      *
      * @param Request $request

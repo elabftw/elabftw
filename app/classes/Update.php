@@ -821,6 +821,10 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         }
     }
 
+    /**
+     * Add inc_files_pdf to users table
+     *
+     */
     private function schema35()
     {
         $sql = "ALTER TABLE `users` ADD `inc_files_pdf` TINYINT(1) NOT NULL DEFAULT '1';";

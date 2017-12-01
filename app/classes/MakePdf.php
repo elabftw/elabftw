@@ -15,7 +15,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Create a pdf given an id and a type
+ * Create a pdf from an Entity
  */
 class MakePdf extends AbstractMake
 {
@@ -26,7 +26,7 @@ class MakePdf extends AbstractMake
     public $filePath;
 
     /**
-     * Everything is done in the constructor
+     * Constructor
      *
      * @param AbstractEntity $entity Experiments or Database
      */

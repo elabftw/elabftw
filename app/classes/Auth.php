@@ -117,7 +117,6 @@ class Auth
             }
         }
 
-        //$this->Request->getSession()->migrate(true);
         $this->Request->getSession()->set('auth', 1);
         $this->Request->getSession()->set('userid', $this->userData['userid']);
 

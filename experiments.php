@@ -22,7 +22,7 @@ require_once 'app/init.inc.php';
 $App->pageTitle = ngettext('Experiment', 'Experiments', 2);
 
 try {
-    $Entity = new Experiments($Users);
+    $Entity = new Experiments($App->Users);
     $EntityView = new ExperimentsView($Entity);
     $Status = new Status($Entity->Users);
 
@@ -180,7 +180,7 @@ try {
             $itemsArr = $Entity->readRelated($Request->query->get('related'));
         } else {
             // filter by user only if we are not making a search
-            if (!$Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {
+            if (!$Entity->Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {
                 $Entity->setUseridFilter();
             }
 

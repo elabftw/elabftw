@@ -21,7 +21,7 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Database');
 
 try {
-    $Entity = new Database($Users);
+    $Entity = new Database($App->Users);
 
     // VIEW
     if ($Request->query->get('mode') === 'view') {
@@ -137,7 +137,7 @@ try {
             $Entity->setLimit(50);
         }
 
-        $ItemsTypes = new ItemsTypes($Users);
+        $ItemsTypes = new ItemsTypes($Entity->Users);
         $categoryArr = $ItemsTypes->readAll();
 
         $itemsArr = $Entity->read();

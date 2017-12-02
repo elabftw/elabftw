@@ -21,14 +21,14 @@ $App->pageTitle = _('Profile');
 
 try {
     // get total number of experiments
-    $Entity = new Experiments($Users);
+    $Entity = new Experiments($App->Users);
     $Entity->setUseridFilter();
     $itemsArr = $Entity->read();
     $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status
     // see https://developers.google.com/chart/interactive/docs/reference?csw=1#datatable-class
-    $UserStats = new UserStats($Users, $count);
+    $UserStats = new UserStats($App->Users, $count);
     $stats = array();
     // columns
     $stats['cols'] = array(
@@ -40,7 +40,7 @@ try {
         'label' => 'Experiments number')
     );
     // rows
-    foreach($UserStats->percentArr as $status => $name) {
+    foreach ($UserStats->percentArr as $status => $name) {
         $stats['rows'][] = array('c' => array(array('v' => $status), array('v' => $name)));
     }
     // now convert to json for JS usage
@@ -54,7 +54,7 @@ try {
     }
     $colorsJson = json_encode($colors);
 
-    $TagCloud = new TagCloud($Users->userid);
+    $TagCloud = new TagCloud($App->Users->userid);
 
     $template = 'profile.html';
     $renderArr = array(

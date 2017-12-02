@@ -63,29 +63,9 @@ try {
         throw new Exception('Redirecting to install folder');
     }
 
-    // GET THE LANG
-    if ($Request->getSession()->has('auth')) {
-        // generate full Users object with current userid
-        $Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
-        // set lang based on user pref
-        $locale = $Users->userData['lang'] . '.utf8';
-    } else {
-        $Users = new Users();
-        // load server configured lang if logged out
-        $locale = $Config->configArr['lang'] . '.utf8';
-    }
-
-    // CONFIGURE GETTEXT
-    $domain = 'messages';
-    putenv("LC_ALL=$locale");
-    $res = setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, ELAB_ROOT . "app/locale");
-    textdomain($domain);
-    // END i18n
-
 
     // INIT APP OBJECT
-    $App = new App($Request, $Config, new Logs(), $Users);
+    $App = new App($Request, $Config, new Logs());
 
     // UPDATE SQL SCHEMA
     $Update = new Update($App->Config);
@@ -102,11 +82,9 @@ try {
 
     // CERBERUS
     if ($Auth->isAuth()) {
-        // make sure we load the global Users with good userid
-        // fix issue on first page load with cookie and no session
-        // TODO refactor all of that, maybe remove the global Users and use the one in App
+        // we are auth, so load a Users in App with a userid
         if ($Request->getSession()->has('auth')) {
-            $Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
+            $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $Config));
         }
     } else {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
@@ -118,6 +96,26 @@ try {
         header('Location: ' . $url);
         exit;
     }
+
+    // GET THE LANG
+    if ($Request->getSession()->has('auth')) {
+        // generate full Users object with current userid
+        //$Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
+        // set lang based on user pref
+        $locale = $App->Users->userData['lang'] . '.utf8';
+    } else {
+        //$Users = new Users();
+        // load server configured lang if logged out
+        $locale = $App->Config->configArr['lang'] . '.utf8';
+    }
+
+    // CONFIGURE GETTEXT
+    $domain = 'messages';
+    putenv("LC_ALL=$locale");
+    $res = setlocale(LC_ALL, $locale);
+    bindtextdomain($domain, ELAB_ROOT . "app/locale");
+    textdomain($domain);
+    // END i18n
 
 } catch (Exception $e) {
     // if something went wrong here it should stop whatever is after

@@ -100,7 +100,6 @@ if (isset($_GET['to']) && !empty($_GET['to'])) {
 }
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
-$template = 'search.html';
 $renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
@@ -114,7 +113,7 @@ $renderArr = array(
     'andor' => $andor,
     'tagsArr' => $tagsArr
 );
-echo $App->render($template, $renderArr);
+echo $App->render('search.html', $renderArr);
 
 /**
  * Here the search begins

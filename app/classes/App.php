@@ -62,18 +62,15 @@ class App
      * @param Request $request
      * @param Config $config
      * @param Logs $logs
-     * @param Users $users
      */
     public function __construct(
         Request $request,
         Config $config,
-        Logs $logs,
-        Users $users
+        Logs $logs
     ) {
         $this->Request = $request;
         $this->Config = $config;
         $this->Logs = $logs;
-        $this->Users = $users;
 
         $this->Db = Db::getConnection();
         $this->Session = $this->Request->getSession();
@@ -82,15 +79,19 @@ class App
         $this->ok = $this->Session->getFlashBag()->get('ok', array());
         $this->ko = $this->Session->getFlashBag()->get('ko', array());
 
-        if ($this->Session->has('auth')) {
-            // todolist
-            $Todolist = new Todolist($this->Users);
-            $this->todoItems = $Todolist->readAll();
+    }
 
-            // team config
-            $Teams = new Teams($this->Users);
-            $this->teamConfigArr = $Teams->read();
-        }
+    public function loadUser(Users $users)
+    {
+        $this->Users = $users;
+
+        // todolist
+        $Todolist = new Todolist($this->Users);
+        $this->todoItems = $Todolist->readAll();
+
+        // team config
+        $Teams = new Teams($this->Users);
+        $this->teamConfigArr = $Teams->read();
     }
 
     /**

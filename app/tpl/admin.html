@@ -2,7 +2,7 @@
 
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
-{% if unvalidatedUsersArr|length > 0 %} 
+{% if unvalidatedUsersArr|length > 0 %}
     <form method='post' action='app/controllers/UsersController.php'>
         <input type='hidden' name='usersValidate' value='true' />
         {{ FormKey.getFormkey|raw }}

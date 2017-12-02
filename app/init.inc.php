@@ -63,7 +63,6 @@ try {
         throw new Exception('Redirecting to install folder');
     }
 
-
     // INIT APP OBJECT
     $App = new App($Request, $Config, new Logs());
 
@@ -81,20 +80,23 @@ try {
     }
 
     // CERBERUS
-    if ($Auth->isAuth()) {
-        // we are auth, so load a Users in App with a userid
-        if ($Request->getSession()->has('auth')) {
+    // do nothing if we don't need to be authenticated to view the page
+    if ($Auth->needAuth()) {
+        if ($Auth->tryAuth()) {
+            // we are auth, so load a Users in App with a userid
             $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $Config));
-        }
-    } else {
-        // maybe we clicked an email link and we want to be redirected to the page upon successful login
-        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
+        } else {
+            // KICK USER
 
-        // also don't redirect blindly to https because we might be in http (after install)
-        $url = $Request->getScheme() . '://' . $Request->getHttpHost() . '/app/logout.php';
-        header('Location: ' . $url);
-        exit;
+            // maybe we clicked an email link and we want to be redirected to the page upon successful login
+            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
+
+            // also don't redirect blindly to https because we might be in http (after install)
+            $url = $Request->getScheme() . '://' . $Request->getHttpHost() . '/app/logout.php';
+            header('Location: ' . $url);
+            exit;
+        }
     }
 
     // GET THE LANG

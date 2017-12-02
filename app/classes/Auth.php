@@ -218,16 +218,11 @@ class Auth
     }
 
     /**
-     * Check authentication of current user
-     *     ____          _
-     *    / ___|___ _ __| |__   ___ _ __ _   _ ___
-     *   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|
-     *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
-     *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
+     * Check if we need to bother with authentication of current user
      *
      * @return bool True if we are authentified (or if we don't need to be)
      */
-    public function isAuth()
+    public function needAuth()
     {
         // pages where you don't need to be logged in
         // only the script name, not the path because we use basename() on it
@@ -243,9 +238,24 @@ class Auth
         );
 
         if (in_array(basename($this->Request->getScriptName()), $nologinArr)) {
-            return true;
+            return false;
         }
 
+        return true;
+    }
+
+    /**
+     * Try to authenticate with session and cookie
+     *     ____          _
+     *    / ___|___ _ __| |__   ___ _ __ _   _ ___
+     *   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|
+     *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
+     *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
+     *
+     * @return bool true if we are authenticated
+     */
+    public function tryAuth()
+    {
         // if we are already logged in with the session, skip everything
         if ($this->Request->getSession()->has('auth')) {
             return true;

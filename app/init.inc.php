@@ -51,20 +51,17 @@ try {
     // Methods for login
     $Auth = new Auth($Request);
 
-    // the config table from mysql
-    // It's the first SQL request
+    // INIT APP OBJECT
+    // new Config will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $Config = new Config();
+        $App = new App($Request, new Config(), new Logs());
     } catch (PDOException $e) {
         $url = $Request->getUri() . 'install/index.php';
         header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }
-
-    // INIT APP OBJECT
-    $App = new App($Request, $Config, new Logs());
 
     // UPDATE SQL SCHEMA
     $Update = new Update($App->Config);
@@ -102,7 +99,7 @@ try {
 
     // load the Users with a userid if we are auth
     if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $Config));
+        $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $App->Config));
     }
 
     // GET THE LANG

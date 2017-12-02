@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 try {
     require_once '../../app/init.inc.php';
-    $Email = new Email($Config);
+    $Email = new Email($App->Config);
 
     if ($Request->request->has('email')) {
 

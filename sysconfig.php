@@ -31,10 +31,10 @@ try {
     $TeamsView = new TeamsView(new Teams($App->Users));
     $teamsArr = $TeamsView->Teams->readAll();
     $usersArr = $App->Users->readAll();
-    $ReleaseCheck = new ReleaseCheck($Config);
+    $ReleaseCheck = new ReleaseCheck($App->Config);
     $langsArr = Tools::getLangsArr();
 
-    switch ($Config->configArr['mail_method']) {
+    switch ($App->Config->configArr['mail_method']) {
         case 'sendmail':
             $disable_sendmail = false;
             $disable_smtp = true;

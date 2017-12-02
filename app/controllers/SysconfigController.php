@@ -75,7 +75,7 @@ try {
 
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
-        $Email = new Email($Config);
+        $Email = new Email($App->Config);
         if ($Email->testemailSend($Request->request->get('testemailEmail'))) {
             $res = true;
             $msg = _('Email sent');
@@ -84,7 +84,7 @@ try {
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email = new Email($Config);
+        $Email = new Email($App->Config);
         if ($Email->massEmail($Request->request->get('subject'), $Request->request->get('body'))) {
             $res = true;
             $msg = _('Email sent');
@@ -101,7 +101,7 @@ try {
 
     // CLEAR SMTP PASS
     if ($Request->query->get('clearSmtppass')) {
-        if (!$Config->update(array('smtp_password' => null))) {
+        if (!$App->Config->update(array('smtp_password' => null))) {
             throw new Exception('Error clearing the SMTP password');
         }
         $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
@@ -132,7 +132,7 @@ try {
             $tab = '8';
         }
 
-        if ($Config->update($Request->request->all())) {
+        if ($App->Config->update($Request->request->all())) {
             $res = true;
             $msg = _('Saved');
         }
@@ -142,7 +142,7 @@ try {
     if ($Request->query->get('clearStamppass')) {
         $redirect = true;
         $tab = '4';
-        if ($Config->destroyStamppass()) {
+        if ($App->Config->destroyStamppass()) {
             $res = true;
             $msg = _('Saved');
         }

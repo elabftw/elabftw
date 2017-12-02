@@ -22,9 +22,9 @@ $App->pageTitle = _('Export');
 
 try {
     if ($Request->query->get('type') === 'experiments') {
-        $Entity = new Experiments($Users);
+        $Entity = new Experiments($App->Users);
     } else {
-        $Entity = new Database($Users);
+        $Entity = new Database($App->Users);
     }
 
     switch ($Request->query->get('what')) {

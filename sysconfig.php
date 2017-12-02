@@ -28,9 +28,9 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
     $logsArr = $App->Logs->readAll();
-    $TeamsView = new TeamsView(new Teams($Users));
+    $TeamsView = new TeamsView(new Teams($App->Users));
     $teamsArr = $TeamsView->Teams->readAll();
-    $usersArr = $Users->readAll();
+    $usersArr = $App->Users->readAll();
     $ReleaseCheck = new ReleaseCheck($Config);
     $langsArr = Tools::getLangsArr();
 

@@ -20,15 +20,15 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('User Control Panel');
 
 try {
-    $TeamGroups = new TeamGroups($Users);
+    $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readAll();
 
-    $Templates = new Templates($Users);
+    $Templates = new Templates($App->Users);
     $templatesArr = $Templates->readFromUserid();
 
     $template = 'ucp.html';
     $renderArr = array(
-        'Users' => $Users,
+        'Users' => $App->Users,
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr

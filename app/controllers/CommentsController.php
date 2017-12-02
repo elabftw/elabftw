@@ -21,7 +21,7 @@ require_once '../../app/init.inc.php';
 
 try {
 
-    $Entity = new Experiments($Users);
+    $Entity = new Experiments($App->Users);
     $Response = new JsonResponse();
 
     $res = false;

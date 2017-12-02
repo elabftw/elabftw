@@ -30,12 +30,12 @@ try {
     $res = false;
     $msg = Tools::error();
 
-    $Teams = new Teams($Users);
+    $Teams = new Teams($App->Users);
     $Response = new JsonResponse();
 
     // PROMOTE SYSADMIN
     if ($Request->request->has('promoteSysadmin')) {
-        if ($Users->promoteSysadmin($Request->request->get('email'))) {
+        if ($App->Users->promoteSysadmin($Request->request->get('email'))) {
             $res = true;
             $msg = _('User promoted');
         }

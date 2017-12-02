@@ -16,13 +16,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 try {
     require_once '../init.inc.php';
 
-    $Users = new Users(null, $Auth, $Config);
-
     // default location to redirect to
     $location = '../../login.php';
 
     // check for disabled local register
-    if ($Users->Config->configArr['local_register'] === '0') {
+    if ($App->Config->configArr['local_register'] === '0') {
         throw new Exception('Registration is disabled.');
     }
 
@@ -41,7 +39,7 @@ try {
     }
 
     // Check whether the query was successful or not
-    if (!$Users->create(
+    if (!$App->Users->create(
         $Request->request->get('email'),
         $Request->request->get('team'),
         $Request->request->get('firstname'),
@@ -51,7 +49,7 @@ try {
         throw new Exception('Failed inserting new account in SQL!');
     }
 
-    if ($Users->needValidation) {
+    if ($App->Users->needValidation) {
         $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.'));
     } else {
         $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Welcome to eLabFTW o/'));

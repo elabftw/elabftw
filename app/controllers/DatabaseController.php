@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 try {
     require_once '../../app/init.inc.php';
 
-    $Entity = new Database($Users);
+    $Entity = new Database($App->Users);
     if ($Request->request->has('id')) {
         $Entity->setId($Request->request->get('id'));
     }

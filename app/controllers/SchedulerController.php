@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Database = new Database($Users);
+    $Database = new Database($App->Users);
     $Scheduler = new Scheduler($Database);
     $Response = new JsonResponse();
 

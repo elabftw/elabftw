@@ -22,9 +22,9 @@ try {
     set_time_limit(0);
 
     if ($Request->request->get('type') === 'csv') {
-        $Import = new ImportCsv($Users);
+        $Import = new ImportCsv($App->Users);
     } elseif ($Request->request->get('type') === 'zip') {
-        $Import = new ImportZip($Users);
+        $Import = new ImportZip($App->Users);
     } else {
         throw new Exception('Invalid argument');
     }

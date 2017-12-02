@@ -23,11 +23,11 @@ try {
     $errflag = false;
 
     if ($Request->query->get('type') === 'experiments') {
-        $Entity = new Experiments($Users);
+        $Entity = new Experiments($App->Users);
 
     } elseif ($Request->query->get('type') === 'items') {
 
-        $Entity = new Database($Users);
+        $Entity = new Database($App->Users);
 
     } else {
         throw new Exception('Bad type!');

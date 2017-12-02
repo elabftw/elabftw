@@ -33,11 +33,11 @@ try {
 
     if ($Request->request->get('type')  === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
-        $Entity = new Experiments($Users, $id);
+        $Entity = new Experiments($App->Users, $id);
     } elseif ($Request->request->get('type') === 'tpl') {
-        $Entity = new Templates($Users, $id);
+        $Entity = new Templates($App->Users, $id);
     } else {
-        $Entity = new Database($Users, $id);
+        $Entity = new Database($App->Users, $id);
     }
 
     /**
@@ -89,7 +89,7 @@ try {
     if ($Request->request->has('lock')) {
         $permissions = $Entity->getPermissions();
         // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if (!$Users->userData['can_lock'] && !$permissions['write']) {
+        if (!$App->Users->userData['can_lock'] && !$permissions['write']) {
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
         $errMsg = Tools::error();
@@ -156,9 +156,9 @@ try {
         if ($Entity->updateCategory($Request->request->get('categoryId'))) {
             // get the color of the status/item type for updating the css
             if ($Entity->type === 'experiments') {
-                $Category = new Status($Users);
+                $Category = new Status($App->Users);
             } else {
-                $Category = new ItemsTypes($Users);
+                $Category = new ItemsTypes($App->Users);
             }
             $Response->setData(array(
                 'res' => true,

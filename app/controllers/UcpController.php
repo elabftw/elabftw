@@ -27,7 +27,7 @@ try {
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
         $redirect = true;
-        if ($Users->updatePreferences($Request->request->all())) {
+        if ($App->Users->updatePreferences($Request->request->all())) {
             $Session->getFlashBag()->add('ok', _('Preferences updated.'));
         } else {
             $Session->getFlashBag()->add('ko', Tools::error());
@@ -40,7 +40,7 @@ try {
         $tab = '2';
         $redirect = true;
 
-        if ($Users->updateAccount($Request->request->all())) {
+        if ($App->Users->updateAccount($Request->request->all())) {
             $Session->getFlashBag()->add('ok', _('Profile updated.'));
         } else {
             $Session->getFlashBag()->add('ko', Tools::error());
@@ -67,7 +67,7 @@ try {
         $tpl_name = $Request->request->filter('new_tpl_name', null, FILTER_SANITIZE_STRING);
         $tpl_body = Tools::checkBody($Request->request->get('new_tpl_body'));
 
-        $Templates = new Templates($Users);
+        $Templates = new Templates($App->Users);
         if (!$Templates->create($tpl_name, $tpl_body, $Session->get('userid'))) {
             throw new Exception(Tools::error());
         }
@@ -79,7 +79,7 @@ try {
         $tab = '3';
         $redirect = true;
 
-        $Templates = new Templates($Users);
+        $Templates = new Templates($App->Users);
         $Templates->update(
             $Request->request->get('tpl_id')[0],
             $Request->request->get('tpl_name')[0],
@@ -93,7 +93,7 @@ try {
         if ($Request->request->get('table') === 'experiments_templates') {
             // remove the create new entry
             unset($Request->request->get('ordering')[0]);
-            $Entity = new Templates($Users);
+            $Entity = new Templates($App->Users);
         }
 
         if ($Entity->updateOrdering($Request->request->all())) {

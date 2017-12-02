@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Status = new Status($Users);
+    $Status = new Status($App->Users);
     $Response = new JsonResponse();
 
     $res = false;

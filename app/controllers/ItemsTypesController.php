@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 try {
     require_once '../../app/init.inc.php';
-    $ItemsTypes = new ItemsTypes($Users);
+    $ItemsTypes = new ItemsTypes($App->Users);
     $Response = new JsonResponse();
 
     $res = false;

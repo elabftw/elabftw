@@ -26,19 +26,19 @@ try {
 
     $FormKey = new FormKey($Session);
 
-    $ItemsTypes = new ItemsTypes($Users);
-    $Status = new Status($Users);
-    $TeamGroups = new TeamGroups($Users);
-    $Templates = new Templates($Users);
+    $ItemsTypes = new ItemsTypes($App->Users);
+    $Status = new Status($App->Users);
+    $TeamGroups = new TeamGroups($App->Users);
+    $Templates = new Templates($App->Users);
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
     $commonTplBody = $Templates->readCommonBody();
     // only the unvalidated ones
-    $unvalidatedUsersArr = $Users->readAllFromTeam(0);
+    $unvalidatedUsersArr = $App->Users->readAllFromTeam(0);
     // all users
-    $usersArr = $Users->readAllFromTeam();
+    $usersArr = $App->Users->readAllFromTeam();
 
     $template = 'admin.html';
     $renderArr = array(
@@ -49,7 +49,7 @@ try {
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,
         'commonTplBody' => $commonTplBody,
-        'Users' => $Users,
+        'Users' => $App->Users,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr
     );

@@ -30,7 +30,7 @@ try {
     if ($Request->request->has('generateApiKey')) {
         $Response = new JsonResponse();
         $redirect = false;
-        if ($Users->generateApiKey()) {
+        if ($App->Users->generateApiKey()) {
             $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -53,7 +53,7 @@ try {
 
         // loop the array
         foreach ($Request->request->get('usersValidateIdArr') as $userid) {
-            $Session->getFlashBag()->add('ok', $Users->validate($userid));
+            $Session->getFlashBag()->add('ok', $App->Users->validate($userid));
         }
     }
 
@@ -69,7 +69,7 @@ try {
             $location = "../../admin.php?tab=$tab";
         }
 
-        if ($Users->update($Request->request->all())) {
+        if ($App->Users->update($Request->request->all())) {
             $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
         }
     }
@@ -83,7 +83,7 @@ try {
             throw new Exception('Non admin user tried to access admin panel.');
         }
 
-        if ($Users->destroy(
+        if ($App->Users->destroy(
             $Request->request->get('usersDestroyEmail'),
             $Request->request->get('usersDestroyPassword')
         )) {

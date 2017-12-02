@@ -19,11 +19,11 @@ try {
     require_once '../../app/init.inc.php';
 
     if ($Request->query->get('type') === 'experiments') {
-        $Entity = new Experiments($Users);
+        $Entity = new Experiments($App->Users);
 
     } elseif ($_GET['type'] === 'items') {
 
-        $Entity = new Database($Users);
+        $Entity = new Database($App->Users);
 
     } else {
         throw new Exception('Bad type!');

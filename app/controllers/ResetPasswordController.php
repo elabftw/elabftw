@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 try {
     require_once '../../app/init.inc.php';
     $Email = new Email($Config);
-    $Users = new Users(null, $Auth, $Config);
 
     if ($Request->request->has('email')) {
 
@@ -31,7 +30,7 @@ try {
         }
 
         // Get data from user
-        $user = $Users->readFromEmail($email);
+        $user = $App->Users->readFromEmail($email);
 
         // Is email in database ?
         if (empty($user)) {
@@ -83,10 +82,10 @@ try {
     if ($Request->request->has('password') &&
         $Request->request->get('password') === $Request->request->get('cpassword')) {
 
-        $Users->setId($Request->request->get('userid'));
+        $App->Users->setId($Request->request->get('userid'));
 
         // Validate key
-        if ($Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(SECRET_KEY))) {
+        if ($App->Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(SECRET_KEY))) {
             throw new Exception('Wrong key for resetting password');
         }
 
@@ -98,11 +97,11 @@ try {
         }
 
         // Replace new password in database
-        if (!$Users->updatePassword($Request->request->get('password'), $Request->request->get('userid'))) {
+        if (!$App->Users->updatePassword($Request->request->get('password'), $Request->request->get('userid'))) {
             throw new Exception('Error updating password');
         }
 
-        $App->Logs->create('Info', $Users->userData['email'], 'Password was changed for this user.');
+        $App->Logs->create('Info', $App->Users->userData['email'], 'Password was changed for this user.');
         $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 

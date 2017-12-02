@@ -102,7 +102,6 @@ try {
     // GET THE LANG
     if ($Request->getSession()->has('auth')) {
         // generate full Users object with current userid
-        //$Users = new Users($Request->getSession()->get('userid'), $Auth, $Config);
         // set lang based on user pref
         $locale = $App->Users->userData['lang'] . '.utf8';
     } else {

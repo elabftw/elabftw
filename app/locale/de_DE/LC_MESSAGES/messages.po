@@ -380,7 +380,7 @@ msgstr "Melden Sie sich bei Ihrem Konto an"
 
 #: login.php:120
 msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
-msgstr "Sie haben noch kein Konto? % SRegisteienr% Sie sich jetzt s! <br> Passwort vergessen? % SRESET% s it!"
+msgstr "Sie haben noch kein Konto? %sRegisteienr%sie sich jetzt s! <br> Passwort vergessen? %sRESET%s it!"
 
 #: login.php:130
 msgid "Enter your email address"

@@ -71,7 +71,7 @@ class App
         $this->Request = $request;
         $this->Config = $config;
         $this->Logs = $logs;
-        $this->Users = new Users();
+        $this->Users = new Users(null, new Auth($request), new Config());
 
         $this->Db = Db::getConnection();
         $this->Session = $this->Request->getSession();

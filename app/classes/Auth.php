@@ -237,11 +237,7 @@ class Auth
             'ResetPasswordController.php'
         );
 
-        if (in_array(basename($this->Request->getScriptName()), $nologinArr)) {
-            return false;
-        }
-
-        return true;
+        return !in_array(basename($this->Request->getScriptName()), $nologinArr);
     }
 
     /**

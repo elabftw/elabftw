@@ -38,6 +38,14 @@
             "<a href='#' class='trigger'>",
             "</a>")|raw }}
     </p>
+
+    <div class='toggle_container'>
+    <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+        <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+        <button class='button' type="submit" name="Submit">{{ 'Send new password'|trans }}</button>
+    </form>
+    </div>
+
     {% endif %}
 
     {% if idpsArr|length > 0 %}
@@ -53,13 +61,6 @@
             <button class='button' type='submit' name='submit'>Go</button>
         </form>
     {% endif %}
-
-    <div class='toggle_container'>
-    <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
-        <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
-        <button class='button' type="submit" name="Submit">{{ 'Send new password'|trans }}</button>
-    </form>
-    </div>
 
 </section>
 <script src='app/js/login.min.js'></script>

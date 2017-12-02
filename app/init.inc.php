@@ -79,24 +79,30 @@ try {
         $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
     }
 
-    // CERBERUS
-    // do nothing if we don't need to be authenticated to view the page
-    if ($Auth->needAuth()) {
-        if ($Auth->tryAuth()) {
-            // we are auth, so load a Users in App with a userid
-            $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $Config));
-        } else {
-            // KICK USER
+    //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
+    //     ____          _                            //
+    //    / ___|___ _ __| |__   ___ _ __ _   _ ___    //
+    //   | |   / _ \ '__| '_ \ / _ \ '__| | | / __|   //
+    //   | |___  __/ |  | |_) |  __/ |  | |_| \__ \   //
+    //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
+    //                                                //
+    //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
+    if ($Auth->needAuth() && !$Auth->tryAuth()) {
+        // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
-            // maybe we clicked an email link and we want to be redirected to the page upon successful login
-            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
+        // maybe we clicked an email link and we want to be redirected to the page upon successful login
+        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+        setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
-            // also don't redirect blindly to https because we might be in http (after install)
-            $url = $Request->getScheme() . '://' . $Request->getHttpHost() . '/app/logout.php';
-            header('Location: ' . $url);
-            exit;
-        }
+        // also don't redirect blindly to https because we might be in http (after install)
+        $url = $Request->getScheme() . '://' . $Request->getHttpHost() . '/app/logout.php';
+        header('Location: ' . $url);
+        exit;
+    }
+
+    // load the Users with a userid if we are auth
+    if ($App->Request->getSession()->has('auth')) {
+        $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $Config));
     }
 
     // GET THE LANG

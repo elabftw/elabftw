@@ -28,7 +28,6 @@ try {
 
     $template = 'ucp.html';
     $renderArr = array(
-        'Users' => $App->Users,
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr

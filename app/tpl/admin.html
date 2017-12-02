@@ -322,7 +322,7 @@
     <div class='box'>
         <h3>{{ 'Common Experiment Template'|trans }}</h3><hr>
         <p>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
-        <textarea style='height:400px' data-lang='{{ Users.userData.lang }}' class='mceditable' id='commonTplTemplate' />
+        <textarea style='height:400px' data-lang='{{ App.Users.userData.lang }}' class='mceditable' id='commonTplTemplate' />
             {{ commonTplBody|raw }}
         </textarea>
         <div class='submitButtonDiv'>

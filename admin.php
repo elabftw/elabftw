@@ -42,14 +42,12 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
-        'Auth' => $Auth,
         'FormKey' => $FormKey,
         'fromSysconfig' => false,
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,
         'commonTplBody' => $commonTplBody,
-        'Users' => $App->Users,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr
     );

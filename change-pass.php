@@ -39,7 +39,6 @@ try {
 
     $template = 'change-pass.html';
     $renderArr = array(
-        'Auth' => $Auth,
         'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
         'deadline' => $Request->query->filter('deadline', null, FILTER_SANITIZE_STRING),
         'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING)

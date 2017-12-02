@@ -49,7 +49,7 @@ try {
         }
 
         // the actual login
-        if ($Auth->login($Request->request->get('email'), $Request->request->get('password'), $rememberme)) {
+        if ($App->Users->Auth->login($Request->request->get('email'), $Request->request->get('password'), $rememberme)) {
             if ($Request->cookies->has('redirect')) {
                 $location = $Request->cookies->get('redirect');
             } else {

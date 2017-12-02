@@ -48,9 +48,6 @@ try {
     require_once $configFilePath;
     // END LOAD CONFIG.PHP
 
-    // Methods for login
-    $Auth = new Auth($Request);
-
     // INIT APP OBJECT
     // new Config will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
@@ -84,7 +81,7 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
-    if ($Auth->needAuth() && !$Auth->tryAuth()) {
+    if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {
         // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
@@ -99,7 +96,7 @@ try {
 
     // load the Users with a userid if we are auth
     if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users($Request->getSession()->get('userid'), $Auth, $App->Config));
+        $App->loadUser(new Users($Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
     }
 
     // GET THE LANG

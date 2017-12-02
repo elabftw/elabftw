@@ -60,7 +60,6 @@ try {
 
     $template = 'sysconfig.html';
     $renderArr = array(
-        'Auth' => $Auth,
         'ReleaseCheck' => $ReleaseCheck,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,

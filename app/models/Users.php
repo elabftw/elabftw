@@ -20,14 +20,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Users
 {
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
     /** @var Auth $Auth instance of Auth */
-    private $Auth;
+    public $Auth;
 
     /** @var Config $Config instance of Config */
     public $Config;
-
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var bool $needValidation flag to check if we need validation or not */
     public $needValidation = false;

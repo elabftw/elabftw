@@ -4,7 +4,7 @@
 
 <section class='center'>
     <form method="post" class='loginform' action="app/controllers/ResetPasswordController.php">
-        <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', Auth) }} {{ 'characters minimum'|trans }}</span>
+        <span class='smallgray'>{{ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) }} {{ 'characters minimum'|trans }}</span>
         <p>
             <!-- output the key and userid as hidden fields -->
             <input type="hidden" name="key" value="{{ key|e }}" />
@@ -12,7 +12,7 @@
             <input type="hidden" name="userid" value="{{ userid|e }}" />
 
             {# min pass length minimum, no maximum #}
-            {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', Auth) ~ ',}' %}
+            {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) ~ ',}' %}
 
             <label class='block' for='passwordtxt'>{{ 'New password'|trans }}</label>
             <input id='password' type='password' pattern='{{ pattern }}' value='' name='password' required />

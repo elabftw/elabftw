@@ -56,8 +56,7 @@ try {
         if (!$Auth->loginWithSaml($email)) {
             // the user doesn't exist yet in the db
             // check if the team exists
-            $Teams = new Teams($Users);
-            $Users = new Users(null, $Auth, $Saml->Config);
+            $Teams = new Teams($App->Users);
 
             // GET TEAM
             $teamAttribute = $Saml->Config->configArr['saml_team'];
@@ -80,7 +79,7 @@ try {
             }
 
             // CREATE USER
-            $Users->create($email, $teamId, $firstname, $lastname);
+            $App->Users->create($email, $teamId, $firstname, $lastname);
             // ok now the user is created, try logging in again
             if (!$Auth->loginWithSaml($email)) {
                 throw new Exception("Not authenticated!");

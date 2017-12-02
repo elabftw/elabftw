@@ -24,7 +24,7 @@ class Teams implements CrudInterface
     protected $Db;
 
     /** @var Users $Users instance of Users */
-    public $Users;
+    private $Users;
 
     /**
      * Constructor
@@ -78,12 +78,11 @@ class Teams implements CrudInterface
         $newId = $this->Db->lastInsertId();
 
         // create default status
-        $Users = new Users();
-        $Status = new Status($Users);
+        $Status = new Status($this->Users);
         $result2 = $Status->createDefault($newId);
 
         // create default item type
-        $ItemsTypes = new ItemsTypes($Users);
+        $ItemsTypes = new ItemsTypes($this->Users);
         $result3 = $ItemsTypes->create(
             'Edit me',
             '32a100',
@@ -93,7 +92,7 @@ class Teams implements CrudInterface
         );
 
         // create default experiment template
-        $Templates = new Templates($Users);
+        $Templates = new Templates($this->Users);
         $result4 = $Templates->createDefault($newId);
 
         if ($result1 && $result2 && $result3 && $result4) {

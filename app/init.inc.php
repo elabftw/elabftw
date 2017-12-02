@@ -111,7 +111,6 @@ try {
         // set lang based on user pref
         $locale = $App->Users->userData['lang'] . '.utf8';
     } else {
-        //$Users = new Users();
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }

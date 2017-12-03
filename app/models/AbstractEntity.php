@@ -440,7 +440,11 @@ abstract class AbstractEntity
         } elseif ($this instanceof Database) {
             // for DB items, we only need to be in the same team
             if ($item['team'] === $this->Users->userData['team']) {
-                return array('read' => true, 'write' => true);
+                $ret = array('read' => true, 'write' => true);
+                if ($this->Users->userData['anon']) {
+                    $ret['write'] = false;
+                }
+                return $ret;
             }
         }
 

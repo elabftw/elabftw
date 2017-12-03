@@ -32,7 +32,7 @@
     <div class='container-fluid'>
 
     <div class="navbar-header">
-        {% if App.Session.has('auth') %}
+        {% if App.Session.has('auth') or App.Session.has('anon') %}
         <!-- hamburger menu -->
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
@@ -45,7 +45,7 @@
         <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
     </div>
 
-    {% if App.Session.has('auth') %}
+    {% if App.Session.has('auth') or App.Session.has('anon') %}
     <!-- everything in there will be part of the burger -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
@@ -56,9 +56,11 @@
                     <a href='database.php?mode=show'>{{ 'Database'|trans }}</a>
                 </li>
 
+                {% if not App.Session.has('anon') %}
                 <li {{ App.Request.getScriptName|split('/')|last == 'team.php' ? "class='active'" }}>
                     <a href='team.php'>{{ 'Team'|trans }}</a>
                 </li>
+                {% endif %}
 
                 <li {{ App.Request.getScriptName|split('/')|last == 'search.php' ? "class='active'" }}>
                     <a href='search.php'>{{ 'Search'|trans }}</a>

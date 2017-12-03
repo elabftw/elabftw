@@ -20,6 +20,11 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Team');
 
 try {
+
+    if ($App->Session->has('anon')) {
+        throw new Exception(Tools::error(true));
+    }
+
     $TeamsView = new TeamsView(new Teams($App->Users));
     $Database = new Database($App->Users);
     // we only want the bookable type of items

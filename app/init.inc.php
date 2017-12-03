@@ -102,6 +102,7 @@ try {
     if ($App->Request->getSession()->has('anon')) {
         $App->Users->userData['team'] = $App->Request->getSession()->get('team');
         $App->Users->userData['limit_nb'] = 15;
+        $App->Users->userData['anon'] = true;
         //$App->Users->userData['userid'] = 0;
     }
 

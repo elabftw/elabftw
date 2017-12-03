@@ -377,6 +377,9 @@ abstract class AbstractEntity
     {
         if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
+            if (empty($this->entityData)) {
+                return array('read' => false, 'write' => false);
+            }
         }
         // don't try to read() again if we have the item (for show where there are several items to check)
         if (!isset($item)) {
@@ -412,8 +415,10 @@ abstract class AbstractEntity
                     }
 
                     // if the vis. setting is team, check we are in the same team than the $item
+                    // we also check for anon because anon will have the same team as real team member
                     if (($item['visibility'] === 'team') &&
-                        ($item['team'] == $this->Users->userData['team'])) {
+                        ($item['team'] == $this->Users->userData['team']) &&
+                        (!$this->Users->userData['anon'])) {
                             return array('read' => true, 'write' => false);
                     }
 

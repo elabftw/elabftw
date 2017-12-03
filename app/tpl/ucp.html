@@ -235,7 +235,7 @@
     <ul class='nav nav-pills' role='tablist'>
         <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
-            <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name }}</li>
+            <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
         {% endfor %}
     </ul>
 
@@ -277,14 +277,14 @@
         </span>
         <input type='text' style='width:auto' class='createTagInput' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
-            <img class='align_right save-to-file' src='app/img/download.png' title='Export Template' alt='Export' data-name='{{ template.name }}' data-id='e{{ template.id }}' />
+            <img class='align_right save-to-file' src='app/img/download.png' title='Download Template' alt='Download' data-name='{{ template.name }}' data-id='e{{ template.id }}' />
             <img class='align_right destroy-template' src='app/img/small-trash.png' title='Delete' alt='Delete' data-id='{{ template.id }}' />
 
             <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />
                 <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
                 <label class='block'>{{ 'Name'|trans }}</label>
-                <input name='tpl_name[]' value='{{ template.name }}' style='width:90%' /><br />
+                <input name='tpl_name[]' value='{{ template.name|raw }}' style='width:90%' /><br />
                 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
                 <label class='block'>{{ 'Template content'|trans }}</label>
                 <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />

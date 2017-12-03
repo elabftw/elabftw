@@ -43,12 +43,16 @@ try {
         }
     }
 
+    $Templates = new Templates($App->Users);
+    $templatesArr = $Templates->readFromTeam();
+
     $template = 'team.html';
     $renderArr = array(
         'TeamsView' => $TeamsView,
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
         'selectedItem' => $selectedItem,
+        'templatesArr' => $templatesArr,
         'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
     );
 

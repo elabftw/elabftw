@@ -441,7 +441,7 @@ abstract class AbstractEntity
             // for DB items, we only need to be in the same team
             if ($item['team'] === $this->Users->userData['team']) {
                 $ret = array('read' => true, 'write' => true);
-                if ($this->Users->userData['anon']) {
+                if (isset($this->Users->userData['anon'])) {
                     $ret['write'] = false;
                 }
                 return $ret;

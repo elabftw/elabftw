@@ -7,6 +7,7 @@
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
         <li class='tabhandle' id='tab2'>{{ 'Infos'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
     </ul>
 </menu>
 
@@ -70,6 +71,41 @@
         {% endfor %}
     </table>
 
+</div>
+
+<!-- TAB 3 TEMPLATE -->
+<div class='divhandle' id='tab3div'>
+<div class='box new-tpl-box'>
+    <h3>{{ 'Experiments Templates'|trans }}</h3>
+    <ul class='nav nav-pills' role='tablist'>
+        {% for template in templatesArr %}
+            <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
+        {% endfor %}
+    </ul>
+    {% for template in templatesArr %}
+    <div class='subdivhandle well' id='subtab_{{ template.id }}div'>
+
+        <h3>{{ template.name|raw }} ({{ template.fullname|raw }})
+            <button class='button import-tpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
+        </h3>
+        <!-- TAGS -->
+        <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
+        <span class='tags'>
+            <!--  build the tag array -->
+            {% if template.tags|length > 0 %}
+                {% set tagsIdArr = template.tags_id|split(',') %}
+                {% set tagsValueArr = template.tags|split('|') %}
+                {% for tag in tagsValueArr %}
+                    <span class='tag'>{{ tag|raw }}</span>
+                {% endfor %}
+            {% endif %}
+        </span>
+
+        <div class='txt' id='e{{ template.id }}'>{{ template.body|raw }}</div>
+
+    </div>
+    {% endfor %}
+</div>
 </div>
 
 <div id='infos'

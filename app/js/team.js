@@ -92,6 +92,33 @@ $(document).on('click', '#change-item', function() {
     insertParamAndReload('item', '');
 });
 
+$(document).on('click', '.import-tpl', function() {
+    $.post('app/controllers/UcpController.php', {
+        import_tpl: true,
+        id: $(this).data('id')
+    }).done(function() {
+        notif('Saved', 'ok');
+    });
+});
+// SUB TABS
+var tab = 1;
+var initdiv = '#subtab_' + tab + 'div';
+var inittab = '#subtab_' + tab;
+// init
+$(".subdivhandle").hide();
+$(initdiv).show();
+$(inittab).addClass('selected');
+
+$(".subtabhandle" ).click(function(event) {
+    var tabhandle = '#' + event.target.id;
+    var divhandle = '#' + event.target.id + 'div';
+    $(".subdivhandle").hide();
+    $(divhandle).show();
+    $(".subtabhandle").removeClass('badgetabactive');
+    $(tabhandle).addClass('badgetabactive');
+});
+// END SUB TABS
+
 function schedulerCreate(start, end) {
     var title = prompt('Comment:');
     if (title) {

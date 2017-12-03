@@ -27,7 +27,7 @@ class Templates extends AbstractEntity
     public $type = 'experiments_tpl';
 
     /**
-     * Give me the team on init
+     * Constructor
      *
      * @param Users $users
      * @param int|null $id
@@ -82,6 +82,25 @@ class Templates extends AbstractEntity
     }
 
     /**
+     * Duplicate a template from someone else in the team
+     *
+     * @return bool
+     */
+    public function duplicate()
+    {
+        $template = $this->read();
+
+        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':name', $template['name']);
+        $req->bindParam(':body', $template['body']);
+        $req->bindParam(':userid', $this->Users->userid);
+
+        return $req->execute();
+    }
+
+    /**
      * Read a template
      *
      * @return array
@@ -110,7 +129,8 @@ class Templates extends AbstractEntity
             GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id
             FROM experiments_templates
             LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
-            WHERE experiments_templates.userid = :userid group by experiments_templates.id ORDER BY experiments_templates.ordering ASC";
+            WHERE experiments_templates.userid = :userid
+            GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
@@ -118,6 +138,30 @@ class Templates extends AbstractEntity
         return $req->fetchAll();
     }
 
+    /**
+     * Read the templates from the team. Don't take into account the userid = 0 (common templates)
+     * nor the current user templates
+     *
+     * @return array
+     */
+    public function readFromTeam()
+    {
+        $sql = "SELECT experiments_templates.id,
+            experiments_templates.body,
+            experiments_templates.name,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id
+            FROM experiments_templates
+            LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
+            LEFT JOIN users ON (experiments_templates.userid = users.userid)
+            WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
+            GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid']);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
 
     /**
      * Get the body of the default experiment template
@@ -211,14 +255,6 @@ class Templates extends AbstractEntity
      * @param int $category
      */
     public function updateCategory($category)
-    {
-    }
-
-    /**
-     * No duplication for templates (yet!)
-     *
-     */
-    public function duplicate()
     {
     }
 

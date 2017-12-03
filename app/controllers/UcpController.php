@@ -50,6 +50,23 @@ try {
 
     // TAB 3 : EXPERIMENTS TEMPLATES
 
+    // DUPLICATE TPL
+    if ($Request->request->has('import_tpl')) {
+        $Response = new JsonResponse();
+        $Templates = new Templates($App->Users, $Request->request->get('id'));
+        if ($Templates->duplicate()) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
     // ADD NEW TPL
     if ($Request->request->has('new_tpl_form')) {
         $tab = '3';
@@ -90,6 +107,7 @@ try {
 
     // UPDATE ORDERING
     if ($Request->request->has('updateOrdering')) {
+        $Response = new JsonResponse();
         if ($Request->request->get('table') === 'experiments_templates') {
             // remove the create new entry
             unset($Request->request->get('ordering')[0]);

@@ -179,6 +179,7 @@ class Auth
     /**
      * Login anonymously in a team
      *
+     * @param int $team
      */
     public function loginAsAnon($team)
     {
@@ -188,6 +189,7 @@ class Auth
         $this->Request->getSession()->set('is_admin', 0);
         $this->Request->getSession()->set('is_sysadmin', 0);
     }
+
     /**
      * Login with the cookie
      *

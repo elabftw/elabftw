@@ -21,6 +21,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 try {
     require_once '../../app/init.inc.php';
 
+    if ($App->Session->has('anon')) {
+        throw new Exception(Tools::error(true));
+    }
+
     $Response = new JsonResponse();
     // id of the item (experiment or database item)
     $id = 1;

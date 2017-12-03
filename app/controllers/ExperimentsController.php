@@ -22,6 +22,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 try {
     require_once '../../app/init.inc.php';
 
+    if ($App->Session->has('anon')) {
+        throw new Exception(Tools::error(true));
+    }
+
     $Entity = new Experiments($App->Users);
     if ($Request->request->has('id')) {
         $Entity->setId($Request->request->get('id'));

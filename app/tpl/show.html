@@ -146,12 +146,11 @@
     </p>
     <div class='row display-flex'>
     {% for item in itemsArr %}
-    {#
         {% set permissions = Entity.getPermissions(item) %}
-        {% if permissions.read %} #}
+        {% if permissions.read %}
             {# dim the experiment a bit if it's not yours #}
             {% set opacity = '1' %}
-            {% if (Entity.Users.userid != item.userid) and Entity.type == 'experiments' %}
+            {% if (Entity.Users.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
                 {% set opacity = '0.7' %}
             {% endif %}
             {% if Entity.Users.userData.single_column_layout %}
@@ -210,9 +209,7 @@
                 <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
             </section>
             </div>
-            {#
         {% endif %}
-        #}
     {% endfor %}
     </div>
 

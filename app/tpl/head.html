@@ -123,6 +123,10 @@
             </ul>
         </p>
     </div>
+    {% elseif App.Session.has('anon') %}
+    <div class="user-nav">
+        <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><img src='app/img/logout.png' alt='{{ 'Logout'|trans }}' /></a>
+    </div>
     {% endif %}
 
 <noscript><!-- show warning if javascript is disabled -->

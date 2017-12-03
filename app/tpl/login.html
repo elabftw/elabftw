@@ -62,6 +62,7 @@
         </form>
     {% endif %}
 
+    {% if App.Config.configArr.anon_users %}
         <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
         <br>
         <form method='post' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
@@ -72,6 +73,7 @@
             </select>
             <button class='button' type='submit' name='submit'>Go</button>
         </form>
+    {% endif %}
 </section>
 <script src='app/js/login.min.js'></script>
 {% endblock body %}

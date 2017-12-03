@@ -103,20 +103,6 @@ class Teams implements CrudInterface
     }
 
     /**
-     * Get all the teams
-     *
-     * @return array
-     */
-    public function readAll()
-    {
-        $sql = "SELECT * FROM teams ORDER BY team_name ASC";
-        $req = $this->Db->prepare($sql);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
      * Read from a team
      *
      * @param string|null $column
@@ -133,6 +119,20 @@ class Teams implements CrudInterface
             return $teamConfig;
         }
         return $teamConfig[$column];
+    }
+
+    /**
+     * Get all the teams
+     *
+     * @return array
+     */
+    public function readAll()
+    {
+        $sql = "SELECT * FROM teams ORDER BY team_name ASC";
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+
+        return $req->fetchAll();
     }
 
     /**
@@ -162,6 +162,11 @@ class Teams implements CrudInterface
             $deletableXp = 1;
         }
 
+        $publicDb = 0;
+        if ($post['public_db'] == 1) {
+            $publicDb = 1;
+        }
+
         $linkName = 'Documentation';
         if (isset($post['link_name'])) {
             $linkName = filter_var($post['link_name'], FILTER_SANITIZE_STRING);
@@ -174,6 +179,7 @@ class Teams implements CrudInterface
 
         $sql = "UPDATE teams SET
             deletable_xp = :deletable_xp,
+            public_db = :public_db,
             link_name = :link_name,
             link_href = :link_href,
             stamplogin = :stamplogin,
@@ -182,13 +188,14 @@ class Teams implements CrudInterface
             stampcert = :stampcert
             WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':stampprovider', $post['stampprovider']);
-        $req->bindParam(':stampcert', $post['stampcert']);
-        $req->bindParam(':stamplogin', $post['stamplogin']);
-        $req->bindParam(':stamppass', $stamppass);
         $req->bindParam(':deletable_xp', $deletableXp);
+        $req->bindParam(':public_db', $publicDb);
         $req->bindParam(':link_name', $linkName);
         $req->bindParam(':link_href', $linkHref);
+        $req->bindParam(':stamplogin', $post['stamplogin']);
+        $req->bindParam(':stamppass', $stamppass);
+        $req->bindParam(':stampprovider', $post['stampprovider']);
+        $req->bindParam(':stampcert', $post['stampcert']);
         $req->bindParam(':team_id', $this->Users->userData['team']);
 
         return $req->execute();

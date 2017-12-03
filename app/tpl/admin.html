@@ -58,6 +58,14 @@
             </p>
 
             <p>
+                <label for='public_db'>{{ 'Anonymous visitors can see database items:'|trans }}</label>
+                <select class='clean-form' name='public_db' id='public_db'>
+                    <option value='1'{{ App.teamConfigArr.public_db ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                    <option value='0'{{ not App.teamConfigArr.public_db ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                </select>
+            </p>
+
+            <p>
                 <label class="block" for='link_name'>{{ 'Name of the link in the top menu:'|trans }}</label>
                 <input class="clean-form col-3-form" type='text' value='{{ App.teamConfigArr.link_name }}' name='link_name' id='link_name' />
             </p>

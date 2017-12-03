@@ -30,7 +30,7 @@ try {
         $returnUrl = $settings['baseurl'] . "/index.php?acs&idp=" . $idpId;
         $SamlAuth->login($returnUrl);
 
-    } elseif ($Request->request->has('team_id')) { // login as anonymous
+    } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
         $App->Users->Auth->loginAsAnon($Request->request->get('team_id'));
         if ($Request->cookies->has('redirect')) {
             $location = $Request->cookies->get('redirect');

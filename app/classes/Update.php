@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '35';
+    const REQUIRED_SCHEMA = '36';
 
     /**
      * Init Update with Config and Db
@@ -265,6 +265,11 @@ class Update
             // 20171201
             $this->schema35();
             $this->updateSchema(35);
+        }
+        if ($current_schema < 36) {
+            // 20171201
+            $this->schema36();
+            $this->updateSchema(36);
         }
         // place new schema functions above this comment
 
@@ -830,6 +835,23 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "ALTER TABLE `users` ADD `inc_files_pdf` TINYINT(1) NOT NULL DEFAULT '1';";
         if (!$this->Db->q($sql)) {
             throw new Exception('Cannot add inc_files_pdf to Users table');
+        }
+    }
+
+    /**
+     * Add public_db to teams and anon_users to config
+     *
+     */
+    private function schema36()
+    {
+        $sql = "ALTER TABLE `teams` ADD `public_db` TINYINT(1) NOT NULL DEFAULT '0';";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Cannot add public_db to teams table');
+        }
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
+            ('anon_users', '0')";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Error adding config anon_users');
         }
     }
 }

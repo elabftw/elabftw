@@ -142,6 +142,13 @@
         <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
 
         <h3>Registration and authentication configuration</h3>
+
+        <label for='anon_users' class='block'>{{ 'Allow anonymous visitors to login and see Public experiments:'|trans }}</label>
+        <select class='clean-form col-3-form' name='anon_users' id='anon_users'>
+            <option value='1'{{ App.Config.configArr.anon_users ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+            <option value='0'{{ not App.Config.configArr.anon_users ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+        </select>
+
         <label for='local_register' class='block'>{{ 'Enable local account creation:'|trans }}</label>
         <select id='local_register' name="local_register" class="clean-form col-3-form">
             <option {{ App.Config.configArr.local_register == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>

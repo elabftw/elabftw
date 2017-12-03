@@ -21,6 +21,11 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Database');
 
 try {
+
+    if ($App->Session->has('anon') && ($App->teamConfigArr['public_db'] === '0')) {
+        throw new Exception(Tools::error(true));
+    }
+
     $Entity = new Database($App->Users);
 
     // VIEW

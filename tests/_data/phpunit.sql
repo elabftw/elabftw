@@ -122,6 +122,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_firstname', NULL),
 ('saml_lastname', NULL),
 ('local_login', '1'),
+('anon_users', '0'),
 ('local_register', '1');
 
 -- --------------------------------------------------------
@@ -418,6 +419,7 @@ CREATE TABLE `teams` (
   `team_id` int(10) UNSIGNED NOT NULL,
   `team_name` text NOT NULL,
   `deletable_xp` tinyint(1) NOT NULL DEFAULT '1',
+  `public_db` tinyint(1) NOT NULL DEFAULT '0',
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

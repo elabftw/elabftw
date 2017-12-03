@@ -129,9 +129,6 @@ class Auth
 
         $this->Request->getSession()->set('is_admin', $group['is_admin']);
         $this->Request->getSession()->set('is_sysadmin', $group['is_sysadmin']);
-        // create a token
-        $this->token = md5(uniqid(rand(), true));
-
         return true;
     }
 
@@ -144,11 +141,16 @@ class Auth
      */
     private function setToken()
     {
-        setcookie('token', $this->token, time() + 2592000, '/', null, true, true);
+        $token = hash('sha256', uniqid(rand(), true));
+
+        // create cookie
+        // name, value, expire, path, domain, secure, httponly
+        setcookie('token', $token, time() + 2592000, '/', null, true, true);
+
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $this->token);
+        $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid']);
 
         return $req->execute();
@@ -174,11 +176,14 @@ class Auth
         return false;
     }
 
+    /**
+     * Login anonymously in a team
+     *
+     */
     public function loginAsAnon($team)
     {
         $this->Request->getSession()->set('anon', 1);
         $this->Request->getSession()->set('team', $team);
-        //$this->Request->getSession()->set('userid', $this->userData['userid']);
 
         $this->Request->getSession()->set('is_admin', 0);
         $this->Request->getSession()->set('is_sysadmin', 0);
@@ -191,8 +196,8 @@ class Auth
     private function loginWithCookie()
     {
         // If user has a cookie; check cookie is valid
-        // the token is a md5 sum: 32 char
-        if (!$this->Request->cookies->has('token') || strlen($this->Request->cookies->get('token')) != 32) {
+        // the token is a sha256 sum: 64 char
+        if (!$this->Request->cookies->has('token') || strlen($this->Request->cookies->get('token')) != 64) {
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);

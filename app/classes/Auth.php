@@ -174,6 +174,15 @@ class Auth
         return false;
     }
 
+    public function loginAsAnon($team)
+    {
+        $this->Request->getSession()->set('anon', 1);
+        $this->Request->getSession()->set('team', $team);
+        //$this->Request->getSession()->set('userid', $this->userData['userid']);
+
+        $this->Request->getSession()->set('is_admin', 0);
+        $this->Request->getSession()->set('is_sysadmin', 0);
+    }
     /**
      * Login with the cookie
      *
@@ -252,6 +261,9 @@ class Auth
      */
     public function tryAuth()
     {
+        if ($this->Request->getSession()->has('anon')) {
+            return true;
+        }
         // if we are already logged in with the session, skip everything
         if ($this->Request->getSession()->has('auth')) {
             return true;

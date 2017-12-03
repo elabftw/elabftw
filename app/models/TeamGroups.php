@@ -110,6 +110,7 @@ class TeamGroups implements CrudInterface
         $tgArr = array_combine($idArr, $nameArr);
 
         $visibilityArr = array(
+            'public' => 'Public',
             'organization' => 'Everyone with an account',
             'team' => 'Only the team',
             'user' => 'Only me'

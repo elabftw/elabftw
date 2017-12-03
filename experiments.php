@@ -173,11 +173,15 @@ try {
         $templatesArr = $Templates->readFromUserid();
 
         // READ ALL ITEMS
+        if ($App->Session->get('anon')) {
+            $Entity->visibilityFilter =  "AND experiments.visibility = 'public'";
+            $itemsArr = $Entity->read();
 
         // related filter
-        if (Tools::checkId($Request->query->get('related'))) {
+        } elseif (Tools::checkId($Request->query->get('related'))) {
             $searchType = 'related';
             $itemsArr = $Entity->readRelated($Request->query->get('related'));
+
         } else {
             // filter by user only if we are not making a search
             if (!$Entity->Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {

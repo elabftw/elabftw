@@ -262,7 +262,6 @@ abstract class AbstractEntity
                 $finalArr[] = $item;
             }
         }
-
         // reduce the dimension of the array if we have only one item (idFilter set)
         if (count($finalArr) === 1 && !empty($this->idFilter)) {
             $item = $finalArr[0];
@@ -402,13 +401,13 @@ abstract class AbstractEntity
                 // if we don't own the experiment (and we are not admin), we need to check the visibility
                 } else {
 
-                    $validArr = array(
-                        'public',
-                        'organization'
-                    );
+                    // if the vis. setting is public, we can see it for sure
+                    if ($item['visibility'] === 'public') {
+                        return array('read' => true, 'write' => false);
+                    }
 
-                    // if the vis. setting is public or organization, we can see it for sure
-                    if (in_array($item['visibility'], $validArr)) {
+                    // if it's organization, we need to be logged in
+                    if (($item['visibility'] === 'organization') && $this->Users->userid) {
                         return array('read' => true, 'write' => false);
                     }
 

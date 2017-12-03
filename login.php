@@ -63,12 +63,16 @@ try {
 
     $idpsArr = $Idps->readAll();
 
+    $Teams = new Teams($App->Users);
+    $teamsArr = $Teams->readAll();
+
     $template = 'login.html';
     $renderArr = array(
         'BannedUsers' => $BannedUsers,
         'FormKey' => $FormKey,
         'Session' => $Session,
         'idpsArr' => $idpsArr,
+        'teamsArr' => $teamsArr,
         'showLocal' => $showLocal
     );
 

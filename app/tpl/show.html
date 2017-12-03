@@ -6,6 +6,7 @@
 <div class='row'>
     <!-- LEFT MENU - CREATE NEW -->
     <div class='col-md-2'>
+    {% if not App.Session.get('anon') %}
         <div class='dropdown'>
             <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
@@ -38,6 +39,7 @@
             {% endif %}
         </ul>
         </div>
+    {% endif %}
     </div>
     <!-- RIGHT MENU -->
     <!-- we hide this menu for small devices -->
@@ -144,8 +146,9 @@
     </p>
     <div class='row display-flex'>
     {% for item in itemsArr %}
+    {#
         {% set permissions = Entity.getPermissions(item) %}
-        {% if permissions.read %}
+        {% if permissions.read %} #}
             {# dim the experiment a bit if it's not yours #}
             {% set opacity = '1' %}
             {% if (Entity.Users.userid != item.userid) and Entity.type == 'experiments' %}
@@ -207,7 +210,9 @@
                 <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
             </section>
             </div>
+            {#
         {% endif %}
+        #}
     {% endfor %}
     </div>
 

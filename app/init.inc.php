@@ -99,6 +99,12 @@ try {
         $App->loadUser(new Users($Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
     }
 
+    if ($App->Request->getSession()->has('anon')) {
+        $App->Users->userData['team'] = $App->Request->getSession()->get('team');
+        $App->Users->userData['limit_nb'] = 15;
+        //$App->Users->userData['userid'] = 0;
+    }
+
     // GET THE LANG
     if ($Request->getSession()->has('auth')) {
         // generate full Users object with current userid

@@ -62,6 +62,16 @@
         </form>
     {% endif %}
 
+        <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
+        <br>
+        <form method='post' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
+            <select name='team_id'>
+                {% for team in teamsArr %}
+                    <option value='{{ team.team_id }}'>{{ team.team_name }}</option>
+                {% endfor %}
+            </select>
+            <button class='button' type='submit' name='submit'>Go</button>
+        </form>
 </section>
 <script src='app/js/login.min.js'></script>
 {% endblock body %}

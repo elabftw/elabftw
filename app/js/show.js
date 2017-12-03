@@ -69,13 +69,6 @@ $(document).ready(function(){
         $('#loadButton').hide(); // hide load button when there is nothing more to show
     });
 
-    // TITLE CLICK
-    /*
-    $('.title').on('click', function() {
-        window.location.href = '?mode=view&id=' + $(this).data('id');
-    });
-    */
-
     // THE CHECKBOXES
     function getCheckedBoxes() {
         var checkedBoxes = [];

@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -151,13 +152,17 @@ class Auth
      * Check the number of character of a password
      *
      * @param string $password The password to check
-     * @return bool true if the length is enough
+     * @throws Exception
+     * @return bool
      */
     public function checkPasswordLength($password)
     {
         // fix for php56
         $min = self::MIN_PASSWORD_LENGTH;
-        return strlen($password) >= $min;
+        if (strlen($password) < $min) {
+            throw new Exception(sprintf(_('Password must contain at least %s characters.'), $min));
+        }
+        return true;
     }
 
     /**

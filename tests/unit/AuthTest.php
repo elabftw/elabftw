@@ -26,7 +26,8 @@ class AuthTest extends \PHPUnit_Framework_TestCase
     public function testCheckPasswordLength()
     {
         $this->assertTrue($this->Auth->checkPasswordLength('longpassword'));
-        $this->assertFalse($this->Auth->checkPasswordLength('short'));
+        $this->expectException(\Exception::class);
+        $this->Auth->checkPasswordLength('short');
     }
 
     public function testLogin()

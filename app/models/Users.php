@@ -99,10 +99,8 @@ class Users
             throw new Exception(_('Someone is already using that email address!'));
         }
 
-        if (!$this->Auth->checkPasswordLength($password) && strlen($password) > 0) {
-            $min = $this->Auth::MIN_PASSWORD_LENGTH;
-            $error = sprintf(_('Password must contain at least %s characters.'), $min);
-            throw new Exception($error);
+        if ($password) {
+            $this->Auth->checkPasswordLength($password);
         }
 
         $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
@@ -647,12 +645,7 @@ class Users
             $userid = $this->userid;
         }
 
-        if (!$this->Auth->checkPasswordLength($password)) {
-            // fix for php56
-            $min = Auth::MIN_PASSWORD_LENGTH;
-            $error = sprintf(_('Password must contain at least %s characters.'), $min);
-            throw new Exception($error);
-        }
+        $this->Auth->checkPasswordLength($password);
 
         $salt = hash("sha512", uniqid(rand(), true));
         $passwordHash = hash("sha512", $salt . $password);

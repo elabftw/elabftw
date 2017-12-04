@@ -328,7 +328,7 @@ abstract class AbstractEntity
     /**
      * Set a limit for sql read
      *
-     * @param int $num
+     * @param int $num number of items to ignore
      * @return null
      */
     public function setLimit($num)
@@ -336,6 +336,12 @@ abstract class AbstractEntity
         $this->limit = 'LIMIT ' . (int) $num;
     }
 
+    /**
+     * Add an offset to the displayed results
+     *
+     * @param int $num number of items to ignore
+     * @return null
+     */
     public function setOffset($num)
     {
         $this->offset = 'OFFSET ' . (int) $num;

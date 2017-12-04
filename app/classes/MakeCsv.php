@@ -50,15 +50,6 @@ class MakeCsv extends AbstractMake
     }
 
     /**
-     * Return a nice name for the file
-     *
-     * @return string
-     */
-    public function getCleanName()
-    {
-        return 'export.elabftw.csv';
-    }
-    /**
      * Here we populate the first row: it will be the column names
      *
      */
@@ -121,5 +112,15 @@ class MakeCsv extends AbstractMake
                 fputcsv($fp, $fields);
         }
         fclose($fp);
+    }
+
+    /**
+     * Return a nice name for the file
+     *
+     * @return string
+     */
+    public function getCleanName()
+    {
+        return 'export.elabftw.csv';
     }
 }

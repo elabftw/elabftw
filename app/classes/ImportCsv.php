@@ -33,7 +33,7 @@ class ImportCsv extends AbstractImport
     private $handle;
 
     /**
-     * Assign item type
+     * Constructor
      *
      * @param Users $users
      */
@@ -47,19 +47,6 @@ class ImportCsv extends AbstractImport
         $this->itemType = $this->getTarget();
         $this->openFile();
         $this->readCsv();
-    }
-
-    /**
-     * Open the file, as the name suggests
-     *
-     * @throws Exception
-     */
-    protected function openFile()
-    {
-        $this->handle = fopen($this->getFilePath(), 'r');
-        if ($this->handle === false) {
-            throw new Exception('Cannot open file!');
-        }
     }
 
     /**
@@ -112,6 +99,20 @@ class ImportCsv extends AbstractImport
                 throw new Exception('Error in SQL query!');
             }
             $this->inserted++;
+        }
+    }
+
+
+    /**
+     * Open the file, as the name suggests
+     *
+     * @throws Exception
+     */
+    protected function openFile()
+    {
+        $this->handle = fopen($this->getFilePath(), 'r');
+        if ($this->handle === false) {
+            throw new Exception('Cannot open file!');
         }
     }
 

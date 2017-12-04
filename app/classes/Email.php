@@ -37,6 +37,36 @@ class Email
     {
         $this->Config = $config;
     }
+
+    /**
+     * Fetch the email(s) of the admin(s) for a team
+     *
+     * @param int $team
+     * @return array
+     */
+    private function getAdminEmail($team)
+    {
+        // array for storing email adresses of admin(s)
+        $arr = array();
+        $Db = Db::getConnection();
+
+        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
+        $req = $Db->prepare($sql);
+        $req->bindParam(':team', $team);
+        $req->execute();
+
+        while ($email = $req->fetchColumn()) {
+            $arr[] = $email;
+        }
+
+        // if we have only one admin, we need to have an associative array
+        if (count($arr) === 1) {
+            return array($arr[0] => 'Admin eLabFTW');
+        }
+
+        return $arr;
+    }
+
     /**
      * Return Swift_Mailer instance and choose between sendmail and smtp
      *
@@ -183,35 +213,6 @@ class Email
             $Logs->create('Error', 'smtp', $e->getMessage());
             throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
         }
-    }
-
-    /**
-     * Fetch the email(s) of the admin(s) for a team
-     *
-     * @param int $team
-     * @return array
-     */
-    private function getAdminEmail($team)
-    {
-        // array for storing email adresses of admin(s)
-        $arr = array();
-        $Db = Db::getConnection();
-
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
-        $req = $Db->prepare($sql);
-        $req->bindParam(':team', $team);
-        $req->execute();
-
-        while ($email = $req->fetchColumn()) {
-            $arr[] = $email;
-        }
-
-        // if we have only one admin, we need to have an associative array
-        if (count($arr) === 1) {
-            return array($arr[0] => 'Admin eLabFTW');
-        }
-
-        return $arr;
     }
 
     /**

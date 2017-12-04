@@ -37,18 +37,6 @@ class Saml
     }
 
     /**
-     * Get the settings array
-     *
-     * @param int|null $id Return the settings array with infos from Idp with id $id
-     * @return array
-     */
-    public function getSettings($id = null)
-    {
-        $this->setSettings($id);
-        return $this->settings;
-    }
-
-    /**
      * Set the settings array to $this->settings
      * If the $id is null, the idp part of the settings will be empty
      * but it's ok because we don't always need it
@@ -166,5 +154,17 @@ class Saml
                 // 'certFingerprintAlgorithm' => 'sha1',
             ),
         );
+    }
+
+    /**
+     * Get the settings array
+     *
+     * @param int|null $id Return the settings array with infos from Idp with id $id
+     * @return array
+     */
+    public function getSettings($id = null)
+    {
+        $this->setSettings($id);
+        return $this->settings;
     }
 }

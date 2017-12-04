@@ -89,17 +89,6 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Replace weird characters by underscores
-     *
-     * @return string The file name of the pdf
-     */
-    public function getCleanName()
-    {
-        return $this->Entity->entityData['date'] . "-" .
-            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
-    }
-
-    /**
      * Add the elabid block for an experiment
      *
      * @return string
@@ -364,5 +353,16 @@ class MakePdf extends AbstractMake
         $content .= $this->buildInfoBlock();
 
         return $content;
+    }
+
+    /**
+     * Replace weird characters by underscores
+     *
+     * @return string The file name of the pdf
+     */
+    public function getCleanName()
+    {
+        return $this->Entity->entityData['date'] . "-" .
+            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
     }
 }

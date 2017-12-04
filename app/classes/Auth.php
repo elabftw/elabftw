@@ -60,40 +60,31 @@ class Auth
     }
 
     /**
-     * Test email and password in the database
+     * Login with the cookie
      *
-     * @param string $email
-     * @param string $password
-     * @return bool True if the login + password are good
+     * @return bool true if token in cookie is found in database
      */
-    public function checkCredentials($email, $password)
+    private function loginWithCookie()
     {
-        $passwordHash = hash('sha512', $this->getSalt($email) . $password);
-
-        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
+        // If user has a cookie; check cookie is valid
+        // the token is a sha256 sum: 64 char
+        if (!$this->Request->cookies->has('token') || strlen($this->Request->cookies->get('token')) != 64) {
+            return false;
+        }
+        $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+        // Now compare current cookie with the token from SQL
+        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $req->bindParam(':passwordHash', $passwordHash);
-        //Check whether the query was successful or not
-        if ($req->execute() && $req->rowCount() === 1) {
-            // populate the userData
+        $req->bindParam(':token', $token);
+        $req->execute();
+
+
+        if ($req->rowCount() === 1) {
             $this->userData = $req->fetch();
             return true;
         }
-        return false;
-    }
 
-    /**
-     * Check the number of character of a password
-     *
-     * @param string $password The password to check
-     * @return bool true if the length is enough
-     */
-    public function checkPasswordLength($password)
-    {
-        // fix for php56
-        $min = self::MIN_PASSWORD_LENGTH;
-        return strlen($password) >= $min;
+        return false;
     }
 
     /**
@@ -157,6 +148,43 @@ class Auth
     }
 
     /**
+     * Check the number of character of a password
+     *
+     * @param string $password The password to check
+     * @return bool true if the length is enough
+     */
+    public function checkPasswordLength($password)
+    {
+        // fix for php56
+        $min = self::MIN_PASSWORD_LENGTH;
+        return strlen($password) >= $min;
+    }
+
+    /**
+     * Test email and password in the database
+     *
+     * @param string $email
+     * @param string $password
+     * @return bool True if the login + password are good
+     */
+    public function checkCredentials($email, $password)
+    {
+        $passwordHash = hash('sha512', $this->getSalt($email) . $password);
+
+        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':email', $email);
+        $req->bindParam(':passwordHash', $passwordHash);
+        //Check whether the query was successful or not
+        if ($req->execute() && $req->rowCount() === 1) {
+            // populate the userData
+            $this->userData = $req->fetch();
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Login with email and password
      *
      * @param string $email
@@ -188,34 +216,6 @@ class Auth
 
         $this->Request->getSession()->set('is_admin', 0);
         $this->Request->getSession()->set('is_sysadmin', 0);
-    }
-
-    /**
-     * Login with the cookie
-     *
-     * @return bool true if token in cookie is found in database
-     */
-    private function loginWithCookie()
-    {
-        // If user has a cookie; check cookie is valid
-        // the token is a sha256 sum: 64 char
-        if (!$this->Request->cookies->has('token') || strlen($this->Request->cookies->get('token')) != 64) {
-            return false;
-        }
-        $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
-        // Now compare current cookie with the token from SQL
-        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-        $req->execute();
-
-
-        if ($req->rowCount() === 1) {
-            $this->userData = $req->fetch();
-            return true;
-        }
-
-        return false;
     }
 
     /**

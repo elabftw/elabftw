@@ -81,6 +81,16 @@ class ReleaseCheck
     }
 
     /**
+     * Check if the version string actually looks like a version
+     *
+     * @return int 1 if version match
+     */
+    private function validateVersion()
+    {
+        return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
+    }
+
+    /**
      * Return the latest version of elabftw
      * Will fetch updates.ini file from elabftw.net
      *
@@ -110,16 +120,6 @@ class ReleaseCheck
         }
         $this->success = true;
         return true;
-    }
-
-    /**
-     * Check if the version string actually looks like a version
-     *
-     * @return int 1 if version match
-     */
-    private function validateVersion()
-    {
-        return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
     }
 
     /**

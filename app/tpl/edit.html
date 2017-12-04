@@ -16,13 +16,14 @@
             {% if Entity.entityData.tags|length > 0 %}
                 {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
                 {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-                {% for key, tag in tagsValueArr %}
-                    {# the key allows to get the id stored in tagsIdArr #}
+                {% set inc = 0 %}
+                {% for tag in tagsValueArr %}
                     <span class='tag'>
-                        <a class='tagDestroy' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                        <a class='tagDestroy' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[inc] }}' data-confirm="{{ 'Delete this?'|trans }}">
                             {{ tag|raw }}
                         </a>
                     </span>
+                    {% set inc = inc + 1 %}
                 {% endfor %}
             {% endif %}
         </span>

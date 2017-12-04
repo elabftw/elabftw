@@ -179,7 +179,7 @@ abstract class AbstractEntity
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
-        $tagsSelect = ", GROUP_CONCAT(DISTINCT tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tagt.id) as tags_id";
+        $tagsSelect = ", GROUP_CONCAT(DISTINCT tagt.tag ORDER BY tagt.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,

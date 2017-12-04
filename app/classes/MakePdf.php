@@ -78,9 +78,9 @@ class MakePdf extends AbstractMake
 
             // output in tmp folder if it's not a timestamp pdf
             if ($timestamp) {
-                $this->filePath = $this->getFilePath($this->fileName, false);
+                $this->filePath = $this->getUploadsPath() . $this->fileName;
             } else {
-                $this->filePath = $this->getFilePath($this->fileName, true);
+                $this->filePath = $this->getTmpPath() . $this->fileName;
             }
             $mpdf->Output($this->filePath, 'F');
         } else {

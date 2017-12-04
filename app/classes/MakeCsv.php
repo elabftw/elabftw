@@ -38,7 +38,7 @@ class MakeCsv extends AbstractMake
         parent::__construct($entity);
 
         $this->fileName = $this->getUniqueString();
-        $this->filePath = $this->getFilePath($this->fileName, true);
+        $this->filePath = $this->getTmpPath() . $this->fileName;
 
         $this->idList = $idList;
 

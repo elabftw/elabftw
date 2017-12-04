@@ -187,7 +187,7 @@ class TrustedTimestamps extends AbstractMake
      */
     private function createRequestfile()
     {
-        $this->requestfilePath = $this->getFilePath($this->getUniqueString(), true);
+        $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         // we don't keep this file around
         $this->trash[] = $this->requestfilePath;
 
@@ -345,7 +345,7 @@ class TrustedTimestamps extends AbstractMake
     private function saveToken($binaryToken)
     {
         $longName = $this->getUniqueString() . ".asn1";
-        $filePath = $this->getFilePath($longName);
+        $filePath = $this->getUploadsPath() . $longName;
         if (!file_put_contents($filePath, $binaryToken)) {
             throw new Exception('Cannot save token to disk!');
         }

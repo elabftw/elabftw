@@ -51,23 +51,20 @@ $(document).ready(function(){
         });
     }
 
-    // SHOW MORE BUTTON
-    $('section.item').hide(); // hide everyone
-    $('section.item').slice(0, $('#limit').data('limit')).show(); // show only the default at the beginning
-    $('#loadButton').click(function(e){ // click to load more
-        e.preventDefault();
-        $('section.item:hidden').slice(0, $('#limit').data('limit')).show();
-        if ($('section.item:hidden').length === 0) { // check if there are more exp to show
-            $('#loadButton').hide(); // hide load button when there is nothing more to show
-            $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-        }
+    // PAGINATION
+    // previous page
+    $(document).on('click', '.previous-page', function() {
+        insertParamAndReload('offset', $('#infos').data('offset') - $('#infos').data('limit'));
     });
-    $('#loadAllButton').click(function(e){ // click to load more
-        e.preventDefault();
-        $('section.item:hidden').show();
-        $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-        $('#loadButton').hide(); // hide load button when there is nothing more to show
+    // next page
+    $(document).on('click', '.next-page', function() {
+        insertParamAndReload('offset', $('#infos').data('offset') + $('#infos').data('limit'));
     });
+    // show all
+    $(document).on('click', '.show-all', function() {
+        insertParamAndReload('limit', 'over9000');
+    });
+    // END PAGINATION
 
     // THE CHECKBOXES
     function getCheckedBoxes() {

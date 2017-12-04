@@ -134,13 +134,24 @@ try {
             $Entity->sort = $sort;
         }
 
-        // limit the number of items to show if there is no search parameters
-        // because with a big database this can be expensive
-        if (!$Request->query->has('q') &&
-            !$Request->query->has('tag') &&
-            !$Request->query->has('filter')) {
-            $Entity->setLimit(50);
+        // PAGINATION
+        $limit = $App->Users->userData['limit_nb'];
+        if ($Request->query->has('limit') && Tools::checkId($Request->query->get('limit'))) {
+            $limit = $Request->query->get('limit');
         }
+
+        $offset = 0;
+        if ($Request->query->has('offset') && Tools::checkId($Request->query->get('offset'))) {
+            $offset = $Request->query->get('offset');
+        }
+
+        $showAll = true;
+        if ($Request->query->get('limit') !== 'over9000') {
+            $Entity->setOffset($offset);
+            $Entity->setLimit($limit);
+            $showAll = false;
+        }
+        // END PAGINATION
 
         $ItemsTypes = new ItemsTypes($Entity->Users);
         $categoryArr = $ItemsTypes->readAll();
@@ -154,7 +165,9 @@ try {
             'Request' => $Request,
             'categoryArr' => $categoryArr,
             'itemsArr' => $itemsArr,
-            'searchType' => $searchType
+            'offset' => $offset,
+            'searchType' => $searchType,
+            'showAll' => $showAll
         );
     }
 } catch (Exception $e) {

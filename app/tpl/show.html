@@ -105,9 +105,9 @@
     <p class='smallgray' style='display:inline'>
         {{ count }}
         {% trans %}
-            result found
+            result shown
         {% plural count %}
-            results found
+            results shown
         {% endtrans %}
         <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
         <span id='advancedSelectOptions'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> - 
@@ -213,18 +213,22 @@
     {% endfor %}
     </div>
 
-    {% if count > Entity.Users.userData.limit_nb %}
-        {# show load more button if there are more results than the default display number #}
+    {% if not showAll and not searchPage %}
         <div class='center'>
-            <button class='button' id='loadButton'>{{ 'Show %s more'|trans|format(Entity.Users.userData.limit_nb) }}</button>
-            <button class='button button-neutral' id='loadAllButton'>{{ 'Show all'|trans }}</button>
+            {% if offset != 0 %}
+                <button class='button button-neutral previous-page'>{{ 'Previous page'|trans }}</button>
+            {% endif %}
+            {% if count >= Entity.Users.userData.limit_nb %}
+                <button class='button next-page'>{{ 'Next page'|trans }}</button>
+            {% endif %}
+            <button class='button button-neutral show-all'>{{ 'Show all'|trans }}</button>
         </div>
     {% endif %}
 
 {% endif %}
 
 <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
-<div id='limit' data-limit='{{ Entity.Users.userData.limit_nb }}'></div>
+<div id='infos' data-limit='{{ Entity.Users.userData.limit_nb }}' data-offset='{{ offset }}'></div>
 <div id='type' data-type='{{ Entity.type }}'></div>
 <script src='app/js/show.min.js'></script>
 {% endblock body %}

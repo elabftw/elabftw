@@ -86,6 +86,9 @@ abstract class AbstractEntity
     /** @var string $limit limit for sql */
     public $limit = '';
 
+    /** @var string $offset offset for sql */
+    public $offset = '';
+
     /** @var array $entityData what you get after you ->read() */
     public $entityData;
 
@@ -246,7 +249,7 @@ abstract class AbstractEntity
             $this->tagFilter . ' ' .
             $this->queryFilter . ' ' .
             $this->visibilityFilter . ' ' .
-            " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
+            " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit . " " . $this->offset;
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
@@ -331,6 +334,11 @@ abstract class AbstractEntity
     public function setLimit($num)
     {
         $this->limit = 'LIMIT ' . (int) $num;
+    }
+
+    public function setOffset($num)
+    {
+        $this->offset = 'OFFSET ' . (int) $num;
     }
 
     /**

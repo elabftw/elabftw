@@ -163,6 +163,25 @@ try {
             $Entity->sort = $sort;
         }
 
+        // PAGINATION
+        $limit = $App->Users->userData['limit_nb'];
+        if ($Request->query->has('limit') && Tools::checkId($Request->query->get('limit'))) {
+            $limit = $Request->query->get('limit');
+        }
+
+        $offset = 0;
+        if ($Request->query->has('offset') && Tools::checkId($Request->query->get('offset'))) {
+            $offset = $Request->query->get('offset');
+        }
+
+        $showAll = true;
+        if ($Request->query->get('limit') !== 'over9000') {
+            $Entity->setOffset($offset);
+            $Entity->setLimit($limit);
+            $showAll = false;
+        }
+        // END PAGINATION
+
         $Status = new Status($Entity->Users);
         $categoryArr = $Status->readAll();
 
@@ -195,13 +214,15 @@ try {
 
         $renderArr = array(
             'Entity' => $Entity,
-            'itemsArr' => $itemsArr,
-            'searchType' => $searchType,
             'categoryArr' => $categoryArr,
-            'templatesArr' => $templatesArr,
-            'visibilityArr' => $visibilityArr,
+            'itemsArr' => $itemsArr,
+            'offset' => $offset,
+            'query' => $query,
+            'searchType' => $searchType,
+            'showAll' => $showAll,
             'tag' => $tag,
-            'query' => $query
+            'templatesArr' => $templatesArr,
+            'visibilityArr' => $visibilityArr
         );
     }
 } catch (InvalidArgumentException $e) {

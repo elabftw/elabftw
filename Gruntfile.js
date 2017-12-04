@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       options: {
-          banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.homepage %> */\n',
+          banner: '/*! <%= pkg.name %> <%= pkg.homepage %> */\n',
         mangle: false
       },
       dist: {

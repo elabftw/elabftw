@@ -40,7 +40,6 @@ class ReleaseCheck
     /**
      * ////////////////////////////
      * UPDATE THIS AFTER RELEASING
-     * UPDATE IT ALSO IN package.json
      * ///////////////////////////
      */
     const INSTALLED_VERSION = '1.8.0';

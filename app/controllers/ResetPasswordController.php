@@ -16,8 +16,9 @@ use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+require_once '../../app/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     $Email = new Email($App->Config);
 
     if ($Request->request->has('email')) {

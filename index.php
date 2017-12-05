@@ -53,7 +53,7 @@ try {
             $email = $email[0];
         }
 
-        if (!$App->Users->Auth->loginWithSaml($email)) {
+        if (!$App->Users->Auth->loginFromSaml($email)) {
             // the user doesn't exist yet in the db
             // check if the team exists
             $Teams = new Teams($App->Users);
@@ -81,7 +81,7 @@ try {
             // CREATE USER
             $App->Users->create($email, $teamId, $firstname, $lastname);
             // ok now the user is created, try logging in again
-            if (!$App->Users->Auth->loginWithSaml($email)) {
+            if (!$App->Users->Auth->loginFromSaml($email)) {
                 throw new Exception("Not authenticated!");
             }
         }

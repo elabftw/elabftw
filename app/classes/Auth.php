@@ -73,14 +73,13 @@ class Auth
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+
         // Now compare current cookie with the token from SQL
         $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
-        $req->execute();
 
-
-        if ($req->rowCount() === 1) {
+        if ($req->execute() && ($req->rowCount() === 1)) {
             $this->userData = $req->fetch();
             return true;
         }
@@ -89,26 +88,32 @@ class Auth
     }
 
     /**
-     * Store userid and permissions in session
+     * Populate userData from email
      *
      * @param string|null $email
      * @return bool
      */
-    private function populateSession($email = null)
+    private function populateUserDataFromEmail($email)
     {
-        if ($email !== null) {
-            $sql = "SELECT * FROM users WHERE email = :email";
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':email', $email);
-            //Check whether the query was successful or not
-            if ($req->execute() && $req->rowCount() === 1) {
-                // populate the userData
-                $this->userData = $req->fetch();
-            } else {
-                return false;
-            }
+        $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':email', $email);
+        //Check whether the query was successful or not
+        if ($req->execute() && $req->rowCount() === 1) {
+            // populate the userData
+            $this->userData = $req->fetch();
+            return true;
         }
+        throw new Exception('Cannot set user data from email!');
+    }
 
+    /**
+     * Store userid and permissions in session
+     *
+     * @return bool
+     */
+    private function populateSession()
+    {
         $this->Request->getSession()->set('auth', 1);
         $this->Request->getSession()->set('userid', $this->userData['userid']);
 
@@ -183,9 +188,6 @@ class Auth
         $req->bindParam(':passwordHash', $passwordHash);
         //Check whether the query was successful or not
         if ($req->execute() && $req->rowCount() === 1) {
-            // populate the userData
-            // TODO remove this, violates SRP
-            $this->userData = $req->fetch();
             return true;
         }
         return false;
@@ -202,6 +204,7 @@ class Auth
     public function login($email, $password, $setCookie = 'on')
     {
         if ($this->checkCredentials($email, $password)) {
+            $this->populateUserDataFromEmail($email);
             $this->populateSession();
             if ($setCookie === 'on') {
                 return $this->setToken();
@@ -226,18 +229,19 @@ class Auth
     }
 
     /**
-     * Login with SAML
+     * Login with SAML. When this is called, user is authenticated with IDP
      *
      * @param string $email
      * @return bool
      */
-    public function loginWithSaml($email)
+    public function loginFromSaml($email)
     {
-        if (!$this->populateSession($email)) {
-            return false;
+        if ($this->populateUserDataFromEmail($email)) {
+            $this->populateSession();
+            $this->setToken();
+            return true;
         }
-        $this->setToken();
-        return true;
+        return false;
     }
 
     /**

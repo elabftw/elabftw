@@ -18,8 +18,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * Deal with requests sent from the admin page
  *
  */
+require_once '../../app/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
 
     if (!$Session->get('is_admin')) {
         throw new Exception('Non admin user tried to access admin panel.');

@@ -18,8 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
  *
  */
+require_once '../../app/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
 
     if (!$Session->get('is_sysadmin')) {
         throw new Exception('Non sysadmin user tried to access sysadmin panel.');

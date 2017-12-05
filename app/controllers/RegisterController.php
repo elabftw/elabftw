@@ -13,8 +13,9 @@ namespace Elabftw\Elabftw;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+require_once '../init.inc.php';
+
 try {
-    require_once '../init.inc.php';
 
     // default location to redirect to
     $location = '../../login.php';

@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * This file is called without any auth, so we don't load init.inc.php but only what we need
  */
-try {
-    require_once '../../config.php';
-    require_once ELAB_ROOT . 'vendor/autoload.php';
+require_once '../../config.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
 
+try {
     // create Request object
     $Request = Request::createFromGlobals();
 

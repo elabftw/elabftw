@@ -14,14 +14,17 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Deal with ajax requests sent from the admin page
+ * CRUD for Status
+ * Only Ajax request and json responses here
  *
  */
+require_once '../../app/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     $Status = new Status($App->Users);
     $Response = new JsonResponse();
 
+    // default response is error
     $res = false;
     $msg = Tools::error();
 

@@ -19,7 +19,7 @@
             <div class='col-md-4'>
                 <label class='block' for='team'>{{ 'Team'|trans }}</label>
                 <select name='team' id='team' required>
-                    <option value=''>{{ '------ Select a team ------'|trans }}</option>
+                    <option selected disabled>{{ '------ Select a team ------'|trans }}</option>
                     {% for team in teamsArr %}
                         <option value = '{{ team['team_id'] }}'>{{ team['team_name'] }}</option>
                     {% endfor %}

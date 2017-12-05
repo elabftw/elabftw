@@ -351,7 +351,7 @@
 
         <label class='block' for='item_selector_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
         <select class='clean-form col-3-form item-selector' id='item_selector_csv'>
-            <option value='' selected disabled>--------</option>
+            <option selected disabled>--------</option>
             {% for itemsType in itemsTypesArr %}
                 <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
             {% endfor %}
@@ -382,12 +382,12 @@
 
         <label class='block' for='item_selector_zip'>{{ '1. Select where to import:'|trans }}</label>
         <select class='clean-form col-3-form item-selector' id='item_selector_zip'>
-            <option value='' selected disabled>-------</option>
-            <option class='disabled-input' value='' disabled>Import items</option>
+            <option selected disabled>-------</option>
+            <option class='disabled-input' disabled>Import items</option>
             {% for itemsType in itemsTypesArr %}
                 <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
             {% endfor %}
-            <option class='disabled-input' value='' disabled>Import experiments</option>
+            <option class='disabled-input' disabled>Import experiments</option>
 
             {% for user in usersArr %}
                 <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>

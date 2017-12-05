@@ -853,5 +853,9 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         if (!$this->Db->q($sql)) {
             throw new Exception('Error adding config anon_users');
         }
+        $sql = "ALTER TABLE `users` ADD `archived` TINYINT(1) NOT NULL DEFAULT '0';";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Error adding config anon_users');
+        }
     }
 }

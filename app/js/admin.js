@@ -43,6 +43,28 @@ $(document).ready(function() {
             return false;
         }
     };
+
+    // ARCHIVE USER
+    $(document).on('click', '.archive-user', function(e) {
+        // don't trigger the form
+        e.preventDefault();
+        // show alert
+        if(confirm('Are you sure you want to archive this user?')) {
+            $.post('app/controllers/UsersController.php', {
+                usersArchive: true,
+                userid: $(this).data('userid')
+            }).done(function(data) {
+                if (data.res) {
+                    notif(data.msg, 'ok');
+                    window.location.replace('admin.php?tab=2');
+                } else {
+                    notif(data.msg, 'ko');
+                }
+            });
+        }
+    });
+
+    // TEAM GROUP
     $(document).on('click', '#teamGroupCreateBtn', function() {
         TeamGroups.create();
     });

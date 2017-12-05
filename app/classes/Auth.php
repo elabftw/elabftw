@@ -53,7 +53,7 @@ class Auth
      */
     private function getSalt($email)
     {
-        $sql = "SELECT salt FROM users WHERE email = :email";
+        $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
@@ -176,13 +176,15 @@ class Auth
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
-        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
+        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash
+            AND validated = 1 AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
         //Check whether the query was successful or not
         if ($req->execute() && $req->rowCount() === 1) {
             // populate the userData
+            // TODO remove this, violates SRP
             $this->userData = $req->fetch();
             return true;
         }

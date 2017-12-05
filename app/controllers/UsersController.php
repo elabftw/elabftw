@@ -74,6 +74,30 @@ try {
         }
     }
 
+    // ARCHIVE USER
+    if ($Request->request->has('usersArchive')) {
+        if (!$Session->get('is_admin')) {
+            throw new Exception('Non admin user tried to access admin panel.');
+        }
+        $Users = new Users($Request->request->get('userid'));
+        $Response = new JsonResponse();
+        $redirect = false;
+
+        if ($Users->archive()) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+        $Response->send();
+    }
+
+
     // DESTROY
     if ($FormKey->validate($Request->request->get('formkey'))
         && $Request->request->has('usersDestroy')) {

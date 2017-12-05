@@ -211,7 +211,7 @@ class Users
      */
     public function isDuplicateEmail($email)
     {
-        $sql = "SELECT email FROM users WHERE email = :email";
+        $sql = "SELECT email FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
@@ -278,7 +278,8 @@ class Users
      */
     public function readFromEmail($email)
     {
-        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users WHERE email = :email";
+        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users
+            WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
@@ -293,7 +294,7 @@ class Users
      */
     public function readFromApiKey($apiKey)
     {
-        $sql = "SELECT userid FROM users WHERE api_key = :key";
+        $sql = "SELECT userid FROM users WHERE api_key = :key AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':key', $apiKey);
         $req->execute();
@@ -359,7 +360,7 @@ class Users
      */
     public function getAllEmails()
     {
-        $sql = "SELECT email FROM users WHERE validated = 1";
+        $sql = "SELECT email FROM users WHERE validated = 1 AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->execute();
 
@@ -711,6 +712,29 @@ class Users
     }
 
     /**
+     * Archive a user
+     *
+     * @return bool
+     */
+    public function archive()
+    {
+        $sql = "UPDATE users SET archived = 1, token = null WHERE userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid);
+        $res1 = $req->execute();
+
+        $sql = "UPDATE experiments
+            SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':locked', 1);
+        $req->bindParam(':lockedby', $this->userid);
+        $req->bindParam(':userid', $this->userid);
+        $res2 = $req->execute();
+
+        return $res1 && $res2;
+    }
+
+    /**
      * Destroy user. Will completely remove everything from the user.
      *
      * @param string $email The email of the user we want to delete
@@ -782,7 +806,7 @@ class Users
             throw new Exception('Email malformed');
         }
 
-        $sql = "UPDATE users SET usergroup = 1 WHERE email = :email";
+        $sql = "UPDATE users SET usergroup = 1 WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
 

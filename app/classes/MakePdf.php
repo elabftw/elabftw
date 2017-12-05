@@ -96,7 +96,7 @@ class MakePdf extends AbstractMake
     private function addElabid()
     {
         if ($this->Entity instanceof Experiments) {
-            return "<p class='elabid'>elabid : " . $this->Entity->entityData['elabid'] . "</p>";
+            return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . "</p>";
         }
         return "";
     }

@@ -22,7 +22,7 @@ $App->pageTitle = _('Register');
 
 try {
     // Check if we're logged in
-    if ($Session->has('auth')) {
+    if ($Session->has('auth') || $Session->has('anon')) {
         throw new Exception(sprintf(
             _('Please %slogout%s before you register another account.'),
             "<a style='alert-link' href='app/logout.php'>",

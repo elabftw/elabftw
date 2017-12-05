@@ -127,6 +127,7 @@
     </div>
     {% elseif App.Session.has('anon') %}
     <div class="user-nav">
+        {{ 'Anonymous'|trans }}
         <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><img src='app/img/logout.png' alt='{{ 'Logout'|trans }}' /></a>
     </div>
     {% endif %}

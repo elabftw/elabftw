@@ -99,7 +99,7 @@
 
 {% if count == 0 and searchType != '' %}
     {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
-{% elseif count == 0 and searchType == '' %}
+{% elseif count == 0 and searchType == '' and not App.Session.get('anon') %}
     {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
 {% else %}
     <p class='smallgray' style='display:inline'>

@@ -23,7 +23,7 @@ $App->pageTitle = _('Login');
 
 try {
     // Check if already logged in
-    if ($Session->has('auth')) {
+    if ($Session->has('auth') || $Session->has('anon')) {
         $Response = new RedirectResponse("experiments.php");
         $Response->send();
         exit;

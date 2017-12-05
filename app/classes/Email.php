@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 class Email
 {
     /** @var Config $Config instance of Config */
-    public $Config;
+    private $Config;
 
     /**
      * Constructor

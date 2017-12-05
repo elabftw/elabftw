@@ -63,7 +63,7 @@ try {
         // Give the message a subject
         ->setSubject('[eLabFTW] Password reset for ' . $user['fullname'])
         // Set the From address with an associative array
-        ->setFrom(array($Email->Config->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom(array($App->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($email => $user['fullname']))
         // Give it a body

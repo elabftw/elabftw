@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 use OneLogin_Saml2_Auth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 try {
     require_once 'app/init.inc.php';
@@ -88,8 +89,14 @@ try {
 
     }
     $Response = new RedirectResponse("experiments.php");
-    $Response->send();
 
 } catch (Exception $e) {
-    echo $e->getMessage();
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response = new Response();
+    $Response->prepare($Request);
+    $Response->setContent($App->render($template, $renderArr));
+
+} finally {
+    $Response->send();
 }

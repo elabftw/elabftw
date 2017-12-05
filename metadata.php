@@ -17,6 +17,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 use OneLogin_Saml2_Error;
 use OneLogin_Saml2_Settings;
+use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
@@ -33,14 +34,21 @@ try {
     $metadata = $Settings->getSPMetadata();
     $errors = $Settings->validateMetadata($metadata);
     if (empty($errors)) {
-        header('Content-Type: text/xml');
-        echo $metadata;
+        $Response = new Response();
+        $Response->prepare($Request);
+        $Response->setContent($metadata);
+        $Response->headers->set('Content-Type', 'text/xml');
+        $Response->send();
     } else {
         throw new OneLogin_Saml2_Error(
             'Invalid SP metadata: '.implode(', ', $errors),
             OneLogin_Saml2_Error::METADATA_SP_INVALID
         );
     }
+
 } catch (Exception $e) {
-    echo $e->getMessage();
+    $Response = new Response();
+    $Response->prepare($Request);
+    $Response->setContent($e->getMessage());
+    $Response->send();
 }

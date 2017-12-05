@@ -158,7 +158,7 @@ class App
     }
 
     /**
-     * Generate HTML from a twig template
+     * Generate HTML from a twig template. The App object is injected into every template.
      *
      * @param string $template template located in app/tpl/
      * @param array $variables the variables injected in the template

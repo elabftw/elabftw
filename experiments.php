@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Entry point for all experiment stuff
@@ -236,6 +237,9 @@ try {
     }
     $template = 'error.html';
     $renderArr = array('error' => $message);
+} finally {
+    $Response = new Response();
+    $Response->prepare($Request);
+    $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
 }
-
-echo $App->render($template, $renderArr);

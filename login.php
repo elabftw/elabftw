@@ -11,6 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Login page
@@ -22,11 +24,11 @@ $App->pageTitle = _('Login');
 try {
     // Check if already logged in
     if ($Session->has('auth')) {
-        header('Location: experiments.php');
-        throw new Exception('Already logged in');
+        $Response = new RedirectResponse("experiments.php");
+        $Response->send();
+        exit;
     }
 
-    $Idps = new Idps();
     $FormKey = new FormKey($Session);
     $BannedUsers = new BannedUsers($App->Config);
 
@@ -61,6 +63,7 @@ try {
         $showLocal = false;
     }
 
+    $Idps = new Idps();
     $idpsArr = $Idps->readAll();
 
     $Teams = new Teams($App->Users);
@@ -76,9 +79,13 @@ try {
         'showLocal' => $showLocal
     );
 
+
 } catch (Exception $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
+} finally {
+    $Response = new Response();
+    $Response->prepare($Request);
+    $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
 }
-
-echo $App->render($template, $renderArr);

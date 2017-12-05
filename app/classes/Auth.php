@@ -57,6 +57,7 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
+
         return $req->fetchColumn();
     }
 
@@ -79,7 +80,7 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
 
-        if ($req->execute() && ($req->rowCount() === 1)) {
+        if ($req->execute() && $req->rowCount() === 1) {
             $this->userData = $req->fetch();
             return true;
         }

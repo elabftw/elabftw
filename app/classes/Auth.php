@@ -187,11 +187,8 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
-        //Check whether the query was successful or not
-        if ($req->execute() && $req->rowCount() === 1) {
-            return true;
-        }
-        return false;
+
+        return $req->execute() && $req->rowCount() === 1;
     }
 
     /**

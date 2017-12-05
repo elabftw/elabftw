@@ -67,6 +67,7 @@
         <br>
         <form method='post' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
             <select name='team_id'>
+                <option selected disabled>{{ '------ Select a team ------'|trans }}</option>
                 {% for team in teamsArr %}
                     <option value='{{ team.team_id }}'>{{ team.team_name }}</option>
                 {% endfor %}

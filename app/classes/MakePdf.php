@@ -10,7 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use mPDF;
+use Mpdf\Mpdf;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -55,21 +55,28 @@ class MakePdf extends AbstractMake
                 throw new Exception("Could not create the $tmpDir directory. Please check permissions on this folder.");
             }
         }
-        define("_MPDF_TEMP_PATH", $tmpDir);
-        define("_MPDF_TTFONTDATAPATH", $tmpDir);
-
         // create the pdf
-        $mpdf = new mPDF('utf-8', 'A4');
+        $mpdf = new Mpdf(array(
+            'tempDir' => $tmpDir,
+            'mode' => 'utf-8',
+            'format' => 'A4'
+        ));
+
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';
         $mpdf->setAutoBottomMargin = 'stretch';
-        // set meta data
+
+        // set metadata
         $mpdf->SetAuthor($this->Entity->entityData['fullname']);
         $mpdf->SetTitle($this->Entity->entityData['title']);
         $mpdf->SetSubject('eLabFTW pdf');
         $mpdf->SetKeywords(strtr($this->Entity->entityData['tags'], '|', ' '));
         $mpdf->SetCreator('www.elabftw.net');
+
+        // write content
         $mpdf->WriteHTML($this->getContent());
+
+        // make sure we can read the pdf in a long time
         $mpdf->PDFA = true;
 
         // output

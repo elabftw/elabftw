@@ -12,7 +12,7 @@
         "ext-pdo": "*",
         "ext-zip": "*",
         "defuse/php-encryption": "2.1.*",
-        "mpdf/mpdf": "^6.1",
+        "mpdf/mpdf": "^7.0",
         "swiftmailer/swiftmailer":"^5.4",
         "twig/extensions": "^1.4",
         "onelogin/php-saml": "^2.10",

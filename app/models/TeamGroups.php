@@ -119,7 +119,6 @@ class TeamGroups implements CrudInterface
         return $visibilityArr + $tgArr;
     }
 
-
     /**
      * Get the name of a group
      *

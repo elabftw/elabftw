@@ -25,7 +25,9 @@ $App->pageTitle = ngettext('Experiment', 'Experiments', 2);
 try {
     $Entity = new Experiments($App->Users);
     $EntityView = new ExperimentsView($Entity);
-    $Status = new Status($Entity->Users);
+
+    $Status = new Status($App->Users);
+    $categoryArr = $Status->readAll();
 
     // VIEW
     if ($Request->query->get('mode') === 'view') {
@@ -86,16 +88,16 @@ try {
 
         $renderArr = array(
             'Entity' => $Entity,
-            'Uv' => $UploadsView,
-            'mode' => 'edit',
             'Revisions' => $Revisions,
-            'Categories' => $Status,
             'TeamGroups' => $TeamGroups,
-            'linksArr' => $linksArr,
-            'stepsArr' => $stepsArr,
+            'Uv' => $UploadsView,
+            'categoryArr' => $categoryArr,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
+            'lang' => Tools::getCalendarLang($App->Users->userData['lang']),
+            'linksArr' => $linksArr,
             'maxUploadSize' => Tools::returnMaxUploadSize(),
-            'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
+            'mode' => 'edit',
+            'stepsArr' => $stepsArr
         );
 
     // DEFAULT MODE IS SHOW
@@ -183,9 +185,6 @@ try {
         }
         // END PAGINATION
 
-        $Status = new Status($Entity->Users);
-        $categoryArr = $Status->readAll();
-
         $TeamGroups = new TeamGroups($Entity->Users);
         $visibilityArr = $TeamGroups->getVisibilityList();
 
@@ -230,10 +229,9 @@ try {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
 } catch (Exception $e) {
-    $debug = false;
     $message = $e->getMessage();
-    if ($debug) {
-        $message .= ' ' . $e->getFile() . '(' . $e->getLine() . ')';
+    if ($App->Config->configArr['debug']) {
+        $message .= ' in ' . $e->getFile() . ' (line ' . $e->getLine() . ')';
     }
     $template = 'error.html';
     $renderArr = array('error' => $message);

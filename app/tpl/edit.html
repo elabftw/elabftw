@@ -72,7 +72,7 @@
                     {% endif %}
                     </label>
                     <select id='category_select'>
-                        {% for category in Categories.readAll %}
+                        {% for category in categoryArr %}
                             <option value='{{ category.category_id }}'
                             {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
                         {% endfor %}

@@ -23,6 +23,7 @@ $App->pageTitle = _('Database');
 
 try {
 
+    // show nothing to anon if admin didn't set the DB as public
     if ($App->Session->has('anon') && ($App->teamConfigArr['public_db'] === '0')) {
         throw new Exception(Tools::error(true));
     }

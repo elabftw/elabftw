@@ -67,7 +67,6 @@
         <section class='box'>
             <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
             <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
-            <hr>
             <p>
                 <table>
                 <tr><th>{{ 'Action'|trans }}</th>
@@ -92,39 +91,61 @@
             </p>
         </section>
 
+        <!-- PDF CONFIG -->
+        <section class='box'>
+            <h3>{{ 'PDF configuration'|trans }}</h3>
+
+            <p>
+            <label for='pdf_format'>{{ 'Select paper format for PDF'|trans }}</label>
+            <select name='pdf_format'>
+                <option value='A4' {{ App.Users.userData.pdf_format == 'A4' ? 'selected' : '' }}>A4</option>
+                <option value='LETTER' {{ App.Users.userData.pdf_format == 'LETTER' ? 'selected' : '' }}>Letter</option>
+                <option value='ROYAL' {{ App.Users.userData.pdf_format == 'ROYAL' ? 'selected' : '' }}>Royal</option>
+            </select>
+            <br>
+
+            <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
+              {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
+            />
+            <label for='cjk_fonts'>{{ 'Enable Chinese, Japonese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
+            <br>
+            <input id='pdfa' type='checkbox' name='pdfa'
+              {{ App.Users.userData.pdfa == '1' ? " checked='checked'" }}
+            />
+            <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
+            <br>
+            <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
+              {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
+            />
+            <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
+
+            </p>
+        </section>
+
+
+
         <section class='box'>
             <h3>{{ 'Miscellaneous'|trans }}</h3>
-            <hr>
             <p>
             <input id='show_team' type='checkbox' name='show_team'
               {{ App.Users.userData.show_team == '1' ? " checked='checked'" }}
             />
-            <label for='show_team'>{{ 'Show experiments from the team on the Experiments page?'|trans }}</label>
+            <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
             <br>
             <input id='close_warning' type='checkbox' name='close_warning'
               {{ App.Users.userData.close_warning == '1' ? " checked='checked'" }}
             />
-            <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab?'|trans }}</label>
+            <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab'|trans }}</label>
             <br>
             <input id='chem_editor' type='checkbox' name='chem_editor'
               {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
             />
-            <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode?'|trans }}</label>
-            <br>
-            <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
-              {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
-            />
-            <label for='cjk_fonts'>{{ 'Enable Chinese, Japonese and Korean fonts in PDF generation. WARNING: enabling CJK fonts will make the PDF size very big!'|trans }}</label>
+            <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode'|trans }}</label>
             <br>
             <input id='use_markdown' type='checkbox' name='use_markdown'
               {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
             />
             <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
-            <br>
-            <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
-              {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
-            />
-            <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf.'|trans }}</label>
             </p>
 
             <p>

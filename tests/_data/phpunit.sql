@@ -524,6 +524,8 @@ CREATE TABLE `users` (
   `default_vis` varchar(255) NULL DEFAULT NULL,
   `single_column_layout` tinyint(1) NOT NULL DEFAULT 0,
   `cjk_fonts` tinyint(1) NOT NULL DEFAULT 0,
+  `pdfa` tinyint(1) NOT NULL DEFAULT 1,
+  `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `use_markdown` tinyint(1) NOT NULL DEFAULT 0,
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

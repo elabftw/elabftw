@@ -48,6 +48,8 @@ class MakePdf extends AbstractMake
      */
     public function output($toFile = false, $timestamp = false)
     {
+        $format = $this->Entity->Users->userData['pdf_format'];
+
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
         $tmpDir = ELAB_ROOT . 'uploads/tmp/mpdf/';
         if (!is_dir($tmpDir)) {
@@ -55,11 +57,12 @@ class MakePdf extends AbstractMake
                 throw new Exception("Could not create the $tmpDir directory. Please check permissions on this folder.");
             }
         }
+
         // create the pdf
         $mpdf = new Mpdf(array(
+            'format' => $format,
             'tempDir' => $tmpDir,
-            'mode' => 'utf-8',
-            'format' => 'A4'
+            'mode' => 'utf-8'
         ));
 
         // make sure header and footer are not overlapping the body text
@@ -76,8 +79,11 @@ class MakePdf extends AbstractMake
         // write content
         $mpdf->WriteHTML($this->getContent());
 
-        // make sure we can read the pdf in a long time
-        $mpdf->PDFA = true;
+        if ($this->Entity->Users->userData['pdfa']) {
+            // make sure we can read the pdf in a long time
+            // will embed the font and make the pdf bigger
+            $mpdf->PDFA = true;
+        }
 
         // output
         if ($toFile) {

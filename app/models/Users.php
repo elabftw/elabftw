@@ -496,6 +496,19 @@ class Users
             $new_cjk_fonts = 1;
         }
 
+        // PDF/A
+        $new_pdfa = 0;
+        if (isset($params['pdfa']) && $params['pdfa'] === 'on') {
+            $new_pdfa = 1;
+        }
+
+        // PDF format
+        $new_pdf_format = 'A4';
+        $formatsArr = array('A4', 'LETTER', 'ROYAL');
+        if (in_array($params['pdf_format'], $formatsArr)) {
+            $new_pdf_format = $params['pdf_format'];
+        }
+
         // USE MARKDOWN
         $new_use_markdown = 0;
         if (isset($params['use_markdown']) && $params['use_markdown'] === 'on') {
@@ -542,6 +555,8 @@ class Users
             default_vis = :new_default_vis,
             single_column_layout = :new_layout,
             cjk_fonts = :new_cjk_fonts,
+            pdfa = :new_pdfa,
+            pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
             inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;";
@@ -560,6 +575,8 @@ class Users
         $req->bindParam(':new_default_vis', $new_default_vis);
         $req->bindParam(':new_layout', $new_layout);
         $req->bindParam(':new_cjk_fonts', $new_cjk_fonts);
+        $req->bindParam(':new_pdfa', $new_pdfa);
+        $req->bindParam(':new_pdf_format', $new_pdf_format);
         $req->bindParam(':new_use_markdown', $new_use_markdown);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
         $req->bindParam(':userid', $this->userid);

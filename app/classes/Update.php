@@ -857,5 +857,13 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         if (!$this->Db->q($sql)) {
             throw new Exception('Error adding config anon_users');
         }
+        $sql = "ALTER TABLE `users` ADD `pdfa` TINYINT(1) NOT NULL DEFAULT '1';";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Cannot add pdfa to users table!');
+        }
+        $sql = "ALTER TABLE `users` ADD `pdf_format` VARCHAR(255) NOT NULL DEFAULT 'A4';";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Cannot add pdf_format to users table!');
+        }
     }
 }

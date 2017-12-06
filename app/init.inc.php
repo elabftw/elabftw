@@ -1,6 +1,6 @@
 <?php
 /**
- * init.inc.php
+ * app/init.inc.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi

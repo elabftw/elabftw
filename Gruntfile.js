@@ -50,8 +50,8 @@ module.exports = function(grunt) {
           'app/js/file-saver.min.js': 'node_modules/file-saver/FileSaver.js',
           'app/js/admin.min.js': 'app/js/admin.js',
           'app/js/view.min.js': [
-              'app/js/view.js',
-              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js'],
+              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js',
+              'app/js/view.js'],
           'app/js/tabs.min.js': 'app/js/tabs.js',
           'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
           'app/js/footer.min.js': 'app/js/footer.js',

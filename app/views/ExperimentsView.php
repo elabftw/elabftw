@@ -78,9 +78,9 @@ class ExperimentsView
             $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" .
             _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] .
             "'><img src='app/img/download.png' title=\"" . _('Download token') .
-            "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] .
-            "', '" . $this->Entity->entityData['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') .
-            "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>",
+            "\" alt='download token' /></a> <a href='#'><img class='decode-asn1' data-token='" . $token[0]['long_name'] .
+            "' data-id='" . $this->Entity->entityData['id'] . "' src='app/img/info.png' title=\"" . _('Decode token') .
+            "\" alt='Decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>",
             'ok',
             false
         );

@@ -33,6 +33,16 @@ $(document).ready(function() {
         window.location.href = '?mode=edit&id=' + id;
     });
 
+    // DECODE ASN1
+    $(document).on('click', '.decode-asn1', function() {
+        $.post('app/controllers/ExperimentsController.php', {
+            asn1: $(this).data('token'),
+            id: $(this).data('id')
+        }).done(function(data) {
+            $('#decodedDiv').html(data.msg);
+        });
+    });
+
     // COMMENTS
     var Comments = {
         controller: 'app/controllers/CommentsController.php',

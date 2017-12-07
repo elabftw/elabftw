@@ -202,13 +202,3 @@ function getQueryParams(qs) {
 
     return params;
 }
-
-// decode asn1token
-function decodeAsn1(path, expId) {
-    $.post('app/controllers/ExperimentsController.php', {
-        asn1: path,
-        id: expId
-    }).done(function(data) {
-        $('#decodedDiv').html(data.msg);
-    });
-}

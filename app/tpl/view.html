@@ -141,7 +141,7 @@
 
 {{ include('uploads.html') }}
 
-{% if Entity.type == 'experiments' %}
+{% if Entity.type == 'experiments' and App.Session.auth %}
     <section id='expcomment_container'>
         <div id='expcomment' class='box'>
             <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>

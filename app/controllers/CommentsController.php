@@ -21,6 +21,10 @@ require_once '../../app/init.inc.php';
 
 try {
 
+    if ($App->Session->has('anon')) {
+        throw new Exception(Tools::error(true));
+    }
+
     $Entity = new Experiments($App->Users);
     $Response = new JsonResponse();
 

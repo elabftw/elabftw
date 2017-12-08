@@ -175,7 +175,7 @@
                 if (checkbox) {
                     bookable = 1;
                 }
-                template = tinymce.get('itemsTypesTemplate').getContent();
+                var template = tinymce.get('itemsTypesTemplate').getContent();
                 $.post(this.controller, {
                     itemsTypesCreate: true,
                     name: name,

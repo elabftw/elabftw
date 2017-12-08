@@ -325,7 +325,6 @@
             makeEditableFileComment($(this).data('type'), $(this).data('id'));
         });
 
-
         // CREATE TAG
         // listen keypress, add tag when it's enter
         $(document).on('keypress', '#createTagInput', function(e) {

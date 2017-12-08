@@ -31,8 +31,8 @@
                 $(this).attr('src', 'app/img/show-more.png');
             }
             // get the id to show the toggleBody
-            id = $(this).attr('id');
-            idArr = id.split("_");
+            var id = $(this).attr('id');
+            var idArr = id.split("_");
             id = idArr[1];
             // get html of body
             $.post('app/controllers/EntityController.php', {

@@ -1,144 +1,38 @@
-/*
- * Helper functions for 3Dmol.js
- * https://www.elabftw.net
+/**
+ * 3Dmol-helpers.js - for the little menu top left of the molecule files uploaded and read by 3Dmol.js
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Alexander Minges <alexander.minges@gmail.com>
+ * @copyright 2015 Nicolas CARPi, Alexander Minges
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
  */
+(function() {
+    'use strict';
 
-/*
-// Remove all surfaces from div with given id and re-render
-$(document).on('click', '.rmSurface', function() {
-    var id = $(this).data('divid');
-    var view = $3Dmol.viewers[id];
-    view.removeAllSurfaces();
-    view.render();
-});
-*/
-
-// CARTOON (only working for protein structures!)
-$(document).on('click', '.3dmol-cartoon', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();
-});
-
-// CROSS
-$(document).on('click', '.3dmol-cross', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{cross:{}}).render();
-});
-
-// LINE
-$(document).on('click', '.3dmol-line', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{line:{}}).render();
-});
-
-// SPHERE
-$(document).on('click', '.3dmol-sphere', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{sphere:{}}).render();
-});
-
-// STICK
-$(document).on('click', '.3dmol-stick', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{stick:{}}).render();
-});
-
-/*
-$(document).on('click', '.3dmol-solid', function() {
-    var viewer = $3Dmol.viewers[$(this).data('divid')];
-    var voldata = new $3Dmol.VolumeData(viewer.pdbData(), "cube");
-                     viewer.addIsosurface(voldata, {isoval: 0.01,
-                                                                         color: "blue"});
-                     viewer.addIsosurface(voldata, {isoval: -0.01,
-                                                                         color: "red"});
-                     viewer.zoomTo();
-                     viewer.render();
-    /*
-    var id = $(this).data('divid');
-    var color = '0xffffff';
-    show_surface(id, 1, color);
-    */
-/*
-});
-$(document).on('click', '.3dmol-trans', function() {
-    var id = $(this).data('divid');
-    var color = '0xffffff';
-    show_surface(id, 0.7, color);
-});
-// Show molecule as surface. Takes optional opacity (float) and color
-// (string in hex notation) as parameters. Opacity defaults to 1.
-// If no valid color is passed, the surface is colored according to charges.
-function show_surface(id, opacity, color) {
-    var id = $(this).data('divid');
-    var view = $3Dmol.viewers[id];
-    if (typeof opacity !== 'number') {
-        opacity = 1;
-    }
-
-    var style_scheme = '{opacity:' + opacity + ';';
-
-    if (typeof color !== 'string') {
-        view.addSurface($3Dmol.SurfaceType.MS, {opacity:opacity,map:{prop:'partialCharge',scheme:new $3Dmol.Gradient.RWB(-.6,.6)}}, {hetflag:false}, {hetflag:false});
-    } else {
-        view.addSurface($3Dmol.SurfaceType.MS, {opacity:opacity,color:color}, {hetflag:false}, {hetflag:false});
-    }
-
-    view.render();
-}
-/*
-function remove_surfaces(id) {
-    var view = $3Dmol.viewers[id];
-    view.removeAllSurfaces();
-    view.render();
-
-}
-*/
-
-    /*
-// Show molecule as cartoon representation and re-render. Color can be passed
-// optionally. If no color is given, spectrum is assumed.
-function show_cartoon(id, color) {
-    if (typeof color !== 'string') {
-        color = 'spectrum';
-    }
-
-    var view = $3Dmol.viewers[id];
-    view.setStyle({
-        hetflag:false
-    }, {
-        cartoon: {
-            color:color
-        }
+    // CARTOON (only working for protein structures!)
+    $(document).on('click', '.3dmol-cartoon', function() {
+        $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();
     });
-    view.render();
-}
-*/
 
-/*
-// Show molecule as sticks and re-render
-function show_stick(id) {
-    var view = $3Dmol.viewers[id];
-    view.setStyle({},
-    {
-        stick:{}
+    // CROSS
+    $(document).on('click', '.3dmol-cross', function() {
+        $3Dmol.viewers[$(this).data('divid')].setStyle({},{cross:{}}).render();
     });
-    view.render();
-}
-*/
 
-// Show molecule as surface. Takes optional opacity (float) and color
-// (string in hex notation) as parameters. Opacity defaults to 1.
-// If no valid color is passed, the surface is colored according to charges.
-/*
-function show_surface(id, opacity, color) {
-    var view = $3Dmol.viewers[id];
-    if (typeof opacity !== 'number') {
-        opacity = 1;
-    }
+    // LINE
+    $(document).on('click', '.3dmol-line', function() {
+        $3Dmol.viewers[$(this).data('divid')].setStyle({},{line:{}}).render();
+    });
 
-    var style_scheme = '{opacity:' + opacity + ';';
+    // SPHERE
+    $(document).on('click', '.3dmol-sphere', function() {
+        $3Dmol.viewers[$(this).data('divid')].setStyle({},{sphere:{}}).render();
+    });
 
-    if (typeof color !== 'string') {
-        view.addSurface($3Dmol.SurfaceType.MS, {opacity:opacity,map:{prop:'partialCharge',scheme:new $3Dmol.Gradient.RWB(-.6,.6)}}, {hetflag:false}, {hetflag:false});
-    } else {
-        view.addSurface($3Dmol.SurfaceType.MS, {opacity:opacity,color:color}, {hetflag:false}, {hetflag:false});
-    }
-
-    view.render();
-}
-*/
+    // STICK
+    $(document).on('click', '.3dmol-stick', function() {
+        $3Dmol.viewers[$(this).data('divid')].setStyle({},{stick:{}}).render();
+    });
+}());

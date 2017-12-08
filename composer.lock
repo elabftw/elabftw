@@ -1121,25 +1121,35 @@
         },
         {
             "name": "behat/mink-goutte-driver",
-            "version": "v1.0.0",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/minkphp/MinkGoutteDriver.git",
-                "reference": "c628f8ca4518f09f71983c3b6b824f85900d596f"
+                "reference": "f0a850b9b4e123896a5878b1ed360b40c2c4a768"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minkphp/MinkGoutteDriver/zipball/c628f8ca4518f09f71983c3b6b824f85900d596f",
-                "reference": "c628f8ca4518f09f71983c3b6b824f85900d596f",
+                "url": "https://api.github.com/repos/minkphp/MinkGoutteDriver/zipball/f0a850b9b4e123896a5878b1ed360b40c2c4a768",
+                "reference": "f0a850b9b4e123896a5878b1ed360b40c2c4a768",
                 "shasum": ""
             },
             "require": {
-                "behat/mink": ">=1.4.0,<1.5.0-dev",
-                "behat/mink-browserkit-driver": "*",
-                "fabpot/goutte": "1.0.*",
-                "php": ">=5.3.1"
+                "behat/mink": ">=1.4,<1.5.0-dev",
+                "behat/mink-browserkit-driver": "1.0.*",
+                "fabpot/goutte": "1.0.*@dev",
+                "php": ">=5.3.1",
+                "symfony/browser-kit": ">=2.1,<2.4-dev",
+                "symfony/css-selector": ">=2.1,<2.4-dev",
+                "symfony/dom-crawler": ">=2.1,<2.4-dev",
+                "symfony/finder": ">=2.1,<2.4-dev",
+                "symfony/process": ">=2.1,<2.4-dev"
             },
             "type": "mink-driver",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Behat\\Mink\\Driver": "src/"
@@ -1164,7 +1174,7 @@
                 "headless",
                 "testing"
             ],
-            "time": "2012-05-29T23:28:38+00:00"
+            "time": "2013-03-02T16:09:32+00:00"
         },
         {
             "name": "behat/mink-selenium-driver",
@@ -3580,29 +3590,30 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v2.8.32",
+            "version": "v2.3.42",
+            "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "efeceae6a05a9b2fcb3391333f1d4a828ff44ab8"
+                "reference": "dce4b58434fc1cbd66e3006e539bb53074dfea82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/efeceae6a05a9b2fcb3391333f1d4a828ff44ab8",
-                "reference": "efeceae6a05a9b2fcb3391333f1d4a828ff44ab8",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/dce4b58434fc1cbd66e3006e539bb53074dfea82",
+                "reference": "dce4b58434fc1cbd66e3006e539bb53074dfea82",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.3.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "2.3-dev"
                 }
             },
             "autoload": {
-                "psr-4": {
+                "psr-0": {
                     "Symfony\\Component\\Finder\\": ""
                 },
                 "exclude-from-classmap": [
@@ -3625,7 +3636,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-11-05T15:25:56+00:00"
+            "time": "2016-05-13T14:58:35+00:00"
         },
         {
             "name": "symfony/process",

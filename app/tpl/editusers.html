@@ -70,7 +70,11 @@
 
                     <!-- ARCHIVE USER -->
                     <li>
+                    {% if user.archived %}
+                        <p>{{ 'User is archived'|trans }}</p>
+                    {% else %}
                         <button class='button button-delete archive-user' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                    {% endif %}
                     </li>
 
                     <li>

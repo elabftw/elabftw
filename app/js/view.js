@@ -28,7 +28,7 @@
                 if (data.res) {
                     notif(data.msg, 'ok');
                     // change the lock icon
-                    current = $('#lock').attr('src');
+                    var current = $('#lock').attr('src');
                     if (current === 'app/img/lock-gray.png') {
                         $('#lock').attr('src', 'app/img/unlock.png');
                     } else {

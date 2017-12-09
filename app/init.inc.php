@@ -99,6 +99,7 @@ try {
         $App->loadUser(new Users($Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
     }
 
+    // ANONYMOUS
     if ($App->Request->getSession()->has('anon')) {
         $Users = new Users();
         $Users->userData['team'] = $App->Request->getSession()->get('team');
@@ -106,6 +107,9 @@ try {
         $App->Users->userData['team'] = $App->Request->getSession()->get('team');
         $App->Users->userData['limit_nb'] = 15;
         $App->Users->userData['anon'] = true;
+        $App->Users->userData['fullname'] = 'Anon Ymous';
+        $App->Users->userData['is_admin'] = 0;
+        $App->Users->userData['is_sysadmin'] = 0;
     }
 
     // GET THE LANG

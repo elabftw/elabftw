@@ -128,7 +128,7 @@
                 }
                 if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
                     // get body
-                    body = decodeURIComponent($('#stepinput').val());
+                    var body = decodeURIComponent($('#stepinput').val());
                     // fix for user pressing enter with no input
                     if (body.length > 0) {
                         $.post(this.controller, {
@@ -188,7 +188,7 @@
                 }
                 if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
                     // get link
-                    link = decodeURIComponent($('#linkinput').val());
+                    var link = decodeURIComponent($('#linkinput').val());
                     // fix for user pressing enter with no input
                     if (link.length > 0) {
                         // parseint will get the id, and not the rest (in case there is number in title)
@@ -271,7 +271,7 @@
                     $("#main_section").css('border', null);
                     // and we add our new border color
                     // first : get what is the color of the new status
-                    css = '6px solid #' + data.color;
+                    var css = '6px solid #' + data.color;
                     $("#main_section").css('border-left', css);
                 } else {
                     notif(data.msg, 'ko');

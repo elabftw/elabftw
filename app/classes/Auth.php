@@ -31,9 +31,6 @@ class Auth
     /** @var array $userData All the user data for a user */
     private $userData;
 
-    /** @var string $token Token that will be in the cookie + db */
-    private $token;
-
     /**
      * Constructor
      *

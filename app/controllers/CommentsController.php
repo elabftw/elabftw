@@ -42,7 +42,7 @@ try {
 
     // UPDATE
     if ($Request->request->has('update')) {
-        if ($Entity->Comments->update($Request->request->get('commentsUpdate'), $Request->request->get('id'))) {
+        if ($Entity->Comments->update($Request->request->get('update'), $Request->request->get('id'))) {
             $res = true;
             $msg = _('Saved');
         }

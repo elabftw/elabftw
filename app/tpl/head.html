@@ -73,7 +73,9 @@
 
             <form class="navbar-form navbar-right" id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
                 <div class="form-group">
+                    {% if App.Request.getScriptName|split('/')|last == 'experiments.php' or App.Request.getScriptName|split('/')|last == 'database.php' %}
                     <input id='big_search_input' class="form-control" type='search' name='q' size='50' value='{{ App.Request.query.get('q') }}' />
+                    {% endif %}
                 </div>
             </form>
         </div>

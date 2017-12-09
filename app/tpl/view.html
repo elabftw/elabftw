@@ -141,7 +141,7 @@
 
 {{ include('uploads.html') }}
 
-{% if Entity.type == 'experiments' and App.Session.auth %}
+{% if Entity.type == 'experiments' and App.Session.get('auth') %}
     <section id='expcomment_container'>
         <div id='expcomment' class='box'>
             <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>
@@ -154,7 +154,7 @@
                         {% endif %}
                         <span>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname)|raw }}</span>
                         <!-- .editable uses the id of the element to send to the controller -->
-                        <p {{ comment.userid == Entity.Users.userid ? "class='editable'" }} id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment }}</p>
+                        <p {{ comment.userid == Entity.Users.userid ? "class='editable'" }} id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
                     </div>
                 {% endfor %}
             {% endif %}

@@ -60,7 +60,7 @@
             controller: 'app/controllers/CommentsController.php',
             create: function() {
                 document.getElementById('commentsCreateButton').disabled = true;
-                comment = $('#commentsCreateArea').val();
+                var comment = $('#commentsCreateArea').val();
                 // check length
                 if (comment.length < 2) {
                     notif('Comment too short!');

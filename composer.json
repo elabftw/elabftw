@@ -22,7 +22,7 @@
 
     },
     "require-dev": {
-        "codeception/codeception": "*",
+        "codeception/codeception": "^2",
         "phpdocumentor/phpdocumentor": "2.*",
         "pyrech/composer-changelogs": "^1.5"
     },

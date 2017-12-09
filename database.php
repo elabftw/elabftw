@@ -60,6 +60,7 @@ try {
         }
 
         $ItemsTypes = new ItemsTypes($Entity->Users);
+        $categoryArr = $ItemsTypes->readAll();
         $Revisions = new Revisions($Entity);
         $UploadsView = new UploadsView($Entity->Uploads);
 
@@ -70,6 +71,7 @@ try {
             'Categories' => $ItemsTypes,
             'Revisions' => $Revisions,
             'Uv' => $UploadsView,
+            'categoryArr' => $categoryArr,
             'mode' => 'edit',
             'maxUploadSize' => Tools::returnMaxUploadSize()
         );

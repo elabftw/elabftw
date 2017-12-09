@@ -273,6 +273,15 @@ try {
         }
     }
 
+    // REPLACE UPLOAD
+    if ($Request->request->has('replace')) {
+        if ($Entity->Uploads->replace($Request)) {
+            $Session->getFlashBag()->add('ok', _('File replaced successfully'));
+        } else {
+            $Session->getFlashBag()->add('ko', Tools::error());
+        }
+        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
+    }
 
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {

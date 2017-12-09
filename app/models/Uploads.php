@@ -119,13 +119,6 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Upload a png image from Doodle canvas
-     *
-     * @param string $png
-     * @return bool
-     */
-
-    /**
      * Create a clean filename
      * Remplace all non letters/numbers by '.' (this way we don't lose the file extension)
      *
@@ -391,6 +384,29 @@ class Uploads implements CrudInterface
         }
     }
 
+    /**
+     * Replace an uploaded file by another
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function replace($request)
+    {
+        $id = filter_var($request->request->get('upload_id'), FILTER_VALIDATE_INT);
+        $upload = $this->readFromId($id);
+        if (empty($upload)) {
+            throw new Exception('Bad id in upload replace');
+        }
+        $fullPath = ELAB_ROOT . 'uploads/' . $upload['long_name'];
+        // check user is same as the previously uploaded file
+        if ($upload['userid'] !== $this->Entity->Users->userid) {
+            return false;
+        }
+        $this->moveFile($request->files->get('file')->getPathName(), $fullPath);
+        $thumbPath = $fullPath . '_th.jpg';
+        $this->makeThumb($fullPath, $thumbPath, 100);
+        return true;
+    }
     /**
      * Destroy an upload
      *

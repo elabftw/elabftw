@@ -138,10 +138,17 @@ class UploadsView
             $html .= $comment;
         }
 
+        // INSERT IN TEXT
         if ($mode === 'edit' && preg_match('/(jpg|jpeg|png|gif|svg)$/i', $ext)) {
             $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] .
                 "'><img src='app/img/show-more.png' /> <p class='inline'>" . _('Insert in text at cursor position') . "</p></div>";
         }
+
+        // REPLACE
+        if ($mode === 'edit') {
+            $html .= "<div class='replacer clickable' data-itemid='" . $upload['item_id'] . "' data-id='" . $upload['id'] . "' data-type='" . $upload['type'] . "'><img src='app/img/replace.png' /> <p class='inline'>" . _('Upload a new version of this file') . "</p></div>";
+        }
+
         $html .= "</div></div></div>";
 
         return $html;

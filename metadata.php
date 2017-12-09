@@ -24,7 +24,8 @@ require_once 'app/init.inc.php';
 try {
 
     $Saml = new Saml(new Config, new Idps);
-    $settingsArr = $Saml->getSettings();
+    // TODO this is the id of the idp to use to get the settings
+    $settingsArr = $Saml->getSettings(1);
     if (empty($settingsArr['sp']['entityId'])) {
         throw new Exception('No Service Provider configured. Aborting.');
     }

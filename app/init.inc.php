@@ -88,9 +88,7 @@ try {
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
-        // also don't redirect blindly to https because we might be in http (after install)
-        $url = $Request->getScheme() . '://' . $Request->getHttpHost() . '/app/logout.php';
-        header('Location: ' . $url);
+        header('Location: ' . 'app/logout.php');
         exit;
     }
 

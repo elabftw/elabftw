@@ -114,10 +114,10 @@
 {% if body != '' %}
     {% set body = Entity.entityData.body|md2html %}
     <!-- Workaround for bug #532; long tables result in empty body returned from md2html:
-         If body is empty, reload and don't parse as markdown -->
-         {% if body|trim == '' %}
-         {% set body = Entity.entityData.body %}
-     {% endif %} 
+        If body is empty, reload and don't parse as markdown -->
+    {% if body|trim == '' %}
+        {% set body = Entity.entityData.body %}
+    {% endif %} 
     <div id='body_view' class='txt'>{{ body|raw }}</div>
     <br>
 {% endif %}

@@ -84,7 +84,7 @@ class Templates extends AbstractEntity
     /**
      * Duplicate a template from someone else in the team
      *
-     * @return bool
+     * @return int
      */
     public function duplicate()
     {
@@ -96,8 +96,9 @@ class Templates extends AbstractEntity
         $req->bindParam(':name', $template['name']);
         $req->bindParam(':body', $template['body']);
         $req->bindParam(':userid', $this->Users->userid);
+        $req->execute();
 
-        return $req->execute();
+        return $this->Db->lastInsertId();
     }
 
     /**

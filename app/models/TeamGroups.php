@@ -188,7 +188,7 @@ class TeamGroups implements CrudInterface
     /**
      * Delete a team group
      *
-     * @param string $id Id of the group to destroy
+     * @param int $id Id of the group to destroy
      * @throws Exception if it fails to delete
      * @return bool true on success
      */

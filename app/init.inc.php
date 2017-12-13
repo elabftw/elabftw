@@ -41,7 +41,9 @@ try {
     $configFilePath = dirname(dirname(__FILE__)) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
-        $url = 'https://' . $Request->getHttpHost() . '/install/index.php';
+        $url = Tools::getUrl($Request) . '/install/index.php';
+        // not pretty but gets the job done
+        $url = str_replace('app/', '', $url);
         header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }

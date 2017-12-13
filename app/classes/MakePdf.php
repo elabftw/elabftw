@@ -155,7 +155,9 @@ class MakePdf extends AbstractMake
 
         // create Request object
         $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/database.php';
+        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
+        // not pretty but gets the job done
+        $url = str_replace('app/classes/', '', $url);
 
         foreach ($linksArr as $link) {
             $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];

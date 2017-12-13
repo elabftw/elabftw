@@ -81,7 +81,7 @@ abstract class AbstractMake
     protected function getUrl()
     {
         $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/' . $this->Entity->page . '.php';
+        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
 
         return $url . "?mode=view&id=" . $this->Entity->id;
     }

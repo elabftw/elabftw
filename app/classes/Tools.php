@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Toolbelt full of useful functions
  */
@@ -343,5 +345,16 @@ class Tools
     public static function getCleanTitle($title)
     {
         return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
+    }
+
+    /**
+     * Return a full URL of the elabftw install
+     *
+     * @param Request $Request
+     * @return string the url
+     */
+    public static function getUrl($Request)
+    {
+        return 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
     }
 }

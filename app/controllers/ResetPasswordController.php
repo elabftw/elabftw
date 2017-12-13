@@ -54,7 +54,9 @@ try {
         $deadline = Crypto::encrypt(time() + 3600, Key::loadFromAsciiSafeString(SECRET_KEY));
 
         // build the reset link
-        $resetLink = 'https://' . $Request->getHttpHost() . '/change-pass.php';
+        $resetLink = Tools::getUrl($Request) . '/change-pass.php';
+        // not pretty but gets the job done
+        $resetLink = str_replace('app/controllers/', '', $resetLink);
         $resetLink .='?key=' . $key . '&deadline=' . $deadline . '&userid=' . $user['userid'];
 
         // Send an email with the reset link

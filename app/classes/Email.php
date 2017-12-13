@@ -190,7 +190,7 @@ class Email
         }
         // get url
         $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/admin.php';
+        $url = 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBaseUrl() . '/admin.php';
 
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
@@ -228,7 +228,7 @@ class Email
 
         // now let's get the URL so we can have a nice link in the email
         $Request = Request::createFromGlobals();
-        $url = 'https://' . $Request->getHttpHost() . '/login.php';
+        $url = 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBaseUrl() . '/login.php';
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         // Create the message

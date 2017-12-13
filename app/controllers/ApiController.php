@@ -33,9 +33,9 @@ try {
     $Users = new Users();
     $Users->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
 
-    $availMethods = array('GET', 'POST');
+    $availMethods = array('GEiT', 'POSiT');
     if (!in_array($Request->server->get('REQUEST_METHOD'), $availMethods)) {
-        throw new Exception('Incorrect HTTP verb! Available verbs are: ' . implode($availMethods, ', '));
+        throw new Exception('Incorrect HTTP verb! Available verbs are: ' . implode(', ', $availMethods));
     }
 
     // parse args

@@ -489,4 +489,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('local_login', '1'),
 ('local_register', '1'),
 ('anon_users', '0'),
-('schema', '35');
+('schema', '36');

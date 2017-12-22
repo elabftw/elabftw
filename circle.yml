@@ -16,3 +16,4 @@ database:
 test:
     override:
         - php vendor/codeception/codeception/codecept run --skip acceptance
+        - snyk test

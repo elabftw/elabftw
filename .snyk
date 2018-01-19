@@ -6,4 +6,8 @@ ignore:
     - bootstrap-markdown:
         reason: no patch available
         expires: '2018-01-21T13:15:22.397Z'
+  'npm:bootstrap:20160627':
+    - bootstrap:
+        reason: elab not affected
+        expires: '2018-02-18T13:43:24.537Z'
 patch: {}

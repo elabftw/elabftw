@@ -78,17 +78,14 @@ try {
     $fsize = filesize($file_path);
 
     // HEADERS
-    // we don't force download of html pages. See #310
-    if (Tools::getExt($file_path) != 'html') {
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: public");
-        header("Content-Description: File Transfer");
-        header("Content-Type: " . $mtype);
-        header("Content-Disposition: attachment; filename=" . $filename);
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Length: " . $fsize);
-    }
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: public");
+    header("Content-Description: File Transfer");
+    header("Content-Type: " . $mtype);
+    header("Content-Disposition: attachment; filename=" . $filename);
+    header("Content-Transfer-Encoding: binary");
+    header("Content-Length: " . $fsize);
 
     // DOWNLOAD
     $file = @fopen($file_path, "rb");

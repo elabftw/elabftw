@@ -156,9 +156,11 @@ class Templates extends AbstractEntity
             LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
             WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
+            AND experiments_templates.team = :team
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid']);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         return $req->fetchAll();

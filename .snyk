@@ -4,8 +4,8 @@ version: v1.10.1
 ignore:
   'npm:bootstrap-markdown:20140826':
     - bootstrap-markdown:
-        reason: no patch available
-        expires: '2018-01-21T13:15:22.397Z'
+        reason: not vuln
+        expires: '2018-02-23T14:12:13.172Z'
   'npm:bootstrap:20160627':
     - bootstrap:
         reason: elab not affected

@@ -894,9 +894,13 @@ jquery.complexify@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/jquery.complexify/-/jquery.complexify-0.5.2.tgz#8c8834ca08cee9476f1d975128d49526adcc4ae9"
 
-"jquery@2 - 3", jquery@>=1.5, jquery@>=1.8.3, jquery@^3.2.1:
+"jquery@2 - 3", jquery@>=1.5, jquery@>=1.8.3:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
+
+jquery@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 js-yaml@^3.5.3:
   version "3.10.0"

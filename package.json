@@ -23,7 +23,7 @@
     "vanderlee-colorpicker": "^1.2.13"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.2",
     "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-uglify": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "^1.0.0",

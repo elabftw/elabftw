@@ -252,9 +252,9 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-coffee-script@~1.10.0:
+coffeescript@~1.10.0:
   version "1.10.0"
-  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.10.0.tgz#12938bcf9be1948fa006f92e0c4c9e81705108c0"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-1.10.0.tgz#e7aa8301917ef621b35d8a39f348dcdd1db7e33e"
 
 colors@~1.1.2:
   version "1.1.2"
@@ -678,11 +678,11 @@ grunt-shell@^2.1.0:
     chalk "^1.0.0"
     npm-run-path "^2.0.0"
 
-grunt@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/grunt/-/grunt-1.0.1.tgz#e8778764e944b18f32bb0f10b9078475c9dfb56b"
+grunt@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/grunt/-/grunt-1.0.2.tgz#4e6a5e695b70472fd5304f5fa9e34236836a73bc"
   dependencies:
-    coffee-script "~1.10.0"
+    coffeescript "~1.10.0"
     dateformat "~1.0.12"
     eventemitter2 "~0.4.13"
     exit "~0.1.1"
@@ -694,7 +694,7 @@ grunt@^1.0.1:
     grunt-legacy-util "~1.0.0"
     iconv-lite "~0.4.13"
     js-yaml "~3.5.2"
-    minimatch "~3.0.0"
+    minimatch "~3.0.2"
     nopt "~3.0.6"
     path-is-absolute "~1.0.0"
     rimraf "~2.2.8"
@@ -1091,7 +1091,7 @@ mime-types@~2.1.15:
   dependencies:
     mime-db "~1.27.0"
 
-"minimatch@2 || 3", minimatch@^3.0.2, minimatch@^3.0.4, minimatch@~3.0.0, minimatch@~3.0.2:
+"minimatch@2 || 3", minimatch@^3.0.2, minimatch@^3.0.4, minimatch@~3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.4.tgz#5166e286457f03306064be5497e8dbb0c3d32083"
   dependencies:

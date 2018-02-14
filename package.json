@@ -29,7 +29,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-shell": "^2.1.0",
     "snyk": "^1.69.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.5"
   },
   "scripts": {
     "test": "snyk test"

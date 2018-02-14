@@ -83,14 +83,18 @@
         var Tag = {
             controller: 'app/controllers/EntityController.php',
             // the argument here is the event (needed to detect which key is pressed)
-            create: function(e) {
-                var keynum;
-                if (e.which) {
-                    keynum = e.which;
+            saveOnEnter: function(e) {
+                // if the key that was pressed was Enter (ascii code 13)
+                if (e.which === 13) {
+                    this.save();
                 }
-                if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get tag
-                    var tag = $('#createTagInput').val();
+            },
+
+            save: function() {
+                // get tag
+                var tag = $('#createTagInput').val();
+                // do nothing if input is empty
+                if (tag.length > 0) {
                     // POST request
                     $.post(this.controller, {
                         createTag: true,
@@ -102,8 +106,9 @@
                         // clear input field
                         $('#createTagInput').val('');
                     });
-                } // end if key is enter
+                }
             },
+
             destroy: function(tag) {
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
@@ -328,7 +333,11 @@
         // CREATE TAG
         // listen keypress, add tag when it's enter
         $(document).on('keypress', '#createTagInput', function(e) {
-            Tag.create(e);
+            Tag.saveOnEnter(e);
+        });
+        // also add the tag if the focus is lost because it looks like it's not obvious for people to use the enter key
+        $(document).on('blur', '#createTagInput', function() {
+            Tag.save();
         });
         // AUTOCOMPLETE THE TAGS
         var cache = {};

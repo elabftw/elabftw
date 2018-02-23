@@ -28,7 +28,7 @@
     "grunt-contrib-uglify": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-shell": "^2.1.0",
-    "snyk": "^1.69.1",
+    "snyk": "^1.69.9",
     "lodash": "^4.17.5"
   },
   "scripts": {

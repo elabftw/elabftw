@@ -109,7 +109,17 @@ function quickSave(type, id) {
         title : document.getElementById('title_input').value,
         date : document.getElementById('datepicker').value,
         body : tinymce.activeEditor.getContent()
-    }).done(function(data) {
+    }).done(function(data, textStatus, xhr) {
+        // detect if the session timedout
+        if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
+            // store the modifications in local storage to prevent any data loss
+            localStorage.setItem('body', tinymce.activeEditor.getContent());
+            localStorage.setItem('id', id);
+            localStorage.setItem('date', new Date().toLocaleString());
+            // reload the page so user gets redirected to the login page
+            location.reload();
+            return;
+        }
         if (data.res) {
             notif(data.msg, 'ok');
         } else {

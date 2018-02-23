@@ -90,7 +90,12 @@ try {
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
 
-        header('Location: ' . 'app/logout.php');
+        // used by ajax requests to detect a timed out session
+        header('X-Elab-Need-Auth: 1');
+        // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
+        if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
+           header('Location: ' . 'app/logout.php');
+        }
         exit;
     }
 

@@ -59,6 +59,38 @@
             location = 'database.php';
         }
 
+        // check if there is some local data with this id to recover
+        if (localStorage.getItem('id') == id) {
+            var bodyRecovery = $('<div></div>', {
+                'class' : 'alert alert-warning',
+                html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button button-delete recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
+            });
+            $('#main_section').before(bodyRecovery);
+        }
+
+        // RECOVER YES
+        $(document).on('click', '.recover-yes', function() {
+            $.post('app/controllers/EntityController.php', {
+                quickSave: true,
+                type : type,
+                id : id,
+                // we need this to get the updated content
+                title : document.getElementById('title_input').value,
+                date : document.getElementById('datepicker').value,
+                body : localStorage.getItem('body')
+            }).done(function() {
+                localStorage.clear();
+                document.location.reload(true);
+            });
+        });
+
+        // RECOVER NO
+        $(document).on('click', '.recover-no', function() {
+            localStorage.clear();
+            document.location.reload();
+        });
+
+
         var Entity = {
             destroy: function() {
                 if (confirm(confirmText)) {

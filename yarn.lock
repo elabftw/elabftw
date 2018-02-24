@@ -878,9 +878,11 @@ isobject@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
 
-jquery-jeditable@1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-1.8.0.tgz#b0e9fead71c882457859c126a5ce6c2e3ec00e54"
+jquery-jeditable@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.0.tgz#35bbbd1a98af232c90bfc20668002a6797d0e1b6"
+  dependencies:
+    jquery "^3.3.1"
 
 jquery-ui-dist@^1.12.1:
   version "1.12.1"

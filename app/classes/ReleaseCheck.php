@@ -42,7 +42,7 @@ class ReleaseCheck
      * UPDATE THIS AFTER RELEASING
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.8.2';
+    const INSTALLED_VERSION = '1.8.3';
 
     /**
      * Fetch the update info on object creation

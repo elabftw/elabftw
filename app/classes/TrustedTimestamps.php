@@ -408,7 +408,7 @@ class TrustedTimestamps extends AbstractMake
 
         foreach ($retarray as $retline) {
             if (stripos($retline, "message imprint mismatch") !== false) {
-                            return false;
+                return false;
             }
             if (stripos($retline, "TS_CHECK_SIGNING_CERTS")) {
                 // we are facing the OpenSSL bug discussed here:
@@ -416,7 +416,6 @@ class TrustedTimestamps extends AbstractMake
                 return $this->validateWithJava();
             }
         }
-
 
         throw new Exception("System command failed: " . implode(", ", $retarray));
     }

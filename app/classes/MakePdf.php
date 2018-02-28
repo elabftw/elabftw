@@ -155,7 +155,7 @@ class MakePdf extends AbstractMake
 
         // create Request object
         $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
+        $url = Tools::getUrl($Request) . '/database.php';
         // not pretty but gets the job done
         $url = str_replace('app/classes/', '', $url);
 

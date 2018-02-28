@@ -348,13 +348,30 @@ class Tools
     }
 
     /**
-     * Return a full URL of the elabftw install
+     * Return a full URL of the elabftw install.
+     * Will first check for config value of 'url' or try to guess from Request
      *
      * @param Request $Request
      * @return string the url
      */
     public static function getUrl($Request)
     {
+        $Config = new Config();
+        if (strlen($Config->configArr['url']) > 10) {
+            return $Config->configArr['url'];
+        }
+        return self::getUrlFromRequest($Request);
+    }
+
+    /**
+     * Get the URL from the Request
+     *
+     * @param Request $Request
+     * @return string the url
+     */
+    public static function getUrlFromRequest($Request)
+    {
         return 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
     }
+
 }

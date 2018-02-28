@@ -115,6 +115,7 @@ function quickSave(type, id) {
             // store the modifications in local storage to prevent any data loss
             localStorage.setItem('body', tinymce.activeEditor.getContent());
             localStorage.setItem('id', id);
+            localStorage.setItem('type', type);
             localStorage.setItem('date', new Date().toLocaleString());
             // reload the page so user gets redirected to the login page
             location.reload();

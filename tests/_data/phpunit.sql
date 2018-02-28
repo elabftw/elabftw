@@ -93,7 +93,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '36'),
+('schema', '37'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -123,6 +123,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_lastname', NULL),
 ('local_login', '1'),
 ('anon_users', '0'),
+('url', NULL),
 ('local_register', '1');
 
 -- --------------------------------------------------------

@@ -28,7 +28,6 @@ jobs:
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
     - image: circleci/php:7.1.14-fpm-node-browsers
-      command: /sbin/init
     steps:
     # Machine Setup
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
@@ -41,9 +40,9 @@ jobs:
     # This is based on your 1.0 configuration file or project settings
     - run:
         working_directory: ~/elabftw/elabftw
-        command: |-
-          ln -fs << $HOME/.phpenv/versions/7.1.6/libexec/apache2/libphp5.so /usr/lib/apache2/modules/libphp5.so;
-          phpenv global 7.1.6 2>/dev/null
+        #command: |-
+        #  ln -fs << $HOME/.phpenv/versions/7.1.6/libexec/apache2/libphp5.so /usr/lib/apache2/modules/libphp5.so;
+        #  phpenv global 7.1.6 2>/dev/null
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
@@ -57,13 +56,14 @@ jobs:
         - v1-dep-
     # This is based on your 1.0 configuration file or project settings
     - run: sudo apt-get update
-    - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server graphicsmagick libgraphicsmagick1-dev
-    - run: yes|sudo /opt/circleci/.phpenv/shims/pecl install gmagick-2.0.4RC1
-    - run: sudo echo "extension=gmagick.so" >> /opt/circleci/php/7.1.6/etc/php.ini
+    - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server graphicsmagick libgraphicsmagick1-dev libmcrypt-dev
+    - run: sudo service mysql start
+    - run: sudo docker-php-ext-install gd gettext mcrypt zip
+    - run: yes|sudo pecl install gmagick-2.0.4RC1
+    - run: sudo docker-php-ext-enable gmagick
     # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
-    - run: if [ -z "${NODE_ENV:-}" ]; then export NODE_ENV=test; fi
-    - run: export PATH="~/elabftw/elabftw/node_modules/.bin:$PATH"
-    - run: npm install
+    - run: export PATH="~/elabftw/elabftw/node_modules/.bin:~/elabftw/elabftw/vendor/bin:$PATH"
+    - run: yarn install
     - run: composer install --no-interaction
     # Save dependency cache
     - save_cache:
@@ -77,7 +77,7 @@ jobs:
     # Test
     #   This would typically be a build job when using workflows, possibly combined with build
     # This is based on your 1.0 configuration file or project settings
-    - run: php vendor/codeception/codeception/codecept run --skip acceptance
+    - run: codecept run --skip acceptance
     - run: snyk test
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each

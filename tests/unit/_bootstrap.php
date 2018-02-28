@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (getenv('CIRCLECI')) {
+if (getenv('CIRCLE_BUILD_URL')) {
     require_once 'tests/config-circleci.php';
 } elseif (getenv('USER') == 'scrutinizer') {
     require_once 'tests/config-scrutinizer.php';

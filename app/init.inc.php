@@ -97,9 +97,11 @@ try {
         header('X-Elab-Need-Auth: 1');
         // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
         if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
-            $url = Tools::getUrl($Request);
-            $url = str_replace('/app/controllers', '', $url);
-            header('Location: ' . $url . '/app/logout.php');
+            //$url = Tools::getUrl($Request);
+            //$url = str_replace('/app/controllers', '', $url);
+            // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
+            // TODO FIXME YOLO
+            header('Location: app/logout.php');
         }
         exit;
     }

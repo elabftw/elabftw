@@ -451,7 +451,9 @@ class TrustedTimestamps extends AbstractMake
         if (stripos($javaRes['retarray'][0], 'matches')) {
             return true;
         }
-        throw new Exception('Could not validate the timestamp with java failsafe method. Please report this bug on Github.');
+        $msg = 'Could not validate the timestamp with java failsafe method. Maybe your java version is too old? Please report this bug on GitHub. Error is: ';
+        $msg .= $javaRes['retarray'][0];
+        throw new Exception($msg);
     }
 
     /**

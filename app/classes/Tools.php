@@ -360,7 +360,7 @@ class Tools
         if (strlen($Config->configArr['url']) > 10) {
             return $Config->configArr['url'];
         }
-        return $this->getUrlFromRequest($Request);
+        return self::getUrlFromRequest($Request);
     }
 
     /**

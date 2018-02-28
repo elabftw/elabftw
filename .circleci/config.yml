@@ -74,13 +74,3 @@ jobs:
     # This is based on your 1.0 configuration file or project settings
     - run: php ~/elabftw/elabftw/vendor/bin/codecept run --skip acceptance
     - run: ~/elabftw/elabftw/node_modules/.bin/snyk test
-    # Teardown
-    #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-    # Save test results
-    - store_test_results:
-        path: /tmp/circleci-test-results
-    # Save artifacts
-    - store_artifacts:
-        path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: /tmp/circleci-test-results

@@ -2,9 +2,9 @@ $(document).ready(function() {
     // hide the install button
     $('#final_section').hide();
 
-    // disable form submit
+    // show last part if form is submitted directly
     $('#install-form').submit(function() {
-        return false;
+        $('#final_section').show();
     });
 
     // sql test button

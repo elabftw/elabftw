@@ -2,6 +2,11 @@ $(document).ready(function() {
     // hide the install button
     $('#final_section').hide();
 
+    // disable form submit
+    $('#install-form').submit(function() {
+        return false;
+    });
+
     // sql test button
     $('#test_sql_button').click(function() {
         var mysql_host = $('#db_host').val();

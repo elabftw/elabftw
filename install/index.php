@@ -172,26 +172,25 @@ try {
     <h3>Configuration</h3>
 
     <!-- MYSQL -->
-    <form action='install.php' method='post'>
     <fieldset>
     <legend><strong>MySQL</strong></legend>
     <p>MySQL is the database that will store everything. eLabFTW need to connect to it with a username/password. This is <strong>NOT</strong> your account with which you'll use eLabFTW. If you followed the installation instructions, you should have created a database <em>elabftw</em> with a user <em>elabftw</em> that have all the rights on it.</p>
 
     <p>
     <label for='db_host'>Host for mysql database:</label><br />
-    <input id='db_host' name='db_host' type='text' value='localhost' />
+    <input id='db_host' type='text' value='localhost' />
     <p class='smallgray'>(you can safely leave 'localhost' here)</p>
     </p>
 
     <p>
     <label for='db_name'>Name of the database:</label><br />
-    <input id='db_name' name='db_name' type='text' value='elabftw' />
+    <input id='db_name' type='text' value='elabftw' />
     <p class='smallgray'>(should be 'elabftw' if you followed the instructions)</p>
     </p>
 
     <p>
     <label for='db_user'>Username to connect to the MySQL server:</label><br />
-    <input id='db_user' name='db_user' type='text' value='<?php
+    <input id='db_user' type='text' value='<?php
     // we show root here if we're on windoze or Mac OS X
     if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'Windows' || PHP_OS == 'Darwin') {
         echo 'root';
@@ -204,7 +203,7 @@ try {
 
     <p>
     <label for='db_password'>Password:</label><br />
-    <input id='db_password' name='db_password' type='password' />
+    <input id='db_password' type='password' />
     <p class='smallgray'>(should be a very complicated one that you won't have to remember)</p>
     </p>
 
@@ -227,11 +226,9 @@ try {
         <button type="submit" name="Submit" class='button'>INSTALL eLabFTW</button>
     </div>
 
-    <p>If the config.php file is in place, <button onclick='window.location.reload()'>reload this page</button></p>
+    <p>If the config.php file is in place, <button class='button click2reload'>reload this page</button></p>
     <p>You will be redirected to the registration page, where you can get your admin account :)</p>
     </section>
-
-    </form>
 
     </section>
 

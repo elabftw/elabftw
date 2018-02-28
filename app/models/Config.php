@@ -79,6 +79,11 @@ class Config
             unset($post['stamppass']);
         }
 
+        // sanitize canonical URL
+        if (isset($post['url']) && !empty($post['url'])) {
+            $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
+        }
+
         if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {
             throw new Exception('Bad value for number of login attempts!');
         }

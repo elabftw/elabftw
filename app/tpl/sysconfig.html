@@ -137,6 +137,10 @@
             {% endfor %}
         </select>
 
+        <label class='block' for='proxy'>{{ 'Installation URL:'|trans }}</label>
+        <input class='clean-form col-3-form' type='url' value='{{ App.Config.configArr.url }}' name='url' id='url' />
+        <p class='smallgray'>{{ 'This is the canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org'|trans }}</p>
+
         <label class='block' for='proxy'>{{ 'Address of the Proxy:'|trans }}</label>
         <input class='clean-form col-3-form' type='text' value='{{ App.Config.configArr.proxy }}' name='proxy' id='proxy' />
         <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>

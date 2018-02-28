@@ -36,7 +36,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '36';
+    const REQUIRED_SCHEMA = '37';
 
     /**
      * Init Update with Config and Db
@@ -270,6 +270,11 @@ class Update
             // 20171201
             $this->schema36();
             $this->updateSchema(36);
+        }
+        if ($current_schema < 37) {
+            // 20180228
+            $this->schema37();
+            $this->updateSchema(37);
         }
         // place new schema functions above this comment
 
@@ -864,6 +869,19 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "ALTER TABLE `users` ADD `pdf_format` VARCHAR(255) NOT NULL DEFAULT 'A4';";
         if (!$this->Db->q($sql)) {
             throw new Exception('Cannot add pdf_format to users table!');
+        }
+    }
+
+    /**
+     * Add URL to config
+     *
+     */
+    private function schema37()
+    {
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
+            ('url', NULL)";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Error adding config url');
         }
     }
 }

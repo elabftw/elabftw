@@ -37,12 +37,6 @@ jobs:
     # In many cases you can simplify this from what is generated here.
     # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-    # This is based on your 1.0 configuration file or project settings
-    - run:
-        working_directory: ~/elabftw/elabftw
-        #command: |-
-        #  ln -fs << $HOME/.phpenv/versions/7.1.6/libexec/apache2/libphp5.so /usr/lib/apache2/modules/libphp5.so;
-        #  phpenv global 7.1.6 2>/dev/null
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache

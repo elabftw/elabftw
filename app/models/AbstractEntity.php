@@ -274,7 +274,7 @@ abstract class AbstractEntity
     }
 
     /**
-     * Update an entity
+     * Update an entity. The revision is saved before so it can easily compare old and new body.
      *
      * @param string $title
      * @param string $date
@@ -290,6 +290,10 @@ abstract class AbstractEntity
         if ($this->entityData['locked']) {
             return false;
         }
+
+        // add a revision
+        $Revisions = new Revisions($this);
+        $Revisions->create($body);
 
         $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
@@ -319,10 +323,7 @@ abstract class AbstractEntity
         }
         $req->bindParam(':id', $this->id);
 
-        // add a revision
-        $Revisions = new Revisions($this);
-
-        return $req->execute() && $Revisions->create($body);
+        return $req->execute();
     }
 
     /**

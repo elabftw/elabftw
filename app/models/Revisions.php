@@ -36,22 +36,26 @@ class Revisions implements CrudInterface
     }
 
     /**
-     * Add a revision
+     * Add a revision if the changeset is big enough
      *
      * @param string $body
      * @return bool
      */
     public function create($body)
     {
-        $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid)
-            VALUES(:item_id, :body, :userid)";
+        // only save a revision if there is at least 20 characters difference between the old version and the new one
+        if (abs(strlen($this->Entity->entityData['body']) - strlen($body)) > 20) {
+            $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid)
+                VALUES(:item_id, :body, :userid)";
 
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':item_id', $this->Entity->id);
+            $req->bindParam(':body', $body);
+            $req->bindParam(':userid', $this->Entity->Users->userid);
 
-        return $req->execute();
+            return $req->execute();
+        }
+        return true;
     }
 
     /**

@@ -46,6 +46,7 @@ module.exports = function(grunt) {
           'web/app/js/view.min.js': [
               'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js',
               'web/app/js/src/view.js'],
+          'web/app/js/install.min.js': 'web/app/js/src/install.js',
           'web/app/js/tabs.min.js': 'web/app/js/src/tabs.js',
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
           'web/app/js/footer.min.js': 'web/app/js/src/footer.js',

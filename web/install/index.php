@@ -237,7 +237,7 @@ try {
 
     </section>
 
-    <script src='../app/js/install.js'></script>
+    <script src='../app/js/install.min.js'></script>
     <?php
 } catch (Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko', false);

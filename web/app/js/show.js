@@ -58,9 +58,12 @@
             controller = 'app/controllers/ExperimentsController.php';
 
             // KEYBOARD SHORTCUT
+            /*
+            * TODO
             key($('#shortcuts').data('create'), function(){
                 window.location.href = controller + '?create=true';
             });
+            */
         }
 
         // PAGINATION

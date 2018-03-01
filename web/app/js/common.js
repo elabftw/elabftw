@@ -2,6 +2,7 @@
  * Common functions used by eLabFTW
  * https://www.elabftw.net
  */
+
 $(document).ready(function() {
     $(document).on('click', '.togglable-next', function() {
         $(this).next().toggle();

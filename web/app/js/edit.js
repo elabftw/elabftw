@@ -325,12 +325,14 @@
             quickSave(type, id);
         }
         // KEYBOARD SHORTCUTS
+        /* TODO
         key($('#shortcuts').data('create'), function(){
             location.href = controller + '?create=true';
         });
         key($('#shortcuts').data('submit'), function(){
             document.forms.main_form.submit();
         });
+        */
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {

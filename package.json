@@ -23,15 +23,19 @@
     "vanderlee-colorpicker": "^1.2.13"
   },
   "devDependencies": {
+    "expose-loader": "^0.7.4",
     "grunt": "^1.0.2",
     "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-uglify": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-shell": "^2.1.0",
+    "lodash": "^4.17.5",
     "snyk": "^1.69.10",
-    "lodash": "^4.17.5"
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9"
   },
   "scripts": {
+    "build": "webpack-cli --config builder.js",
     "test": "snyk test"
   },
   "repository": "git+https://github.com/elabftw/elabftw.git",

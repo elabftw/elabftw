@@ -17,15 +17,22 @@ module.exports = {
             'bootstrap/js/button.js',
             'bootstrap/js/collapse.js',
             'bootstrap/js/dropdown.js',
+            //'./web/app/js/team.js',
         ],
         edit: [
             'tinymce',
 //            'dropzone',
         ],
+        scheduler: [
+            'moment',
+            //'./web/app/js/team.js',
+            //'fullcalendar',
+        ],
     },
     resolve: {
         alias: {
-            'jquery-ui': 'jquery-ui-dist/jquery-ui.js'
+            'jquery-ui': 'jquery-ui-dist/jquery-ui.js',
+            //'fullcalendar': 'fullcalendar/dist/fullcalendar.js',
         }
     },
     mode: 'production',
@@ -41,9 +48,24 @@ module.exports = {
                 use: [
                     { loader: 'expose-loader', options: 'jQuery' },
                     { loader: 'expose-loader', options: '$' },
-                    { loader: 'expose-loader', options: 'Dropzone.options' },
+                    //{ loader: 'expose-loader', options: 'Dropzone.options' },
+                    //{ loader: 'expose-loader', options: 'fullCalendar' },
                 ]
             },
+            {
+                test: require.resolve('moment'),
+                use: [
+                    { loader: 'expose-loader', options: 'moment' },
+                ]
+            },
+            /*
+            {
+                test: require.resolve('fullcalendar'),
+                use: [
+                    { loader: 'expose-loader', options: 'fullCalendar' },
+                ]
+            },
+            */
         ],
     },
     /*

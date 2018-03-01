@@ -30,10 +30,11 @@ module.exports = function(grunt) {
               'web/app/js/src/chemdoodle/chemdoodle-uis-unpacked.js'],
 
           'web/app/js/scheduler.min.js': [
-              'node_modules/moment/moment.js',
+            //  'node_modules/moment/moment.js',
               'node_modules/fullcalendar/dist/fullcalendar.js',
               'node_modules/fullcalendar/dist/locale-all.js'],
-          'web/app/js/team.min.js': 'web/app/js/team.js',
+
+          'web/app/js/team.min.js': 'web/app/js/src/team.js',
 
           'web/app/js/tinymce-dropzone.min.js': [
           //    'node_modules/tinymce/tinymce.js',

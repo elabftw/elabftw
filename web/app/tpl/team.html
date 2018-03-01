@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
+<script src='app/js/scheduler.bundle.js'></script>
 <script src='app/js/scheduler.min.js?v=183'></script>
 
 <menu>
@@ -112,5 +113,5 @@
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"></div>
 <script src='app/js/tabs.min.js'></script>
-<script src='app/js/team.min.js'></script>
+<script src='app/js/team.js'></script>
 {% endblock body %}

@@ -74,7 +74,7 @@ class UploadsView
 
         // get file extension
         $ext = Tools::getExt($upload['real_name']);
-        $filepath = 'uploads/' . $upload['long_name'];
+        $filepath = ELAB_ROOT . 'uploads/' . $upload['long_name'];
         $thumbpath = $filepath . '_th.jpg';
 
         // Make thumbnail only if it isn't done already
@@ -95,7 +95,7 @@ class UploadsView
             if ($upload['comment'] != 'Click to add a comment') {
                 $html .= "title='" . $upload['comment'] . "' data-caption='" . $upload['comment'] . "'";
             }
-            $html .= "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
+            $html .= "><img class='thumb' src='app/download.php?f=" . $upload['long_name'] . "_th.jpg' alt='thumbnail' /></a>";
 
             // not an image
         } elseif (in_array($ext, $commonExtensions)) {

@@ -23,7 +23,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'smtp_encryption' => "tls",
             'smtp_password' => "yep",
             'smtp_port' => 587,
-            'stampcert' => "app/dfn-cert/pki.dfn.pem",
+            'stampcert' => "src/dfn-cert/pki.dfn.pem",
             'stamppass' => "",
             'login_tries' => 15,
             'ban_time' => 42

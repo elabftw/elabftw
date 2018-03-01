@@ -89,8 +89,8 @@ class App
      */
     private function getTwig()
     {
-        $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
-        $cache = ELAB_ROOT . 'uploads/tmp';
+        $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'web/app/tpl');
+        $cache = ELAB_ROOT . 'cache/twig';
         $options = array();
 
         // enable cache if not in debug (dev) mode

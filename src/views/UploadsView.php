@@ -126,7 +126,7 @@ class UploadsView
         $linkUrl = "app/download.php?f=" . $upload['long_name'] . "&name=" . $upload['real_name'];
         $html .= "<a href='" . $linkUrl . "' target='_blank' rel='noopener'>" . $upload['real_name'] . "</a>";
         $html .= "<span class='smallgray' style='display:inline'> " .
-            Tools::formatBytes(filesize('uploads/' . $upload['long_name'])) . "</span><br>";
+            Tools::formatBytes(filesize(ELAB_ROOT . 'uploads/' . $upload['long_name'])) . "</span><br>";
         // if we are in view mode, we don't show the comment if it's the default text
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
         // your are in view mode

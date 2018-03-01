@@ -51,7 +51,7 @@ class MakePdf extends AbstractMake
         $format = $this->Entity->Users->userData['pdf_format'];
 
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = ELAB_ROOT . 'uploads/tmp/mpdf/';
+        $tmpDir = ELAB_ROOT . 'cache/mpdf/';
         if (!is_dir($tmpDir)) {
             if (!mkdir($tmpDir)) {
                 throw new Exception("Could not create the $tmpDir directory. Please check permissions on this folder.");
@@ -208,7 +208,7 @@ class MakePdf extends AbstractMake
      */
     private function addCss()
     {
-        return file_get_contents(ELAB_ROOT . 'app/css/pdf.min.css');
+        return file_get_contents(ELAB_ROOT . 'web/app/css/pdf.min.css');
     }
 
     /**

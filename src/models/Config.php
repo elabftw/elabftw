@@ -151,7 +151,7 @@ class Config
             "stamppass" => '',
             "stampshare" => '1',
             "stampprovider" => 'http://zeitstempel.dfn.de/',
-            "stampcert" => 'app/dfn-cert/pki.dfn.pem',
+            "stampcert" => 'src/dfn-cert/pki.dfn.pem',
             "stamphash" => 'sha256',
             "schema" => $this->configArr['schema']);
 

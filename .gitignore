@@ -2,8 +2,11 @@
 .scannerwork/*
 *.bak
 _api/
+cache
 config.php
 config.php.*
+web/config.php
+web/config.php.*
 node_modules/*
 test.php
 tests/_output/*

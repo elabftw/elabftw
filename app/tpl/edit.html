@@ -3,7 +3,7 @@
 {% block body %}
 
 {% include('view-edit.html') %}
-<script src='app/js/tinymce-dropzone.min.js'></script>
+<script src='app/js/tinymce-dropzone.min.js?v=183'></script>
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
     <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
@@ -209,5 +209,5 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
-<script src='app/js/edit.min.js'></script>
+<script src='app/js/edit.min.js?v=183'></script>
 {% endblock body %}

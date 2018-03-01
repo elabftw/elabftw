@@ -8,6 +8,7 @@ config.php.*
 web/config.php
 web/config.php.*
 *.min.js
+*.bundle.js
 node_modules/*
 test.php
 tests/_output/*

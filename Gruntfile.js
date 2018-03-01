@@ -36,8 +36,8 @@ module.exports = function(grunt) {
           'web/app/js/team.min.js': 'web/app/js/team.js',
 
           'web/app/js/tinymce-dropzone.min.js': [
-              'node_modules/tinymce/tinymce.js',
-              'web/app/js/tinymce-langs/*',
+          //    'node_modules/tinymce/tinymce.js',
+           //   'web/app/js/tinymce-langs/*',
               'node_modules/dropzone/dist/dropzone.js'],
 
           'web/app/js/file-saver.min.js': 'node_modules/file-saver/FileSaver.js',

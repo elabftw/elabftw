@@ -6,17 +6,23 @@
  * doing autocompletion.
  */
 const path = require('path');
-const webpack = require('webpack');
+//const webpack = require('webpack');
 
 module.exports = {
-    entry: [
-        'jquery',
-        'jquery-ui',
-        'bootstrap/js/alert.js',
-        'bootstrap/js/button.js',
-        'bootstrap/js/collapse.js',
-        'bootstrap/js/dropdown.js',
-    ],
+    entry: {
+        main: [
+            'jquery',
+            'jquery-ui',
+            'bootstrap/js/alert.js',
+            'bootstrap/js/button.js',
+            'bootstrap/js/collapse.js',
+            'bootstrap/js/dropdown.js',
+        ],
+        edit: [
+            'tinymce',
+//            'dropzone',
+        ],
+    },
     resolve: {
         alias: {
             'jquery-ui': 'jquery-ui-dist/jquery-ui.js'
@@ -24,7 +30,7 @@ module.exports = {
     },
     mode: 'production',
     output: {
-        filename: 'bundle.min.js',
+        filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'web/app/js')
     },
     module: {
@@ -35,6 +41,7 @@ module.exports = {
                 use: [
                     { loader: 'expose-loader', options: 'jQuery' },
                     { loader: 'expose-loader', options: '$' },
+                    { loader: 'expose-loader', options: 'Dropzone.options' },
                 ]
             },
         ],

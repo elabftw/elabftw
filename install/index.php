@@ -226,11 +226,11 @@ try {
     <div class='center' style='margin-top:8px'>
         <button type="submit" name="Submit" class='button'>INSTALL eLabFTW</button>
     </div>
+    </form>
 
     <p>If the config.php file is in place, <button class='button click2reload'>reload this page</button></p>
     <p>You will be redirected to the registration page, where you can get your admin account :)</p>
 
-    </form>
     </section>
 
     </section>

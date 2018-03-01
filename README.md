@@ -3,7 +3,7 @@
 [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/master)
+[![Build Status](https://img.shields.io/circleci/project/github/elabftw/elabftw.svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 [![Codeclimate](https://d3s6mut3hikguw.cloudfront.net/github/elabftw/elabftw/badges/gpa.svg)](https://codeclimate.com/github/elabftw/elabftw)
 [![Codacy Badge](https://www.codacy.com/project/badge/9942fbe6c6f14f488be69e51e93a1c10)](https://www.codacy.com/app/elabftw/elabftw)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

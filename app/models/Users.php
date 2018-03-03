@@ -656,9 +656,8 @@ class Users
      * @throws Exception if invalid character length
      * @return bool True if password is updated
      */
-    private function updatePassword($password, $userid = null)
+    public function updatePassword($password, $userid = null)
     {
-
         if (is_null($userid)) {
             $userid = $this->userid;
         }

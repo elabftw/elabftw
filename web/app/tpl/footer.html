@@ -18,7 +18,8 @@
                 <a href='admin.php'>{{ 'Admin panel'|trans }}
 
                     {% if App.Users.readAllFromTeam(0)|length > 0 %}
-                        <span class='badge'>{{ App.Users.readAllFromTeam(0)|length }}</span>
+                        <span class='badge badge-dark p-1'>{{ App.Users.readAllFromTeam(0)|length }}</span>
+                        <span class='sr-only'>Unconfirmed users</span>
                     {% endif %}
                 </a>
             {% endif %}

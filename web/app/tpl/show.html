@@ -8,7 +8,7 @@
     <div class='col-md-2'>
     {% if not App.Session.get('anon') %}
         <div class='dropdown'>
-            <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
+            <button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
             {% if Entity.type == 'experiments' %}
                 <li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>

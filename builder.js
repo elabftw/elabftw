@@ -13,10 +13,10 @@ module.exports = {
         main: [
             'jquery',
             'jquery-ui',
-            'bootstrap/js/alert.js',
-            'bootstrap/js/button.js',
-            'bootstrap/js/collapse.js',
-            'bootstrap/js/dropdown.js',
+            'bootstrap/js/src/alert.js',
+            'bootstrap/js/src/button.js',
+            'bootstrap/js/src/collapse.js',
+            'bootstrap/js/src/dropdown.js',
             //'./web/app/js/team.js',
         ],
         edit: [

@@ -228,54 +228,68 @@ label {
     padding: 0 5%;
     border-radius: 0;
     border: 0;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 .navbar-brand {
     padding: 5px 5px 5px 0;
 }
-nav a {
+.nav-link {
     font-size:90%;
     text-transform:uppercase;
     color: #888;
     text-decoration: none;
 }
 /* blue on hover */
-nav a:hover {
+.nav-link:hover {
     color:#29AEB9 !important;
     transition-duration: 500ms;
 }
 /* we want the border bottom to be same width as the text */
-ul.nav li a {
-    padding-left: 0;
-    padding-right: 0;
+.nav-link {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     margin-left: 15px;
     margin-right: 15px;
 }
 /* selected nav entry */
-ul.nav li.active a {
+.nav-link.active {
     border-bottom:6px #29AEB9 solid;
+    /*
     background-color:#343434 !important;
     color: white !important;
+    */
 }
 
 /* search bar in head.php ; nav */
+/*
 #big_search {
     width:30%;
-    text-align:right;
+/*
     margin-right: -45px;
 }
+    */
 #big_search input {
     background:#555 url(images/search.png) no-repeat scroll right 10px center;
     border: none;
     border-radius: 20px;
+    /*
+    text-align:right;
+    */
+    margin-right: 0 !important;
+    /*
     width:50%;
+    */
     height:2em;
     color: white;
+    /*
     transition:width 1s;
+    */
 }
+/*
 #big_search input:focus {
     width:100%;
 }
+*/
 
 /* END NAV */
 
@@ -436,7 +450,8 @@ section.item {
 }
 
 /* BADGE */
-.badge {
+.badge-pill {
+    padding: 5px;
     margin-right: 5px;
 }
 .badgetab {

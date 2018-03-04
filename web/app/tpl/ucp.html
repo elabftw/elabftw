@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
+<script src='app/js/edit.bundle.js?v=183'></script>
 <script src="app/js/tinymce-dropzone.min.js"></script>
 
 <menu>
@@ -254,9 +255,9 @@
 <div class='box new-tpl-box'>
     <h3>{{ 'Experiments Templates'|trans }}</h3>
     <ul class='nav nav-pills' role='tablist'>
-        <li class='subtabhandle clickable badge badgetab badgetabactive' id='subtab_1'>{{ 'Create new'|trans }}</li>
+        <li class='subtabhandle clickable badge-pill badgetab badgetabactive' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
-            <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
+            <li class='sortable subtabhandle clickable badge-pill badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
         {% endfor %}
     </ul>
 

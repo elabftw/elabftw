@@ -1,13 +1,16 @@
 <footer>
+    <!--
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    -->
     <p class='footer_left'>
-        <a class='elab-tooltip-top' href='https://twitter.com/elabftw'>
+        <a class='elab-tooltip-top' style='color:#343434' href='https://twitter.com/elabftw'>
             <span>Follow eLabFTW on Twitter!</span>
-            <img src='app/img/twitter.png' alt='twitter' />
+            <i class='fab fa-twitter fa-lg'></i>
         </a>
 
-        <a class='elab-tooltip-top' href='https://github.com/elabftw/elabftw'>
+        <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw'>
             <span>eLabFTW on GitHub</span>
-            <img src='app/img/github.png' alt='github' />
+            <i class='fab fa-github fa-lg'></i>
         </a>
         <span>
             {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}

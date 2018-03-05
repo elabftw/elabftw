@@ -78,28 +78,6 @@ function isInt(n) {
     return n % 1 === 0;
 }
 
-// ENTITY
-function toggleLock(type, id) {
-    $.post("app/controllers/EntityController.php", {
-        lock: true,
-        type: type,
-        id: id
-    }).done(function(data) {
-        if (data.res) {
-            notif(data.msg, 'ok');
-            // change the lock icon
-            current = $('#lock').attr('src');
-            if (current === 'app/img/lock-gray.png') {
-                $('#lock').attr('src', 'app/img/unlock.png');
-            } else {
-                $('#lock').attr('src', 'app/img/lock-gray.png');
-            }
-        } else {
-            notif(data.msg, 'ko');
-        }
-    });
-}
-
 // called when you click the save button of tinymce
 function quickSave(type, id) {
     $.post('app/controllers/EntityController.php', {

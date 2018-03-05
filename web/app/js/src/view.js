@@ -28,11 +28,10 @@
                 if (data.res) {
                     notif(data.msg, 'ok');
                     // change the lock icon
-                    var current = $('#lock').attr('src');
-                    if (current === 'app/img/lock-gray.png') {
-                        $('#lock').attr('src', 'app/img/unlock.png');
+                    if ($('#lock').data('icon') === 'lock') {
+                        $('#lock').attr('class', 'fa-lock-open');
                     } else {
-                        $('#lock').attr('src', 'app/img/lock-gray.png');
+                        $('#lock').attr('class', 'fa-lock');
                     }
                 } else {
                     notif(data.msg, 'ko');

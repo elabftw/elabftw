@@ -162,7 +162,10 @@
 
                 <p class='title'>
                 {% if item.locked %}
+                    <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+                    <!--
                     <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
+                    -->
                 {% endif %}
 
                 <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>

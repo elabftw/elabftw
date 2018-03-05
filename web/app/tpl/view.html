@@ -19,7 +19,7 @@
 
 <!-- DATE -->
 <div>
-    <img src='app/img/calendar.png' title='date' alt='Date :' />{{ Entity.entityData.date|kdate }}
+    <i class='far fa-calendar-alt'></i> {{ Entity.entityData.date|kdate }}
 </div>
 <!-- begin action buttons row -->
 {% if not Entity.isReadOnly and not Entity.entityData.locked %}
@@ -32,18 +32,18 @@
 {% if not App.Session.has('anon') %}
     <a class='elab-tooltip' href='app/controllers/EntityController.php?duplicate=1&id={{ Entity.id }}&type={{ Entity.type }}'>
         <span>{{ 'Duplicate'|trans }}</span>
-        <img src='app/img/duplicate.png' alt='Duplicate' />
+        <i class='far fa-copy'></i>
     </a>
 {% endif %}
 
 <a class='elab-tooltip' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
     <span>{{ 'Make a PDF'|trans }}</span>
-    <img src='app/img/pdf.png' alt='PDF' />
+    <i class='far fa-file-pdf'></i>
 </a>
 
 <a class='elab-tooltip' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
     <span>{{ 'Make a ZIP'|trans }}</span>
-    <img src='app/img/zip.png' alt='ZIP' />
+    <i class='fas fa-file-archive'></i>
 </a>
 
 {% if Entity.type == 'items' %}
@@ -55,14 +55,14 @@
 
 <!-- LOCK -->
 {% if not Entity.isReadOnly %}
-    {% set imgSrc = 'unlock.png' %}
+    {% set lockIcon = 'fa-lock-open' %}
     {% set alt = 'Lock/Unlock item'|trans %}
     {% if Entity.entityData.locked %}
-        {% set imgSrc = 'lock-gray.png' %}
+        {% set lockIcon = 'fa-lock' %}
     {% endif %}
     <a class='elab-tooltip' href='#'>
         <span>{{ alt }}</span>
-        <img id='lock' src='app/img/{{ imgSrc }}' alt='{{ alt }}' />
+        <i id='lock' class='fas {{lockIcon}}'></i>
     </a>
 {% endif %}
 
@@ -82,7 +82,7 @@
 
 <!-- build the tag array -->
 {% if Entity.entityData.tags|length > 0 %}
-    <span class='tags'><img src='app/img/tags.png' alt='tags' />
+<span class='tags'><i class='fas fa-tags'></i>
     {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
     {% set tagsValueArr = Entity.entityData.tags|split('|') %}
     {% for key, tag in tagsValueArr %}
@@ -187,5 +187,8 @@
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 
+<!--
 <script src='app/js/view.min.js'></script>
+-->
+<script src='app/js/src/view.js'></script>
 {% endblock body %}

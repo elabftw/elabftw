@@ -7,6 +7,10 @@
   },
   "dependencies": {
     "@fancyapps/fancybox": "^3.2.5",
+    "@fortawesome/fontawesome": "^1.1.4",
+    "@fortawesome/fontawesome-free-brands": "^5.0.8",
+    "@fortawesome/fontawesome-free-regular": "^5.0.8",
+    "@fortawesome/fontawesome-free-solid": "^5.0.8",
     "bootstrap": "^4.0.0",
     "bootstrap-markdown": "^2.10.0",
     "dropzone": "^5.3.0",

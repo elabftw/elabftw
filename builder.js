@@ -6,7 +6,6 @@
  * doing autocompletion.
  */
 const path = require('path');
-//const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -17,22 +16,21 @@ module.exports = {
             'bootstrap/js/src/button.js',
             'bootstrap/js/src/collapse.js',
             'bootstrap/js/src/dropdown.js',
-            //'./web/app/js/team.js',
+            './web/app/js/src/fontawesome.es6.js',
         ],
         edit: [
             'tinymce',
-//            'dropzone',
         ],
         scheduler: [
             'moment',
-            //'./web/app/js/team.js',
-            //'fullcalendar',
         ],
     },
     resolve: {
         alias: {
             'jquery-ui': 'jquery-ui-dist/jquery-ui.js',
-            //'fullcalendar': 'fullcalendar/dist/fullcalendar.js',
+            '@fortawesome/fontawesome-free-solid$': '@fortawesome/fontawesome-free-solid/shakable.es.js',
+            '@fortawesome/fontawesome-free-regular$': '@fortawesome/fontawesome-free-regular/shakable.es.js',
+            '@fortawesome/fontawesome-free-brands$': '@fortawesome/fontawesome-free-brands/shakable.es.js',
         }
     },
     mode: 'production',
@@ -48,8 +46,6 @@ module.exports = {
                 use: [
                     { loader: 'expose-loader', options: 'jQuery' },
                     { loader: 'expose-loader', options: '$' },
-                    //{ loader: 'expose-loader', options: 'Dropzone.options' },
-                    //{ loader: 'expose-loader', options: 'fullCalendar' },
                 ]
             },
             {
@@ -58,22 +54,6 @@ module.exports = {
                     { loader: 'expose-loader', options: 'moment' },
                 ]
             },
-            /*
-            {
-                test: require.resolve('fullcalendar'),
-                use: [
-                    { loader: 'expose-loader', options: 'fullCalendar' },
-                ]
-            },
-            */
         ],
     },
-    /*
-    plugins: [
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-        })
-    ]
-    */
 };

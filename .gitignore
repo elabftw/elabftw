@@ -10,6 +10,7 @@ web/config.php.*
 *.min.js
 *.bundle.js
 node_modules/*
+phpDocumentor.phar
 test.php
 tests/_output/*
 tests/_support/_generated*

@@ -97,8 +97,9 @@ module.exports = function(grunt) {
       }
     },
     shell: {
+      // you need to have phpDocumentor.phar in the root dir: wget http://phpdoc.org/phpDocumentor.phar
       buildapi: {
-        command: 'phpdoc run -d src/classes -d src/models -d web/app/controllers -d src/views -t _api'
+        command: 'php phpDocumentor.phar run -d src/classes -d src/models -d web/app/controllers -d src/views -t _api'
       },
       rununit: {
         command: 'php vendor/bin/codecept run unit'

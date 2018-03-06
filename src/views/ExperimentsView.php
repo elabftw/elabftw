@@ -74,8 +74,8 @@ class ExperimentsView
             _('Experiment was timestamped by') . " " . $timestamper['fullname'] . " " . _('on') .
             " " . $date->format('Y-m-d') . " " . _('at') . " " .
             $date->format('H:i:s') . " " .
-            $date->getTimezone()->getName() . " <a class='elab-tooltip' href='uploads/" .
-            $pdf[0]['long_name'] . "'><span>" . _('Download timestamped pdf') . "</span><i class='far fa-file-pdf'></i></a> <a class='elab-tooltip' href='uploads/" . $token[0]['long_name'] .
+            $date->getTimezone()->getName() . " <a class='elab-tooltip' href='app/download.php?f=" .
+            $pdf[0]['long_name'] . "'><span>" . _('Download timestamped pdf') . "</span><i class='far fa-file-pdf'></i></a> <a class='elab-tooltip' href='app/download.php?f=" . $token[0]['long_name'] .
             "'><span>" . _('Download token') . "</span><i class='fas fa-download'></i></a> <a href='#' class='elab-tooltip'><span>" .
             _('Decode token') . "</span><i class='fas fa-info-circle decode-asn1' data-token='" . $token[0]['long_name'] .
             "' data-id='" . $this->Entity->entityData['id'] . "'></i></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>",

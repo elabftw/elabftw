@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class StatusTest extends \PHPUnit_Framework_TestCase
+class StatusTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class TagCloudTest extends \PHPUnit_Framework_TestCase
+class TagCloudTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

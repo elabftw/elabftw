@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class CommentsTest extends \PHPUnit_Framework_TestCase
+class CommentsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

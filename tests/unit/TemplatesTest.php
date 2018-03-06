@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class TemplatesTest extends \PHPUnit_Framework_TestCase
+class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

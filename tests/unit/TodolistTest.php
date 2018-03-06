@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class TodolistTest extends \PHPUnit_Framework_TestCase
+class TodolistTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

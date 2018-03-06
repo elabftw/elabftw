@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class ItemsTypesTest extends \PHPUnit_Framework_TestCase
+class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

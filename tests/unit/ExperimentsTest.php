@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class ExperimentsTest extends \PHPUnit_Framework_TestCase
+class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

@@ -62,7 +62,7 @@ try {
         // Send an email with the reset link
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
+        $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject('[eLabFTW] Password reset for ' . $user['fullname'])
         // Set the From address with an associative array

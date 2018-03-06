@@ -81,12 +81,12 @@ class Email
             // Use SMTP Server
             case 'smtp':
                 if ($this->Config->configArr['smtp_encryption'] === 'none') {
-                    $transport = Swift_SmtpTransport::newInstance(
+                    $transport = new Swift_SmtpTransport(
                         $this->Config->configArr['smtp_address'],
                         $this->Config->configArr['smtp_port']
                     );
                 } else {
-                    $transport = Swift_SmtpTransport::newInstance(
+                    $transport = new Swift_SmtpTransport(
                         $this->Config->configArr['smtp_address'],
                         $this->Config->configArr['smtp_port'],
                         $this->Config->configArr['smtp_encryption']
@@ -104,16 +104,18 @@ class Email
 
             // Use php mail function
             case 'php':
+                // TODO doesn't see to exist anymore
+                throw new Exception('Invalid email method!');
                 $transport = Swift_MailTransport::newInstance();
                 break;
 
             // Use locally installed MTA (aka sendmail); Default
             default:
-                $transport = Swift_SendmailTransport::newInstance($this->Config->configArr['sendmail_path'] . ' -bs');
+                $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
                 break;
         }
 
-        $mailer = Swift_Mailer::newInstance($transport);
+        $mailer = new Swift_Mailer($transport);
         return $mailer;
     }
 
@@ -130,7 +132,7 @@ class Email
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
+        $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
         // Set the From address with an associative array
@@ -167,7 +169,7 @@ class Email
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
+        $message = (new Swift_Message())
         ->setSubject($subject)
         ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         ->setTo($to)
@@ -195,7 +197,7 @@ class Email
 
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
+        $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
         // Set the From address with an associative array
@@ -234,7 +236,7 @@ class Email
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         // Create the message
-        $message = Swift_Message::newInstance()
+        $message = (new Swift_Message())
         // Give the message a subject
         // no i18n here
         ->setSubject('[eLabFTW] Account validated')

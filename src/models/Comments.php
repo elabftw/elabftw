@@ -100,7 +100,7 @@ class Comments implements CrudInterface
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 
-        $message = Swift_Message::newInstance()
+        $message = (new Swift_Message())
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New comment posted'))
         // Set the From address with an associative array

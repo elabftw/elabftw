@@ -853,21 +853,7 @@ input[type='checkbox']{
     height: 100px;
 }
 
-.expcomment_box {
-    background-color: #f2f2f2;
-    border: 1px solid #dcdddc;
-    border-radius: 5px;
-    margin-top:5px;
-    padding: 10px;
-}
-
-.expcomment_box p {
-    margin: 5px 0;
-    padding: 5px;
-    border-radius: 5 0 5px 0;
-    border-left: 3px solid #797979;
-}
-.expcomment_box p:hover {
+.expcomment:hover {
     background-color:#555;
     color:#fff;
 }

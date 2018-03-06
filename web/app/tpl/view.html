@@ -153,13 +153,13 @@
 
             {% if commentsArr %}
                 {% for comment in commentsArr %}
-                    <div class='expcomment_box'>
+                    <div class='box'>
                         {% if comment.userid == Entity.Users.userid %}
-                        <img class='align_right commentsDestroy' src='app/img/small-trash.png' title='delete' alt='delete' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' />
+                        <i class='align_right fas fa-times clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
                         {% endif %}
-                        <span>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname)|raw }}</span>
+                        <span class='text-muted'>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname)|raw }}</span>
                         <!-- .editable uses the id of the element to send to the controller -->
-                        <p {{ comment.userid == Entity.Users.userid ? "class='editable'" }} id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
+                        <p class='expcomment m-2 p-2 {{ comment.userid == Entity.Users.userid ? "editable" }}' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
                     </div>
                 {% endfor %}
             {% endif %}

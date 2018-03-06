@@ -260,6 +260,7 @@
             <li class='sortable subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
         {% endfor %}
     </ul>
+    <hr>
 
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
@@ -299,8 +300,12 @@
         </span>
         <input type='text' style='width:auto' class='createTagInput' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
-            <img class='align_right save-to-file' src='app/img/download.png' title='Download Template' alt='Download' data-name='{{ template.name }}' data-id='e{{ template.id }}' />
-            <img class='align_right destroy-template' src='app/img/small-trash.png' title='Delete' alt='Delete' data-id='{{ template.id }}' />
+            <a class='align_right save-to-file' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
+                <i class='fas fa-download clickable'></i>
+            </a>
+            <a class='align_right destroy-template' title='Destroy template' data-id='{{ template.id }}'>
+                <i class='fas fa-times mr-1 clickable'></i>
+            </a>
 
             <form action='app/controllers/UcpController.php' method='post'>
                 <input type='hidden' name='tpl_form' />

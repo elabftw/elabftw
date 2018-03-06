@@ -44,7 +44,7 @@ class Comments implements CrudInterface
      */
     public function create($comment)
     {
-        $comment = filter_var($comment, FILTER_SANITIZE_STRING);
+        $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
 
         $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid)
             VALUES(:datetime, :exp_id, :comment, :userid)";
@@ -150,7 +150,7 @@ class Comments implements CrudInterface
      */
     public function update($comment, $id)
     {
-        $comment = filter_var($comment, FILTER_SANITIZE_STRING);
+        $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
         // check length
         if (strlen($comment) < 2) {
             return false;

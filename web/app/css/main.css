@@ -838,6 +838,12 @@ input[type='checkbox']{
 /* fix for bootstrap's thumbnail class */
 .thumbnail {
     overflow:hidden;
+    /*
+    border: 1px solid #f2f2f2;
+    padding: 5px;
+    border-radius: 7px;
+    */
+
 }
 
 .thumb {
@@ -1162,4 +1168,8 @@ h3.togglable-next {
 
 .svg-inline--fa {
     color: #797979;
+}
+
+.well {
+    overflow: visible;
 }

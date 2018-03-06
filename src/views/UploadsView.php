@@ -63,13 +63,13 @@ class UploadsView
         );
 
         $html .= "<div class='col-md-4 col-sm-6'>";
-        $html .= "<div class='thumbnail' data-type='" . $this->Uploads->Entity->type .
+        $html .= "<div class='thumbnail box' data-type='" . $this->Uploads->Entity->type .
             "' data-id='" . $this->Uploads->Entity->id . "'>";
         // show the delete button only in edit mode, not in view mode
         if ($mode === 'edit') {
             $html .= "<a class='align_right uploadsDestroy' data-id='" . $upload['id'] . "' data-type='" . $upload['type'] . "'
                 data-itemid='" . $upload['item_id'] . "' data-msg='" . _('Delete this?') . "'>";
-            $html .= "<img src='app/img/small-trash.png' title='delete' alt='delete' /></a>";
+            $html .= "<i class='fas fa-times clickable'></i></a>";
         } // end if it is in edit mode
 
         // get file extension
@@ -95,11 +95,11 @@ class UploadsView
             if ($upload['comment'] != 'Click to add a comment') {
                 $html .= "title='" . $upload['comment'] . "' data-caption='" . $upload['comment'] . "'";
             }
-            $html .= "><img class='thumb' src='app/download.php?f=" . $upload['long_name'] . "_th.jpg' alt='thumbnail' /></a>";
+            $html .= "><img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f=" . $upload['long_name'] . "_th.jpg' alt='thumbnail' /></a>";
 
             // not an image
         } elseif (in_array($ext, $commonExtensions)) {
-            $html .= "<img class='thumb' src='app/img/thumb-" . $ext . ".png' alt='' />";
+            $html .= "<img class='thumb img-thumbnail rounded mx-auto d-block' src='app/img/thumb-" . $ext . ".png' alt='' />";
 
             // special case for mol files, only in view mode
         } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
@@ -118,10 +118,10 @@ class UploadsView
             $html .= $molviewer->getViewerDiv();
         } else {
             // uncommon extension without a nice image to display
-            $html .= "<img class='thumb' src='app/img/thumb.png' alt='' />";
+            $html .= "<img class='thumb img-thumbnail rounded mx-auto d-block' src='app/img/thumb.png' alt='' />";
         }
 
-        // now display the name + comment with icons
+        // NOW DISPLAY THE NAME + COMMENT WITH ICONS
         $html .= "<div class='caption'><img src='app/img/attached.png' alt='attached' /> ";
         $linkUrl = "app/download.php?f=" . $upload['long_name'] . "&name=" . $upload['real_name'];
         $html .= "<a href='" . $linkUrl . "' rel='noopener'>" . $upload['real_name'] . "</a>";

@@ -123,11 +123,15 @@
                 {% if stepsArr %}
                 <ul class='list-group'>
                     {% for step in stepsArr %}
-                    <li class='list-group-item {{ step.finished ? 'finished' }}'>
-                        <input type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' /> {{ step.body|raw }}
-                        <span class='align_right'>{{ step.finished ? step.finished_time }}
-                        <a class='stepDestroy' data-stepid='{{ step.id }}'>
-                        <img src='app/img/small-trash.png' title='Delete' alt='Delete' /></a></span>
+                    <li class='d-flex list-group-item {{ step.finished ? 'finished' }}'>
+                        <input class='mr-1' type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' />
+                        <span class='mr-2'>{{ step.body|raw }}</span>
+                        <span class='mr-2 text-muted'>
+                            {{ step.finished ? 'completed on %s'|trans|format(step.finished_time) }}
+                        </span>
+                        <a class='ml-auto stepDestroy' data-stepid='{{ step.id }}'>
+                            <i class='fas fa-lg fa-times clickable'></i>
+                        </a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -146,8 +150,9 @@
                     {% for link in linksArr %}
                     <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
                             {{ link.title|raw }}</a>
-                        <a class='linkDestroy' data-linkid='{{ link.linkid }}'>
-                        <img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' /></a>
+                        <a class='align_right linkDestroy' data-linkid='{{ link.linkid }}'>
+                            <i class='fas fa-lg fa-times clickable'></i>
+                        </a>
                     </li>
                     {% endfor %}
                 </ul>

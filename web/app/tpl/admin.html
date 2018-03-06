@@ -199,10 +199,10 @@
             <hr>
             <h3>{{ 'Existing groups'|trans }}</h3>
             {% for teamGroup in teamGroupsArr %}
-                <div class='well'>
-                    <a class='elab-tooltip' style='float:right;' href='#'>
-                    <span>{{ 'Remove this Group'|trans }}</span>
-                    <img class='teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" src='app/img/small-trash.png' style='float:right' alt='trash' /></a>
+                <div class='box'>
+                    <a href='#'>
+                        <i class='fas fa-times clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
+                    </a>
                     <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
                     <ul class='group-list'>
                         {% for user in teamGroup.users %}

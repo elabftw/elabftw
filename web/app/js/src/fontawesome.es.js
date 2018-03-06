@@ -7,11 +7,9 @@
 
 const fontawesome = require('@fortawesome/fontawesome');
 
-import { faCogs, faDownload, faFileArchive, faInfoCircle, faLock, faLockOpen, faQuestionCircle, faSignOutAlt, faTags } from '@fortawesome/fontawesome-free-solid';
-import { faCalendarAlt, faCopy, faFilePdf } from '@fortawesome/fontawesome-free-regular';
-import { faGithub, faTwitter } from '@fortawesome/fontawesome-free-brands';
 
 // SOLID
+import { faCogs, faDownload, faFileArchive, faInfoCircle, faLock, faLockOpen, faQuestionCircle, faSignOutAlt, faTags, faTimes } from '@fortawesome/fontawesome-free-solid';
 fontawesome.library.add(faCogs);
 fontawesome.library.add(faDownload);
 fontawesome.library.add(faFileArchive);
@@ -21,12 +19,15 @@ fontawesome.library.add(faLockOpen);
 fontawesome.library.add(faQuestionCircle);
 fontawesome.library.add(faSignOutAlt);
 fontawesome.library.add(faTags);
+fontawesome.library.add(faTimes);
 
 // REGULAR
+import { faCalendarAlt, faCopy, faFilePdf } from '@fortawesome/fontawesome-free-regular';
 fontawesome.library.add(faCalendarAlt);
 fontawesome.library.add(faCopy);
 fontawesome.library.add(faFilePdf);
 
 // BRANDS
+import { faGithub, faTwitter } from '@fortawesome/fontawesome-free-brands';
 fontawesome.library.add(faTwitter);
 fontawesome.library.add(faGithub);

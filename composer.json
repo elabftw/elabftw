@@ -3,7 +3,7 @@
     "description": "Laboratory notebook for research labs",
     "homepage": "https://www.elabftw.net",
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.1.0",
         "ext-ctype": "*",
         "ext-curl":"*",
         "ext-gettext":"*",
@@ -13,7 +13,7 @@
         "ext-zip": "*",
         "defuse/php-encryption": "2.1.*",
         "mpdf/mpdf": "^7.0",
-        "swiftmailer/swiftmailer":"^5.4",
+        "swiftmailer/swiftmailer":"^6.0.2",
         "onelogin/php-saml": "^2.10",
         "guzzlehttp/guzzle": "^6.3",
         "michelf/php-markdown": "^1.7",

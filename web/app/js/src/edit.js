@@ -28,7 +28,7 @@
             // once it is done
             this.on('complete', function(answer) {
                 // check the answer we get back from app/controllers/EntityController.php
-                var json = JSON.parse(answer.xhr.responseText);
+                const json = JSON.parse(answer.xhr.responseText);
                 if (json.res) {
                     notif(json.msg, 'ok');
                 } else {
@@ -49,19 +49,22 @@
         // add the title in the page name (see #324)
         document.title = $('#entityInfos').data('title');
 
-        var type = $('#entityInfos').data('type');
-        var id = $('#entityInfos').data('id');
-        var confirmText = $('#entityInfos').data('confirm');
-        var controller = 'app/controllers/ExperimentsController.php';
-        var location = 'experiments.php';
+        let type = $('#entityInfos').data('type');
+        let id = $('#entityInfos').data('id');
+        let confirmText = $('#entityInfos').data('confirm');
+        let controller = 'app/controllers/ExperimentsController.php';
+        let location = 'experiments.php';
         if (type != 'experiments') {
             controller = 'app/controllers/DatabaseController.php';
             location = 'database.php';
         }
 
+        ////////////////
+        // DATA RECOVERY
+
         // check if there is some local data with this id to recover
         if ((localStorage.getItem('id') == id) && (localStorage.getItem('type') == type)) {
-            var bodyRecovery = $('<div></div>', {
+            let bodyRecovery = $('<div></div>', {
                 'class' : 'alert alert-warning',
                 html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button button-delete recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
             });
@@ -90,9 +93,13 @@
             document.location.reload();
         });
 
+        // END DATA RECOVERY
+        ////////////////////
 
-        var Entity = {
-            destroy: function() {
+
+        class Entity {
+
+            destroy() {
                 if (confirm(confirmText)) {
                     if (type === 'items') {
                         controller = 'app/controllers/EntityController.php';
@@ -110,21 +117,155 @@
                     });
                 }
             }
-        };
+        }
 
-        var Tag = {
-            controller: 'app/controllers/EntityController.php',
+        class Link {
+
             // the argument here is the event (needed to detect which key is pressed)
-            saveOnEnter: function(e) {
+            create(e) {
+                let keynum;
+                if (e.which) {
+                    keynum = e.which;
+                }
+                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+                    // get link
+                    let link = decodeURIComponent($('#linkinput').val());
+                    // fix for user pressing enter with no input
+                    if (link.length > 0) {
+                        // parseint will get the id, and not the rest (in case there is number in title)
+                        link = parseInt(link, 10);
+                        if (!isNaN(link)) {
+                            $.post(controller, {
+                                createLink: true,
+                                id: id,
+                                linkId: link
+                            })
+                            // reload the link list
+                            .done(function () {
+                                $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
+                                // clear input field
+                                $("#linkinput").val("");
+                            });
+                        } // end if input is bad
+                    } // end if input < 0
+                } // end if key is enter
+            }
+
+            destroy(linkId) {
+                if (confirm(confirmText)) {
+                    $.post(controller, {
+                        destroyLink: true,
+                        id: id,
+                        linkId: linkId
+                    }).done(function (data) {
+                        if (data.res) {
+                            notif(data.msg, 'ok');
+                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
+                        } else {
+                            notif(data.msg, 'ko');
+                        }
+                    });
+                }
+            }
+        }
+
+        class Star {
+
+            constructor() {
+                this.controller = 'app/controllers/DatabaseController.php';
+            }
+
+            update(rating) {
+                $.post(this.controller, {
+                    rating: rating,
+                    id: id
+                }).done(function(data) {
+                    if (data.res) {
+                        notif(data.msg, 'ok');
+                    } else {
+                        notif(data.msg, 'ko');
+                    }
+                });
+            }
+        }
+
+
+        class Step {
+
+            // the argument here is the event (needed to detect which key is pressed)
+            create(e) {
+                let keynum;
+                if (e.which) {
+                    keynum = e.which;
+                }
+                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+                    // get body
+                    let body = decodeURIComponent($('#stepinput').val());
+                    // fix for user pressing enter with no input
+                    if (body.length > 0) {
+                        $.post(controller, {
+                            createStep: true,
+                            id: id,
+                            body: body
+                        })
+                        // reload the step list
+                        .done(function() {
+                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                            // clear input field
+                            $("#stepinput").val("");
+                        });
+                    } // end if input < 0
+                } // end if key is enter
+            }
+
+            finish(stepId) {
+                $.post(controller, {
+                    finishStep: true,
+                    id: id,
+                    stepId: stepId
+                })
+                // reload the step list
+                .done(function() {
+                    $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                    // clear input field
+                    $("#stepinput").val("");
+                });
+            }
+
+            destroy(stepId) {
+                if (confirm(confirmText)) {
+                    $.post(controller, {
+                        destroyStep: true,
+                        id: id,
+                        stepId: stepId
+                    }).done(function(data) {
+                        if (data.res) {
+                            notif(data.msg, 'ok');
+                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                        } else {
+                            notif(data.msg, 'ko');
+                        }
+                    });
+                }
+            }
+        }
+
+        class Tag {
+
+            constructor() {
+                this.controller = 'app/controllers/EntityController.php';
+            }
+
+            saveOnEnter(e) {
                 // if the key that was pressed was Enter (ascii code 13)
                 if (e.which === 13) {
                     this.save();
                 }
-            },
+            }
 
-            save: function() {
+            save() {
                 // get tag
-                var tag = $('#createTagInput').val();
+                const tag = $('#createTagInput').val();
                 // do nothing if input is empty
                 if (tag.length > 0) {
                     // POST request
@@ -139,146 +280,127 @@
                         $('#createTagInput').val('');
                     });
                 }
-            },
+            }
 
-            destroy: function(tag) {
+            destroy(tagId) {
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                         destroyTag: true,
                         type: type,
                         id: id,
-                        tag_id: tag
+                        tag_id: tagId
                     }).done(function() {
                         $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
                     });
                 }
             }
-        };
+        }
 
-        var Step = {
-            controller: 'app/controllers/ExperimentsController.php',
-            // the argument here is the event (needed to detect which key is pressed)
-            create: function(e) {
-                var keynum;
-                if (e.which) {
-                    keynum = e.which;
+
+        ///////
+        // TAGS
+        const TagC = new Tag();
+
+        // CREATE
+        // listen keypress, add tag when it's enter
+        $(document).on('keypress', '#createTagInput', function(e) {
+            TagC.saveOnEnter(e);
+        });
+        // also add the tag if the focus is lost because it looks like it's not obvious for people to use the enter key
+        $(document).on('blur', '#createTagInput', function() {
+            TagC.save();
+        });
+
+        // AUTOCOMPLETE
+        let cache = {};
+        $('#createTagInput').autocomplete({
+            source: function(request, response) {
+                let term = request.term;
+                if (term in cache) {
+                    response(cache[term]);
+                    return;
                 }
-                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get body
-                    var body = decodeURIComponent($('#stepinput').val());
-                    // fix for user pressing enter with no input
-                    if (body.length > 0) {
-                        $.post(this.controller, {
-                            createStep: true,
-                            id: id,
-                            body: body
-                        })
-                        // reload the step list
-                        .done(function () {
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
-                            // clear input field
-                            $("#stepinput").val("");
-                        });
-                    } // end if input < 0
-                } // end if key is enter
-            },
-
-            finish: function(stepId) {
-                $.post(this.controller, {
-                    finishStep: true,
-                    id: id,
-                    stepId: stepId
-                })
-                // reload the step list
-                .done(function () {
-                    $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
-                    // clear input field
-                    $("#stepinput").val("");
+                $.getJSON("app/controllers/EntityController.php?tag=1&type=" + type + "&id=" + id, request, function(data, status, xhr) {
+                    cache[term] = data;
+                    response(data);
                 });
-            },
-
-            destroy: function(stepId) {
-                if (confirm(confirmText)) {
-                    $.post(this.controller, {
-                        destroyStep: true,
-                        id: id,
-                        stepId: stepId
-                    }).done(function (data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
-                        } else {
-                            notif(data.msg, 'ko');
-                        }
-                    });
-                }
             }
-        };
-
-        var Link = {
-            controller: 'app/controllers/ExperimentsController.php',
-            // the argument here is the event (needed to detect which key is pressed)
-            create: function(e) {
-                var keynum;
-                if (e.which) {
-                    keynum = e.which;
-                }
-                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get link
-                    var link = decodeURIComponent($('#linkinput').val());
-                    // fix for user pressing enter with no input
-                    if (link.length > 0) {
-                        // parseint will get the id, and not the rest (in case there is number in title)
-                        link = parseInt(link, 10);
-                        if (!isNaN(link)) {
-                            $.post(this.controller, {
-                                createLink: true,
-                                id: id,
-                                linkId: link
-                            })
-                            // reload the link list
-                            .done(function () {
-                                $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
-                                // clear input field
-                                $("#linkinput").val("");
-                            });
-                        } // end if input is bad
-                    } // end if input < 0
-                } // end if key is enter
-            },
-            destroy: function(link) {
-                if (confirm(confirmText)) {
-                    $.post(this.controller, {
-                        destroyLink: true,
-                        id: id,
-                        linkId: link
-                    }).done(function (data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
-                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
-                        } else {
-                            notif(data.msg, 'ko');
-                        }
-                    });
-                }
-            }
-        };
-
-        $(document).on('click', '.entityDestroy', function() {
-            Entity.destroy();
         });
+
+        // DESTROY
         $(document).on('click', '.tagDestroy', function() {
-            Tag.destroy($(this).data('tagid'));
+            //Tag.destroy($(this).data('tagid'));
+            TagC.destroy($(this).data('tagid'));
+
         });
+
+        // END TAGS
+        ///////////
+
+        // DESTROY ENTITY
+        const EntityC = new Entity();
+        $(document).on('click', '.entityDestroy', function() {
+            EntityC.destroy();
+        });
+
+        ////////
+        // STEPS
+        const StepC = new Step();
+
+        // CREATE
+        $('#stepinput').keypress(function (e) {
+            StepC.create(e);
+        });
+
+        // STEP IS DONE
+        $(document).on('click', 'input[type=checkbox]', function() {
+            StepC.finish($(this).data('stepid'));
+        });
+
+
+        // DESTROY
         $(document).on('click', '.stepDestroy', function() {
-            Step.destroy($(this).data('stepid'));
+            StepC.destroy($(this).data('stepid'));
         });
+
+        // END STEPS
+        ////////////
+
+        ////////
+        // LINKS
+        const LinkC = new Link();
+
+        // CREATE
+        // listen keypress, add link when it's enter
+        $('#linkinput').keypress(function (e) {
+            LinkC.create(e);
+        });
+        // AUTOCOMPLETE
+        $( '#linkinput' ).autocomplete({
+            source: function(request, response) {
+                let term = request.term;
+                if (term in cache) {
+                    response(cache[term]);
+                    return;
+                }
+                $.getJSON("app/controllers/ExperimentsController.php", request, function(data, status, xhr) {
+                    cache[term] = data;
+                    response(data);
+                });
+            }
+        });
+
+        // DESTROY
         $(document).on('click', '.linkDestroy', function() {
-            Link.destroy($(this).data('linkid'));
+            LinkC.destroy($(this).data('linkid'));
         });
+
+        // END LINKS
+        ////////////
+
         // VISIBILITY SELECT
         $(document).on('change', '#visibility_select', function() {
-            var visibility = $(this).val();
+            const visibility = $(this).val();
             $.post("app/controllers/ExperimentsController.php", {
                 updateVisibility: true,
                 id: id,
@@ -294,7 +416,7 @@
 
         // STATUS SELECT
         $(document).on('change', '#category_select', function() {
-            var categoryId = $(this).val();
+            const categoryId = $(this).val();
             $.post("app/controllers/EntityController.php", {
                 updateCategory: true,
                 id: id,
@@ -308,7 +430,7 @@
                     $("#main_section").css('border', null);
                     // and we add our new border color
                     // first : get what is the color of the new status
-                    var css = '6px solid #' + data.color;
+                    const css = '6px solid #' + data.color;
                     $("#main_section").css('border-left', css);
                 } else {
                     notif(data.msg, 'ko');
@@ -317,8 +439,8 @@
         });
 
         // AUTOSAVE
-        var typingTimer;                // timer identifier
-        var doneTypingInterval = 7000;  // time in ms between end of typing and save
+        let typingTimer;                // timer identifier
+        const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
         // user finished typing, save work
         function doneTyping () {
@@ -336,13 +458,13 @@
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {
-            var imgLink = "<img src='app/download.php?f=" + $(this).data('link') + "' />";
+            const imgLink = "<img src='app/download.php?f=" + $(this).data('link') + "' />";
             tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
         });
 
         // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
         $(document).on('click', '.show-hide',  function() {
-            var elem;
+            let elem;
 
             if ($(this).data('type') === 'doodle') {
                 elem = $('.canvasDiv');
@@ -364,63 +486,6 @@
             makeEditableFileComment($(this).data('type'), $(this).data('id'));
         });
 
-        // CREATE TAG
-        // listen keypress, add tag when it's enter
-        $(document).on('keypress', '#createTagInput', function(e) {
-            Tag.saveOnEnter(e);
-        });
-        // also add the tag if the focus is lost because it looks like it's not obvious for people to use the enter key
-        $(document).on('blur', '#createTagInput', function() {
-            Tag.save();
-        });
-        // AUTOCOMPLETE THE TAGS
-        var cache = {};
-        $('#createTagInput').autocomplete({
-            source: function(request, response) {
-                var term = request.term;
-                if (term in cache) {
-                    response(cache[term]);
-                    return;
-                }
-                $.getJSON("app/controllers/EntityController.php?tag=1&type=" + type + "&id=" + id, request, function(data, status, xhr) {
-                    cache[term] = data;
-                    response(data);
-                });
-            }
-        });
-
-        if (type === 'experiments') {
-            // CREATE STEP
-            $('#stepinput').keypress(function (e) {
-                Step.create(e);
-            });
-
-            // STEP IS DONE
-            $(document).on('click', 'input[type=checkbox]', function() {
-                Step.finish($(this).data('stepid'));
-            });
-
-
-            // CREATE LINK
-            // listen keypress, add link when it's enter
-            $('#linkinput').keypress(function (e) {
-                Link.create(e);
-            });
-            // AUTOCOMPLETE THE LINKS
-            $( '#linkinput' ).autocomplete({
-                source: function(request, response) {
-                    var term = request.term;
-                    if (term in cache) {
-                        response(cache[term]);
-                        return;
-                    }
-                    $.getJSON("app/controllers/ExperimentsController.php", request, function(data, status, xhr) {
-                        cache[term] = data;
-                        response(data);
-                    });
-                }
-            });
-        }
 
         // DATEPICKER
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
@@ -432,24 +497,10 @@
         });
 
         // STAR RATING
-        var Star = {
-            controller: 'app/controllers/DatabaseController.php',
-            update: function(rating) {
-                $.post(this.controller, {
-                    rating: rating,
-                    id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        };
+        const StarC = new Star();
         $('input.star').rating();
         $('.star').click(function() {
-            Star.update($(this).data('rating').current[0].innerText);
+            StarC.update($(this).data('rating').current[0].innerText);
         });
 
         // EDITOR
@@ -500,7 +551,7 @@
                 delimiter: ['#', '$'],
                 // get the source from json with get request
                 source: function (query, process, delimiter) {
-                    var url = "app/controllers/EntityController.php?mention=1&term=" + query;
+                    let url = "app/controllers/EntityController.php?mention=1&term=" + query;
                     if (delimiter === '#') {
                         $.getJSON(url, function(data, status, xhr) {
                             process(data);

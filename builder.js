@@ -17,6 +17,7 @@ module.exports = {
             'bootstrap/js/src/collapse.js',
             'bootstrap/js/src/dropdown.js',
             './web/app/js/src/fontawesome.es6.js',
+            './web/app/js/src/classes.es6.js',
         ],
         edit: [
             'tinymce',

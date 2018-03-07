@@ -10,6 +10,8 @@
 (function() {
     'use strict';
 
+    // i18n for moment.js
+    moment.locale($('#entityInfos').data('locale'));
     // DISPLAY COMMENT TIME RELATIVE TO NOW
     function relativeMoment() {
         $.each($('.relative-moment'), function(i, el) {

@@ -184,7 +184,7 @@
                     {% endif %}
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' style='width:15px;vertical-align:-3px;' />
                 {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items') %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt' style='color:#29AEB9'></i></a>
                 {% endif %}
                 <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
                 <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>

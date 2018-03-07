@@ -13,7 +13,7 @@
 797979 => gray main text color
 f2f2f2 => very light gray
 dcdddc = > borders gray
-29AEB9 => blue
+29AEB9 => elab blue
 1F8591 => dark blue
 C4F9FF => light blue
 dd1e00 => dark red
@@ -129,6 +129,7 @@ img {
     margin-right: 3px;
 }
 
+/* TODO remove and use bootstrap for these stuff */
 .inline {
     display: inline;
 }

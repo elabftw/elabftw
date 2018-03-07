@@ -173,8 +173,7 @@
 
 <!-- DOODLE -->
 <section class='box'>
-    <img src='app/img/pencil.png' />
-    <h3 class='inline'>{{ 'Draw something'|trans }}</h3>
+    <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
     <button class='button show-hide' data-type='doodle'>+</button>
     <div class='canvasDiv'>
         <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
@@ -187,8 +186,7 @@
 <!-- CHEM EDITOR -->
 {% if Entity.Users.userData.chem_editor %}
     <div class='box chemdoodle'>
-        <img src='app/img/atom.png' />
-        <h3 class='inline'>{{ 'Molecule drawer'|trans }}</h3>
+        <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
         <button class='button show-hide' data-type='chem'>+</button>
         <div class='center' style='display:none' id='chem_editor'>
             <script src='app/js/sketcher.js'></script>

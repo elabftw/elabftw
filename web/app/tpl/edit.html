@@ -117,7 +117,7 @@
     {% if Entity.type == 'experiments' %}
         <!-- STEPS -->
         <section>
-            <img src='app/img/step.png' alt='steps' /> <h4 style='display:inline'>{{ 'Experiments steps'|trans }}</h4>
+            <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Experiments steps'|trans }}</h4>
             <br>
             <div class='list' id='steps_div'>
                 {% if stepsArr %}
@@ -142,7 +142,7 @@
         </section>
         <!-- LINKS -->
         <section>
-            <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>{{ 'Linked items'|trans }}</h4>
+            <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
             <br>
             <div class='list' id='links_div'>
                 {% if linksArr %}
@@ -166,8 +166,7 @@
 
 <!-- UPLOAD FORM -->
 <section class='box'>
-    <img src='app/img/attached.png' />
-    <h3 style='display:inline'>{{ 'Attach a file'|trans }}</h3>
+    <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
     <form action='app/controllers/EntityController.php' class='dropzone' id='elabftw-dropzone'></form>
 </section>
 

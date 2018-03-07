@@ -49,7 +49,7 @@
 {% if Entity.type == 'items' %}
 <a class='elab-tooltip' href='experiments.php?mode=show&related={{ Entity.id }}'>
     <span>{{ 'Show related'|trans }}</span>
-    <img src='app/img/link.png' alt='Related' />
+    <i class='fas fa-link'></i>
 </a>
 {% endif %}
 
@@ -127,8 +127,10 @@
     {% if linksArr %}
         <ul class='list-group'>
             {% for link in linksArr %}
-            <li class='list-group-item'><img src='app/img/link.png'> {{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                    {{ link.title|raw }}</a></li>
+            <li class='list-group-item'>
+                <i class='fas fa-link mr-1'></i>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                    {{ link.title|raw }}</a>
+            </li>
             {% endfor %}
         </ul>
     {% endif %}

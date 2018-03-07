@@ -19,7 +19,7 @@
 
 <!-- DATE -->
 <div>
-    <i class='far fa-calendar-alt'></i> {{ Entity.entityData.date|kdate }}
+    <i class='far fa-calendar-alt mr-1'></i>{{ Entity.entityData.date|kdate }}
 </div>
 <!-- begin action buttons row -->
 {% if not Entity.isReadOnly and not Entity.entityData.locked %}

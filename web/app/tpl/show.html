@@ -187,14 +187,14 @@
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><img src='app/img/pen-blue.png' alt='edit' /></a>
                 {% endif %}
                 <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
-                <span class='date'><img class='image' alt='Date' src='app/img/calendar.png' />{{ item.date|kdate }}</span>
+                <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
                 {% if item.timestamped %}
                     <img src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
                 {% endif %}
 
                 {# show attached if there is a file attached #}
                 {% if item.has_attachment %}
-                    <img src='app/img/attached.png' alt='file attached' />
+                    <i class='fas fa-paperclip mr-1'></i>
                 {% endif %}
 
                 {% if Entity.type == 'items' %}
@@ -202,7 +202,7 @@
                 {% endif %}
 
                 {% if item.tags is not null %}
-                <span class='tags'><img src='app/img/tags.png' alt='tags' />
+                <span class='tags'><i class='fas fa-tags mr-1'></i>
                     {% set tagsArr = item.tags|split('|') %}
                     {% for tag in tagsArr %}
                     <a href='{{ Entity.page }}.php?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>

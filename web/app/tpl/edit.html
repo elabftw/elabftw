@@ -10,7 +10,7 @@
     <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
 
     <!-- TAGS -->
-    <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
+    <i class='fas fa-tags mr-1'></i><label for='addtaginput'>{{ 'Tags'|trans }}</label>
     <div class='tags'>
         <span id='tags_div'>
             <!--  build the tag array -->
@@ -19,7 +19,7 @@
                 {% set tagsValueArr = Entity.entityData.tags|split('|') %}
                 {% set inc = 0 %}
                 {% for tag in tagsValueArr %}
-                    <span class='tag'>
+                    <span class='tag clickable'>
                         <a class='tagDestroy' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[inc] }}' data-confirm="{{ 'Delete this?'|trans }}">
                             {{ tag|raw }}
                         </a>
@@ -40,8 +40,7 @@
         <!-- DATE -->
             <div class='row'>
                 <div class='col-md-4'>
-                    <img src='app/img/calendar.png' title='date' alt='calendar' />
-                    <label for='datepicker'>{{ 'Date'|trans }}</label>
+                    <i class='far fa-calendar-alt mr-1'></i><label for='datepicker'>{{ 'Date'|trans }}</label>
                     <!-- if firefox has support for it: type = date -->
                     <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
                     <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />

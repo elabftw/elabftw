@@ -10,6 +10,15 @@
 (function() {
     'use strict';
 
+    // DISPLAY COMMENT TIME RELATIVE TO NOW
+    function relativeMoment() {
+        $.each($('.relative-moment'), function(i, el) {
+            let commentTime = el.title;
+            let relMom = moment(commentTime, 'YYYY-MM-DD H:m:s').fromNow();
+            el.textContent = relMom;
+        });
+    }
+
     $(document).ready(function() {
         // add the title in the page name (see #324)
         document.title = $('#entityInfos').data('title');
@@ -74,7 +83,9 @@
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
-                        $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
+                        $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment", function() {
+                            relativeMoment();
+                        });
                     } else {
                         notif(data.msg, 'ko');
                     }
@@ -88,7 +99,9 @@
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
-                         $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
+                        $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment", function() {
+                            relativeMoment();
+                        });
                     } else {
                         notif(data.msg, 'ko');
                     }
@@ -123,7 +136,9 @@
                 style : 'display:inline',
                 callback : function() {
                     // now we reload the comments part to show the comment we just submitted
-                    $('#expcomment_container').load('experiments.php?mode=view&id=' + id + ' #expcomment');
+                    $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment", function() {
+                        relativeMoment();
+                    });
                 }
             });
         });
@@ -132,6 +147,8 @@
         $(document).on('click', '.commentsDestroy', function() {
             Comments.destroy($(this).data('id'));
         });
+
+        relativeMoment();
 
         // TIMESTAMP
         $(document).on('click', '#confirmTimestamp', function() {

@@ -4,6 +4,9 @@
 
 {% include('view-edit.html') %}
 
+<!-- add moment lib TODO rename it to moment if it's only moment inside it-->
+<script src='app/js/scheduler.bundle.js'></script>
+
 {% if Entity.type == 'experiments' %}
     {% if Entity.entityData.timestamped %}
         {{ Ev.showTimestamp|raw }}
@@ -159,7 +162,8 @@
                         {% if comment.userid == Entity.Users.userid %}
                         <i class='align_right fas fa-times clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
                         {% endif %}
-                        <span class='text-muted'>{{ 'On %s %s wrote:'|trans|format(comment.datetime, comment.fullname)|raw }}</span>
+                        <span class='text-muted'>{{ comment.fullname }}</span>
+                        <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         <!-- .editable uses the id of the element to send to the controller -->
                         <p class='expcomment m-2 p-2 {{ comment.userid == Entity.Users.userid ? "editable" }}' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
                     </div>

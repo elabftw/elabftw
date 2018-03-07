@@ -160,11 +160,14 @@
             {% if commentsArr %}
                 {% for comment in commentsArr %}
                     <div class='box'>
-                        {% if comment.userid == Entity.Users.userid %}
-                        <i class='align_right fas fa-times clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
-                        {% endif %}
-                        <span class='text-muted'>{{ comment.fullname }}</span>
+                        <div class='comment-header'>
+                        <span class='text-muted'>{{ comment.fullname }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
+                        {% if comment.userid == Entity.Users.userid %}
+                        <i class='fas fa-pencil-alt clickable commentsEdit'></i>
+                        <i class='fas fa-times fa-lg clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
+                        {% endif %}
+                        </div>
                         <!-- .editable uses the id of the element to send to the controller -->
                         <p class='expcomment m-2 p-2 {{ comment.userid == Entity.Users.userid ? "editable" }}' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
                     </div>

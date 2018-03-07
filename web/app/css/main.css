@@ -881,6 +881,12 @@ input[type='checkbox']{
 .editable input{
     margin: 0 0 15px;
 }
+
+.comment-header {
+    background-color: #f7f7f7;
+    padding: 5px;
+
+}
 #commentsCreateArea {
     border: 1px solid #ccc;
     width: 100%;

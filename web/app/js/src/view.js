@@ -113,6 +113,11 @@
             Comments.create($(this).data('expid'));
         });
 
+        $(document).on('click', '.commentsEdit', function() {
+            // TODO not working but idea is good :p
+            $(this).find('.editable').trigger('click');
+        });
+
         // UPDATE COMMENTS
         $(document).on('mouseover', '.editable', function(){
             $('div#expcomment p.editable').editable(Comments.controller, {

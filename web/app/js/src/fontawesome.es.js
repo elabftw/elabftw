@@ -9,9 +9,10 @@ const fontawesome = require('@fortawesome/fontawesome');
 
 
 // SOLID
-import { faCheckSquare, faCogs, faDna, faDownload, faFileArchive, faHistory, faInfoCircle, faLink, faLock, faLockOpen, faPaintBrush, faPaperclip, faPencilAlt, faQuestionCircle, faSignOutAlt, faTags, faTimes } from '@fortawesome/fontawesome-free-solid';
+import { faCheckSquare, faCogs, faComments, faDna, faDownload, faFileArchive, faHistory, faInfoCircle, faLink, faLock, faLockOpen, faPaintBrush, faPaperclip, faPencilAlt, faQuestionCircle, faSignOutAlt, faTags, faTimes } from '@fortawesome/fontawesome-free-solid';
 fontawesome.library.add(faCheckSquare);
 fontawesome.library.add(faCogs);
+fontawesome.library.add(faComments);
 fontawesome.library.add(faDna);
 fontawesome.library.add(faDownload);
 fontawesome.library.add(faFileArchive);

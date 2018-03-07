@@ -3,8 +3,7 @@
 {% set uploadsArr = Entity.Uploads.readAll %}
 {% if uploadsArr|length > 0 %}
     <div class='box'>
-        <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>
-            {% trans %}Attached file
+        <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{% trans %}Attached file
             {% plural uploadsArr|length %}
             Attached files
             {% endtrans %}

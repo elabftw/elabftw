@@ -113,6 +113,9 @@
         $(document).on('mouseover', '.editable', function(){
             $('div#expcomment p.editable').editable(Comments.controller, {
                 name: 'update',
+                type : 'textarea',
+                width: '80%',
+                height: '200',
                 tooltip : 'Click to edit',
                 indicator : $(this).data('indicator'),
                 submit : $(this).data('submit'),

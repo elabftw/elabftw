@@ -151,7 +151,7 @@
 {% if Entity.type == 'experiments' and App.Session.get('auth') %}
     <section id='expcomment_container'>
         <div id='expcomment' class='box'>
-            <h3><img src='app/img/comment.png' alt='comment' />{{ 'Comments'|trans }}</h3>
+            <i class='fas fa-comments mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Comments'|trans }}</h3>
 
             {% if commentsArr %}
                 {% for comment in commentsArr %}
@@ -189,5 +189,8 @@
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 
+<!--
 <script src='app/js/view.min.js'></script>
+-->
+<script src='app/js/src/view.js'></script>
 {% endblock body %}

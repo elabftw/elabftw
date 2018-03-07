@@ -84,10 +84,10 @@ class Revisions implements CrudInterface
         $count = $this->readCount();
 
         if ($count > 0) {
-            $html .= "<span class='align_right'>";
-            $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
-            $html .= " <a href='revisions.php?type=" . $this->Entity->type . "&item_id=" .
-                $this->Entity->id . "'>" . _('Show history') . "</a>";
+            $html .= "<span class='align_right'><i class='fas fa-history mr-1'></i>";
+            $html .= "<a href='revisions.php?type=" . $this->Entity->type . "&item_id=" .
+                $this->Entity->id . "'>" . $count . " " .
+                ngettext('revision available', 'revisions available', $count) . "</a>";
             $html .= "</span>";
         }
 

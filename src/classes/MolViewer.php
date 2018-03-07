@@ -52,7 +52,7 @@ class MolViewer
      */
     private function getDiv()
     {
-        return "<div class='row viewer_3Dmoljs' data-href='" . $this->filePath .
+        return "<div class='row viewer_3Dmoljs' data-href='app/download.php?f=" . $this->filePath .
             "' data-style='" . $this->defaultStyle . "' data-backgroundcolor='0xffffff' id='" . $this->divId . "'></div>";
     }
 

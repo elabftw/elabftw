@@ -7,6 +7,7 @@ config.php
 config.php.*
 web/config.php
 web/config.php.*
+*.min.css
 *.min.js
 *.bundle.js
 node_modules/*

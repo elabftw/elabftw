@@ -854,7 +854,7 @@ input[type='checkbox']{
     height: 100px;
 }
 
-.expcomment:hover {
+.expcomment.editable:hover {
     background-color:#555;
     color:#fff;
 }

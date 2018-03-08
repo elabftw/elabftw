@@ -1,7 +1,8 @@
 *~
 .scannerwork/*
 *.bak
-_api*
+_apidoc
+_srcdoc
 cache
 config.php
 config.php.*

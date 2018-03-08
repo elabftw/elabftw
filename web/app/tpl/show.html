@@ -7,8 +7,13 @@
     <!-- LEFT MENU - CREATE NEW -->
     <div class='col-md-2'>
     {% if not App.Session.get('anon') %}
-        <div class='dropdown'>
-            <button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
+        <div class='dropright'>
+<style>
+#dropdownMenu1{ background-color: white;color: #495057;border: 1px solid #ced4da}
+li.dropdown-item > a { color:black;}
+li.dropdown-item:hover a{ color:#29AEB9;}
+</style>
+            <button class='btn dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
             {% if Entity.type == 'experiments' %}
                 <li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>
@@ -18,17 +23,19 @@
                     Experiments
                     {% endtrans %}
                     </a>
-                <li role='separator' class='divider'></li>
+                </li>
+                <div class="dropdown-divider"></div>
                 {% if templatesArr|length > 0 %}
+                <h6 class="dropdown-header">{{ 'Templates'|trans }}</h6>
                     {% for tpl in templatesArr %}
                         <li class='dropdown-item'>
                             <a href='app/controllers/ExperimentsController.php?create=true&tpl={{ tpl.id }}'>{{ tpl.name|raw }}</a>
                         </li>
                     {% endfor %}
                 {% else %}
-                    <li class='dropdown-item disabled'><a href='#'>{{ 'No templates found'|trans }}</a></li>
+                <h6 class="dropdown-header">{{ 'No templates found'|trans }}</h6>
                 {% endif %}
-                <li role='separator' class='divider'></li>
+                <div class="dropdown-divider"></div>
                 <li class='dropdown-item'><a href='ucp.php?tab=3'>{{ 'Manage templates'|trans }}</a></li>
             {% else %}
                 {% for category in categoryArr %}

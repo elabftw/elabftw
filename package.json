@@ -28,6 +28,7 @@
     "vanderlee-colorpicker": "^1.2.13"
   },
   "devDependencies": {
+    "apidoc": "^0.17.6",
     "expose-loader": "^0.7.4",
     "grunt": "^1.0.2",
     "grunt-contrib-cssmin": "^2.2.1",
@@ -40,6 +41,7 @@
     "webpack-cli": "^2.0.9"
   },
   "scripts": {
+    "apidoc": "apidoc -o _apidoc -i src/classes",
     "build": "webpack-cli --config builder.js",
     "test": "snyk test"
   },

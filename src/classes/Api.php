@@ -33,6 +33,18 @@ class Api
     }
 
     /**
+     * @api {post} /experiment Create experiment
+     * @apiName CreateExperiment
+     * @apiGroup Entity
+     * @apiSuccess {String} Id Id of the new experiment
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "id": "42"
+     *     }
+     */
+
+    /**
      * Create an experiment
      *
      * @return array
@@ -43,6 +55,72 @@ class Api
 
         return array('id' => $id);
     }
+
+    /**
+     * @apiDefine GetEntity
+     * @apiParam {Number} id Entity id
+     */
+
+    /**
+     * @api {get} /items/:id Read a database item
+     * @apiName GetItem
+     * @apiGroup Entity
+     * @apiParam {Number} id Entity id
+     * @apiSuccess {String} body Main content
+     * @apiSuccess {String} category Item type
+     * @apiSuccess {Number} category_id Id of the item type
+     * @apiSuccess {String} color Hexadecimal color code for the item type
+     * @apiSuccess {Number} date Date in YYYYMMDD format
+     * @apiSuccess {String} fullname Name of the owner of the experiment
+     * @apiSuccess {Number} has_attachment Number of files attached
+     * @apiSuccess {Number} id Id of the item
+     * @apiSuccess {Number} locked 0 if not locked, 1 if locked
+     * @apiSuccess {Number} rating Number of stars
+     * @apiSuccess {String} tags Tags separated by '|'
+     * @apiSuccess {String} tags_id Id of the tags separated by ','
+     * @apiSuccess {Number} team Id of the team
+     * @apiSuccess {String} title Title of the experiment
+     * @apiSuccess {String} type See category_id
+     * @apiSuccess {String} up_item_id Id of the uploaded items
+     * @apiSuccess {String[]} uploads Array of uploaded files
+     * @apiSuccess {Number} userid User id of the owner
+     */
+
+    /**
+     * @api {get} /experiments/:id Read an experiment
+     * @apiName GetExperiment
+     * @apiGroup Entity
+     * @apiParam {Number} id Entity id
+     * @apiSuccess {String} body Main content
+     * @apiSuccess {String} category Status
+     * @apiSuccess {Number} category_id Id of the status
+     * @apiSuccess {String} color Hexadecimal color code for the status
+     * @apiSuccess {Number} date Date in YYYYMMDD format
+     * @apiSuccess {DateTime} datetime Date and time when the experiment was created
+     * @apiSuccess {String} elabid Unique elabid of the experiment
+     * @apiSuccess {String} fullname Name of the owner of the experiment
+     * @apiSuccess {Number} has_attachment Number of files attached
+     * @apiSuccess {Number} id Id of the experiment
+     * @apiSuccess {Number} locked 0 if not locked, 1 if locked
+     * @apiSuccess {Number} lockedby 1 User id of the locker
+     * @apiSuccess {DateTime} lockedwhen Time when it was locked
+     * @apiSuccess {String} next_step Next step to execute
+     * @apiSuccess {DateTime} recent_comment Date and time of the most recent comment
+     * @apiSuccess {Number} status See category_id
+     * @apiSuccess {String} tags Tags separated by '|'
+     * @apiSuccess {String} tags_id Id of the tags separated by ','
+     * @apiSuccess {Number} team Id of the team
+     * @apiSuccess {Number} timestamped 0 if not timestamped, 1 if timestamped
+     * @apiSuccess {Number} timestampedby User id of the timestamper
+     * @apiSuccess {DateTime} timestampedwhen Date and time of the timestamp
+     * @apiSuccess {String} timestampedtoken Full path to the token file
+     * @apiSuccess {String} title Title of the experiment
+     * @apiSuccess {String} up_item_id Id of the uploaded items
+     * @apiSuccess {String[]} uploads Array of uploaded files
+     * @apiSuccess {Number} userid User id of the owner
+     * @apiSuccess {String} visibility Visibility of the experiment
+     *
+     */
 
     /**
      * Read an entity in full
@@ -65,6 +143,25 @@ class Api
     }
 
     /**
+     * @api {post} /:endpoint/:id Update entity
+     * @apiName UpdateEntity
+     * @apiGroup Entity
+     * @apiParam {String} endpoint 'experiments' or 'items'
+     * @apiParam {Number} id Entity id
+     * @apiParam {String} body Main content
+     * @apiParam {String} date Date
+     * @apiParam {String} title Title
+     * @apiSuccess {String} result Success
+     * @apiError {String} error Error mesage
+     * @apiParamExample {Json} Request-Example:
+     *     {
+     *       "body": "New body to be updated.",
+     *       "date": "20180308",
+     *       "title": "New title"
+     *     }
+     */
+
+    /**
      * Update an entity
      *
      * @param string $title
@@ -77,11 +174,26 @@ class Api
         $this->Entity->canOrExplode('write');
 
         if ($this->Entity->update($title, $date, $body)) {
-            return array('Result', 'Success');
+            return array('result' => 'success');
         }
 
-        return array('error', Tools::error());
+        return array('error' => Tools::error());
     }
+
+    /**
+     * @api {post} /:endpoint/:id Add a tag
+     * @apiName AddTag
+     * @apiGroup Entity
+     * @apiParam {String} endpoint 'experiments' or 'items'
+     * @apiParam {Number} id Entity id
+     * @apiParam {String} tag Tag to add
+     * @apiSuccess {String} result Success
+     * @apiError {String} error Error mesage
+     * @apiParamExample {Json} Request-Example:
+     *     {
+     *       "tag": "my tag"
+     *     }
+     */
 
     /**
      * Add a tag to an entity
@@ -94,11 +206,22 @@ class Api
         $this->Entity->canOrExplode('write');
 
         if ($this->Entity->Tags->create($tag)) {
-            return array('Result', 'Success');
+            return array('result' => 'success');
         }
 
-        return array('error', Tools::error());
+        return array('error' => Tools::error());
     }
+
+    /**
+     * @api {post} /:endpoint/:id Upload a file
+     * @apiName AddFile
+     * @apiGroup Entity
+     * @apiParam {String} endpoint 'experiments' or 'items'
+     * @apiParam {Number} id Entity id
+     * @apiParam {File} file File to upload
+     * @apiSuccess {String} result Success
+     * @apiError {String} error Error mesage
+     */
 
     /**
      * Add a file to an entity
@@ -111,9 +234,9 @@ class Api
         $this->Entity->canOrExplode('write');
 
         if ($this->Entity->Uploads->create($request)) {
-            return array('Result', 'Success');
+            return array('result' => 'success');
         }
 
-        return array('Result', Tools::error());
+        return array('error' => Tools::error());
     }
 }

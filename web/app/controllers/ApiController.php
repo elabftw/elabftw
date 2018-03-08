@@ -97,7 +97,7 @@ try {
     $Response = new JsonResponse($content);
 
 } catch (Exception $e) {
-    $Response = new JsonResponse(array('error', $e->getMessage()));
+    $Response = new JsonResponse(array('error' => $e->getMessage()));
 
 } finally {
     $Response->send();

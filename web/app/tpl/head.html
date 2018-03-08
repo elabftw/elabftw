@@ -20,7 +20,7 @@
     <link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
     <!-- JS -->
     <script src="app/js/main.bundle.js"></script>
-    <script src="app/js/elabftw.min.js?v=183"></script>
+    <script src="app/js/elabftw.min.js?v=200"></script>
 </head>
 
 <body>
@@ -30,14 +30,14 @@
 
 <!-- begin main menu -->
 <nav class='navbar navbar-expand-lg navbar-dark'>
-        <!-- logo -->
-        <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
-        {% if App.Session.has('auth') or App.Session.has('anon') %}
-        <!-- hamburger menu -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        {% endif %}
+    <!-- logo -->
+    <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
+    {% if App.Session.has('auth') or App.Session.has('anon') %}
+    <!-- hamburger menu -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    {% endif %}
 
     {% if App.Session.has('auth') or App.Session.has('anon') %}
     <!-- everything in there will be part of the burger -->

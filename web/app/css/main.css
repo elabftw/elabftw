@@ -239,6 +239,8 @@ label {
     text-transform:uppercase;
     color: #888;
     text-decoration: none;
+    /* fix navbar height getting smaller on profile/ucp/admin/… pages */
+    min-height: 43px;
 }
 /* blue on hover */
 .nav-link:hover {

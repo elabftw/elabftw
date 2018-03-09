@@ -6,6 +6,7 @@
  * doing autocompletion.
  */
 const path = require('path');
+//const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -25,6 +26,17 @@ module.exports = {
             'moment',
         ],
     },
+    /*
+    plugins: [
+        new HtmlWebpackPlugin({
+            //filename: path.resolve(__dirname, 'web/app/tpl/head.html'),
+            filename: 'scripts.html',
+            //inject: 'head',
+            minify: false,
+            //template: 'web/app/tpl/head.html'
+        })
+    ],
+    */
     resolve: {
         alias: {
             'jquery-ui': 'jquery-ui-dist/jquery-ui.js',
@@ -35,6 +47,7 @@ module.exports = {
     },
     mode: 'production',
     output: {
+        //filename: '[name].[hash].bundle.js',
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'web/app/js')
     },

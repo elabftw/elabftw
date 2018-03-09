@@ -42,7 +42,8 @@
   },
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/classes",
-    "build": "webpack-cli --config builder.js && grunt",
+    "build": "webpack-cli --config builder.js",
+    "buildall": "webpack-cli --config builder.js && grunt",
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
     "srcdoc": "phpDocumentor run -d src/classes -d src/models -d web/app/controllers -d src/views -t _srcdoc",
     "test": "docker run --rm --name selenium -d --net=host selenium/standalone-chrome && php vendor/bin/codecept run --skip functionnal; cp -fn config.php.docker web/config.php; docker stop selenium",

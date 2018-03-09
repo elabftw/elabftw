@@ -2,11 +2,11 @@
 /**
  * \Elabftw\Elabftw\App
  *
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @package   Elabftw\Elabftw
+ * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
- * @see https://www.elabftw.net Official website
- * @license AGPL-3.0
- * @package elabftw
+ * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+ * @see       https://www.elabftw.net Official website
  */
 namespace Elabftw\Elabftw;
 
@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * This is a super class holding various global objects
- *
  */
 class App
 {

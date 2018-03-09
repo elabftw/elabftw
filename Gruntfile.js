@@ -29,16 +29,13 @@ module.exports = function(grunt) {
               'web/app/js/src/chemdoodle/chemdoodle-unpacked.js',
               'web/app/js/src/chemdoodle/chemdoodle-uis-unpacked.js'],
 
-          'web/app/js/scheduler.min.js': [
-            //  'node_modules/moment/moment.js',
+          'web/app/js/fullcalendar.min.js': [
               'node_modules/fullcalendar/dist/fullcalendar.js',
               'node_modules/fullcalendar/dist/locale-all.js'],
 
           'web/app/js/team.min.js': 'web/app/js/src/team.js',
 
-          'web/app/js/tinymce-dropzone.min.js': [
-          //    'node_modules/tinymce/tinymce.js',
-           //   'web/app/js/tinymce-langs/*',
+          'web/app/js/dropzone.min.js': [
               'node_modules/dropzone/dist/dropzone.js'],
 
           'web/app/js/file-saver.min.js': 'node_modules/file-saver/FileSaver.js',

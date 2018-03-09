@@ -18,10 +18,10 @@ module.exports = {
             'bootstrap/js/src/dropdown.js',
             './web/app/js/src/fontawesome.es.js',
         ],
-        edit: [
+        tinymce: [
             'tinymce',
         ],
-        scheduler: [
+        moment: [
             'moment',
         ],
     },

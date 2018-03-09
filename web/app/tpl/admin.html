@@ -224,10 +224,10 @@
         <ul class='list-group'>
             <li>
                 <ul class='list-inline'>
-                    <li>{{ 'Name'|trans }} <input type='text' id='statusName' /></li>
-                    <li>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>
-                    <li><input type='checkbox' id='statusTimestamp' /> {{ 'Allow timestamp'|trans }}</li>
-                    <li><button class='button' id='statusCreate'>{{ 'Save'|trans }}</button></li>
+                    <li class='list-inline-item'>{{ 'Name'|trans }} <input type='text' id='statusName' /></li>
+                    <li class='list-inline-item'>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>
+                    <li class='list-inline-item'><input type='checkbox' id='statusTimestamp' /> {{ 'Allow timestamp'|trans }}</li>
+                    <li class='list-inline-item'><button class='button' id='statusCreate'>{{ 'Save'|trans }}</button></li>
                 </ul>
             </li>
         </ul>
@@ -240,17 +240,17 @@
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
-                    <li>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
-                    <li style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
+                    <li class='list-inline-item'>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
+                    <li class='list-inline-item' style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
                     </li>
-                    <li><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> {{ 'Allow timestamp'|trans }}</li>
-                    <li><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} />
+                    <li class='list-inline-item'><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> {{ 'Allow timestamp'|trans }}</li>
+                    <li class='list-inline-item'><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} />
                         {{ 'Default status'|trans }}</li>
 
 
-                    <li><button data-id='{{ status.category_id }}' class='button statusSave'>{{ 'Save'|trans }}</button></li>
+                    <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button statusSave'>{{ 'Save'|trans }}</button></li>
 
-                    <li><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
+                    <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
 
                 </ul>
             </li>
@@ -265,9 +265,9 @@
         <h3>{{ 'Add a new type of item'|trans }}</h3>
         <hr>
         <ul class='list-inline'>
-            <li>{{ 'Name'|trans }} <input type='text' id='itemsTypesName' /></li>
-            <li>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li>
-            <li><input type='checkbox' id='itemsTypesBookable'> <label for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label></li>
+            <li class='list-inline-item'>{{ 'Name'|trans }} <input type='text' id='itemsTypesName' /></li>
+            <li class='list-inline-item'>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li>
+            <li class='list-inline-item'><input type='checkbox' id='itemsTypesBookable'> <label for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label></li>
         </ul>
         <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
         <div class='submitButtonDiv'>
@@ -282,28 +282,27 @@
             {% for itemType in itemsTypesArr %}
             <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
             <ul class='list-inline'>
-                <li>
+                <li class='list-inline-item'>
                     {{ 'Name'|trans }} <input type='text' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
                 </li>
-                <li style='color:#{{ itemType.color }}'>
+                <li class='list-inline-item' style='color:#{{ itemType.color }}'>
                     {{ 'Color'|trans }} <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_{{ itemType.category_id }}' value='{{ itemType.color }}' />
                 </li>
-                <li>
+                <li class='list-inline-item'>
                     <input id='itemsTypesBookable_{{ itemType.category_id }}' type='checkbox' {{ itemType.bookable ? " checked" }} />
                     <label for='itemsTypesBookable_{{ itemType.category_id }}'>{{ 'Bookable'|trans }}</label>
                 </li>
-                <li>
+                <li class='list-inline-item'>
                     <button data-id='{{ itemType.category_id }}' class='button button-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
                 </li>
-                <li>
+                <li class='list-inline-item'>
                     <button data-id='{{ itemType.category_id }}' class='button itemsTypesUpdate'>{{ 'Save'|trans }}</button>
                 </li>
-                <li>
+                <li class='list-inline-item'>
                     <button data-id='{{ itemType.category_id }}' class='button button-delete itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
                 </li>
 
-                <!--/li -->
-                <li class='itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
+                <li class='list-inline-item itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
                     <textarea class='mceditable' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
                 </li>
             </ul>
@@ -406,7 +405,7 @@
     </div>
 </div>
 
-<script src='app/js/tinymce-dropzone.min.js'></script>
+<script src='app/js/edit.bundle.js?v=200'></script>
 <script src='app/js/admin.min.js'></script>
 <script src='app/js/tabs.min.js'></script>
 {% endblock body %}

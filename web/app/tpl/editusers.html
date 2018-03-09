@@ -15,26 +15,26 @@
                 <ul class='list-inline'>
 
                     <!-- FIRSTNAME -->
-                    <li>
+                    <li class='list-inline-item'>
                         {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
                         <label class='block' for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
                         <input autocomplete='off' class='clean-form' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
                     </li>
 
                     <!-- LASTNAME -->
-                    <li>
+                    <li class='list-inline-item'>
                         <label class='block' for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
                         <input autocomplete='off' class='clean-form' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
                     </li>
 
                     <!-- EMAIL -->
-                    <li>
+                    <li class='list-inline-item'>
                         <label class='block' for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
                         <input autocomplete='off' class='clean-form' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
                     </li>
 
                     <!-- PERMISSION GROUP -->
-                    <li>
+                    <li class='list-inline-item'>
                         <label class='block' for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
                         <select class='clean-form' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
                             {% if App.Session.get('is_sysadmin') %}
@@ -48,7 +48,7 @@
                     </li>
 
                     <!-- RESET PASSWORD -->
-                    <li>
+                    <li class='list-inline-item'>
                         <label class='block' for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
                             <span class='smallgray'>({{ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) }} {{ 'characters minimum'|trans }})</span>
                         </label>
@@ -61,7 +61,7 @@
                     </li>
 
                     <!-- ACTIVE ACCOUNT -->
-                    <li>
+                    <li class='list-inline-item'>
                         <label class='block' for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
                         <select class='clean-form' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
                             <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
@@ -70,7 +70,7 @@
                     </li>
 
                     <!-- ARCHIVE USER -->
-                    <li>
+                    <li class='list-inline-item'>
                     {% if user.archived %}
                         <p>{{ 'User is archived'|trans }}</p>
                     {% else %}
@@ -78,7 +78,7 @@
                     {% endif %}
                     </li>
 
-                    <li>
+                    <li class='list-inline-item'>
                         <button type='submit' class='button'>{{ 'Save'|trans }}</button>
                     </li>
                 </ul>

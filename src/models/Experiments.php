@@ -182,11 +182,11 @@ class Experiments extends AbstractEntity
     }
 
     /**
-    * Returns if this experiment can be timestamped
-    * It checks if the status is timestampable but also if we own the experiment
-    *
-    * @return string 0 or 1
-    */
+     * Returns if this experiment can be timestamped
+     * It checks if the status is timestampable but also if we own the experiment
+     *
+     * @return string 0 or 1
+     */
     public function isTimestampable()
     {
         $currentStatus = (int) $this->entityData['category_id'];

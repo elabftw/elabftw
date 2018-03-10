@@ -50,7 +50,7 @@ class Saml
             $idpsArr = $this->Idps->read($id);
         }
 
-        $this->settings = array (
+        $this->settings = array(
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
             // or unencrypted messages if it expects them signed or encrypted
             // Also will reject the messages if not strictly follow the SAML
@@ -67,12 +67,12 @@ class Saml
             'baseurl' => $this->Config->configArr['saml_baseurl'],
 
             // Service Provider Data that we are deploying
-            'sp' => array (
+            'sp' => array(
                 // Identifier of the SP entity  (must be a URI)
                 'entityId' => $this->Config->configArr['saml_entityid'],
                 // Specifies info about where and how the <AuthnResponse> message MUST be
                 // returned to the requester, in this case our SP.
-                'assertionConsumerService' => array (
+                'assertionConsumerService' => array(
                     // URL Location where the <Response> from the IdP will be returned
                     'url' => $this->Config->configArr['saml_acs_url'],
                     // SAML protocol binding to be used when returning the <Response>
@@ -98,7 +98,7 @@ class Saml
                 ),
                 // Specifies info about where and how the <Logout Response> message MUST be
                 // returned to the requester, in this case our SP.
-                'singleLogoutService' => array (
+                'singleLogoutService' => array(
                     // URL Location where the <Response> from the IdP will be returned
                     'url' => $this->Config->configArr['saml_slo_url'],
                     // SAML protocol binding to be used when returning the <Response>
@@ -118,11 +118,11 @@ class Saml
             ),
 
             // Identity Provider Data that we want connect with our SP
-            'idp' => array (
+            'idp' => array(
                 // Identifier of the IdP entity  (must be a URI)
                 'entityId' => $idpsArr['entityid'],
                 // SSO endpoint info of the IdP. (Authentication Request protocol)
-                'singleSignOnService' => array (
+                'singleSignOnService' => array(
                     // URL Target of the IdP where the SP will send the Authentication Request Message
                     'url' => $idpsArr['sso_url'],
                     // SAML protocol binding to be used when returning the <Response>
@@ -131,7 +131,7 @@ class Saml
                     'binding' => $idpsArr['sso_binding'],
                 ),
                 // SLO endpoint info of the IdP.
-                'singleLogoutService' => array (
+                'singleLogoutService' => array(
                     // URL Location of the IdP where the SP will send the SLO Request
                     'url' => $idpsArr['slo_url'],
                     // SAML protocol binding to be used when returning the <Response>

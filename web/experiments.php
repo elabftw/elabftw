@@ -193,7 +193,7 @@ try {
 
         // READ ALL ITEMS
         if ($App->Session->get('anon')) {
-            $Entity->visibilityFilter =  "AND experiments.visibility = 'public'";
+            $Entity->visibilityFilter = "AND experiments.visibility = 'public'";
             $itemsArr = $Entity->read();
 
         // related filter

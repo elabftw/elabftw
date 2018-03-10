@@ -57,7 +57,7 @@ try {
         $resetLink = Tools::getUrl($Request) . '/change-pass.php';
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
-        $resetLink .='?key=' . $key . '&deadline=' . $deadline . '&userid=' . $user['userid'];
+        $resetLink .= '?key=' . $key . '&deadline=' . $deadline . '&userid=' . $user['userid'];
 
         // Send an email with the reset link
         // Create the message

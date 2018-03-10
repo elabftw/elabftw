@@ -35,7 +35,7 @@ try {
         $id = $Request->query->get('id');
     }
 
-    if ($Request->request->get('type')  === 'experiments' ||
+    if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users, $id);
     } elseif ($Request->request->get('type') === 'tpl') {

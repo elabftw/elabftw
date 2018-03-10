@@ -8,7 +8,7 @@
  */
 require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/vendor/autoload.php';
-$tplDir = dirname(dirname(dirname(__FILE__)))  . '/app/tpl';
+$tplDir = dirname(dirname(dirname(__FILE__))) . '/app/tpl';
 $tmpDir = '/tmp/elabftw-twig-cache/';
 
 $loader = new \Twig_Loader_Filesystem($tplDir);

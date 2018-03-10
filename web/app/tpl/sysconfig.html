@@ -14,7 +14,7 @@
 {% if ReleaseCheck.success %}
     <!-- show a little green check if we have latest version -->
     {% if not ReleaseCheck.updateIsAvailable %}
-        <img src='app/img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:5px;' alt='OK' />
+        <i style='color:green' class='fas fa-check fa-lg align-top' title="Good job!"></i>
     {% endif %}
 {% endif %}
 <br>

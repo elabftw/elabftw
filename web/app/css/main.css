@@ -194,7 +194,14 @@ h4 {
     font-size: 150%;
     font-weight:normal;
     color: #797979;
+    /*
     margin: 0 auto 10px auto;
+    */
+}
+
+h5 {
+    color: #797979;
+    font-size: 130%;
 }
 
 /* paragraphs */

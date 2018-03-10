@@ -264,7 +264,10 @@
 
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
-    <p id='import-from-file' style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' />{{ 'Import from File'|trans }}</p>
+        <div class='mb-2'>
+        <i class='fas fa-upload' title='Import template'></i>
+        <p id='import-from-file' class='inline clickable'>{{ 'Import from File'|trans }}</p>
+        </div>
         <form action='app/controllers/UcpController.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.tpl' id='import_tpl'>

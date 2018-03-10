@@ -167,7 +167,7 @@ class Api
      * @param string $title
      * @param string $date
      * @param string $body
-     * @return string[]
+     * @return string<string,string>
      */
     public function updateEntity($title, $date, $body)
     {
@@ -199,7 +199,7 @@ class Api
      * Add a tag to an entity
      *
      * @param string $tag
-     * @return string[]
+     * @return string<string,string>
      */
     public function addTag($tag)
     {
@@ -227,7 +227,7 @@ class Api
      * Add a file to an entity
      *
      * @param Request $request
-     * @return string[]
+     * @return string<string,string>
      */
     public function uploadFile(Request $request)
     {

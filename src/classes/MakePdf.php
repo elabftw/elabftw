@@ -296,11 +296,11 @@ class MakePdf extends AbstractMake
     private function buildInfoBlock()
     {
         return "<table id='infoblock'><tr><td class='noborder'>
-                           <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
-                           </td><td class='noborder'>" .
-                           $this->addElabid() .
-                           $this->addLockinfo() .
-                           $this->addUrl() . "</td></tr></table>";
+            <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
+            </td><td class='noborder'>" .
+            $this->addElabid() .
+            $this->addLockinfo() .
+            $this->addUrl() . "</td></tr></table>";
     }
 
     /**

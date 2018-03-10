@@ -44,7 +44,7 @@ try {
 
     // CREATE TEAM
     if ($Request->request->has('teamsCreate')) {
-        if ($Teams->create($Request->request->get('teamsName'))) {
+        if ($Teams->create($Request->request->get('teamsName')) !== false) {
             $res = true;
             $msg = _('Saved');
         }

@@ -99,7 +99,7 @@ class Database extends AbstractEntity
     /**
      * Duplicate an item
      *
-     * @return int The id of the newly created item
+     * @return string The id of the newly created item
      */
     public function duplicate()
     {

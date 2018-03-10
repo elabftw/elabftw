@@ -257,15 +257,13 @@
         <input type='hidden' name='updateConfig' value='true' />
         <p>{{ "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific smtp2go.com account and add the infos here."|trans }}</p>
         <p>
-        <label class="block" for='selectMailMethod'>{{ 'Send e-mails via:'|trans }}</label>
-        <select class="clean-form col-3-form" data-mailmethod='{{ App.Config.configArr.mail_method }}' name='mail_method' id='selectMailMethod'>
-            <option value=''>{{ 'Select mailing method...'|trans }}</option>
+            <label class="block" for='selectMailMethod'>{{ 'Send e-mails via:'|trans }}</label>
+            <select class="clean-form col-3-form" data-mailmethod='{{ App.Config.configArr.mail_method }}' name='mail_method' id='selectMailMethod'>
+                <option value='' disabled>{{ 'Select mailing method...'|trans }}</option>
 
-            <option value="sendmail" {{ not disable_sendmail ? " selected" }}>{{ 'Local MTA (default)'|trans }}</option>
-            <option value="smtp" {{ not disable_smtp ? " selected" }}>{{ 'SMTP'|trans }}</option>
-            <option value="php" {{ not disable_php ? " selected" }}>{{ 'PHP'|trans }}</option>
-
-        </select>
+                <option value="sendmail" {{ not disable_sendmail ? " selected" }}>{{ 'Local MTA (default)'|trans }}</option>
+                <option value="smtp" {{ not disable_smtp ? " selected" }}>{{ 'SMTP'|trans }}</option>
+            </select>
         </p>
 
         <div id='general_mail_config'>

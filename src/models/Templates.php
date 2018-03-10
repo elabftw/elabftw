@@ -84,7 +84,7 @@ class Templates extends AbstractEntity
     /**
      * Duplicate a template from someone else in the team
      *
-     * @return int
+     * @return string
      */
     public function duplicate()
     {

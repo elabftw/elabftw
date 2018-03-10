@@ -102,13 +102,6 @@ class Email
                 }
                 break;
 
-            // Use php mail function
-            case 'php':
-                // TODO doesn't see to exist anymore
-                throw new Exception('Invalid email method!');
-                $transport = Swift_MailTransport::newInstance();
-                break;
-
             // Use locally installed MTA (aka sendmail); Default
             default:
                 $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');

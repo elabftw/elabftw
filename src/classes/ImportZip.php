@@ -199,7 +199,7 @@ class ImportZip extends AbstractImport
      * Extract the zip to the temporary folder
      *
      * @throws Exception if it cannot open the zip
-     * @return bool
+     * @return null
      */
     protected function openFile()
     {

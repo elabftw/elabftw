@@ -101,11 +101,6 @@
                     $('#smtp_config').show();
                     $('#sendmail_config').hide();
                     break;
-                case 'php':
-                    $('#smtp_config').hide();
-                    $('#sendmail_config').hide();
-                    $('#general_mail_config').show();
-                    break;
                 default:
                     $('#smtp_config').hide();
                     $('#sendmail_config').hide();

@@ -11,7 +11,24 @@
 
         <div class='row'>
         {% for upload in uploadsArr %}
-            {{ Uv.displayUpload(mode, upload)|raw }}
+            <div class='col-md-4 col-sm-6'>
+                <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>
+                    {% if mode == 'edit' %}
+                    <a class='align_right uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
+                        data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}'>
+                        <i class='fas fa-times clickable'></i>
+                    </a>
+                    {% endif %}
+
+                    {{ Uv.displayUpload(mode, upload)|raw }}
+
+                    {% if mode == 'edit' %}
+                    <div class='replacer clickable' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
+                        <i class='fas fa-sync-alt mr-1'></i><p class='inline'>{{ 'Upload a new version of this file'|trans }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         {% endfor %}
         </div>
     </div>

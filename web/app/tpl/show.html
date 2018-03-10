@@ -170,9 +170,6 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                 <p class='title'>
                 {% if item.locked %}
                     <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
-                    <!--
-                    <img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />
-                    -->
                 {% endif %}
 
                 <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
@@ -184,7 +181,10 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                     {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
                     </p>
                 {% endif %}
-<img id='bodyToggleImg_{{ item.id }}' data-type='{{ Entity.type }}' class='bodyToggleImg' src='app/img/show-more.png' title='Show more' alt='+' />
+
+                <div data-type='{{ Entity.type }}' id='bodyToggleImg_{{ item.id }}' class='bodyToggleImg clickable'>
+                    <i class='align_right fas fa-plus-circle mr-1' title='Show more'></i>
+                </div>
                 <p style='padding-left:20px'>
                     {% if searchPage %}
                         {{ item.fullname|raw }}
@@ -240,5 +240,8 @@ li.dropdown-item:hover a{ color:#29AEB9;}
 <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
 <div id='infos' data-limit='{{ Entity.Users.userData.limit_nb }}' data-offset='{{ offset }}'></div>
 <div id='type' data-type='{{ Entity.type }}'></div>
+<!--
 <script src='app/js/show.min.js'></script>
+-->
+<script src='app/js/src/show.js'></script>
 {% endblock body %}

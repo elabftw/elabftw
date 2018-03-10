@@ -28,11 +28,7 @@
                 if (data.res) {
                     notif(data.msg, 'ok');
                     // change the lock icon
-                    if ($('#lock').data('icon') === 'lock') {
-                        $('#lock').attr('class', 'fa-lock-open');
-                    } else {
-                        $('#lock').attr('class', 'fa-lock');
-                    }
+                    $('#lock').toggleClass('fa-lock-open').toggleClass('fa-lock');
                 } else {
                     notif(data.msg, 'ko');
                 }

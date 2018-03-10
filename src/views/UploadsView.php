@@ -38,7 +38,7 @@ class UploadsView
      */
     public function displayUpload($mode, $upload)
     {
-        $html = '';
+        //$html = '';
 
         // list of extensions with a corresponding app/img/thumb-*.png image
         $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
@@ -61,16 +61,6 @@ class UploadsView
             'vasp',
             'xyz'
         );
-
-        $html .= "<div class='col-md-4 col-sm-6'>";
-        $html .= "<div class='thumbnail box' data-type='" . $this->Uploads->Entity->type .
-            "' data-id='" . $this->Uploads->Entity->id . "'>";
-        // show the delete button only in edit mode, not in view mode
-        if ($mode === 'edit') {
-            $html .= "<a class='align_right uploadsDestroy' data-id='" . $upload['id'] . "' data-type='" . $upload['type'] . "'
-                data-itemid='" . $upload['item_id'] . "' data-msg='" . _('Delete this?') . "'>";
-            $html .= "<i class='fas fa-times clickable'></i></a>";
-        } // end if it is in edit mode
 
         // get file extension
         $ext = Tools::getExt($upload['real_name']);
@@ -141,15 +131,10 @@ class UploadsView
         // INSERT IN TEXT
         if ($mode === 'edit' && preg_match('/(jpg|jpeg|png|gif|svg)$/i', $ext)) {
             $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] .
-                "'><img src='app/img/show-more.png' /> <p class='inline'>" . _('Insert in text at cursor position') . "</p></div>";
+                "'><i class='fas fa-plus-circle mr-1'></i><p class='inline'>" . _('Insert in text at cursor position') . "</p></div>";
         }
 
-        // REPLACE
-        if ($mode === 'edit') {
-            $html .= "<div class='replacer clickable' data-itemid='" . $upload['item_id'] . "' data-id='" . $upload['id'] . "' data-type='" . $upload['type'] . "'><img src='app/img/replace.png' /> <p class='inline'>" . _('Upload a new version of this file') . "</p></div>";
-        }
-
-        $html .= "</div></div></div>";
+        $html .= "</div>";
 
         return $html;
     }

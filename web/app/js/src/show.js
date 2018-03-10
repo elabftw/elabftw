@@ -25,14 +25,11 @@
         // bodyToggleImg is the little +/- image
         $('.bodyToggleImg').click(function() {
             // transform the + in - and vice versa
-            if ($(this).attr('src') == 'app/img/show-more.png') {
-                $(this).attr('src', 'app/img/show-less.png');
-            } else {
-                $(this).attr('src', 'app/img/show-more.png');
-            }
+            $(this).children().toggleClass('fa-minus-circle').toggleClass('fa-plus-circle');
+
             // get the id to show the toggleBody
-            var id = $(this).attr('id');
-            var idArr = id.split("_");
+            let id = $(this).parent().attr('id');
+            const idArr = id.split("_");
             id = idArr[1];
             // get html of body
             $.post('app/controllers/EntityController.php', {
@@ -43,7 +40,7 @@
             }).done(function(data) {
                 $('#bodyToggle_' + id).html(data.msg);
                 // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-                var width = $('#parent_' + id).width() - 30;
+                const width = $('#parent_' + id).width() - 30;
                 // adjust the width of the children
                 $('#bodyToggle_' + id).css('width', width);
                 // display div
@@ -52,8 +49,8 @@
         });
 
         // there is a create shortcut only for experiments
-        var page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
-        var controller = 'app/controllers/DatabaseController.php';
+        const page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
+        let controller = 'app/controllers/DatabaseController.php';
         if (page === 'experiments.php') {
             controller = 'app/controllers/ExperimentsController.php';
 

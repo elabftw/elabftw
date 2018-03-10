@@ -9,7 +9,7 @@ const fontawesome = require('@fortawesome/fontawesome');
 
 
 // SOLID
-import { faCheckSquare, faCogs, faComments, faDna, faDownload, faFileArchive, faHistory, faInfoCircle, faLink, faLock, faLockOpen, faPaintBrush, faPaperclip, faPencilAlt, faQuestionCircle, faSignOutAlt, faTags, faTimes } from '@fortawesome/fontawesome-free-solid';
+import { faCheckSquare, faCogs, faComments, faDna, faDownload, faFileArchive, faHistory, faInfoCircle, faLink, faLock, faLockOpen, faMinusCircle, faPaintBrush, faPaperclip, faPencilAlt, faPlusCircle, faQuestionCircle, faSignOutAlt, faSyncAlt, faTags, faTimes } from '@fortawesome/fontawesome-free-solid';
 fontawesome.library.add(faCheckSquare);
 fontawesome.library.add(faCogs);
 fontawesome.library.add(faComments);
@@ -21,11 +21,14 @@ fontawesome.library.add(faInfoCircle);
 fontawesome.library.add(faLink);
 fontawesome.library.add(faLock);
 fontawesome.library.add(faLockOpen);
+fontawesome.library.add(faMinusCircle);
 fontawesome.library.add(faPaintBrush);
 fontawesome.library.add(faPaperclip);
 fontawesome.library.add(faPencilAlt);
+fontawesome.library.add(faPlusCircle);
 fontawesome.library.add(faQuestionCircle);
 fontawesome.library.add(faSignOutAlt);
+fontawesome.library.add(faSyncAlt);
 fontawesome.library.add(faTags);
 fontawesome.library.add(faTimes);
 

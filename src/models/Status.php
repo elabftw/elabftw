@@ -132,12 +132,12 @@ class Status extends AbstractCategory
      */
     public function isTimestampable($status)
     {
-         $sql = "SELECT is_timestampable FROM status WHERE id = :id";
-         $req = $this->Db->prepare($sql);
-         $req->bindParam(':id', $status, PDO::PARAM_INT);
-         $req->execute();
+            $sql = "SELECT is_timestampable FROM status WHERE id = :id";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $status, PDO::PARAM_INT);
+            $req->execute();
 
-         return (bool) $req->fetchColumn();
+            return (bool) $req->fetchColumn();
     }
 
     /**

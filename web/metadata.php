@@ -42,7 +42,7 @@ try {
         $Response->send();
     } else {
         throw new OneLogin_Saml2_Error(
-            'Invalid SP metadata: '.implode(', ', $errors),
+            'Invalid SP metadata: ' . implode(', ', $errors),
             OneLogin_Saml2_Error::METADATA_SP_INVALID
         );
     }

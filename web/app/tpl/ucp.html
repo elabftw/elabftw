@@ -284,7 +284,8 @@
     {% for template in templatesArr %}
     <div class='subdivhandle' id='subtab_{{ template.id }}div'>
     <!-- TAGS -->
-    <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
+    <i class='fas fa-tags'></i>
+    <label for='addtaginput'>{{ 'Tags'|trans }}</label>
     <div class='tags'>
         <span id='tags_div_{{ template.id }}'>
             <!--  build the tag array -->

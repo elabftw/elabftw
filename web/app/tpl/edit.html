@@ -7,7 +7,7 @@
 <script src='app/js/dropzone.min.js?v=200'></script>
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
-    <img class='align_right entityDestroy' src='app/img/big-trash.png' title='delete' alt='delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" />
+    <i class='fas fa-times fa-2x clickable align_right entityDestroy' title='Delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
 
     <!-- TAGS -->
     <i class='fas fa-tags mr-1'></i><label for='addtaginput'>{{ 'Tags'|trans }}</label>
@@ -49,7 +49,7 @@
             {% if Entity.type == 'experiments' %}
                 <!-- VISIBILITY -->
                 <div class='col-md-4'>
-                    <img src='app/img/eye.png' alt='visibility' />
+                    <i class='fas fa-eye' title='Visibility'></i>
                     <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
                     <select id='visibility_select'>
                         {% for key, value in TeamGroups.getVisibilityList %}
@@ -63,7 +63,7 @@
 
                 <!-- CATEGORIES (status for exp and itemstypes for items) -->
                 <div class='col-md-4'>
-                    <img src='app/img/status.png' alt='category' />
+                    <i class='fas fa-clipboard-check'></i>
                     <label for='category_select'>
                     {% if Entity.type == 'experiments' %}
                     {{ 'Status'|trans }}

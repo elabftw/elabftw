@@ -90,7 +90,8 @@
             <button class='button import-tpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
         </h3>
         <!-- TAGS -->
-        <img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>{{ 'Tags'|trans }}</label>
+        <i class='fas fa-tags'></i>
+        <label for='addtaginput'>{{ 'Tags'|trans }}</label>
         <span class='tags'>
             <!--  build the tag array -->
             {% if template.tags|length > 0 %}

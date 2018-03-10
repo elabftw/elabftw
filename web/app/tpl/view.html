@@ -13,9 +13,11 @@
         {{ Ev.showTimestamp|raw }}
     {% endif %}
     <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
-        <span class='top_right_status'><img src='app/img/status.png'>{{ Entity.entityData.category }}
-            <img src='app/img/eye.png' alt='eye' />{{ Ev.getVisibility }}
-        </span>
+        <p class='align_right inline'><i class='fas fa-clipboard-check'></i>
+            {{ Entity.entityData.category }}
+            <i class='fas fa-eye' title='Visibility'></i>
+            {{ Ev.getVisibility }}
+        </p>
 {% else %}
     <section class='box'>
         <span class='align_right'>{{ Entity.entityData.rating|stars|raw }}</span>

@@ -14,11 +14,13 @@ import {
     faCheck,
     faCheckSquare,
     faChevronCircleLeft,
+    faClipboardCheck,
     faCloud,
     faCogs,
     faComments,
     faDna,
     faDownload,
+    faEye,
     faFileArchive,
     faHistory,
     faInfoCircle,
@@ -43,11 +45,13 @@ fontawesome.library.add(faChartPie);
 fontawesome.library.add(faCheck);
 fontawesome.library.add(faCheckSquare);
 fontawesome.library.add(faChevronCircleLeft);
+fontawesome.library.add(faClipboardCheck);
 fontawesome.library.add(faCloud);
 fontawesome.library.add(faCogs);
 fontawesome.library.add(faComments);
 fontawesome.library.add(faDna);
 fontawesome.library.add(faDownload);
+fontawesome.library.add(faEye);
 fontawesome.library.add(faFileArchive);
 fontawesome.library.add(faHistory);
 fontawesome.library.add(faInfoCircle);

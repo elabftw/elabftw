@@ -776,14 +776,6 @@ input[type='checkbox']{
     float:left;
 }
 
-.top_right_status {
-    color: #797979;
-    float:right;
-}
-.top_right_status img {
-    margin: 0 5px 0 25px;
-}
-
 .danger-zone-area{
     border-color: #e6614c;
     background-color: #ffc1b7;

@@ -261,8 +261,8 @@
             <select class="clean-form col-3-form" data-mailmethod='{{ App.Config.configArr.mail_method }}' name='mail_method' id='selectMailMethod'>
                 <option value='' disabled>{{ 'Select mailing method...'|trans }}</option>
 
-                <option value="sendmail" {{ not disable_sendmail ? " selected" }}>{{ 'Local MTA (default)'|trans }}</option>
-                <option value="smtp" {{ not disable_smtp ? " selected" }}>{{ 'SMTP'|trans }}</option>
+                <option value="sendmail" {{ App.Config.configArr.mail_method == 'sendmail' ? " selected" }}>{{ 'Local MTA (default)'|trans }}</option>
+                <option value="smtp" {{ App.Config.configArr.mail_method == 'smtp' ? " selected" }}>{{ 'SMTP'|trans }}</option>
             </select>
         </p>
 

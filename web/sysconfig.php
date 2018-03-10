@@ -35,28 +35,6 @@ try {
     $ReleaseCheck = new ReleaseCheck($App->Config);
     $langsArr = Tools::getLangsArr();
 
-    switch ($App->Config->configArr['mail_method']) {
-        case 'sendmail':
-            $disable_sendmail = false;
-            $disable_smtp = true;
-            $disable_php = true;
-            break;
-        case 'smtp':
-            $disable_sendmail = true;
-            $disable_smtp = false;
-            $disable_php = true;
-            break;
-        case 'php':
-            $disable_sendmail = true;
-            $disable_smtp = true;
-            $disable_php = false;
-            break;
-        default:
-            $disable_sendmail = true;
-            $disable_smtp = true;
-            $disable_php = true;
-    }
-
     $phpInfos = array(PHP_OS, PHP_VERSION, PHP_INT_MAX, PHP_SYSCONFDIR);
 
     $template = 'sysconfig.html';
@@ -64,9 +42,6 @@ try {
         'ReleaseCheck' => $ReleaseCheck,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,
-        'disable_sendmail' => $disable_sendmail,
-        'disable_smtp' => $disable_smtp,
-        'disable_php' => $disable_php,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
         'phpInfos' => $phpInfos,

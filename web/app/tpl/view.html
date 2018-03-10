@@ -161,7 +161,7 @@
                 {% for comment in commentsArr %}
                     <div class='box'>
                         <div class='comment-header'>
-                        <span class='text-muted'>{{ comment.fullname }} {{ 'commented'|trans }}</span>
+                        <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userid %}
                         <i class='fas fa-pencil-alt clickable commentsEdit'></i>

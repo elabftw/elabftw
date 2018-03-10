@@ -4,10 +4,20 @@
  */
 
 $(document).ready(function() {
+    // TOGGLABLE
     $(document).on('click', '.togglable-next', function() {
         $(this).next().toggle();
     });
     $('.togglable-hidden').hide();
+
+    // HELP CONTAINER
+    $('#help_container').hide();
+    $('#help').click(function() {
+        $('#help_container').toggle();
+    });
+    $(document).on('click', '.helpClose', function() {
+        $('#help_container').hide();
+    });
 });
 
 // for editXP/DB, ctrl-shift-D will add the date

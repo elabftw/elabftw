@@ -46,7 +46,6 @@ module.exports = function(grunt) {
           'web/app/js/install.min.js': 'web/app/js/src/install.js',
           'web/app/js/tabs.min.js': 'web/app/js/src/tabs.js',
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
-          'web/app/js/footer.min.js': 'web/app/js/src/footer.js',
           'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
           'web/app/js/login.min.js': 'web/app/js/src/login.js',
           'web/app/js/register.min.js': [

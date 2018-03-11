@@ -204,7 +204,7 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                     <i class='fas fa-paperclip mr-1'></i>
                 {% endif %}
 
-                {% if Entity.type == 'items' %}
+                {% if Entity.type == 'items' and item.rating > 0 %}
                     {{ item.rating|stars|raw }}
                 {% endif %}
 

@@ -329,8 +329,8 @@ class Tools
      */
     public static function showStars($rating)
     {
-        $green = "<img src='app/img/star-green.png' alt='☻' />";
-        $gray = "<img src='app/img/star-gray.png' alt='☺' />";
+        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
+        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
 
         return str_repeat($green, $rating) . str_repeat($gray, (5 - $rating));
     }

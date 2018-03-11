@@ -41,6 +41,7 @@ import {
     faPlusCircle,
     faQuestionCircle,
     faSignOutAlt,
+    faStar,
     faSyncAlt,
     faTags,
     faTimes,
@@ -79,6 +80,7 @@ fontawesome.library.add(faPencilAlt);
 fontawesome.library.add(faPlusCircle);
 fontawesome.library.add(faQuestionCircle);
 fontawesome.library.add(faSignOutAlt);
+fontawesome.library.add(faStar);
 fontawesome.library.add(faSyncAlt);
 fontawesome.library.add(faTags);
 fontawesome.library.add(faTimes);

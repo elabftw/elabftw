@@ -196,12 +196,12 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                 <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
                 <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
                 {% if item.timestamped %}
-                    <img src='app/img/stamp.png' alt='stamp' title='experiment timestamped' />
+                    <i class='far fa-calendar-check'></i>
                 {% endif %}
 
                 {# show attached if there is a file attached #}
                 {% if item.has_attachment %}
-                    <i class='fas fa-paperclip mr-1'></i>
+                    <i class='fas fa-paperclip'></i>
                 {% endif %}
 
                 {% if Entity.type == 'items' and item.rating > 0 %}

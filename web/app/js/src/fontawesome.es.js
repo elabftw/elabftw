@@ -88,8 +88,9 @@ fontawesome.library.add(faUpload);
 fontawesome.library.add(faUser);
 
 // REGULAR
-import { faCalendarAlt, faCopy} from '@fortawesome/fontawesome-free-regular';
+import { faCalendarAlt, faCalendarCheck, faCopy} from '@fortawesome/fontawesome-free-regular';
 fontawesome.library.add(faCalendarAlt);
+fontawesome.library.add(faCalendarCheck);
 fontawesome.library.add(faCopy);
 
 // BRANDS

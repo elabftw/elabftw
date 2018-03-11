@@ -74,9 +74,9 @@
 
 <!-- show timestamp button if not timestamped already -->
 {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('anon') %}
-    <a class='elab-tooltip'>
+    <a class='elab-tooltip' href='#'>
         <span>{{ 'Timestamp Experiment'|trans }}</span>
-        <img id='confirmTimestamp' src='app/img/stamp.png' alt='Timestamp' />
+        <i class='far fa-calendar-check' id='confirmTimestamp'></i>
     </a>
     <div id='confirmTimestampDiv' data-wait='{{ 'Please wait…' }}' title='{{ 'Timestamp this experiment?'|trans }}'>
         <p>

@@ -38,10 +38,7 @@ class UploadsView
      */
     public function displayUpload($mode, $upload)
     {
-        //$html = '';
-
-        // list of extensions with a corresponding app/img/thumb-*.png image
-        $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
+        $html = '';
 
         // list of extensions understood by 3Dmol.js
         // see http://3dmol.csb.pitt.edu/doc/types.html
@@ -88,9 +85,6 @@ class UploadsView
             $html .= "><img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f=" . $upload['long_name'] . "_th.jpg' alt='thumbnail' /></a>";
 
             // not an image
-        } elseif (in_array($ext, $commonExtensions)) {
-            $html .= "<img class='thumb img-thumbnail rounded mx-auto d-block' src='app/img/thumb-" . $ext . ".png' alt='' />";
-
             // special case for mol files, only in view mode
         } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
             $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
@@ -106,9 +100,9 @@ class UploadsView
             }
             $molviewer = new MolViewer($upload['id'], $filepath, $isProtein);
             $html .= $molviewer->getViewerDiv();
+
         } else {
-            // uncommon extension without a nice image to display
-            $html .= "<img class='thumb img-thumbnail rounded mx-auto d-block' src='app/img/thumb.png' alt='' />";
+            $html .= "<i class='fas " . Tools::getIconFromExtension($ext) . " thumb rounded mx-auto d-block'></i>";
         }
 
         // NOW DISPLAY THE NAME + COMMENT WITH ICONS

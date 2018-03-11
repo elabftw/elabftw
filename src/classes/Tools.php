@@ -374,4 +374,71 @@ class Tools
         return 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
     }
 
+    /**
+     * Get the correct class for icon from the extension
+     *
+     * @param string $ext Extension of the file
+     * @return string Class of the fa icon
+     */
+    public static function getIconFromExtension($ext)
+    {
+        switch($ext) {
+            // ARCHIVE
+            case 'zip':
+            case 'rar':
+            case 'xz':
+            case 'tgz':
+            case '7z':
+            case 'bz2':
+            case 'tar':
+                return 'fa-file-archive';
+                break;
+
+            // CODE
+            case 'py':
+            case 'jupyter':
+            case 'js':
+            case 'm':
+            case 'r':
+            case 'R':
+                return 'fa-file-code';
+                break;
+
+            // EXCEL
+            case 'xls':
+            case 'xlsx':
+            case 'ods':
+            case 'csv':
+                return 'fa-file-excel';
+                break;
+
+            // POWERPOINT
+            case 'ppt':
+            case 'pptx':
+            case 'pps':
+            case 'odp':
+                return 'fa-file-powerpoint';
+                break;
+
+            // VIDEO
+            case 'mov':
+            case 'avi':
+            case 'mp4':
+            case 'wmv':
+            case 'mpeg':
+            case 'flv':
+                return 'fa-file-video';
+                break;
+
+            // WORD
+            case 'doc':
+            case 'docx':
+            case 'odt':
+                return 'fa-file-word';
+                break;
+
+            default:
+                return 'fa-file';
+        }
+    }
 }

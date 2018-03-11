@@ -21,7 +21,14 @@ import {
     faDna,
     faDownload,
     faEye,
+    faFile,
     faFileArchive,
+    faFileCode,
+    faFileExcel,
+    faFilePdf,
+    faFilePowerpoint,
+    faFileVideo,
+    faFileWord,
     faHistory,
     faInfoCircle,
     faLink,
@@ -52,7 +59,14 @@ fontawesome.library.add(faComments);
 fontawesome.library.add(faDna);
 fontawesome.library.add(faDownload);
 fontawesome.library.add(faEye);
+fontawesome.library.add(faFile);
 fontawesome.library.add(faFileArchive);
+fontawesome.library.add(faFileCode);
+fontawesome.library.add(faFileExcel);
+fontawesome.library.add(faFilePdf);
+fontawesome.library.add(faFilePowerpoint);
+fontawesome.library.add(faFileVideo);
+fontawesome.library.add(faFileWord);
 fontawesome.library.add(faHistory);
 fontawesome.library.add(faInfoCircle);
 fontawesome.library.add(faLink);
@@ -72,10 +86,9 @@ fontawesome.library.add(faUpload);
 fontawesome.library.add(faUser);
 
 // REGULAR
-import { faCalendarAlt, faCopy, faFilePdf } from '@fortawesome/fontawesome-free-regular';
+import { faCalendarAlt, faCopy} from '@fortawesome/fontawesome-free-regular';
 fontawesome.library.add(faCalendarAlt);
 fontawesome.library.add(faCopy);
-fontawesome.library.add(faFilePdf);
 
 // BRANDS
 import { faGithub, faTwitter } from '@fortawesome/fontawesome-free-brands';

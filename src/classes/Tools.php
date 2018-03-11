@@ -387,6 +387,7 @@ class Tools
             case 'zip':
             case 'rar':
             case 'xz':
+            case 'gz':
             case 'tgz':
             case '7z':
             case 'bz2':
@@ -416,6 +417,7 @@ class Tools
             case 'ppt':
             case 'pptx':
             case 'pps':
+            case 'ppsx':
             case 'odp':
                 return 'fa-file-powerpoint';
                 break;

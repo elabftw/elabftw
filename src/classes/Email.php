@@ -14,7 +14,6 @@ use Exception;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SmtpTransport;
-use Swift_MailTransport;
 use Swift_SendmailTransport;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;

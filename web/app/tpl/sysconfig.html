@@ -333,7 +333,7 @@
             <ul class='clean-list'>
                 {% if logsArr %}
                     {% for log in logsArr %}
-                        <li>✪ {{ log.datetime }} [ {{ log.type }} ] {{ log.body }} ({{ log.user }})</li>
+                        <li>⚫ {{ log.datetime }} [ {{ log.type }} ] {{ log.body }} ({{ log.user }})</li>
                     {% endfor %}
                 {% else %}
                     <li>{{ 'Nothing to display'|trans }}</li>

@@ -329,11 +329,11 @@
 <!-- TAB 7 LOGS -->
 <div class='divhandle' id='tab7div'>
     <div id='logsDiv'>
-        <div class='well'>
+        <div class='box'>
             <ul class='clean-list'>
                 {% if logsArr %}
-                    {% for logs in logsArr %}
-                        <li>✪ {{ logs.datetime }} [ {{ logs.type }} ] {{ logs.body }} ({{ logs.user }})</li>
+                    {% for log in logsArr %}
+                        <li>✪ {{ log.datetime }} [ {{ log.type }} ] {{ log.body }} ({{ log.user }})</li>
                     {% endfor %}
                 {% else %}
                     <li>{{ 'Nothing to display'|trans }}</li>
@@ -398,7 +398,7 @@
     <div class='box'>
         <h3>Identity Providers Configuration</h3>
 
-        <div class='well'>
+        <div class='box'>
             <h4>Add new Identity Provider</h4>
             <form method='post' action='app/controllers/IdpsController.php'>
                 <input type='hidden' name='idpsCreate' />
@@ -433,7 +433,7 @@
         {% if idpsArr|length > 0 %}
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
-                <div class='well'>
+                <div class='box'>
                     <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                     <form method='post' action='app/controllers/IdpsController.php'>
                     <input type='hidden' name='idpsUpdate' />

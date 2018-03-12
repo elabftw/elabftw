@@ -277,43 +277,17 @@ label {
 /* selected nav entry */
 .nav-link.active {
     border-bottom:6px #29AEB9 solid;
-    /*
-    background-color:#343434 !important;
-    color: white !important;
-    */
 }
 
 /* search bar in head.php ; nav */
-/*
-#big_search {
-    width:30%;
-/*
-    margin-right: -45px;
-}
-    */
 #big_search input {
     background:#555 url(images/search.png) no-repeat scroll right 10px center;
     border: none;
     border-radius: 20px;
-    /*
-    text-align:right;
-    */
     margin-right: 0 !important;
-    /*
-    width:50%;
-    */
     height:2em;
     color: white;
-    /*
-    transition:width 1s;
-    */
 }
-/*
-#big_search input:focus {
-    width:100%;
-}
-*/
-
 /* END NAV */
 
 /*  MENU is below main nav */
@@ -341,11 +315,6 @@ menu ul li.selected {
 /* USER MENU (settings, help, logout) */
 .user-nav {
     text-align: right;
-}
-
-/* fix well overflow */
-.well {
-    overflow: auto;
 }
 
 /* ALERT */
@@ -1175,8 +1144,4 @@ h3.togglable-next {
 
 .svg-inline--fa {
     color: #797979;
-}
-
-.well {
-    overflow: visible;
 }

@@ -84,7 +84,7 @@
         {% endfor %}
     </ul>
     {% for template in templatesArr %}
-    <div class='subdivhandle well' id='subtab_{{ template.id }}div'>
+    <div class='subdivhandle box' id='subtab_{{ template.id }}div'>
 
         <h3>{{ template.name|raw }} ({{ template.fullname|raw }})
             <button class='button import-tpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>

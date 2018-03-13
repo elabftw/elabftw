@@ -53,14 +53,14 @@ class Tools
      */
     public static function displayMessage($message, $type, $cross = true)
     {
-        $glyphicon = 'info-sign';
+        $icon = 'fa-info-circle';
         $alert = 'success';
 
         if ($type === 'ko') {
-            $glyphicon = 'exclamation-sign';
+            $icon = 'fa-exclamation-triangle';
             $alert = 'danger';
         } elseif ($type === 'warning') {
-            $glyphicon = 'chevron-right';
+            $icon = 'fa-chevron-right';
             $alert = $type;
         }
 
@@ -71,8 +71,8 @@ class Tools
         }
 
         $begin = "<div class='alert alert-" . $alert .
-            "'><span class='glyphicon glyphicon-" . $glyphicon .
-            "' aria-hidden='true'></span>";
+            "'><i class='fas " . $icon .
+            "'></i>";
         $end = "</div>";
 
         return $begin . $crossLink . ' ' . $message . $end;

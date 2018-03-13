@@ -4387,9 +4387,9 @@ pkg-dir@^2.0.0:
   dependencies:
     find-up "^2.1.0"
 
-popper.js@^1.12.9:
-  version "1.12.9"
-  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.12.9.tgz#0dfbc2dff96c451bb332edcfcfaaf566d331d5b3"
+popper.js@^1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.0.tgz#3d73132100c83bfdc5fabb4769be925f57e59dc2"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -5217,9 +5217,9 @@ snyk-try-require@^1.1.1, snyk-try-require@^1.2.0:
     lru-cache "^4.0.0"
     then-fs "^2.0.0"
 
-snyk@^1.69.11:
-  version "1.69.11"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.69.11.tgz#6a4e236311be3afcab9d7f5d665b49f75b68a84a"
+snyk@^1.70.0:
+  version "1.70.0"
+  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.70.0.tgz#141a5ab88c262ef1bd6cb2b590bc50d4f46f4dc8"
   dependencies:
     abbrev "^1.0.7"
     ansi-escapes "^1.3.0"

@@ -170,6 +170,7 @@ try {
             'categoryArr' => $categoryArr,
             'itemsArr' => $itemsArr,
             'offset' => $offset,
+            'query' => $query,
             'searchType' => $searchType,
             'showAll' => $showAll
         );

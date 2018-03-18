@@ -1094,14 +1094,6 @@ code {
 #todoItems-list.ui-sortable {
     padding-left: 0;
 }
-
-#todoList ul li a:hover {
-    color:red;
-}
-#todoList #clear-all, #todoList #close {
-    color: white;
-    text-decoration:none;
-}
 /* END TODOLIST */
 
 /* fix dropzone css */
@@ -1115,7 +1107,7 @@ code {
 }
 
 /* doodle canvas */
-h3.togglable-next {
+.togglable-next {
     display: inline;
 }
 .doodle {

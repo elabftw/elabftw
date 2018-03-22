@@ -3,7 +3,7 @@
     "description": "Laboratory notebook for research labs",
     "homepage": "https://www.elabftw.net",
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.0.26",
         "ext-ctype": "*",
         "ext-curl":"*",
         "ext-gettext":"*",

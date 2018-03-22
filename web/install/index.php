@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 try {
     session_start();
-    require_once '../vendor/autoload.php';
+    require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
     // create Request object
     $Request = Request::createFromGlobals();
     $errflag = false;

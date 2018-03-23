@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 try {
-    require_once '../vendor/autoload.php';
+    require_once '../../vendor/autoload.php';
 
     // create Request object
     $Request = Request::createFromGlobals();

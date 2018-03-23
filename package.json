@@ -38,7 +38,7 @@
     "lodash": "^4.17.5",
     "snyk": "^1.70.1",
     "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.12"
+    "webpack-cli": "^2.0.13"
   },
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/classes",

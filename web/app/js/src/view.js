@@ -174,14 +174,15 @@
         // ACTIVATE FANCYBOX
         $('[data-fancybox]').fancybox();
 
-        // KEYBOARD SHORTCUTS
-        /* TODO
-        key($('#shortcuts').data('create'), function(){
-            window.location.href = 'app/controllers/EntityController.php?create=true';
-        });
-        key($('#shortcuts').data('edit'), function(){
-            window.location.href = '?mode=edit&id=' + id;
-        });
-        */
+    });
+
+    // KEYBOARD SHORTCUT
+    $(document).keypress(function(e) {
+        if (e.key === $('#shortcuts').data('create') && $('#entityInfos').data('type') === 'experiments') {
+            window.location.href = 'app/controllers/ExperimentsController.php?create=true';
+        }
+        if (e.key === $('#shortcuts').data('edit')) {
+            window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
+        }
     });
 }());

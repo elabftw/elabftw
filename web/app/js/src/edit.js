@@ -446,15 +446,12 @@
         function doneTyping () {
             quickSave(type, id);
         }
-        // KEYBOARD SHORTCUTS
-        /* TODO
-        key($('#shortcuts').data('create'), function(){
-            location.href = controller + '?create=true';
+        // KEYBOARD SHORTCUT
+        $(document).keypress(function(e) {
+            if (e.key === $('#shortcuts').data('submit')) {
+                document.forms.main_form.submit();
+            }
         });
-        key($('#shortcuts').data('submit'), function(){
-            document.forms.main_form.submit();
-        });
-        */
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {

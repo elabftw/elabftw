@@ -102,18 +102,11 @@
     });
 
     // TOGGLE VISIBILITY WITH A SHORTCUT
-    // TODO
-    $(document).on('keydown', function(e) {
-		if (e.which == 119) {
-            console.log('key w pressed');
+    $(document).keypress(function(e) {
+        if (e.key === $('#todoSc').data('toggle')) {
             Todolist.toggle();
-		}
-	});
-    /*
-    key($('#todoSc').data('toggle'), function(){
-        Todolist.toggle();
+        }
     });
-    */
 
     // SORTABLE for TODOLIST items
     $('#todoItems-list').sortable({

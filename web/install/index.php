@@ -136,6 +136,8 @@ try {
         throw new Exception($message);
     }
 
+    // TODO check for cache folder
+
     // UPLOADS DIR
     if (!is_writable('../../uploads') || !is_writable('../../uploads/tmp')) {
         // create the folders

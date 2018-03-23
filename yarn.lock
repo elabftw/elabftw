@@ -2095,9 +2095,9 @@ figures@^2.0.0:
   dependencies:
     escape-string-regexp "^1.0.5"
 
-file-saver@^1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-1.3.3.tgz#cdd4c44d3aa264eac2f68ec165bc791c34af1232"
+file-saver@^1.3.7:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-1.3.7.tgz#10030fba3917ce000e9231c0e1ac4f902d38e986"
 
 filename-regex@^2.0.0:
   version "2.0.1"

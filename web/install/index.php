@@ -137,12 +137,12 @@ try {
     }
 
     // UPLOADS DIR
-    if (!is_writable('../uploads') || !is_writable('../uploads/tmp')) {
+    if (!is_writable('../../uploads') || !is_writable('../../uploads/tmp')) {
         // create the folders
-        @mkdir('../uploads');
-        @mkdir('../uploads/tmp');
+        @mkdir('../../uploads');
+        @mkdir('../../uploads/tmp');
         // check the folders
-        if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
+        if (is_writable('../../uploads') && is_writable('../../uploads/tmp')) {
             $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
             echo Tools::displayMessage($message, 'ok', false);
         } else { // failed at creating the folder

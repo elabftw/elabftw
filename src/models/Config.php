@@ -59,6 +59,7 @@ class Config
      * Used in sysconfig.php to update config values
      *
      * @param array $post (conf_name => conf_value)
+     * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @return bool the return value of execute queries
      */
     public function update($post): bool

@@ -40,7 +40,7 @@ class Tags implements CrudInterface
      * @param string $tag
      * @return int id of the tag
      */
-    public function create($tag): int
+    public function create(string $tag): int
     {
         if ($this->Entity->type === 'experiments' || $this->Entity->type === 'experiments_tpl') {
             $userOrTeam = 'userid';
@@ -52,13 +52,13 @@ class Tags implements CrudInterface
         $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, " . $userOrTeam . ")
             VALUES(:tag, :item_id, :userOrTeam)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag', $tag, PDO::PARAM_STR);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':tag', $tag);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userOrTeam', $userOrTeamValue);
 
         $req->execute();
 
-        return (int) $this->Db->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -158,7 +158,7 @@ class Tags implements CrudInterface
 
         foreach ($tagsArr as $tag) {
             $tagList .= "<option value='" . $tag['tag'] . "'";
-            if (in_array($tag['tag'], $selected)) {
+            if (\in_array($tag['tag'], $selected)) {
                 $tagList .= " selected='selected'";
             }
             $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";

@@ -128,7 +128,7 @@ class App
      */
     public function getGenerationTime(): float
     {
-        return round((microtime(true) - $this->Request->server->get("REQUEST_TIME_FLOAT")), 5);
+        return round(microtime(true) - $this->Request->server->get("REQUEST_TIME_FLOAT"), 5);
     }
 
     /**

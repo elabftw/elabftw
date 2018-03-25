@@ -83,16 +83,16 @@ class Saml
                 // If you need to specify requested attributes, set a
                 // attributeConsumingService. nameFormat, attributeValue and
                 // friendlyName can be omitted. Otherwise remove this section.
-                "attributeConsumingService"=> array(
-                        "ServiceName" => "eLabFTW",
-                        "serviceDescription" => "Electronic Lab Notebook",
-                        "requestedAttributes" => array(
+                'attributeConsumingService'=> array(
+                        'ServiceName' => 'eLabFTW',
+                        'serviceDescription' => 'Electronic Lab Notebook',
+                        'requestedAttributes' => array(
                             array(
-                                "name" => "",
-                                "isRequired" => false,
-                                "nameFormat" => "",
-                                "friendlyName" => "",
-                                "attributeValue" => ""
+                                'name' => '',
+                                'isRequired' => false,
+                                'nameFormat' => '',
+                                'friendlyName' => '',
+                                'attributeValue' => ''
                             )
                         )
                 ),

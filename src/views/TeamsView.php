@@ -40,13 +40,13 @@ class TeamsView
 
         if ($team === null) {
             $count = $this->Teams->getAllStats();
-            $stats .= _('Teams') . ": " . $count['totteams'] . " − ";
+            $stats .= _('Teams') . ': ' . $count['totteams'] . ' − ';
         } else {
             $count = $this->Teams->getStats($this->Teams->Users->userData['team']);
         }
-            $stats .= _('Members') . ": " . $count['totusers'] . " − " .
-            ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .
-            _('Items') . ": " . $count['totdb'];
+            $stats .= _('Members') . ': ' . $count['totusers'] . ' − ' .
+            ngettext('Experiment', 'Experiments', $count['totxp']) . ': ' . $count['totxp'] . ' (' . $count['totxpts'] . ' timestamped) − ' .
+            _('Items') . ': ' . $count['totdb'];
 
         return $stats;
     }

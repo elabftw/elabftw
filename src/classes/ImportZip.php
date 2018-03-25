@@ -134,7 +134,7 @@ class ImportZip extends AbstractImport
             throw new Exception('Cannot import in database!');
         }
 
-        $newItemId = (int) $this->Db->lastInsertId();
+        $newItemId = $this->Db->lastInsertId();
 
         // create necessary objects
         if ($this->type === 'experiments') {

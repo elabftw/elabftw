@@ -91,7 +91,7 @@ class UploadsView
                 "' data-molpath='" . $filepath . "'></canvas></div>";
 
             // if this is something 3Dmol.js can handle
-        } elseif (in_array($ext, $molExtensions)) {
+        } elseif (\in_array($ext, $molExtensions)) {
             // try to be clever and use cartoon representation for pdb files
             if ($ext === 'pdb') {
                 $isProtein = true;

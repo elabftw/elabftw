@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -125,6 +126,7 @@ class Api
      * Read an entity in full
      *
      * @return array<string,array>
+     * @throws Exception
      */
     public function getEntity(): array
     {

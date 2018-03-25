@@ -34,31 +34,28 @@ final class Db
      */
     private function __construct()
     {
-        try {
-            $pdo_options = array();
-            // throw exception if error
-            $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-            // use persistent mode for connection to MySQL
-            $pdo_options[PDO::ATTR_PERSISTENT] = true;
-            // only return a named array
-            $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
+        $pdo_options = array();
+        // throw exception if error
+        $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        // use persistent mode for connection to MySQL
+        $pdo_options[PDO::ATTR_PERSISTENT] = true;
+        // only return a named array
+        $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
 
-            $this->connection = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' .
-                DB_NAME,
-                DB_USER,
-                DB_PASSWORD,
-                $pdo_options
-            );
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        $this->connection = new PDO(
+            'mysql:host=' . DB_HOST . ';dbname=' .
+            DB_NAME,
+            DB_USER,
+            DB_PASSWORD,
+            $pdo_options
+        );
     }
 
     /**
      * Return the instance of the class
      *
-     * @return Db $instance The instance of the class
+     * @throws Exception If connection to database failed
+     * @return Db The instance of the class
      */
     public static function getConnection(): Db
     {

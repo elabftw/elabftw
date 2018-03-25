@@ -27,6 +27,7 @@ class Links implements CrudInterface
      * Constructor
      *
      * @param Experiments $entity
+     * @throws Exception
      */
     public function __construct(Experiments $entity)
     {
@@ -82,7 +83,7 @@ class Links implements CrudInterface
      *
      * @param int $id The id of the original experiment
      * @param int $newId The id of the new experiment that will receive the links
-     * @return null
+     * @return void
      */
     public function duplicate($id, $newId): void
     {

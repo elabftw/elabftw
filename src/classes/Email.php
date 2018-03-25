@@ -59,7 +59,7 @@ class Email
         }
 
         // if we have only one admin, we need to have an associative array
-        if (count($arr) === 1) {
+        if (\count($arr) === 1) {
             return array($arr[0] => 'Admin eLabFTW');
         }
 

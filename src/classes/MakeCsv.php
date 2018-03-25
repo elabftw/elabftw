@@ -111,7 +111,7 @@ class MakeCsv extends AbstractMake
      */
     private function writeCsv(): void
     {
-        $fp = fopen($this->filePath, 'w+');
+        $fp = fopen($this->filePath, 'w+b');
         // utf8 headers
         fwrite($fp, "\xEF\xBB\xBF");
         foreach ($this->list as $fields) {

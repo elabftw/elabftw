@@ -40,7 +40,7 @@ class Logs implements CrudInterface
      */
     public function create($type, $user, $body): bool
     {
-        $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
+        $sql = 'INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $type);
         $req->bindParam(':user', $user);
@@ -67,6 +67,7 @@ class Logs implements CrudInterface
      * Not implemented
      *
      * @param $id
+     * @return bool
      */
     public function destroy(int $id): bool
     {

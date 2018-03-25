@@ -115,7 +115,7 @@ class Teams implements CrudInterface
         $req->bindParam(':team_id', $this->Users->userData['team']);
         $req->execute();
         $teamConfig = $req->fetch();
-        if (is_null($column)) {
+        if ($column === null) {
             return $teamConfig;
         }
         return $teamConfig[$column];

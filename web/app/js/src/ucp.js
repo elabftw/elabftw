@@ -114,13 +114,12 @@
             Templates.destroy($(this).data('id'));
         });
 
-
-        // hide the file input
-        $('#import_tpl').hide();
         $(document).on('click', '#import-from-file', function() {
             $('#import_tpl').toggle();
         });
-        $('#import_tpl').on('change', function(e) {
+
+        // input to upload an elabftw.tpl file
+        $('#import_tpl').hide().on('change', function(e) {
             var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "").replace("C:\\fakepath\\", "");
             readFile(this.files[0], function(e) {
                 // FIXME if the user is using markdown there will be no tinymce to get

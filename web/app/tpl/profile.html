@@ -13,7 +13,7 @@
         <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
         <div id='api_div'><h4>{{ 'API key'|trans }}</h4>
             {% if App.Users.userData.api_key|length > 0 %}
-            <input value='{{ App.Users.userData.api_key }}'></input>
+            <input value='{{ App.Users.userData.api_key }}' />
             {% endif %}
             <button class='button generateApiKey'>{% trans %}Generate an API Key{% endtrans %}</button></p>
         </div>

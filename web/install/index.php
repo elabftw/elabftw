@@ -100,7 +100,8 @@ try {
     <!-- CSS -->
     <link rel="stylesheet" media="all" href="../app/css/elabftw.min.css" />
     <!-- JAVASCRIPT -->
-    <script src="../app/js/elabftw.min.js"></script>
+    <script src="../app/js/main.bundle.js?v=200"></script>
+    <script src="../app/js/elabftw.min.js?v=200"></script>
     </head>
 
     <body>

@@ -41,7 +41,8 @@ function addDateOnCursor() {
 
 // notifications
 function notif(text, cssClass) {
-    var htmlText = '<p>' + text + '</p>';
+    const htmlText = '<p>' + text + '</p>';
+    let overlayClass;
     if (cssClass === 'ok') {
         overlayClass = 'overlay-ok';
     } else {

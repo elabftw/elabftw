@@ -68,11 +68,10 @@ class TrustedTimestamps extends AbstractMake
      */
     public function __construct(Config $config, Teams $teams, Experiments $entity)
     {
-        $this->Config = $config;
-        $this->Entity = $entity;
-        $this->teamConfigArr = $teams->read();
+        parent::__construct($entity);
 
-        $this->Db = Db::getConnection();
+        $this->Config = $config;
+        $this->teamConfigArr = $teams->read();
 
         // initialize with info from config
         $this->stampParams = $this->getTimestampParameters();

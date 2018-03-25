@@ -116,6 +116,7 @@ class TeamGroups implements CrudInterface
             'user' => 'Only me'
         );
 
+        /** @noinspection AdditionOperationOnArraysInspection */
         return $visibilityArr + $tgArr;
     }
 

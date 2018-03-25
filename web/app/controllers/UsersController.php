@@ -33,8 +33,8 @@ try {
         $redirect = false;
         try {
             $res = $App->Users->generateApiKey();
-        } catch (\RunTimeException $e) {
-            $error = $e->getMessage();
+        } catch (Exception $e) {
+            $error = "No suitable source of randomness found! Error: " . $e->getMessage();
         }
 
         if ($res) {

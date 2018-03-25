@@ -830,15 +830,12 @@ class Users
     /**
      * Generate an API key and store it
      *
+     * @throws Exception
      * @return bool
      */
     public function generateApiKey(): bool
     {
-        $random = openssl_random_pseudo_bytes(42, $cstrong);
-        if ($cstrong === false || $random === false) {
-            throw new RuntimeException("Your system doesn't appear to be cryptographically strong. IV generation failed.");
-        }
-        $apiKey = \bin2hex($random);
+        $apiKey = \bin2hex(\random_bytes(42));
 
         $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
         $req = $this->Db->prepare($sql);

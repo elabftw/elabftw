@@ -44,7 +44,7 @@ class Uploads implements CrudInterface
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @return bool
      */
-    public function create($request)
+    public function create($request): bool
     {
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
@@ -69,7 +69,7 @@ class Uploads implements CrudInterface
      * @param string $comment
      * @return bool
      */
-    public function createFromLocalFile($filePath, $comment)
+    public function createFromLocalFile($filePath, $comment): bool
     {
         $realName = basename($filePath);
         $ext = Tools::getExt($realName);
@@ -94,7 +94,7 @@ class Uploads implements CrudInterface
      * @param string $string
      * @return bool
      */
-    public function createFromString($fileType, $string)
+    public function createFromString($fileType, $string): bool
     {
         if ($fileType === 'png') {
             $realName = 'Doodle.png';
@@ -125,7 +125,7 @@ class Uploads implements CrudInterface
      * @param string $rawName The name of the file as it was on the user's computer
      * @return string The cleaned filename
      */
-    private function getSanitizedName($rawName)
+    private function getSanitizedName($rawName): string
     {
         return preg_replace('/[^A-Za-z0-9]/', '.', $rawName);
     }
@@ -136,8 +136,9 @@ class Uploads implements CrudInterface
      * @param string $orig from
      * @param string $dest to
      * @throws Exception if cannot move the file
+     * @return bool
      */
-    private function moveFile($orig, $dest)
+    private function moveFile($orig, $dest): bool
     {
         // fix for FreeBSD and rename across different filesystems
         // see http://php.net/manual/en/function.rename.php#117590
@@ -148,6 +149,7 @@ class Uploads implements CrudInterface
         if (!rename($orig, $dest)) {
             throw new Exception('Error while moving the file. Check folder permissons!');
         }
+        return true;
     }
 
     /**
@@ -156,7 +158,7 @@ class Uploads implements CrudInterface
      * @param string $file The full path to the file
      * @return string|null the hash or null if file is too big
      */
-    private function getHash($file)
+    private function getHash($file): ?string
     {
         if (filesize($file) < 5000000) {
             return hash_file($this->hashAlgorithm, $file);
@@ -170,7 +172,7 @@ class Uploads implements CrudInterface
      *
      * @return string the path for storing the file
      */
-    protected function getCleanName()
+    protected function getCleanName(): string
     {
         $hash = hash("sha512", uniqid(rand(), true));
         $folder = substr($hash, 0, 2);
@@ -192,9 +194,9 @@ class Uploads implements CrudInterface
      * @throws Exception if request fail
      * @return bool
      */
-    private function dbInsert($realName, $longName, $hash, $comment = null)
+    private function dbInsert($realName, $longName, $hash, $comment = null): bool
     {
-        if (is_null($comment)) {
+        if ($comment === null) {
             $comment = 'Click to add a comment';
         }
 
@@ -240,7 +242,7 @@ class Uploads implements CrudInterface
      * @param int $id id of the uploaded item
      * @return array
      */
-    public function readFromId($id)
+    public function readFromId($id): array
     {
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
         $req = $this->Db->prepare($sql);
@@ -256,7 +258,7 @@ class Uploads implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->Db->prepare($sql);
@@ -274,7 +276,7 @@ class Uploads implements CrudInterface
      * @param string $comment
      * @return bool
      */
-    public function updateComment($id, $comment)
+    public function updateComment($id, $comment): bool
     {
         // SQL to update single file comment
         $sql = "UPDATE uploads SET comment = :comment WHERE id = :id";
@@ -293,7 +295,7 @@ class Uploads implements CrudInterface
      * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
      * @return null|false
      */
-    public function makeThumb($src, $dest, $desiredWidth)
+    public function makeThumb($src, $dest, $desiredWidth): ?bool
     {
         // we don't want to work on too big images
         // put the limit to 5 Mbytes
@@ -387,10 +389,10 @@ class Uploads implements CrudInterface
     /**
      * Replace an uploaded file by another
      *
-     * @param Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @return bool
      */
-    public function replace($request)
+    public function replace($request): bool
     {
         $id = filter_var($request->request->get('upload_id'), FILTER_VALIDATE_INT);
         $upload = $this->readFromId($id);
@@ -413,7 +415,7 @@ class Uploads implements CrudInterface
      * @param int $id id of the upload
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $uploadArr = $this->readFromId($id);
 
@@ -443,7 +445,7 @@ class Uploads implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $uploadArr = $this->readAll();
         $resultsArr = array();

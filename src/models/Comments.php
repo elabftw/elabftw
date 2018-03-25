@@ -42,7 +42,7 @@ class Comments implements CrudInterface
      * @param string $comment Content for the comment
      * @return int number of email sent
      */
-    public function create($comment)
+    public function create($comment): int
     {
         $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
 
@@ -67,7 +67,7 @@ class Comments implements CrudInterface
      *
      * @return int number of email sent
      */
-    private function alertOwner()
+    private function alertOwner(): int
     {
         $Config = new Config();
 
@@ -122,9 +122,9 @@ class Comments implements CrudInterface
     /**
      * Read comments for an experiments id
      *
-     * @return array|false results or false if no comments
+     * @return array comments for this experiment
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT experiments_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
@@ -138,7 +138,7 @@ class Comments implements CrudInterface
             return $req->fetchAll();
         }
 
-        return false;
+        return array();
     }
 
     /**
@@ -148,7 +148,7 @@ class Comments implements CrudInterface
      * @param int $id id of the comment
      * @return bool
      */
-    public function update($comment, $id)
+    public function update($comment, $id): bool
     {
         $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
         // check length
@@ -173,7 +173,7 @@ class Comments implements CrudInterface
      * @param int $id id of the comment
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $sql = "DELETE FROM experiments_comments WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -188,7 +188,7 @@ class Comments implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
         $req = $this->Db->prepare($sql);

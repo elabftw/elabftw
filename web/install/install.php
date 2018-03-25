@@ -70,7 +70,7 @@ try {
 
     // the new file to write to
     $config_file = '../config.php';
-    $elab_root = dirname(dirname(dirname(__FILE__))) . '/';
+    $elab_root = dirname(__DIR__, 2) . '/';
     // make a new secret key
     $new_key = Key::createNewRandomKey();
 

@@ -39,7 +39,7 @@ class Idps implements CrudInterface
      * @param string $x509 Public x509 Certificate
      * @return string last insert id
      */
-    public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
+    public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509): string
     {
         $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509)
             VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509)";
@@ -63,7 +63,7 @@ class Idps implements CrudInterface
      * @param int $id
      * @return array
      */
-    public function read($id)
+    public function read($id): array
     {
         $sql = "SELECT * FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -78,7 +78,7 @@ class Idps implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT * FROM idps";
         $req = $this->Db->prepare($sql);
@@ -100,7 +100,7 @@ class Idps implements CrudInterface
      * @param string $x509 Public x509 Certificate
      * @return bool
      */
-    public function update($id, $name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509)
+    public function update($id, $name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509): bool
     {
         $sql = "UPDATE idps SET
             name = :name,
@@ -130,7 +130,7 @@ class Idps implements CrudInterface
      * @param int $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $sql = "DELETE FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -143,7 +143,8 @@ class Idps implements CrudInterface
      * Not implemented
      *
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
+        return false;
     }
 }

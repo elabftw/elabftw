@@ -19,10 +19,10 @@ use Exception;
 final class Db
 {
     /** @var PDO $connection Connection to PDO */
-    private $connection = null;
+    private $connection;
 
     /** @var Db $instance store the single instance of the class */
-    private static $instance = null;
+    private static $instance;
 
     /** @var int $nq total number of queries */
     private $nq = 0;
@@ -60,9 +60,9 @@ final class Db
      *
      * @return Db $instance The instance of the class
      */
-    public static function getConnection()
+    public static function getConnection(): Db
     {
-        if (is_null(self::$instance)) {
+        if (self::$instance === null) {
             self::$instance = new Db();
         }
 
@@ -75,7 +75,7 @@ final class Db
      * @param string $sql The SQL query
      * @return \PDOStatement
      */
-    public function prepare($sql)
+    public function prepare($sql): \PDOStatement
     {
         $this->nq++;
         return $this->connection->prepare($sql);
@@ -87,7 +87,7 @@ final class Db
      * @param string $sql The SQL query
      * @return \PDOStatement
      */
-    public function q($sql)
+    public function q($sql): \PDOStatement
     {
         return $this->connection->query($sql);
     }
@@ -95,11 +95,11 @@ final class Db
     /**
      * Return the last id inserted
      *
-     * @return string
+     * @return int
      */
-    public function lastInsertId()
+    public function lastInsertId(): int
     {
-        return $this->connection->lastInsertId();
+        return (int) $this->connection->lastInsertId();
     }
 
     /**
@@ -107,7 +107,7 @@ final class Db
      *
      * @return int
      */
-    public function getNumberOfQueries()
+    public function getNumberOfQueries(): int
     {
         return $this->nq;
     }

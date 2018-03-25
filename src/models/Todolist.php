@@ -35,9 +35,9 @@ class Todolist implements CrudInterface
      * Create a todoitem
      *
      * @param string $body
-     * @return string the id of the created todoitem
+     * @return int the id of the created todoitem
      */
-    public function create($body)
+    public function create(string $body): int
     {
         $sql = "INSERT INTO todolist(body, userid)
             VALUES(:body, :userid)";
@@ -49,7 +49,7 @@ class Todolist implements CrudInterface
             throw new Exception('Error inserting todoitem!');
         }
 
-        return $this->Db->lastInsertId();
+        return (int) $this->Db->lastInsertId();
     }
 
     /**
@@ -57,7 +57,7 @@ class Todolist implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
@@ -74,7 +74,7 @@ class Todolist implements CrudInterface
      * @param string $body
      * @return bool
      */
-    public function update($id, $body)
+    public function update(int $id, string $body): bool
     {
         $sql = "UPDATE todolist SET body = :body WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -90,7 +90,7 @@ class Todolist implements CrudInterface
      * @param int $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $sql = "DELETE FROM todolist WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -105,7 +105,7 @@ class Todolist implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $sql = "DELETE FROM todolist WHERE userid = :userid";
         $req = $this->Db->prepare($sql);

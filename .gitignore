@@ -6,6 +6,7 @@ _srcdoc
 cache
 config.php
 config.php.*
+.idea
 web/config.php
 web/config.php.*
 *.min.css

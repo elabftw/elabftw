@@ -41,7 +41,7 @@ class ExperimentsView
      *
      * @return string
      */
-    public function getVisibility()
+    public function getVisibility(): string
     {
         if (Tools::checkId($this->Entity->entityData['visibility'])) {
             return $this->TeamGroups->readName($this->Entity->entityData['visibility']);
@@ -54,7 +54,7 @@ class ExperimentsView
      *
      * @return string
      */
-    public function showTimestamp()
+    public function showTimestamp(): string
     {
         $UploadsView = new UploadsView($this->Entity->Uploads);
         $timestamper = $this->Entity->Users->read($this->Entity->entityData['timestampedby']);

@@ -17,9 +17,6 @@ class Scheduler
 {
     use EntityTrait;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** @var Database $Database instance of Database */
     public $Database;
 
@@ -41,7 +38,7 @@ class Scheduler
      * Read the db items and store it in itemData
      *
      */
-    public function populate()
+    public function populate(): void
     {
         $this->itemData = $this->Database->read();
     }
@@ -54,7 +51,7 @@ class Scheduler
      * @param string $title the comment entered by user
      * @return bool
      */
-    public function create($start, $end, $title)
+    public function create($start, $end, $title): bool
     {
         $title = filter_var($title, FILTER_SANITIZE_STRING);
 
@@ -76,7 +73,7 @@ class Scheduler
      *
      * @return array
      */
-    public function read()
+    public function read(): array
     {
         // the title of the event is Firstname + Lastname of the user who booked it
         $sql = "SELECT team_events.*,
@@ -97,7 +94,7 @@ class Scheduler
      *
      * @return array
      */
-    public function readFromId()
+    public function readFromId(): array
     {
         $sql = "SELECT * from team_events WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -114,7 +111,7 @@ class Scheduler
      * @param string $end 2016-07-22T13:37:00
      * @return bool
      */
-    public function updateStart($start, $end)
+    public function updateStart($start, $end): bool
     {
         $sql = "UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);
@@ -132,7 +129,7 @@ class Scheduler
      * @param string $end 2016-07-22T13:37:00
      * @return bool
      */
-    public function updateEnd($end)
+    public function updateEnd($end): bool
     {
         $sql = "UPDATE team_events SET end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);
@@ -148,7 +145,7 @@ class Scheduler
      *
      * @return bool
      */
-    public function destroy()
+    public function destroy(): bool
     {
         $sql = "DELETE FROM team_events WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);

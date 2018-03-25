@@ -48,7 +48,7 @@ class Auth
      * @param string $email
      * @return string
      */
-    private function getSalt($email)
+    private function getSalt($email): string
     {
         $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -63,7 +63,7 @@ class Auth
      *
      * @return bool true if token in cookie is found in database
      */
-    private function loginWithCookie()
+    private function loginWithCookie(): bool
     {
         // If user has a cookie; check cookie is valid
         // the token is a sha256 sum: 64 char
@@ -91,7 +91,7 @@ class Auth
      * @param string|null $email
      * @return bool
      */
-    private function populateUserDataFromEmail($email)
+    private function populateUserDataFromEmail($email): bool
     {
         $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -110,7 +110,7 @@ class Auth
      *
      * @return bool
      */
-    private function populateSession()
+    private function populateSession(): bool
     {
         $this->Request->getSession()->set('auth', 1);
         $this->Request->getSession()->set('userid', $this->userData['userid']);
@@ -134,7 +134,7 @@ class Auth
      *
      * @return bool
      */
-    private function setToken()
+    private function setToken(): bool
     {
         $token = hash('sha256', uniqid(rand(), true));
 
@@ -158,7 +158,7 @@ class Auth
      * @throws Exception
      * @return bool
      */
-    public function checkPasswordLength($password)
+    public function checkPasswordLength($password): bool
     {
         // fix for php56
         $min = self::MIN_PASSWORD_LENGTH;
@@ -175,7 +175,7 @@ class Auth
      * @param string $password
      * @return bool True if the login + password are good
      */
-    public function checkCredentials($email, $password)
+    public function checkCredentials($email, $password): bool
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
@@ -196,7 +196,7 @@ class Auth
      * @param string $setCookie will be here if the user ticked the remember me checkbox
      * @return bool Return true if user provided correct credentials
      */
-    public function login($email, $password, $setCookie = 'on')
+    public function login($email, $password, $setCookie = 'on'): bool
     {
         if ($this->checkCredentials($email, $password)) {
             $this->populateUserDataFromEmail($email);
@@ -213,8 +213,9 @@ class Auth
      * Login anonymously in a team
      *
      * @param int $team
+     * @return void
      */
-    public function loginAsAnon($team)
+    public function loginAsAnon($team): void
     {
         $this->Request->getSession()->set('anon', 1);
         $this->Request->getSession()->set('team', $team);
@@ -229,7 +230,7 @@ class Auth
      * @param string $email
      * @return bool
      */
-    public function loginFromSaml($email)
+    public function loginFromSaml($email): bool
     {
         if ($this->populateUserDataFromEmail($email)) {
             $this->populateSession();
@@ -244,7 +245,7 @@ class Auth
      *
      * @return bool True if we are authentified (or if we don't need to be)
      */
-    public function needAuth()
+    public function needAuth(): bool
     {
         // pages where you don't need to be logged in
         // only the script name, not the path because we use basename() on it
@@ -272,7 +273,7 @@ class Auth
      *
      * @return bool true if we are authenticated
      */
-    public function tryAuth()
+    public function tryAuth(): bool
     {
         if ($this->Request->getSession()->has('anon')) {
             return true;

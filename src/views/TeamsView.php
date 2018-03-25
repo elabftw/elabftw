@@ -34,9 +34,9 @@ class TeamsView
      * @param bool|null team set to true to get stats from the team
      * @return string stats
      */
-    public function showStats($team = null)
+    public function showStats($team = null): string
     {
-        $stats = "";
+        $stats = '';
 
         if ($team === null) {
             $count = $this->Teams->getAllStats();

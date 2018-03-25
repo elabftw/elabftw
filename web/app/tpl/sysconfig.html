@@ -284,7 +284,7 @@
             <input class="clean-form col-3-form" type='text' value='{{ App.Config.configArr.smtp_address }}' name='smtp_address' id='smtp_address' />
             <span class='smallgray'>mail.smtp2go.com</span>
             <label class="block" for='smtp_encryption'>{{ 'SMTP encryption:'|trans }}</label>
-            <select class="clean-form col-3-form" name='smtp_encryption'>
+            <select class="clean-form col-3-form" id='smtp_encryption' name='smtp_encryption'>
                 <option value='none' {{ App.Config.configArr.smtp_encryption == 'none' ? ' selected' }}>None</option>
                 <option value='tls' {{ App.Config.configArr.smtp_encryption == 'tls' ? ' selected' }}>TLS</option>
                 <option value='startssl' {{ App.Config.configArr.smtp_encryption == 'startssl' ? ' selected' }}>STARTSSL</option>

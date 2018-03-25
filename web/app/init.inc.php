@@ -19,15 +19,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
-require_once dirname(dirname(dirname(__FILE__))) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 try {
-    // CHECK PHP VERSION
-    if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
-        $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
-        throw new Exception($message);
-    }
-
     // CREATE REQUEST OBJECT
     $Request = Request::createFromGlobals();
 
@@ -38,7 +32,7 @@ try {
     $Request->setSession($Session);
 
     // LOAD CONFIG.PHP
-    $configFilePath = dirname(dirname(__FILE__)) . '/config.php';
+    $configFilePath = dirname(__DIR__) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
@@ -137,7 +131,7 @@ try {
     // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");
-    $res = setlocale(LC_ALL, $locale);
+    setlocale(LC_ALL, $locale);
     bindtextdomain($domain, ELAB_ROOT . "web/app/locale");
     textdomain($domain);
     // END i18n

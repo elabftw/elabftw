@@ -55,11 +55,14 @@
             controller = 'app/controllers/ExperimentsController.php';
 
             // KEYBOARD SHORTCUT
+            // FIXME disable if in the searchbar
+            /*
             $(document).keypress(function(e) {
                 if (e.key === $('#shortcuts').data('create')) {
                     window.location.href = controller + '?create=true';
                 }
             });
+            */
         }
 
         // PAGINATION

@@ -17,12 +17,6 @@ class Templates extends AbstractEntity
 {
     use EntityTrait;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
-    /** @var Users $Users instance of Users */
-    public $Users;
-
     /** @var string $type almost the database table… */
     public $type = 'experiments_tpl';
 
@@ -46,9 +40,9 @@ class Templates extends AbstractEntity
      * @param int|null $team
      * @return bool
      */
-    public function create($name, $body, $userid, $team = null)
+    public function create($name, $body, $userid, $team = null): bool
     {
-        if (is_null($team)) {
+        if ($team === null) {
             $team = $this->Users->userData['team'];
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
@@ -70,7 +64,7 @@ class Templates extends AbstractEntity
      * @param int $team the id of the new team
      * @return bool
      */
-    public function createDefault($team)
+    public function createDefault($team): bool
     {
         $defaultBody = "<p><span style='font-size: 14pt;'><strong>Goal :</strong></span></p>
         <p>&nbsp;</p>
@@ -84,9 +78,9 @@ class Templates extends AbstractEntity
     /**
      * Duplicate a template from someone else in the team
      *
-     * @return string
+     * @return int id of the new template
      */
-    public function duplicate()
+    public function duplicate(): int
     {
         $template = $this->read();
 
@@ -98,7 +92,7 @@ class Templates extends AbstractEntity
         $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
 
-        return $this->Db->lastInsertId();
+        return (int) $this->Db->lastInsertId();
     }
 
     /**
@@ -106,7 +100,7 @@ class Templates extends AbstractEntity
      *
      * @return array
      */
-    public function read()
+    public function read(): array
     {
         $sql = "SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);
@@ -122,7 +116,7 @@ class Templates extends AbstractEntity
      *
      * @return array
      */
-    public function readFromUserid()
+    public function readFromUserid(): array
     {
         $sql = "SELECT experiments_templates.id,
             experiments_templates.body,
@@ -145,7 +139,7 @@ class Templates extends AbstractEntity
      *
      * @return array
      */
-    public function readFromTeam()
+    public function readFromTeam(): array
     {
         $sql = "SELECT experiments_templates.id,
             experiments_templates.body,
@@ -171,7 +165,7 @@ class Templates extends AbstractEntity
      *
      * @return string body of the common template
      */
-    public function readCommonBody()
+    public function readCommonBody(): string
     {
         // don't load the common template if you are using markdown because it's probably in html
         if ($this->Users->userData['use_markdown']) {
@@ -192,7 +186,7 @@ class Templates extends AbstractEntity
      * @param string $body Content of the template
      * @return bool true if sql success
      */
-    public function updateCommon($body)
+    public function updateCommon($body): bool
     {
         $body = Tools::checkBody($body);
         $sql = "UPDATE experiments_templates SET
@@ -215,7 +209,7 @@ class Templates extends AbstractEntity
      * @param string $body Content of the template
      * @return bool
      */
-    public function update($id, $name, $body)
+    public function update($id, $name, $body): bool
     {
         $body = Tools::checkBody($body);
         $name = Tools::checkTitle($name);
@@ -239,7 +233,7 @@ class Templates extends AbstractEntity
      *
      * @return bool
      */
-    public function destroy()
+    public function destroy(): bool
     {
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);

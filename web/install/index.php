@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 try {
     session_start();
-    require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+    require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
     // create Request object
     $Request = Request::createFromGlobals();
     $errflag = false;
@@ -121,13 +121,6 @@ try {
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
             $url . "'>$url</a>";
         throw new Exception($message);
-    }
-
-    // CHECK PHP version
-    if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
-        $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
-        echo Tools::displayMessage($message, 'ko', false);
-        $errflag = true;
     }
 
     // Check for hash function

@@ -177,6 +177,8 @@
     });
 
     // KEYBOARD SHORTCUT
+    // FIXME disable if writing a comment
+    /*
     $(document).keypress(function(e) {
         if (e.key === $('#shortcuts').data('create') && $('#entityInfos').data('type') === 'experiments') {
             window.location.href = 'app/controllers/ExperimentsController.php?create=true';
@@ -185,4 +187,5 @@
             window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
         }
     });
+    */
 }());

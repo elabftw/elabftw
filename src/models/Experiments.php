@@ -54,9 +54,9 @@ class Experiments extends AbstractEntity
      * Create an experiment
      *
      * @param int|null $tpl the template on which to base the experiment
-     * @return string the new id of the experiment
+     * @return int the new id of the experiment
      */
-    public function create($tpl = null)
+    public function create($tpl = null): int
     {
         $Templates = new Templates($this->Users);
 
@@ -72,7 +72,7 @@ class Experiments extends AbstractEntity
         }
 
         $visibility = 'team';
-        if (!is_null($this->Users->userData['default_vis'])) {
+        if ($this->Users->userData['default_vis'] !== null) {
             $visibility = $this->Users->userData['default_vis'];
         }
 
@@ -98,7 +98,7 @@ class Experiments extends AbstractEntity
             $Tags->copyTags($newId);
         }
 
-        return $newId;
+        return (int) $newId;
     }
 
     /**
@@ -107,7 +107,7 @@ class Experiments extends AbstractEntity
      * @param int $itemId the DB item
      * @return array
      */
-    public function readRelated($itemId)
+    public function readRelated($itemId): array
     {
         $itemsArr = array();
 
@@ -132,7 +132,7 @@ class Experiments extends AbstractEntity
      * @param string $visibility
      * @return bool
      */
-    public function checkVisibility($visibility)
+    public function checkVisibility($visibility): bool
     {
         $validArr = array(
             'public',
@@ -155,7 +155,7 @@ class Experiments extends AbstractEntity
      * @param string $visibility
      * @return bool
      */
-    public function updateVisibility($visibility)
+    public function updateVisibility($visibility): bool
     {
         $sql = "UPDATE experiments SET visibility = :visibility WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -171,7 +171,7 @@ class Experiments extends AbstractEntity
      * @param int $status Id of the status
      * @return bool
      */
-    public function updateCategory($status)
+    public function updateCategory($status): bool
     {
         $sql = "UPDATE experiments SET status = :status WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -182,19 +182,18 @@ class Experiments extends AbstractEntity
     }
 
     /**
-     * Returns if this experiment can be timestamped
-     * It checks if the status is timestampable but also if we own the experiment
+     * Can this experiment be timestamped?
      *
-     * @return string 0 or 1
+     * @return bool
      */
-    public function isTimestampable()
+    public function isTimestampable(): bool
     {
         $currentStatus = (int) $this->entityData['category_id'];
         $sql = "SELECT is_timestampable FROM status WHERE id = :status;";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $currentStatus);
         $req->execute();
-        return $req->fetchColumn();
+        return (bool) $req->fetchColumn();
     }
 
     /**
@@ -204,7 +203,7 @@ class Experiments extends AbstractEntity
      * @param string $responsefilePath the file path to the timestamp token
      * @return bool
      */
-    public function updateTimestamp($responseTime, $responsefilePath)
+    public function updateTimestamp($responseTime, $responsefilePath): bool
     {
         $sql = "UPDATE experiments SET
             locked = 1,
@@ -228,9 +227,9 @@ class Experiments extends AbstractEntity
     /**
      * Select what will be the status for the experiment
      *
-     * @return string The status ID
+     * @return int The status ID
      */
-    private function getStatus()
+    private function getStatus(): int
     {
         // what will be the status ?
         // go pick what is the default status upon creating experiment
@@ -251,7 +250,7 @@ class Experiments extends AbstractEntity
             $req->execute();
             $status = $req->fetchColumn();
         }
-        return $status;
+        return (int) $status;
     }
 
     /**
@@ -260,7 +259,7 @@ class Experiments extends AbstractEntity
      *
      * @return string unique elabid with date in front of it
      */
-    private function generateElabid()
+    private function generateElabid(): string
     {
         $date = Tools::kdate();
         return $date . "-" . sha1(uniqid($date, true));
@@ -269,9 +268,9 @@ class Experiments extends AbstractEntity
     /**
      * Duplicate an experiment
      *
-     * @return int Will return the ID of the new item
+     * @return int the ID of the new item
      */
-    public function duplicate()
+    public function duplicate(): int
     {
         $experiment = $this->read();
 
@@ -305,7 +304,7 @@ class Experiments extends AbstractEntity
      *
      * @return bool
      */
-    public function destroy()
+    public function destroy(): bool
     {
         // delete the experiment
         $sql = "DELETE FROM experiments WHERE id = :id";
@@ -313,13 +312,11 @@ class Experiments extends AbstractEntity
         $req->bindParam(':id', $this->id);
         $req->execute();
 
-
         $this->Comments->destroyAll();
         $this->Links->destroyAll();
         $this->Steps->destroyAll();
         $this->Tags->destroyAll();
         $this->Uploads->destroyAll();
-
 
         return true;
     }
@@ -330,7 +327,7 @@ class Experiments extends AbstractEntity
      * @throws Exception
      * @return bool
      */
-    public function toggleLock()
+    public function toggleLock(): bool
     {
         $locked = (int) $this->entityData['locked'];
 

@@ -41,7 +41,7 @@ class Revisions implements CrudInterface
      * @param string $body
      * @return bool
      */
-    public function create($body)
+    public function create($body): bool
     {
         // only save a revision if there is at least 20 characters difference between the old version and the new one
         if (abs(strlen($this->Entity->entityData['body']) - strlen($body)) > 20) {
@@ -61,11 +61,12 @@ class Revisions implements CrudInterface
     /**
      * Get how many revisions we have
      *
+     * @return int number of revisions existing
      */
-    public function readCount()
+    public function readCount(): int
     {
         $sql = "SELECT COUNT(*) FROM " . $this->Entity->type . "_revisions
-             WHERE item_id = :item_id ORDER BY savedate DESC";
+             WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
@@ -77,8 +78,9 @@ class Revisions implements CrudInterface
     /**
      * Output HTML for displaying revisions
      *
+     * @return string html with the count
      */
-    public function showCount()
+    public function showCount(): string
     {
         $html = '';
         $count = $this->readCount();
@@ -99,7 +101,7 @@ class Revisions implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT * FROM " . $this->Entity->type . "_revisions
             WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
@@ -117,7 +119,7 @@ class Revisions implements CrudInterface
      * @param int $revId The id of the revision
      * @return string
      */
-    private function readRev($revId)
+    private function readRev($revId): string
     {
         $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id AND userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -134,7 +136,7 @@ class Revisions implements CrudInterface
      * @throws Exception
      * @return bool
      */
-    private function isLocked()
+    private function isLocked(): bool
     {
         $sql = "SELECT locked FROM " . $this->Entity->type . " WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -152,7 +154,7 @@ class Revisions implements CrudInterface
      * @throws Exception
      * @return bool
      */
-    public function restore($revId)
+    public function restore($revId): bool
     {
         // check for lock
         if ($this->isLocked()) {
@@ -174,15 +176,17 @@ class Revisions implements CrudInterface
      *
      * @param int $id
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
+        return false;
     }
 
     /**
      * Not implemented
      *
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
+        return false;
     }
 }

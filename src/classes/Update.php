@@ -11,8 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use FilesystemIterator;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Exception as Ex;
@@ -307,7 +305,7 @@ class Update
      */
     private function updateSchema($schema = null)
     {
-        if (is_null($schema)) {
+        if ($schema === null) {
             $schema = self::REQUIRED_SCHEMA;
         }
         $config_arr = array('schema' => $schema);

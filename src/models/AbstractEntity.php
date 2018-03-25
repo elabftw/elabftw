@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use PDO;
 
 /**
  * The mother class of Experiments and Database
@@ -19,9 +18,6 @@ use PDO;
 abstract class AbstractEntity
 {
     use EntityTrait;
-
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var Tags $Tags instance of Tags */
     public $Tags;
@@ -34,12 +30,6 @@ abstract class AbstractEntity
 
     /** @var string $page will be defined in children classes */
     public $page;
-
-    /** @var Users $Users instance of Users */
-    public $Users;
-
-    /** @var int $id id of our entity */
-    public $id;
 
     /** @var string $idFilter inserted in sql */
     public $idFilter = '';
@@ -109,7 +99,7 @@ abstract class AbstractEntity
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
 
-        if (!is_null($id)) {
+        if ($id !== null) {
             $this->setId($id);
         }
 
@@ -149,7 +139,7 @@ abstract class AbstractEntity
      */
     protected function populate()
     {
-        if (is_null($this->id)) {
+        if ($this->id === null) {
             throw new Exception('No id was set.');
         }
 
@@ -166,7 +156,7 @@ abstract class AbstractEntity
      */
     public function read()
     {
-        if (!is_null($this->id)) {
+        if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
         }
 

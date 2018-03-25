@@ -43,7 +43,7 @@ class Teams implements CrudInterface
      * @param string $name Name of the team (case sensitive)
      * @return int The team ID
      */
-    public function initializeIfNeeded($name)
+    public function initializeIfNeeded($name): int
     {
         $sql = 'SELECT team_id, team_name, team_orgid FROM teams';
         $req = $this->Db->prepare($sql);
@@ -96,7 +96,7 @@ class Teams implements CrudInterface
         $result4 = $Templates->createDefault($newId);
 
         if ($result1 && $result2 && $result3 && $result4) {
-            return $newId;
+            return (int) $newId;
         }
         return false;
 
@@ -126,7 +126,7 @@ class Teams implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT * FROM teams ORDER BY team_name ASC";
         $req = $this->Db->prepare($sql);
@@ -141,7 +141,7 @@ class Teams implements CrudInterface
      * @param array $post POST
      * @return bool
      */
-    public function update($post)
+    public function update($post): bool
     {
         // CHECKS
         if (isset($post['stampcert'])) {
@@ -209,7 +209,7 @@ class Teams implements CrudInterface
      * @param string $orgid The id of the team in the organisation (from IDP for instance)
      * @return bool
      */
-    public function updateName($id, $name, $orgid = "")
+    public function updateName($id, $name, $orgid = ""): bool
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams
@@ -230,7 +230,7 @@ class Teams implements CrudInterface
      * @param int $id ID of the team
      * @return bool true if success, false if the team is not brand new
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         // check for stats, should be 0
         $count = $this->getStats($id);
@@ -267,8 +267,9 @@ class Teams implements CrudInterface
      * Not implemented
      *
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
+        return false;
     }
 
     /**
@@ -276,7 +277,7 @@ class Teams implements CrudInterface
      *
      * @return bool
      */
-    public function destroyStamppass()
+    public function destroyStamppass(): bool
     {
         $sql = "UPDATE teams SET stamppass = NULL WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
@@ -290,7 +291,7 @@ class Teams implements CrudInterface
      *
      * @return array
      */
-    public function getAllStats()
+    public function getAllStats(): array
     {
         $sql = "SELECT
         (SELECT COUNT(users.userid) FROM users) AS totusers,
@@ -310,7 +311,7 @@ class Teams implements CrudInterface
      * @param int $team
      * @return array
      */
-    public function getStats($team)
+    public function getStats($team): array
     {
         $sql = "SELECT
         (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,

@@ -21,8 +21,6 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Revisions');
 
 try {
-    $errflag = false;
-
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
 

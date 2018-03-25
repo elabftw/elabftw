@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use InvalidArgumentException;
 
 /**
@@ -32,8 +31,10 @@ trait EntityTrait {
      * Check and set id
      *
      * @param int $id
+     * @throws InvalidArgumentException
+     * @return void
      */
-    public function setId($id)
+    public function setId($id): void
     {
         if (Tools::checkId($id) === false) {
             throw new InvalidArgumentException(_('The id parameter is not valid!'));
@@ -49,7 +50,7 @@ trait EntityTrait {
      * @param array $post POST
      * @return bool
      */
-    public function updateOrdering($post)
+    public function updateOrdering($post): bool
     {
         $success = array();
 

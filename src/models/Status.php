@@ -20,12 +20,6 @@ class Status extends AbstractCategory
 {
     use EntityTrait;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
-    /** @var Users $Users instance of Users */
-    public $Users;
-
     /**
      * Constructor
      *
@@ -45,11 +39,11 @@ class Status extends AbstractCategory
      * @param int $isTimestampable
      * @param int $default
      * @param int|null $team
-     * @return string id of the new item
+     * @return int id of the new item
      */
-    public function create($name, $color, $isTimestampable = 1, $default = 0, $team = null)
+    public function create($name, $color, $isTimestampable = 1, $default = 0, $team = null): int
     {
-        if (is_null($team)) {
+        if ($team === null) {
             $team = $this->Users->userData['team'];
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
@@ -71,7 +65,7 @@ class Status extends AbstractCategory
 
         $req->execute();
 
-        return $this->Db->lastInsertId();
+        return (int) $this->Db->lastInsertId();
     }
 
     /**
@@ -80,7 +74,7 @@ class Status extends AbstractCategory
      * @param int $team the new team id
      * @return bool
      */
-    public function createDefault($team)
+    public function createDefault($team): bool
     {
         return $this->create('Running', '29AEB9', 0, 1, $team) &&
             $this->create('Success', '54AA08', 1, 0, $team) &&
@@ -93,7 +87,7 @@ class Status extends AbstractCategory
      *
      * @return array All status from the team
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT status.id AS category_id,
             status.name AS category,
@@ -114,7 +108,7 @@ class Status extends AbstractCategory
      * @param int $id ID of the category
      * @return string
      */
-    public function readColor($id)
+    public function readColor($id): string
     {
         $sql = "SELECT color FROM status WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -130,7 +124,7 @@ class Status extends AbstractCategory
      * @param int $status ID of the status
      * @return bool true if status may be timestamped
      */
-    public function isTimestampable($status)
+    public function isTimestampable($status): bool
     {
             $sql = "SELECT is_timestampable FROM status WHERE id = :id";
             $req = $this->Db->prepare($sql);
@@ -147,7 +141,7 @@ class Status extends AbstractCategory
      *
      * @return bool true if sql success
      */
-    private function setDefaultFalse()
+    private function setDefaultFalse(): bool
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->Db->prepare($sql);
@@ -166,7 +160,7 @@ class Status extends AbstractCategory
      * @param bool $isDefault
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $isTimestampable, $isDefault)
+    public function update($id, $name, $color, $isTimestampable, $isDefault): bool
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -201,7 +195,7 @@ class Status extends AbstractCategory
      * @param int $id
      * @return int
      */
-    protected function countItems($id)
+    protected function countItems($id): int
     {
         $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
         $req = $this->Db->prepare($sql);
@@ -217,7 +211,7 @@ class Status extends AbstractCategory
      * @param int $id id of the status
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         // don't allow deletion of a status with experiments
         if ($this->countItems($id) > 0) {
@@ -235,7 +229,8 @@ class Status extends AbstractCategory
      * Not implemented
      *
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
+        return false;
     }
 }

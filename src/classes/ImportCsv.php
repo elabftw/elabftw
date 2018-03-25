@@ -42,7 +42,7 @@ class ImportCsv extends AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
 
-        $this->checkFileReadable();
+        $this->isFileReadable();
         $this->checkMimeType();
         $this->itemType = $this->getTarget();
         $this->openFile();
@@ -52,8 +52,9 @@ class ImportCsv extends AbstractImport
     /**
      * Do the work
      *
+     * @return void
      */
-    private function readCsv()
+    private function readCsv(): void
     {
         $row = 0;
         $column = array();
@@ -107,8 +108,9 @@ class ImportCsv extends AbstractImport
      * Open the file, as the name suggests
      *
      * @throws Exception
+     * @return void
      */
-    protected function openFile()
+    protected function openFile(): void
     {
         $this->handle = fopen($this->getFilePath(), 'r');
         if ($this->handle === false) {

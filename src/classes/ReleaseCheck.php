@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -61,7 +59,7 @@ class ReleaseCheck
      * @throws \GuzzleHttp\Exception\RequestException
      * @return \GuzzleHttp\Psr7\Response
      */
-    private function get($url)
+    private function get($url): \GuzzleHttp\Psr7\Response
     {
         $client = new \GuzzleHttp\Client();
 
@@ -76,7 +74,6 @@ class ReleaseCheck
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
             'timeout' => 5
-
         ]);
     }
 
@@ -85,7 +82,7 @@ class ReleaseCheck
      *
      * @return int 1 if version match
      */
-    private function validateVersion()
+    private function validateVersion(): int
     {
         return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
     }
@@ -96,7 +93,7 @@ class ReleaseCheck
      *
      * @return bool latest version or false if error
      */
-    public function getUpdatesIni()
+    public function getUpdatesIni(): bool
     {
         try {
             $response = $this->get(self::URL);
@@ -127,7 +124,7 @@ class ReleaseCheck
      *
      * @return bool
      */
-    public function updateIsAvailable()
+    public function updateIsAvailable(): bool
     {
         return self::INSTALLED_VERSION != $this->version;
     }
@@ -147,7 +144,7 @@ class ReleaseCheck
      *
      * @return string
      */
-    public function getReleaseDate()
+    public function getReleaseDate(): string
     {
         return $this->releaseDate;
     }
@@ -157,7 +154,7 @@ class ReleaseCheck
      *
      * @return string URL for changelog
      */
-    public function getChangelogLink()
+    public function getChangelogLink(): string
     {
         $base = "https://doc.elabftw.net/changelog.html#version-";
         $dashedVersion = str_replace(".", "-", $this->version);

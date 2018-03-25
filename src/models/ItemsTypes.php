@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
 
 /**
@@ -19,12 +18,6 @@ use Exception;
 class ItemsTypes extends AbstractCategory
 {
     use EntityTrait;
-
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
-    /** @var Users $Users instance of Users */
-    public $Users;
 
     /**
      * Constructor
@@ -37,7 +30,7 @@ class ItemsTypes extends AbstractCategory
     {
         $this->Db = Db::getConnection();
         $this->Users = $users;
-        if (!is_null($id)) {
+        if ($id !== null) {
             $this->setId($id);
         }
     }
@@ -52,9 +45,9 @@ class ItemsTypes extends AbstractCategory
      * @param int|null $team
      * @return bool true if sql success
      */
-    public function create($name, $color, $bookable, $template, $team = null)
+    public function create($name, $color, $bookable, $template, $team = null): bool
     {
-        if (is_null($team)) {
+        if ($team === null) {
             $team = $this->Users->userData['team'];
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
@@ -81,7 +74,7 @@ class ItemsTypes extends AbstractCategory
      *
      * @return string
      */
-    public function read()
+    public function read(): string
     {
         $sql = "SELECT template FROM items_types WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);
@@ -101,7 +94,7 @@ class ItemsTypes extends AbstractCategory
      *
      * @return array all the items types for the team
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT items_types.id AS category_id,
             items_types.name AS category,
@@ -123,7 +116,7 @@ class ItemsTypes extends AbstractCategory
      * @param int $id ID of the category
      * @return string
      */
-    public function readColor($id)
+    public function readColor($id): string
     {
         $sql = "SELECT color FROM items_types WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -143,7 +136,7 @@ class ItemsTypes extends AbstractCategory
      * @param string $template html for the body
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $bookable, $template)
+    public function update($id, $name, $color, $bookable, $template): bool
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -172,7 +165,7 @@ class ItemsTypes extends AbstractCategory
      * @param int $id of the type
      * @return int
      */
-    protected function countItems($id)
+    protected function countItems($id): int
     {
         $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
         $req = $this->Db->prepare($sql);
@@ -187,7 +180,7 @@ class ItemsTypes extends AbstractCategory
      * @param int $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         // don't allow deletion of an item type with items
         if ($this->countItems($id) > 0) {
@@ -205,7 +198,8 @@ class ItemsTypes extends AbstractCategory
      * Not implemented
      *
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
+        return false;
     }
 }

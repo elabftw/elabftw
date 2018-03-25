@@ -41,7 +41,7 @@ class Config
      *
      * @return array
      */
-    public function read()
+    public function read(): array
     {
         $configArr = array();
 
@@ -61,7 +61,7 @@ class Config
      * @param array $post (conf_name => conf_value)
      * @return bool the return value of execute queries
      */
-    public function update($post)
+    public function update($post): bool
     {
         $result = array();
 
@@ -96,7 +96,7 @@ class Config
             $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
             // we might receive a set but empty smtp_password, so ignore it
             // unless it is null, then it's because we want to clear it
-        } elseif (empty($post['smtp_password']) && !is_null($post['smtp_password'])) {
+        } elseif (empty($post['smtp_password']) && $post['smtp_password'] !== null) {
             unset($post['smtp_password']);
         }
 
@@ -118,7 +118,7 @@ class Config
      *
      * @return bool
      */
-    public function destroyStamppass()
+    public function destroyStamppass(): bool
     {
         $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
         $req = $this->Db->prepare($sql);
@@ -130,7 +130,7 @@ class Config
      *
      * @return bool
      */
-    public function reset()
+    public function reset(): bool
     {
         $defaultConf = array(
             "admin_validate" => '1',

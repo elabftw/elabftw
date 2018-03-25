@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -49,7 +48,7 @@ class Api
      *
      * @return array
      */
-    public function createExperiment()
+    public function createExperiment(): array
     {
         $id = $this->Entity->create();
 
@@ -127,7 +126,7 @@ class Api
      *
      * @return array<string,array>
      */
-    public function getEntity()
+    public function getEntity(): array
     {
         if (Tools::checkId($this->Entity->id) === false) {
             return $this->Entity->read();
@@ -169,7 +168,7 @@ class Api
      * @param string $body Body
      * @return string[]
      */
-    public function updateEntity($title, $date, $body)
+    public function updateEntity($title, $date, $body): array
     {
         $this->Entity->canOrExplode('write');
 
@@ -201,7 +200,7 @@ class Api
      * @param string $tag
      * @return string[]
      */
-    public function addTag($tag)
+    public function addTag($tag): array
     {
         $this->Entity->canOrExplode('write');
 
@@ -229,7 +228,7 @@ class Api
      * @param Request $request
      * @return string[]
      */
-    public function uploadFile(Request $request)
+    public function uploadFile(Request $request): array
     {
         $this->Entity->canOrExplode('write');
 

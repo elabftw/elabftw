@@ -41,7 +41,7 @@ class TeamGroups implements CrudInterface
      * @param string $name Name of the group
      * @return bool true if sql is successful
      */
-    public function create($name)
+    public function create($name): bool
     {
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->Db->prepare($sql);
@@ -56,7 +56,7 @@ class TeamGroups implements CrudInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $fullGroups = array();
 
@@ -91,7 +91,7 @@ class TeamGroups implements CrudInterface
      *
      * @return array
      */
-    public function getVisibilityList()
+    public function getVisibilityList(): array
     {
         $idArr = array();
         $nameArr = array();
@@ -125,7 +125,7 @@ class TeamGroups implements CrudInterface
      * @param int $id
      * @return string
      */
-    public function readName($id)
+    public function readName($id): string
     {
         $sql = "SELECT name FROM team_groups WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -143,7 +143,7 @@ class TeamGroups implements CrudInterface
      * @throws Exception
      * @return string|null $name Name of the group if success
      */
-    public function update($name, $id)
+    public function update($name, $id): ?string
     {
         $idArr = explode('_', $id);
         if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1])) {
@@ -170,7 +170,7 @@ class TeamGroups implements CrudInterface
      * @throws Exception if the action keyword is wrong
      * @return bool true if success
      */
-    public function updateMember($userId, $groupId, $action)
+    public function updateMember($userId, $groupId, $action): bool
     {
         if ($action === 'add') {
             $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
@@ -182,6 +182,7 @@ class TeamGroups implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userId, PDO::PARAM_INT);
         $req->bindParam(':groupid', $groupId, PDO::PARAM_INT);
+
         return $req->execute();
     }
 
@@ -192,7 +193,7 @@ class TeamGroups implements CrudInterface
      * @throws Exception if it fails to delete
      * @return bool true on success
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $success = array();
 
@@ -214,6 +215,7 @@ class TeamGroups implements CrudInterface
         if (in_array(false, $success)) {
             throw new Exception('Error removing group');
         }
+
         return true;
     }
 
@@ -224,7 +226,7 @@ class TeamGroups implements CrudInterface
      * @param int $groupid
      * @return bool
      */
-    public function isInTeamGroup($userid, $groupid)
+    public function isInTeamGroup($userid, $groupid): bool
     {
         $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
         $req = $this->Db->prepare($sql);
@@ -242,7 +244,8 @@ class TeamGroups implements CrudInterface
      * Not implemented
      *
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
+        return false;
     }
 }

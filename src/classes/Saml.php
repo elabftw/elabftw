@@ -43,7 +43,7 @@ class Saml
      *
      * @param int|null $id Id of the IDP
      */
-    private function setSettings($id)
+    private function setSettings($id): void
     {
         $idpsArr = array();
         if ($id !== null) {
@@ -162,7 +162,7 @@ class Saml
      * @param int|null $id Return the settings array with infos from Idp with id $id
      * @return array
      */
-    public function getSettings($id = null)
+    public function getSettings($id = null): array
     {
         $this->setSettings($id);
         return $this->settings;

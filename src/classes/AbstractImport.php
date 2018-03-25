@@ -22,14 +22,14 @@ abstract class AbstractImport
      *
      * @return void
      */
-    abstract protected function openFile();
+    abstract protected function openFile(): void;
 
     /**
      * Get the temporary uploaded file
      *
      * @return string a sha512 hash of uniqid()
      */
-    protected function getFilePath()
+    protected function getFilePath(): string
     {
         return $_FILES['file']['tmp_name'];
     }
@@ -37,12 +37,13 @@ abstract class AbstractImport
     /**
      * Get what type we want
      *
+     * @throws Exception
      * @return int The type of item
      */
-    protected function getTarget()
+    protected function getTarget(): int
     {
         if (isset($_COOKIE['itemType']) && Tools::checkId($_COOKIE['itemType'])) {
-            return $_COOKIE['itemType'];
+            return (int) $_COOKIE['itemType'];
         }
         throw new Exception('No cookies found. Import aborted.');
     }
@@ -53,7 +54,7 @@ abstract class AbstractImport
      * @throws Exception if cannot read the file
      * @return bool
      */
-    protected function checkFileReadable()
+    protected function isFileReadable(): bool
     {
         if (is_readable($_FILES['file']['tmp_name'])) {
             return true;
@@ -68,7 +69,7 @@ abstract class AbstractImport
      * @throws Exception if the mime type is not whitelisted
      * @return bool
      */
-    protected function checkMimeType()
+    protected function checkMimeType(): bool
     {
         $mimes = array(null, 'application/vnd.ms-excel', 'text/plain',
             'text/csv', 'text/tsv',

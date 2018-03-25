@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
 
 /**
@@ -41,9 +40,9 @@ class Database extends AbstractEntity
      * Create an item
      *
      * @param int $itemType What kind of item we want to create.
-     * @return string the new id of the item
+     * @return int the new id of the item
      */
-    public function create($itemType)
+    public function create($itemType): int
     {
         $itemsTypes = new ItemsTypes($this->Users, $itemType);
 
@@ -60,7 +59,7 @@ class Database extends AbstractEntity
             'type' => $itemType
         ));
 
-        return $this->Db->lastInsertId();
+        return (int) $this->Db->lastInsertId();
     }
 
     /**
@@ -69,7 +68,7 @@ class Database extends AbstractEntity
      * @param int $rating
      * @return bool
      */
-    public function updateRating($rating)
+    public function updateRating($rating): bool
     {
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -85,7 +84,7 @@ class Database extends AbstractEntity
      * @param int $category Id of the item type
      * @return bool
      */
-    public function updateCategory($category)
+    public function updateCategory($category): bool
     {
         $sql = "UPDATE items SET type = :type WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -99,9 +98,9 @@ class Database extends AbstractEntity
     /**
      * Duplicate an item
      *
-     * @return string The id of the newly created item
+     * @return int The id of the newly created item
      */
-    public function duplicate()
+    public function duplicate(): int
     {
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
@@ -118,7 +117,7 @@ class Database extends AbstractEntity
 
         $this->Tags->copyTags($newId);
 
-        return $newId;
+        return (int) $newId;
     }
 
     /**
@@ -127,7 +126,7 @@ class Database extends AbstractEntity
      * @throws Exception
      * @return bool
      */
-    public function destroy()
+    public function destroy(): bool
     {
         // to store the outcome of sql
         $result = array();
@@ -169,7 +168,7 @@ class Database extends AbstractEntity
      * @throws Exception
      * @return bool
      */
-    public function toggleLock()
+    public function toggleLock(): bool
     {
         // get what is the current state
         $sql = "SELECT locked FROM items WHERE id = :id";

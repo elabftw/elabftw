@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -24,9 +25,9 @@ class Tools
      * @param string|null $input 20160521
      * @return string
      */
-    public static function kdate($input = null)
+    public static function kdate($input = null): string
     {
-        if (!is_null($input)
+        if ($input !== null
             && ((strlen($input) == '8'))
             && self::checkId($input)) {
             // Check if day/month are good (badly)
@@ -51,7 +52,7 @@ class Tools
      * @param bool $cross do we display a cross or not?
      * @return string the HTML of the message
      */
-    public static function displayMessage($message, $type, $cross = true)
+    public static function displayMessage($message, $type, $cross = true): string
     {
         $icon = 'fa-info-circle';
         $alert = 'success';
@@ -84,7 +85,7 @@ class Tools
      * @param string $input The title to sanitize
      * @return string Will return Untitled if there is no input.
      */
-    public static function checkTitle($input)
+    public static function checkTitle($input): string
     {
         if (empty($input)) {
             return _('Untitled');
@@ -100,7 +101,7 @@ class Tools
      * @param string $input Body to sanitize
      * @return string The sanitized body or empty string if there is no input
      */
-    public static function checkBody($input)
+    public static function checkBody($input): string
     {
         $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
@@ -114,7 +115,7 @@ class Tools
      * @param string $md Markdown code
      * @return string HTML code
      */
-    public static function md2html($md)
+    public static function md2html($md): string
     {
         return \Michelf\Markdown::defaultTransform($md);
     }
@@ -126,7 +127,7 @@ class Tools
      *
      * @return int maximum size in MB of files allowed for upload
      */
-    public static function returnMaxUploadSize()
+    public static function returnMaxUploadSize(): int
     {
         $max_size = trim(ini_get('upload_max_filesize'));
         $post_max_size = trim(ini_get('post_max_size'));
@@ -136,7 +137,7 @@ class Tools
         }
 
         // assume they both have same unit to compare the values
-        if (intval($post_max_size) > intval($max_size)) {
+        if ((int) ($post_max_size) > (int) ($max_size)) {
             $input = $max_size;
         } else {
             $input = $post_max_size;
@@ -159,7 +160,7 @@ class Tools
                 return 2;
         }
 
-        return intval($input);
+        return (int) $input;
     }
 
     /**
@@ -168,7 +169,7 @@ class Tools
      * @param int $bytes size in bytes
      * @return string
      */
-    public static function formatBytes($bytes)
+    public static function formatBytes($bytes): string
     {
         // nice display of filesize
         if ($bytes < 1024) {
@@ -191,12 +192,13 @@ class Tools
      *
      * @param string $date Input date '20140302'
      * @param string $s an optionnal param to specify the separator
-     * @return false|string The formatted string
+     * @throws InvalidArgumentException
+     * @return string The formatted string
      */
-    public static function formatDate($date, $s = '.')
+    public static function formatDate($date, $s = '.'): string
     {
         if (strlen($date) != 8) {
-            return false;
+            throw new InvalidArgumentException('Date has wrong size!');
         }
         return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];
     }
@@ -207,7 +209,7 @@ class Tools
      * @param string $filename path of the file
      * @return string file extension
      */
-    public static function getExt($filename)
+    public static function getExt($filename): string
     {
         // Get file extension
         $path_info = pathinfo($filename);
@@ -223,7 +225,7 @@ class Tools
      * Check ID is valid (pos int)
      *
      * @param int $id
-     * @return int $id if pos int
+     * @return int|false $id if pos int
      */
     public static function checkId($id)
     {
@@ -240,7 +242,7 @@ class Tools
      * @param bool $permission show the out of reach message for permission message
      * @return string
      */
-    public static function error($permission = false)
+    public static function error($permission = false): string
     {
         if ($permission) {
             return _("This section is out of your reach!");
@@ -254,7 +256,7 @@ class Tools
      * @param string $lang 'pt_BR' or 'fr_FR'
      * @return string
      */
-    public static function getCalendarLang($lang)
+    public static function getCalendarLang($lang): string
     {
         $map = array(
             'ca_ES' => 'ca',
@@ -278,7 +280,7 @@ class Tools
      *
      * @return array<string,string>
      */
-    public static function getLangsArr()
+    public static function getLangsArr(): array
     {
         $langs = array(
             'ca_ES' => 'Spanish (Catalan)',
@@ -305,7 +307,7 @@ class Tools
      * @param array $arr
      * @return string
      */
-    public static function printArr($arr)
+    public static function printArr($arr): string
     {
         $html = '<ul>';
         if (is_array($arr)) {
@@ -327,7 +329,7 @@ class Tools
      * @param int $rating The number of stars to display
      * @return string HTML of the stars
      */
-    public static function showStars($rating)
+    public static function showStars($rating): string
     {
         $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
         $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
@@ -342,7 +344,7 @@ class Tools
      * @param $title string
      * @return string
      */
-    public static function getCleanTitle($title)
+    public static function getCleanTitle($title): string
     {
         return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
     }
@@ -354,7 +356,7 @@ class Tools
      * @param Request $Request
      * @return string the url
      */
-    public static function getUrl($Request)
+    public static function getUrl($Request): string
     {
         $Config = new Config();
         if (strlen($Config->configArr['url']) > 10) {
@@ -369,7 +371,7 @@ class Tools
      * @param Request $Request
      * @return string the url
      */
-    public static function getUrlFromRequest($Request)
+    public static function getUrlFromRequest($Request): string
     {
         return 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
     }
@@ -380,7 +382,7 @@ class Tools
      * @param string $ext Extension of the file
      * @return string Class of the fa icon
      */
-    public static function getIconFromExtension($ext)
+    public static function getIconFromExtension($ext): string
     {
         switch($ext) {
             // ARCHIVE

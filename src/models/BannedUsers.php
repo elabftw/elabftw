@@ -40,7 +40,7 @@ class BannedUsers
      * @param string $fingerprint Should be the md5 of IP + useragent
      * @return bool
      */
-    public function create($fingerprint)
+    public function create($fingerprint): bool
     {
         $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
         $req = $this->Db->prepare($sql);
@@ -54,7 +54,7 @@ class BannedUsers
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $banTime = date("Y-m-d H:i:s", strtotime('-' . $this->Config->configArr['ban_time'] . ' minutes'));
 

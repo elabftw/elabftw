@@ -38,7 +38,7 @@ class Logs implements CrudInterface
      * @param string $body The content of the log
      * @return bool Will return true if the query is successfull
      */
-    public function create($type, $user, $body)
+    public function create($type, $user, $body): bool
     {
         $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
         $req = $this->Db->prepare($sql);
@@ -54,7 +54,7 @@ class Logs implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
         $req = $this->Db->prepare($sql);
@@ -68,8 +68,9 @@ class Logs implements CrudInterface
      *
      * @param $id
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
+        return false;
     }
 
     /**
@@ -77,7 +78,7 @@ class Logs implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $sql = "DELETE FROM logs";
         $req = $this->Db->prepare($sql);

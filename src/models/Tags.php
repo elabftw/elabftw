@@ -38,9 +38,9 @@ class Tags implements CrudInterface
      * Create a tag
      *
      * @param string $tag
-     * @return string id of the tag
+     * @return int id of the tag
      */
-    public function create($tag)
+    public function create($tag): int
     {
         if ($this->Entity->type === 'experiments' || $this->Entity->type === 'experiments_tpl') {
             $userOrTeam = 'userid';
@@ -58,7 +58,7 @@ class Tags implements CrudInterface
 
         $req->execute();
 
-        return $this->Db->lastInsertId();
+        return (int) $this->Db->lastInsertId();
     }
 
     /**
@@ -67,10 +67,10 @@ class Tags implements CrudInterface
      * @param string|null $term The beginning of the input for tag autocomplete
      * @return array
      */
-    public function readAll($term = null)
+    public function readAll($term = null): array
     {
         $tagFilter = "";
-        if (!is_null($term)) {
+        if ($term !== null) {
             $tagFilter = " AND " . $this->Entity->type . "_tags.tag LIKE '$term%'";
         }
         if ($this->Entity->type === 'experiments') {
@@ -100,7 +100,7 @@ class Tags implements CrudInterface
      * @param int $newId The id of the new experiment/item that will receive the tags
      * @return null
      */
-    public function copyTags($newId)
+    public function copyTags($newId): void
     {
         $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
@@ -127,14 +127,13 @@ class Tags implements CrudInterface
         }
     }
 
-
     /**
      * Get an array of tags starting with the query ($term)
      *
      * @param string $term the beginning of the tag
      * @return array the tag list filtered by the term
      */
-    public function getList($term)
+    public function getList($term): array
     {
         $tagListArr = array();
         $tagsArr = $this->readAll($term);
@@ -151,7 +150,7 @@ class Tags implements CrudInterface
      * @param array $selected the selected tag(s)
      * @return string html for include in a select input
      */
-    public function generateTagList($selected)
+    public function generateTagList($selected): string
     {
         $tagsArr = $this->readAll();
 
@@ -174,7 +173,7 @@ class Tags implements CrudInterface
      * @param int $id id of the tag
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -188,7 +187,7 @@ class Tags implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
 

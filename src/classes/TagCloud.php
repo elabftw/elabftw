@@ -38,7 +38,7 @@ class TagCloud
      *
      * @return array
      */
-    private function readAll()
+    private function readAll(): array
     {
         $sql = "SELECT tag, COUNT(*) AS total
             FROM experiments_tags
@@ -58,7 +58,7 @@ class TagCloud
      * @param int $ratio between 0 and 100
      * @return string
      */
-    private function getClassFromRatio($ratio)
+    private function getClassFromRatio($ratio): string
     {
         return 'cloud-' . round($ratio, -1);
     }
@@ -68,7 +68,7 @@ class TagCloud
      *
      * @return array
      */
-    public function getCloudArr()
+    public function getCloudArr(): array
     {
         $tags = $this->readAll();
         $first = reset($tags);

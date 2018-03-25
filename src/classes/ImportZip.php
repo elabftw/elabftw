@@ -55,7 +55,7 @@ class ImportZip extends AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
 
-        $this->checkFileReadable();
+        $this->isFileReadable();
         $this->checkMimeType();
         $this->target = $this->getTarget();
         // this is where we will extract the zip
@@ -72,8 +72,9 @@ class ImportZip extends AbstractImport
     /**
      * We get all the info we need from the embedded .json file
      *
+     * @return void
      */
-    private function readJson()
+    private function readJson(): void
     {
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
@@ -86,15 +87,15 @@ class ImportZip extends AbstractImport
     /**
      * Select a status for our experiments.
      *
-     * @return string The default status ID of the team
+     * @return int The default status ID of the team
      */
-    private function getDefaultStatus()
+    private function getDefaultStatus(): int
     {
         $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
-        return $req->fetchColumn();
+        return (int) $req->fetchColumn();
     }
 
     /**
@@ -102,8 +103,9 @@ class ImportZip extends AbstractImport
      *
      * @param array $item the item to insert
      * @throws Exception if SQL request failed
+     * @return void
      */
-    private function dbInsert($item)
+    private function dbInsert($item): void
     {
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
@@ -150,8 +152,9 @@ class ImportZip extends AbstractImport
      * Loop over the tags and insert them for the new entity
      *
      * @param string $tags the tags string separated by '|'
+     * @return void
      */
-    private function tagsDbInsert($tags)
+    private function tagsDbInsert($tags): void
     {
         $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
@@ -162,8 +165,9 @@ class ImportZip extends AbstractImport
     /**
      * Loop the json and import the items.
      *
+     * @return void
      */
-    private function importAll()
+    private function importAll(): void
     {
         foreach ($this->json as $item) {
 
@@ -199,9 +203,9 @@ class ImportZip extends AbstractImport
      * Extract the zip to the temporary folder
      *
      * @throws Exception if it cannot open the zip
-     * @return null
+     * @return void
      */
-    protected function openFile()
+    protected function openFile(): void
     {
         $Zip = new ZipArchive;
         $Zip->open($this->getFilePath()) && $Zip->extractTo($this->tmpPath);
@@ -209,7 +213,6 @@ class ImportZip extends AbstractImport
 
     /**
      * Cleanup : remove the temporary folder created
-     *
      */
     public function __destruct()
     {

@@ -17,7 +17,6 @@ use Exception;
 use PDO;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
-use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -52,7 +51,7 @@ class TrustedTimestamps extends AbstractMake
     private $pdfLongName;
 
     /** @var array $stampParams config (url, login, password, cert) */
-    private $stampParams = array();
+    private $stampParams;
 
     /** @var array $trash things that get deleted with destruct method */
     private $trash = array();
@@ -93,8 +92,9 @@ class TrustedTimestamps extends AbstractMake
      * Generate the pdf to timestamp.
      *
      * @throws Exception if it cannot make the pdf
+     * @return void
      */
-    private function generatePdf()
+    private function generatePdf(): void
     {
         try {
             $MakePdf = new MakePdf($this->Entity);
@@ -111,7 +111,7 @@ class TrustedTimestamps extends AbstractMake
      *
      * @return array<string,string>
      */
-    private function getTimestampParameters()
+    private function getTimestampParameters(): array
     {
         // if there is a config in the team, use that
         // otherwise use the general config if we can
@@ -152,7 +152,7 @@ class TrustedTimestamps extends AbstractMake
      * @param string $cmd
      * @return array<string,null|array|integer>
      */
-    private function runOpenSSL($cmd)
+    private function runOpenSSL($cmd): array
     {
         $retarray = array();
         exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
@@ -169,7 +169,7 @@ class TrustedTimestamps extends AbstractMake
      * @param string $cmd
      * @return array<string,null|array|integer>
      */
-    private function runSh($cmd)
+    private function runSh($cmd): array
     {
         $retarray = array();
         exec("sh -c \"" . $cmd . "\" 2>&1", $retarray, $retcode);
@@ -184,8 +184,9 @@ class TrustedTimestamps extends AbstractMake
      * Creates a Timestamp Requestfile from a filename
      *
      * @throws Exception
+     * @return void
      */
-    private function createRequestfile()
+    private function createRequestfile(): void
     {
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         // we don't keep this file around
@@ -212,8 +213,9 @@ class TrustedTimestamps extends AbstractMake
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
      * @throws Exception if unhappy
+     * @return void
      */
-    private function setResponseTime()
+    private function setResponseTime(): void
     {
         if (!is_readable($this->responsefilePath)) {
             throw new Exception('Bad token');
@@ -287,7 +289,7 @@ class TrustedTimestamps extends AbstractMake
      * @throws Exception
      * @return \GuzzleHttp\Psr7\Response
      */
-    private function postData()
+    private function postData(): \GuzzleHttp\Psr7\Response
     {
         $client = new \GuzzleHttp\Client();
 
@@ -329,7 +331,7 @@ class TrustedTimestamps extends AbstractMake
      * @throws Exception if file is not readable
      * @return string Hash of the file
      */
-    private function getHash($file)
+    private function getHash($file): string
     {
         if (!is_readable($file)) {
             throw new Exception('Not a file!');
@@ -340,9 +342,10 @@ class TrustedTimestamps extends AbstractMake
     /**
      * Save the binaryToken to a .asn1 file
      *
+     * @throws Exception
      * @param string $binaryToken asn1 response from TSA
      */
-    private function saveToken($binaryToken)
+    private function saveToken($binaryToken): string
     {
         $longName = $this->getUniqueString() . ".asn1";
         $filePath = $this->getUploadsPath() . $longName;
@@ -375,9 +378,10 @@ class TrustedTimestamps extends AbstractMake
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
      * in the timestamp itself.
      *
+     * @throws Exception
      * @return bool
      */
-    private function validate()
+    private function validate(): bool
     {
         $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
 
@@ -425,7 +429,7 @@ class TrustedTimestamps extends AbstractMake
      *
      * @return bool
      */
-    private function isJavaInstalled()
+    private function isJavaInstalled(): bool
     {
         $res = $this->runSh("java");
         return (bool) stripos($res['retarray'][0], 'class');
@@ -438,7 +442,7 @@ class TrustedTimestamps extends AbstractMake
      * @throws Exception
      * @return bool
      */
-    private function validateWithJava()
+    private function validateWithJava(): bool
     {
         if (!$this->isJavaInstalled()) {
             throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
@@ -458,8 +462,10 @@ class TrustedTimestamps extends AbstractMake
     /**
      * The realname is elabid-timestamped.pdf
      *
+     * @throws Exception
+     * @return string
      */
-    public function getCleanName()
+    public function getCleanName(): string
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -474,8 +480,10 @@ class TrustedTimestamps extends AbstractMake
      * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
      * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
      * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
+     * @throws Exception
+     * @return void
      */
-    private function sqlInsertPdf()
+    private function sqlInsertPdf(): void
     {
         $hash = $this->getHash($this->pdfPath);
 
@@ -493,7 +501,6 @@ class TrustedTimestamps extends AbstractMake
         if (!$req->execute()) {
             throw new Exception('Cannot insert into SQL!');
         }
-
     }
 
     /**
@@ -502,7 +509,7 @@ class TrustedTimestamps extends AbstractMake
      * @param string $token
      * @return string
      */
-    public function decodeAsn1($token)
+    public function decodeAsn1($token): string
     {
         $cmd = "asn1parse -inform DER -in " . escapeshellarg(ELAB_ROOT . "uploads/" . $token);
 
@@ -565,9 +572,10 @@ class TrustedTimestamps extends AbstractMake
      * The main function.
      * Request a timestamp and parse the response.
      *
+     * @throws Exception
      * @return bool True upon timestamping success, throw Exceptions in your face if it fails
      */
-    public function timeStamp()
+    public function timeStamp(): bool
     {
         // first we create the request file
         $this->createRequestfile();

@@ -126,7 +126,6 @@ if (isset($_GET)) {
     $tagTable = 'items_tags';
     $status = '';
     $rating = '';
-    $tags = '';
 
     // TABLE
     if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
@@ -142,9 +141,9 @@ if (isset($_GET)) {
     // RATING
     if (isset($_GET['rating']) && !empty($_GET['rating'])) {
         if ($_GET['rating'] === 'no') {
-            $rating = '0';
+            $rating = 0;
         } else {
-            $rating = intval($_GET['rating']);
+            $rating = (int) $_GET['rating'];
         }
     }
 

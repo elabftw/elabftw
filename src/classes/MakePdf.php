@@ -45,8 +45,9 @@ class MakePdf extends AbstractMake
      *
      * @param bool|null $toFile Do we want to write it to a file ?
      * @param bool $timestamp Is it a timestamp pdf we are doing ? If yes save it in normal path, not tmp
+     * @return void
      */
-    public function output($toFile = false, $timestamp = false)
+    public function output($toFile = false, $timestamp = false): void
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -106,7 +107,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function addElabid()
+    private function addElabid(): string
     {
         if ($this->Entity instanceof Experiments) {
             return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . "</p>";
@@ -119,7 +120,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function addLockinfo()
+    private function addLockinfo(): string
     {
         if ($this->Entity instanceof Experiments && $this->Entity->entityData['locked']) {
             // get info about the locker
@@ -136,8 +137,10 @@ class MakePdf extends AbstractMake
 
     /**
      * Add the linked item if we are in an experiment
+     *
+     * @return string
      */
-    private function addLinkedItems()
+    private function addLinkedItems(): string
     {
         $html = '';
         $linksArr = $this->Entity->Links->readAll();
@@ -175,7 +178,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function addComments()
+    private function addComments(): string
     {
         $html = '';
         // will return false if empty
@@ -204,9 +207,9 @@ class MakePdf extends AbstractMake
     /**
      * Load the contents of app/css/pdf.min.css and add to the content.
      *
-     * @return string
+     * @return string minified css for the pdf
      */
-    private function addCss()
+    private function addCss(): string
     {
         return file_get_contents(ELAB_ROOT . 'web/app/css/pdf.min.css');
     }
@@ -217,7 +220,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function addAttachedFiles()
+    private function addAttachedFiles(): string
     {
         $html = '';
 
@@ -264,8 +267,10 @@ class MakePdf extends AbstractMake
 
     /**
      * A url to click is always nice
+     *
+     * @return string
      */
-    private function addUrl()
+    private function addUrl(): string
     {
         $full_url = $this->getUrl();
         return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
@@ -276,7 +281,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function buildBody()
+    private function buildBody(): string
     {
         $body = $this->Entity->entityData['body'];
 
@@ -293,7 +298,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function buildInfoBlock()
+    private function buildInfoBlock(): string
     {
         return "<table id='infoblock'><tr><td class='noborder'>
             <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
@@ -305,8 +310,10 @@ class MakePdf extends AbstractMake
 
     /**
      * Build the header of the HTML code that will be used to build the PDF.
+     *
+     * @return string
      */
-    private function buildHeader()
+    private function buildHeader(): string
     {
 
         $date = date_create($this->Entity->entityData['date']);
@@ -356,7 +363,7 @@ class MakePdf extends AbstractMake
      *
      * @return string
      */
-    private function getContent()
+    private function getContent(): string
     {
         $content = $this->buildHeader();
         $content .= $this->buildBody();
@@ -375,7 +382,7 @@ class MakePdf extends AbstractMake
      *
      * @return string The file name of the pdf
      */
-    public function getCleanName()
+    public function getCleanName(): string
     {
         return $this->Entity->entityData['date'] . "-" .
             preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';

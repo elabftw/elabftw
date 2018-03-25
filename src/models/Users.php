@@ -10,10 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
-use Swift_Message;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Users
@@ -48,13 +45,13 @@ class Users
     public function __construct($userid = null, Auth $auth = null, Config $config = null)
     {
         $this->Db = Db::getConnection();
-        if (!is_null($userid)) {
+        if ($userid !== null) {
             $this->setId($userid);
         }
-        if (!is_null($auth)) {
+        if ($auth !== null) {
             $this->Auth = $auth;
         }
-        if (!is_null($config)) {
+        if ($config !== null) {
             $this->Config = $config;
         }
     }
@@ -64,7 +61,7 @@ class Users
      *
      * @param int $userid
      */
-    public function setId($userid)
+    public function setId($userid): void
     {
         if (Tools::checkId($userid) === false) {
             throw new Exception('Bad userid');
@@ -77,7 +74,7 @@ class Users
      * Populate userData with read()
      *
      */
-    private function populate()
+    private function populate(): void
     {
         $this->userData = $this->read($this->userid);
     }
@@ -92,7 +89,7 @@ class Users
      * @param string $password
      * @return bool
      */
-    public function create($email, $team, $firstname = '', $lastname = '', $password = '')
+    public function create($email, $team, $firstname = '', $lastname = '', $password = ''): bool
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
@@ -175,7 +172,7 @@ class Users
      * @param int $group
      * @return int
      */
-    private function getValidated($group)
+    private function getValidated($group): int
     {
         // validation is required for normal user
         if ($this->Config->configArr['admin_validate'] === "1" && $group === 4) {
@@ -193,7 +190,7 @@ class Users
      * @param int $team
      * @return int
      */
-    private function getGroup($team)
+    private function getGroup($team): int
     {
         if ($this->isFirstUser()) {
             return 1;
@@ -209,7 +206,7 @@ class Users
      * @param string $email
      * @return bool true if there is a duplicate
      */
-    public function isDuplicateEmail($email)
+    public function isDuplicateEmail($email): bool
     {
         $sql = "SELECT email FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -224,7 +221,7 @@ class Users
      *
      * @return bool
      */
-    private function isFirstUser()
+    private function isFirstUser(): bool
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users";
         $req = $this->Db->prepare($sql);
@@ -240,7 +237,7 @@ class Users
      * @param int $team
      * @return bool
      */
-    private function isFirstUserInTeam($team)
+    private function isFirstUserInTeam($team): bool
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
         $req = $this->Db->prepare($sql);
@@ -257,7 +254,7 @@ class Users
      * @param int $userid
      * @return array
      */
-    public function read($userid)
+    public function read($userid): array
     {
         $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
@@ -276,7 +273,7 @@ class Users
      * @param string $email
      * @return array
      */
-    public function readFromEmail($email)
+    public function readFromEmail($email): array
     {
         $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users
             WHERE email = :email AND archived = 0";
@@ -292,7 +289,7 @@ class Users
      *
      * @param string $apiKey
      */
-    public function readFromApiKey($apiKey)
+    public function readFromApiKey($apiKey): void
     {
         $sql = "SELECT userid FROM users WHERE api_key = :key AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -315,7 +312,7 @@ class Users
      * @param int|null $validated
      * @return array
      */
-    public function readAllFromTeam($validated = null)
+    public function readAllFromTeam($validated = null): array
     {
         $valSql = '';
         if (is_int($validated)) {
@@ -341,7 +338,7 @@ class Users
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT users.*, teams.team_name AS teamname
             FROM users
@@ -358,7 +355,7 @@ class Users
      *
      * @return array
      */
-    public function getAllEmails()
+    public function getAllEmails(): array
     {
         $sql = "SELECT email FROM users WHERE validated = 1 AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -374,7 +371,7 @@ class Users
      * @throws Exception
      * @return bool
      */
-    public function update($params)
+    public function update($params): bool
     {
         $userid = Tools::checkId($params['userid']);
 
@@ -429,7 +426,7 @@ class Users
      * @param array $params
      * @return bool
      */
-    public function updatePreferences($params)
+    public function updatePreferences($params): bool
     {
         // LIMIT
         $filter_options = array(
@@ -590,7 +587,7 @@ class Users
      * @param array $params
      * @return bool
      */
-    public function updateAccount($params)
+    public function updateAccount($params): bool
     {
         // check that we got the good password
         if (!$this->Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
@@ -656,9 +653,9 @@ class Users
      * @throws Exception if invalid character length
      * @return bool True if password is updated
      */
-    public function updatePassword($password, $userid = null)
+    public function updatePassword($password, $userid = null): bool
     {
-        if (is_null($userid)) {
+        if ($userid === null) {
             $userid = $this->userid;
         }
 
@@ -687,7 +684,7 @@ class Users
      * @param int $userid
      * @return bool
      */
-    private function invalidateToken($userid)
+    private function invalidateToken($userid): bool
     {
         $sql = "UPDATE users SET token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -702,7 +699,7 @@ class Users
      * @param int $userid
      * @return string
      */
-    public function validate($userid)
+    public function validate($userid): string
     {
         $this->setId($userid);
 
@@ -732,7 +729,7 @@ class Users
      *
      * @return bool
      */
-    public function archive()
+    public function archive(): bool
     {
         $sql = "UPDATE users SET archived = 1, token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -757,7 +754,7 @@ class Users
      * @param string $password The confirmation password
      * @return bool
      */
-    public function destroy($email, $password)
+    public function destroy($email, $password): bool
     {
         // check that we got the good password
         if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
@@ -815,7 +812,7 @@ class Users
      * @param string $email Email of user to promote
      * @return bool
      */
-    public function promoteSysadmin($email)
+    public function promoteSysadmin($email): bool
     {
         // check we have a valid email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -834,7 +831,7 @@ class Users
      *
      * @return bool
      */
-    public function generateApiKey()
+    public function generateApiKey(): bool
     {
         $apiKey = bin2hex(openssl_random_pseudo_bytes(42));
 

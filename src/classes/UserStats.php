@@ -20,7 +20,7 @@ class UserStats
     private $Users;
 
     /** @var int $count count of experiments */
-    private $count = 0;
+    private $count;
 
     /** @var Db $Db SQL Database */
     private $Db;
@@ -55,8 +55,9 @@ class UserStats
     /**
      * Count number of experiments for each status
      *
+     * @return void
      */
-    private function countStatus()
+    private function countStatus(): void
     {
         // get all status name and id
         $Status = new Status($this->Users);
@@ -85,8 +86,9 @@ class UserStats
     /**
      * Create an array with status name => percent
      *
+     * @return void
      */
-    private function makePercent()
+    private function makePercent(): void
     {
         foreach ($this->statusArr as $key => $value) {
             $value = str_replace("'", "\'", html_entity_decode($value, ENT_QUOTES));

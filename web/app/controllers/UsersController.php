@@ -46,7 +46,6 @@ try {
 
     // VALIDATE
     if ($Request->request->has('usersValidate')) {
-        $tab = 2;
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
@@ -102,7 +101,6 @@ try {
     if ($FormKey->validate($Request->request->get('formkey'))
         && $Request->request->has('usersDestroy')) {
 
-        $tab = 2;
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }

@@ -43,7 +43,7 @@ class Email
      * @param int $team
      * @return array
      */
-    private function getAdminEmail($team)
+    private function getAdminEmail($team): array
     {
         // array for storing email adresses of admin(s)
         $arr = array();
@@ -71,7 +71,7 @@ class Email
      *
      * @return Swift_Mailer
      */
-    public function getMailer()
+    public function getMailer(): Swift_Mailer
     {
 
         // Choose mail transport method; either smtp or sendmail
@@ -117,7 +117,7 @@ class Email
      * @param string $email
      * @return bool
      */
-    public function testemailSend($email)
+    public function testemailSend($email): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new Exception('Bad email!');
@@ -146,7 +146,7 @@ class Email
      * @param string $body
      * @return int number of emails sent
      */
-    public function massEmail($subject, $body)
+    public function massEmail($subject, $body): int
     {
         if (empty($subject)) {
             $subject = 'No subject';

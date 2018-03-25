@@ -41,14 +41,14 @@ abstract class AbstractMake
      *
      * @return string
      */
-    abstract public function getCleanName();
+    abstract public function getCleanName(): string;
 
     /**
      * Generate a long and unique string
      *
      * @return string a sha512 hash of uniqid()
      */
-    protected function getUniqueString()
+    protected function getUniqueString(): string
     {
         return hash("sha512", uniqid(rand(), true));
     }
@@ -58,7 +58,7 @@ abstract class AbstractMake
      *
      * @return string absolute path
      */
-    protected function getUploadsPath()
+    protected function getUploadsPath(): string
     {
         return ELAB_ROOT . 'uploads/';
     }
@@ -68,7 +68,7 @@ abstract class AbstractMake
      *
      * @return string absolute path
      */
-    protected function getTmpPath()
+    protected function getTmpPath(): string
     {
         return ELAB_ROOT . 'uploads/tmp/';
     }
@@ -78,7 +78,7 @@ abstract class AbstractMake
      *
      * @return string url to the item/experiment
      */
-    protected function getUrl()
+    protected function getUrl(): string
     {
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';

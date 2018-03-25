@@ -20,7 +20,7 @@ interface CrudInterface
      *
      * @return array
      */
-    public function readAll();
+    public function readAll(): array;
 
     /**
      * Destroy with id
@@ -29,12 +29,12 @@ interface CrudInterface
      *
      * @return bool
      */
-    public function destroy($id);
+    public function destroy(int $id): bool;
 
     /**
      * Detroy all the things
      *
      * @return bool
      */
-    public function destroyAll();
+    public function destroyAll(): bool;
 }

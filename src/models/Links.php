@@ -41,7 +41,7 @@ class Links implements CrudInterface
      * @throws Exception
      * @return bool
      */
-    public function create($link)
+    public function create($link): bool
     {
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->Db->prepare($sql);
@@ -54,9 +54,9 @@ class Links implements CrudInterface
     /**
      * Get links for an experiments
      *
-     * @return array|false
+     * @return array links of the experiments
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT items.id AS itemid,
             experiments_links.id AS linkid,
@@ -74,7 +74,7 @@ class Links implements CrudInterface
             return $req->fetchAll();
         }
 
-        return false;
+        return array();
     }
 
     /**
@@ -84,7 +84,7 @@ class Links implements CrudInterface
      * @param int $newId The id of the new experiment that will receive the links
      * @return null
      */
-    public function duplicate($id, $newId)
+    public function duplicate($id, $newId): void
     {
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
@@ -108,7 +108,7 @@ class Links implements CrudInterface
      * @param int $id ID of our link
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->Db->prepare($sql);
@@ -122,7 +122,7 @@ class Links implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);

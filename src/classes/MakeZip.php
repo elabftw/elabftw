@@ -76,8 +76,10 @@ class MakeZip extends AbstractMake
     /**
      * Initiate the zip object and the archive
      *
+     * @throws Exception
+     * @return void
      */
-    private function createZipArchive()
+    private function createZipArchive(): void
     {
         $this->Zip = new ZipArchive;
 
@@ -89,9 +91,9 @@ class MakeZip extends AbstractMake
     /**
      * Make a title without special char for folder inside .zip
      *
-     * @return null
+     * @return void
      */
-    private function setCleanTitle()
+    private function setCleanTitle(): void
     {
         $this->cleanTitle = preg_replace(
             '/[^A-Za-z0-9]/',
@@ -104,8 +106,9 @@ class MakeZip extends AbstractMake
      * Add the .asn1 token and the timestamped pdf to the zip archive
      *
      * @param int $id The id of current item we are zipping
+     * @return void
      */
-    private function addTimestampFiles($id)
+    private function addTimestampFiles($id): void
     {
         if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
             // SQL to get the path of the token
@@ -129,8 +132,9 @@ class MakeZip extends AbstractMake
     /**
      * Folder begins with date for experiments
      *
+     * @return void
      */
-    private function nameFolder()
+    private function nameFolder(): void
     {
         if ($this->Entity instanceof Experiments) {
             $this->folder = $this->Entity->entityData['date'] . "-" . $this->cleanTitle;
@@ -143,8 +147,9 @@ class MakeZip extends AbstractMake
      * Add attached files
      *
      * @param array $filesArr the files array
+     * @return void
      */
-    private function addAttachedFiles($filesArr)
+    private function addAttachedFiles($filesArr): void
     {
         $real_names_so_far = array();
         $i = 0;
@@ -165,8 +170,9 @@ class MakeZip extends AbstractMake
     /**
      * Add a PDF file to the ZIP archive
      *
+     * @return void
      */
-    private function addPdf()
+    private function addPdf(): void
     {
         $MakePdf = new MakePdf($this->Entity);
         $MakePdf->output(true);
@@ -178,8 +184,9 @@ class MakeZip extends AbstractMake
      * Add a CSV file to the ZIP archive
      *
      * @param int $id The id of the item we are zipping
+     * @return void
      */
-    private function addCsv($id)
+    private function addCsv($id): void
     {
         $MakeCsv = new MakeCsv($this->Entity, $id);
         $this->Zip->addFile($MakeCsv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
@@ -190,8 +197,9 @@ class MakeZip extends AbstractMake
      * This is where the magic happens
      *
      * @param int $id The id of the item we are zipping
+     * @return void
      */
-    private function addToZip($id)
+    private function addToZip($id): void
     {
         $this->Entity->setId($id);
         $permissions = $this->Entity->getPermissions();
@@ -218,8 +226,9 @@ class MakeZip extends AbstractMake
      * This could be called the main function.
      *
      * @throws Exception If the zip failed
+     * @return void
      */
-    private function loopIdArr()
+    private function loopIdArr(): void
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {
@@ -241,7 +250,7 @@ class MakeZip extends AbstractMake
      *
      * @return string
      */
-    public function getCleanName()
+    public function getCleanName(): string
     {
         $ext = '.elabftw.zip';
 

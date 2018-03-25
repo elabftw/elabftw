@@ -14,10 +14,10 @@
             {# min pass length minimum, no maximum #}
             {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) ~ ',}' %}
 
-            <label class='block' for='passwordtxt'>{{ 'New password'|trans }}</label>
+            <label class='block' for='password'>{{ 'New password'|trans }}</label>
             <input id='password' type='password' pattern='{{ pattern }}' value='' name='password' required />
 
-            <label class='block' for='cpasswordtxt'>{{ 'Type it again'|trans }}</label>
+            <label class='block' for='cpassword'>{{ 'Type it again'|trans }}</label>
             <input id='cpassword' type='password' pattern='{{ pattern }}' value='' name='cpassword' required />
             <label class='block' for='complexity'>{{ 'Complexity'|trans }}</label>
             <input id='complexity' disabled />

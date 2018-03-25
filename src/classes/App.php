@@ -86,7 +86,7 @@ class App
      *
      * @return \Twig_Environment
      */
-    private function getTwig()
+    private function getTwig(): \Twig_Environment
     {
         $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'web/app/tpl');
         $cache = ELAB_ROOT . 'cache/twig';
@@ -128,7 +128,7 @@ class App
      *
      * @return float
      */
-    public function getGenerationTime()
+    public function getGenerationTime(): float
     {
         return round((microtime(true) - $this->Request->server->get("REQUEST_TIME_FLOAT")), 5);
     }
@@ -138,7 +138,7 @@ class App
      *
      * @return int
      */
-    public function getMemoryUsage()
+    public function getMemoryUsage(): int
     {
         return memory_get_usage();
     }
@@ -147,8 +147,9 @@ class App
      * If the current user is authenticated, load Users with an id
      *
      * @param Users $users
+     * @return void
      */
-    public function loadUser(Users $users)
+    public function loadUser(Users $users): void
     {
         $this->Users = $users;
 
@@ -168,7 +169,7 @@ class App
      * @param array $variables the variables injected in the template
      * @return string html
      */
-    public function render($template, $variables)
+    public function render($template, $variables): string
     {
         return $this->Twig->render($template, array_merge(array('App' => $this), $variables));
     }

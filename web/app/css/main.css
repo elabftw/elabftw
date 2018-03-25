@@ -24,7 +24,7 @@ ffc1b7 => light red
 /* Font is Lato */
 @font-face {
     font-family: 'Lato';
-    src: url('fonts/lato-medium-.ttf');
+    src: url('fonts/lato-medium-webfont.ttf');
     src: url('fonts/lato-medium-webfont.eot');
     src: url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
     url('fonts/lato-medium-webfont.woff') format('woff'),

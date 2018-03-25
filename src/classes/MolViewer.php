@@ -11,8 +11,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * Simple viewer for molecular structures based on 3Dmol.js
  */
@@ -50,7 +48,7 @@ class MolViewer
      *
      * @return string HTML with the div for 3dmol.js
      */
-    private function getDiv()
+    private function getDiv(): string
     {
         return "<div class='row viewer_3Dmoljs' data-href='app/download.php?f=" . $this->filePath .
             "' data-style='" . $this->defaultStyle . "' data-backgroundcolor='0xffffff' id='" . $this->divId . "'></div>";
@@ -61,7 +59,7 @@ class MolViewer
      *
      * @return string HTML code of the control panel
      */
-    private function getControls()
+    private function getControls(): string
     {
 
         // Label of dropdown list and clean button
@@ -93,7 +91,7 @@ class MolViewer
      *
      * @return string HTML code of the viewer div
      */
-    public function getViewerDiv()
+    public function getViewerDiv(): string
     {
         return $this->getControls() . $this->getDiv();
     }

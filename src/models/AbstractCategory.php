@@ -21,7 +21,7 @@ abstract class AbstractCategory implements CrudInterface
      * @param int $id ID of the category
      * @return string
      */
-    abstract public function readColor($id);
+    abstract public function readColor($id): string;
 
     /**
      * Count all items of this type
@@ -29,5 +29,5 @@ abstract class AbstractCategory implements CrudInterface
      * @param int $id of the type
      * @return int
      */
-    abstract protected function countItems($id);
+    abstract protected function countItems($id): int;
 }

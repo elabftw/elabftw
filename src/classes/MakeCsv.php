@@ -52,8 +52,9 @@ class MakeCsv extends AbstractMake
     /**
      * Here we populate the first row: it will be the column names
      *
+     * @return array
      */
-    private function populateFirstLine()
+    private function populateFirstLine(): array
     {
         if ($this->Entity->type === 'experiments') {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
@@ -64,8 +65,9 @@ class MakeCsv extends AbstractMake
     /**
      * Main loop
      *
+     * @return void
      */
-    private function loopIdArr()
+    private function loopIdArr(): void
     {
         $idArr = explode(" ", $this->idList);
         foreach ($idArr as $id) {
@@ -80,8 +82,10 @@ class MakeCsv extends AbstractMake
 
     /**
      * The column names will be different depending on type
+     *
+     * @return void
      */
-    private function addLine()
+    private function addLine(): void
     {
         if ($this->Entity->type === 'experiments') {
             $elabidOrRating = $this->Entity->entityData['elabid'];
@@ -102,8 +106,10 @@ class MakeCsv extends AbstractMake
 
     /**
      * Write our file
+     *
+     * @return void
      */
-    private function writeCsv()
+    private function writeCsv(): void
     {
         $fp = fopen($this->filePath, 'w+');
         // utf8 headers
@@ -119,7 +125,7 @@ class MakeCsv extends AbstractMake
      *
      * @return string
      */
-    public function getCleanName()
+    public function getCleanName(): string
     {
         return 'export.elabftw.csv';
     }

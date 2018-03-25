@@ -37,7 +37,7 @@ class FormKey
      *
      * @return string $hinput Hidden input html
      */
-    public function getFormkey()
+    public function getFormkey(): string
     {
         // generate the key
         $formkey = Key::createNewRandomKey()->saveToAsciiSafeString();
@@ -53,7 +53,7 @@ class FormKey
      * @param string $formkey
      * @return bool True if there is no CSRF going on (hopefully)
      */
-    public function validate($formkey)
+    public function validate($formkey): bool
     {
         return $formkey === $this->Session->get('formkey');
     }

@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * All about the experiments steps
  */
@@ -40,7 +38,7 @@ class Steps implements CrudInterface
      * @param string $body the text for the step
      * @return bool
      */
-    public function create($body)
+    public function create($body): bool
     {
         // remove any | as they are used in the group_concat
         $body = strtr($body, '|', ' ');
@@ -58,7 +56,7 @@ class Steps implements CrudInterface
      * @param int $stepid
      * @return bool
      */
-    public function finish($stepid)
+    public function finish($stepid): bool
     {
         $sql = "UPDATE experiments_steps SET finished = !finished,
             finished_time = NOW()
@@ -74,7 +72,7 @@ class Steps implements CrudInterface
      *
      * @return array
      */
-    public function readAll()
+    public function readAll(): array
     {
         $sql = "SELECT * FROM experiments_steps WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
@@ -91,7 +89,7 @@ class Steps implements CrudInterface
      * @param int $newId The id of the new experiment that will receive the steps
      * @return null
      */
-    public function duplicate($id, $newId)
+    public function duplicate($id, $newId): void
     {
         $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
         $stepreq = $this->Db->prepare($stepsql);
@@ -114,7 +112,7 @@ class Steps implements CrudInterface
      * @param int $id ID of the step
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(int $id): bool
     {
         $sql = "DELETE FROM experiments_steps WHERE id= :id";
         $req = $this->Db->prepare($sql);
@@ -128,7 +126,7 @@ class Steps implements CrudInterface
      *
      * @return bool
      */
-    public function destroyAll()
+    public function destroyAll(): bool
     {
         $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);

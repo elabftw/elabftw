@@ -36,7 +36,7 @@ class UploadsView
      * @param array $upload the item to display
      * @return string html
      */
-    public function displayUpload($mode, $upload): string
+    public function displayUpload(string $mode, array $upload): string
     {
         $html = '';
 

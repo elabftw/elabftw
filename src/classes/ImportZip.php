@@ -60,8 +60,8 @@ class ImportZip extends AbstractImport
         $this->target = $this->getTarget();
         // this is where we will extract the zip
         $this->tmpPath = ELAB_ROOT . 'uploads/tmp/' . \uniqid(\mt_rand(), true);
-        if (!mkdir($this->tmpPath)) {
-            throw new Exception('Cannot create temporary folder');
+        if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath) && !is_dir($this->tmpPath)) {
+            throw new Exception('Cannot create temporary folder!');
         }
 
         $this->openFile();

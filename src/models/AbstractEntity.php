@@ -110,34 +110,36 @@ abstract class AbstractEntity
      * @param int $category
      * @return bool
      */
-    abstract public function updateCategory($category);
+    abstract public function updateCategory(int $category): bool;
 
     /**
      * Duplicate an item
      *
      * @return int the new item id
      */
-    abstract public function duplicate();
+    abstract public function duplicate(): int;
 
     /**
      * Destroy an item
      *
      * @return bool
      */
-    abstract public function destroy();
+    abstract public function destroy(): bool;
 
     /**
      * Lock or unlock
      *
      * @return bool
      */
-    abstract public function toggleLock();
+    abstract public function toggleLock(): bool;
 
     /**
      * Now that we have an id, load the data in entityData array
      *
+     * @throws Exception
+     * @return void
      */
-    protected function populate()
+    protected function populate(): void
     {
         if ($this->id === null) {
             throw new Exception('No id was set.');
@@ -154,7 +156,7 @@ abstract class AbstractEntity
      *
      * @return array
      */
-    public function read()
+    public function read(): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
@@ -271,7 +273,7 @@ abstract class AbstractEntity
      * @param string $body
      * @return bool
      */
-    public function update($title, $date, $body)
+    public function update($title, $date, $body): bool
     {
         if (empty($this->entityData)) {
             $this->populate();
@@ -320,9 +322,9 @@ abstract class AbstractEntity
      * Set a limit for sql read
      *
      * @param int $num number of items to ignore
-     * @return null
+     * @return void
      */
-    public function setLimit($num)
+    public function setLimit($num): void
     {
         $this->limit = 'LIMIT ' . (int) $num;
     }
@@ -331,9 +333,9 @@ abstract class AbstractEntity
      * Add an offset to the displayed results
      *
      * @param int $num number of items to ignore
-     * @return null
+     * @return void
      */
-    public function setOffset($num)
+    public function setOffset($num): void
     {
         $this->offset = 'OFFSET ' . (int) $num;
     }
@@ -341,9 +343,9 @@ abstract class AbstractEntity
     /**
      * Set the userid filter for read()
      *
-     * @return null
+     * @return void
      */
-    public function setUseridFilter()
+    public function setUseridFilter(): void
     {
         $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userid;
     }
@@ -355,7 +357,7 @@ abstract class AbstractEntity
      * @throws Exception
      * @return array
      */
-    public function canOrExplode($rw)
+    public function canOrExplode($rw): array
     {
         $permissions = $this->getPermissions();
 
@@ -378,7 +380,7 @@ abstract class AbstractEntity
      * @throws Exception
      * @return array
      */
-    public function getPermissions($item = null)
+    public function getPermissions($item = null): array
     {
         if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
@@ -463,7 +465,7 @@ abstract class AbstractEntity
      * @param bool $userFilter filter experiments for user or not
      * @return array
      */
-    public function getExpList($term, $userFilter = false)
+    public function getExpList($term, $userFilter = false): array
     {
         $Experiments = new Experiments($this->Users);
         $Experiments->titleFilter = " AND title LIKE '%$term%'";
@@ -480,7 +482,7 @@ abstract class AbstractEntity
      * @param string $term the query
      * @return array
      */
-    public function getDbList($term)
+    public function getDbList($term): array
     {
         $Database = new Database($this->Users);
         $Database->titleFilter = " AND title LIKE '%$term%'";
@@ -494,7 +496,7 @@ abstract class AbstractEntity
      * @param string $term the query
      * @return array
      */
-    public function getLinkList($term)
+    public function getLinkList($term): array
     {
         $linksArr = array();
         $itemsArr = $this->getDbList($term);
@@ -510,11 +512,11 @@ abstract class AbstractEntity
      * Get an array of a mix of experiments and database items
      * for use with the mention plugin of tinymce (# and $ autocomplete)
      *
-     * @param $term the query
+     * @param string $term the query
      * @param bool $userFilter filter experiments for user or not
      * @return array
      */
-    public function getMentionList($term, $userFilter = false)
+    public function getMentionList(string $term, bool $userFilter = false): array
     {
         $mentionArr = array();
 

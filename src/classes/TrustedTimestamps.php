@@ -338,8 +338,9 @@ class TrustedTimestamps extends AbstractMake
      *
      * @throws Exception
      * @param string $binaryToken asn1 response from TSA
+     * @return void
      */
-    private function saveToken($binaryToken): string
+    private function saveToken($binaryToken): void
     {
         $longName = $this->getUniqueString() . ".asn1";
         $filePath = $this->getUploadsPath() . $longName;

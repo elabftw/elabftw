@@ -25,12 +25,19 @@ try {
 
     $tab = 1;
     $location = '../../admin.php?tab=' . $tab;
+    $error = Tools::error();
 
     // (RE)GENERATE AN API KEY (from profile)
     if ($Request->request->has('generateApiKey')) {
         $Response = new JsonResponse();
         $redirect = false;
-        if ($App->Users->generateApiKey()) {
+        try {
+            $res = $App->Users->generateApiKey();
+        } catch (\RunTimeException $e) {
+            $error = $e->getMessage();
+        }
+
+        if ($res) {
             $Response->setData(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -38,7 +45,7 @@ try {
         } else {
             $Response->setData(array(
                 'res' => false,
-                'msg' => Tools::error()
+                'msg' => $error
             ));
         }
         $Response->send();

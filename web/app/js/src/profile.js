@@ -32,8 +32,13 @@
         $(document).on('click', '.generateApiKey', function() {
             $.post('app/controllers/UsersController.php', {
                 generateApiKey: true
-            }).done(function() {
+            }).done(function(data) {
                 $("#api_div").load("profile.php #api_div");
+                if (data.res) {
+                    notif(data.msg, 'ok');
+                } else {
+                    notif(data.msg, 'ko');
+                }
             });
         });
     });

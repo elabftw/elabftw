@@ -90,10 +90,8 @@ class App
     {
         $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'web/app/tpl');
         $cache = ELAB_ROOT . 'cache/twig';
-        if (!is_dir($cache)) {
-            if (!mkdir($cache)) {
-                throw new Exception("Could not create the $cache directory. Please check permissions on this folder.");
-            }
+        if (!is_dir($cache) && !mkdir($cache) && !is_dir($cache)) {
+            throw new Exception("Could not create the $cache directory. Please check permissions on this folder.");
         }
         $options = array();
 

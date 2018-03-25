@@ -249,15 +249,17 @@ class Templates extends AbstractEntity
      *
      * @param int $category
      */
-    public function updateCategory($category)
+    public function updateCategory(int $category): bool
     {
+        return false;
     }
 
     /**
      * No locking option for templates
      *
      */
-    public function toggleLock()
+    public function toggleLock(): bool
     {
+        return false;
     }
 }

@@ -168,7 +168,7 @@ class Experiments extends AbstractEntity
      * @param int $status Id of the status
      * @return bool
      */
-    public function updateCategory($status): bool
+    public function updateCategory(int $status): bool
     {
         $sql = "UPDATE experiments SET status = :status WHERE id = :id";
         $req = $this->Db->prepare($sql);

@@ -170,6 +170,7 @@ class Uploads implements CrudInterface
     /**
      * Create a unique long filename with a folder
      *
+     * @throws Exception
      * @return string the path for storing the file
      */
     protected function getCleanName(): string
@@ -178,8 +179,8 @@ class Uploads implements CrudInterface
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
         $folderPath = ELAB_ROOT . 'uploads/' . $folder;
-        if (!is_writable($folderPath)) {
-            mkdir($folderPath);
+        if (!is_dir($folderPath) && !mkdir($folderPath) && !is_dir($folderPath)) {
+            throw new Exception('Cannot create folder! Check permissions of uploads folder.');
         }
         return $folder . '/' . $hash;
     }
@@ -293,9 +294,9 @@ class Uploads implements CrudInterface
      * @param string $src Path to the original file
      * @param string $dest Path to the place to save the thumbnail
      * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
-     * @return null|false
+     * @return bool
      */
-    public function makeThumb($src, $dest, $desiredWidth): ?bool
+    public function makeThumb($src, $dest, $desiredWidth): bool
     {
         // we don't want to work on too big images
         // put the limit to 5 Mbytes
@@ -379,11 +380,11 @@ class Uploads implements CrudInterface
 
             // create the physical thumbnail image to its destination (85% quality)
             imagejpeg($virtualImage, $dest, 85);
+            return true;
 
+            }
         // and if we have no gmagick and no gd, well there's nothing I can do for you boy!
-        } else {
-            return false;
-        }
+        return false;
     }
 
     /**

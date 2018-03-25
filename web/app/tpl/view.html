@@ -21,7 +21,9 @@
         </p>
 {% else %}
     <section class='box'>
-        <span class='align_right'>{{ Entity.entityData.rating|stars|raw }}</span>
+        {% if Entity.entityData.rating > 0 %}
+            <span class='align_right'>{{ Entity.entityData.rating|stars|raw }}</span>
+        {% endif %}
 {% endif %}
 
 <!-- DATE -->

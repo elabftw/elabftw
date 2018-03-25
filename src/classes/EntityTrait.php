@@ -34,7 +34,7 @@ trait EntityTrait {
      * @throws InvalidArgumentException
      * @return void
      */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         if (Tools::checkId($id) === false) {
             throw new InvalidArgumentException(_('The id parameter is not valid!'));

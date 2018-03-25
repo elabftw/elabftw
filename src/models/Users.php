@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use RunTimeException;
 
 /**
  * Users
@@ -32,7 +33,7 @@ class Users
     /** @var array $userData what you get when you read() */
     public $userData;
 
-    /** @var string $userid our userid */
+    /** @var int $userid our userid */
     public $userid;
 
     /**
@@ -833,7 +834,11 @@ class Users
      */
     public function generateApiKey(): bool
     {
-        $apiKey = bin2hex(openssl_random_pseudo_bytes(42));
+        $random = openssl_random_pseudo_bytes(42, $cstrong);
+        if ($cstrong === false || $random === false) {
+            throw new RuntimeException("Your system doesn't appear to be cryptographically strong. IV generation failed.");
+        }
+        $apiKey = \bin2hex($random);
 
         $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
         $req = $this->Db->prepare($sql);

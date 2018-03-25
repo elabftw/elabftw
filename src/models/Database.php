@@ -64,7 +64,7 @@ class Database extends AbstractEntity
      * @param int $rating
      * @return bool
      */
-    public function updateRating($rating): bool
+    public function updateRating(int $rating): bool
     {
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -80,7 +80,7 @@ class Database extends AbstractEntity
      * @param int $category Id of the item type
      * @return bool
      */
-    public function updateCategory($category): bool
+    public function updateCategory(int $category): bool
     {
         $sql = "UPDATE items SET type = :type WHERE id = :id";
         $req = $this->Db->prepare($sql);

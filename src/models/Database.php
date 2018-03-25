@@ -19,12 +19,6 @@ class Database extends AbstractEntity
 {
     use EntityTrait;
 
-    /** @var string $page The page name */
-    public $page = 'database';
-
-    /** @var string $type The table/type name */
-    public $type = 'items';
-
     /**
      * Constructor
      *
@@ -34,6 +28,8 @@ class Database extends AbstractEntity
     public function __construct(Users $users, $id = null)
     {
         parent::__construct($users, $id);
+        $this->type = 'items';
+        $this->page = 'database';
     }
 
     /**

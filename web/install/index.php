@@ -82,10 +82,9 @@ try {
         if ($req->rowCount() === 0) {
             header('Location: ../register.php');
             throw new Exception('Redirecting to register page');
-        } else {
-            $message = 'It looks like eLabFTW is already installed. Delete the config.php file if you wish to reinstall it.';
-            throw new Exception($message);
         }
+        $message = 'It looks like eLabFTW is already installed. Delete the config.php file if you wish to reinstall it.';
+        throw new Exception($message);
     }
     ?>
     <!DOCTYPE HTML>

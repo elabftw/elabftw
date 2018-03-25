@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 class Auth
 {
     /** the minimum password length */
-    const MIN_PASSWORD_LENGTH = 8;
+    public const MIN_PASSWORD_LENGTH = 8;
 
     /** @var Db $Db SQL Database */
     protected $Db;
@@ -136,7 +136,7 @@ class Auth
      */
     private function setToken(): bool
     {
-        $token = hash('sha256', uniqid(rand(), true));
+        $token = hash('sha256', \uniqid(\mt_rand(), true));
 
         // create cookie
         // name, value, expire, path, domain, secure, httponly

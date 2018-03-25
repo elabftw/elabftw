@@ -442,10 +442,6 @@ section.item {
 }
 
 /* BADGE */
-.badge-pill {
-    padding: 5px;
-    margin-right: 5px;
-}
 .badgetab {
     padding: 5px;
     margin: 0 20px 10px 0;

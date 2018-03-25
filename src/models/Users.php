@@ -104,7 +104,7 @@ class Users
         $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
-        $salt = hash("sha512", uniqid(rand(), true));
+        $salt = hash("sha512", \uniqid(\mt_rand(), true));
         // Create hash
         $passwordHash = hash("sha512", $salt . $password);
 
@@ -661,7 +661,7 @@ class Users
 
         $this->Auth->checkPasswordLength($password);
 
-        $salt = hash("sha512", uniqid(rand(), true));
+        $salt = hash("sha512", \uniqid(\mt_rand(), true));
         $passwordHash = hash("sha512", $salt . $password);
 
         $sql = "UPDATE users SET salt = :salt, password = :password WHERE userid = :userid";

@@ -86,7 +86,7 @@ class Scheduler
         $req->bindParam(':item', $this->Database->id);
         $req->execute();
 
-        return $req->fetchall();
+        return $req->fetchAll();
     }
 
     /**

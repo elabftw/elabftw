@@ -117,14 +117,12 @@ final class Db
      */
     private function __clone()
     {
-        return false;
     }
 
     /**
      * Disallow wakeup also
      */
-    private function __wakeup()
+    public function __wakeup()
     {
-        return false;
     }
 }

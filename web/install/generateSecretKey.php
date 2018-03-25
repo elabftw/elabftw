@@ -9,7 +9,7 @@
  * @package elabftw
  */
 
-use Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Key;
 
 /**
  * Generate a secret key for the config file

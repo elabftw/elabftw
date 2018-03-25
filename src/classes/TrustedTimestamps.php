@@ -15,8 +15,8 @@ namespace Elabftw\Elabftw;
 use DateTime;
 use Exception;
 use PDO;
-use Defuse\Crypto\Crypto as Crypto;
-use Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use GuzzleHttp\Exception\RequestException;
 
 /**
@@ -27,13 +27,7 @@ use GuzzleHttp\Exception\RequestException;
 class TrustedTimestamps extends AbstractMake
 {
     /** default hash algo for file */
-    const HASH_ALGORITHM = 'sha256';
-
-    /** @var Experiments $Entity instance of Entity */
-    protected $Entity;
-
-    /** @var Db $Db SQL Database */
-    protected $Db;
+    private const HASH_ALGORITHM = 'sha256';
 
     /** @var Config $Config instance of Config*/
     private $Config;

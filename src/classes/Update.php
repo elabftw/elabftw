@@ -12,9 +12,9 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use FilesystemIterator;
-use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception as Ex;
-use Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Key;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -34,7 +34,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '37';
+    private const REQUIRED_SCHEMA = '37';
 
     /**
      * Init Update with Config and Db
@@ -309,7 +309,7 @@ class Update
             $schema = self::REQUIRED_SCHEMA;
         }
         $config_arr = array('schema' => $schema);
-        if (!$this->Config->Update($config_arr)) {
+        if (!$this->Config->update($config_arr)) {
             throw new Exception('Failed at updating the schema!');
         }
     }

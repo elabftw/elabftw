@@ -74,7 +74,7 @@ class MakePdf extends AbstractMake
         $mpdf->SetAuthor($this->Entity->entityData['fullname']);
         $mpdf->SetTitle($this->Entity->entityData['title']);
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords(strtr($this->Entity->entityData['tags'], '|', ' '));
+        $mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
         $mpdf->SetCreator('www.elabftw.net');
 
         // write content
@@ -341,7 +341,7 @@ class MakePdf extends AbstractMake
         <p style="float:left; width:90%;">
             <strong>Date:</strong> ' . $date_str . '<br />
             <strong>Tags:</strong> <em>' .
-                strtr($this->Entity->entityData['tags'], '|', ' ') . '</em> <br />
+                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
         <p style="float:right; width:10%;"><br /><br />

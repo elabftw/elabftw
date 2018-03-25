@@ -15,8 +15,8 @@ use Swift_Mailer;
 use Swift_Message;
 use Swift_SmtpTransport;
 use Swift_SendmailTransport;
-use Defuse\Crypto\Crypto as Crypto;
-use Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -75,40 +75,35 @@ class Email
     {
 
         // Choose mail transport method; either smtp or sendmail
-        switch ($this->Config->configArr['mail_method']) {
+        if ($this->Config->configArr['mail_method'] === 'smtp') {
 
-            // Use SMTP Server
-            case 'smtp':
-                if ($this->Config->configArr['smtp_encryption'] === 'none') {
-                    $transport = new Swift_SmtpTransport(
-                        $this->Config->configArr['smtp_address'],
-                        $this->Config->configArr['smtp_port']
-                    );
-                } else {
-                    $transport = new Swift_SmtpTransport(
-                        $this->Config->configArr['smtp_address'],
-                        $this->Config->configArr['smtp_port'],
-                        $this->Config->configArr['smtp_encryption']
-                    );
-                }
+            if ($this->Config->configArr['smtp_encryption'] === 'none') {
+                $transport = new Swift_SmtpTransport(
+                    $this->Config->configArr['smtp_address'],
+                    $this->Config->configArr['smtp_port']
+                );
+            } else {
+                $transport = new Swift_SmtpTransport(
+                    $this->Config->configArr['smtp_address'],
+                    $this->Config->configArr['smtp_port'],
+                    $this->Config->configArr['smtp_encryption']
+                );
+            }
 
-                if ($this->Config->configArr['smtp_password']) {
-                    $transport->setUsername($this->Config->configArr['smtp_username'])
-                    ->setPassword(Crypto::decrypt(
-                        $this->Config->configArr['smtp_password'],
-                        Key::loadFromAsciiSafeString(SECRET_KEY)
-                    ));
-                }
-                break;
+            if ($this->Config->configArr['smtp_password']) {
+                $transport->setUsername($this->Config->configArr['smtp_username'])
+                ->setPassword(Crypto::decrypt(
+                    $this->Config->configArr['smtp_password'],
+                    Key::loadFromAsciiSafeString(SECRET_KEY)
+                ));
+            }
 
+        } else {
             // Use locally installed MTA (aka sendmail); Default
-            default:
-                $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
-                break;
+            $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
         }
 
-        $mailer = new Swift_Mailer($transport);
-        return $mailer;
+        return new Swift_Mailer($transport);
     }
 
     /**

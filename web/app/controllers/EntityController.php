@@ -181,9 +181,9 @@ try {
     if ($Request->request->has('createTag')) {
         $Entity->canOrExplode('write');
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        $tag = strtr($Request->request->filter('tag', null, FILTER_SANITIZE_STRING), '\\', '');
+        $tag = str_replace('\\', '', $Request->request->filter('tag', null, FILTER_SANITIZE_STRING));
         // also remove | because we use this as separator for tags in SQL
-        $tag = strtr($tag, '|', ' ');
+        $tag = strtr('|', ' ', $tag);
         // check for string length and if user owns the experiment
         if (strlen($tag) < 1) {
             throw new Exception(_('Tag is too short!'));

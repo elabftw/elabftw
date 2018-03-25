@@ -195,7 +195,7 @@ class ImportZip extends AbstractImport
                     }
                 }
             }
-            $this->inserted += 1;
+            ++$this->inserted;
         }
     }
 

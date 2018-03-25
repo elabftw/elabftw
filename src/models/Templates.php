@@ -17,9 +17,6 @@ class Templates extends AbstractEntity
 {
     use EntityTrait;
 
-    /** @var string $type almost the database table… */
-    public $type = 'experiments_tpl';
-
     /**
      * Constructor
      *
@@ -29,6 +26,7 @@ class Templates extends AbstractEntity
     public function __construct(Users $users, $id = null)
     {
         parent::__construct($users, $id);
+        $this->type = 'experiments_tpl';
     }
 
     /**

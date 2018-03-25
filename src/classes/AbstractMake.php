@@ -50,7 +50,7 @@ abstract class AbstractMake
      */
     protected function getUniqueString(): string
     {
-        return hash("sha512", uniqid(rand(), true));
+        return hash("sha512", \uniqid(\mt_rand(), true));
     }
 
     /**

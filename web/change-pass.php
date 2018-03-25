@@ -11,8 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Defuse\Crypto\Crypto as Crypto;
-use Defuse\Crypto\Key as Key;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

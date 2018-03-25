@@ -174,7 +174,7 @@ class Uploads implements CrudInterface
      */
     protected function getCleanName(): string
     {
-        $hash = hash("sha512", uniqid(rand(), true));
+        $hash = hash("sha512", \uniqid(\mt_rand(), true));
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
         $folderPath = ELAB_ROOT . 'uploads/' . $folder;
@@ -329,7 +329,7 @@ class Uploads implements CrudInterface
                 // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
                 // works in those cases
                 if ($mime === 'application/pdf' || $mime === 'application/postscript') {
-                    $src = $src . '[0]';
+                    $src .= '[0]';
                 }
                 // fail silently if thumbnail generation does not work to keep file upload field functional;
                 // originally introduced due to issue #415.

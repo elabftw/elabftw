@@ -127,10 +127,6 @@ tr:nth-child(odd) {
     border: none;
 }
 
-#body_text {
-    page-break-after: always;
-}
-
 #infoblock {
     border: 1px solid #dcdddc;
     border-radius: 5px;

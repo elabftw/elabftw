@@ -41,7 +41,7 @@ class Steps implements CrudInterface
     public function create($body): bool
     {
         // remove any | as they are used in the group_concat
-        $body = strtr($body, '|', ' ');
+        $body = str_replace('|', ' ', $body);
         $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id);

@@ -30,17 +30,17 @@ class ReleaseCheck
     public $success = false;
 
     /** where to get info from */
-    const URL = 'https://get.elabftw.net/updates.ini';
+    private const URL = 'https://get.elabftw.net/updates.ini';
 
     /** if we can't connect in https for some reason, use http */
-    const URL_HTTP = 'http://get.elabftw.net/updates.ini';
+    private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
 
     /**
      * ////////////////////////////
      * UPDATE THIS AFTER RELEASING
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '2.0.0';
+    public const INSTALLED_VERSION = '2.0.0';
 
     /**
      * Fetch the update info on object creation

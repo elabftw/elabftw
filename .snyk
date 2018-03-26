@@ -4,8 +4,8 @@ version: v1.10.1
 ignore:
   'npm:bootstrap-markdown:20140826':
     - bootstrap-markdown:
-        reason: not vuln
-        expires: '2018-03-25T16:14:43.002Z'
+        reason: Correct CSP will prevent this
+        expires: '2018-04-25T09:30:03.280Z'
   'npm:bootstrap:20160627':
     - bootstrap:
         reason: elab not affected

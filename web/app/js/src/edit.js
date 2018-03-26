@@ -447,11 +447,14 @@
             quickSave(type, id);
         }
         // KEYBOARD SHORTCUT
+        /* TODO
         $(document).keypress(function(e) {
             if (e.key === $('#shortcuts').data('submit')) {
                 document.forms.main_form.submit();
             }
         });
+        */
+        // TODO $('.markdown-textarea').markdown({autofocus:false,savable:false, iconlibrary: 'fa'});
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {

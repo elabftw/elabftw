@@ -82,7 +82,11 @@ $(document).ready(function() {
                 }).done(function() {
                     notif('Saved', 'ok');
                 });
-            }
+            },
+			eventRender: function(event, element, view) {
+				var title = element.find('.fc-title');
+				title.html(title.text());
+			}
 
 		});
 });

@@ -70,7 +70,7 @@ class UserStats
         }
 
         // count experiments for each status
-        foreach ($this->statusArr as $key => $value) {
+        foreach (array_keys($this->statusArr) as $key) {
             $sql = "SELECT COUNT(*)
                 FROM experiments
                 WHERE userid = :userid

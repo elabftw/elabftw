@@ -87,10 +87,10 @@ class Config
             $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
         }
 
-        if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {
+        if (isset($post['login_tries']) && Tools::checkId((int) $post['login_tries']) === false) {
             throw new Exception('Bad value for number of login attempts!');
         }
-        if (isset($post['ban_time']) && Tools::checkId($post['ban_time']) === false) {
+        if (isset($post['ban_time']) && Tools::checkId((int) $post['ban_time']) === false) {
             throw new Exception('Bad value for number of login attempts!');
         }
 

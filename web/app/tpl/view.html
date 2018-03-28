@@ -22,7 +22,7 @@
 {% else %}
     <section class='box'>
         {% if Entity.entityData.rating > 0 %}
-            <span class='align_right'>{{ Entity.entityData.rating|stars|raw }}</span>
+            <span class='align_right'>{{ Entity.entityData.rating|int|stars|raw }}</span>
         {% endif %}
 {% endif %}
 

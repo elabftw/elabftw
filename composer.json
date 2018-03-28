@@ -31,5 +31,5 @@
             "Elabftw\\Elabftw\\" : ["src/classes", "src/models", "src/views"]
         }
     },
-    "license": "AGPL-3.0"
+    "license": "AGPL-3.0-or-later"
 }

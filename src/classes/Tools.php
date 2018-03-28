@@ -51,7 +51,7 @@ class Tools
      * @param bool $cross do we display a cross or not?
      * @return string the HTML of the message
      */
-    public static function displayMessage($message, $type, $cross = true): string
+    public static function displayMessage(string $message, string $type, bool $cross = true): string
     {
         $icon = 'fa-info-circle';
         $alert = 'success';
@@ -84,7 +84,7 @@ class Tools
      * @param string $input The title to sanitize
      * @return string Will return Untitled if there is no input.
      */
-    public static function checkTitle($input): string
+    public static function checkTitle(string $input): string
     {
         if (empty($input)) {
             return _('Untitled');
@@ -100,7 +100,7 @@ class Tools
      * @param string $input Body to sanitize
      * @return string The sanitized body or empty string if there is no input
      */
-    public static function checkBody($input): string
+    public static function checkBody(string $input): string
     {
         $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
@@ -114,7 +114,7 @@ class Tools
      * @param string $md Markdown code
      * @return string HTML code
      */
-    public static function md2html($md): string
+    public static function md2html(string $md): string
     {
         return \Michelf\Markdown::defaultTransform($md);
     }
@@ -168,7 +168,7 @@ class Tools
      * @param int $bytes size in bytes
      * @return string
      */
-    public static function formatBytes($bytes): string
+    public static function formatBytes(int $bytes): string
     {
         // nice display of filesize
         if ($bytes < 1024) {
@@ -194,7 +194,7 @@ class Tools
      * @throws InvalidArgumentException
      * @return string The formatted string
      */
-    public static function formatDate($date, $s = '.'): string
+    public static function formatDate(string $date, string $s = '.'): string
     {
         if (strlen($date) != 8) {
             throw new InvalidArgumentException('Date has wrong size!');
@@ -208,7 +208,7 @@ class Tools
      * @param string $filename path of the file
      * @return string file extension
      */
-    public static function getExt($filename): string
+    public static function getExt(string $filename): string
     {
         // Get file extension
         $path_info = pathinfo($filename);
@@ -226,7 +226,7 @@ class Tools
      * @param int $id
      * @return int|false $id if pos int
      */
-    public static function checkId($id)
+    public static function checkId(int $id)
     {
         $filter_options = array(
             'options' => array(
@@ -241,7 +241,7 @@ class Tools
      * @param bool $permission show the out of reach message for permission message
      * @return string
      */
-    public static function error($permission = false): string
+    public static function error(bool $permission = false): string
     {
         if ($permission) {
             return _("This section is out of your reach!");
@@ -255,7 +255,7 @@ class Tools
      * @param string $lang 'pt_BR' or 'fr_FR'
      * @return string
      */
-    public static function getCalendarLang($lang): string
+    public static function getCalendarLang(string $lang): string
     {
         $map = array(
             'ca_ES' => 'ca',
@@ -306,7 +306,7 @@ class Tools
      * @param array $arr
      * @return string
      */
-    public static function printArr($arr): string
+    public static function printArr(array $arr): string
     {
         $html = '<ul>';
         if (is_array($arr)) {
@@ -328,7 +328,7 @@ class Tools
      * @param int $rating The number of stars to display
      * @return string HTML of the stars
      */
-    public static function showStars($rating): string
+    public static function showStars(int $rating): string
     {
         $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
         $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
@@ -343,7 +343,7 @@ class Tools
      * @param string $title
      * @return string
      */
-    public static function getCleanTitle($title): string
+    public static function getCleanTitle(string $title): string
     {
         return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
     }
@@ -355,7 +355,7 @@ class Tools
      * @param Request $Request
      * @return string the url
      */
-    public static function getUrl($Request): string
+    public static function getUrl(Request $Request): string
     {
         $Config = new Config();
         if (strlen($Config->configArr['url']) > 10) {
@@ -370,7 +370,7 @@ class Tools
      * @param Request $Request
      * @return string the url
      */
-    public static function getUrlFromRequest($Request): string
+    public static function getUrlFromRequest(Request $Request): string
     {
         return 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
     }
@@ -381,7 +381,7 @@ class Tools
      * @param string $ext Extension of the file
      * @return string Class of the fa icon
      */
-    public static function getIconFromExtension($ext): string
+    public static function getIconFromExtension(string $ext): string
     {
         switch($ext) {
             // ARCHIVE

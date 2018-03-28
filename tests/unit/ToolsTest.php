@@ -55,6 +55,7 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckId()
     {
+        $this->expectException(\TypeError::class);
         $this->assertFalse(Tools::checkId('yep'));
         $this->assertFalse(Tools::checkId(-42));
         $this->assertFalse(Tools::checkId(0));

@@ -41,9 +41,9 @@ class Teams implements CrudInterface
      * Check if the team exists already and create one if not
      *
      * @param string $name Name of the team (case sensitive)
-     * @return int The team ID
+     * @return int|false The team ID
      */
-    public function initializeIfNeeded($name): int
+    public function initializeIfNeeded(string $name)
     {
         $sql = 'SELECT team_id, team_name, team_orgid FROM teams';
         $req = $this->Db->prepare($sql);
@@ -61,7 +61,7 @@ class Teams implements CrudInterface
      * Add a new team
      *
      * @param string $name The new name of the team
-     * @return string|false false on error, new team id otherwise
+     * @return int|false false on error, new team id otherwise
      */
     public function create($name)
     {
@@ -96,7 +96,7 @@ class Teams implements CrudInterface
         $result4 = $Templates->createDefault($newId);
 
         if ($result1 && $result2 && $result3 && $result4) {
-            return (int) $newId;
+            return $newId;
         }
         return false;
     }
@@ -139,12 +139,15 @@ class Teams implements CrudInterface
     public function update($post): bool
     {
         // CHECKS
+        /* TODO provide an upload button
         if (isset($post['stampcert'])) {
             $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
-            if (!is_readable(realpath(ELAB_ROOT . $cert_chain))) {
+            $elabRoot = dirname(__DIR__, 2);
+            if (!is_readable(realpath($elabRoot . '/web/' . $cert_chain))) {
                 throw new Exception('Cannot read provided certificate file.');
             }
         }
+         */
 
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
             $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));

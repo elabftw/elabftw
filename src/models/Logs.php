@@ -66,7 +66,7 @@ class Logs implements CrudInterface
     /**
      * Not implemented
      *
-     * @param $id
+     * @param int $id
      * @return bool
      */
     public function destroy(int $id): bool

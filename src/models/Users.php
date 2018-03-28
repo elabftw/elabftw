@@ -794,7 +794,7 @@ class Users
         ));
         while ($uploads = $req->fetch()) {
             // Delete file
-            $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
+            $filepath = dirname(__DIR__, 2) . '/uploads/' . $uploads['long_name'];
             $result[] = unlink($filepath);
         }
 

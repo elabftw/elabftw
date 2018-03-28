@@ -324,9 +324,9 @@ abstract class AbstractEntity
      * @param int $num number of items to ignore
      * @return void
      */
-    public function setLimit($num): void
+    public function setLimit(int $num): void
     {
-        $this->limit = 'LIMIT ' . (int) $num;
+        $this->limit = 'LIMIT ' . $num;
     }
 
     /**
@@ -335,9 +335,9 @@ abstract class AbstractEntity
      * @param int $num number of items to ignore
      * @return void
      */
-    public function setOffset($num): void
+    public function setOffset(int $num): void
     {
-        $this->offset = 'OFFSET ' . (int) $num;
+        $this->offset = 'OFFSET ' . $num;
     }
 
     /**

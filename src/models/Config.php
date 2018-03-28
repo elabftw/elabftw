@@ -67,12 +67,14 @@ class Config
         $result = array();
 
         // do some data validation for some values
+        /* TODO
         if (isset($post['stampcert'])) {
             $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
             if (!is_readable(realpath(ELAB_ROOT . $cert_chain))) {
                 throw new Exception('Cannot read provided certificate file.');
             }
         }
+         */
 
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
             $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));

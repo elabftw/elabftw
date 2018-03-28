@@ -98,7 +98,7 @@ class Tags implements CrudInterface
      * Copy the tags from one experiment/item to an other.
      *
      * @param int $newId The id of the new experiment/item that will receive the tags
-     * @return null
+     * @return void
      */
     public function copyTags($newId): void
     {

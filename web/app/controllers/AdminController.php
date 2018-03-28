@@ -52,12 +52,12 @@ try {
     // UPDATE TEAM SETTINGS
     if ($Request->request->has('teamsUpdateFull')) {
         $Teams = new Teams($App->Users);
-        if ($Teams->update($Request->request->all())) {
-            $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        } else {
-            $Session->getFlashBag()->add('ko', Tools::error());
-        }
         $Response = new RedirectResponse("../../admin.php?tab=1");
+        if ($Teams->update($Request->request->all())) {
+            $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+        } else {
+            $App->Session->getFlashBag()->add('ko', Tools::error());
+        }
     }
 
     // CLEAR STAMP PASS
@@ -66,7 +66,7 @@ try {
         if (!$Teams->destroyStamppass()) {
             throw new Exception('Error clearing the timestamp password');
         }
-        $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+        $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
         $Response = new RedirectResponse("../../admin.php?tab=1");
     }
 
@@ -86,8 +86,8 @@ try {
         }
     }
 
-    $Response->send();
-
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $App->Session->get('userid'), $e->getMessage());
+} finally {
+    $Response->send();
 }

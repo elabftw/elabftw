@@ -86,6 +86,7 @@
                 </p>
 
                 <p>
+                <!-- TODO provide an upload button -->
                     <label class='block' for='stampcert'>{{ 'Chain of certificates of the external timestamping service:'|trans }}</label>
                     <input class='clean-form col-3-form' type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='{{ App.teamConfigArr.stampcert }}' name='stampcert' id='stampcert' />
                     <span class='smallgray'>{{ "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"|trans|format("<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>")|raw }}</span>

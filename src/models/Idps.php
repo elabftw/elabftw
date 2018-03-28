@@ -37,9 +37,9 @@ class Idps implements CrudInterface
      * @param string $sloUrl Single Log Out URL
      * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
-     * @return string last insert id
+     * @return int last insert id
      */
-    public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509): string
+    public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509): int
     {
         $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509)
             VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509)";

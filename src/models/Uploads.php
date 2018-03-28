@@ -27,6 +27,9 @@ class Uploads implements CrudInterface
     /** @var string $hashAlgorithm what algo for hashing */
     private $hashAlgorithm = 'sha256';
 
+    /** @var string $uploadsPath absolute path to uploads folder */
+    private $uploadsPath;
+
     /**
      * Constructor
      *
@@ -36,6 +39,7 @@ class Uploads implements CrudInterface
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
+        $this->uploadsPath = \dirname(__DIR__, 2) . '/uploads/';
     }
 
     /**
@@ -48,7 +52,7 @@ class Uploads implements CrudInterface
     {
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
-        $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+        $fullPath = $this->uploadsPath . $longName;
 
         // disallow upload of php files
         if (Tools::getExt($realName) === 'php') {
@@ -80,7 +84,7 @@ class Uploads implements CrudInterface
         }
 
         $longName = $this->getCleanName() . "." . $ext;
-        $finalPath = ELAB_ROOT . 'uploads/' . $longName;
+        $finalPath = $this->uploadsPath . $longName;
 
         $this->moveFile($filePath, $finalPath);
 
@@ -109,7 +113,7 @@ class Uploads implements CrudInterface
         }
 
         $longName = $this->getCleanName() . "." . $fileType;
-        $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+        $fullPath = $this->uploadsPath . $longName;
 
         if (!empty($string) && !file_put_contents($fullPath, $string)) {
             throw new Exception("Could not write to file");
@@ -156,15 +160,15 @@ class Uploads implements CrudInterface
      * Generate the hash based on selected algorithm
      *
      * @param string $file The full path to the file
-     * @return string|null the hash or null if file is too big
+     * @return string the hash or an empty string if file is too big
      */
-    private function getHash($file): ?string
+    private function getHash(string $file): string
     {
         if (filesize($file) < 5000000) {
             return hash_file($this->hashAlgorithm, $file);
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -178,7 +182,7 @@ class Uploads implements CrudInterface
         $hash = hash("sha512", \uniqid(\mt_rand(), true));
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
-        $folderPath = \dirname(__DIR__, 2) . '/uploads/' . $folder;
+        $folderPath = $this->uploadsPath . $folder;
         if (!is_dir($folderPath) && !mkdir($folderPath) && !is_dir($folderPath)) {
             throw new Exception('Cannot create folder! Check permissions of uploads folder.');
         }
@@ -400,7 +404,7 @@ class Uploads implements CrudInterface
         if (empty($upload)) {
             throw new Exception('Bad id in upload replace');
         }
-        $fullPath = ELAB_ROOT . 'uploads/' . $upload['long_name'];
+        $fullPath = $this->uploadsPath . $upload['long_name'];
         // check user is same as the previously uploaded file
         if ($upload['userid'] !== $this->Entity->Users->userid) {
             return false;
@@ -421,12 +425,12 @@ class Uploads implements CrudInterface
         $uploadArr = $this->readFromId($id);
 
         // remove thumbnail
-        $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';
+        $thumbPath = $this->uploadsPath . $uploadArr['long_name'] . '_th.jpg';
         if (file_exists($thumbPath)) {
             unlink($thumbPath);
         }
         // now delete file from filesystem
-        $filePath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'];
+        $filePath = $this->uploadsPath . $uploadArr['long_name'];
         if (file_exists($thumbPath)) {
             unlink($filePath);
         }

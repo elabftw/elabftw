@@ -129,7 +129,7 @@ class Experiments extends AbstractEntity
      * @param string $visibility
      * @return bool
      */
-    public function checkVisibility($visibility): bool
+    public function checkVisibility(string $visibility): bool
     {
         $validArr = array(
             'public',
@@ -143,7 +143,7 @@ class Experiments extends AbstractEntity
         }
 
         // or we might have a TeamGroup, so an int
-        return (bool) Tools::checkId($visibility);
+        return (bool) Tools::checkId((int) $visibility);
     }
 
     /**

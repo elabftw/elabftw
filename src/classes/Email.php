@@ -112,7 +112,7 @@ class Email
      * @param string $email
      * @return bool
      */
-    public function testemailSend($email): bool
+    public function testemailSend(string $email): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new Exception('Bad email!');

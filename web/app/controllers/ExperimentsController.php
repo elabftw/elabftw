@@ -192,8 +192,9 @@ try {
         $Entity->canOrExplode('write');
 
         $Teams = new Teams($App->Users);
+        $teamConfigArr = $Teams->read();
 
-        if (($Teams->read('deletable_xp') == '0') && !$Session->get('is_admin')) {
+        if (($teamConfigArr['deletable_xp'] == '0') && !$Session->get('is_admin')) {
             $Response->setData(array(
                 'res' => false,
                 'msg' => _("You don't have the rights to delete this experiment.")

@@ -88,8 +88,9 @@ class App
      */
     private function getTwig(): \Twig_Environment
     {
-        $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'web/app/tpl');
-        $cache = ELAB_ROOT . 'cache/twig';
+        $elabRoot = dirname(__DIR__, 2);
+        $loader = new \Twig_Loader_Filesystem($elabRoot . '/web/app/tpl');
+        $cache = $elabRoot . '/cache/twig';
         if (!is_dir($cache) && !mkdir($cache) && !is_dir($cache)) {
             throw new Exception("Could not create the $cache directory. Please check permissions on this folder.");
         }

@@ -99,26 +99,21 @@ class Teams implements CrudInterface
             return (int) $newId;
         }
         return false;
-
     }
 
     /**
-     * Read from a team
+     * Read from the current team
      *
-     * @param string|null $column
-     * @return array|string
+     * @return array
      */
-    public function read($column = null)
+    public function read(): array
     {
         $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team_id', $this->Users->userData['team']);
         $req->execute();
-        $teamConfig = $req->fetch();
-        if ($column === null) {
-            return $teamConfig;
-        }
-        return $teamConfig[$column];
+
+        return $req->fetch();
     }
 
     /**

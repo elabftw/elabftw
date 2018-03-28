@@ -383,7 +383,7 @@ class Tools
      */
     public static function getIconFromExtension(string $ext): string
     {
-        switch($ext) {
+        switch ($ext) {
             // ARCHIVE
             case 'zip':
             case 'rar':

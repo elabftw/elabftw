@@ -200,7 +200,7 @@ class ImportZip extends AbstractImport
     protected function openFile(): void
     {
         $Zip = new ZipArchive;
-        $Zip->open($this->UploadedFile->getPathName()) && $Zip->extractTo($this->tmpPath);
+        $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
     }
 
     /**

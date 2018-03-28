@@ -60,7 +60,7 @@ class Uploads implements CrudInterface
         }
 
         // Try to move the file to its final place
-        $this->moveFile($request->files->get('file')->getPathName(), $fullPath);
+        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
 
         // final sql
         return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
@@ -409,7 +409,7 @@ class Uploads implements CrudInterface
         if ($upload['userid'] !== $this->Entity->Users->userid) {
             return false;
         }
-        $this->moveFile($request->files->get('file')->getPathName(), $fullPath);
+        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $thumbPath = $fullPath . '_th.jpg';
         $this->makeThumb($fullPath, $thumbPath, 100);
         return true;

@@ -16,9 +16,9 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.1.3"
 
-"@fortawesome/fontawesome-free-regular@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-regular/-/fontawesome-free-regular-5.0.8.tgz#feaa96ee230e7f0d685ede3ae512aa6a1dca2480"
+"@fortawesome/fontawesome-free-regular@^5.0.9":
+  version "5.0.9"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-regular/-/fontawesome-free-regular-5.0.9.tgz#d420f0b9f9f4a3a0585f192d235d7e08bd5029d5"
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.1.3"
 

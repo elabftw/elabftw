@@ -51,9 +51,12 @@ class Api
      */
     public function createExperiment(): array
     {
-        $id = $this->Entity->create();
+        if ($this->Entity instanceof Experiments) {
+            $id = $this->Entity->create();
+            return array('id' => $id);
+        }
+        return array('error' => 'Unable to create experiment!');
 
-        return array('id' => $id);
     }
 
     /**

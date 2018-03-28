@@ -377,7 +377,8 @@ class TrustedTimestamps extends AbstractMake
      */
     private function validate(): bool
     {
-        $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
+        $elabRoot = dirname(__DIR__, 2);
+        $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg($elabRoot . '/' . $this->stampParams['stampcert']);
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
@@ -442,7 +443,8 @@ class TrustedTimestamps extends AbstractMake
             throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
         }
 
-        chdir(ELAB_ROOT . "src/dfn-cert/timestampverifier/");
+        $elabRoot = dirname(__DIR__, 2);
+        chdir($elabRoot . '/src/dfn-cert/timestampverifier/');
         $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
         $javaRes = $this->runSh($cmd);
         if (stripos($javaRes['retarray'][0], 'matches')) {
@@ -505,7 +507,8 @@ class TrustedTimestamps extends AbstractMake
      */
     public function decodeAsn1($token): string
     {
-        $cmd = "asn1parse -inform DER -in " . escapeshellarg(ELAB_ROOT . "uploads/" . $token);
+        $elabRoot = dirname(__DIR__, 2);
+        $cmd = "asn1parse -inform DER -in " . escapeshellarg($elabRoot . '/uploads/' . $token);
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
@@ -585,7 +588,7 @@ class TrustedTimestamps extends AbstractMake
         $this->validate();
 
         // SQL
-        if (!$this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath)) {
+        if ($this->Entity instanceof Experiments && !$this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath)) {
             throw new Exception('Cannot update SQL!');
         }
         $this->sqlInsertPdf();

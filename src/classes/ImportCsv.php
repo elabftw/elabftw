@@ -11,6 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Import items from a csv file.
@@ -23,9 +25,6 @@ class ImportCsv extends AbstractImport
     /** @var Db $Db SQL Database */
     private $Db;
 
-    /** @var int $itemType the category in which we do the import */
-    private $itemType;
-
     /** @var int $inserted number of items we got into the database */
     public $inserted = 0;
 
@@ -37,14 +36,11 @@ class ImportCsv extends AbstractImport
      *
      * @param Users $users
      */
-    public function __construct(Users $users)
+    public function __construct(Users $users, Request $request)
     {
-        $this->Db = Db::getConnection();
-        $this->Users = $users;
+        parent::__construct($users, $request);
 
-        $this->isFileReadable();
-        $this->checkMimeType();
-        $this->itemType = $this->getTarget();
+        $this->target = $this->getTarget();
         $this->openFile();
         $this->readCsv();
     }
@@ -94,7 +90,7 @@ class ImportCsv extends AbstractImport
                 'date' => Tools::kdate(),
                 'body' => $body,
                 'userid' => $this->Users->userid,
-                'type' => $this->itemType
+                'type' => $this->target
             ));
             if (!$result) {
                 throw new Exception('Error in SQL query!');
@@ -103,18 +99,17 @@ class ImportCsv extends AbstractImport
         }
     }
 
-
     /**
      * Open the file, as the name suggests
      *
-     * @throws Exception
+     * @throws RuntimeException
      * @return void
      */
     protected function openFile(): void
     {
-        $this->handle = fopen($this->getFilePath(), 'r');
+        $this->handle = fopen($this->UploadedFile->getPathName(), 'r');
         if ($this->handle === false) {
-            throw new Exception('Cannot open file!');
+            throw new RuntimeException('Cannot open file!');
         }
     }
 

@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -60,17 +61,23 @@ abstract class AbstractMake
      */
     protected function getUploadsPath(): string
     {
-        return ELAB_ROOT . 'uploads/';
+        return dirname(__DIR__, 2) . '/uploads/';
     }
 
     /**
      * Get the temporary files folder absolute path
+     * Create the folder if it doesn't exist
      *
      * @return string absolute path
      */
     protected function getTmpPath(): string
     {
-        return ELAB_ROOT . 'uploads/tmp/';
+        $tmpPath = dirname(__DIR__, 2) . '/cache/elab/';
+        if (!is_dir($tmpPath) && !mkdir($tmpPath) && !is_dir($tmpPath)) {
+            throw new RuntimeException('Unable to create the cache directory (' . $tmpPath . ')');
+        }
+
+        return $tmpPath;
     }
 
     /**

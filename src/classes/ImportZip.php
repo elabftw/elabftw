@@ -10,25 +10,21 @@
  */
 namespace Elabftw\Elabftw;
 
+use RuntimeException;
 use Exception;
 use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use FilesystemIterator;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Import a .elabftw.zip file into the database.
  */
 class ImportZip extends AbstractImport
 {
-    /** @var Users $Users instance of Users */
-    private $Users;
-
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
-
-    /** @var Db $Db SQL Database */
-    private $Db;
 
     /** @var int $inserted number of item we have inserted */
     public $inserted = 0;
@@ -39,9 +35,6 @@ class ImportZip extends AbstractImport
     /** @var array $json an array with the data we want to import */
     private $json;
 
-    /** @var int $target the target item type */
-    private $target;
-
     /** @var string $type experiments or items */
     private $type = 'items';
 
@@ -50,18 +43,15 @@ class ImportZip extends AbstractImport
      *
      * @param Users $users
      */
-    public function __construct(Users $users)
+    public function __construct(Users $users, Request $request)
     {
-        $this->Db = Db::getConnection();
-        $this->Users = $users;
+        parent::__construct($users, $request);
 
-        $this->isFileReadable();
-        $this->checkMimeType();
         $this->target = $this->getTarget();
         // this is where we will extract the zip
-        $this->tmpPath = ELAB_ROOT . 'uploads/tmp/' . \uniqid(\mt_rand(), true);
-        if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath) && !is_dir($this->tmpPath)) {
-            throw new Exception('Cannot create temporary folder!');
+        $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \uniqid(\mt_rand(), true);
+        if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
+            throw new RuntimeException('Unable to create temporary folder! (' . $this->tmpPath . ')');
         }
 
         $this->openFile();
@@ -208,7 +198,7 @@ class ImportZip extends AbstractImport
     protected function openFile(): void
     {
         $Zip = new ZipArchive;
-        $Zip->open($this->getFilePath()) && $Zip->extractTo($this->tmpPath);
+        $Zip->open($this->UploadedFile->getPathName()) && $Zip->extractTo($this->tmpPath);
     }
 
     /**

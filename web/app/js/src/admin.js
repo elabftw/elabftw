@@ -263,7 +263,7 @@
 
         // COMMON
         $('.item-selector').on('change', function() {
-            document.cookie = 'itemType=' + this.value;
+            document.cookie = 'importTarget=' + this.value;
             $('.import_block').show();
         });
 

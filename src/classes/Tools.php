@@ -28,8 +28,7 @@ class Tools
     public static function kdate($input = null): string
     {
         if ($input !== null
-            && ((strlen($input) == '8'))
-            && self::checkId($input)) {
+            && strlen($input) == '8') {
             // Check if day/month are good (badly)
             $datemonth = substr($input, 4, 2);
             $dateday = substr($input, 6, 2);
@@ -341,7 +340,7 @@ class Tools
      * This is used to include the title in the page name (see #324)
      * It removes #, ' and " and appends "- eLabFTW"
      *
-     * @param $title string
+     * @param string $title
      * @return string
      */
     public static function getCleanTitle($title): string

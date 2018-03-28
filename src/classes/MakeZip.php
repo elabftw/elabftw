@@ -59,7 +59,7 @@ class MakeZip extends AbstractMake
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
             throw new Exception(
-                _("You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file.")
+                _('You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file.')
             );
         }
 
@@ -122,8 +122,8 @@ class MakeZip extends AbstractMake
             foreach ($uploads as $upload) {
                 // add it to the .zip
                 $this->Zip->addFile(
-                    ELAB_ROOT . 'uploads/' . $upload['long_name'],
-                    $this->folder . "/" . $upload['real_name']
+                    $this->getUploadsPath() . $upload['long_name'],
+                    $this->folder . '/' . $upload['real_name']
                 );
             }
         }
@@ -137,8 +137,8 @@ class MakeZip extends AbstractMake
     private function nameFolder(): void
     {
         if ($this->Entity instanceof Experiments) {
-            $this->folder = $this->Entity->entityData['date'] . "-" . $this->cleanTitle;
-        } else { // items
+            $this->folder = $this->Entity->entityData['date'] . " - " . $this->cleanTitle;
+        } elseif ($this->Entity instanceof Database) {
             $this->folder = $this->Entity->entityData['category'] . " - " . $this->cleanTitle;
         }
     }
@@ -163,7 +163,7 @@ class MakeZip extends AbstractMake
             $real_names_so_far[] = $realName;
 
             // add files to archive
-            $this->Zip->addFile(ELAB_ROOT . 'uploads/' . $file['long_name'], $this->folder . "/" . $realName);
+            $this->Zip->addFile($this->getUploadsPath() . $file['long_name'], $this->folder . '/' . $realName);
         }
     }
 
@@ -186,10 +186,10 @@ class MakeZip extends AbstractMake
      * @param int $id The id of the item we are zipping
      * @return void
      */
-    private function addCsv($id): void
+    private function addCsv(int $id): void
     {
-        $MakeCsv = new MakeCsv($this->Entity, $id);
-        $this->Zip->addFile($MakeCsv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
+        $MakeCsv = new MakeCsv($this->Entity, (string) $id);
+        $this->Zip->addFile($MakeCsv->filePath, $this->folder . '/' . $this->cleanTitle . '.csv');
         $this->trash[] = $MakeCsv->filePath;
     }
 
@@ -199,7 +199,7 @@ class MakeZip extends AbstractMake
      * @param int $id The id of the item we are zipping
      * @return void
      */
-    private function addToZip($id): void
+    private function addToZip(int $id): void
     {
         $this->Entity->setId($id);
         $permissions = $this->Entity->getPermissions();

@@ -132,13 +132,12 @@ try {
     // TODO check for cache folder
 
     // UPLOADS DIR
-    if (!is_writable('../../uploads') || !is_writable('../../uploads/tmp')) {
-        // create the folders
+    if (!is_writable('../../uploads')) {
+        // create the folder
         @mkdir('../../uploads');
-        @mkdir('../../uploads/tmp');
-        // check the folders
-        if (is_writable('../../uploads') && is_writable('../../uploads/tmp')) {
-            $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
+        // check the folder
+        if (is_writable('../../uploads')) {
+            $message = "The <em>uploads/</em> folder was created successfully.";
             echo Tools::displayMessage($message, 'ok', false);
         } else { // failed at creating the folder
             $message = "Failed creating <em>uploads/</em> directory. You need to do it manually. 

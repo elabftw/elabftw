@@ -14,6 +14,8 @@ use Exception;
 
 require_once '../app/init.inc.php';
 
+$elabRoot = \dirname(__DIR__, 2);
+
 try {
     // we disable errors to avoid having notice and warning polluting our file
     error_reporting(E_ERROR);
@@ -34,7 +36,7 @@ try {
     $final_filename = $folder . '/' . $long_filename;
 
     // maybe it's an old file that has no subfolder
-    if (!is_readable(ELAB_ROOT . 'uploads/' . $final_filename)) {
+    if (!is_readable($elabRoot . '/uploads/' . $final_filename)) {
         $final_filename = $long_filename;
     }
 
@@ -54,9 +56,9 @@ try {
     // SET FILE PATH
     // the zip archives will be in the tmp folder
     if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv')) {
-        $file_path = ELAB_ROOT . 'uploads/tmp/' . $long_filename;
+        $file_path = $elabRoot . '/cache/elab/' . $long_filename;
     } else {
-        $file_path = ELAB_ROOT . 'uploads/' . $final_filename;
+        $file_path = $elabRoot . '/uploads/' . $final_filename;
     }
 
     // MIME

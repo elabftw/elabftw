@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use RuntimeException;
 
 /**
  * Import a zip or a csv
@@ -19,12 +20,12 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
-    set_time_limit(0);
+    \set_time_limit(0);
 
     if ($Request->request->get('type') === 'csv') {
-        $Import = new ImportCsv($App->Users);
+        $Import = new ImportCsv($App->Users, $App->Request);
     } elseif ($Request->request->get('type') === 'zip') {
-        $Import = new ImportZip($App->Users);
+        $Import = new ImportZip($App->Users, $App->Request);
     } else {
         throw new Exception('Invalid argument');
     }
@@ -32,6 +33,10 @@ try {
     $msg = $Import->inserted . ' ' .
         ngettext('item imported successfully.', 'items imported successfully.', $Import->inserted);
     $Session->getFlashBag()->add('ok', $msg);
+
+} catch (RuntimeException $e) {
+    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Session->getFlashBag()->add('ko', $e->getMessage());
 
 } catch (Exception $e) {
     $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());

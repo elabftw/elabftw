@@ -178,7 +178,7 @@ class Uploads implements CrudInterface
         $hash = hash("sha512", \uniqid(\mt_rand(), true));
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
-        $folderPath = ELAB_ROOT . 'uploads/' . $folder;
+        $folderPath = \dirname(__DIR__, 2) . '/uploads/' . $folder;
         if (!is_dir($folderPath) && !mkdir($folderPath) && !is_dir($folderPath)) {
             throw new Exception('Cannot create folder! Check permissions of uploads folder.');
         }

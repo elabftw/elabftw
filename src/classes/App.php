@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -88,11 +89,11 @@ class App
      */
     private function getTwig(): \Twig_Environment
     {
-        $elabRoot = dirname(__DIR__, 2);
+        $elabRoot = \dirname(__DIR__, 2);
         $loader = new \Twig_Loader_Filesystem($elabRoot . '/web/app/tpl');
         $cache = $elabRoot . '/cache/twig';
         if (!is_dir($cache) && !mkdir($cache) && !is_dir($cache)) {
-            throw new Exception("Could not create the $cache directory. Please check permissions on this folder.");
+            throw new RuntimeException('Unable to create the cache directory (' . $cache . ')');
         }
         $options = array();
 

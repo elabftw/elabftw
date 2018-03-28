@@ -10,13 +10,43 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Mother class of ImportCsv and ImportZip
  */
 abstract class AbstractImport
 {
+    /** @var Symfony\Component\HttpFoundation\ParameterBag $Cookies cookies */
+    protected $Cookies;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    /** @var UploadedFile $UploadedFile the uploaded file */
+    protected $UploadedFile;
+
+    /** @var Users $Users instance of Users */
+    protected $Users;
+
+    /** @var int $target the item type category or userid where we do the import */
+    protected $target;
+
+    public function __construct(Users $users, Request $request)
+    {
+        $this->Db = Db::getConnection();
+        $this->Users = $users;
+        $this->Cookies = $request->cookies;
+        $this->UploadedFile = $request->files->all()['file'];
+        if ($this->UploadedFile->getError()) {
+            throw new RuntimeException($this->UploadedFile->getErrorMessage());
+        }
+
+        $this->checkMimeType();
+    }
+
     /**
      * Read the file input
      *
@@ -25,41 +55,18 @@ abstract class AbstractImport
     abstract protected function openFile(): void;
 
     /**
-     * Get the temporary uploaded file
+     * Get where we want to import the file.
+     * It can be a user id for experiments or item type id for items
      *
-     * @return string a sha512 hash of uniqid()
-     */
-    protected function getFilePath(): string
-    {
-        return $_FILES['file']['tmp_name'];
-    }
-
-    /**
-     * Get what type we want
-     *
-     * @throws Exception
+     * @throws RuntimeException
      * @return int The type of item
      */
     protected function getTarget(): int
     {
-        if (isset($_COOKIE['itemType']) && Tools::checkId($_COOKIE['itemType'])) {
-            return (int) $_COOKIE['itemType'];
+        if ($this->Cookies->has('importTarget') && Tools::checkId($this->Cookies->get('importTarget'))) {
+            return (int) $this->Cookies->get('importTarget');
         }
-        throw new Exception('No cookies found. Import aborted.');
-    }
-
-    /**
-     * Try to read the file we have
-     *
-     * @throws Exception if cannot read the file
-     * @return bool
-     */
-    protected function isFileReadable(): bool
-    {
-        if (is_readable($_FILES['file']['tmp_name'])) {
-            return true;
-        }
-        throw new Exception(_("Could not open the file."));
+        throw new RuntimeException('No cookies found. Import aborted.');
     }
 
     /**
@@ -75,9 +82,9 @@ abstract class AbstractImport
             'text/csv', 'text/tsv',
             'application/zip', 'application/force-download', 'application/x-zip-compressed');
 
-        if (in_array($_FILES['file']['type'], $mimes)) {
+        if (in_array($this->UploadedFile->getMimeType(), $mimes)) {
             return true;
         }
-        throw new Exception(_("This doesn't look like the right kind of file. Import aborted."));
+        throw new RuntimeException("This doesn't look like the right kind of file. Import aborted.");
     }
 }

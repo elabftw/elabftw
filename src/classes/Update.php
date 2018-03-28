@@ -57,14 +57,11 @@ class Update
     {
         $current_schema = $this->Config->configArr['schema'];
 
-        // fix for php56
-        $required_schema = self::REQUIRED_SCHEMA;
-        if ($current_schema === $required_schema) {
+        if ($current_schema === self::REQUIRED_SCHEMA) {
             return true;
         }
 
         $msg_arr = array();
-
 
         if ($current_schema < 2) {
             // 20150727
@@ -276,7 +273,6 @@ class Update
         }
         // place new schema functions above this comment
 
-        // remove files in uploads/tmp
         $this->cleanTmp();
 
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
@@ -285,12 +281,14 @@ class Update
     }
 
     /**
-     * Delete things in the tmp folder
+     * Delete things in the tmp folder (cache/elab)
      */
-    private function cleanTmp()
+    private function cleanTmp(): void
     {
-        // cleanup files in tmp
-        $dir = ELAB_ROOT . '/uploads/tmp';
+        $dir = dirname(__DIR__, 2) . '/cache/elab';
+        if (!is_dir($dir)) {
+            return;
+        }
         $di = new \RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
         $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($ri as $file) {
@@ -301,16 +299,15 @@ class Update
     /**
      * Update the schema value in config to latest because we did the update functions before
      *
-     * @param string|null $schema the version we want to update
+     * @throws Exception
+     * @param int $schema the version we want to update
+     * @return void
      */
-    private function updateSchema($schema = null)
+    private function updateSchema(int $schema): void
     {
-        if ($schema === null) {
-            $schema = self::REQUIRED_SCHEMA;
-        }
         $config_arr = array('schema' => $schema);
         if (!$this->Config->update($config_arr)) {
-            throw new Exception('Failed at updating the schema!');
+            throw new Exception('Failed at updating the schema number to: ' . $schema);
         }
     }
 
@@ -432,7 +429,8 @@ class Update
      */
     private function schema9()
     {
-        if (!is_writable(ELAB_ROOT . 'config.php')) {
+        $elabRoot = dirname(__DIR__, 2);
+        if (!is_writable($elabRoot. '/config.php')) {
             throw new Exception('Please make your config file writable by server for this update.');
         }
         // grab old key
@@ -490,11 +488,11 @@ define('DB_HOST', '" . DB_HOST . "');
 define('DB_NAME', '" . DB_NAME . "');
 define('DB_USER', '" . DB_USER . "');
 define('DB_PASSWORD', '" . DB_PASSWORD . "');
-define('ELAB_ROOT', '" . ELAB_ROOT . "');
+define('ELAB_ROOT', '" . $elabRoot . "/');
 define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 ";
 
-        if (file_put_contents(ELAB_ROOT . 'config.php', $contents) == 'false') {
+        if (file_put_contents($elabRoot . '/config.php', $contents) == 'false') {
             throw new Exception('There was a problem writing the file!');
         }
     }

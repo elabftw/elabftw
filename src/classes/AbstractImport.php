@@ -34,6 +34,13 @@ abstract class AbstractImport
     /** @var int $target the item type category or userid where we do the import */
     protected $target;
 
+    /**
+     * Constructor
+     *
+     * @param Users $users instance of Users
+     * @param Request $request instance of Request
+     * @return void
+     */
     public function __construct(Users $users, Request $request)
     {
         $this->Db = Db::getConnection();

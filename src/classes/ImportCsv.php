@@ -28,7 +28,9 @@ class ImportCsv extends AbstractImport
     /**
      * Constructor
      *
-     * @param Users $users
+     * @param Users $users instance of Users
+     * @param Request $request instance of Request
+     * @return void
      */
     public function __construct(Users $users, Request $request)
     {

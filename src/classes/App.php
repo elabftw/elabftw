@@ -169,7 +169,7 @@ class App
      * @param array $variables the variables injected in the template
      * @return string html
      */
-    public function render($template, $variables): string
+    public function render(string $template, array $variables): string
     {
         return $this->Twig->render($template, array_merge(array('App' => $this), $variables));
     }

@@ -205,7 +205,7 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                 {% endif %}
 
                 {% if Entity.type == 'items' and item.rating > 0 %}
-                    {{ item.rating|int|stars|raw }}
+                    {{ item.rating|stars|raw }}
                 {% endif %}
 
                 {% if item.tags is not null %}

@@ -82,7 +82,7 @@ try {
         $searchType = null;
 
         // CATEGORY FILTER
-        if (Tools::checkId($Request->query->get('cat')) !== false) {
+        if (Tools::checkId((int) $Request->query->get('cat')) !== false) {
             $Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('cat');
             $searchType = 'category';
         }
@@ -139,12 +139,12 @@ try {
 
         // PAGINATION
         $limit = $App->Users->userData['limit_nb'];
-        if ($Request->query->has('limit') && Tools::checkId($Request->query->get('limit')) !== false) {
+        if ($Request->query->has('limit') && Tools::checkId((int) $Request->query->get('limit')) !== false) {
             $limit = $Request->query->get('limit');
         }
 
         $offset = 0;
-        if ($Request->query->has('offset') && Tools::checkId($Request->query->get('offset')) !== false) {
+        if ($Request->query->has('offset') && Tools::checkId((int) $Request->query->get('offset')) !== false) {
             $offset = $Request->query->get('offset');
         }
 

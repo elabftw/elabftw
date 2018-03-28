@@ -24,6 +24,9 @@ class Revisions implements CrudInterface
     /** @var AbstractEntity $Entity an instance of Experiments or Database */
     private $Entity;
 
+    /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
+    private const MIN_DELTA
+
     /**
      * Constructor
      *
@@ -43,8 +46,8 @@ class Revisions implements CrudInterface
      */
     public function create($body): bool
     {
-        // only save a revision if there is at least 20 characters difference between the old version and the new one
-        if (abs(strlen($this->Entity->entityData['body']) - strlen($body)) > 20) {
+        // only save a revision if there is at least MIN_DELTA characters difference between the old version and the new one
+        if (abs(strlen($this->Entity->entityData['body']) - strlen($body)) > self::MIN_DELTA) {
             $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid)
                 VALUES(:item_id, :body, :userid)";
 

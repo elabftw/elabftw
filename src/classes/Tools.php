@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Tools
 {
+    /** @var int DEFAULT_UPLOAD_SIZE max size of uploaded file if we cannot find in in ini file */
+    private const DEFAULT_UPLOAD_SIZE = 2;
+
     /**
      * Return the current date as YYYYMMDD format if no input
      * return input if it is a valid date
@@ -132,7 +135,7 @@ class Tools
         $post_max_size = trim(ini_get('post_max_size'));
 
         if (empty($max_size) || empty($post_max_size)) {
-            return 2;
+            return self::DEFAULT_UPLOAD_SIZE;
         }
 
         // assume they both have same unit to compare the values
@@ -156,7 +159,7 @@ class Tools
             case 'm':
                 break;
             default:
-                return 2;
+                return self::DEFAULT_UPLOAD_SIZE;
         }
 
         return (int) $input;

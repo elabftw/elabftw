@@ -30,6 +30,9 @@ class Uploads implements CrudInterface
     /** @var string $uploadsPath absolute path to uploads folder */
     private $uploadsPath;
 
+    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
+    private const BIG_FILE_THRESHOLD = 5000000;
+
     /**
      * Constructor
      *
@@ -164,7 +167,7 @@ class Uploads implements CrudInterface
      */
     private function getHash(string $file): string
     {
-        if (filesize($file) < 5000000) {
+        if (filesize($file) < BIG_FILE_THRESHOLD) {
             return hash_file($this->hashAlgorithm, $file);
         }
 
@@ -303,8 +306,7 @@ class Uploads implements CrudInterface
     public function makeThumb($src, $dest, $desiredWidth): bool
     {
         // we don't want to work on too big images
-        // put the limit to 5 Mbytes
-        if (filesize($src) > 5000000) {
+        if (filesize($src) > BIG_FILE_THRESHOLD) {
             return false;
         }
 

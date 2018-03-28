@@ -430,7 +430,7 @@ abstract class AbstractEntity
                     }
 
                     // if the vis. setting is a team group, check we are in the group
-                    if (Tools::checkId($item['visibility']) !== false) {
+                    if (Tools::checkId((int) $item['visibility']) !== false) {
                         $TeamGroups = new TeamGroups($this->Users);
                         if ($TeamGroups->isInTeamGroup($this->Users->userid, $item['visibility'])) {
                             return array('read' => true, 'write' => false);

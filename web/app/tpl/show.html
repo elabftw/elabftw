@@ -157,8 +157,10 @@ li.dropdown-item:hover a{ color:#29AEB9;}
         {% if permissions.read %}
             {# dim the experiment a bit if it's not yours #}
             {% set opacity = '1' %}
+            {% set owner = '' %}
             {% if (Entity.Users.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
                 {% set opacity = '0.7' %}
+                {% set owner = item.fullname %}
             {% endif %}
             {% if Entity.Users.userData.single_column_layout %}
                 <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
@@ -207,6 +209,8 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                 {% if Entity.type == 'items' and item.rating > 0 %}
                     {{ item.rating|stars|raw }}
                 {% endif %}
+
+                {{ owner }}
 
                 {% if item.tags is not null %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>

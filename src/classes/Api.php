@@ -133,7 +133,7 @@ class Api
      */
     public function getEntity(): array
     {
-        if (Tools::checkId($this->Entity->id) === false) {
+        if ($this->Entity->id === null) {
             return $this->Entity->read();
         }
 

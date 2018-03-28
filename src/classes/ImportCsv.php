@@ -19,12 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ImportCsv extends AbstractImport
 {
-    /** @var Users $Users the current user */
-    private $Users;
-
-    /** @var Db $Db SQL Database */
-    private $Db;
-
     /** @var int $inserted number of items we got into the database */
     public $inserted = 0;
 

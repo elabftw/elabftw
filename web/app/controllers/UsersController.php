@@ -18,14 +18,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 $redirect = true;
 
+require_once '../../app/init.inc.php';
+
+$tab = 1;
+$location = '../../admin.php?tab=' . $tab;
+$error = Tools::error();
+
 try {
-    require_once '../../app/init.inc.php';
 
     $FormKey = new FormKey($Session);
-
-    $tab = 1;
-    $location = '../../admin.php?tab=' . $tab;
-    $error = Tools::error();
 
     // (RE)GENERATE AN API KEY (from profile)
     if ($Request->request->has('generateApiKey')) {

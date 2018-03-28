@@ -137,7 +137,7 @@ try {
     $docUrl = 'https://doc.elabftw.net/faq.html#failed-creating-uploads-directory';
 
     if (!is_dir($uploadsDir) && !mkdir($uploadsDir) && !is_dir($uploadsDir)) {
-        $message = sprint(
+        $message = sprintf(
             "Unable to create 'uploads' folder! (%s) You need to do it manually. %sClick here to discover how%s.",
             $uploadsDir,
             '<a href=' . $docUrl . '>',

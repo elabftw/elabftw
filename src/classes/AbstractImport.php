@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 abstract class AbstractImport
 {
-    /** @var Symfony\Component\HttpFoundation\ParameterBag $Cookies cookies */
+    /** @var \Symfony\Component\HttpFoundation\ParameterBag $Cookies cookies */
     protected $Cookies;
 
     /** @var Db $Db SQL Database */
@@ -63,7 +63,7 @@ abstract class AbstractImport
      */
     protected function getTarget(): int
     {
-        if ($this->Cookies->has('importTarget') && Tools::checkId($this->Cookies->get('importTarget'))) {
+        if ($this->Cookies->get('importTarget') !== false) {
             return (int) $this->Cookies->get('importTarget');
         }
         throw new RuntimeException('No cookies found. Import aborted.');

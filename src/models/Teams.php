@@ -149,7 +149,8 @@ class Teams implements CrudInterface
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
             $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } else {
-            $stamppass = $this->read('stamppass');
+            $teamConfigArr = $this->read();
+            $stamppass = $teamConfigArr['stamppass'];
         }
 
         $deletableXp = 0;

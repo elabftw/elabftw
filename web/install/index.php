@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -132,18 +133,21 @@ try {
     // TODO check for cache folder
 
     // UPLOADS DIR
-    if (!is_writable('../../uploads')) {
-        // create the folder
-        @mkdir('../../uploads');
-        // check the folder
-        if (is_writable('../../uploads')) {
-            $message = "The <em>uploads/</em> folder was created successfully.";
-            echo Tools::displayMessage($message, 'ok', false);
-        } else { // failed at creating the folder
-            $message = "Failed creating <em>uploads/</em> directory. You need to do it manually. 
-                <a href='https://doc.elabftw.net/faq.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
-            $errflag = true;
-        }
+    $uploadsDir = dirname(__DIR__, 2) . '/uploads';
+    $docUrl = 'https://doc.elabftw.net/faq.html#failed-creating-uploads-directory';
+
+    if (!is_dir($uploadsDir) && !mkdir($uploadsDir) && !is_dir($uploadsDir)) {
+        $message = sprint(
+            "Unable to create 'uploads' folder! (%s) You need to do it manually. %sClick here to discover how%s.",
+            $uploadsDir,
+            '<a href=' . $docUrl . '>',
+            '</a>'
+        );
+        $errflag = true;
+        throw new RuntimeException($message);
+    } else {
+        $message = "The 'uploads' folder was created successfully.";
+        echo Tools::displayMessage($message, 'ok', false);
     }
 
     // Check for required php extensions

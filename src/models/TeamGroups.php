@@ -144,15 +144,15 @@ class TeamGroups implements CrudInterface
      * @throws Exception
      * @return string|null $name Name of the group if success
      */
-    public function update($name, $id): ?string
+    public function update(string $name, string $id): ?string
     {
         $idArr = explode('_', $id);
-        if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1])) {
+        if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1]) !== false) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':name', $name);
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
+            $req->bindParam(':team', $this->Users->userData['team']);
+            $req->bindParam(':id', $idArr[1]);
 
             if ($req->execute()) {
                 // the group name is returned so it gets back into jeditable input field

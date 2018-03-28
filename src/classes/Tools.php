@@ -394,7 +394,6 @@ class Tools
             case 'bz2':
             case 'tar':
                 return 'fa-file-archive';
-                break;
 
             // CODE
             case 'py':
@@ -404,7 +403,6 @@ class Tools
             case 'r':
             case 'R':
                 return 'fa-file-code';
-                break;
 
             // EXCEL
             case 'xls':
@@ -412,7 +410,6 @@ class Tools
             case 'ods':
             case 'csv':
                 return 'fa-file-excel';
-                break;
 
             // POWERPOINT
             case 'ppt':
@@ -421,7 +418,6 @@ class Tools
             case 'ppsx':
             case 'odp':
                 return 'fa-file-powerpoint';
-                break;
 
             // VIDEO
             case 'mov':
@@ -431,14 +427,12 @@ class Tools
             case 'mpeg':
             case 'flv':
                 return 'fa-file-video';
-                break;
 
             // WORD
             case 'doc':
             case 'docx':
             case 'odt':
                 return 'fa-file-word';
-                break;
 
             default:
                 return 'fa-file';

@@ -134,7 +134,7 @@ if (isset($_GET)) {
     }
 
     // STATUS
-    if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId($_GET['status'])) {
+    if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId($_GET['status']) !== false) {
         $status = $_GET['status'];
     }
 
@@ -226,7 +226,7 @@ if (isset($_GET)) {
 
             // USERID FILTER
             if (isset($_GET['owner'])) {
-                if (Tools::checkId($_GET['owner'])) {
+                if (Tools::checkId($_GET['owner']) !== false) {
                     $owner = $_GET['owner'];
                     $sqlUserid = " AND experiments.userid = " . $owner;
                 } elseif (empty($_GET['owner'])) {
@@ -249,7 +249,7 @@ if (isset($_GET)) {
 
             // RATING
             $Entity->ratingFilter = $sqlRating;
-            if (Tools::checkId($_GET['type'])) {
+            if (Tools::checkId($_GET['type']) !== false) {
                 // filter on database items types
                 $Entity->categoryFilter = "AND items_types.id = " . $_GET['type'];
             }

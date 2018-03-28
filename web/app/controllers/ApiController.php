@@ -43,7 +43,7 @@ try {
 
     // assign the id if there is one
     $id = null;
-    if (Tools::checkId(end($args))) {
+    if (Tools::checkId(end($args)) !== false) {
         $id = end($args);
     }
 

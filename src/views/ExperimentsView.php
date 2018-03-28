@@ -43,7 +43,7 @@ class ExperimentsView
      */
     public function getVisibility(): string
     {
-        if (Tools::checkId($this->Entity->entityData['visibility'])) {
+        if (Tools::checkId($this->Entity->entityData['visibility']) !== false) {
             return $this->TeamGroups->readName($this->Entity->entityData['visibility']);
         }
         return ucfirst($this->Entity->entityData['visibility']);

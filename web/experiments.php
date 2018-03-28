@@ -107,7 +107,7 @@ try {
         $query = '';
 
         // CATEGORY FILTER
-        if (Tools::checkId($Request->query->get('cat'))) {
+        if (Tools::checkId($Request->query->get('cat')) !== false) {
             $Entity->categoryFilter = " AND status.id = " . $Request->query->get('cat');
             $searchType = 'filter';
         }
@@ -168,12 +168,12 @@ try {
 
         // PAGINATION
         $limit = $App->Users->userData['limit_nb'];
-        if ($Request->query->has('limit') && Tools::checkId($Request->query->get('limit'))) {
+        if ($Request->query->has('limit') && Tools::checkId($Request->query->get('limit')) !== false) {
             $limit = $Request->query->get('limit');
         }
 
         $offset = 0;
-        if ($Request->query->has('offset') && Tools::checkId($Request->query->get('offset'))) {
+        if ($Request->query->has('offset') && Tools::checkId($Request->query->get('offset')) !== false) {
             $offset = $Request->query->get('offset');
         }
 
@@ -197,7 +197,7 @@ try {
             $itemsArr = $Entity->read();
 
         // related filter
-        } elseif (Tools::checkId($Request->query->get('related'))) {
+        } elseif (Tools::checkId($Request->query->get('related')) !== false) {
             $searchType = 'related';
             $itemsArr = $Entity->readRelated($Request->query->get('related'));
 

@@ -95,7 +95,7 @@ try {
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'lang' => Tools::getCalendarLang($App->Users->userData['lang']),
             'linksArr' => $linksArr,
-            'maxUploadSize' => Tools::returnMaxUploadSize(),
+            'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
             'stepsArr' => $stepsArr
         );

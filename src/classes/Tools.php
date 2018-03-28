@@ -124,12 +124,12 @@ class Tools
 
     /**
      * Converts the php.ini upload size setting to a numeric value in MB
-     * Returns 2 if no value is found (using the default setting that was in there previously)
-     * It also checks for the post_max_size value and return the lowest value
+     * Returns DEFAULT_UPLOAD_SIZE if no value is found
+     * It also checks for the post_max_size value and returns the lowest value
      *
      * @return int maximum size in MB of files allowed for upload
      */
-    public static function returnMaxUploadSize(): int
+    public static function getMaxUploadSize(): int
     {
         $max_size = trim(ini_get('upload_max_filesize'));
         $post_max_size = trim(ini_get('post_max_size'));

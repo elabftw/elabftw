@@ -73,7 +73,7 @@ try {
             'Uv' => $UploadsView,
             'categoryArr' => $categoryArr,
             'mode' => 'edit',
-            'maxUploadSize' => Tools::returnMaxUploadSize()
+            'maxUploadSize' => Tools::getMaxUploadSize()
         );
 
     // DEFAULT MODE IS SHOW

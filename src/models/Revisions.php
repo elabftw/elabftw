@@ -25,7 +25,7 @@ class Revisions implements CrudInterface
     private $Entity;
 
     /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
-    private const MIN_DELTA
+    private const MIN_DELTA = 20;
 
     /**
      * Constructor

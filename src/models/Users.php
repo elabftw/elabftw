@@ -594,9 +594,7 @@ class Users
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
-        // fix for php56
-        $min = Auth::MIN_PASSWORD_LENGTH;
-        if (strlen($params['newpass']) >= $min) {
+        if (strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
             if ($params['newpass'] != $params['cnewpass']) {
                 throw new Exception(_('The passwords do not match!'));
             }

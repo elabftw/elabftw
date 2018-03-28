@@ -160,10 +160,8 @@ class Auth
      */
     public function checkPasswordLength($password): bool
     {
-        // fix for php56
-        $min = self::MIN_PASSWORD_LENGTH;
-        if (strlen($password) < $min) {
-            throw new Exception(sprintf(_('Password must contain at least %s characters.'), $min));
+        if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
+            throw new Exception(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;
     }

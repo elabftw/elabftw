@@ -24,7 +24,7 @@
     "popper.js": "^1.14.1",
     "tinymce": "^4.7.9",
     "tinymce-mention": "^4.0.2",
-    "vanderlee-colorpicker": "^1.2.13"
+    "vanderlee-colorpicker": "^1.2.16"
   },
   "devDependencies": {
     "apidoc": "^0.17.6",
@@ -36,7 +36,7 @@
     "grunt-shell": "^2.1.0",
     "lodash": "^4.17.5",
     "snyk": "^1.70.3",
-    "webpack": "^4.3.0",
+    "webpack": "^4.4.1",
     "webpack-cli": "^2.0.13"
   },
   "scripts": {

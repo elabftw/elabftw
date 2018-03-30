@@ -24,6 +24,7 @@ import {
     faDna,
     faDownload,
     faExclamationTriangle,
+    faExpand,
     faEye,
     faFile,
     faFileArchive,
@@ -74,6 +75,7 @@ fontawesome.library.add(faComments);
 fontawesome.library.add(faDna);
 fontawesome.library.add(faDownload);
 fontawesome.library.add(faExclamationTriangle);
+fontawesome.library.add(faExpand);
 fontawesome.library.add(faEye);
 fontawesome.library.add(faFile);
 fontawesome.library.add(faFileArchive);

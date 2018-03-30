@@ -62,8 +62,8 @@ module.exports = function(grunt) {
           'web/app/js/doodle.min.js': 'web/app/js/src/doodle.js',
           'web/app/js/bootstrap-markdown.min.js': [
               'node_modules/markdown/lib/markdown.js',
-              'node_modules/bootstrap-markdown/js/bootstrap-markdown.js',
-              'node_modules/bootstrap-markdown/locale/*' ]
+              'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',
+              'node_modules/bootstrap-markdown-fa5/locale/*' ]
         }
       }
     },

@@ -10,6 +10,7 @@ const fontawesome = require('@fortawesome/fontawesome');
 
 // SOLID
 import {
+    faBold,
     faChartPie,
     faCheck,
     faCheckSquare,
@@ -17,6 +18,7 @@ import {
     faChevronRight,
     faClipboardCheck,
     faCloud,
+    faCode,
     faCogs,
     faComments,
     faDna,
@@ -31,9 +33,14 @@ import {
     faFilePowerpoint,
     faFileVideo,
     faFileWord,
+    faHeading,
     faHistory,
+    faImage,
+    faItalic,
     faInfoCircle,
     faLink,
+    faList,
+    faListOl,
     faLock,
     faLockOpen,
     faMinusCircle,
@@ -42,6 +49,8 @@ import {
     faPencilAlt,
     faPlusCircle,
     faQuestionCircle,
+    faQuoteLeft,
+    faSearch,
     faSignOutAlt,
     faStar,
     faSyncAlt,
@@ -51,6 +60,7 @@ import {
     faUser,
 } from '@fortawesome/fontawesome-free-solid';
 
+fontawesome.library.add(faBold);
 fontawesome.library.add(faChartPie);
 fontawesome.library.add(faCheck);
 fontawesome.library.add(faCheckSquare);
@@ -58,6 +68,7 @@ fontawesome.library.add(faChevronCircleLeft);
 fontawesome.library.add(faChevronRight);
 fontawesome.library.add(faClipboardCheck);
 fontawesome.library.add(faCloud);
+fontawesome.library.add(faCode);
 fontawesome.library.add(faCogs);
 fontawesome.library.add(faComments);
 fontawesome.library.add(faDna);
@@ -72,9 +83,14 @@ fontawesome.library.add(faFilePdf);
 fontawesome.library.add(faFilePowerpoint);
 fontawesome.library.add(faFileVideo);
 fontawesome.library.add(faFileWord);
+fontawesome.library.add(faHeading);
 fontawesome.library.add(faHistory);
+fontawesome.library.add(faImage);
+fontawesome.library.add(faItalic);
 fontawesome.library.add(faInfoCircle);
 fontawesome.library.add(faLink);
+fontawesome.library.add(faList);
+fontawesome.library.add(faListOl);
 fontawesome.library.add(faLock);
 fontawesome.library.add(faLockOpen);
 fontawesome.library.add(faMinusCircle);
@@ -83,6 +99,8 @@ fontawesome.library.add(faPaperclip);
 fontawesome.library.add(faPencilAlt);
 fontawesome.library.add(faPlusCircle);
 fontawesome.library.add(faQuestionCircle);
+fontawesome.library.add(faQuoteLeft);
+fontawesome.library.add(faSearch);
 fontawesome.library.add(faSignOutAlt);
 fontawesome.library.add(faStar);
 fontawesome.library.add(faSyncAlt);

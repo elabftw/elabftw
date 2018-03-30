@@ -974,9 +974,9 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-bootstrap-markdown@^2.10.0:
+bootstrap-markdown-fa5@^2.10.0:
   version "2.10.0"
-  resolved "https://registry.yarnpkg.com/bootstrap-markdown/-/bootstrap-markdown-2.10.0.tgz#65234277840454ee1adc7482b2f4a5e3975dace5"
+  resolved "https://registry.yarnpkg.com/bootstrap-markdown-fa5/-/bootstrap-markdown-fa5-2.10.0.tgz#31d4b680d17acb49273960713706db76ef34c6f6"
 
 bootstrap@^4.0.0:
   version "4.0.0"

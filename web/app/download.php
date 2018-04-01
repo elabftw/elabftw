@@ -80,17 +80,17 @@ try {
     $fsize = filesize($file_path);
 
     // HEADERS
-    header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Cache-Control: public");
-    header("Content-Description: File Transfer");
-    header("Content-Type: " . $mtype);
-    header("Content-Disposition: attachment; filename=" . $filename);
-    header("Content-Transfer-Encoding: binary");
-    header("Content-Length: " . $fsize);
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Cache-Control: public');
+    header('Content-Description: File Transfer');
+    header('Content-Type: ' . $mtype);
+    header('Content-Disposition: attachment; filename=' . $filename);
+    header('Content-Transfer-Encoding: binary');
+    header('Content-Length: ' . $fsize);
 
     // DOWNLOAD
-    $file = @fopen($file_path, "rb");
+    $file = @fopen($file_path, 'rb');
     if ($file) {
         while (!feof($file)) {
             echo fread($file, 1024 * 8);

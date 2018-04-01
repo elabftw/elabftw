@@ -113,7 +113,7 @@ class Database extends AbstractEntity
 
         $this->Tags->copyTags($newId);
 
-        return (int) $newId;
+        return $newId;
     }
 
     /**

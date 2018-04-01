@@ -76,7 +76,7 @@ try {
             throw new Exception('Redirecting to register page');
         }
 
-        $sql = "SELECT * FROM users";
+        $sql = 'SELECT * FROM users';
         $req = $Db->prepare($sql);
         $req->execute();
         // redirect to register page if no users are in the database

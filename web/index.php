@@ -42,7 +42,7 @@ try {
         }
 
         if (!$SamlAuth->isAuthenticated()) {
-            throw new Exception("Not authenticated!");
+            throw new Exception('Not authenticated!');
         }
 
         $Session->set('samlUserdata', $SamlAuth->getAttributes());

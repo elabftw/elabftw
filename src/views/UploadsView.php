@@ -107,7 +107,7 @@ class UploadsView
 
         // NOW DISPLAY THE NAME + COMMENT WITH ICONS
         $html .= "<div class='caption'><i class='fas fa-paperclip mr-1'></i>";
-        $linkUrl = 'app/download.php?f=' . $upload['long_name'] . "&name=" . $upload['real_name'];
+        $linkUrl = 'app/download.php?f=' . $upload['long_name'] . '&name=' . $upload['real_name'];
         $html .= "<a href='" . $linkUrl . "' rel='noopener'>" . $upload['real_name'] . "</a>";
         $html .= "<span class='smallgray' style='display:inline'> " .
             Tools::formatBytes(filesize(ELAB_ROOT . 'uploads/' . $upload['long_name'])) . "</span><br>";

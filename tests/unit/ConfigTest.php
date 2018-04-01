@@ -19,7 +19,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $post = array(
-            'smtp_address' => "smtp.mailgun.org",
+            'smtp_address' => 'smtp.mailgun.org',
             'smtp_encryption' => "tls",
             'smtp_password' => "yep",
             'smtp_port' => 587,

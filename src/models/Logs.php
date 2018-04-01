@@ -81,7 +81,7 @@ class Logs implements CrudInterface
      */
     public function destroyAll(): bool
     {
-        $sql = "DELETE FROM logs";
+        $sql = 'DELETE FROM logs';
         $req = $this->Db->prepare($sql);
 
         return $req->execute();

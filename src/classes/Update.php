@@ -72,7 +72,7 @@ class Update
 
         $this->cleanTmp();
 
-        $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
+        $msg_arr[] = '[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)';
 
         return $msg_arr;
     }

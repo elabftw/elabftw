@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * Store informations about different identity providers for auth with SAML
  */
@@ -21,6 +23,7 @@ class Idps implements CrudInterface
     /**
      * Constructor
      *
+     * @throws Exception
      */
     public function __construct()
     {

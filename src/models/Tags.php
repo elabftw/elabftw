@@ -158,7 +158,7 @@ class Tags implements CrudInterface
 
         foreach ($tagsArr as $tag) {
             $tagList .= "<option value='" . $tag['tag'] . "'";
-            if (\in_array($tag['tag'], $selected)) {
+            if (in_array($tag['tag'], $selected, true)) {
                 $tagList .= " selected='selected'";
             }
             $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";

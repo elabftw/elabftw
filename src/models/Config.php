@@ -112,7 +112,7 @@ class Config
             $result[] = $req->execute();
         }
 
-        return !in_array(0, $result);
+        return !\in_array(0, $result);
     }
 
 

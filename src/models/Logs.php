@@ -56,7 +56,7 @@ class Logs implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
+        $sql = 'SELECT * FROM logs ORDER BY id DESC LIMIT 100';
         $req = $this->Db->prepare($sql);
         $req->execute();
 

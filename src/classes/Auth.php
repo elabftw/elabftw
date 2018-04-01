@@ -67,7 +67,7 @@ class Auth
     {
         // If user has a cookie; check cookie is valid
         // the token is a sha256 sum: 64 char
-        if (!$this->Request->cookies->has('token') || strlen($this->Request->cookies->get('token')) != 64) {
+        if (!$this->Request->cookies->has('token') || \strlen($this->Request->cookies->get('token')) !== 64) {
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
@@ -258,7 +258,7 @@ class Auth
             'ResetPasswordController.php'
         );
 
-        return !in_array(basename($this->Request->getScriptName()), $nologinArr);
+        return !\in_array(basename($this->Request->getScriptName()), $nologinArr, true);
     }
 
     /**

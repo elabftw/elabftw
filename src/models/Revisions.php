@@ -178,6 +178,7 @@ class Revisions implements CrudInterface
      * Not implemented
      *
      * @param int $id
+     * @return bool
      */
     public function destroy(int $id): bool
     {

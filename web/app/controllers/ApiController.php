@@ -34,7 +34,7 @@ try {
     $Users->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
 
     $availMethods = array('GET', 'POST');
-    if (!in_array($Request->server->get('REQUEST_METHOD'), $availMethods)) {
+    if (!in_array($Request->server->get('REQUEST_METHOD'), $availMethods, true)) {
         throw new Exception('Incorrect HTTP verb! Available verbs are: ' . implode(', ', $availMethods));
     }
 
@@ -89,7 +89,7 @@ try {
             if ($endpoint === 'experiments') {
                 $content = $Api->createExperiment();
             } else {
-                throw new Exception("Creating database items is not supported.");
+                throw new Exception('Creating database items is not supported.');
             }
         }
     }

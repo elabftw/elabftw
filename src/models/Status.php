@@ -50,7 +50,7 @@ class Status extends AbstractCategory
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
 
-        if (strlen($name) < 1) {
+        if ($name === '') {
             $name = 'Unnamed';
         }
 
@@ -65,7 +65,7 @@ class Status extends AbstractCategory
 
         $req->execute();
 
-        return (int) $this->Db->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -165,7 +165,7 @@ class Status extends AbstractCategory
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
-        if (($isDefault != 'false') && $this->setDefaultFalse()) {
+        if (($isDefault !== 'false') && $this->setDefaultFalse()) {
             $default = 1;
         } else {
             $default = 0;

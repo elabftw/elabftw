@@ -65,8 +65,8 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
 
     public function testError()
     {
-        $this->assertEquals(Tools::error(), "An error occured!");
-        $this->assertEquals(Tools::error(true), "This section is out of your reach!");
+        $this->assertEquals(Tools::error(), 'An error occured!');
+        $this->assertEquals(Tools::error(true), 'This section is out of your reach!');
     }
 
     public function testGetCalendarLang()

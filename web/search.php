@@ -80,10 +80,8 @@ if (isset($_GET['type']) && $_GET['type'] === 'database' && isset($_GET['tag_db'
 
 // VISIBILITY
 $vis = '';
-if (isset($_GET['vis']) && !empty($_GET['vis'])) {
-    if ($Experiments->checkVisibility($_GET['vis'])) {
-        $vis = $_GET['vis'];
-    }
+if (isset($_GET['vis']) && !empty($_GET['vis']) && $Experiments->checkVisibility($_GET['vis'])) {
+    $vis = $_GET['vis'];
 }
 
 // FROM
@@ -161,7 +159,7 @@ if (isset($_GET)) {
     if ($titleWithSpace) {
         $sqlTitle = " AND (";
         foreach ($title_arr as $key => $value) {
-            if ($key != 0) {
+            if ($key !== 0) {
                 $sqlTitle .= $andor;
             }
             $sqlTitle .= $table . ".title LIKE '%$value%'";

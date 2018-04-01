@@ -62,9 +62,9 @@ try {
     }
 
     // MIME
-    $mtype = "application/force-download";
+    $mtype = 'application/force-download';
 
-    if (function_exists('mime_content_type')) {
+    if (\function_exists('mime_content_type')) {
         $mtype = mime_content_type($file_path);
     } elseif (function_exists('finfo_file')) {
         $finfo = finfo_open(FILEINFO_MIME); // return mime type
@@ -95,7 +95,7 @@ try {
         while (!feof($file)) {
             echo fread($file, 1024 * 8);
             flush();
-            if (connection_status() != 0) {
+            if (connection_status() !== 0) {
                 fclose($file);
             }
         }

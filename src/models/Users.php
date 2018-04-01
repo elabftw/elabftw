@@ -526,7 +526,7 @@ class Users
 
         // LANG
         $new_lang = 'en_GB';
-        if (isset($params['lang']) && in_array($params['lang'], array_keys(Tools::getLangsArr()))) {
+        if (isset($params['lang']) && array_key_exists($params['lang'], Tools::getLangsArr())) {
             $new_lang = $params['lang'];
         }
 

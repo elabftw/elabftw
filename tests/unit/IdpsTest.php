@@ -37,6 +37,6 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Idps->readAll()));
+        $this->assertInternalType('array', $this->Idps->readAll());
     }
 }

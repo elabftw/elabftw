@@ -29,17 +29,17 @@ try {
     $TeamsView = new TeamsView(new Teams($App->Users));
     $Database = new Database($App->Users);
     // we only want the bookable type of items
-    $Database->bookableFilter = " AND bookable = 1";
+    $Database->bookableFilter = ' AND bookable = 1';
     $itemsArr = $Database->read();
     $Scheduler = new Scheduler($Database);
 
     $selectedItem = null;
     if ($Request->query->get('item')) {
         $Scheduler->Database->setId($Request->query->get('item'));
-        $selectedItem = ($Request->query->get('item'));
+        $selectedItem = $Request->query->get('item');
 
         $Scheduler->populate();
-        if (strlen($Scheduler->itemData['category']) === 0) {
+        if ($Scheduler->itemData['category'] === '') {
             throw new Exception(_('Nothing to show with this id'));
         }
     }

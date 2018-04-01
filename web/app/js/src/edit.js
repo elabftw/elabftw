@@ -454,7 +454,7 @@
             }
         });
         */
-        $('.markdown-textarea').markdown({autofocus:false,savable:false, iconlibrary: 'fa'});
+        //$('.markdown-textarea').markdown({autofocus:false,savable:false, iconlibrary: 'fa'});
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {

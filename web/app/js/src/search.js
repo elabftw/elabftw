@@ -30,7 +30,7 @@
         });
 
         $('#searchin').on('change', function() {
-            if (this.value == 'experiments') {
+            if (this.value === 'experiments') {
                 $("#tag_exp").show();
                 $("#tag_db").hide();
             } else {

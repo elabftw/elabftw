@@ -17,14 +17,14 @@ module.exports = {
             'bootstrap/js/src/button.js',
             'bootstrap/js/src/collapse.js',
             'bootstrap/js/src/dropdown.js',
-            './web/app/js/src/fontawesome.es.js',
+            './web/app/js/src/fontawesome.es.js'
         ],
         tinymce: [
-            'tinymce',
+            'tinymce'
         ],
         moment: [
-            'moment',
-        ],
+            'moment'
+        ]
     },
     /*
     plugins: [
@@ -42,7 +42,7 @@ module.exports = {
             'jquery-ui': 'jquery-ui-dist/jquery-ui.js',
             '@fortawesome/fontawesome-free-solid$': '@fortawesome/fontawesome-free-solid/shakable.es.js',
             '@fortawesome/fontawesome-free-regular$': '@fortawesome/fontawesome-free-regular/shakable.es.js',
-            '@fortawesome/fontawesome-free-brands$': '@fortawesome/fontawesome-free-brands/shakable.es.js',
+            '@fortawesome/fontawesome-free-brands$': '@fortawesome/fontawesome-free-brands/shakable.es.js'
         }
     },
     mode: 'production',
@@ -58,15 +58,15 @@ module.exports = {
                 test: require.resolve('jquery'),
                 use: [
                     { loader: 'expose-loader', options: 'jQuery' },
-                    { loader: 'expose-loader', options: '$' },
+                    { loader: 'expose-loader', options: '$' }
                 ]
             },
             {
                 test: require.resolve('moment'),
                 use: [
-                    { loader: 'expose-loader', options: 'moment' },
+                    { loader: 'expose-loader', options: 'moment' }
                 ]
-            },
-        ],
-    },
+            }
+        ]
+    }
 };

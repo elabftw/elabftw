@@ -83,7 +83,7 @@ $(document).ready(function() {
                     notif('Saved', 'ok');
                 });
             },
-			eventRender: function(event, element, view) {
+			eventRender: function(event, element) {
 				var title = element.find('.fc-title');
 				title.html(title.text());
 			}

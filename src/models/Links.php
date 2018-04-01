@@ -44,7 +44,7 @@ class Links implements CrudInterface
      */
     public function create($link): bool
     {
-        $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
+        $sql = 'INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':link_id', $link);

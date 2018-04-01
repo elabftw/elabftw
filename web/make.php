@@ -49,7 +49,7 @@ try {
     }
 
     // the pdf is shown directly, but for csv or zip we want a download page
-    if ($Request->query->get('what') === 'csv' || $Request->query->get('what') === 'zip') {
+    if (\in_array($Request->query->get('what'), array('csv', 'zip'), true)) {
 
         $filesize = Tools::formatBytes(filesize($Make->filePath));
 

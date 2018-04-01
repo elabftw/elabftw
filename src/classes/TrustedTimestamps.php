@@ -396,14 +396,10 @@ class TrustedTimestamps extends AbstractMake
             throw new Exception('$retarray must be an array.');
         }
 
-        if ($retcode === 0) {
-            // because the first return line could be "Using configuration from /usr/local/ssl/openssl.cnf"
-            // so we check the two first lines
-            if (strtolower(trim($retarray[0])) == "verification: ok" ||
-                strtolower(trim($retarray[1])) == "verification: ok") {
+        if ($retcode === 0 && (strtolower(trim($retarray[0])) === "verification: ok" ||
+                strtolower(trim($retarray[1])) === "verification: ok")) {
                 return true;
             }
-        }
 
         foreach ($retarray as $retline) {
             if (stripos($retline, "message imprint mismatch") !== false) {

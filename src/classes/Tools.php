@@ -139,7 +139,7 @@ class Tools
         }
 
         // assume they both have same unit to compare the values
-        if ((int) ($post_max_size) > (int) ($max_size)) {
+        if ((int) $post_max_size > (int) $max_size) {
             $input = $max_size;
         } else {
             $input = $post_max_size;
@@ -184,9 +184,8 @@ class Tools
             return round($bytes / 1073741824, 2) . ' GiB';
         } elseif ($bytes < 1125899906842624) {
             return round($bytes / 1099511627776, 2) . ' TiB';
-        } else {
-            return 'That is a very big file you have there my friend.';
         }
+        return 'That is a very big file you have there my friend.';
     }
 
     /**

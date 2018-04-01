@@ -33,8 +33,7 @@ try {
     }
 
     // CREATE STATUS
-    if ($Request->request->has('statusCreate')) {
-        if ($Status->create(
+    if ($Request->request->has('statusCreate') && $Status->create(
             $Request->request->get('name'),
             $Request->request->get('color'),
             $Request->request->get('isTimestampable')
@@ -42,11 +41,9 @@ try {
             $res = true;
             $msg = _('Saved');
         }
-    }
 
     // UPDATE STATUS
-    if ($Request->request->has('statusUpdate')) {
-        if ($Status->update(
+    if ($Request->request->has('statusUpdate') && $Status->update(
             $Request->request->get('id'),
             $Request->request->get('name'),
             $Request->request->get('color'),
@@ -56,7 +53,6 @@ try {
             $res = true;
             $msg = _('Saved');
         }
-    }
 
     // DESTROY STATUS
     if ($Request->request->has('statusDestroy')) {

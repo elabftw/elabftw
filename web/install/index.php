@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 try {
     session_start();
-    require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+    require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
     // create Request object
     $Request = Request::createFromGlobals();
     $errflag = false;
@@ -31,8 +31,8 @@ try {
         // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
         // check that the config file is here and readable
         if (!is_readable('../config.php')) {
-            $message = "No readable config file found. Make sure the server has permissions to read it. Try :<br />
-                chmod 644 config.php<br />";
+            $message = 'No readable config file found. Make sure the server has permissions to read it. Try :<br />
+                chmod 644 config.php<br />';
             throw new Exception($message);
         }
 
@@ -42,8 +42,8 @@ try {
         // ok so we are connected, now count the number of tables before trying to count the users
         // if we are in docker, the number of tables might be 0
         // so we will need to import the structure before going further
-        $sql = "SELECT COUNT(DISTINCT `table_name`) AS tablesCount
-            FROM `information_schema`.`columns` WHERE `table_schema` = :db_name";
+        $sql = 'SELECT COUNT(DISTINCT `table_name`) AS tablesCount
+            FROM `information_schema`.`columns` WHERE `table_schema` = :db_name';
         $req = $Db->prepare($sql);
         $req->bindValue(':db_name', DB_NAME);
         $req->execute();
@@ -58,14 +58,14 @@ try {
             // loop through each line
             foreach ($lines as $line) {
                 // Skip it if it's a comment
-                if (substr($line, 0, 2) == '--' || $line == '') {
+                if ($line === '' || strpos($line, '--') === 0) {
                         continue;
                 }
 
                 // Add this line to the current segment
                 $queryline .= $line;
                 // If it has a semicolon at the end, it's the end of the query
-                if (substr(trim($line), -1, 1) == ';') {
+                if (trim($line)[strlen(trim($line)) - 1] === ';') {
                     // Perform the query
                     $Db->q($queryline);
                     // Reset temp variable to empty

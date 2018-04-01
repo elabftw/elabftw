@@ -36,7 +36,7 @@ $(document).ready(function() {
     var clickY = [];
     var clickDrag = [];
     var paint;
-    context = document.getElementById('doodleCanvas').getContext("2d");
+    var context = document.getElementById('doodleCanvas').getContext("2d");
 
     $('#doodleCanvas').mousedown(function(e){
       paint = true;

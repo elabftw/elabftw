@@ -106,8 +106,7 @@ class Uploads implements CrudInterface
         if ($fileType === 'png') {
             $realName = 'Doodle.png';
             // get the image in binary
-            $string = str_replace('data:image/png;base64,', '', $string);
-            $string = str_replace(' ', '+', $string);
+            $string = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $string);
             $string = base64_decode($string);
         } elseif ($fileType === 'mol') {
             $realName = 'Mol-file.mol';
@@ -167,7 +166,7 @@ class Uploads implements CrudInterface
      */
     private function getHash(string $file): string
     {
-        if (filesize($file) < BIG_FILE_THRESHOLD) {
+        if (filesize($file) < self::BIG_FILE_THRESHOLD) {
             return hash_file($this->hashAlgorithm, $file);
         }
 
@@ -306,7 +305,7 @@ class Uploads implements CrudInterface
     public function makeThumb($src, $dest, $desiredWidth): bool
     {
         // we don't want to work on too big images
-        if (filesize($src) > BIG_FILE_THRESHOLD) {
+        if (filesize($src) > self::BIG_FILE_THRESHOLD) {
             return false;
         }
 

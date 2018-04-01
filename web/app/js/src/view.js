@@ -166,7 +166,7 @@
                     Cancel: function() {
                         $(this).dialog('close');
                     }
-                },
+                }
             });
         });
         $('#confirmTimestampDiv').hide();

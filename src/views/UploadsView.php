@@ -79,19 +79,19 @@ class UploadsView
             }
 
             $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "'" . $fancybox;
-            if ($upload['comment'] != 'Click to add a comment') {
+            if ($upload['comment'] !== 'Click to add a comment') {
                 $html .= "title='" . $upload['comment'] . "' data-caption='" . $upload['comment'] . "'";
             }
             $html .= "><img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f=" . $upload['long_name'] . "_th.jpg' alt='thumbnail' /></a>";
 
             // not an image
             // special case for mol files, only in view mode
-        } elseif ($ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor'] && $mode === 'view') {
+        } elseif ($mode === 'view' && $ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor']) {
             $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
                 "' data-molpath='" . $filepath . "'></canvas></div>";
 
             // if this is something 3Dmol.js can handle
-        } elseif (\in_array($ext, $molExtensions)) {
+        } elseif (in_array($ext, $molExtensions, true)) {
             // try to be clever and use cartoon representation for pdb files
             if ($ext === 'pdb') {
                 $isProtein = true;
@@ -107,7 +107,7 @@ class UploadsView
 
         // NOW DISPLAY THE NAME + COMMENT WITH ICONS
         $html .= "<div class='caption'><i class='fas fa-paperclip mr-1'></i>";
-        $linkUrl = "app/download.php?f=" . $upload['long_name'] . "&name=" . $upload['real_name'];
+        $linkUrl = 'app/download.php?f=' . $upload['long_name'] . "&name=" . $upload['real_name'];
         $html .= "<a href='" . $linkUrl . "' rel='noopener'>" . $upload['real_name'] . "</a>";
         $html .= "<span class='smallgray' style='display:inline'> " .
             Tools::formatBytes(filesize(ELAB_ROOT . 'uploads/' . $upload['long_name'])) . "</span><br>";

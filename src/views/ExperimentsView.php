@@ -71,7 +71,7 @@ class ExperimentsView
         $date = new DateTime($this->Entity->entityData['timestampedwhen']);
 
         return Tools::displayMessage(
-            _('Experiment was timestamped by') . " " . $timestamper['fullname'] . " " . _('on') .
+            _('Experiment was timestamped by') . ' ' . $timestamper['fullname'] . " " . _('on') .
             " " . $date->format('Y-m-d') . " " . _('at') . " " .
             $date->format('H:i:s') . " " .
             $date->getTimezone()->getName() . " <a class='elab-tooltip' href='app/download.php?f=" .

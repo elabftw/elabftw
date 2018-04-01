@@ -51,7 +51,7 @@ try {
     if ($Request->request->has('updateStart')) {
         $Scheduler->setId($Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
-        if ($eventArr['userid'] == $Session->get('userid')) {
+        if ($eventArr['userid'] === $Session->get('userid')) {
             if ($Scheduler->updateStart($Request->request->get('start'), $Request->request->get('end'))) {
                 $res = true;
                 $msg = _('Saved');

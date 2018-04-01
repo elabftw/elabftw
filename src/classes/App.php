@@ -42,7 +42,7 @@ class App
     public $Twig;
 
     /** @var string $pageTitle the title for the current page */
-    public $pageTitle = "Lab manager";
+    public $pageTitle = 'Lab manager';
 
     /** @var array $ok the ok messages from flashBag */
     public $ok;
@@ -130,7 +130,7 @@ class App
      */
     public function getGenerationTime(): float
     {
-        return round(microtime(true) - $this->Request->server->get("REQUEST_TIME_FLOAT"), 5);
+        return round(microtime(true) - $this->Request->server->get('REQUEST_TIME_FLOAT'), 5);
     }
 
     /**

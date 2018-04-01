@@ -132,7 +132,7 @@ try {
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     if ($redirect) {
-        $Response = new RedirectResponse("../../ucp.php?tab=" . $tab);
+        $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
     }
     $Response->send();
 }

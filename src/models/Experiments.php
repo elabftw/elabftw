@@ -259,7 +259,7 @@ class Experiments extends AbstractEntity
     private function generateElabid(): string
     {
         $date = Tools::kdate();
-        return $date . "-" . sha1(uniqid($date, true));
+        return $date . "-" . \sha1(\uniqid($date, true));
     }
 
     /**

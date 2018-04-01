@@ -136,7 +136,7 @@ class Auth
      */
     private function setToken(): bool
     {
-        $token = hash('sha256', \uniqid(\mt_rand(), true));
+        $token = hash('sha256', \uniqid((string) \mt_rand(), true));
 
         // create cookie
         // name, value, expire, path, domain, secure, httponly

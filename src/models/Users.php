@@ -100,13 +100,13 @@ class Users
             $this->Auth->checkPasswordLength($password);
         }
 
-        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
-        $salt = hash("sha512", \uniqid(\mt_rand(), true));
+        $salt = \hash("sha512", \uniqid((string) \mt_rand(), true));
         // Create hash
-        $passwordHash = hash("sha512", $salt . $password);
+        $passwordHash = \hash("sha512", $salt . $password);
 
         // Registration date is stored in epoch
         $registerDate = time();
@@ -659,8 +659,8 @@ class Users
 
         $this->Auth->checkPasswordLength($password);
 
-        $salt = hash("sha512", \uniqid(\mt_rand(), true));
-        $passwordHash = hash("sha512", $salt . $password);
+        $salt = \hash("sha512", \uniqid((string) \mt_rand(), true));
+        $passwordHash = \hash("sha512", $salt . $password);
 
         $sql = "UPDATE users SET salt = :salt, password = :password WHERE userid = :userid";
         $req = $this->Db->prepare($sql);

@@ -173,7 +173,6 @@ class Api
      * @param string $body Body
      * @throws Exception
      * @return string[]
-
      */
     public function updateEntity($title, $date, $body): array
     {

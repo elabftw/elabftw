@@ -8,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use RuntimeException;
@@ -51,7 +53,7 @@ abstract class AbstractMake
      */
     protected function getUniqueString(): string
     {
-        return hash("sha512", \uniqid(\mt_rand(), true));
+        return hash("sha512", \uniqid((string) \mt_rand(), true));
     }
 
     /**

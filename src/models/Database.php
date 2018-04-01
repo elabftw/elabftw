@@ -55,7 +55,7 @@ class Database extends AbstractEntity
             'type' => $itemType
         ));
 
-        return (int) $this->Db->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**

@@ -41,9 +41,13 @@ try {
         // the mode parameter is for the uploads tpl
         $template = 'view.html';
 
+        // COMMENTS
+        $commentsArr = $Entity->Comments->readAll();
+
         $renderArr = array(
             'Entity' => $Entity,
             'Uv' => $UploadsView,
+            'commentsArr' => $commentsArr,
             'mode' => 'view'
         );
 

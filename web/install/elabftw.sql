@@ -85,12 +85,25 @@ DROP TABLE IF EXISTS `experiments_comments`;
 CREATE TABLE `experiments_comments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `datetime` datetime NOT NULL,
-  `exp_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
   `comment` text NOT NULL,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `items_comments`
+--
+
+DROP TABLE IF EXISTS `items_comments`;
+CREATE TABLE `items_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `datetime` datetime NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Table structure for table `experiments_links`
 --
@@ -490,4 +503,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('local_register', '1'),
 ('anon_users', '0'),
 ('url', NULL),
-('schema', '37');
+('schema', '38');

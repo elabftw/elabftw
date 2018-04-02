@@ -367,9 +367,9 @@ class MakePdf extends AbstractMake
         $content .= $this->buildBody();
         if ($this->Entity instanceof Experiments) {
             $content .= $this->addLinkedItems();
-            $content .= $this->addComments();
         }
         $content .= $this->addAttachedFiles();
+        $content .= $this->addComments();
         $content .= $this->buildInfoBlock();
 
         return $content;

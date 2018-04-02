@@ -34,7 +34,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 37;
+    private const REQUIRED_SCHEMA = 38;
 
     /**
      * Init Update with Config and Db
@@ -68,6 +68,11 @@ class Update
 
         $msg_arr = array();
 
+        if ($current_schema < 38) {
+            // 20180402 v2.0.0
+            $this->schema38();
+            $this->updateSchema(38);
+        }
         // place new schema functions above this comment
 
         $this->cleanTmp();
@@ -105,6 +110,31 @@ class Update
         $config_arr = array('schema' => $schema);
         if (!$this->Config->update($config_arr)) {
             throw new Exception('Failed at updating the schema number to: ' . $schema);
+        }
+    }
+
+    /**
+     * Add items_comments and rename exp_id to item_id in experiments_comments
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema38(): void
+    {
+        $sql = "ALTER TABLE experiments_comments CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem updating to schema 38!');
+        }
+        $sql = "CREATE TABLE IF NOT EXISTS `items_comments` (
+          `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+          `datetime` datetime NOT NULL,
+          `item_id` int(11) NOT NULL,
+          `comment` text NOT NULL,
+          `userid` int(11) NOT NULL,
+          PRIMARY KEY (`id`)
+        );";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem updating to schema 38 (second part)!');
         }
     }
 }

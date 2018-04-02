@@ -19,6 +19,9 @@ abstract class AbstractEntity
 {
     use EntityTrait;
 
+    /** @var Comments $Comments instance of Comments */
+    public $Comments;
+
     /** @var Tags $Tags instance of Tags */
     public $Tags;
 
@@ -98,6 +101,7 @@ abstract class AbstractEntity
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
+        $this->Comments = new Comments($this);
 
         if ($id !== null) {
             $this->setId($id);
@@ -196,9 +200,9 @@ abstract class AbstractEntity
             $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
             $commentsJoin = "LEFT JOIN (
                 SELECT MAX(experiments_comments.datetime) AS recent_comment,
-                    experiments_comments.exp_id FROM experiments_comments GROUP BY experiments_comments.exp_id
+                    experiments_comments.item_id FROM experiments_comments GROUP BY experiments_comments.item_id
                 ) AS experiments_comments
-                ON (experiments_comments.exp_id = experiments.id)";
+                ON (experiments_comments.item_id = experiments.id)";
             $where = "WHERE experiments.team = :team";
 
             $sql = $select . ' ' .

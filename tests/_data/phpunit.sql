@@ -93,7 +93,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '37'),
+('schema', '38'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -187,7 +187,15 @@ INSERT INTO `idps` VALUES (1,'OneLogin','https://app.onelogin.com/','https://one
 CREATE TABLE `experiments_comments` (
   `id` int(10) UNSIGNED NOT NULL,
   `datetime` datetime NOT NULL,
-  `exp_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `items_comments` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `datetime` datetime NOT NULL,
+  `item_id` int(11) NOT NULL,
   `comment` text NOT NULL,
   `userid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -581,6 +589,8 @@ ALTER TABLE `experiments`
 ALTER TABLE `experiments_comments`
   ADD PRIMARY KEY (`id`);
 
+ALTER TABLE `items_comments`
+  ADD PRIMARY KEY (`id`);
 --
 -- Indexes for table `experiments_links`
 --

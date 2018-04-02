@@ -22,7 +22,7 @@ class Comments implements CrudInterface
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** @var Experiments $Entity instance of Experiments */
+    /** @var AbstractEntity $Entity instance of Experiments or Database */
     public $Entity;
 
     /**
@@ -30,7 +30,7 @@ class Comments implements CrudInterface
      *
      * @param Experiments $entity
      */
-    public function __construct(Experiments $entity)
+    public function __construct(AbstractEntity $entity)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
@@ -40,35 +40,37 @@ class Comments implements CrudInterface
      * Create a comment
      *
      * @param string $comment Content for the comment
-     * @return int number of email sent
+     * @return bool
      */
-    public function create($comment): int
+    public function create(string $comment): bool
     {
         $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
 
-        $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid)
-            VALUES(:datetime, :exp_id, :comment, :userid)";
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
+            VALUES(:datetime, :item_id, :comment, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':datetime', date("Y-m-d H:i:s"));
-        $req->bindParam(':exp_id', $this->Entity->id);
+        $req->bindValue(':datetime', date('Y-m-d H:i:s'));
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':comment', $comment);
         $req->bindParam(':userid', $this->Entity->Users->userid);
 
-        if (!$req->execute()) {
-            throw new Exception('Error inserting comment!');
-        }
+        $this->alertOwner();
 
-        return $this->alertOwner();
+        return $req->execute();
     }
 
     /**
      * Send an email to the experiment owner to alert a comment was posted
-     * (issue #160)
+     * (issue #160). Only send for an experiment.
      *
      * @return int number of email sent
      */
     private function alertOwner(): int
     {
+        if ($this->Entity instanceof Database) {
+            return 0;
+        }
+
         $Config = new Config();
 
         // get the first and lastname of the commenter
@@ -120,17 +122,17 @@ class Comments implements CrudInterface
     }
 
     /**
-     * Read comments for an experiments id
+     * Read comments for an entity id
      *
-     * @return array comments for this experiment
+     * @return array comments for this entity
      */
     public function readAll(): array
     {
-        $sql = "SELECT experiments_comments.*,
+        $sql = "SELECT " . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM experiments_comments
-            LEFT JOIN users ON (experiments_comments.userid = users.userid)
-            WHERE exp_id = :id ORDER BY experiments_comments.datetime ASC";
+            FROM " . $this->Entity->type . "_comments
+            LEFT JOIN users ON (" . $this->Entity->type . "_comments.userid = users.userid)
+            WHERE item_id = :id ORDER BY " . $this->Entity->type . "_comments.datetime ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->execute();
@@ -156,9 +158,9 @@ class Comments implements CrudInterface
             return false;
         }
 
-        $sql = "UPDATE experiments_comments SET
+        $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
             comment = :comment
-            WHERE id = :id AND userid = :userid";
+            WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':comment', $comment);
         $req->bindParam(':id', $id);
@@ -175,7 +177,7 @@ class Comments implements CrudInterface
      */
     public function destroy(int $id): bool
     {
-        $sql = "DELETE FROM experiments_comments WHERE id = :id AND userid = :userid";
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':userid', $this->Entity->Users->userid);
@@ -190,7 +192,7 @@ class Comments implements CrudInterface
      */
     public function destroyAll(): bool
     {
-        $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
 

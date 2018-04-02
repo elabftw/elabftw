@@ -55,7 +55,7 @@
             controller: 'app/controllers/CommentsController.php',
             create: function() {
                 document.getElementById('commentsCreateButton').disabled = true;
-                var comment = $('#commentsCreateArea').val();
+                const comment = $('#commentsCreateArea').val();
                 // check length
                 if (comment.length < 2) {
                     notif('Comment too short!');
@@ -66,11 +66,12 @@
                 $.post(this.controller, {
                     create: true,
                     comment: comment,
+                    type: $('#entityInfos').data('type'),
                     id: id
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
-                        $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment", function() {
+                        $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
                             relativeMoment();
                         });
                     } else {
@@ -82,11 +83,12 @@
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                     destroy: true,
+                    type: $('#entityInfos').data('type'),
                     id: comment
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
-                        $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment", function() {
+                        $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
                             relativeMoment();
                         });
                     } else {
@@ -128,7 +130,7 @@
                 style : 'display:inline',
                 callback : function() {
                     // now we reload the comments part to show the comment we just submitted
-                    $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment", function() {
+                    $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
                         relativeMoment();
                     });
                 }

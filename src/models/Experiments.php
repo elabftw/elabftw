@@ -20,9 +20,6 @@ class Experiments extends AbstractEntity
 {
     use EntityTrait;
 
-    /** @var Comments $Comments instance of Comments */
-    public $Comments;
-
     /** @var Links $Links instance of Links */
     public $Links;
 
@@ -42,7 +39,6 @@ class Experiments extends AbstractEntity
         //TODO remove type and check with instanceof, rename to table because it's used as table
         $this->type = 'experiments';
 
-        $this->Comments = new Comments($this);
         $this->Links = new Links($this);
         $this->Steps = new Steps($this);
     }

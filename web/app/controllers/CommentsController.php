@@ -25,7 +25,12 @@ try {
         throw new Exception(Tools::error(true));
     }
 
-    $Entity = new Experiments($App->Users);
+    if ($Request->request->get('type') === 'experiments') {
+        $Entity = new Experiments($App->Users);
+    } else {
+        $Entity = new Database($App->Users);
+    }
+
     $Response = new JsonResponse();
 
     $res = false;

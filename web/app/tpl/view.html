@@ -126,7 +126,7 @@
         If body is empty, reload and don't parse as markdown -->
     {% if body|trim == '' %}
         {% set body = Entity.entityData.body %}
-    {% endif %} 
+    {% endif %}
     <div id='body_view' class='txt'>{{ body|raw }}</div>
     <br>
 {% endif %}
@@ -157,9 +157,9 @@
 
 {{ include('uploads.html') }}
 
-{% if Entity.type == 'experiments' and App.Session.get('auth') %}
-    <section id='expcomment_container'>
-        <div id='expcomment' class='box'>
+{% if App.Session.get('auth') %}
+    <section id='comment_container'>
+        <div id='comment' class='box'>
             <i class='fas fa-comments mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Comments'|trans }}</h3>
 
             {% if commentsArr %}

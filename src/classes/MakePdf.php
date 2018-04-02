@@ -179,25 +179,25 @@ class MakePdf extends AbstractMake
     private function addComments(): string
     {
         $html = '';
-        // will return false if empty
+
         $commentsArr = $this->Entity->Comments->readAll();
-        if ($commentsArr === false) {
+        if (empty($commentsArr)) {
             return $html;
         }
         $html .= "<section class='no-break'>";
 
         if (count($commentsArr) === 1) {
-            $html .= "<h3>Comment:</h3>";
+            $html .= '<h3>Comment:</h3>';
         } else {
-            $html .= "<h3>Comments:</h3>";
+            $html .= '<h3>Comments:</h3>';
         }
 
         foreach ($commentsArr as $comment) {
             $html .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
-            $html .= $comment['comment'] . "</p>";
+            $html .= $comment['comment'] . '</p>';
         }
 
-        $html .= "</section>";
+        $html .= '</section>';
 
         return $html;
     }

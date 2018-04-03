@@ -34,25 +34,25 @@ try {
 
     // CREATE STATUS
     if ($Request->request->has('statusCreate') && $Status->create(
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            $Request->request->get('isTimestampable')
-        )) {
-            $res = true;
-            $msg = _('Saved');
-        }
+        $Request->request->get('name'),
+        $Request->request->get('color'),
+        $Request->request->get('isTimestampable')
+    )) {
+        $res = true;
+        $msg = _('Saved');
+    }
 
     // UPDATE STATUS
     if ($Request->request->has('statusUpdate') && $Status->update(
-            $Request->request->get('id'),
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            $Request->request->get('isTimestampable'),
-            $Request->request->get('isDefault')
-        )) {
-            $res = true;
-            $msg = _('Saved');
-        }
+        $Request->request->get('id'),
+        $Request->request->get('name'),
+        $Request->request->get('color'),
+        $Request->request->get('isTimestampable'),
+        $Request->request->get('isDefault')
+    )) {
+        $res = true;
+        $msg = _('Saved');
+    }
 
     // DESTROY STATUS
     if ($Request->request->has('statusDestroy')) {

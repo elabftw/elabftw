@@ -70,7 +70,6 @@ class MakeZip extends AbstractMake
 
         $this->createZipArchive();
         $this->loopIdArr();
-
     }
 
     /**

@@ -387,7 +387,7 @@ class Uploads implements CrudInterface
             imagejpeg($virtualImage, $dest, 85);
             return true;
 
-            }
+        }
         // and if we have no gmagick and no gd, well there's nothing I can do for you boy!
         return false;
     }

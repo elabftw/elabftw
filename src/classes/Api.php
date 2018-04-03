@@ -56,7 +56,6 @@ class Api
             return array('id' => $id);
         }
         return array('error' => 'Unable to create experiment!');
-
     }
 
     /**

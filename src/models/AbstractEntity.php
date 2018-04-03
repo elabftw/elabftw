@@ -106,8 +106,8 @@ abstract class AbstractEntity
         if ($id !== null) {
             $this->setId($id);
         }
-
     }
+
     /**
      * Update status or item type
      *

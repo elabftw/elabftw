@@ -79,7 +79,6 @@ class App
 
         $this->ok = $this->Session->getFlashBag()->get('ok', array());
         $this->ko = $this->Session->getFlashBag()->get('ko', array());
-
     }
 
     /**

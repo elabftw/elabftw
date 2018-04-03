@@ -397,9 +397,9 @@ class TrustedTimestamps extends AbstractMake
         }
 
         if ($retcode === 0 && (strtolower(trim($retarray[0])) === "verification: ok" ||
-                strtolower(trim($retarray[1])) === "verification: ok")) {
-                return true;
-            }
+            strtolower(trim($retarray[1])) === "verification: ok")) {
+            return true;
+        }
 
         foreach ($retarray as $retline) {
             if (stripos($retline, "message imprint mismatch") !== false) {

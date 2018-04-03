@@ -16,7 +16,8 @@ use InvalidArgumentException;
  * For things that are used by experiments, database, status, item types, templates, …
  *
  */
-trait EntityTrait {
+trait EntityTrait
+{
 
     /** @var Db $Db SQL Database */
     protected $Db;

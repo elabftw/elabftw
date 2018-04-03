@@ -37,7 +37,6 @@ class MakePdf extends AbstractMake
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
-
     }
 
     /**

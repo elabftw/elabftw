@@ -140,7 +140,7 @@ class Auth
 
         // create cookie
         // name, value, expire, path, domain, secure, httponly
-        setcookie('token', $token, time() + 2592000, '/', null, true, true);
+        setcookie('token', $token, time() + 2592000, '/', '', true, true);
 
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";

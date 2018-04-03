@@ -498,7 +498,6 @@
 
         // STAR RATING
         const StarC = new Star();
-        $('input.star').rating();
         $('.star').click(function() {
             StarC.update($(this).data('rating').current[0].innerText);
         });

@@ -189,13 +189,13 @@
         <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
         <button class='button show-hide' data-type='chem'>+</button>
         <div class='center' style='display:none' id='chem_editor'>
-            <script src='app/js/sketcher.js'></script>
+            <script src='app/js/chemdoodle-canvas.min.js'></script>
         </div>
     </div>
 {% endif %}
 
 {% if Entity.Users.userData.close_warning %}
-    <script src='app/js/closeWarning.js'></script>
+    <script src='app/js/close-warning.min.js'></script>
 {% endif %}
 <div id='entityInfos'
     data-upmsg='{{ 'Drop files here to upload'|trans }}'

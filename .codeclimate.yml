@@ -13,8 +13,15 @@ engines:
     checks:
       TODO:
         enabled: false
+plugins:
+  phpcodesniffer:
+    enabled: true
   phpmd:
     enabled: true
+  phan:
+    enabled: true
+    config:
+      file_extensions: "php"
 ratings:
   paths:
   - "**.css"
@@ -26,6 +33,12 @@ ratings:
   - "**.py"
   - "**.rb"
 exclude_paths:
-- app/js/*
+- web/app/js/chemdoodle
+- web/app/js/src/prism.js
+- web/app/js/src/3Dmol-nojquery.js
+- web/app/js/plugins
+- web/app/js/langs
+- web/app/js/themes
+- web/app/js/skins
 - vendor/*
 - tests/*

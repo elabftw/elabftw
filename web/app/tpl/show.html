@@ -117,11 +117,11 @@ li.dropdown-item:hover a{ color:#29AEB9;}
             results shown
         {% endtrans %}
         <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
-        <span id='advancedSelectOptions'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> - 
+        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> - 
             <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
     </p>
 
-    <p id='withSelected'>{{ 'With selected:'|trans }}
+    <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
     {% if not searchPage %}
         <select id='catChecked'>
             <option selected disabled>

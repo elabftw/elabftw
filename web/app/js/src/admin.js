@@ -286,43 +286,24 @@
             style : 'display:inline'
 
         });
-        // SORTABLE for STATUS
-        $('.sortable_status').sortable({
-            // limit to vertical dragging
-            axis : 'y',
-            helper : 'clone',
-            // do ajax request to update db with new order
-            update: function(event, ui) {
-                // send the orders as an array
-                var ordering = $(".sortable_status").sortable("toArray");
-
-                $.post("app/controllers/AdminController.php", {
-                    'updateOrdering': true,
-                    'table': 'status',
-                    'ordering': ordering
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        });
-
-        // SORTABLE for ITEMS TYPES
-        $('.sortable_itemstypes').sortable({
+        // SORTABLE for ITEMS TYPES or STATUS
+        $('.sortable').sortable({
             // limit to horizontal dragging
             axis : 'y',
             helper : 'clone',
             // do ajax request to update db with new order
             update: function(event, ui) {
+                // switch between status or items_types
+                let table = 'status';
+                if ($(this).data('type') === 'items') {
+                    table = 'items_types';
+                }
                 // send the orders as an array
-                var ordering = $(".sortable_itemstypes").sortable("toArray");
+                var ordering = $(".sortable").sortable("toArray");
 
                 $.post("app/controllers/AdminController.php", {
                     'updateOrdering': true,
-                    'table': 'items_types',
+                    'table': table,
                     'ordering': ordering
                 }).done(function(data) {
                     if (data.res) {

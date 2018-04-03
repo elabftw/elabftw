@@ -100,7 +100,7 @@ class App
         if (!$this->Config->configArr['debug']) {
             $options = array('cache' => $cache);
         }
-        $Twig = new \Twig_Environment($loader, $options);
+        $TwigEnvironment = new \Twig_Environment($loader, $options);
 
         // custom twig filters
         $filterOptions = array('is_safe' => array('html'));
@@ -110,16 +110,16 @@ class App
         $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
 
-        $Twig->addFilter($msgFilter);
-        $Twig->addFilter($dateFilter);
-        $Twig->addFilter($mdFilter);
-        $Twig->addFilter($starsFilter);
-        $Twig->addFilter($bytesFilter);
+        $TwigEnvironment->addFilter($msgFilter);
+        $TwigEnvironment->addFilter($dateFilter);
+        $TwigEnvironment->addFilter($mdFilter);
+        $TwigEnvironment->addFilter($starsFilter);
+        $TwigEnvironment->addFilter($bytesFilter);
 
         // i18n for twig
-        $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
+        $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
 
-        return $Twig;
+        return $TwigEnvironment;
     }
 
     /**

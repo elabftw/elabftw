@@ -316,8 +316,8 @@ class Uploads implements CrudInterface
         if (extension_loaded('gmagick')) {
             // try first with gmagick lib
 
-            // do some sane white-listing; in theory, gmagick handles almost all image formats,
-            // but the processing of rarely used formats may be less tested/stable or may have security issues;
+            // do some sane white-listing. In theory, gmagick handles almost all image formats,
+            // but the processing of rarely used formats may be less tested/stable or may have security issues
             // when adding new mime types take care of
             // ambiguities: e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
             // image/x-ms-bmp
@@ -331,13 +331,13 @@ class Uploads implements CrudInterface
                                 'application/postscript');
 
             if (in_array($mime, $allowed_mime)) {
-                // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files;
+                // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files
                 // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
                 // works in those cases
                 if ($mime === 'application/pdf' || $mime === 'application/postscript') {
                     $src .= '[0]';
                 }
-                // fail silently if thumbnail generation does not work to keep file upload field functional;
+                // fail silently if thumbnail generation does not work to keep file upload field functional
                 // originally introduced due to issue #415.
                 try {
                     $image = new Gmagick($src);

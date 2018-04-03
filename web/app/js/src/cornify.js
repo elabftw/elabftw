@@ -2,7 +2,7 @@
  * Cornify.js - because unicorns FTW
  */
 var cornifyCount = 0;
-cornifyAdd = function() {
+const cornifyAdd = function() {
 	cornifyCount += 1;
 	var cornifyUrl = 'https://www.cornify.com/';
 	var div = document.createElement('div');
@@ -87,7 +87,7 @@ cornifyAdd = function() {
 	}
 };
 
-cornifyReplace = function() {
+const cornifyReplace = function() {
 	// Replace text
 	var hc = 6;
 	var hs;

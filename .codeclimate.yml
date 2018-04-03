@@ -1,5 +1,14 @@
 ---
-engines:
+version: "2"
+plugins:
+  phpcodesniffer:
+    enabled: true
+  phpmd:
+    enabled: true
+  phan:
+    enabled: true
+    config:
+      file_extensions: "php"
   csslint:
     enabled: true
   duplication:
@@ -13,26 +22,7 @@ engines:
     checks:
       TODO:
         enabled: false
-plugins:
-  phpcodesniffer:
-    enabled: true
-  phpmd:
-    enabled: true
-  phan:
-    enabled: true
-    config:
-      file_extensions: "php"
-ratings:
-  paths:
-  - "**.css"
-  - "**.inc"
-  - "**.js"
-  - "**.jsx"
-  - "**.module"
-  - "**.php"
-  - "**.py"
-  - "**.rb"
-exclude_paths:
+exclude_patterns:
 - web/app/js/chemdoodle
 - web/app/js/src/prism.js
 - web/app/js/src/3Dmol-nojquery.js

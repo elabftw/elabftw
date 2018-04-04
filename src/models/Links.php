@@ -42,8 +42,11 @@ class Links implements CrudInterface
      * @throws Exception
      * @return bool
      */
-    public function create($link): bool
+    public function create(int $link): bool
     {
+        $Database = new Database($this->Entity->Users, $link);
+        $Database->canOrExplode('read');
+
         $sql = 'INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);

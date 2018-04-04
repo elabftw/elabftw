@@ -33,7 +33,7 @@ class Api
     }
 
     /**
-     * @api {post} /experiment Create experiment
+     * @api {post} /experiments Create experiment
      * @apiName CreateExperiment
      * @apiGroup Entity
      * @apiSuccess {String} Id Id of the new experiment
@@ -56,6 +56,42 @@ class Api
             return array('id' => $id);
         }
         return array('error' => 'Unable to create experiment!');
+    }
+
+    /**
+     * @api {post} /experiments/:id Add a link
+     * @apiName AddLink
+     * @apiGroup Entity
+     * @apiParam {Number} id Entity id
+     * @apiParam {Number} link Id of the database item to link to
+     * @apiSuccess {String} Success or error message
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "result": "success"
+     *     }
+     */
+
+    /**
+     * Add a link to an experiment
+     *
+     * @param int $itemId Id of the database item to link to
+     * @return array
+     */
+    public function addLink(int $itemId): array
+    {
+        if ($this->Entity instanceof Database) {
+            return array('error' => 'Endpoint must be experiments not items!');
+        }
+        if ($this->Entity->id === null) {
+            return array('error' => 'No ID set. Aborting!');
+        }
+
+        if ($this->Entity->Links->create($itemId)) {
+            return array('result' => 'success');
+        }
+
+        return array('error' => 'Unable to add link!');
     }
 
     /**

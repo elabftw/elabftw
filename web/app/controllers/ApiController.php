@@ -84,6 +84,11 @@ try {
         } elseif ($Request->request->has('tag')) {
             $content = $Api->addTag($Request->request->get('tag'));
 
+        // ADD LINK
+        } elseif ($Request->request->has('link')) {
+            $content = $Api->addLink((int) $Request->request->get('link'));
+
+
         // CREATE AN EXPERIMENT
         } else {
             if ($endpoint === 'experiments') {

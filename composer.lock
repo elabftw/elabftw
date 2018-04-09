@@ -778,7 +778,7 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v4.0.7",
+            "version": "v4.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",

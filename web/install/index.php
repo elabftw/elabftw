@@ -136,11 +136,27 @@ try {
         throw new Exception($message);
     }
 
-    // TODO check for cache folder
-
-    // UPLOADS DIR
-    $uploadsDir = dirname(__DIR__, 2) . '/uploads';
+    // same doc url for cache and uploads folder
     $docUrl = 'https://doc.elabftw.net/faq.html#failed-creating-uploads-directory';
+
+    // CACHE FOLDER
+    $cacheDir = dirname(__DIR__, 2) . '/cache';
+    if (!is_dir($cacheDir) && !mkdir($cacheDir) && !is_dir($cacheDir)) {
+        $message = sprintf(
+            "Unable to create 'cache' folder! (%s) You need to do it manually. %sClick here to discover how%s.",
+            $cacheDir,
+            '<a href=' . $docUrl . '>',
+            '</a>'
+        );
+        $errflag = true;
+        throw new RuntimeException($message);
+    } else {
+        $message = "The 'cache' folder was created successfully.";
+        echo Tools::displayMessage($message, 'ok', false);
+    }
+
+    // UPLOADS FOLDER
+    $uploadsDir = dirname(__DIR__, 2) . '/uploads';
 
     if (!is_dir($uploadsDir) && !mkdir($uploadsDir) && !is_dir($uploadsDir)) {
         $message = sprintf(

@@ -20,6 +20,7 @@
     "jquery-jeditable": "2.0.2",
     "jquery-ui-dist": "^1.12.1",
     "jquery.complexify": "^0.5.2",
+    "keypress.js": "^2.1.5",
     "markdown": "^0.5.0",
     "popper.js": "^1.14.1",
     "tinymce": "^4.7.9",

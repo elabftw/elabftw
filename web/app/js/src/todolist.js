@@ -102,10 +102,13 @@
     });
 
     // TOGGLE VISIBILITY WITH A SHORTCUT
-    $(document).keypress(function(e) {
-        if (e.key === $('#todoSc').data('toggle')) {
-            Todolist.toggle();
-        }
+    const listener = new window.keypress.Listener();
+    // disable listener when in input mode (and relisten on blur)
+    $('input[type=text], textarea, input[type=search]')
+        .bind('focus', function() { listener.stop_listening(); })
+        .bind('blur', function() { listener.listen(); });
+    listener.simple_combo($('#todoSc').data('toggle'), function() {
+        Todolist.toggle();
     });
 
     // SORTABLE for TODOLIST items

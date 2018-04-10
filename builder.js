@@ -17,7 +17,8 @@ module.exports = {
             'bootstrap/js/src/button.js',
             'bootstrap/js/src/collapse.js',
             'bootstrap/js/src/dropdown.js',
-            './web/app/js/src/fontawesome.es.js'
+            './web/app/js/src/fontawesome.es.js',
+            'keypress.js'
         ],
         tinymce: [
             'tinymce'
@@ -65,6 +66,12 @@ module.exports = {
                 test: require.resolve('moment'),
                 use: [
                     { loader: 'expose-loader', options: 'moment' }
+                ]
+            },
+            {
+                test: require.resolve('keypress.js'),
+                use: [
+                    { loader: 'expose-loader', options: 'keypress' }
                 ]
             }
         ]

@@ -37,7 +37,7 @@
     "grunt-shell": "^2.1.0",
     "lodash": "^4.17.5",
     "snyk": "^1.70.3",
-    "webpack": "^4.4.1",
+    "webpack": "^4.5.0",
     "webpack-cli": "^2.0.13"
   },
   "scripts": {

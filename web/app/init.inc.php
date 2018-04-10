@@ -52,7 +52,7 @@ try {
     try {
         $App = new App($Request, new Config(), new Logs());
     } catch (PDOException $e) {
-        $url = $Request->getUri() . 'install/index.php';
+        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
         header('Location: ' . $url);
         throw new Exception('Redirecting to install folder');
     }

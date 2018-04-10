@@ -105,7 +105,7 @@ module.exports = function(grunt) {
       },
       // xdebug must be DISABLED
       runtests: {
-        command: 'docker run --rm --name selenium -d --net=host selenium/standalone-chrome && php vendor/bin/codecept run --skip functionnal; cp -f config.php.dev config.php; docker stop selenium'
+        command: 'docker run --rm --name selenium -d --net=host selenium/standalone-chrome && php vendor/bin/codecept run --skip functionnal; docker stop selenium'
       },
       // xdebug must be ENABLED
       runcoverage: {

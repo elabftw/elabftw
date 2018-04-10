@@ -12,7 +12,7 @@ config.php.*
 *.bundle.js
 node_modules/*
 phpDocumentor.phar
-test.php
+./test.php
 tests/_output/*
 tests/_support/_generated*
 uploads/

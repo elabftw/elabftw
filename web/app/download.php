@@ -12,9 +12,8 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 
-require_once '../app/init.inc.php';
-
 $elabRoot = \dirname(__DIR__, 2);
+require_once $elabRoot . '/web/app/init.inc.php';
 
 try {
     // we disable errors to avoid having notice and warning polluting our file

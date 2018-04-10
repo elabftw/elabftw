@@ -14,11 +14,11 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- *
+ * For the todolist
  */
-try {
-    require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
+try {
     $Todolist = new Todolist($App->Users);
     $Response = new JsonResponse();
 

@@ -14,9 +14,9 @@ use Exception;
 use OneLogin_Saml2_Auth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-try {
-    require_once '../init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
+try {
     // default location for redirect
     $location = '../../login.php';
 

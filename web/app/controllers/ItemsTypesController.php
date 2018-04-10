@@ -17,8 +17,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Deal with ajax requests sent from the admin page
  *
  */
+require_once \dirname(__DIR__) . '/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     $ItemsTypes = new ItemsTypes($App->Users);
     $Response = new JsonResponse();
 

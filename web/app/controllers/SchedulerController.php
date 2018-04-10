@@ -17,8 +17,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Controller for the scheduler
  *
  */
+require_once \dirname(__DIR__) . '/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     $Database = new Database($App->Users);
     $Scheduler = new Scheduler($Database);
     $Response = new JsonResponse();

@@ -17,8 +17,9 @@ use RuntimeException;
  * Import a zip or a csv
  *
  */
+require_once \dirname(__DIR__) . '/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     \set_time_limit(0);
 

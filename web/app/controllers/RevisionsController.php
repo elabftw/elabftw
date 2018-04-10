@@ -15,9 +15,9 @@ use Exception;
 /**
  * Revisions controller
  */
-try {
-    require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
+try {
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
 

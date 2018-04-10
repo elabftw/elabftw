@@ -61,7 +61,7 @@ try {
             foreach ($lines as $line) {
                 // Skip it if it's a comment
                 if ($line === '' || strpos($line, '--') === 0) {
-                        continue;
+                    continue;
                 }
 
                 // Add this line to the current segment

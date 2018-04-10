@@ -16,11 +16,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with ajax requests sent from the user control panel
- *
  */
-try {
-    require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
+try {
     $tab = 1;
     $redirect = false;
 

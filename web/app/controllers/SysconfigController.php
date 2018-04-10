@@ -16,9 +16,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
- *
  */
-require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
 

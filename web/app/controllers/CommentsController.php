@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Controller for the experiments comments
  *
  */
-require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
 

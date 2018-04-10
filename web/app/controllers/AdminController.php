@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * Deal with requests sent from the admin page
  *
  */
-require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
 

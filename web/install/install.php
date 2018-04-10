@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-require_once '../../vendor/autoload.php';
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 $configFilePath = \dirname(__DIR__, 2) . '/config.php';
 
 try {

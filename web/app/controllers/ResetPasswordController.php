@@ -16,7 +16,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
     $Email = new Email($App->Config);

@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Only Ajax request and json responses here
  *
  */
-require_once '../../app/init.inc.php';
+require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
     $Status = new Status($App->Users);

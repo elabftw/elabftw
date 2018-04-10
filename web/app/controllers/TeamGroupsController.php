@@ -14,10 +14,10 @@ use Exception;
 
 /**
  * Deal with ajax requests sent from the admin page
- *
  */
+require_once \dirname(__DIR__) . '/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     $TeamGroups = new TeamGroups($App->Users);
 
     if (!$Session->get('is_admin')) {

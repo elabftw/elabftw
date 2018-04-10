@@ -16,8 +16,9 @@ use Exception;
  * Controller for IDPs
  *
  */
+require_once \dirname(__DIR__) . '/init.inc.php';
+
 try {
-    require_once '../../app/init.inc.php';
     $Idps = new Idps();
 
     if (!$Session->get('is_sysadmin')) {

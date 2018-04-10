@@ -78,6 +78,7 @@ try {
      */
 
     // GET BODY
+    // TODO not working as anon
     if ($Request->request->has('getBody')) {
         $permissions = $Entity->getPermissions();
         if ($permissions['read'] === false) {

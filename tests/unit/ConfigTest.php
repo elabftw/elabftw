@@ -55,8 +55,10 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Config->destroyStamppass());
     }
 
-    public function testReset()
+    /* TODO
+    public function testPopulate()
     {
-        $this->assertTrue($this->Config->reset());
+        $this->assertTrue($this->Config->populate());
     }
+     */
 }

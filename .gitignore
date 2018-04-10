@@ -7,8 +7,6 @@ cache
 config.php
 config.php.*
 .idea
-web/config.php
-web/config.php.*
 *.min.css
 *.min.js
 *.bundle.js

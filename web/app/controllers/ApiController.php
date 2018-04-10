@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * This file is called without any auth, so we don't load init.inc.php but only what we need
  */
-require_once '../../config.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
+require_once \dirname(__DIR__, 3) . '/config.php';
+require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 
 try {
     // create Request object

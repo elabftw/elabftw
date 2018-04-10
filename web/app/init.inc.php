@@ -33,7 +33,7 @@ try {
     $Request->setSession($Session);
 
     // LOAD CONFIG.PHP
-    $configFilePath = dirname(__DIR__) . '/config.php';
+    $configFilePath = dirname(__DIR__, 2) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';

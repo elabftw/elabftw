@@ -19,25 +19,27 @@ use Symfony\Component\HttpFoundation\Request;
  * because the config file is already here. Otherwise, ask infos for creating it.
  *
  */
+session_start();
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
+$configFilePath = \dirname(__DIR__, 2) . '/config.php';
+$errflag = false;
+
 try {
-    session_start();
-    require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
     // create Request object
     $Request = Request::createFromGlobals();
-    $errflag = false;
 
     // Check if there is already a config file
-    if (file_exists('../config.php')) {
+    if (file_exists($configFilePath)) {
         // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
         // check that the config file is here and readable
-        if (!is_readable('../config.php')) {
+        if (!is_readable($configFilePath)) {
             $message = 'No readable config file found. Make sure the server has permissions to read it. Try :<br />
                 chmod 644 config.php<br />';
             throw new Exception($message);
         }
 
         // check if there are users registered
-        require_once '../config.php';
+        require_once $configFilePath;
         $Db = Db::getConnection();
         // ok so we are connected, now count the number of tables before trying to count the users
         // if we are in docker, the number of tables might be 0

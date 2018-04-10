@@ -23,7 +23,7 @@
     "keypress.js": "^2.1.5",
     "markdown": "^0.5.0",
     "popper.js": "^1.14.1",
-    "tinymce": "^4.7.9",
+    "tinymce": "^4.7.10",
     "tinymce-mention": "^4.0.2",
     "vanderlee-colorpicker": "^1.2.16"
   },

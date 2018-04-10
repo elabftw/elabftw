@@ -5606,9 +5606,9 @@ tinymce-mention@^4.0.2:
   dependencies:
     jquery ">=1.8.3"
 
-tinymce@^4.7.9:
-  version "4.7.9"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.7.9.tgz#2f14934cf42ab20e6d081fd282842c24aecf1866"
+tinymce@^4.7.10:
+  version "4.7.10"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.7.10.tgz#c48524dfbe7be0b294a05944a74e4aee0a2d6a1f"
 
 tmp@^0.0.33:
   version "0.0.33"

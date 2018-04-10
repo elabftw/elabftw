@@ -2496,7 +2496,7 @@ grunt-contrib-cssmin@^2.2.1:
     clean-css "~4.1.1"
     maxmin "^2.1.0"
 
-grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
+grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony, grunt-contrib-uglify@gruntjs/grunt-contrib-uglify#harmony:
   version "3.3.0"
   resolved "https://codeload.github.com/gruntjs/grunt-contrib-uglify/tar.gz/ccb95a70cad6a4e9e902d3bd5d0e38a4de09a1e1"
   dependencies:

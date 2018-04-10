@@ -161,6 +161,7 @@ class Update
      */
     private function schema39(): void
     {
+        /* TODO maybe allow to run if can_lock is already dropped too */
         $sql = "ALTER TABLE `users` DROP `can_lock`";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem updating to schema 39!');

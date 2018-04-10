@@ -2,7 +2,7 @@
 # generate the .po file
 
 # first generate the cache files of twig templates
-php web/app/locale/genCache.php
+#php src/langs/genCache.php
 # add it to the list
 find /tmp/elabftw-twig-cache -name '*.php' >> /tmp/list
 
@@ -14,10 +14,10 @@ find src -name '*.php' >> /tmp/list
 xgettext -f /tmp/list -o /tmp/xgettext.out -L PHP --from-code UTF-8
 
 # merge with existing translations
-msgmerge -o /tmp/merge.out web/app/locale/fr_FR/LC_MESSAGES/messages.po /tmp/xgettext.out
+msgmerge -o /tmp/merge.out src/langs/fr_FR/LC_MESSAGES/messages.po /tmp/xgettext.out
 
 # copy to final destination
-mv /tmp/merge.out web/app/locale/fr_FR/LC_MESSAGES/messages.po
+mv /tmp/merge.out src/langs/fr_FR/LC_MESSAGES/messages.po
 
 # cleanup
 rm /tmp/list

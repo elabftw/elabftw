@@ -133,7 +133,7 @@ try {
     $domain = 'messages';
     putenv("LC_ALL=$locale");
     setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, ELAB_ROOT . "web/app/locale");
+    bindtextdomain($domain, \dirname(__DIR__, 2) . "/src/langs");
     textdomain($domain);
     // END i18n
 

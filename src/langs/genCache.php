@@ -4,11 +4,11 @@
  * force the generation of Twig cache files
  * so we can use them for gettext po/mo generation
  *
- * Usage: php web/app/locale/genCache.php
+ * Usage: php src/langs/genCache.php
  */
-require_once dirname(__DIR__, 2) . '/config.php';
-require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
-$tplDir = dirname(__DIR__, 2) . '/app/tpl';
+require_once dirname(__DIR__, 2) . '/web/config.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+$tplDir = dirname(__DIR__, 2) . '/src/templates';
 $tmpDir = '/tmp/elabftw-twig-cache/';
 
 $loader = new \Twig_Loader_Filesystem($tplDir);

@@ -6,6 +6,7 @@
  * doing autocompletion.
  */
 const path = require('path');
+const webpack = require('webpack');
 //const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -27,8 +28,10 @@ module.exports = {
             'moment'
         ]
     },
-    /*
     plugins: [
+        // only load the moment locales that we are interested in
+        new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|pl|pt|pt-br|ru|sl|zh-cn)$/)
+    /*
         new HtmlWebpackPlugin({
             //filename: path.resolve(__dirname, 'web/app/tpl/head.html'),
             filename: 'scripts.html',
@@ -36,8 +39,8 @@ module.exports = {
             minify: false,
             //template: 'web/app/tpl/head.html'
         })
+        */
     ],
-    */
     resolve: {
         alias: {
             'jquery-ui': 'jquery-ui-dist/jquery-ui.js',

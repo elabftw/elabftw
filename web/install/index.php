@@ -52,7 +52,7 @@ try {
         $res = $req->fetch();
         if ($res['tablesCount'] < 2) {
             // bootstrap MySQL database
-            $sqlFile = __DIR__ . '/elabftw.sql';
+            $sqlFile = \dirname(__DIR__, 2) . '/src/sql/structure.sql';
             // temporary variable, used to store current query
             $queryline = '';
             // read in entire file
@@ -74,6 +74,10 @@ try {
                     $queryline = '';
                 }
             }
+            $Config = new Config();
+            $Config->reset();
+            $Teams = new Teams(new Users());
+            $Teams->create('Default team');
             header('Location: ../register.php');
             throw new Exception('Redirecting to register page');
         }

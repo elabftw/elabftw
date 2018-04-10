@@ -129,34 +129,56 @@ class Config
     }
 
     /**
-     * Reset the config to default values
+     * Reset the config to default values (or init on install)
      *
      * @return bool
      */
     public function reset(): bool
     {
+        $Update = new Update();
+        $schema = $Update->getRequiredSchema();
+
         $defaultConf = array(
-            "admin_validate" => '1',
-            "ban_time" => '60',
-            "debug" => '0',
-            "lang" => 'en_GB',
-            "login_tries" => '3',
-            "mail_from" => 'notconfigured@example.com',
-            "mail_method" => 'sendmail',
-            "proxy" => '',
-            "sendmail_path" => '/usr/sbin/sendmail',
-            "smtp_address" => 'mail.smtp2go.com',
-            "smtp_encryption" => 'tls',
-            "smtp_password" => '',
-            "smtp_port" => '2525',
-            "smtp_username" => '',
-            "stamplogin" => '',
-            "stamppass" => '',
-            "stampshare" => '1',
-            "stampprovider" => 'http://zeitstempel.dfn.de/',
-            "stampcert" => 'src/dfn-cert/pki.dfn.pem',
-            "stamphash" => 'sha256',
-            "schema" => $this->configArr['schema']);
+            'admin_validate' => '1',
+            'ban_time' => '60',
+            'debug' => '0',
+            'lang' => 'en_GB',
+            'login_tries' => '3',
+            'mail_from' => 'notconfigured@example.com',
+            'mail_method' => 'smtp',
+            'proxy' => '',
+            'sendmail_path' => '/usr/sbin/sendmail',
+            'smtp_address' => 'mail.smtp2go.com',
+            'smtp_encryption' => 'tls',
+            'smtp_password' => '',
+            'smtp_port' => '2525',
+            'smtp_username' => '',
+            'stamplogin' => '',
+            'stamppass' => '',
+            'stampshare' => '1',
+            'stampprovider' => 'http://zeitstempel.dfn.de/',
+            'stampcert' => 'src/dfn-cert/pki.dfn.pem',
+            'stamphash' => 'sha256',
+            'saml_debug' => '0',
+            'saml_strict' => '1',
+            'saml_baseurl' => NULL,
+            'saml_entityid' => NULL,
+            'saml_acs_url' => NULL,
+            'saml_acs_binding' => NULL,
+            'saml_slo_url' => NULL,
+            'saml_slo_binding' => NULL,
+            'saml_nameidformat' => NULL,
+            'saml_x509' => NULL,
+            'saml_privatekey' => NULL,
+            'saml_team' => NULL,
+            'saml_email' => NULL,
+            'saml_firstname' => NULL,
+            'saml_lastname' => NULL,
+            'local_login' => '1',
+            'local_register' => '1',
+            'anon_users' => '0',
+            'url' => NULL,
+            'schema' => $schema);
 
         return $this->update($defaultConf);
     }

@@ -34,7 +34,7 @@ class Update
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 38;
+    private const REQUIRED_SCHEMA = 39;
 
     /**
      * Init Update with Config and Db
@@ -45,6 +45,16 @@ class Update
     {
         $this->Config = $config;
         $this->Db = Db::getConnection();
+    }
+
+    /**
+     * Get the current required schema
+     *
+     * @return int required schema number
+     */
+    public function getRequiredSchema(): int
+    {
+        return self::REQUIRED_SCHEMA;
     }
 
     /**
@@ -72,6 +82,11 @@ class Update
             // 20180402 v2.0.0
             $this->schema38();
             $this->updateSchema(38);
+        }
+        if ($current_schema < 39) {
+            // 20180406 v2.0.0
+            $this->schema39();
+            $this->updateSchema(39);
         }
         // place new schema functions above this comment
 
@@ -135,6 +150,20 @@ class Update
         );";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem updating to schema 38 (second part)!');
+        }
+    }
+
+    /**
+     * Remove can_lock from users table
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema39(): void
+    {
+        $sql = "ALTER TABLE `users` DROP `can_lock`";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem updating to schema 39!');
         }
     }
 }

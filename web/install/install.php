@@ -22,9 +22,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-try {
-    require_once '../../vendor/autoload.php';
+require_once '../../vendor/autoload.php';
+$configFilePath = \dirname(__DIR__, 2) . '/config.php';
 
+try {
     // create Request object
     $Request = Request::createFromGlobals();
 
@@ -37,7 +38,7 @@ try {
     error_reporting(E_ERROR);
 
     // Check if there is already a config file, redirect to index if yes.
-    if (file_exists('../config.php')) {
+    if (file_exists($configFilePath)) {
         header('Location: ../install/index.php');
         throw new Exception('Redirecting to install page');
     }
@@ -68,8 +69,7 @@ try {
 
     // BUILD CONFIG FILE
 
-    // the new file to write to
-    $config_file = '../config.php';
+    // DEPRECATED TODO
     $elab_root = dirname(__DIR__, 2) . '/';
     // make a new secret key
     $new_key = Key::createNewRandomKey();
@@ -84,12 +84,11 @@ try {
     define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');";
 
     // we try to write content to file and propose the file for download if we can't write to it
-    //if (file_put_contents($config_file, $config)) {
-    if (file_put_contents($config_file, $config)) {
+    if (file_put_contents($configFilePath, $config)) {
         // it's cool, we managed to write the config file
         // let's put restricting permissions on it as discussed in #129
-        if (is_writable($config_file)) {
-            chmod($config_file, 0400);
+        if (is_writable($configFilePath)) {
+            chmod($configFilePath, 0400);
         }
         $msg = 'Congratulations, you successfully installed eLabFTW, 
         now you need to <strong>register</strong> your account (you will have full admin rights).';

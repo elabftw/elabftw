@@ -322,7 +322,6 @@ CREATE TABLE `users` (
   `cellphone` varchar(127) DEFAULT NULL,
   `skype` varchar(255) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL,
-  `can_lock` int(1) NOT NULL DEFAULT '0',
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
   `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
@@ -434,73 +433,9 @@ CREATE TABLE IF NOT EXISTS `experiments_tpl_tags` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ELABFTW
-/* the default item_types */
-INSERT INTO `items_types` (`team`, `id`, `name`, `color`, `template`) VALUES
-(1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');
-
-/* the default status */
-INSERT INTO `status` (`team`, `id`, `name`, `color`, `is_timestampable`, `is_default`) VALUES
-(1, 1, 'Running', '29AEB9', 0, 1),
-(1, 2, 'Success', '54aa08', 1, 0),
-(1, 3, 'Need to be redone', 'c0c0c0', 1, 0),
-(1, 4, 'Fail', 'c24f3d', 1, 0);
-
-/* the default experiment template */
-INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
-('1', '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
-<p>&nbsp;</p>
-<p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
-<p>&nbsp;</p>
-<p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);
-/* the default team */
-INSERT INTO `teams` (`team_id`, `team_name`, `deletable_xp`, `link_name`, `link_href`) VALUES
-(1, 'Default team', 1, 'Documentation', 'https://doc.elabftw.net');
 /* the groups */
 INSERT INTO `groups` (`group_id`, `group_name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
 (1, 'Sysadmins', 1, 1, 0),
 (2, 'Admins', 0, 1, 0),
 (3, 'Chiefs', 0, 1, 1),
 (4, 'Users', 0, 0, 0);
-/* the config */
-INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
-('admin_validate', '1'),
-('ban_time', '60'),
-('debug', '0'),
-('lang', 'en_GB'),
-('login_tries', '3'),
-('mail_from', 'notconfigured@example.com'),
-('mail_method', 'sendmail'),
-('proxy', ''),
-('sendmail_path', '/usr/sbin/sendmail'),
-('smtp_address', 'mail.smtp2go.com'),
-('smtp_encryption', 'tls'),
-('smtp_password', ''),
-('smtp_port', '2525'),
-('smtp_username', ''),
-('stamplogin', ''),
-('stamppass', ''),
-('stampshare', '1'),
-('stampprovider', 'http://zeitstempel.dfn.de/'),
-('stampcert', 'app/dfn-cert/pki.dfn.pem'),
-('stamphash', 'sha256'),
-('saml_debug', '0'),
-('saml_strict', '1'),
-('saml_baseurl', NULL),
-('saml_entityid', NULL),
-('saml_acs_url', NULL),
-('saml_acs_binding', NULL),
-('saml_slo_url', NULL),
-('saml_slo_binding', NULL),
-('saml_nameidformat', NULL),
-('saml_x509', NULL),
-('saml_privatekey', NULL),
-('saml_team', NULL),
-('saml_email', NULL),
-('saml_firstname', NULL),
-('saml_lastname', NULL),
-('local_login', '1'),
-('local_register', '1'),
-('anon_users', '0'),
-('url', NULL),
-('schema', '38');

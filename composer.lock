@@ -1164,21 +1164,21 @@
         },
         {
             "name": "codeception/phpunit-wrapper",
-            "version": "7.0.6",
+            "version": "7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/phpunit-wrapper.git",
-                "reference": "e8528cb777cf5a5ccea1cf57a3522b142625d1b5"
+                "reference": "cde840638d021804ce93e8f98bcb7edbf6935423"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/phpunit-wrapper/zipball/e8528cb777cf5a5ccea1cf57a3522b142625d1b5",
-                "reference": "e8528cb777cf5a5ccea1cf57a3522b142625d1b5",
+                "url": "https://api.github.com/repos/Codeception/phpunit-wrapper/zipball/cde840638d021804ce93e8f98bcb7edbf6935423",
+                "reference": "cde840638d021804ce93e8f98bcb7edbf6935423",
                 "shasum": ""
             },
             "require": {
                 "phpunit/php-code-coverage": "^6.0",
-                "phpunit/phpunit": "^7.0",
+                "phpunit/phpunit": "^7.1",
                 "sebastian/comparator": "^2.0",
                 "sebastian/diff": "^3.0"
             },
@@ -1203,7 +1203,7 @@
                 }
             ],
             "description": "PHPUnit classes used by Codeception",
-            "time": "2018-03-31T18:49:51+00:00"
+            "time": "2018-04-10T09:05:14+00:00"
         },
         {
             "name": "codeception/stub",
@@ -1960,16 +1960,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.1.1",
+            "version": "7.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f7fe5127889519e421600fe0feeb113a5e210f20"
+                "reference": "6a17c170fb92845896e1b3b00fcb462cd4b3c017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f7fe5127889519e421600fe0feeb113a5e210f20",
-                "reference": "f7fe5127889519e421600fe0feeb113a5e210f20",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6a17c170fb92845896e1b3b00fcb462cd4b3c017",
+                "reference": "6a17c170fb92845896e1b3b00fcb462cd4b3c017",
                 "shasum": ""
             },
             "require": {
@@ -2036,7 +2036,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-04-06T12:39:30+00:00"
+            "time": "2018-04-10T11:40:22+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

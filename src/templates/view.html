@@ -68,6 +68,7 @@
     {% set alt = 'Lock/Unlock item'|trans %}
     {% if Entity.entityData.locked %}
         {% set lockIcon = 'fa-lock' %}
+        {% set alt = Entity.entityData.lockedwhen %}
     {% endif %}
     <a class='elab-tooltip' href='#'>
         <span>{{ alt }}</span>

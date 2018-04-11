@@ -141,7 +141,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
         $linksArr = $this->Entity->Links->readAll();
-        if ($linksArr === false) {
+        if (\count($linksArr) === 0) {
             return $html;
         }
 
@@ -263,6 +263,35 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Add the steps
+     *
+     * @return string
+     */
+    private function addSteps(): string
+    {
+        $html = '';
+
+        $stepsArr = $this->Entity->Steps->readAll();
+        if (\count($stepsArr) === 0) {
+            return $html;
+        }
+
+        $html .= "<section class='no-break'>";
+        $html .= '<h3>Steps:</h3>';
+
+        foreach ($stepsArr as $step) {
+            $html .= "<p class='pdf-ul'>" . $step['body'];
+            if ($step['finished']) {
+                $html .= " (" . $step['finished_time'] . ")";
+            }
+            $html .= "</p>";
+        }
+
+        $html .= "</section>";
+        return $html;
+    }
+
+    /**
      * A url to click is always nice
      *
      * @return string
@@ -366,6 +395,7 @@ class MakePdf extends AbstractMake
         $content .= $this->buildBody();
         if ($this->Entity instanceof Experiments) {
             $content .= $this->addLinkedItems();
+            $content .= $this->addSteps();
         }
         $content .= $this->addAttachedFiles();
         $content .= $this->addComments();

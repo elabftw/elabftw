@@ -74,11 +74,8 @@ class Links implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->execute();
-        if ($req->rowCount() > 0) {
-            return $req->fetchAll();
-        }
 
-        return array();
+        return $req->fetchAll();
     }
 
     /**

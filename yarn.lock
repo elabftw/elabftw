@@ -10,23 +10,27 @@
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.1.3.tgz#8475e0f2d1ad1f858c4ec2e76ed9a2456a09ad83"
 
-"@fortawesome/fontawesome-free-brands@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-brands/-/fontawesome-free-brands-5.0.9.tgz#6023e29636a6d97a67a36b7e3f4af20f3d1526b0"
-  dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.1.3"
+"@fortawesome/fontawesome-common-types@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.1.4.tgz#1fbc66f0223646f23c5550c2c12e341078e2c262"
 
-"@fortawesome/fontawesome-free-regular@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-regular/-/fontawesome-free-regular-5.0.9.tgz#d420f0b9f9f4a3a0585f192d235d7e08bd5029d5"
+"@fortawesome/fontawesome-free-brands@^5.0.10":
+  version "5.0.10"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-brands/-/fontawesome-free-brands-5.0.10.tgz#37f007a2f548682c8bfb7086b7e03dc65758580a"
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.1.3"
+    "@fortawesome/fontawesome-common-types" "^0.1.4"
 
-"@fortawesome/fontawesome-free-solid@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-solid/-/fontawesome-free-solid-5.0.9.tgz#456155a1cd82a0342ffe6a869d5a54fdadd78548"
+"@fortawesome/fontawesome-free-regular@^5.0.10":
+  version "5.0.10"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-regular/-/fontawesome-free-regular-5.0.10.tgz#f81dfeaa24896bfac8fb50c58c6c02f87a2a0c80"
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.1.3"
+    "@fortawesome/fontawesome-common-types" "^0.1.4"
+
+"@fortawesome/fontawesome-free-solid@^5.0.10":
+  version "5.0.10"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free-solid/-/fontawesome-free-solid-5.0.10.tgz#b54c87d3ce4ffd0546b60d12e898e87b59776c30"
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.1.4"
 
 "@fortawesome/fontawesome@^1.1.5":
   version "1.1.5"
@@ -965,9 +969,9 @@ bootstrap-markdown-fa5@^2.10.0:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/bootstrap-markdown-fa5/-/bootstrap-markdown-fa5-2.10.0.tgz#31d4b680d17acb49273960713706db76ef34c6f6"
 
-bootstrap@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.0.0.tgz#ceb03842c145fcc1b9b4e15da2a05656ba68469a"
+bootstrap@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.1.0.tgz#110b05c31a236d56dbc9adcda6dd16f53738a28a"
 
 bops@~0.1.1:
   version "0.1.1"

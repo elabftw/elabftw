@@ -8,7 +8,7 @@
   "dependencies": {
     "@fancyapps/fancybox": "^3.2.5",
     "@fortawesome/fontawesome": "^1.1.5",
-    "@fortawesome/fontawesome-free-brands": "^5.0.9",
+    "@fortawesome/fontawesome-free-brands": "^5.0.10",
     "@fortawesome/fontawesome-free-regular": "^5.0.9",
     "@fortawesome/fontawesome-free-solid": "^5.0.9",
     "bootstrap": "^4.0.0",

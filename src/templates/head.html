@@ -86,7 +86,7 @@
                     {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://doc.elabftw.net/manual.html'>", "</a>")|raw }}
                 </li>
                 <li class='tip'>
-                    {{ "You can use a TODOlist by pressing 't'."|trans }}
+                    {{ "You can use a TODOlist by pressing '%s'."|trans|format(App.Users.userData.sc_create) }}
                 </li>
                 <li class='tip'>
                     {{ 'You can have experiments templates (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=3'>", "</a>")|raw }}

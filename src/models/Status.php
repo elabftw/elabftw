@@ -165,10 +165,9 @@ class Status extends AbstractCategory
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
-        if (($isDefault !== 'false') && $this->setDefaultFalse()) {
+        $default = 0;
+        if ($isDefault && $this->setDefaultFalse()) {
             $default = 1;
-        } else {
-            $default = 0;
         }
 
         $sql = "UPDATE status SET

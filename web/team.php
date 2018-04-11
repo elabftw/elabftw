@@ -30,8 +30,10 @@ try {
     $Database = new Database($App->Users);
     // we only want the bookable type of items
     $Database->bookableFilter = ' AND bookable = 1';
-    $itemsArr = $Database->read();
     $Scheduler = new Scheduler($Database);
+
+    $itemsArr = $Database->read();
+    $teamArr = $TeamsView->Teams->read();
 
     $selectedItem = null;
     if ($Request->query->get('item')) {
@@ -53,6 +55,7 @@ try {
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
         'selectedItem' => $selectedItem,
+        'teamArr' => $teamArr,
         'templatesArr' => $templatesArr,
         'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
     );

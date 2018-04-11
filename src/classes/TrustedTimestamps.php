@@ -280,9 +280,9 @@ class TrustedTimestamps extends AbstractMake
      * Contact the TSA and receive a token after successful timestamp
      *
      * @throws Exception
-     * @return \GuzzleHttp\Psr7\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    private function postData(): \GuzzleHttp\Psr7\Response
+    private function postData(): \Psr\Http\Message\ResponseInterface
     {
         $client = new \GuzzleHttp\Client();
 

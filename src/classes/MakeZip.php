@@ -210,8 +210,8 @@ class MakeZip extends AbstractMake
 
             $this->nameFolder();
             $this->addTimestampFiles($id);
-            if (is_array($entityArr)) {
-                $this->addAttachedFiles($entityArr['uploads']);
+            if ($uploadedFilesArr) {
+                $this->addAttachedFiles($uploadedFilesArr);
             }
             $this->addCsv($id);
             $this->addPdf();
@@ -231,7 +231,7 @@ class MakeZip extends AbstractMake
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {
-            $this->addToZip($id);
+            $this->addToZip((int) $id);
         }
 
         // add the (hidden) .elabftw.json file useful for reimport

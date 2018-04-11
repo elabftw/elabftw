@@ -163,8 +163,8 @@ class Api
     /**
      * Read an entity in full
      *
-     * @return array<string,array>
      * @throws Exception
+     * @return array<mixed, mixed>
      */
     public function getEntity(): array
     {
@@ -207,7 +207,7 @@ class Api
      * @param string $date Date
      * @param string $body Body
      * @throws Exception
-     * @return string[]
+     * @return array{error?:string, result?:string}
      */
     public function updateEntity($title, $date, $body): array
     {
@@ -239,7 +239,7 @@ class Api
      * Add a tag to an entity
      *
      * @param string $tag
-     * @return string[]
+     * @return array{error?:string, result?:string}
      */
     public function addTag($tag): array
     {
@@ -267,7 +267,7 @@ class Api
      * Add a file to an entity
      *
      * @param Request $request
-     * @return string[]
+     * @return array{error?:string, result?:string}
      */
     public function uploadFile(Request $request): array
     {

@@ -147,7 +147,7 @@ class TeamGroups implements CrudInterface
     public function update(string $name, string $id): ?string
     {
         $idArr = explode('_', $id);
-        if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1]) !== false) {
+        if ($idArr[0] === 'teamgroup' && Tools::checkId((int) $idArr[1]) !== false) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':name', $name);

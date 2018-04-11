@@ -296,7 +296,7 @@ class Users
         $req->bindParam(':key', $apiKey);
         $req->execute();
 
-        $userid = $req->fetchColumn();
+        $userid = (int) $req->fetchColumn();
 
         if (empty($userid)) {
             throw new Exception('Invalid API key.');

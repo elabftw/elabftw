@@ -147,14 +147,15 @@ class Tools
 
         // get unit
         $unit = strtolower($input[strlen($input) - 1]);
+        $value = (int) $input;
 
         // convert to Mb
         switch ($unit) {
             case 'g':
-                $input *= 1000;
+                $value *= 1000;
                 break;
             case 'k':
-                $input /= 1024;
+                $value /= 1024;
                 break;
             case 'm':
                 break;
@@ -162,7 +163,7 @@ class Tools
                 return self::DEFAULT_UPLOAD_SIZE;
         }
 
-        return (int) $input;
+        return $value;
     }
 
     /**
@@ -311,13 +312,11 @@ class Tools
     public static function printArr(array $arr): string
     {
         $html = '<ul>';
-        if (is_array($arr)) {
-            foreach ($arr as $key => $val) {
-                if (is_array($val)) {
-                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
-                } else {
-                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
-                }
+        foreach ($arr as $key => $val) {
+            if (is_array($val)) {
+                $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
+            } else {
+                $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
             }
         }
         $html .= '</ul>';

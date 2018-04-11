@@ -31,22 +31,23 @@ class TeamsView
     /**
      * Output a line of stats for a team or for all
      *
-     * @param bool|null team set to true to get stats from the team
+     * @param bool team set to true to get stats from the team
      * @return string stats
      */
-    public function showStats($team = null): string
+    public function showStats(bool $team = false): string
     {
         $stats = '';
 
-        if ($team === null) {
+        if ($team) {
+            $count = $this->Teams->getStats($this->Teams->Users->userData['team']);
+        } else {
             $count = $this->Teams->getAllStats();
             $stats .= _('Teams') . ': ' . $count['totteams'] . ' − ';
-        } else {
-            $count = $this->Teams->getStats($this->Teams->Users->userData['team']);
         }
-            $stats .= _('Members') . ': ' . $count['totusers'] . ' − ' .
-            ngettext('Experiment', 'Experiments', $count['totxp']) . ': ' . $count['totxp'] . ' (' . $count['totxpts'] . ' timestamped) − ' .
-            _('Items') . ': ' . $count['totdb'];
+
+        $stats .= _('Members') . ': ' . $count['totusers'] . ' − ' .
+        ngettext('Experiment', 'Experiments', $count['totxp']) . ': ' . $count['totxp'] . ' (' . $count['totxpts'] . ' timestamped) − ' .
+        _('Items') . ': ' . $count['totdb'];
 
         return $stats;
     }

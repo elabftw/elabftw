@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 /**
  * All about the templates
+ * TODO maybe don't extend AbstractEntity but implement CrudInterface?
  */
 class Templates extends AbstractEntity
 {

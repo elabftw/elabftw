@@ -57,9 +57,9 @@ class ReleaseCheck
      *
      * @param string $url URL to hit
      * @throws \GuzzleHttp\Exception\RequestException
-     * @return \GuzzleHttp\Psr7\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    private function get($url): \GuzzleHttp\Psr7\Response
+    private function get($url): \Psr\Http\Message\ResponseInterface
     {
         $client = new \GuzzleHttp\Client();
 
@@ -88,10 +88,10 @@ class ReleaseCheck
     }
 
     /**
-     * Return the latest version of elabftw
-     * Will fetch updates.ini file from elabftw.net
+     * Try to get the latest version number of elabftw
+     * Will fetch updates.ini file from get.elabftw.net
      *
-     * @return bool latest version or false if error
+     * @return bool
      */
     public function getUpdatesIni(): bool
     {

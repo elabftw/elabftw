@@ -375,7 +375,7 @@ class Uploads implements CrudInterface
             $height = imagesy($sourceImage);
 
             // find the "desired height" of this thumbnail, relative to the desired width
-            $desiredHeight = floor($height * ($desiredWidth / $width));
+            $desiredHeight = (int) floor($height * ($desiredWidth / $width));
 
             // create a new, "virtual" image
             $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);

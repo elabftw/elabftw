@@ -51,7 +51,7 @@ class MakePdf extends AbstractMake
         $format = $this->Entity->Users->userData['pdf_format'];
 
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = ELAB_ROOT . 'cache/mpdf/';
+        $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
         if (!is_dir($tmpDir) && !mkdir($tmpDir) && !is_dir($tmpDir)) {
             throw new Exception("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }
@@ -208,7 +208,7 @@ class MakePdf extends AbstractMake
      */
     private function addCss(): string
     {
-        return file_get_contents(ELAB_ROOT . 'web/app/css/pdf.min.css');
+        return file_get_contents(\dirname(__DIR__, 2) . '/web/app/css/pdf.min.css');
     }
 
     /**
@@ -316,7 +316,7 @@ class MakePdf extends AbstractMake
             $body = Tools::md2html($body);
         }
         // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
-        return str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $body);
+        return str_replace("src=\"app/download.php?f=", "src=\"" . \dirname(__DIR__, 2) . "/uploads/", $body);
     }
 
     /**

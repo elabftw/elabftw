@@ -57,7 +57,7 @@ class TagCloud
      * @param int $ratio between 0 and 100
      * @return string
      */
-    private function getClassFromRatio($ratio): string
+    private function getClassFromRatio(int $ratio): string
     {
         return 'cloud-' . round($ratio, -1);
     }
@@ -85,7 +85,7 @@ class TagCloud
         $cloudArr = array();
         foreach ($tags as $tag) {
             // calculate ratio
-            $ratio = floor((($tag['total'] - $last['total']) / $spread) * 100);
+            $ratio = (int) floor((($tag['total'] - $last['total']) / $spread) * 100);
             // assign a class: font size will be different depending on ratio
             $cssClass = $this->getClassFromRatio($ratio);
             $cloudArr[$tag['tag']] = $cssClass;

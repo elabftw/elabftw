@@ -71,7 +71,7 @@ class MakeCsv extends AbstractMake
     {
         $idArr = explode(" ", $this->idList);
         foreach ($idArr as $id) {
-            $this->Entity->setId($id);
+            $this->Entity->setId((int) $id);
             $permissions = $this->Entity->getPermissions();
             if ($permissions['read']) {
                 $this->addLine();

@@ -28,7 +28,7 @@ class Comments implements CrudInterface
     /**
      * Constructor
      *
-     * @param Experiments $entity
+     * @param AbstractEntity $entity
      */
     public function __construct(AbstractEntity $entity)
     {

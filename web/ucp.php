@@ -25,7 +25,7 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readFromUserid();
+    $templatesArr = $Templates->readAll();
 
     $template = 'ucp.html';
     $renderArr = array(

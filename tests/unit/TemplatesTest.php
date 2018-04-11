@@ -20,9 +20,9 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->Templates->setId(1);
         $this->assertTrue(is_array($this->Templates->read(1)));
     }
-    public function testReadFromUserid()
+    public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Templates->readFromUserid()));
+        $this->assertTrue(is_array($this->Templates->readAll()));
     }
     public function testUpdate()
     {

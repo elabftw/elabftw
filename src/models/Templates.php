@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 /**
  * All about the templates
- * TODO maybe don't extend AbstractEntity but implement CrudInterface?
  */
 class Templates extends AbstractEntity
 {
@@ -115,7 +114,7 @@ class Templates extends AbstractEntity
      *
      * @return array
      */
-    public function readFromUserid(): array
+    public function readAll(): array
     {
         $sql = "SELECT experiments_templates.id,
             experiments_templates.body,
@@ -208,7 +207,7 @@ class Templates extends AbstractEntity
      * @param string $body Content of the template
      * @return bool
      */
-    public function update($id, $name, $body): bool
+    public function updateTpl(int $id, string $name, string $body): bool
     {
         $body = Tools::checkBody($body);
         $name = Tools::checkTitle($name);

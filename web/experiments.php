@@ -189,7 +189,7 @@ try {
         $visibilityArr = $TeamGroups->getVisibilityList();
 
         $Templates = new Templates($Entity->Users);
-        $templatesArr = $Templates->readFromUserid();
+        $templatesArr = $Templates->readAll();
 
         // READ ALL ITEMS
         if ($App->Session->get('anon')) {

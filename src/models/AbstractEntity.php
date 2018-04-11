@@ -277,7 +277,7 @@ abstract class AbstractEntity
      * @param string $body
      * @return bool
      */
-    public function update($title, $date, $body): bool
+    public function update(string $title, string $date, string $body): bool
     {
         if (empty($this->entityData)) {
             $this->populate();
@@ -314,7 +314,7 @@ abstract class AbstractEntity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        if ($this->type != 'experiments') {
+        if ($this instanceof Database) {
             $req->bindParam(':userid', $this->Users->userid);
         }
         $req->bindParam(':id', $this->id);

@@ -8,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -209,7 +211,7 @@ class Api
      * @throws Exception
      * @return array{error?:string, result?:string}
      */
-    public function updateEntity($title, $date, $body): array
+    public function updateEntity(string $title, string $date, string $body): array
     {
         $this->Entity->canOrExplode('write');
 
@@ -241,7 +243,7 @@ class Api
      * @param string $tag
      * @return array{error?:string, result?:string}
      */
-    public function addTag($tag): array
+    public function addTag(string $tag): array
     {
         $this->Entity->canOrExplode('write');
 

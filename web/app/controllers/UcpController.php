@@ -96,7 +96,7 @@ try {
         $redirect = true;
 
         $Templates = new Templates($App->Users);
-        $Templates->update(
+        $Templates->updateTpl(
             $Request->request->get('tpl_id')[0],
             $Request->request->get('tpl_name')[0],
             $Request->request->get('tpl_body')[0]

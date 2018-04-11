@@ -8,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use PDO;
@@ -48,7 +50,7 @@ class Auth
      * @param string $email
      * @return string
      */
-    private function getSalt($email): string
+    private function getSalt(string $email): string
     {
         $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -88,10 +90,10 @@ class Auth
     /**
      * Populate userData from email
      *
-     * @param string|null $email
+     * @param string $email
      * @return bool
      */
-    private function populateUserDataFromEmail($email): bool
+    private function populateUserDataFromEmail(string $email): bool
     {
         $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -158,7 +160,7 @@ class Auth
      * @throws Exception
      * @return bool
      */
-    public function checkPasswordLength($password): bool
+    public function checkPasswordLength(string $password): bool
     {
         if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new Exception(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
@@ -173,7 +175,7 @@ class Auth
      * @param string $password
      * @return bool True if the login + password are good
      */
-    public function checkCredentials($email, $password): bool
+    public function checkCredentials(string $email, string $password): bool
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
@@ -194,7 +196,7 @@ class Auth
      * @param string $setCookie will be here if the user ticked the remember me checkbox
      * @return bool Return true if user provided correct credentials
      */
-    public function login($email, $password, $setCookie = 'on'): bool
+    public function login(string $email, string $password, string $setCookie = 'on'): bool
     {
         if ($this->checkCredentials($email, $password)) {
             $this->populateUserDataFromEmail($email);
@@ -213,7 +215,7 @@ class Auth
      * @param int $team
      * @return void
      */
-    public function loginAsAnon($team): void
+    public function loginAsAnon(int $team): void
     {
         $this->Request->getSession()->set('anon', 1);
         $this->Request->getSession()->set('team', $team);
@@ -228,7 +230,7 @@ class Auth
      * @param string $email
      * @return bool
      */
-    public function loginFromSaml($email): bool
+    public function loginFromSaml(string $email): bool
     {
         if ($this->populateUserDataFromEmail($email)) {
             $this->populateSession();
@@ -258,7 +260,7 @@ class Auth
             'ResetPasswordController.php'
         );
 
-        return !\in_array(basename($this->Request->getScriptName()), $nologinArr, true);
+        return !\in_array(\basename($this->Request->getScriptName()), $nologinArr, true);
     }
 
     /**

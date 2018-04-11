@@ -62,7 +62,7 @@ li.dropdown-item:hover a{ color:#29AEB9;}
 <select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>
     <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
     {% for category in categoryArr %}
-        <option value='{{ category.category_id }}' {{ Request.query.get('cat') == category.category_id ? 'selected' }}>
+        <option value='{{ category.category_id }}' {{ App.Request.query.get('cat') == category.category_id ? 'selected'}}>
         {{ category.category }}</option>
     {% endfor %}
 
@@ -73,21 +73,21 @@ li.dropdown-item:hover a{ color:#29AEB9;}
 <!-- ORDER -->
 <select name='order' style='-moz-appearance:none' class='form-control select-order'>
     <option value=''>{{ 'Order by'|trans }}</option>
-    <option value='cat' {{ Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
-    <option value='date' {{ Request.query.get('order') == 'date' ? 'selected' }}>{{ 'Date'|trans }}</option>
+    <option value='cat' {{ App.Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
+    <option value='date' {{ App.Request.query.get('order') == 'date' ? 'selected' }}>{{ 'Date'|trans }}</option>
     {% if Entity.type == 'database' %}
-        <option value='rating' {{ Request.query.get('order') == 'rating' ? 'selected' }}>{{ 'Rating'|trans }}</option>
+        <option value='rating' {{ App.Request.query.get('order') == 'rating' ? 'selected' }}>{{ 'Rating'|trans }}</option>
     {% else %}
-        <option value='comment' {{ Request.query.get('order') == 'comment' ? 'selected' }}>{{ 'Comment'|trans }}</option>
+        <option value='comment' {{ App.Request.query.get('order') == 'comment' ? 'selected' }}>{{ 'Comment'|trans }}</option>
     {% endif %}
-    <option value='title' {{ Request.query.get('order') == 'title' ? 'selected' }}>{{ 'Title'|trans }}</option>
+    <option value='title' {{ App.Request.query.get('order') == 'title' ? 'selected' }}>{{ 'Title'|trans }}</option>
 </select>
 
 <!-- SORT -->
 <select name='sort' style='-moz-appearance:none' class='form-control select-sort'>
     <option value=''>{{ 'Sort'|trans }}</option>
-    <option value='desc' {{ Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
-    <option value='asc' {{ Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
+    <option value='desc' {{ App.Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
+    <option value='asc' {{ App.Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
 </select>
 <button class='btn btn-elab submit-order'>{{ 'Order'|trans }}</button>
 <button type='reset' class='btn btn-danger submit-reset'>

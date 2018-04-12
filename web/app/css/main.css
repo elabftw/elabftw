@@ -1131,3 +1131,8 @@ code {
 .svg-inline--fa {
     color: #797979;
 }
+
+/* give more space between view action buttons */
+.view-action-buttons a {
+    margin-right: 5px;
+}

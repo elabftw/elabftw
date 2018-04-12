@@ -31,6 +31,7 @@
     <i class='far fa-calendar-alt mr-1'></i>{{ Entity.entityData.date|kdate }}
 </div>
 <!-- begin action buttons row -->
+<span class='view-action-buttons'>
 {% if not Entity.isReadOnly and not Entity.entityData.locked %}
     <a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
         <span>{{ 'Edit'|trans }}</span>
@@ -89,6 +90,8 @@
         </p>
     </div>
 {% endif %}
+
+</span><!-- end view-action-button -->
 
 <!-- build the tag array -->
 {% if Entity.entityData.tags|length > 0 %}

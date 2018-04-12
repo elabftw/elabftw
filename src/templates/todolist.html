@@ -1,4 +1,5 @@
 <div id='todoList'>
+    <i class='fas fa-times clickable align_right todoToggle' title="{{ 'Close'|trans }}"></i>
     <h2>{{ 'Todolist'|trans }}</h2>
     <form id="todo-form">
         <input id="todo" type="text" />
@@ -12,8 +13,6 @@
                 <span id='todoItem_{{ todoItem['id'] }}' class='editable'>{{ todoItem['body'] }}</span></li>
             {% endfor %}
         </ul>
-        <br><br>
-        <a class='button todoToggle' href="#">Close</a>
     </p>
     <a href="#" style='float:left' class='todoDestroyAll'>Clear All</a>
 </div>

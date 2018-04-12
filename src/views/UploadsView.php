@@ -125,7 +125,7 @@ class UploadsView
         // INSERT IN TEXT
         if ($mode === 'edit' && preg_match('/(jpg|jpeg|png|gif|svg)$/i', $ext)) {
             $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] .
-                "'><i class='fas fa-plus-circle mr-1'></i><p class='inline'>" . _('Insert in text at cursor position') . "</p></div>";
+                "'><i class='fas fa-image mr-1'></i><p class='inline'>" . _('Insert in text at cursor position') . "</p></div>";
         }
 
         $html .= "</div>";

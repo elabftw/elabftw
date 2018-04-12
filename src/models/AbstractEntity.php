@@ -431,7 +431,7 @@ abstract class AbstractEntity
                     // we also check for anon because anon will have the same team as real team member
                     if (($item['visibility'] === 'team') &&
                         ($item['team'] == $this->Users->userData['team']) &&
-                        (!$this->Users->userData['anon'])) {
+                        (!$this->Users->userData['anon'] ?? true)) {
                             return array('read' => true, 'write' => false);
                     }
 

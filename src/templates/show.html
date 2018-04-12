@@ -210,7 +210,7 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                     {{ item.rating|stars|raw }}
                 {% endif %}
 
-                {{ owner }}
+                {{ owner|raw }}
 
                 {% if item.tags is not null %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>

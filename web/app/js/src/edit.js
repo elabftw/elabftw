@@ -481,12 +481,6 @@
             elem.toggle();
         });
 
-        // MAKE THE FILE COMMENT FIELD EDITABLE
-        $('.thumbnail').on('mouseover', '.editable', function(){
-            makeEditableFileComment($(this).data('type'), $(this).data('id'));
-        });
-
-
         // DATEPICKER
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
         // If the title is 'Untitled', clear it on focus

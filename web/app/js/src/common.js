@@ -25,6 +25,7 @@ $(document).ready(function() {
     $('input[type=text], textarea, input[type=search]')
         .bind('focus', function() { listener.stop_listening(); })
         .bind('blur', function() { listener.listen(); });
+
     listener.simple_combo($('#todoSc').data('toggle'), function() {
         $('#todoList').toggle();
     });
@@ -36,6 +37,10 @@ $(document).ready(function() {
     });
     listener.simple_combo($('#shortcuts').data('submit'), function() {
         document.forms.main_form.submit();
+    });
+    // MAKE THE FILE COMMENT FIELD EDITABLE
+    $('.thumbnail').on('mouseover', '.editable', function(){
+        makeEditableFileComment($(this).data('type'), $(this).data('id'), listener);
     });
 });
 
@@ -140,7 +145,7 @@ function quickSave(type, id) {
 
 
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment(type, itemId) {
+function makeEditableFileComment(type, itemId, listener) {
     $('.thumbnail p.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
@@ -158,12 +163,17 @@ function makeEditableFileComment(type, itemId) {
 
         return(value);
         }, {
-     tooltip : 'Click to edit',
-     indicator : 'Saving...',
-     name : 'fileComment',
-     submit : 'Save',
-     cancel : 'Cancel',
-     style : 'display:inline'
+        tooltip : 'Click to edit',
+        indicator : 'Saving...',
+        name : 'fileComment',
+        submit : 'Save',
+        onblur : 'ignore',
+        // stop the keyboard shortcuts from being triggered
+        before : function() { listener.stop_listening(); },
+        callback : function() { listener.listen(); },
+
+        cancel : 'Cancel',
+        style : 'display:inline'
     });
 }
 

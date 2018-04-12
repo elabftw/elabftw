@@ -177,14 +177,4 @@
         $('[data-fancybox]').fancybox();
 
     });
-
-    // KEYBOARD SHORTCUT
-    const listener = new window.keypress.Listener();
-    // disable listener when in input mode (and relisten on blur)
-    $('input[type=text], textarea, input[type=search]')
-        .bind('focus', function() { listener.stop_listening(); })
-        .bind('blur', function() { listener.listen(); });
-    listener.simple_combo($('#shortcuts').data('edit'), function() {
-        window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
-    });
 }());

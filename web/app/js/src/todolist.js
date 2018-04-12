@@ -73,21 +73,13 @@
                 }
             });
         },
-        // show or hide the todolist
-        toggle: function() {
-            if ($('#todoList').css('display') === 'none') {
-                $('#todoList').css('display', 'inline');
-            } else {
-                $('#todoList').css('display', 'none');
-            }
-        }
     };
 
     $('#todo-form').submit(function(e) {
         Todolist.create(e);
     });
     $(document).on('click', '.todoToggle', function() {
-        Todolist.toggle();
+        $('#todoList').toggle();
     });
     $(document).on('click', '.todoDestroyAll', function() {
         Todolist.destroyAll();
@@ -99,16 +91,6 @@
 
     $('#todoItems-list').on('mouseover', '.editable', function(){
         makeEditableTodoitem();
-    });
-
-    // TOGGLE VISIBILITY WITH A SHORTCUT
-    const listener = new window.keypress.Listener();
-    // disable listener when in input mode (and relisten on blur)
-    $('input[type=text], textarea, input[type=search]')
-        .bind('focus', function() { listener.stop_listening(); })
-        .bind('blur', function() { listener.listen(); });
-    listener.simple_combo($('#todoSc').data('toggle'), function() {
-        Todolist.toggle();
     });
 
     // SORTABLE for TODOLIST items

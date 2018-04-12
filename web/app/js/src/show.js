@@ -48,23 +48,6 @@
             });
         });
 
-        // there is a create shortcut only for experiments
-        const page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
-        let controller = 'app/controllers/DatabaseController.php';
-        if (page === 'experiments.php') {
-            controller = 'app/controllers/ExperimentsController.php';
-
-            // KEYBOARD SHORTCUT
-            const listener = new window.keypress.Listener();
-            // disable listener when in input mode (and relisten on blur)
-            $('input[type=text], textarea, input[type=search]')
-                .bind('focus', function() { listener.stop_listening(); })
-                .bind('blur', function() { listener.listen(); });
-            listener.simple_combo($('#shortcuts').data('create'), function() {
-                window.location.href = controller + '?create=true';
-            });
-        }
-
         // PAGINATION
         // previous page
         $(document).on('click', '.previous-page', function() {

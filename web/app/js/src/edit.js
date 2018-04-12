@@ -226,7 +226,9 @@
                 })
                 // reload the step list
                 .done(function() {
-                    $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                    $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                        relativeMoment();
+                    });
                     // clear input field
                     $("#stepinput").val("");
                 });

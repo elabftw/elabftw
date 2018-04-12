@@ -3,8 +3,14 @@
 {% block body %}
 
 {% include('view-edit.html') %}
+<!-- WYSIWYG editor -->
 <script src='app/js/tinymce.bundle.js?v=200'></script>
+<!-- upload files form -->
 <script src='app/js/dropzone.min.js?v=200'></script>
+<!-- add moment lib -->
+<script src='app/js/moment.bundle.js'></script>
+<script src='app/js/src/relative-moment.js'></script>
+
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
     <i class='fas fa-times fa-2x clickable align_right entityDestroy' title='Delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
@@ -114,36 +120,43 @@
     {{ Revisions.showCount|raw }}
 
     {% if Entity.type == 'experiments' %}
+    <div class='row justify-content-around mt-4'>
         <!-- STEPS -->
-        <section>
+        <section class='col-md-6'>
             <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Experiments steps'|trans }}</h4>
             <br>
-            <div class='list' id='steps_div'>
-                {% if stepsArr %}
-                <ul class='list-group'>
-                    {% for step in stepsArr %}
-                    <li class='d-flex list-group-item {{ step.finished ? 'finished' }}'>
-                        <input class='mr-1' type='checkbox' {{ step.finished ? 'checked=checked' }} data-stepid='{{ step.id }}' />
-                        <span class='mr-2'>{{ step.body|raw }}</span>
-                        <span class='mr-2 text-muted'>
-                            {{ step.finished ? 'completed on %s'|trans|format(step.finished_time) }}
-                        </span>
-                        <a class='ml-auto stepDestroy' data-stepid='{{ step.id }}'>
-                            <i class='fas fa-lg fa-times clickable'></i>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+            <div class='mt-2' id='steps_div'>
+                {% for step in stepsArr %}
+
+                <div class='input-group mb-2 '>
+                    <div class='input-group-prepend'>
+                        <div class='input-group-text'>
+                            <input type='checkbox' autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' >
+                        </div>
+                    </div>
+                    <div class='form-control {{ step.finished ? 'finished' }}'>
+                    <span>{{ step.body|raw }}</span>
+                    {% if step.finished %}
+                    <span class='mr-2 text-muted'>
+                        {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+                    </span>
+                    {% endif %}
+                    <a class='ml-auto stepDestroy' data-stepid='{{ step.id }}'>
+                        <i class='fas fa-lg fa-times clickable'></i>
+                    </a>
+                    </div>
+                </div>
+
+                {% endfor %}
             </div>
             <p class='inline'>{{ 'Add a step'|trans }}</p>
             <input id='stepinput' size='60' type='text' name='step' />
         </section>
         <!-- LINKS -->
-        <section>
+        <section class='col-md-6'>
             <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
             <br>
-            <div class='list' id='links_div'>
+            <div class='mt-2' id='links_div'>
                 {% if linksArr %}
                 <ul class='list-group'>
                     {% for link in linksArr %}
@@ -160,6 +173,7 @@
             <p class='inline'>{{ 'Add a link'|trans }}</p>
             <input id='linkinput' size='60' type='text' name='link' placeholder='{{ 'from the database'|trans }}' />
         </section>
+    </div>
     {% endif %}
 </section>
 
@@ -202,6 +216,7 @@
     data-maxsize='{{ maxUploadSize }}'
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
+    data-locale='{{ App.Users.userData.lang }}'
     data-title='{{ cleanTitle }}'
     data-confirm="{{ 'Delete this?'|trans }}"
     data-untitled="{{ 'Untitled'|trans }}"

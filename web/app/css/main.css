@@ -100,7 +100,9 @@ input, select, textarea {
     color:#797979;
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
+    /*
     margin:5px 0;
+    */
 }
 .disabled-input{
     color:#989898;
@@ -115,7 +117,7 @@ select{
 .form-control{
     -moz-appearance:none;
     -webkit-appearance:none;
-    background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;
+    /*background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;*/
     padding-right: 31px;
 }
 
@@ -705,21 +707,18 @@ input[type='checkbox']{
 }
 
 /* EXPERIMENT STEPS */
-/* more space for the steps / links */
-.list {
-    margin-top: 10px;
-}
-
 .finished {
-    border-color: #58FA58;
+    color: #54aa08;
 }
 
 /* END EXPERIMENT STEPS */
 
+/*
 .col-md-6 input{
     width: 95%;
     margin: 0 0 15px;
 }
+*/
 .col-md-6 label{
     margin: 0;
 }

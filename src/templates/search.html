@@ -124,7 +124,7 @@
                 <input id='body' name='body' type='text' value='{{ body }}'/>
 
                 <!-- AND / OR -->
-                <select id='andor' name='andor'>
+                <select class='mt-2' id='andor' name='andor'>
                     <option value='' disabled selected>{{ 'Space means'|trans }}</option>
                     <option value='and' {{ Request.query.get('andor') == 'and' ? 'selected' }}>{{ 'and'|trans }}</option>
                     <option value='or' {{ Request.query.get('andor') == 'or' ? 'selected' }}>{{ 'or'|trans }}</option>

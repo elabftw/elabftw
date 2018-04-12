@@ -210,7 +210,9 @@
                         })
                         // reload the step list
                         .done(function() {
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                            relativeMoment();
+                        });
                             // clear input field
                             $("#stepinput").val("");
                         });
@@ -243,7 +245,9 @@
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div");
+                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                                relativeMoment();
+                            });
                         } else {
                             notif(data.msg, 'ko');
                         }

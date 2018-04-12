@@ -141,7 +141,7 @@
                         {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
                     </span>
                     {% endif %}
-                    <a class='ml-auto stepDestroy' data-stepid='{{ step.id }}'>
+                    <a class='align_right stepDestroy' data-stepid='{{ step.id }}'>
                         <i class='fas fa-lg fa-times clickable'></i>
                     </a>
                     </div>
@@ -149,8 +149,15 @@
 
                 {% endfor %}
             </div>
-            <p class='inline'>{{ 'Add a step'|trans }}</p>
-            <input id='stepinput' size='60' type='text' name='step' />
+
+            <!-- ADD STEP -->
+            <div class='input-group mb-3'>
+                <div class='input-group-prepend'>
+                    <span class='input-group-text' id='link-input-1'>{{ 'Add a step'|trans }}</span>
+                </div>
+                <input type='text' size='60' id='stepinput' class='form-control' />
+            </div>
+
         </section>
         <!-- LINKS -->
         <section class='col-md-6'>
@@ -170,8 +177,15 @@
                 </ul>
                 {% endif %}
             </div>
-            <p class='inline'>{{ 'Add a link'|trans }}</p>
-            <input id='linkinput' size='60' type='text' name='link' placeholder='{{ 'from the database'|trans }}' />
+            <!-- ADDD LINK -->
+            <div class='mt-2'>
+                <div class='input-group mb-3'>
+                    <div class='input-group-prepend'>
+                        <span class='input-group-text' id='link-input-1'>{{ 'Add a link'|trans }}</span>
+                    </div>
+                    <input type='text' id='linkinput' placeholder='{{ 'from the database'|trans }}' class='form-control' />
+                </div>
+            </div>
         </section>
     </div>
     {% endif %}

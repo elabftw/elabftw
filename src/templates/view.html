@@ -115,8 +115,8 @@
 <!-- SHOW NEXT STEP -->
 {% set next_step = Entity.entityData.next_step %}
 {% if next_step|length > 0 %}
-    {% set stepsArr = next_step|split('|') %}
-    {% set next = stepsArr|first %}
+    {% set nextStepsArr = next_step|split('|') %}
+    {% set next = nextStepsArr|first %}
     <p>
     {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
     </p>
@@ -136,6 +136,23 @@
 {% endif %}
 
 {% if Entity.type == 'experiments' %}
+    <!-- STEPS -->
+    {% if stepsArr %}
+        <ul class='list-group'>
+            {% for step in stepsArr %}
+            <li class='list-group-item {{ step.finished ? 'finished' }}'>
+                <i class='fas fa-{{ step.finished ? 'check-square' : 'square' }} mr-1'></i>{{ step.body|raw }}
+        {% if step.finished %}
+        <span class='mr-2 text-muted'>
+            {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+        </span>
+        {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class='mt-2'>
     <!-- LINKS -->
     {% if linksArr %}
         <ul class='list-group'>
@@ -147,6 +164,7 @@
             {% endfor %}
         </ul>
     {% endif %}
+    </div>
 
     <!-- eLabID -->
     <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>

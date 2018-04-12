@@ -37,6 +37,9 @@ try {
         // LINKS
         $linksArr = $Entity->Links->readAll();
 
+        // STEPS
+        $stepsArr = $Entity->Steps->readAll();
+
         // COMMENTS
         $commentsArr = $Entity->Comments->readAll();
 
@@ -54,6 +57,7 @@ try {
             'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'linksArr' => $linksArr,
+            'stepsArr' => $stepsArr,
             'commentsArr' => $commentsArr,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'mode' => 'view'

@@ -90,7 +90,7 @@
             </div>
             <!-- TITLE -->
             <h4>{{ 'Title'|trans }}</h4>
-            <input id='title_input' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
+            <input id='title_input' type='text' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
 
             <!-- BODY -->
             {% if Entity.type == 'experiments' %}

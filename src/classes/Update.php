@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
-use FilesystemIterator;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception as Ex;
 use Defuse\Crypto\Key;
+use Exception;
+use FilesystemIterator;
 
 /**
  * Use this to check for latest version or update the database schema

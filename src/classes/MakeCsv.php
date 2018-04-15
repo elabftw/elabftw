@@ -117,7 +117,7 @@ class MakeCsv extends AbstractMake
         // utf8 headers
         fwrite($fp, "\xEF\xBB\xBF");
         foreach ($this->list as $fields) {
-                fputcsv($fp, $fields);
+            fputcsv($fp, $fields);
         }
         fclose($fp);
     }

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Mpdf\Mpdf;
 use Exception;
+use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -343,7 +343,6 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-
         $date = date_create($this->Entity->entityData['date']);
         $date_str = date_format($date, 'Y-m-d');
 

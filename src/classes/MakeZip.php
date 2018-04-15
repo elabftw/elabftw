@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use ZipArchive;
 use Exception;
+use ZipArchive;
 
 /**
  * Make a zip archive from experiment or db item
@@ -82,7 +82,7 @@ class MakeZip extends AbstractMake
      */
     private function createZipArchive(): void
     {
-        $this->Zip = new ZipArchive;
+        $this->Zip = new ZipArchive();
 
         if (!$this->Zip->open($this->filePath, ZipArchive::CREATE)) {
             throw new Exception('Could not open zip file!');

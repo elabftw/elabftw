@@ -41,7 +41,7 @@ class Tools
                 && ($dateday <= '31')
                 && ($datemonth > '0')
                 && ($dateday > '0')) {
-                    // SUCCESS on every test
+                // SUCCESS on every test
                 return $input;
             }
         }

@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
 use DateTime;
+use Exception;
 
 /**
  * Experiments View

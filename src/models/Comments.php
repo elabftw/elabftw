@@ -115,7 +115,7 @@ class Comments implements CrudInterface
             $commenter['fullname'],
             $url
         ) . $footer);
-        $Email = new Email(new Config);
+        $Email = new Email(new Config());
         $mailer = $Email->getMailer();
 
         return $mailer->send($message);

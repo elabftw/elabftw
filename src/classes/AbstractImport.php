@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Mother class of ImportCsv and ImportZip

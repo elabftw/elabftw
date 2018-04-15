@@ -20,7 +20,6 @@ use InvalidArgumentException;
  */
 trait EntityTrait
 {
-
     /** @var Db $Db SQL Database */
     protected $Db;
 

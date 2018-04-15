@@ -385,8 +385,8 @@ class Uploads implements CrudInterface
 
             // create the physical thumbnail image to its destination (85% quality)
             imagejpeg($virtualImage, $dest, 85);
-            return true;
 
+            return true;
         }
         // and if we have no gmagick and no gd, well there's nothing I can do for you boy!
         return false;

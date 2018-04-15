@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Exception;
 use Swift_Mailer;
 use Swift_Message;
-use Swift_SmtpTransport;
 use Swift_SendmailTransport;
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
+use Swift_SmtpTransport;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -78,7 +78,6 @@ class Email
 
         // Choose mail transport method; either smtp or sendmail
         if ($this->Config->configArr['mail_method'] === 'smtp') {
-
             if ($this->Config->configArr['smtp_encryption'] === 'none') {
                 $transport = new Swift_SmtpTransport(
                     $this->Config->configArr['smtp_address'],
@@ -99,7 +98,6 @@ class Email
                     Key::loadFromAsciiSafeString(SECRET_KEY)
                 ));
             }
-
         } else {
             // Use locally installed MTA (aka sendmail); Default
             $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');

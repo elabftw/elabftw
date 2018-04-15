@@ -215,7 +215,6 @@ abstract class AbstractEntity
                 $uploadsJoin . ' ' .
                 $commentsJoin . ' ' .
                 $where;
-
         } elseif ($this instanceof Database) {
             $sql = "SELECT DISTINCT items.*, items_types.name AS category,
                 items_types.color,
@@ -230,7 +229,6 @@ abstract class AbstractEntity
             $where = "WHERE items.team = :team";
 
             $sql .= ' ' . $tagsSelect . ' ' . $from . ' ' . $uploadsJoin . ' ' . $where;
-
         } else {
             throw new Exception('Nope.');
         }
@@ -413,9 +411,8 @@ abstract class AbstractEntity
                     if ($item['team'] === $this->Users->userData['team']) {
                         return array('read' => true, 'write' => true);
                     }
-
-                // if we don't own the experiment (and we are not admin), we need to check the visibility
                 } else {
+                    // if we don't own the experiment (and we are not admin), we need to check the visibility
 
                     // if the vis. setting is public, we can see it for sure
                     if ($item['visibility'] === 'public') {
@@ -432,7 +429,7 @@ abstract class AbstractEntity
                     if (($item['visibility'] === 'team') &&
                         ($item['team'] == $this->Users->userData['team']) &&
                         (!$this->Users->userData['anon'] ?? true)) {
-                            return array('read' => true, 'write' => false);
+                        return array('read' => true, 'write' => false);
                     }
 
                     // if the vis. setting is a team group, check we are in the group
@@ -444,12 +441,10 @@ abstract class AbstractEntity
                     }
                 }
             }
-
         } elseif ($this instanceof Templates) {
             if ($item['userid'] === $this->Users->userid) {
                 return array('read' => true, 'write' => true);
             }
-
         } elseif ($this instanceof Database) {
             // for DB items, we only need to be in the same team
             if ($item['team'] === $this->Users->userData['team']) {

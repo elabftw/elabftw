@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
+use PDO;
 
 /**
  * Connect to the database with a singleton class

@@ -10,10 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
-use Exception;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
+use PDO;
 
 /**
  * All about the teams
@@ -235,7 +235,6 @@ class Teams implements CrudInterface
         $count = $this->getStats($id);
 
         if ($count['totxp'] === '0' && $count['totdb'] === '0' && $count['totusers'] === '0') {
-
             $sql = "DELETE FROM teams WHERE team_id = :team_id";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team_id', $id, PDO::PARAM_INT);

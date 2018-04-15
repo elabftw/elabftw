@@ -15,11 +15,11 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTime;
-use Exception;
-use PDO;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
 use GuzzleHttp\Exception\RequestException;
+use PDO;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -313,7 +313,6 @@ class TrustedTimestamps extends AbstractMake
 
         try {
             return $client->request('POST', $this->stampParams['stampprovider'], $options);
-
         } catch (RequestException $e) {
             throw new Exception($e->getMessage());
         }

@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
+use PDO;
 
 /**
  * Everything related to the team groups

@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use RuntimeException;
 use Exception;
-use ZipArchive;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
 use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
+use ZipArchive;
 
 /**
  * Import a .elabftw.zip file into the database.
@@ -164,7 +164,6 @@ class ImportZip extends AbstractImport
     private function importAll(): void
     {
         foreach ($this->json as $item) {
-
             $this->dbInsert($item);
 
             // upload the attached files
@@ -201,7 +200,7 @@ class ImportZip extends AbstractImport
      */
     protected function openFile(): void
     {
-        $Zip = new ZipArchive;
+        $Zip = new ZipArchive();
         $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
     }
 

@@ -10,10 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
-use Exception;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
+use PDO;
 
 /**
  * The general config table

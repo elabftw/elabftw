@@ -89,8 +89,7 @@ class UploadsView
         } elseif ($mode === 'view' && $ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor']) {
             $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
                 "' data-molpath='" . $filepath . "'></canvas></div>";
-
-            // if this is something 3Dmol.js can handle
+        // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $molExtensions, true)) {
             // try to be clever and use cartoon representation for pdb files
             if ($ext === 'pdb') {
@@ -100,7 +99,6 @@ class UploadsView
             }
             $molviewer = new MolViewer($upload['id'], $filepath, $isProtein);
             $html .= $molviewer->getViewerDiv();
-
         } else {
             $html .= "<i class='fas " . Tools::getIconFromExtension($ext) . " thumb rounded mx-auto d-block'></i>";
         }

@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use PDO;
@@ -67,7 +69,7 @@ class Tags implements CrudInterface
      * @param string|null $term The beginning of the input for tag autocomplete
      * @return array
      */
-    public function readAll($term = null): array
+    public function readAll(?string $term = null): array
     {
         $tagFilter = "";
         if ($term !== null) {
@@ -100,7 +102,7 @@ class Tags implements CrudInterface
      * @param int $newId The id of the new experiment/item that will receive the tags
      * @return void
      */
-    public function copyTags($newId): void
+    public function copyTags(int $newId): void
     {
         $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
@@ -133,7 +135,7 @@ class Tags implements CrudInterface
      * @param string $term the beginning of the tag
      * @return array the tag list filtered by the term
      */
-    public function getList($term): array
+    public function getList(string $term): array
     {
         $tagListArr = array();
         $tagsArr = $this->readAll($term);
@@ -150,7 +152,7 @@ class Tags implements CrudInterface
      * @param array $selected the selected tag(s)
      * @return string html for include in a select input
      */
-    public function generateTagList($selected): string
+    public function generateTagList(array $selected): string
     {
         $tagsArr = $this->readAll();
 

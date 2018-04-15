@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -25,7 +27,7 @@ class Database extends AbstractEntity
      * @param Users $users
      * @param int|null $id id of the item
      */
-    public function __construct(Users $users, $id = null)
+    public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
         $this->type = 'items';
@@ -38,7 +40,7 @@ class Database extends AbstractEntity
      * @param int $itemType What kind of item we want to create.
      * @return int the new id of the item
      */
-    public function create($itemType): int
+    public function create(int $itemType): int
     {
         $itemsTypes = new ItemsTypes($this->Users, $itemType);
 

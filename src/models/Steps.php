@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 /**
@@ -38,7 +40,7 @@ class Steps implements CrudInterface
      * @param string $body the text for the step
      * @return bool
      */
-    public function create($body): bool
+    public function create(string $body): bool
     {
         // remove any | as they are used in the group_concat
         $body = str_replace('|', ' ', $body);
@@ -56,7 +58,7 @@ class Steps implements CrudInterface
      * @param int $stepid
      * @return bool
      */
-    public function finish($stepid): bool
+    public function finish(int $stepid): bool
     {
         $sql = "UPDATE experiments_steps SET finished = !finished,
             finished_time = NOW()
@@ -89,7 +91,7 @@ class Steps implements CrudInterface
      * @param int $newId The id of the new experiment that will receive the steps
      * @return void
      */
-    public function duplicate($id, $newId): void
+    public function duplicate(int $id, int $newId): void
     {
         $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
         $stepreq = $this->Db->prepare($stepsql);

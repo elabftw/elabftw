@@ -8,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -41,7 +43,7 @@ class TeamGroups implements CrudInterface
      * @param string $name Name of the group
      * @return bool true if sql is successful
      */
-    public function create($name): bool
+    public function create(string $name): bool
     {
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->Db->prepare($sql);
@@ -126,7 +128,7 @@ class TeamGroups implements CrudInterface
      * @param int $id
      * @return string
      */
-    public function readName($id): string
+    public function readName(int $id): string
     {
         $sql = "SELECT name FROM team_groups WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -165,13 +167,13 @@ class TeamGroups implements CrudInterface
     /**
      * Add or remove a member from a team group
      *
-     * @param string $userId Id of the user
-     * @param string $groupId Id of the group
+     * @param int $userId Id of the user
+     * @param int $groupId Id of the group
      * @param string $action Can be 'add' or 'rm'
      * @throws Exception if the action keyword is wrong
      * @return bool true if success
      */
-    public function updateMember($userId, $groupId, $action): bool
+    public function updateMember(int $userId, int $groupId, string $action): bool
     {
         if ($action === 'add') {
             $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
@@ -227,7 +229,7 @@ class TeamGroups implements CrudInterface
      * @param int $groupid
      * @return bool
      */
-    public function isInTeamGroup($userid, $groupid): bool
+    public function isInTeamGroup(int $userid, int $groupid): bool
     {
         $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
         $req = $this->Db->prepare($sql);

@@ -41,7 +41,7 @@ class Status extends AbstractCategory
      * @param int|null $team
      * @return int id of the new item
      */
-    public function create($name, $color, $isTimestampable = 1, $default = 0, $team = null): int
+    public function create(string $name, string $color, int $isTimestampable = 1, int $default = 0, ?int $team = null): int
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];
@@ -74,7 +74,7 @@ class Status extends AbstractCategory
      * @param int $team the new team id
      * @return bool
      */
-    public function createDefault($team): bool
+    public function createDefault(int $team): bool
     {
         return $this->create('Running', '29AEB9', 0, 1, $team) &&
             $this->create('Success', '54AA08', 1, 0, $team) &&
@@ -108,7 +108,7 @@ class Status extends AbstractCategory
      * @param int $id ID of the category
      * @return string
      */
-    public function readColor($id): string
+    public function readColor(int $id): string
     {
         $sql = "SELECT color FROM status WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -124,7 +124,7 @@ class Status extends AbstractCategory
      * @param int $status ID of the status
      * @return bool true if status may be timestamped
      */
-    public function isTimestampable($status): bool
+    public function isTimestampable(int $status): bool
     {
         $sql = "SELECT is_timestampable FROM status WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -157,10 +157,10 @@ class Status extends AbstractCategory
      * @param string $name New name
      * @param string $color New color
      * @param int $isTimestampable May this status be timestamped
-     * @param bool $isDefault
+     * @param int $isDefault
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $isTimestampable, $isDefault): bool
+    public function update(int $id, string $name, string $color, int $isTimestampable, int $isDefault): bool
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -194,7 +194,7 @@ class Status extends AbstractCategory
      * @param int $id
      * @return int
      */
-    protected function countItems($id): int
+    protected function countItems(int $id): int
     {
         $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
         $req = $this->Db->prepare($sql);

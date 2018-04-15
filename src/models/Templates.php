@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 /**
@@ -23,7 +25,7 @@ class Templates extends AbstractEntity
      * @param Users $users
      * @param int|null $id
      */
-    public function __construct(Users $users, $id = null)
+    public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
         $this->type = 'experiments_tpl';
@@ -38,7 +40,7 @@ class Templates extends AbstractEntity
      * @param int|null $team
      * @return bool
      */
-    public function create($name, $body, $userid, $team = null): bool
+    public function create(string $name, string $body, int $userid, ?int $team = null): bool
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];
@@ -62,7 +64,7 @@ class Templates extends AbstractEntity
      * @param int $team the id of the new team
      * @return bool
      */
-    public function createDefault($team): bool
+    public function createDefault(int $team): bool
     {
         $defaultBody = "<p><span style='font-size: 14pt;'><strong>Goal :</strong></span></p>
         <p>&nbsp;</p>
@@ -184,7 +186,7 @@ class Templates extends AbstractEntity
      * @param string $body Content of the template
      * @return bool true if sql success
      */
-    public function updateCommon($body): bool
+    public function updateCommon(string $body): bool
     {
         $body = Tools::checkBody($body);
         $sql = "UPDATE experiments_templates SET

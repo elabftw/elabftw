@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -32,7 +34,7 @@ class Experiments extends AbstractEntity
      * @param Users $users
      * @param int|null $id
      */
-    public function __construct(Users $users, $id = null)
+    public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
         $this->page = 'experiments';
@@ -49,7 +51,7 @@ class Experiments extends AbstractEntity
      * @param int|null $tpl the template on which to base the experiment
      * @return int the new id of the experiment
      */
-    public function create($tpl = null): int
+    public function create(?int $tpl = null): int
     {
         $Templates = new Templates($this->Users);
 
@@ -91,7 +93,7 @@ class Experiments extends AbstractEntity
             $Tags->copyTags($newId);
         }
 
-        return (int) $newId;
+        return $newId;
     }
 
     /**
@@ -100,7 +102,7 @@ class Experiments extends AbstractEntity
      * @param int $itemId the DB item
      * @return array
      */
-    public function readRelated($itemId): array
+    public function readRelated(int $itemId): array
     {
         $itemsArr = array();
 
@@ -148,7 +150,7 @@ class Experiments extends AbstractEntity
      * @param string $visibility
      * @return bool
      */
-    public function updateVisibility($visibility): bool
+    public function updateVisibility(string $visibility): bool
     {
         $sql = "UPDATE experiments SET visibility = :visibility WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -196,7 +198,7 @@ class Experiments extends AbstractEntity
      * @param string $responsefilePath the file path to the timestamp token
      * @return bool
      */
-    public function updateTimestamp($responseTime, $responsefilePath): bool
+    public function updateTimestamp(string $responseTime, string $responsefilePath): bool
     {
         $sql = "UPDATE experiments SET
             locked = 1,
@@ -289,7 +291,7 @@ class Experiments extends AbstractEntity
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 
-        return (int) $newId;
+        return $newId;
     }
 
     /**

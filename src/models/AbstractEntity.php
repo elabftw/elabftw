@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -94,7 +96,7 @@ abstract class AbstractEntity
      * @param Users $users
      * @param int|null $id the id of the entity
      */
-    public function __construct(Users $users, $id = null)
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
 
@@ -359,7 +361,7 @@ abstract class AbstractEntity
      * @throws Exception
      * @return array
      */
-    public function canOrExplode($rw): array
+    public function canOrExplode(string $rw): array
     {
         $permissions = $this->getPermissions();
 
@@ -382,7 +384,7 @@ abstract class AbstractEntity
      * @throws Exception
      * @return array
      */
-    public function getPermissions($item = null): array
+    public function getPermissions(?array $item = null): array
     {
         if (!isset($this->entityData) && !isset($item)) {
         // TODO should be replaceable by this
@@ -466,7 +468,7 @@ abstract class AbstractEntity
      * @param bool $userFilter filter experiments for user or not
      * @return array
      */
-    public function getExpList($term, $userFilter = false): array
+    public function getExpList(string $term, bool $userFilter = false): array
     {
         $Experiments = new Experiments($this->Users);
         $Experiments->titleFilter = " AND title LIKE '%$term%'";
@@ -483,7 +485,7 @@ abstract class AbstractEntity
      * @param string $term the query
      * @return array
      */
-    public function getDbList($term): array
+    public function getDbList(string $term): array
     {
         $Database = new Database($this->Users);
         $Database->titleFilter = " AND title LIKE '%$term%'";
@@ -497,7 +499,7 @@ abstract class AbstractEntity
      * @param string $term the query
      * @return array
      */
-    public function getLinkList($term): array
+    public function getLinkList(string $term): array
     {
         $linksArr = array();
         $itemsArr = $this->getDbList($term);

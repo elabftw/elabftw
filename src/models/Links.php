@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -85,7 +87,7 @@ class Links implements CrudInterface
      * @param int $newId The id of the new experiment that will receive the links
      * @return void
      */
-    public function duplicate($id, $newId): void
+    public function duplicate(int $id, int $newId): void
     {
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";

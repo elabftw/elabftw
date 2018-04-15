@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -44,7 +46,7 @@ class Revisions implements CrudInterface
      * @param string $body
      * @return bool
      */
-    public function create($body): bool
+    public function create(string $body): bool
     {
         // only save a revision if there is at least MIN_DELTA characters difference between the old version and the new one
         if (abs(strlen($this->Entity->entityData['body']) - strlen($body)) > self::MIN_DELTA) {
@@ -122,7 +124,7 @@ class Revisions implements CrudInterface
      * @param int $revId The id of the revision
      * @return string
      */
-    private function readRev($revId): string
+    private function readRev(int $revId): string
     {
         $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id AND userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -157,7 +159,7 @@ class Revisions implements CrudInterface
      * @throws Exception
      * @return bool
      */
-    public function restore($revId): bool
+    public function restore(int $revId): bool
     {
         // check for lock
         if ($this->isLocked()) {

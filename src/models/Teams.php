@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
@@ -63,7 +65,7 @@ class Teams implements CrudInterface
      * @param string $name The new name of the team
      * @return int|false false on error, new team id otherwise
      */
-    public function create($name)
+    public function create(string $name)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
 
@@ -136,7 +138,7 @@ class Teams implements CrudInterface
      * @param array $post POST
      * @return bool
      */
-    public function update($post): bool
+    public function update(array $post): bool
     {
         // CHECKS
         /* TODO provide an upload button
@@ -208,7 +210,7 @@ class Teams implements CrudInterface
      * @param string $orgid The id of the team in the organisation (from IDP for instance)
      * @return bool
      */
-    public function updateName($id, $name, $orgid = ""): bool
+    public function updateName(int $id, string $name, string $orgid = ""): bool
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams
@@ -218,7 +220,7 @@ class Teams implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':orgid', $orgid);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $id);
 
         return $req->execute();
     }
@@ -237,22 +239,22 @@ class Teams implements CrudInterface
         if ($count['totxp'] === '0' && $count['totdb'] === '0' && $count['totusers'] === '0') {
             $sql = "DELETE FROM teams WHERE team_id = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id);
             $result1 = $req->execute();
 
             $sql = "DELETE FROM status WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id);
             $result2 = $req->execute();
 
             $sql = "DELETE FROM items_types WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id);
             $result3 = $req->execute();
 
             $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
+            $req->bindParam(':team_id', $id);
             $result4 = $req->execute();
 
             return $result1 && $result2 && $result3 && $result4;
@@ -309,7 +311,7 @@ class Teams implements CrudInterface
      * @param int $team
      * @return array
      */
-    public function getStats($team): array
+    public function getStats(int $team): array
     {
         $sql = "SELECT
         (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
@@ -318,7 +320,7 @@ class Teams implements CrudInterface
         (SELECT COUNT(experiments.id) FROM experiments
             WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':team', $team);
         $req->execute();
 
         return $req->fetch(PDO::FETCH_NAMED);

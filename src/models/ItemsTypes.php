@@ -26,7 +26,7 @@ class ItemsTypes extends AbstractCategory
      * @param int|null $id
      * @throws Exception if user is not admin
      */
-    public function __construct(Users $users, $id = null)
+    public function __construct(Users $users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->Users = $users;
@@ -45,7 +45,7 @@ class ItemsTypes extends AbstractCategory
      * @param int|null $team
      * @return bool true if sql success
      */
-    public function create($name, $color, $bookable, $template, $team = null): bool
+    public function create(string $name, string $color, int $bookable, string $template, ?int $team = null): bool
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];
@@ -116,7 +116,7 @@ class ItemsTypes extends AbstractCategory
      * @param int $id ID of the category
      * @return string
      */
-    public function readColor($id): string
+    public function readColor(int $id): string
     {
         $sql = "SELECT color FROM items_types WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -136,7 +136,7 @@ class ItemsTypes extends AbstractCategory
      * @param string $template html for the body
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $bookable, $template): bool
+    public function update(int $id, string $name, string $color, int $bookable, string $template): bool
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -165,7 +165,7 @@ class ItemsTypes extends AbstractCategory
      * @param int $id of the type
      * @return int
      */
-    protected function countItems($id): int
+    protected function countItems(int $id): int
     {
         $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
         $req = $this->Db->prepare($sql);

@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -42,7 +44,7 @@ class Idps implements CrudInterface
      * @param string $x509 Public x509 Certificate
      * @return int last insert id
      */
-    public function create($name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509): int
+    public function create(string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): int
     {
         $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509)
             VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509)";
@@ -66,7 +68,7 @@ class Idps implements CrudInterface
      * @param int $id
      * @return array
      */
-    public function read($id): array
+    public function read(int $id): array
     {
         $sql = "SELECT * FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -103,7 +105,7 @@ class Idps implements CrudInterface
      * @param string $x509 Public x509 Certificate
      * @return bool
      */
-    public function update($id, $name, $entityid, $ssoUrl, $ssoBinding, $sloUrl, $sloBinding, $x509): bool
+    public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): bool
     {
         $sql = "UPDATE idps SET
             name = :name,

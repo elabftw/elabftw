@@ -48,7 +48,7 @@ try {
         $Request->request->get('name'),
         $Request->request->get('color'),
         $Request->request->get('isTimestampable'),
-        $Request->request->get('isDefault')
+        (int) $Request->request->get('isDefault')
     )) {
         $res = true;
         $msg = _('Saved');

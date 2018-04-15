@@ -8,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -38,7 +40,7 @@ class Logs implements CrudInterface
      * @param string $body The content of the log
      * @return bool Will return true if the query is successfull
      */
-    public function create($type, $user, $body): bool
+    public function create(string $type, string $user, string $body): bool
     {
         $sql = 'INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)';
         $req = $this->Db->prepare($sql);

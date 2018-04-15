@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use PDO;
@@ -40,7 +42,7 @@ class BannedUsers
      * @param string $fingerprint Should be the md5 of IP + useragent
      * @return bool
      */
-    public function create($fingerprint): bool
+    public function create(string $fingerprint): bool
     {
         $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
         $req = $this->Db->prepare($sql);

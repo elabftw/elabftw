@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
@@ -62,7 +64,7 @@ class Config
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @return bool the return value of execute queries
      */
-    public function update($post): bool
+    public function update(array $post): bool
     {
         $result = array();
 
@@ -114,7 +116,6 @@ class Config
 
         return !\in_array(0, $result);
     }
-
 
     /**
      * Reset the timestamp password

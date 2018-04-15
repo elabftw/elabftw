@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 /**
@@ -51,7 +53,7 @@ class Scheduler
      * @param string $title the comment entered by user
      * @return bool
      */
-    public function create($start, $end, $title): bool
+    public function create(string $start, string $end, string $title): bool
     {
         $title = filter_var($title, FILTER_SANITIZE_STRING);
 
@@ -111,7 +113,7 @@ class Scheduler
      * @param string $end 2016-07-22T13:37:00
      * @return bool
      */
-    public function updateStart($start, $end): bool
+    public function updateStart(string $start, string $end): bool
     {
         $sql = "UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);
@@ -129,7 +131,7 @@ class Scheduler
      * @param string $end 2016-07-22T13:37:00
      * @return bool
      */
-    public function updateEnd($end): bool
+    public function updateEnd(string $end): bool
     {
         $sql = "UPDATE team_events SET end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);

@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -150,7 +152,7 @@ class Comments implements CrudInterface
      * @param int $id id of the comment
      * @return bool
      */
-    public function update($comment, $id): bool
+    public function update(string $comment, int $id): bool
     {
         $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
         // check length

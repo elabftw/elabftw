@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -42,7 +44,7 @@ class Users
      * @param Auth|null $auth
      * @param Config|null $config
      */
-    public function __construct($userid = null, Auth $auth = null, Config $config = null)
+    public function __construct(?int $userid = null, ?Auth $auth = null, ?Config $config = null)
     {
         $this->Db = Db::getConnection();
         if ($userid !== null) {
@@ -61,7 +63,7 @@ class Users
      *
      * @param int $userid
      */
-    public function setId($userid): void
+    public function setId(int $userid): void
     {
         if (Tools::checkId($userid) === false) {
             throw new Exception('Bad userid');
@@ -89,7 +91,7 @@ class Users
      * @param string $password
      * @return bool
      */
-    public function create($email, $team, $firstname = '', $lastname = '', $password = ''): bool
+    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): bool
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
@@ -172,10 +174,10 @@ class Users
      * @param int $group
      * @return int
      */
-    private function getValidated($group): int
+    private function getValidated(int $group): int
     {
         // validation is required for normal user
-        if ($this->Config->configArr['admin_validate'] === "1" && $group === 4) {
+        if ($this->Config->configArr['admin_validate'] === '1' && $group === 4) {
             return 0; // so new user will need validation
         }
         return 1;
@@ -190,7 +192,7 @@ class Users
      * @param int $team
      * @return int
      */
-    private function getGroup($team): int
+    private function getGroup(int $team): int
     {
         if ($this->isFirstUser()) {
             return 1;
@@ -206,7 +208,7 @@ class Users
      * @param string $email
      * @return bool true if there is a duplicate
      */
-    public function isDuplicateEmail($email): bool
+    public function isDuplicateEmail(string $email): bool
     {
         $sql = "SELECT email FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -237,7 +239,7 @@ class Users
      * @param int $team
      * @return bool
      */
-    private function isFirstUserInTeam($team): bool
+    private function isFirstUserInTeam(int $team): bool
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
         $req = $this->Db->prepare($sql);
@@ -254,7 +256,7 @@ class Users
      * @param int $userid
      * @return array
      */
-    public function read($userid): array
+    public function read(int $userid): array
     {
         $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
@@ -273,7 +275,7 @@ class Users
      * @param string $email
      * @return array
      */
-    public function readFromEmail($email): array
+    public function readFromEmail(string $email): array
     {
         $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users
             WHERE email = :email AND archived = 0";
@@ -289,7 +291,7 @@ class Users
      *
      * @param string $apiKey
      */
-    public function readFromApiKey($apiKey): void
+    public function readFromApiKey(string $apiKey): void
     {
         $sql = "SELECT userid FROM users WHERE api_key = :key AND archived = 0";
         $req = $this->Db->prepare($sql);
@@ -312,7 +314,7 @@ class Users
      * @param int|null $validated
      * @return array
      */
-    public function readAllFromTeam($validated = null): array
+    public function readAllFromTeam(?int $validated = null): array
     {
         $valSql = '';
         if (is_int($validated)) {
@@ -371,7 +373,7 @@ class Users
      * @throws Exception
      * @return bool
      */
-    public function update($params): bool
+    public function update(array $params): bool
     {
         $userid = Tools::checkId($params['userid']);
 
@@ -426,7 +428,7 @@ class Users
      * @param array $params
      * @return bool
      */
-    public function updatePreferences($params): bool
+    public function updatePreferences(array $params): bool
     {
         // LIMIT
         $filter_options = array(
@@ -587,7 +589,7 @@ class Users
      * @param array $params
      * @return bool
      */
-    public function updateAccount($params): bool
+    public function updateAccount(array $params): bool
     {
         // check that we got the good password
         if (!$this->Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
@@ -651,7 +653,7 @@ class Users
      * @throws Exception if invalid character length
      * @return bool True if password is updated
      */
-    public function updatePassword($password, $userid = null): bool
+    public function updatePassword(string $password, ?int $userid = null): bool
     {
         if ($userid === null) {
             $userid = $this->userid;
@@ -682,7 +684,7 @@ class Users
      * @param int $userid
      * @return bool
      */
-    private function invalidateToken($userid): bool
+    private function invalidateToken(int $userid): bool
     {
         $sql = "UPDATE users SET token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
@@ -697,7 +699,7 @@ class Users
      * @param int $userid
      * @return string
      */
-    public function validate($userid): string
+    public function validate(int $userid): string
     {
         $this->setId($userid);
 
@@ -752,7 +754,7 @@ class Users
      * @param string $password The confirmation password
      * @return bool
      */
-    public function destroy($email, $password): bool
+    public function destroy(string $email, string $password): bool
     {
         // check that we got the good password
         if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
@@ -810,7 +812,7 @@ class Users
      * @param string $email Email of user to promote
      * @return bool
      */
-    public function promoteSysadmin($email): bool
+    public function promoteSysadmin(string $email): bool
     {
         // check we have a valid email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

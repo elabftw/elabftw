@@ -8,10 +8,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
 use Gmagick;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the file uploads
@@ -51,7 +54,7 @@ class Uploads implements CrudInterface
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @return bool
      */
-    public function create($request): bool
+    public function create(Request $request): bool
     {
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
@@ -76,7 +79,7 @@ class Uploads implements CrudInterface
      * @param string $comment
      * @return bool
      */
-    public function createFromLocalFile($filePath, $comment): bool
+    public function createFromLocalFile(string $filePath, string $comment): bool
     {
         $realName = basename($filePath);
         $ext = Tools::getExt($realName);
@@ -98,16 +101,16 @@ class Uploads implements CrudInterface
      * Create an upload from a string, from Chemdoodle or Doodle
      *
      * @param string $fileType 'mol' or 'png'
-     * @param string $string
+     * @param string $content content of the file
      * @return bool
      */
-    public function createFromString($fileType, $string): bool
+    public function createFromString(string $fileType, string $content): bool
     {
         if ($fileType === 'png') {
             $realName = 'Doodle.png';
             // get the image in binary
-            $string = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $string);
-            $string = base64_decode($string);
+            $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
+            $content = base64_decode($content);
         } elseif ($fileType === 'mol') {
             $realName = 'Mol-file.mol';
         } else {
@@ -117,7 +120,7 @@ class Uploads implements CrudInterface
         $longName = $this->getCleanName() . "." . $fileType;
         $fullPath = $this->uploadsPath . $longName;
 
-        if (!empty($string) && !file_put_contents($fullPath, $string)) {
+        if (!empty($content) && !file_put_contents($fullPath, $content)) {
             throw new Exception("Could not write to file");
         }
 
@@ -131,7 +134,7 @@ class Uploads implements CrudInterface
      * @param string $rawName The name of the file as it was on the user's computer
      * @return string The cleaned filename
      */
-    private function getSanitizedName($rawName): string
+    private function getSanitizedName(string $rawName): string
     {
         return preg_replace('/[^A-Za-z0-9]/', '.', $rawName);
     }
@@ -144,7 +147,7 @@ class Uploads implements CrudInterface
      * @throws Exception if cannot move the file
      * @return bool
      */
-    private function moveFile($orig, $dest): bool
+    private function moveFile(string $orig, string $dest): bool
     {
         // fix for FreeBSD and rename across different filesystems
         // see http://php.net/manual/en/function.rename.php#117590
@@ -201,7 +204,7 @@ class Uploads implements CrudInterface
      * @throws Exception if request fail
      * @return bool
      */
-    private function dbInsert($realName, $longName, $hash, $comment = null): bool
+    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): bool
     {
         if ($comment === null) {
             $comment = 'Click to add a comment';
@@ -249,7 +252,7 @@ class Uploads implements CrudInterface
      * @param int $id id of the uploaded item
      * @return array
      */
-    public function readFromId($id): array
+    public function readFromId(int $id): array
     {
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
         $req = $this->Db->prepare($sql);
@@ -283,7 +286,7 @@ class Uploads implements CrudInterface
      * @param string $comment
      * @return bool
      */
-    public function updateComment($id, $comment): bool
+    public function updateComment(int $id, string $comment): bool
     {
         // SQL to update single file comment
         $sql = "UPDATE uploads SET comment = :comment WHERE id = :id";
@@ -302,7 +305,7 @@ class Uploads implements CrudInterface
      * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
      * @return bool
      */
-    public function makeThumb($src, $dest, $desiredWidth): bool
+    public function makeThumb(string $src, string $dest, int $desiredWidth): bool
     {
         // we don't want to work on too big images
         if (filesize($src) > self::BIG_FILE_THRESHOLD) {
@@ -398,7 +401,7 @@ class Uploads implements CrudInterface
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @return bool
      */
-    public function replace($request): bool
+    public function replace(Request $request): bool
     {
         $id = filter_var($request->request->get('upload_id'), FILTER_VALIDATE_INT);
         $upload = $this->readFromId($id);

@@ -49,7 +49,7 @@ class Revisions implements CrudInterface
     public function create(string $body): bool
     {
         // only save a revision if there is at least MIN_DELTA characters difference between the old version and the new one
-        if (abs(strlen($this->Entity->entityData['body']) - strlen($body)) > self::MIN_DELTA) {
+        if (abs(strlen($this->Entity->entityData['body'] ?? "") - strlen($body)) > self::MIN_DELTA) {
             $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid)
                 VALUES(:item_id, :body, :userid)";
 
@@ -124,7 +124,7 @@ class Revisions implements CrudInterface
      * @param int $revId The id of the revision
      * @return string
      */
-    private function readRev(int $revId): string
+    private function readRev(int $revId)
     {
         $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id AND userid = :userid";
         $req = $this->Db->prepare($sql);

@@ -24,7 +24,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa', 1), 'New name', 'fffccc', 0, 'on'));
-        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa', 1), 'New name', 'fffccc', 1, false));
+        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa', 1), 'New name', 'fffccc', 0, 1));
+        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa', 1), 'New name', 'fffccc', 1, 0));
     }
 }

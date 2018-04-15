@@ -113,7 +113,7 @@ class Experiments extends AbstractEntity
         $req->bindParam(':link_id', $itemId);
         $req->execute();
         while ($data = $req->fetch()) {
-            $this->setId($data['item_id']);
+            $this->setId((int) $data['item_id']);
             $this->canOrExplode('read');
             $itemsArr[] = $this->read();
         }

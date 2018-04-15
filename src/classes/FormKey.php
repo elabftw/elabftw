@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types = 1);
+
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Key;
@@ -53,7 +55,7 @@ class FormKey
      * @param string $formkey
      * @return bool True if there is no CSRF going on (hopefully)
      */
-    public function validate($formkey): bool
+    public function validate(string $formkey): bool
     {
         return $formkey === $this->Session->get('formkey');
     }

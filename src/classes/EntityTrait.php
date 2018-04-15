@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types = 1);
+
 namespace Elabftw\Elabftw;
 
 use InvalidArgumentException;
@@ -51,7 +53,7 @@ trait EntityTrait
      * @param array $post POST
      * @return bool
      */
-    public function updateOrdering($post): bool
+    public function updateOrdering(array $post): bool
     {
         $success = array();
 

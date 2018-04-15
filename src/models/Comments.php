@@ -97,7 +97,7 @@ class Comments implements CrudInterface
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
         // not pretty but gets the job done
-        $url = str_replace('app/models/', '', $url);
+        $url = str_replace('app/controllers/', '', $url);
         $url .= "?mode=view&id=" . $this->Entity->id;
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";

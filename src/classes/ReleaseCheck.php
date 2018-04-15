@@ -8,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+declare(strict_types = 1);
+
 namespace Elabftw\Elabftw;
 
 use GuzzleHttp\Exception\RequestException;
@@ -107,7 +109,7 @@ class ReleaseCheck
         }
 
         // read the response
-        $versions = parse_ini_string($response->getBody(), true);
+        $versions = parse_ini_string((string) $response->getBody(), true);
         // get the latest version
         $this->version = array_keys($versions)[0];
         $this->releaseDate = $versions[$this->version]['date'];

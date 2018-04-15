@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types = 1);
+
 namespace Elabftw\Elabftw;
 
 use InvalidArgumentException;
@@ -359,10 +361,8 @@ class Tools
     public static function getUrl(Request $Request): string
     {
         $Config = new Config();
-        if (strlen($Config->configArr['url']) > 10) {
-            return $Config->configArr['url'];
-        }
-        return self::getUrlFromRequest($Request);
+
+        return $Config->configArr['url'] ?? self::getUrlFromRequest($Request);
     }
 
     /**

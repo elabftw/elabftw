@@ -88,7 +88,7 @@ class UploadsView
             // special case for mol files, only in view mode
         } elseif ($mode === 'view' && $ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor']) {
             $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
-                "' data-molpath='" . $filepath . "'></canvas></div>";
+                "' data-molpath='app/download.php?f=" . $filepath . "'></canvas></div>";
         // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $molExtensions, true)) {
             // try to be clever and use cartoon representation for pdb files

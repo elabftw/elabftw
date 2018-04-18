@@ -1,0 +1,1636 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"Project-Id-Version: elabftw\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"Language: sk_SK\n"
+
+#: admin.php:94 admin.php:173 sysconfig.php:147 sysconfig.php:191
+msgid "Yes"
+msgstr "Áno"
+
+#: admin.php:97 admin.php:174 sysconfig.php:150 sysconfig.php:194
+msgid "No"
+msgstr "Nie"
+
+#: app/controllers/SysconfigController.php:176
+#: app/controllers/AdminController.php:58
+#: app/controllers/UsersController.php:43
+msgid "Configuration updated successfully."
+msgstr "Konfigurácia bola úspešne aktualizovaná."
+
+#: app/models/Users.php:472
+msgid "Wrong password!"
+msgstr "Zlé heslo!"
+
+#: app/models/Users.php:479
+msgid "No user with this email or user not in your team"
+msgstr "Žiaden používateľ s týmto e-mailom alebo používateľ nie je vo vašom tíme"
+
+#: app/ucp-exec.php:191 change-pass.php:64 change-pass.php:75
+msgid "The passwords do not match!"
+msgstr "Heslá sa nezhodujú!"
+
+#: app/register-exec.php:39 app/ucp-exec.php:141 app/ucp-exec.php:174
+#: app/login-exec.php:31 app/login-exec.php:36
+msgid "A mandatory field is missing!"
+msgstr "Chýbajú povinné polia!"
+
+#: revisions.php:31 revisions.php:40 sysconfig.php:24
+msgid "This section is out of your reach."
+msgstr "Táto sekcia je mimo váš dosah."
+
+#: login.php:106 register.php:58
+msgid "Password"
+msgstr "heslo"
+
+#: register.php:65 ucp.php:170 admin.php:164
+msgid "Firstname"
+msgstr "Krstné meno"
+
+#: register.php:70 ucp.php:177 admin.php:166
+msgid "Lastname"
+msgstr "Priezvisko"
+
+#: login.php:97 register.php:54 ucp.php:181 admin.php:168 sysconfig.php:72
+msgid "Email"
+msgstr "Email"
+
+#: app/views/ExperimentsView.php:317 app/views/EntityView.php:107
+#: app/views/TeamsView.php:78 app/views/TeamsView.php:101
+#: app/classes/UserStats.php:146 app/head.inc.php:71 experiments.php:21
+#: search.php:99
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "experiment"
+msgstr[1] "experiment"
+msgstr[2] "experiment"
+
+#: app/head.inc.php:76 database.php:21 search.php:101
+msgid "Database"
+msgstr "Databáza"
+
+#: app/head.inc.php:82 team.php:20 register.php:40 admin.php:67
+msgid "Team"
+msgstr "tím"
+
+#: app/views/DatabaseView.php:274 app/views/ExperimentsView.php:256
+#: app/views/EntityView.php:179
+msgid "Date"
+msgstr "dátum"
+
+#: app/views/DatabaseView.php:291 app/views/ExperimentsView.php:313
+#: app/views/EntityView.php:183
+msgid "Title"
+msgstr "nadpis"
+
+#: app/views/DatabaseView.php:295 profile.php:34 team.php:38
+msgid "Infos"
+msgstr "informácie"
+
+#: app/views/ExperimentsView.php:265
+msgid "Visibility"
+msgstr "viditeľnosť"
+
+#: app/views/ExperimentsView.php:297 admin.php:69
+msgid "Status"
+msgid_plural "Status"
+msgstr[0] "Stav"
+msgstr[1] "Stavy"
+msgstr[2] "Stavov"
+
+#: ucp.php:92
+msgid "Edit"
+msgstr "editovať"
+
+#: app/views/ExperimentsView.php:657 app/views/ExperimentsView.php:746
+#: app/views/StatusView.php:44 app/views/StatusView.php:80
+#: app/views/ItemsTypesView.php:48 app/views/ItemsTypesView.php:82 ucp.php:138
+#: admin.php:202 admin.php:260 sysconfig.php:121 sysconfig.php:174
+#: sysconfig.php:206 sysconfig.php:300
+msgid "Save"
+msgstr "Uložiť"
+
+#: app/controllers/DatabaseController.php:69
+#: app/controllers/SysconfigController.php:52
+#: app/controllers/SysconfigController.php:67
+#: app/controllers/SysconfigController.php:82
+#: app/controllers/StatusController.php:35
+#: app/controllers/StatusController.php:55
+#: app/controllers/EntityController.php:32
+#: app/controllers/EntityController.php:64
+#: app/controllers/EntityController.php:116
+#: app/controllers/EntityController.php:139
+#: app/controllers/ExperimentsController.php:65
+#: app/controllers/ExperimentsController.php:88
+#: app/controllers/ExperimentsController.php:104
+#: app/controllers/ItemsTypesController.php:37
+#: app/controllers/ItemsTypesController.php:58
+#: app/controllers/AdminController.php:43
+#: app/controllers/CommentsController.php:29
+#: app/controllers/CommentsController.php:44
+#: app/controllers/SchedulerController.php:28
+#: app/controllers/SchedulerController.php:44
+#: app/controllers/SchedulerController.php:59
+msgid "Saved"
+msgstr "Uložené"
+
+#: app/views/ExperimentsView.php:658
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: app/views/ExperimentsView.php:655
+msgid "Saving"
+msgstr "Ukladám"
+
+#: app/views/DatabaseView.php:303 app/views/ExperimentsView.php:322
+msgid "Save and go back"
+msgstr "Uložiť a vrátiť sa späť"
+
+#: ucp.php:85
+msgid "Action"
+msgstr "Akcia"
+
+#: ucp.php:86
+msgid "Shortcut"
+msgstr "Skratka"
+
+#: ucp.php:88 admin.php:342
+msgid "Create"
+msgstr "Vytvoriť"
+
+#: ucp.php:96
+msgid "Submit"
+msgstr "Odoslať"
+
+#: ucp.php:100
+msgid "TODO list"
+msgstr "Zoznam úloh"
+
+#: app/views/StatusView.php:42 app/views/StatusView.php:69
+#: app/views/ItemsTypesView.php:41 app/views/ItemsTypesView.php:74 team.php:104
+msgid "Name"
+msgstr "Meno"
+
+#: team.php:105 ucp.php:190
+msgid "Phone"
+msgstr "telefón"
+
+#: team.php:106 ucp.php:194
+msgid "Mobile"
+msgstr "Mobil"
+
+#: team.php:107 ucp.php:204
+msgid "Website"
+msgstr "webové stránky"
+
+#: team.php:108 ucp.php:200
+msgid "Skype"
+msgstr "Skype"
+
+#: app/models/Users.php:126
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Registrovaný nový používateľ"
+
+#: app/controllers/ResetPasswordController.php:84 app/models/Users.php:454
+msgid "There was a problem sending the email! Error was logged."
+msgstr "Pri odosielaní e-mailu sa vyskytol problém! Chyba bola zaznamenaná."
+
+#: app/controllers/ResetPasswordController.php:87
+msgid "Email sent. Check your INBOX."
+msgstr "Email odoslaný. Skontroluj si poštu."
+
+#: admin.php:46
+msgid "There are users waiting for validation of their account:"
+msgstr "Používatelia čakajú na potvrdenie svojho účtu:"
+
+#: admin.php:68
+msgid "Users"
+msgstr "Užívatelia"
+
+#: admin.php:70
+msgid "Types of items"
+msgstr "Typy položiek"
+
+#: admin.php:71
+msgid "Experiments template"
+msgstr "Šablóna experimentov"
+
+#: admin.php:90
+msgid "Users can delete experiments:"
+msgstr "Používatelia môžu odstrániť experimenty:"
+
+#: admin.php:102
+msgid "Name of the link in the top menu:"
+msgstr "Názov odkazu v hornej ponuke:"
+
+#: admin.php:106
+msgid "Address where this link should point:"
+msgstr "Adresa na ktorú má odkaz odkazovať:"
+
+#: admin.php:171
+msgid "Has an active account?"
+msgstr "Má aktívny účet?"
+
+#: admin.php:214
+msgid "DANGER ZONE"
+msgstr "NEBEZPEČNÁ ZÓNA"
+
+#: admin.php:215
+msgid "Delete an account"
+msgstr "Odstrániť účet"
+
+#: admin.php:220
+msgid "Type EMAIL ADDRESS of a member to delete this user and all their experiments/files forever:"
+msgstr "Vyplňte EMAIL ADRESU člena pre vymazanie užívateľa a všetkých jeho experimentov a súborov natrvalo:"
+
+#: admin.php:222
+msgid "Type your password:"
+msgstr "Zadajte svoje heslo:"
+
+#: admin.php:225
+msgid "Delete this user!"
+msgstr "Odstrániť tohto používateľa!"
+
+#: app/models/Status.php:170
+msgid "Remove all experiments with this status before deleting this status."
+msgstr "Pred odstránením tohto stavu odstráňte všetky experimenty s týmto stavom."
+
+#: app/views/StatusView.php:77
+msgid "Default status"
+msgstr "Predvolený stav"
+
+#: app/models/ItemsTypes.php:159
+msgid "Remove all database items with this type before deleting this type."
+msgstr "Vymažte všetky položky databázy tohto typu, pred odstránením tohto typu."
+
+#: admin.php:252
+msgid "This is the default text when someone creates an experiment."
+msgstr "Toto je predvolený text novo vytvoreného experimentu"
+
+#: admin.php:272 admin.php:301
+msgid "You should make a backup of your database before importing thousands of items!"
+msgstr "Pred importovaním tisícok položiek by ste mali zálohovať databázu!"
+
+#: admin.php:274
+msgid "1. Select a type of item to import to:"
+msgstr "1. Vyberte typ položky, ktorú chcete importovať:"
+
+#: admin.php:285
+msgid "2. Select a CSV file to import:"
+msgstr "2. Vyberte súbor CSV, ktorý chcete importovať:"
+
+#: admin.php:72 admin.php:289
+msgid "Import CSV"
+msgstr "Import CSV"
+
+#: app/models/Users.php:327
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "Len sysadmin môže niekoho spraviť sysadminom."
+
+#: app/controllers/UsersController.php:58
+msgid "Everything was purged successfully."
+msgstr "Všetko bolo úspešne očistené."
+
+#: change-pass.php:23
+msgid "Reset password"
+msgstr "Obnoviť heslo"
+
+#: change-pass.php:60
+msgid "Type it again"
+msgstr "Napíš to znova"
+
+#: change-pass.php:62
+msgid "Complexity"
+msgstr "Zložitosť"
+
+#: change-pass.php:77
+msgid "Save new password"
+msgstr "Uložiť nové heslo"
+
+#: register.php:96 change-pass.php:90
+msgid "Weak password"
+msgstr "Slabé heslo"
+
+#: register.php:103 change-pass.php:97
+msgid "Average password"
+msgstr "Priemerné heslo"
+
+#: register.php:109 change-pass.php:103
+msgid "Good password"
+msgstr "Dobré heslo"
+
+#: register.php:116 change-pass.php:110
+msgid "Strong password"
+msgstr "Silné heslo"
+
+#: register.php:123 change-pass.php:117
+msgid "No way that is your real password!"
+msgstr "Toto nie je vaše skutočné heslo!"
+
+#: app/classes/ImportCsv.php:83 app/classes/Tools.php:59
+#: app/models/Experiments.php:82 app/models/Database.php:62
+msgid "Untitled"
+msgstr "Bez mena"
+
+#: app/controllers/ExperimentsController.php:160
+msgid "You don't have the rights to delete this experiment."
+msgstr "Nemáte právo odstrániť tento experiment."
+
+#: app/models/Experiments.php:433 app/models/Experiments.php:446
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Nemáte práva na uzamknutie/odomknutie."
+
+#: app/models/Experiments.php:446
+msgid "This experiment was locked by"
+msgstr "Tento experiment bol uzamknutý "
+
+#: app/login-exec.php:58
+msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
+msgstr "Prihlásenie zlyhalo. Buď ste nesprávne zadali svoje heslo alebo Váš účet ešte nie je aktivovaný."
+
+#: login.php:20 login.php:114
+msgid "Login"
+msgstr "Prihlásiť sa"
+
+#: login.php:45 login.php:63
+msgid "You cannot login now because of too many failed login attempts."
+msgstr "Teraz sa nemôžete prihlásiť z dôvodu príliš veľa neúspešných pokusov o prihlásenie."
+
+#: login.php:51
+msgid "Number of login attempt left before being banned for"
+msgstr "Počet pokusov o prihlásenie pred zablokovaním."
+
+#: login.php:51
+msgid "minutes:"
+msgstr "minút:"
+
+#: login.php:85
+msgid "Please enable cookies in your navigator to continue."
+msgstr "Ak chcete pokračovať, povoľte vo svojom navigátore cookies."
+
+#: login.php:94
+msgid "Sign in to your account"
+msgstr "Prihláste sa do svojho účtu"
+
+#: login.php:120
+msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr "Nemáte účet? %sRegistrácia %steraz! <br> Zabudli ste heslo? %s Obnoviť %s !"
+
+#: login.php:130
+msgid "Enter your email address"
+msgstr "Vložte svoju e-mailovú adresu"
+
+#: login.php:131
+msgid "Send new password"
+msgstr "Odošlite nové heslo"
+
+#: profile.php:20
+msgid "Profile"
+msgstr "Profil"
+
+#: profile.php:38
+msgid "experiments done since"
+msgstr "experimenty dokončených od"
+
+#: app/ucp-exec.php:148 app/models/Users.php:36
+msgid "Someone is already using that email address!"
+msgstr "Niekto už túto e-mailovú adresu používa!"
+
+#: app/models/Users.php:132
+msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account."
+msgstr "Ahoj. Nový užívateľ registrovaný na elabftw. Prejdite do administrátorského panelu a overte účet."
+
+#: app/models/Users.php:142
+msgid "Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account."
+msgstr "Nepodarilo sa odoslať e-mail na informovanie administrátora. Chyba bola zaznamenaná. Obráťte sa priamo na administrátora a overte svoj účet."
+
+#: app/register-exec.php:48
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Registrácia úspešná :) <br> Vitajte na eLabFTW o /"
+
+#: register.php:24
+msgid "Please %slogout%s before you register another account."
+msgstr "Prosím %sodhláste sa%s predtým než si založíte ďalší účet."
+
+#: register.php:30
+msgid "go back to login page"
+msgstr "vráťte sa na prihlasovaciu stránku"
+
+#: register.php:32
+msgid "Create your account"
+msgstr "Vytvor si účet"
+
+#: register.php:42
+msgid "------ Select a team ------"
+msgstr "------ Zvoľte tím ------"
+
+#: register.php:75
+msgid "Password complexity"
+msgstr "Zložitosť hesla"
+
+#: register.php:81
+msgid "create"
+msgstr "vytvoriť"
+
+#: app/controllers/ResetPasswordController.php:78
+msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
+msgstr "Ahoj. Niekto (pravdepodobne vy) s adresou IP: %s a používateľský agent %s požiadali o nové heslo na eLabFTW. Ak chcete obnoviť heslo, postupujte podľa tohto odkazu: %s"
+
+#: app/controllers/ResetPasswordController.php:36
+msgid "Email not found in database!"
+msgstr "E-mail sa nenašiel v databáze!"
+
+#: revisions.php:20
+msgid "Revisions"
+msgstr "revízií"
+
+#: revisions.php:67
+msgid "Saved on:"
+msgstr "Uložené dňa:"
+
+#: revisions.php:67
+msgid "Restore"
+msgstr "obnoviť"
+
+#: app/head.inc.php:88 search.php:21
+msgid "Search"
+msgstr "Vyhľadávanie"
+
+#: search.php:197
+msgid "Search only in experiments owned by:"
+msgstr "Hľadať iba v experimentoch vo vlastníctve:"
+
+#: search.php:200
+msgid "Yourself"
+msgstr "sám"
+
+#: search.php:97
+msgid "Search in"
+msgstr "Vyhľadávanie v"
+
+#: search.php:233
+msgid "Where date is between"
+msgstr "Kde je dátum medzi"
+
+#: search.php:235 search.php:273
+msgid "and"
+msgstr "a"
+
+#: search.php:244
+msgid "And title contains"
+msgstr "A názov obsahuje"
+
+#: search.php:268
+msgid "And body contains"
+msgstr "A telo obsahuje"
+
+#: search.php:249
+msgid "And status is"
+msgstr "A stav je"
+
+#: search.php:251
+msgid "select status"
+msgstr "vyberte stav"
+
+#: search.php:282
+msgid "And rating is"
+msgstr "A hodnotenie je"
+
+#: search.php:284
+msgid "select number of stars"
+msgstr "vyberte počet hviezdičiek"
+
+#: search.php:285
+msgid "Unrated"
+msgstr "nehodnotené"
+
+#: search.php:301
+msgid "Launch search"
+msgstr "Spustenie vyhľadávania"
+
+#: app/views/EntityView.php:82 search.php:509
+msgid "Export this result:"
+msgstr "Exportovať tento výsledok:"
+
+#: app/views/DatabaseView.php:111 app/views/ExperimentsView.php:157
+#: search.php:497
+msgid "Sorry. I couldn't find anything :("
+msgstr "Prepáč. Nenašiel som nič :("
+
+#: sysconfig.php:69
+msgid "Server"
+msgstr "server"
+
+#: sysconfig.php:70
+msgid "Timestamp"
+msgstr "Časová značka"
+
+#: app/views/ExperimentsView.php:432
+msgid "on"
+msgstr "na"
+
+#: app/views/ExperimentsView.php:432
+msgid "at"
+msgstr "na"
+
+#: sysconfig.php:71
+msgid "Security"
+msgstr "Zabezpečenie"
+
+#: app/views/TeamsView.php:78 app/views/TeamsView.php:100
+msgid "Members"
+msgstr "Členovia"
+
+#: app/views/TeamsView.php:78 app/views/TeamsView.php:102
+msgid "Items"
+msgstr "predmety"
+
+#: app/views/TeamsView.php:78
+msgid "Created"
+msgstr "Vytvorené"
+
+#: sysconfig.php:118
+msgid "If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128"
+msgstr "Ak ste za bránou firewall / proxy, zadajte tu adresu. Príklad: http://proxy.example.com:3128"
+
+#: sysconfig.php:143
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "Tímy môžu použiť nižšie uvedené poverenia na časovú pečiatku:"
+
+#: admin.php:124 sysconfig.php:163
+msgid "Login for external timestamping service:"
+msgstr "Prihlásenie pre službu externého časového označenia:"
+
+#: admin.php:129 sysconfig.php:165
+msgid "Password for external timestamping service:"
+msgstr "Heslo pre službu externého časovania:"
+
+#: sysconfig.php:187
+msgid "Users need validation by admin after registration:"
+msgstr "Používatelia potrebujú validáciu adminom po registrácii:"
+
+#: sysconfig.php:196
+msgid "Set to yes for added security."
+msgstr "Ak chcete zvýšiť bezpečnosť, nastavte áno."
+
+#: sysconfig.php:197
+msgid "Number of allowed login attempts:"
+msgstr "Počet povolených pokusov o prihlásenie:"
+
+#: sysconfig.php:199
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 môže byť príliš málo. Pozrite sa sami :)"
+
+#: sysconfig.php:203
+msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
+msgstr "Na identifikáciu používateľa používame md5 užívateľského agenta + IP. Pretože robiť to len na základe IP adresy by určite spôsobilo problémy."
+
+#: sysconfig.php:276
+msgid "Address of the SMTP server:"
+msgstr "Adresa SMTP servera:"
+
+#: sysconfig.php:289
+msgid "Probably TLS"
+msgstr "Pravdepodobne TLS"
+
+#: sysconfig.php:290
+msgid "SMTP Port:"
+msgstr "SMTP Port:"
+
+#: sysconfig.php:292
+msgid "Default is 587."
+msgstr "Predvolená hodnota je 587."
+
+#: sysconfig.php:293
+msgid "SMTP username:"
+msgstr "SMTP používateľské meno:"
+
+#: sysconfig.php:295
+msgid "SMTP password"
+msgstr "Heslo SMTP"
+
+#: app/head.inc.php:111
+msgid "You can use a TODOlist by pressing 't'."
+msgstr "Zoznam TODO môžete použiť stlačením tlačidla \"t\"."
+
+#: app/head.inc.php:113
+msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
+msgstr "Správca tímu môže upraviť stav a typy dostupných položiek ( %s Admin Panel %s )."
+
+#: app/head.inc.php:115
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "K dispozícii sú vlastné skratky ( %s Ovládací panel %s )."
+
+#: app/head.inc.php:116
+msgid "You can duplicate experiments in one click."
+msgstr "Experimenty môžete duplikovať jedným kliknutím."
+
+#: app/head.inc.php:117
+msgid "Click a tag to list all items with this tag."
+msgstr "Kliknutím na značku zobrazíte všetky položky s touto značkou."
+
+#: app/head.inc.php:118
+msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
+msgstr "Po ukončení časového označenia nie je možné experiment odblokovať alebo upraviť. Je možné pridať iba poznámky."
+
+#: ucp.php:18
+msgid "User Control Panel"
+msgstr "Ovládací panel používateľa"
+
+#: app/ucp-exec.php:222
+msgid "Profile updated."
+msgstr "Profil aktualizovaný."
+
+#: app/ucp-exec.php:119
+msgid "Preferences updated."
+msgstr "Preferencie aktualizované."
+
+#: app/ucp-exec.php:233
+msgid "You must specify a name for the template!"
+msgstr "Musíte zadať názov šablóny!"
+
+#: app/ucp-exec.php:237
+msgid "The template name must be 3 characters long."
+msgstr "Názov šablóny musí mať 3 znaky."
+
+#: app/ucp-exec.php:247
+msgid "Experiment template successfully added."
+msgstr "Šablóna experimentu bola úspešne pridaná."
+
+#: app/ucp-exec.php:282
+msgid "Template successfully edited."
+msgstr "Šablóna bola úspešne upravená."
+
+#: ucp.php:32
+msgid "Account"
+msgstr "účet"
+
+#: ucp.php:31
+msgid "Preferences"
+msgstr "Preferencie"
+
+#: ucp.php:33
+msgid "Templates"
+msgstr "Šablóny"
+
+#: ucp.php:151
+msgid "Modify your personal informations"
+msgstr "Zmeňte svoje osobné informácie"
+
+#: ucp.php:166
+msgid "Modify your identity"
+msgstr "Upravte svoju identitu"
+
+#: ucp.php:156
+msgid "Modify your password"
+msgstr "Upravte svoje heslo"
+
+#: ucp.php:157 change-pass.php:57
+msgid "New password"
+msgstr "Nové heslo"
+
+#: ucp.php:159
+msgid "Confirm new password"
+msgstr "Potvrďte nové heslo"
+
+#: ucp.php:187
+msgid "Modify your contact information"
+msgstr "Upravte svoje kontaktné informácie"
+
+#: ucp.php:211
+msgid "Update profile"
+msgstr "Aktualizovať profil"
+
+#: ucp.php:66
+msgid "Default"
+msgstr "štandardné"
+
+#: ucp.php:71
+msgid "Compact"
+msgstr "kompaktné"
+
+#: ucp.php:75
+msgid "Items per page:"
+msgstr "Položky na stránku:"
+
+#: app/views/EntityView.php:146
+msgid "Create new"
+msgstr "Vytvor nový"
+
+#: ucp.php:245
+msgid "Add template"
+msgstr "Pridať šablónu"
+
+#: ucp.php:266
+msgid "Edit template"
+msgstr "Upraviť šablónu"
+
+#: ucp.php:42 sysconfig.php:100
+msgid "Language"
+msgstr "Jazyk"
+
+#: app/views/DatabaseView.php:219
+msgid "Last modified by"
+msgstr "Naposledy upravené"
+
+#: app/views/ExperimentsView.php:432
+msgid "Experiment was timestamped by"
+msgstr "Experiment bol označený časovou značkou"
+
+#: app/views/ExperimentsView.php:509
+msgid "Unique eLabID:"
+msgstr "Jedinečný eLabID:"
+
+#: app/views/ExperimentsView.php:717
+msgid "Comments"
+msgstr "Komentáre"
+
+#: app/views/ExperimentsView.php:743
+msgid "Add a comment"
+msgstr "Pridať komentár"
+
+#: app/views/DatabaseView.php:260 app/views/ExperimentsView.php:243
+#: app/views/ExperimentsView.php:629 app/views/ExperimentsView.php:728
+#: app/views/UploadsView.php:121 app/views/TeamGroupsView.php:53
+msgid "Delete this?"
+msgstr "Odstrániť toto?"
+
+#: app/classes/TagCloud.php:76
+msgid "Tag cloud"
+msgstr "Značka cloud"
+
+#: app/classes/TagCloud.php:82
+msgid "Not enough tags to make a tagcloud."
+msgstr "Nie je dostatok značiek na vytvorenie tagcloud."
+
+#: app/classes/UserStats.php:126
+msgid "Statistics"
+msgstr "Štatistiky"
+
+#: profile.php:46
+msgid "No statistics available yet."
+msgstr "Zatiaľ nie sú k dispozícii žiadne štatistiky."
+
+#: app/views/EntityView.php:122
+msgid "Filter status"
+msgstr "Stav filtra"
+
+#: app/views/DatabaseView.php:71 app/views/ExperimentsView.php:105
+msgid "<strong>This item is locked.</strong> You cannot edit it."
+msgstr "<strong> Táto položka je uzamknutá. </ strong> Nemôžete ju upraviť."
+
+#: app/views/EntityView.php:278
+msgid "Tags"
+msgstr "Štítky"
+
+#: app/views/EntityView.php:66
+msgid "Do you want to navigate away from this page? Unsaved changes will be lost!"
+msgstr "Chcete prejsť od tejto stránky? Neuložené zmeny sa stratia!"
+
+#: app/views/ExperimentsView.php:100
+msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
+msgstr "<strong> Nemožno upraviť: </ strong> tento experiment nie je váš!"
+
+#: app/views/EntityView.php:284
+msgid "Add a tag"
+msgstr "Pridajte štítok"
+
+#: app/views/ExperimentsView.php:276
+msgid "Only the team"
+msgstr "Len Tím"
+
+#: app/views/ExperimentsView.php:281
+msgid "Only me"
+msgstr "Iba ja"
+
+#: app/views/ExperimentsView.php:331
+msgid "Linked items"
+msgstr "Prepojené položky"
+
+#: app/views/ExperimentsView.php:335
+msgid "Add a link"
+msgstr "Pridať odkaz"
+
+#: app/views/ExperimentsView.php:336
+msgid "from the database"
+msgstr "z databázy"
+
+#: app/models/Revisions.php:104
+msgid "Show history"
+msgstr "Zobraziť históriu"
+
+#: app/models/Revisions.php:103
+msgid "revision available."
+msgid_plural "revisions available."
+msgstr[0] "revízii k dispozícii."
+msgstr[1] "revízia k dispozícii."
+msgstr[2] "revízie k dispozícii."
+
+#: app/head.inc.php:102
+msgid "Howdy,"
+msgstr "Nazdar,"
+
+#: app/head.inc.php:103
+msgid "Settings"
+msgstr "Nastavenie"
+
+#: app/head.inc.php:105
+msgid "Logout"
+msgstr "Odhlásiť sa"
+
+#: app/footer.inc.php:42
+msgid "Sysadmin panel"
+msgstr "Panel Sysadmin"
+
+#: app/footer.inc.php:46 admin.php:20
+msgid "Admin panel"
+msgstr "Panel správcov"
+
+#: app/footer.inc.php:55
+msgid "Powered by"
+msgstr "Založené na technológii"
+
+#: app/footer.inc.php:56
+msgid "Page generated in"
+msgstr "Stránka generovaná v"
+
+#: app/head.inc.php:112
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr "Môžete mať šablóny experimentov ( %s Ovládací panel %s )."
+
+#: app/head.inc.php:114
+msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
+msgstr "Ak v editore stlačíte kláves Ctrl Shift D, pod kurzor sa objaví dátum."
+
+#: profile.php:39
+msgid "Go to user control panel"
+msgstr "Prejdite na ovládací panel používateľa"
+
+#: sysconfig.php:61
+msgid "Please finalize install : %slink to documentation%s."
+msgstr "Prosím dokončite inštaláciu: %s odkaz na dokumentáciu %s ."
+
+#: app/views/TeamsView.php:96 sysconfig.php:68
+msgid "Teams"
+msgstr "Timy"
+
+#: admin.php:115 sysconfig.php:154
+msgid "URL for external timestamping service:"
+msgstr "Adresa URL pre externú službu časovania:"
+
+#: admin.php:120 sysconfig.php:159
+msgid "Chain of certificates of the external timestamping service:"
+msgstr "Reťaz certifikátov služby externého časovania:"
+
+#: admin.php:126
+msgid "This should be the login associated with your timestamping service provider"
+msgstr "Toto by malo byť prihlasovacie meno spojené s poskytovateľom služieb časovej značky"
+
+#: admin.php:137
+msgid "Your timestamping service provider password"
+msgstr "Heslo poskytovateľa služby časového označenia"
+
+#: admin.php:271
+msgid "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."
+msgstr "Táto stránka vám umožní importovať súbor .csv (tabuľkový procesor Excel) do databázy. <br> Najprv musíte otvoriť súbor .xls / .xlsx v programe Excel alebo Libreoffice a uložiť ho ako .csv. aby bol dobrý import, prvý riadok by mal byť názvy polí v stĺpci. Môžete urobiť malý import 3 riadkov, aby ste zistili, či všetko funguje pred importom veľkého súboru."
+
+#: app/models/Users.php:427
+msgid "Validated user with ID :"
+msgstr "Overený používateľ s ID:"
+
+#: app/models/Users.php:306 app/models/Users.php:322 app/models/Entity.php:56
+#: revisions.php:54
+msgid "The id parameter is not valid!"
+msgstr "Parameter id nie je platný!"
+
+#: app/models/Experiments.php:451
+msgid "You cannot unlock or edit in any way a timestamped experiment."
+msgstr "Nemôžete akýmkoľvek spôsobom odomknúť ani upraviť experiment s časovým označením."
+
+#: app/login-exec.php:26
+msgid "Your session expired. Please retry."
+msgstr "Vaša relácia vypršala. Skúste to znova."
+
+#: app/register-exec.php:46
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "Úspešná registrácia :) <br> Váš účet musí teraz overiť administrátor. <br> Po prijatí e-mailu dostanete e-mail."
+
+#: app/views/UploadsView.php:113
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "Priložených súborov"
+msgstr[1] "Priložený súbor"
+msgstr[2] "Priložené súbory"
+
+#: app/views/UploadsView.php:39
+msgid "Attach a file"
+msgstr "Priložiť súbor"
+
+#: app/views/UploadsView.php:54
+msgid "Drop files here to upload"
+msgstr "Tu vložte súbory, ktoré chcete priložiť"
+
+#: app/views/DatabaseView.php:118 app/views/ExperimentsView.php:165
+#: search.php:519
+msgid "result found"
+msgid_plural "results found"
+msgstr[0] "nájdených výsledkov"
+msgstr[1] "nájdený výsledok"
+msgstr[2] "nájdené výsledky"
+
+#: register.php:18
+msgid "Register"
+msgstr "Zaregistruj sa"
+
+#: app/models/Revisions.php:172
+msgid "You cannot restore a revision of a locked item!"
+msgstr "Nemôžete obnoviť revíziu uzamknutej položky!"
+
+#: sysconfig.php:73
+msgid "Logs"
+msgstr "Logy"
+
+#: sysconfig.php:152
+msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel."
+msgstr "Môžete kontrolovať, či tímy môžu používať globálny účet časového označenia. Ak je nastavený <em> nie </ em>, administrátor tímu musí pridať prihlasovacie informácie do administrátorského panelu."
+
+#: app/views/EntityView.php:43
+msgid "Molecule drawer"
+msgstr "Zásuvka na molekulu"
+
+#: ucp.php:152
+msgid "Enter your password to edit infos."
+msgstr "Zadajte svoje heslo na úpravu informácií."
+
+#: search.php:173
+msgid "Select a tag"
+msgstr "vyber značku"
+
+#: search.php:152 search.php:171
+msgid "With the tag"
+msgstr "S tagom"
+
+#: admin.php:117 sysconfig.php:156
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "Mala by to byť adresa URL použitá pre žiadosti o časové označenie %s RFC 3161 %s ."
+
+#: admin.php:122 sysconfig.php:161
+msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!"
+msgstr "To by malo poukázať na reťazec certifikátov používaných vaším externým poskytovateľom časových pečiatok na podpísanie časových pečiatok. %s Miestna cesta vzhľadom na inštalačný adresár eLabFTW. Súbor musí byť v %s formáte PEM kódovaných (ASCII) %s !"
+
+#: app/views/ExperimentsView.php:433
+msgid "Download timestamped pdf"
+msgstr "Stiahnite si časovo opečiatkované pdf"
+
+#: admin.php:300
+msgid "This page will allow you to import a .elabftw.zip archive."
+msgstr "Táto stránka vám umožní importovať archív .elabftw.zip."
+
+#: app/controllers/ImportController.php:33
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "položiek úspešne importovaných."
+msgstr[1] "položka úspešne importovaná."
+msgstr[2] "položky úspešne importované."
+
+#: sysconfig.php:44
+msgid "Installed version:"
+msgstr "Inštalovaná verzia:"
+
+#: sysconfig.php:54
+msgid "A new version is available!"
+msgstr "Nová verzia"
+
+#: ucp.php:108
+msgid "Miscellaneous"
+msgstr "Rôzne"
+
+#: ucp.php:133
+msgid "Display the molecule drawer in edit mode?"
+msgstr "Zobrazovať zásuvku molekúl v režime úprav?"
+
+#: admin.php:73 admin.php:326
+msgid "Import ZIP"
+msgstr "Import ZIP"
+
+#: app/functions.inc.php:206
+msgid "milliseconds"
+msgstr "milisekúnd"
+
+#: app/functions.inc.php:203
+msgid "seconds"
+msgstr "sekúnd"
+
+#: admin.php:99
+msgid "An admin account will always be able to delete experiments."
+msgstr "Účet administrátora bude vždy schopný odstrániť experimenty."
+
+#: app/head.inc.php:110
+msgid "There is a manual available %shere%s."
+msgstr "K dispozícii je manuálne dostupné %s tu %s ."
+
+#: app/views/EntityView.php:177
+msgid "Order by"
+msgstr "Zoradiť podľa"
+
+#: app/views/EntityView.php:188
+msgid "Sort"
+msgstr "Triediť"
+
+#: app/views/EntityView.php:194
+msgid "Reset"
+msgstr "Reset"
+
+#: make.php:47
+msgid "Your file is ready:"
+msgstr "Váš súbor je pripravený."
+
+#: app/views/ExperimentsView.php:433
+msgid "Download token"
+msgstr "Stiahnutie tokenu"
+
+#: app/classes/TrustedTimestamps.php:131
+msgid "Please configure Timestamping in the admin panel."
+msgstr "Prosím, nakonfigurujte Časové označenie v správcovskom paneli."
+
+#: app/classes/MakeZip.php:298
+msgid "Error making the zip archive!"
+msgstr "Chyba pri vytváraní zip archívu!"
+
+#: app/classes/MakeZip.php:66
+msgid "You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file."
+msgstr "Chýba vám trieda ZipArchive v php. Rozbaľte príponu linky = zip.so v súbore php.ini."
+
+#: app/classes/MakeZip.php:123
+msgid "You are trying to download an experiment you don't own!"
+msgstr "Snažíte sa stiahnuť experiment, ktorý nevlastníte!"
+
+#: login.php:111
+msgid "Remember me"
+msgstr "Zapamätať si ma"
+
+#: app/classes/Import.php:80
+msgid "This doesn't look like the right kind of file. Import aborted."
+msgstr "Toto nevyzerá ako správny druh súboru. Import bol prerušený."
+
+#: search.php:207
+msgid "All the team"
+msgstr "Celý tím"
+
+#: search.php:272
+msgid "Space means"
+msgstr "Priestor znamená"
+
+#: app/controllers/DatabaseController.php:85
+msgid "Item deleted successfully"
+msgstr "Položka bola úspešne odstránená"
+
+#: app/controllers/SysconfigController.php:37
+msgid "User promoted"
+msgstr "Používateľ bol povýšený"
+
+#: app/controllers/SysconfigController.php:98
+#: app/controllers/SysconfigController.php:114
+msgid "Email sent"
+msgstr "Email odoslaný"
+
+#: app/controllers/SysconfigController.php:130
+msgid "Logs cleared"
+msgstr "Záznamy boli odstránené"
+
+#: app/controllers/StatusController.php:71
+msgid "Status deleted successfully"
+msgstr "Stav bol úspešne odstránený"
+
+#: app/controllers/EntityController.php:102
+msgid "Comment is too short"
+msgstr "Komentár je príliš krátky"
+
+#: app/controllers/EntityController.php:108
+msgid "The id parameter is invalid"
+msgstr "Parameter id je neplatný"
+
+#: app/controllers/EntityController.php:161
+msgid "File deleted successfully"
+msgstr "Súbor bol úspešne odstránený"
+
+#: app/controllers/ExperimentsController.php:120
+msgid "Link deleted successfully"
+msgstr "Odkaz bol úspešne odstránený"
+
+#: app/controllers/ExperimentsController.php:166
+msgid "Experiment successfully deleted"
+msgstr "Experiment bol úspešne odstránený"
+
+#: app/controllers/ItemsTypesController.php:74
+msgid "Item type deleted successfully"
+msgstr "Typ položky bol úspešne odstránený"
+
+#: app/controllers/ResetPasswordController.php:112 change-pass.php:44
+msgid "Invalid link. Reset links are only valid for one hour."
+msgstr "Neplatný odkaz. Odkazy na obnovenie sú platné iba jednu hodinu."
+
+#: app/controllers/ResetPasswordController.php:121
+msgid "New password inserted. You can now login."
+msgstr "Nové heslo bolo vložené. Teraz sa môžete prihlásiť."
+
+#: app/controllers/AdminController.php:60
+msgid "An error occurred!"
+msgstr "Vyskytla sa chyba."
+
+#: app/controllers/UcpController.php:33
+msgid "Template deleted successfully"
+msgstr "Šablóna experimentov zmazaná"
+
+#: app/controllers/CommentsController.php:59
+msgid "Comment successfully deleted"
+msgstr "Komentár bol úspešne odstránený"
+
+#: app/controllers/SchedulerController.php:74
+msgid "Event deleted successfully"
+msgstr "Udalosť bola úspešne odstránená"
+
+#: app/views/DatabaseView.php:113
+msgid "Welcome to eLabFTW. Head to the %sAdmin Panel%s to create a new type of item."
+msgstr "Vitajte v eLabFTW. Ak chcete vytvoriť nový typ položky, prejdite na %s Administrátorský panel %s ."
+
+#: app/views/DatabaseView.php:122 app/views/ExperimentsView.php:169
+msgid "Show %s more"
+msgstr "Zobraziť viac %s"
+
+#: app/views/DatabaseView.php:123 app/views/ExperimentsView.php:170
+msgid "Show all"
+msgstr "Zobraziť všetko"
+
+#: app/views/DatabaseView.php:193 app/views/ExperimentsView.php:467
+msgid "Lock/Unlock item"
+msgstr "Zámok / Odomknúť položku"
+
+#: app/views/ExperimentsView.php:159
+msgid "Welcome to eLabFTW. %sClick here%s to create your first experiment."
+msgstr "Vitajte v eLabFTW. %s Kliknite sem %s na vytvorenie prvého experimentu."
+
+#: app/views/ExperimentsView.php:271
+msgid "Everyone with an account"
+msgstr "Každý, kto má účet"
+
+#: app/views/ExperimentsView.php:450
+msgid "Read-only mode. Experiment of %s."
+msgstr "Režim iba na čítanie. Experiment %s ."
+
+#: app/views/ExperimentsView.php:481
+msgid "Timestamp this experiment?"
+msgstr "Časový rozpis tohto experimentu?"
+
+#: app/views/ExperimentsView.php:483
+msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
+msgstr "Akonáhle je časový záznam experimentu už nemožno upraviť! Naozaj chcete to urobiť?"
+
+#: app/views/SysconfigView.php:49
+msgid "Send a test email"
+msgstr "Odošli testovací email"
+
+#: app/views/SysconfigView.php:51
+msgid "Send"
+msgstr "odoslať"
+
+#: app/views/SysconfigView.php:68
+msgid "Nothing to display"
+msgstr "Nič, čo sa zobrazí"
+
+#: app/views/EntityView.php:118
+msgid "No templates found"
+msgstr "Žiadne šablóny neboli nájdené"
+
+#: app/views/EntityView.php:135
+msgid "Filter by type"
+msgstr "Filtrovať podľa typu"
+
+#: app/views/EntityView.php:173
+msgid "Filter"
+msgstr "filter"
+
+#: app/views/EntityView.php:178
+msgid "Category"
+msgstr "kategórie"
+
+#: app/views/EntityView.php:181
+msgid "Rating"
+msgstr "Hodnotenie"
+
+#: app/views/EntityView.php:189
+msgid "DESC"
+msgstr "Nadol"
+
+#: app/views/EntityView.php:190
+msgid "ASC"
+msgstr "Nahor"
+
+#: app/views/EntityView.php:192
+msgid "Order"
+msgstr "Zákazka:"
+
+#: app/views/EntityView.php:298
+msgid "Back to Experiments Listing"
+msgstr "Späť na zoznam experimentov"
+
+#: app/views/EntityView.php:300
+msgid "Back to Database Listing"
+msgstr "Späť na zoznam databázy"
+
+#: app/views/StatusView.php:39
+msgid "Add a New Status"
+msgstr "Pridať nový stav"
+
+#: app/views/StatusView.php:43 app/views/StatusView.php:70
+#: app/views/ItemsTypesView.php:42 app/views/ItemsTypesView.php:75
+msgid "Color"
+msgstr "Farba"
+
+#: app/views/StatusView.php:59
+msgid "Edit an Existing Status"
+msgstr "Upraviť existujúci stav"
+
+#: app/views/StatusView.php:83 app/views/ItemsTypesView.php:84
+msgid "Delete"
+msgstr "Vymazať"
+
+#: app/views/ItemsTypesView.php:39
+msgid "Add a new type of item"
+msgstr "Pridajte nový typ položky"
+
+#: app/views/ItemsTypesView.php:43 app/views/ItemsTypesView.php:80
+msgid "Bookable"
+msgstr "rezervovať"
+
+#: app/views/ItemsTypesView.php:44
+msgid "in the %sscheduler%s"
+msgstr "v %s plánovači %s"
+
+#: app/views/ItemsTypesView.php:65
+msgid "Database Items Types"
+msgstr "Typy položiek databázy"
+
+#: app/views/ItemsTypesView.php:81
+msgid "Edit the template"
+msgstr "Upravte šablónu"
+
+#: app/views/TeamsView.php:38
+msgid "Add a New Team"
+msgstr "Pridať nový tím"
+
+#: app/views/TeamsView.php:51
+msgid "Promote Someone to Sysadmin"
+msgstr "Propagujte niekoho na Sysadmin"
+
+#: app/views/TeamsView.php:67
+msgid "Edit Existing Teams"
+msgstr "Upraviť existujúce tímy"
+
+#: app/views/TeamsView.php:114
+msgid "Send a Mass Email"
+msgstr "Odoslať masový e-mail"
+
+#: app/views/TeamsView.php:115
+msgid "Email Subject"
+msgstr "Predmet emailu"
+
+#: app/views/TeamsView.php:116
+msgid "Email Body"
+msgstr "Telo e-mailu"
+
+#: app/ucp-exec.php:130
+msgid "Please input your current password!"
+msgstr "Zadajte svoje aktuálne heslo!"
+
+#: app/classes/MakeZip.php:137
+msgid "You are trying to download an item you don't own!"
+msgstr "Snažíte sa stiahnuť položku, ktorú nevlastníte!"
+
+#: app/classes/Tools.php:266
+msgid "This section is out of your reach!"
+msgstr "Táto sekcia je mimo dosahu!"
+
+#: app/classes/Tools.php:268
+msgid "An error occured!"
+msgstr "Vyskytla sa chyba!"
+
+#: app/classes/Import.php:61
+msgid "Could not open the file."
+msgstr "Súbor sa nepodarilo otvoriť."
+
+#: app/classes/MolViewer.php:107
+msgid "Cartoon"
+msgstr "karikatúra"
+
+#: app/classes/MolViewer.php:108
+msgid "Stick"
+msgstr "Pero"
+
+#: app/classes/MolViewer.php:109
+msgid "Solid Surface"
+msgstr "Plná plocha"
+
+#: app/classes/MolViewer.php:110
+msgid "Transparent Surface"
+msgstr "Priehľadný povrch"
+
+#: app/classes/MolViewer.php:114
+msgid "Style"
+msgstr "Štýl"
+
+#: app/classes/MolViewer.php:115
+msgid "Remove Surfaces"
+msgstr "Odstráňte povrchy"
+
+#: app/models/Users.php:40 app/models/Users.php:368
+msgid "Password must contain at least %s characters."
+msgstr "Heslo musí obsahovať aspoň znaky %s ."
+
+#: app/models/Tags.php:57
+msgid "Tag is too short!"
+msgstr "Tag je príliš krátky!"
+
+#: app/models/Comments.php:109
+msgid "[eLabFTW] New comment posted"
+msgstr "[eLabFTW] Zverejnil sa nový komentár"
+
+#: app/models/Comments.php:116
+msgid "Hi. %s %s left a comment on your experiment. Have a look: %s"
+msgstr "Ahoj. %s %s zanechal komentár k vášmu experimentu. Pozrite sa: %s"
+
+#: app/models/Sysconfig.php:49
+msgid "[eLabFTW] Test email"
+msgstr "[eLabFTW] Testovací e-mail"
+
+#: app/models/Sysconfig.php:55
+msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
+msgstr "Blahoželáme, správne ste nakonfigurovali eLabFTW na odosielanie e-mailov :)"
+
+#: app/models/ItemsTypes.php:80 team.php:78
+msgid "Nothing to show with this id"
+msgstr "Nič sa nezobrazí s týmto identifikátorom"
+
+#: login.php:90
+msgid "Note: You need cookies enabled to log in."
+msgstr "Poznámka: Na prihlásenie musíte mať povolené súbory cookie."
+
+#: revisions.php:64
+msgid "Go back"
+msgstr "Návrat"
+
+#: team.php:37
+msgid "Scheduler"
+msgstr "Plánovač"
+
+#: team.php:50
+msgid "No bookable items."
+msgstr "Žiadne rezervovateľné položky."
+
+#: team.php:56
+msgid "Select an equipment"
+msgstr "Vyberte zariadenie"
+
+#: team.php:80
+msgid "Change item"
+msgstr "Zmeniť položku"
+
+#: team.php:96
+msgid "You belong to the %s team. %s"
+msgstr "Patríte do tímu %s . %s"
+
+#: ucp.php:60
+msgid "Display"
+msgstr "Zobraziť"
+
+#: ucp.php:81
+msgid "Keyboard Shortcuts"
+msgstr "Klávesové skratky"
+
+#: ucp.php:117
+msgid "Show experiments from the team on the Experiments page?"
+msgstr "Zobraziť experimenty od tímu na stránke Experimenty?"
+
+#: ucp.php:125
+msgid "Display a warning before closing an edit window/tab?"
+msgstr "Zobrazenie varovania pred zatvorením okna alebo karty úprav?"
+
+#: ucp.php:225
+msgid "Experiments Templates"
+msgstr "Šablóny experimentov"
+
+#: ucp.php:228
+msgid "Create New"
+msgstr "Vytvor"
+
+#: ucp.php:236
+msgid "Import from File"
+msgstr "Importuj zo súboru"
+
+#: ucp.php:240
+msgid "Name of the Template"
+msgstr "Meno šablóny"
+
+#: search.php:154
+msgid "Select a Tag"
+msgstr "vyber značku"
+
+#: search.php:275
+msgid "or"
+msgstr "alebo"
+
+#: admin.php:58
+msgid "Validate"
+msgstr "Validuj"
+
+#: admin.php:74
+msgid "Groups"
+msgstr "Skupiny"
+
+#: admin.php:85
+msgid "Configure your Team"
+msgstr "Nakonfigurujte tím"
+
+#: admin.php:110
+msgid "Override general timestamping config"
+msgstr "Prepísať všeobecnú konfiguráciu časového označenia"
+
+#: admin.php:152
+msgid "Edit Users"
+msgstr "Upraviť používateľov"
+
+#: admin.php:177
+msgid "Group"
+msgstr "Skupina"
+
+#: admin.php:198
+msgid "Reset user password"
+msgstr "Obnovenie hesla používateľa"
+
+#: admin.php:200 change-pass.php:50
+msgid "characters minimum"
+msgstr "znakov minimálne"
+
+#: admin.php:251
+msgid "Common Experiment Template"
+msgstr "Spoločná šablóna experimentu"
+
+#: admin.php:269
+msgid "Import a CSV File"
+msgstr "Importovať súbor CSV"
+
+#: admin.php:299
+msgid "Import a ZIP File"
+msgstr "Import súboru ZIP"
+
+#: admin.php:303
+msgid "1. Select where to import:"
+msgstr "1. Vyberte miesto importovania:"
+
+#: admin.php:322
+msgid "2. Select a ZIP file to import:"
+msgstr "2. Vyberte súbor ZIP, ktorý chcete importovať:"
+
+#: admin.php:338
+msgid "Manage Groups of Users"
+msgstr "Správa skupín používateľov"
+
+#: admin.php:340
+msgid "Create a group"
+msgstr "Vytvorte skupinu"
+
+#: admin.php:350
+msgid "Add this user"
+msgstr "Pridať tohto používateľa"
+
+#: admin.php:360
+msgid "to this group"
+msgstr "do tejto skupiny"
+
+#: admin.php:369
+msgid "Add"
+msgstr "Pridať"
+
+#: admin.php:375
+msgid "Remove this user"
+msgstr "Odstráňte tohto používateľa"
+
+#: admin.php:385
+msgid "from this group"
+msgstr "z tejto skupiny"
+
+#: admin.php:394
+msgid "Remove"
+msgstr "odstrániť"
+
+#: admin.php:400
+msgid "Existing groups"
+msgstr "Existujúce skupiny"
+
+#: make.php:21
+msgid "Export"
+msgstr "Exportuj"
+
+#: make.php:39
+msgid "Bad type!"
+msgstr "Zlý typ!"
+
+#: sysconfig.php:27
+msgid "eLabFTW Configuration"
+msgstr "Konfigurácia eLabFTW"
+
+#: sysconfig.php:50
+msgid "Latest version:"
+msgstr "Najnovšia verzia:"
+
+#: sysconfig.php:81
+msgid "Usage Statistics"
+msgstr "Štatistiky využitia"
+
+#: sysconfig.php:97
+msgid "Under the Hood"
+msgstr "Pod kapotou"
+
+#: sysconfig.php:116
+msgid "Address of the Proxy:"
+msgstr "Adresa Proxy:"
+
+#: sysconfig.php:126
+msgid "Informations"
+msgstr "informácie"
+
+#: sysconfig.php:129
+msgid "Operating System"
+msgstr "Operačný systém"
+
+#: sysconfig.php:130
+msgid "PHP Version"
+msgstr "PHP verzia"
+
+#: sysconfig.php:131
+msgid "Largest integer supported"
+msgstr "Najväčšie celé číslo je podporované"
+
+#: sysconfig.php:132
+msgid "PHP configuration directory"
+msgstr "Konfiguračný adresár PHP"
+
+#: sysconfig.php:140
+msgid "Timestamping Configuration"
+msgstr "Časová konfigurácia"
+
+#: sysconfig.php:182
+msgid "Security Settings"
+msgstr "Bezpečnostné nastavenia"
+
+#: sysconfig.php:200
+msgid "Time of the ban after failed login attempts (in minutes):"
+msgstr "Čas zákazu po neúspešných pokusoch o prihlásenie (v minútach):"
+
+#: sysconfig.php:215
+msgid "E-mail Settings"
+msgstr "Nastavenie e-mailu"
+
+#: sysconfig.php:244
+msgid "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com account and add the infos here."
+msgstr "Bez platného spôsobu odosielania e-mailov nebudú používatelia môcť obnoviť svoje heslo. Odporúčame vám vytvoriť konkrétny účet Mailgun.com a pridať informácie tu."
+
+#: sysconfig.php:246
+msgid "Send e-mails via:"
+msgstr "Poslať e-maily cez:"
+
+#: sysconfig.php:248
+msgid "Select mailing method..."
+msgstr "Vyberte spôsob odosielania emailov ..."
+
+#: sysconfig.php:251
+msgid "Local MTA (default)"
+msgstr "Miestne MTA (predvolené)"
+
+#: sysconfig.php:254
+msgid "SMTP"
+msgstr "SMTP"
+
+#: sysconfig.php:257
+msgid "PHP"
+msgstr "php"
+
+#: sysconfig.php:264
+msgid "Sender address:"
+msgstr "Adresa odosielateľa:"
+
+#: sysconfig.php:270
+msgid "Path to sendmail:"
+msgstr "Cesta k odosielaniu:"
+
+#: sysconfig.php:279
+msgid "SMTP encryption:"
+msgstr "Šifrovanie SMTP:"

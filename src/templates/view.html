@@ -8,6 +8,10 @@
 <script src='app/js/moment.bundle.js'></script>
 <script src='app/js/src/relative-moment.js'></script>
 
+<!-- mathjax lib -->
+<script src='app/js/src/mathjax-config.js'></script>
+<script src='app/js/mathjax/MathJax.js'></script>
+
 {% if Entity.type == 'experiments' %}
     {% if Entity.entityData.timestamped %}
         {{ Ev.showTimestamp|raw }}
@@ -132,7 +136,6 @@
         {% set body = Entity.entityData.body %}
     {% endif %}
     <div id='body_view' class='txt'>{{ body|raw }}</div>
-    <br>
 {% endif %}
 
 {% if Entity.type == 'experiments' %}

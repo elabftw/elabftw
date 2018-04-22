@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Exception as Ex;
-use Defuse\Crypto\Key;
 use Exception;
 use FilesystemIterator;
 

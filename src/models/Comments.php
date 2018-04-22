@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 

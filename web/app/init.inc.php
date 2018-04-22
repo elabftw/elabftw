@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use RuntimeException;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;

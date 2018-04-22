@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Exception;
 use PDO;
 
 /**

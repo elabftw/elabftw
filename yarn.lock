@@ -2244,7 +2244,7 @@ gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-gaze@^1.0.0:
+gaze@^1.1.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/gaze/-/gaze-1.1.2.tgz#847224677adb8870d679257ed3388fdb61e40105"
   dependencies:
@@ -2497,7 +2497,7 @@ grunt-contrib-cssmin@^2.2.1:
     clean-css "~4.1.1"
     maxmin "^2.1.0"
 
-grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
+grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony, grunt-contrib-uglify@gruntjs/grunt-contrib-uglify#harmony:
   version "3.3.0"
   resolved "https://codeload.github.com/gruntjs/grunt-contrib-uglify/tar.gz/ccb95a70cad6a4e9e902d3bd5d0e38a4de09a1e1"
   dependencies:
@@ -2506,13 +2506,13 @@ grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
     uglify-es "~3.3.0"
     uri-path "^1.0.0"
 
-grunt-contrib-watch@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/grunt-contrib-watch/-/grunt-contrib-watch-1.0.0.tgz#84a1a7a1d6abd26ed568413496c73133e990018f"
+grunt-contrib-watch@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/grunt-contrib-watch/-/grunt-contrib-watch-1.0.1.tgz#ca65934b6e04dbd26da684d598f79ee22f47fdac"
   dependencies:
     async "^1.5.0"
-    gaze "^1.0.0"
-    lodash "^3.10.1"
+    gaze "^1.1.0"
+    lodash "^4.0.0"
     tiny-lr "^0.2.1"
 
 grunt-known-options@~1.1.0:
@@ -3467,10 +3467,6 @@ lodash.defaultsdeep@^4.3.1:
 lodash.mergewith@^4.3.1:
   version "4.6.1"
   resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.1.tgz#639057e726c3afbdb3e7d42741caa8d6e4335927"
-
-lodash@^3.10.1:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
 lodash@^4.0.0, lodash@^4.11.1, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@~4.17.4, lodash@~4.17.5:
   version "4.17.5"

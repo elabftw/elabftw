@@ -69,7 +69,7 @@ class Auth
     {
         // If user has a cookie; check cookie is valid
         // the token is a sha256 sum: 64 char
-        if (!$this->Request->cookies->has('token') || \strlen($this->Request->cookies->get('token')) !== 64) {
+        if (!$this->Request->cookies->has('token') || \mb_strlen($this->Request->cookies->get('token')) !== 64) {
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
@@ -162,7 +162,7 @@ class Auth
      */
     public function checkPasswordLength(string $password): bool
     {
-        if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
+        if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new Exception(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;

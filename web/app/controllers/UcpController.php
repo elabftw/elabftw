@@ -76,7 +76,7 @@ try {
             throw new Exception(_('You must specify a name for the template!'));
         }
         // template name must be 3 chars at least
-        if (strlen($Request->request->get('new_tpl_name')) < 3) {
+        if (\mb_strlen($Request->request->get('new_tpl_name')) < 3) {
             throw new Exception(_('The template name must be 3 characters long.'));
         }
 

@@ -247,7 +247,7 @@ class MakePdf extends AbstractMake
                 }
                 // add hash ? don't add if we don't have it
                 // length must be greater (sha2 hashes) or equal (md5) 32 bits
-                if (strlen($upload['hash']) >= 32) { // we have hash
+                if (\mb_strlen($upload['hash']) >= 32) { // we have hash
                     $html .= "<br>" . $upload['hash_algorithm'] . " : " . $upload['hash'];
                 }
                 // if this is an image file, add the thumbnail picture

@@ -400,7 +400,7 @@ class Users
             throw new Exception(_('Only a sysadmin can put someone sysadmin.'));
         }
 
-        if (strlen($params['password']) > 1) {
+        if (\mb_strlen($params['password']) > 1) {
             $this->updatePassword($params['password'], $userid);
         }
 
@@ -596,7 +596,7 @@ class Users
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
-        if (strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
+        if (\mb_strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
             if ($params['newpass'] != $params['cnewpass']) {
                 throw new Exception(_('The passwords do not match!'));
             }

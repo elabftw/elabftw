@@ -51,7 +51,7 @@ class ItemsTypes extends AbstractCategory
             $team = $this->Users->userData['team'];
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        if (strlen($name) < 1) {
+        if (\mb_strlen($name) < 1) {
             $name = 'Unnamed';
         }
 

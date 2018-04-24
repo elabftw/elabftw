@@ -39,7 +39,7 @@ try {
         try {
             $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
 
-            if (strlen($body) === 0 || $body === ' ') {
+            if (\mb_strlen($body) === 0 || $body === ' ') {
                 throw new Exception('Body is too short');
             }
 

@@ -155,7 +155,7 @@ class Comments implements CrudInterface
     {
         $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
         // check length
-        if (strlen($comment) < 2) {
+        if (\mb_strlen($comment) < 2) {
             return false;
         }
 

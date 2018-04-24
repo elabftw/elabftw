@@ -33,7 +33,7 @@ class Tools
     public static function kdate($input = null): string
     {
         if ($input !== null
-            && strlen($input) == '8') {
+            && \mb_strlen($input) == '8') {
             // Check if day/month are good (badly)
             $datemonth = substr($input, 4, 2);
             $dateday = substr($input, 6, 2);
@@ -148,7 +148,7 @@ class Tools
         }
 
         // get unit
-        $unit = strtolower($input[strlen($input) - 1]);
+        $unit = strtolower($input[\mb_strlen($input) - 1]);
         $value = (int) $input;
 
         // convert to Mb
@@ -201,7 +201,7 @@ class Tools
      */
     public static function formatDate(string $date, string $s = '.'): string
     {
-        if (strlen($date) != 8) {
+        if (\mb_strlen($date) != 8) {
             throw new InvalidArgumentException('Date has wrong size!');
         }
         return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];

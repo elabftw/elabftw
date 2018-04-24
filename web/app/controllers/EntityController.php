@@ -206,11 +206,11 @@ try {
         try {
             $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
 
-            if (strlen($comment) === 0 || $comment === ' ') {
+            if (\mb_strlen($comment) === 0 || $comment === ' ') {
                 throw new Exception(_('Comment is too short'));
             }
 
-            $id_arr = explode('_', $Request->request->get('comment_id'));
+            $id_arr = \explode('_', $Request->request->get('comment_id'));
             if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }

@@ -67,7 +67,7 @@ try {
                 // Add this line to the current segment
                 $queryline .= $line;
                 // If it has a semicolon at the end, it's the end of the query
-                if (trim($line)[strlen(trim($line)) - 1] === ';') {
+                if (trim($line)[\mb_strlen(trim($line)) - 1] === ';') {
                     // Perform the query
                     $Db->q($queryline);
                     // Reset temp variable to empty

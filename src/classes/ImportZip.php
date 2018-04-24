@@ -137,7 +137,7 @@ class ImportZip extends AbstractImport
             $this->Entity = new Database($this->Users, $newItemId);
         }
 
-        if (strlen($item['tags']) > 1) {
+        if (\mb_strlen($item['tags']) > 1) {
             $this->tagsDbInsert($item['tags']);
         }
     }

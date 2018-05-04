@@ -10,7 +10,7 @@
     "@fortawesome/fontawesome": "^1.1.5",
     "@fortawesome/fontawesome-free-brands": "^5.0.10",
     "@fortawesome/fontawesome-free-regular": "^5.0.10",
-    "@fortawesome/fontawesome-free-solid": "^5.0.10",
+    "@fortawesome/fontawesome-free-solid": "^5.0.12",
     "bootstrap": "^4.1.0",
     "bootstrap-markdown-fa5": "^2.10.0",
     "dropzone": "^5.4.0",

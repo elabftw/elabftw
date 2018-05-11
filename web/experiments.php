@@ -146,7 +146,7 @@ try {
         }
 
         if ($order === 'cat') {
-            $Entity->order = 'status.ordering';
+            $Entity->order = 'status.id';
         } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
             $Entity->order = 'experiments.' . $order;
         } elseif ($order === 'comment') {

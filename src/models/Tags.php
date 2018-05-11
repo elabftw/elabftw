@@ -72,7 +72,7 @@ class Tags implements CrudInterface
     {
         $tagFilter = "";
         if ($term !== null) {
-            $tagFilter = " AND " . $this->Entity->type . "_tags.tag LIKE '$term%'";
+            $tagFilter = " AND " . $this->Entity->type . "_tags.tag LIKE '%$term%'";
         }
         if ($this->Entity->type === 'experiments') {
             $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag

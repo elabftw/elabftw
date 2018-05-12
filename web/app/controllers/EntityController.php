@@ -316,6 +316,15 @@ try {
     // DESTROY ENTITY
     if ($Request->request->has('destroy')) {
         $Response = new JsonResponse();
+
+        // check write permissions
+        $Entity->canOrExplode('write');
+
+        // check for deletable xp
+        if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp']) {
+            throw new Exception(Tools::error(true));
+        }
+
         if ($Entity->destroy()) {
             $Response->setData(array(
                 'res' => true,
@@ -333,4 +342,10 @@ try {
 
 } catch (Exception $e) {
     $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $Response = new JsonResponse();
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+    $Response->send();
 }

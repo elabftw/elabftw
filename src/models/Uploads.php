@@ -460,7 +460,7 @@ class Uploads implements CrudInterface
         $resultsArr = array();
 
         foreach ($uploadArr as $upload) {
-            $resultsArr[] = $this->destroy($upload['id']);
+            $resultsArr[] = $this->destroy((int) $upload['id']);
         }
 
         if (in_array(false, $resultsArr)) {

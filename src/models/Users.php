@@ -375,7 +375,7 @@ class Users
      */
     public function update(array $params): bool
     {
-        $userid = Tools::checkId($params['userid']);
+        $userid = Tools::checkId((int) $params['userid']);
 
         if ($userid === false) {
             throw new Exception(_('The id parameter is not valid!'));
@@ -390,7 +390,7 @@ class Users
         } else {
             $validated = 0;
         }
-        $usergroup = Tools::checkId($params['usergroup']);
+        $usergroup = Tools::checkId((int) $params['usergroup']);
         if ($usergroup === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }

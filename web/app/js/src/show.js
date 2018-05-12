@@ -192,9 +192,15 @@
                     destroy: true,
                     id: value,
                     type: $('#type').data('type')
+                }).done(function(data) {
+                    if (data.res) {
+                        // hide the div
+                        $('#parent_' + value).hide(200);
+                        notif(data.msg, 'ok');
+                    } else {
+                        notif(data.msg, 'ko');
+                    }
                 });
-                // hide the div
-                $('#parent_' + value).hide(200);
             });
         });
     });

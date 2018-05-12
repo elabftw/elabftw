@@ -192,7 +192,7 @@ li.dropdown-item:hover a{ color:#29AEB9;}
                         {{ item.fullname|raw }}
                     {% endif %}
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' style='width:15px;vertical-align:-3px;' />
-                {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items') %}
+                {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt' style='color:#29AEB9'></i></a>
                 {% endif %}
                 <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>

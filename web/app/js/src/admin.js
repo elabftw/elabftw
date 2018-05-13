@@ -295,11 +295,13 @@
             update: function(event, ui) {
                 // switch between status or items_types
                 let table = 'status';
+                let elements = '.sortable-status';
                 if ($(this).data('type') === 'items') {
                     table = 'items_types';
+                    elements = '.sortable-itemstypes';
                 }
                 // send the orders as an array
-                var ordering = $(".sortable").sortable("toArray");
+                var ordering = $(elements).sortable("toArray");
 
                 $.post("app/controllers/AdminController.php", {
                     'updateOrdering': true,
@@ -314,6 +316,7 @@
                 });
             }
         });
+
         // IMPORT
         $('.import_block').hide();
 

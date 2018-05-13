@@ -532,6 +532,12 @@ class Users
             $new_lang = $params['lang'];
         }
 
+        // ALLOW EDIT
+        $new_allow_edit = 0;
+        if (isset($params['allow_edit']) && $params['allow_edit'] === 'on') {
+            $new_allow_edit = 1;
+        }
+
         // DEFAULT VIS
         $new_default_vis = null;
         $Experiments = new Experiments($this);
@@ -557,6 +563,7 @@ class Users
             pdfa = :new_pdfa,
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
+            allow_edit = :new_allow_edit,
             inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;";
         $req = $this->Db->prepare($sql);
@@ -577,6 +584,7 @@ class Users
         $req->bindParam(':new_pdfa', $new_pdfa);
         $req->bindParam(':new_pdf_format', $new_pdf_format);
         $req->bindParam(':new_use_markdown', $new_use_markdown);
+        $req->bindParam(':new_allow_edit', $new_allow_edit);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
         $req->bindParam(':userid', $this->userid);
 

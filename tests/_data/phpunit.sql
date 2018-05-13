@@ -540,6 +540,7 @@ CREATE TABLE `users` (
   `pdfa` tinyint(1) NOT NULL DEFAULT 1,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `use_markdown` tinyint(1) NOT NULL DEFAULT 0,
+  `allow_edit` tinyint(1) NOT NULL DEFAULT 0,
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

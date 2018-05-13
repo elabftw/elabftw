@@ -1,8 +1,11 @@
--- MySQL dump 10.15  Distrib 10.0.12-MariaDB, for Linux (x86_64)
 --
--- Host: localhost    Database: elabftw2
--- ------------------------------------------------------
--- Server version	10.0.12-MariaDB-log
+-- elabftw mysql structure. This file is loaded upon installation.
+--
+-- @author Nicolas CARPi <nicolas.carpi@curie.fr>
+-- @copyright 2012 Nicolas CARPi
+-- @see https://www.elabftw.net Official website
+-- @license AGPL-3.0
+-- @package elabftw
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -344,6 +347,7 @@ CREATE TABLE `users` (
   `pdfa` tinyint(1) NOT NULL DEFAULT 1,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `use_markdown` tinyint(1) NOT NULL DEFAULT 0,
+  `allow_edit` tinyint(1) NOT NULL DEFAULT 0,
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

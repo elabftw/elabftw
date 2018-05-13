@@ -414,6 +414,16 @@ abstract class AbstractEntity
                         return array('read' => true, 'write' => true);
                     }
                 } else {
+                    // if we don't own the experiment (and we are not admin), we need to check if owner allowed edits
+                    // get the owner data
+                    $Owner = new Users((int) $item['userid']);
+                    // owner allows edit and is in same team and we are not anon
+                    if ($Owner->userData['allow_edit'] &&
+                        $item['team'] == $this->Users->userData['team'] &&
+                        !isset($this->Users->userData['anon'])) {
+                        return array('read' => true, 'write' => true);
+                    }
+
                     // if we don't own the experiment (and we are not admin), we need to check the visibility
 
                     // if the vis. setting is public, we can see it for sure

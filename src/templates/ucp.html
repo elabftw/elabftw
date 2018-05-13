@@ -147,6 +147,11 @@
               {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
             />
             <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
+            <br>
+            <input id='allow_edit' type='checkbox' name='allow_edit'
+              {{ App.Users.userData.allow_edit == '1' ? " checked='checked'" }}
+            />
+            <label for='allow_edit'>{{ 'Allow members of the team to edit your experiments'|trans }}</label>
             </p>
 
             <p>

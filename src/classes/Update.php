@@ -29,11 +29,11 @@ class Update
     /**
      * /////////////////////////////////////////////////////
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
-     * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
+     * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 39;
+    private const REQUIRED_SCHEMA = 40;
 
     /**
      * Init Update with Config and Db
@@ -68,6 +68,7 @@ class Update
         $current_schema = (int) $this->Config->configArr['schema'];
 
         if ($current_schema === self::REQUIRED_SCHEMA) {
+        $this->cleanTmp();
             return true;
         }
 
@@ -87,6 +88,11 @@ class Update
             $this->schema39();
             $this->updateSchema(39);
         }
+        if ($current_schema < 40) {
+            // 20180513 v2.0.0
+            $this->schema40();
+            $this->updateSchema(40);
+        }
         // place new schema functions above this comment
 
         $this->cleanTmp();
@@ -98,6 +104,8 @@ class Update
 
     /**
      * Delete things in the tmp folder (cache/elab)
+     *
+     * @return void
      */
     private function cleanTmp(): void
     {
@@ -108,7 +116,7 @@ class Update
         $di = new \RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
         $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file) : unlink($file);
+            $file->isDir() ? rmdir($file->getPathName()) : unlink($file->getPathName());
         }
     }
 
@@ -164,6 +172,20 @@ class Update
         $sql = "ALTER TABLE `users` DROP `can_lock`";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem updating to schema 39!');
+        }
+    }
+
+    /**
+     * Add allow_edit to Users
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema40(): void
+    {
+        $sql = "ALTER TABLE `users` ADD `allow_edit` TINYINT(1) NOT NULL DEFAULT '0'";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem updating to schema 40!');
         }
     }
 }

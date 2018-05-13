@@ -7,7 +7,6 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-//const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -18,8 +17,7 @@ module.exports = {
             'bootstrap/js/src/button.js',
             'bootstrap/js/src/collapse.js',
             'bootstrap/js/src/dropdown.js',
-            './web/app/js/src/fontawesome.es.js',
-            'keypress.js'
+            './web/app/js/src/fontawesome.es.js'
         ],
         tinymce: [
             'tinymce'
@@ -31,15 +29,6 @@ module.exports = {
     plugins: [
         // only load the moment locales that we are interested in
         new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|pl|pt|pt-br|ru|sl|zh-cn)$/)
-    /*
-        new HtmlWebpackPlugin({
-            //filename: path.resolve(__dirname, 'web/app/tpl/head.html'),
-            filename: 'scripts.html',
-            //inject: 'head',
-            minify: false,
-            //template: 'web/app/tpl/head.html'
-        })
-        */
     ],
     resolve: {
         alias: {
@@ -51,13 +40,12 @@ module.exports = {
     },
     mode: 'production',
     output: {
-        //filename: '[name].[hash].bundle.js',
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'web/app/js')
     },
     module: {
         rules:[
-            // Expose jquery globally for inline/legacy use
+            // expose jquery and moment globally
             {
                 test: require.resolve('jquery'),
                 use: [
@@ -69,12 +57,6 @@ module.exports = {
                 test: require.resolve('moment'),
                 use: [
                     { loader: 'expose-loader', options: 'moment' }
-                ]
-            },
-            {
-                test: require.resolve('keypress.js'),
-                use: [
-                    { loader: 'expose-loader', options: 'keypress' }
                 ]
             }
         ]

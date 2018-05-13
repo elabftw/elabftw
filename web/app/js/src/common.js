@@ -19,44 +19,23 @@ $(document).ready(function() {
         $('#help_container').hide();
     });
 
-    // KEYBOARD SHORTCUTS
-    const listener = new window.keypress.Listener();
-    // disable listener when in input mode (and relisten on blur)
-    $('input[type=text], textarea, input[type=search]')
-        .bind('focus', function() { listener.stop_listening(); })
-        .bind('blur', function() { listener.listen(); });
-
-    listener.simple_combo($('#todoSc').data('toggle'), function() {
+    // TODOLIST TOGGLE
+    key($('#todoSc').data('toggle'), function() {
         $('#todoList').toggle();
     });
-    listener.simple_combo($('#shortcuts').data('edit'), function() {
-        window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
-    });
-    listener.simple_combo($('#shortcuts').data('create'), function() {
-        window.location.href = 'app/controllers/ExperimentsController.php?create=true';
-    });
-    listener.simple_combo($('#shortcuts').data('submit'), function() {
-        document.forms.main_form.submit();
-    });
+
     // MAKE THE FILE COMMENT FIELD EDITABLE
-    $('.file-comment').on('mouseover', function() {
-        makeEditableFileComment($(this).data('type'), $(this).data('id'), listener);
+    $('#files_div').on('mouseover', '.file-comment', function() {
+        makeEditableFileComment($(this).data('type'), $(this).data('id'));
     });
     // MAKE THE COMMENT FIELD EDITABLE
-    $('.comment.editable').on('mouseover', function() {
-        makeEditableComment($(this).data('type'), listener);
+    $('#comment_container').on('mouseover', '.comment.editable', function() {
+        makeEditableComment($(this).data('type'));
     });
 
     $('.todoitem.editable').on('mouseover', function(){
-        makeEditableTodoitem(listener);
+        makeEditableTodoitem();
     });
-
-    // low quality fix for keyboard shortcuts being available in a reloaded comment input (after adding a comment)
-    /*
-    $('#comment_container').on('mouseover', '.editable', function() {
-        listener.stop_listening();
-    });
-    */
 });
 
 // for editXP/DB, ctrl-shift-D will add the date
@@ -159,8 +138,7 @@ function quickSave(type, id) {
 }
 
 // EDIT todoitem
-function makeEditableTodoitem(listener) {
-    listener.stop_listening();
+function makeEditableTodoitem() {
     $('.todoitem.editable').editable(function(value, settings) {
         $.post('app/controllers/TodolistController.php', {
             update: true,
@@ -186,11 +164,8 @@ function makeEditableTodoitem(listener) {
 }
 
 // EDIT COMMENT ON experiment/database
-function makeEditableComment(type, listener) {
-    listener.stop_listening();
+function makeEditableComment(type) {
     $('.comment.editable').editable('app/controllers/CommentsController.php', {
-        // stop the keyboard shortcuts from being triggered
-        before : function() { listener.stop_listening(); },
         name: 'update',
         type : 'textarea',
         submitdata: {type: type},
@@ -213,8 +188,7 @@ function makeEditableComment(type, listener) {
 }
 
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment(type, itemId, listener) {
-    listener.stop_listening();
+function makeEditableFileComment(type, itemId) {
     $('.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
@@ -237,8 +211,6 @@ function makeEditableFileComment(type, itemId, listener) {
         name : 'fileComment',
         submit : 'Save',
         onblur : 'ignore',
-        // stop the keyboard shortcuts from being triggered
-        before : function() { listener.stop_listening(); },
         cancel : 'Cancel',
         submitcssclass : 'button',
         cancelcssclass : 'button button-delete',

@@ -23,7 +23,8 @@ module.exports = function(grunt) {
               'web/app/js/src/jquery.rating.js',
               'web/app/js/src/3Dmol-nojquery.js',
               'web/app/js/src/3Dmol-helpers.js',
-              'web/app/js/src/prism.js'],
+              'web/app/js/src/prism.js',
+              'web/app/js/src/keymaster.js'],
 
           'web/app/js/chemdoodle/chemdoodle.min.js': [
               'web/app/js/src/chemdoodle/chemdoodle-unpacked.js',

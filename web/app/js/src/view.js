@@ -18,6 +18,11 @@
         var id = $('#entityInfos').data('id');
         var confirmText = $('#entityInfos').data('confirm');
 
+        // EDIT
+        key($('#shortcuts').data('edit'), function() {
+            window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
+        });
+
         // TOGGLE LOCK
         $(document).on('click', '#lock', function() {
             $.post("app/controllers/EntityController.php", {

@@ -12,6 +12,11 @@
 
     $(document).ready(function(){
 
+        // CREATE EXPERIMENT
+        key($('#shortcuts').data('create'), function() {
+            window.location.href = 'app/controllers/ExperimentsController.php?create=true';
+        });
+
         // the reset button
         $('.submit-reset').on('click', function() {
             window.location.href = '?mode=show';

@@ -38,27 +38,7 @@
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                     $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
                         // make the comment zone editable (fix issue #54)
-            /* TODO */
-    const listener = new window.keypress.Listener();
-    // disable listener when in input mode (and relisten on blur)
-    $('input[type=text], textarea, input[type=search]')
-        .bind('focus', function() { listener.stop_listening(); })
-        .bind('blur', function() { listener.listen(); });
-
-    listener.simple_combo($('#todoSc').data('toggle'), function() {
-        $('#todoList').toggle();
-    });
-    listener.simple_combo($('#shortcuts').data('edit'), function() {
-        window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
-    });
-    listener.simple_combo($('#shortcuts').data('create'), function() {
-        window.location.href = 'app/controllers/ExperimentsController.php?create=true';
-    });
-    listener.simple_combo($('#shortcuts').data('submit'), function() {
-        document.forms.main_form.submit();
-    });
-        /* end todo */
-                        makeEditableFileComment($('#entityInfos').data('type'), $('#entityInfos').data('id'), listener);
+                        makeEditableFileComment($('#entityInfos').data('type'), $('#entityInfos').data('id'));
                     });
                 }
             });
@@ -78,6 +58,12 @@
             controller = 'app/controllers/DatabaseController.php';
             location = 'database.php';
         }
+
+        // KEYBOARD SHORTCUT
+        key($('#shortcuts').data('submit'), function() {
+            document.forms.main_form.submit();
+        });
+
 
         ////////////////
         // DATA RECOVERY

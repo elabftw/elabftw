@@ -116,27 +116,6 @@
             $(this).find('.editable').trigger('click');
         });
 
-        // UPDATE COMMENTS
-        $(document).on('mouseover', '.editable', function(){
-            $('div#expcomment p.editable').editable(Comments.controller, {
-                name: 'update',
-                type : 'textarea',
-                width: '80%',
-                height: '200',
-                tooltip : 'Click to edit',
-                indicator : $(this).data('indicator'),
-                submit : $(this).data('submit'),
-                cancel : $(this).data('cancel'),
-                style : 'display:inline',
-                callback : function() {
-                    // now we reload the comments part to show the comment we just submitted
-                    $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
-                        relativeMoment();
-                    });
-                }
-            });
-        });
-
         // DESTROY COMMENTS
         $(document).on('click', '.commentsDestroy', function() {
             Comments.destroy($(this).data('id'));

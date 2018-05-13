@@ -39,9 +39,24 @@ $(document).ready(function() {
         document.forms.main_form.submit();
     });
     // MAKE THE FILE COMMENT FIELD EDITABLE
-    $('.thumbnail').on('mouseover', '.editable', function(){
+    $('.file-comment').on('mouseover', function() {
         makeEditableFileComment($(this).data('type'), $(this).data('id'), listener);
     });
+    // MAKE THE COMMENT FIELD EDITABLE
+    $('.comment.editable').on('mouseover', function() {
+        makeEditableComment($(this).data('type'), listener);
+    });
+
+    $('.todoitem.editable').on('mouseover', function(){
+        makeEditableTodoitem(listener);
+    });
+
+    // low quality fix for keyboard shortcuts being available in a reloaded comment input (after adding a comment)
+    /*
+    $('#comment_container').on('mouseover', '.editable', function() {
+        listener.stop_listening();
+    });
+    */
 });
 
 // for editXP/DB, ctrl-shift-D will add the date
@@ -143,10 +158,64 @@ function quickSave(type, id) {
     });
 }
 
+// EDIT todoitem
+function makeEditableTodoitem(listener) {
+    listener.stop_listening();
+    $('.todoitem.editable').editable(function(value, settings) {
+        $.post('app/controllers/TodolistController.php', {
+            update: true,
+            body: value,
+            id: $(this).attr('id')
+        }).done(function(data) {
+            if (data.res) {
+                notif(data.msg, 'ok');
+            } else {
+                notif(data.msg, 'ko');
+            }
+        });
+
+        return(value);
+        }, {
+     tooltip : 'Click to edit',
+     indicator : 'Saving...',
+     name : 'fileComment',
+     submit : 'Save',
+     cancel : 'Cancel',
+     style : 'display:inline'
+    });
+}
+
+// EDIT COMMENT ON experiment/database
+function makeEditableComment(type, listener) {
+    listener.stop_listening();
+    $('.comment.editable').editable('app/controllers/CommentsController.php', {
+        // stop the keyboard shortcuts from being triggered
+        before : function() { listener.stop_listening(); },
+        name: 'update',
+        type : 'textarea',
+        submitdata: {type: type},
+        width: '80%',
+        height: '200',
+        tooltip : 'Click to edit',
+        //indicator : $(this).data('indicator'),
+        //submit : $(this).data('submit'),
+        //cancel : $(this).data('cancel'),
+        submit: 'Save',
+        cancel: 'Cancel',
+        style : 'display:inline',
+        submitcssclass : 'button mt-2',
+        cancelcssclass : 'button button-delete mt-2',
+        callback : function(result, settings, submitdata) {
+            // show result in comment box
+            $('#' + submitdata.id).html(submitdata.update.replace(/\n/g,"<br>"));
+        }
+    });
+}
 
 // EDIT COMMENT ON UPLOAD
 function makeEditableFileComment(type, itemId, listener) {
-    $('.thumbnail p.editable').editable(function(value, settings) {
+    listener.stop_listening();
+    $('.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
             type: type,
@@ -170,9 +239,9 @@ function makeEditableFileComment(type, itemId, listener) {
         onblur : 'ignore',
         // stop the keyboard shortcuts from being triggered
         before : function() { listener.stop_listening(); },
-        callback : function() { listener.listen(); },
-
         cancel : 'Cancel',
+        submitcssclass : 'button',
+        cancelcssclass : 'button button-delete',
         style : 'display:inline'
     });
 }

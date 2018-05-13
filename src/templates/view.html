@@ -196,7 +196,7 @@
                         {% endif %}
                         </div>
                         <!-- .editable uses the id of the element to send to the controller -->
-                        <p class='expcomment m-2 p-2 {{ comment.userid == Entity.Users.userid ? "editable" }}' id='{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
+                        <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userid ? "editable" }}' data-itemid='{{ Entity.id }}' data-type='{{ Entity.type }}' id='comment_{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
                     </div>
                 {% endfor %}
             {% endif %}

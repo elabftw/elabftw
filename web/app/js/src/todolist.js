@@ -89,9 +89,11 @@
         Todolist.destroy($(this).data('id'));
     });
 
+    /*
     $('#todoItems-list').on('mouseover', '.editable', function(){
         makeEditableTodoitem();
     });
+    */
 
     // SORTABLE for TODOLIST items
     $('#todoItems-list').sortable({
@@ -117,29 +119,4 @@
         }
     });
 
-    // EDIT todoitem
-    function makeEditableTodoitem() {
-        $('.editable').editable(function(value, settings) {
-            $.post('app/controllers/TodolistController.php', {
-                update: true,
-                body: value,
-                id: $(this).attr('id')
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
-            });
-
-            return(value);
-            }, {
-         tooltip : 'Click to edit',
-         indicator : 'Saving...',
-         name : 'fileComment',
-         submit : 'Save',
-         cancel : 'Cancel',
-         style : 'display:inline'
-        });
-    }
 }());

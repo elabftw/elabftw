@@ -148,16 +148,20 @@ class Comments implements CrudInterface
      * Update a comment
      *
      * @param string $comment New content for the comment
-     * @param int $id id of the comment
+     * @param string $id id of the comment (comment_42)
      * @return bool
      */
-    public function update(string $comment, int $id): bool
+    public function update(string $comment, string $id): bool
     {
-        $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
+        $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
         // check length
         if (\mb_strlen($comment) < 2) {
             return false;
         }
+
+        $exploded = \explode('_', $id);
+        $id = (int) $exploded[1];
+        var_dump($this->Entity->type);
 
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
             comment = :comment

@@ -816,12 +816,6 @@ input[type='checkbox']{
 /* fix for bootstrap's thumbnail class */
 .thumbnail {
     overflow:hidden;
-    /*
-    border: 1px solid #f2f2f2;
-    padding: 5px;
-    border-radius: 7px;
-    */
-
 }
 
 .thumb {
@@ -831,10 +825,6 @@ input[type='checkbox']{
     height: 100px;
 }
 
-.expcomment.editable:hover {
-    background-color:#555;
-    color:#fff;
-}
 /* EDITABLE */
 .editable:hover {
      cursor: pointer;
@@ -847,12 +837,16 @@ input[type='checkbox']{
     color: #FFFFFF;
     font-size: 11px;
     text-transform: uppercase;
+    /*
     background-color: #29AEB9;
+    */
     margin: 0 5px;
     letter-spacing: 1px;
 }
 .editable button:hover {
+    /*
     background-color: #1F8591;
+    */
 }
 
 .editable input{

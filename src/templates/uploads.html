@@ -8,7 +8,9 @@
             Attached files
             {% endtrans %}
         </h3>
+        {% if mode == 'edit' %}
         <i class='fas fa-eye clickable align_right' title='Toggle visibility' id='hideUploads'></i>
+        {% endif %}
 
         <div class='row' id='uploadsDiv'>
         {% for upload in uploadsArr %}

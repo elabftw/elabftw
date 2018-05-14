@@ -163,7 +163,6 @@ class Comments implements CrudInterface
 
         $exploded = \explode('_', $id);
         $id = (int) $exploded[1];
-        var_dump($this->Entity->type);
 
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
             comment = :comment

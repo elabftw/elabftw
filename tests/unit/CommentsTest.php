@@ -13,7 +13,8 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertEquals($this->Entity->Comments->create('Ohai'), 1);
+        $id = $this->Entity->Comments->create('Ohai');
+        $this->assertInternalType("int", $id);
     }
 
     public function testReadAll()

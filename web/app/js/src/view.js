@@ -75,8 +75,8 @@
                     id: id
                 }).done(function(data) {
                     if (data.res) {
-                        notif(data.msg, 'ok');
                         $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
+                            makeEditableComment($('#comment_' + data.msg));
                             relativeMoment();
                         });
                     } else {

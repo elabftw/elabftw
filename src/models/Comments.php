@@ -41,9 +41,9 @@ class Comments implements CrudInterface
      * Create a comment
      *
      * @param string $comment Content for the comment
-     * @return bool
+     * @return int comment id
      */
-    public function create(string $comment): bool
+    public function create(string $comment): int
     {
         $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
 
@@ -57,7 +57,9 @@ class Comments implements CrudInterface
 
         $this->alertOwner();
 
-        return $req->execute();
+        $req->execute();
+
+        return $this->Db->lastInsertId();
     }
 
     /**

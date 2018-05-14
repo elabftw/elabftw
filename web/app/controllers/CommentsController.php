@@ -39,10 +39,9 @@ try {
     // CREATE
     if ($Request->request->has('create')) {
         $Entity->setId($Request->request->get('id'));
-        if ($Entity->Comments->create($Request->request->get('comment'))) {
-            $res = true;
-            $msg = _('Saved');
-        }
+        $commentId = $Entity->Comments->create($Request->request->get('comment'));
+        $res = true;
+        $msg = $commentId;
     }
 
     // UPDATE

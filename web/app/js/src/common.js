@@ -30,8 +30,9 @@ $(document).ready(function() {
         makeEditableFileComment($(this));
     });
     // MAKE THE COMMENT FIELD EDITABLE
-    $('#comment_container').on('mouseover', '.comment.editable', function() {
-        makeEditableComment($(this).data('type'));
+    //$('#comment_container').on('mouseover', '.comment.editable', function() {
+    $('.comment.editable').each(function() {
+        makeEditableComment($(this));
     });
 
     // MAKE TODOITEMS EDITABLE
@@ -158,19 +159,17 @@ function makeEditableTodoitem(element) {
 }
 
 // EDIT COMMENT ON experiment/database
-function makeEditableComment(type) {
-    $('.comment.editable').editable('app/controllers/CommentsController.php', {
+function makeEditableComment(element) {
+    $(element).editable('app/controllers/CommentsController.php', {
         name: 'update',
         type : 'textarea',
-        submitdata: {type: type},
+        submitdata: {type: $(element).data('type')},
         width: '80%',
         height: '200',
         tooltip : 'Click to edit',
-        //indicator : $(this).data('indicator'),
-        //submit : $(this).data('submit'),
-        //cancel : $(this).data('cancel'),
-        submit: 'Save',
-        cancel: 'Cancel',
+        indicator : $(element).data('indicator'),
+        submit : $(element).data('submit'),
+        cancel : $(element).data('cancel'),
         style : 'display:inline',
         submitcssclass : 'button mt-2',
         cancelcssclass : 'button button-delete mt-2',

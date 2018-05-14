@@ -1134,3 +1134,7 @@ code {
 .view-action-buttons a {
     margin-right: 5px;
 }
+
+.pseudo-link:hover {
+    color: #29AEB9;
+}

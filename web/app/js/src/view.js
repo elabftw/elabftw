@@ -116,11 +116,6 @@
             Comments.create($(this).data('expid'));
         });
 
-        $(document).on('click', '.commentsEdit', function() {
-            // TODO not working but idea is good :p
-            $(this).find('.editable').trigger('click');
-        });
-
         // DESTROY COMMENTS
         $(document).on('click', '.commentsDestroy', function() {
             Comments.destroy($(this).data('id'));

@@ -2451,7 +2451,7 @@ grunt-contrib-cssmin@^2.2.1:
     clean-css "~4.1.1"
     maxmin "^2.1.0"
 
-grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
+grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony, grunt-contrib-uglify@gruntjs/grunt-contrib-uglify#harmony:
   version "3.3.0"
   resolved "https://codeload.github.com/gruntjs/grunt-contrib-uglify/tar.gz/ccb95a70cad6a4e9e902d3bd5d0e38a4de09a1e1"
   dependencies:
@@ -2460,7 +2460,7 @@ grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
     uglify-es "~3.3.0"
     uri-path "^1.0.0"
 
-grunt-contrib-watch@^1.0.0:
+grunt-contrib-watch@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/grunt-contrib-watch/-/grunt-contrib-watch-1.1.0.tgz#c143ca5b824b288a024b856639a5345aedb78ed4"
   dependencies:

@@ -65,6 +65,10 @@
         });
 
 
+        $('#hideUploads').on('click', function() {
+            $('#uploadsDiv').toggle();
+        });
+
         ////////////////
         // DATA RECOVERY
 

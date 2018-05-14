@@ -8,8 +8,9 @@
             Attached files
             {% endtrans %}
         </h3>
+        <i class='fas fa-eye clickable align_right' title='Toggle visibility' id='hideUploads'></i>
 
-        <div class='row'>
+        <div class='row' id='uploadsDiv'>
         {% for upload in uploadsArr %}
             <div class='col-md-4 col-sm-6'>
                 <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>

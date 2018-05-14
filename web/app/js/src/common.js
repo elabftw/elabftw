@@ -25,8 +25,9 @@ $(document).ready(function() {
     });
 
     // MAKE THE FILE COMMENT FIELD EDITABLE
-    $('#files_div').on('mouseover', '.file-comment', function() {
-        makeEditableFileComment($(this).data('type'), $(this).data('id'));
+    //$('#files_div').on('mouseover', '.file-comment', function() {
+    $('.file-comment.editable').each(function() {
+        makeEditableFileComment($(this));
     });
     // MAKE THE COMMENT FIELD EDITABLE
     $('#comment_container').on('mouseover', '.comment.editable', function() {
@@ -34,7 +35,7 @@ $(document).ready(function() {
     });
 
     // MAKE TODOITEMS EDITABLE
-    $(".todoitem.editable").each(function() {
+    $('.todoitem.editable').each(function() {
         makeEditableTodoitem($(this));
     });
 });
@@ -181,14 +182,14 @@ function makeEditableComment(type) {
 }
 
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment(type, itemId) {
+function makeEditableFileComment(element) {
     $('.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
-            type: type,
+            type: $(element).data('type'),
             comment : value,
             comment_id : $(this).attr('id'),
-            id: itemId
+            id: $(element).data('itemid')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');
@@ -199,9 +200,16 @@ function makeEditableFileComment(type, itemId) {
 
         return(value);
         }, {
-        tooltip : 'Click to edit',
+        tooltip : 'File comment',
+        placeholder: 'File comment',
         indicator : 'Saving...',
         name : 'fileComment',
+        onedit: function() {
+            console.log($(this).text());
+            if ($(this).text() === 'Click to add a comment') {
+                $(this).text('');
+            }
+        },
         submit : 'Save',
         onblur : 'ignore',
         cancel : 'Cancel',

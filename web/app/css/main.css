@@ -1075,12 +1075,16 @@ code {
     font-size: 60%;
     display: none;
     text-decoration: none;
-    color: #303030;
+    /*color: #303030;*/
 }
 
 /* fix the padding for sortable list */
 #todoItems-list.ui-sortable {
     padding-left: 0;
+}
+
+.destroyTodoItem:hover {
+    color: #e6614c;
 }
 /* END TODOLIST */
 

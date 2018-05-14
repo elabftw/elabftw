@@ -33,8 +33,9 @@ $(document).ready(function() {
         makeEditableComment($(this).data('type'));
     });
 
-    $('.todoitem.editable').on('mouseover', function(){
-        makeEditableTodoitem();
+    // MAKE TODOITEMS EDITABLE
+    $(".todoitem.editable").each(function() {
+        makeEditableTodoitem($(this));
     });
 });
 
@@ -138,27 +139,19 @@ function quickSave(type, id) {
 }
 
 // EDIT todoitem
-function makeEditableTodoitem() {
-    $('.todoitem.editable').editable(function(value, settings) {
+function makeEditableTodoitem(element) {
+    $(element).editable(function(value, settings) {
         $.post('app/controllers/TodolistController.php', {
             update: true,
             body: value,
             id: $(this).attr('id')
-        }).done(function(data) {
-            if (data.res) {
-                notif(data.msg, 'ok');
-            } else {
-                notif(data.msg, 'ko');
-            }
         });
 
         return(value);
         }, {
      tooltip : 'Click to edit',
      indicator : 'Saving...',
-     name : 'fileComment',
-     submit : 'Save',
-     cancel : 'Cancel',
+     onblur: 'submit',
      style : 'display:inline'
     });
 }

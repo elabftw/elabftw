@@ -23,8 +23,8 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Entity->Comments->Update('Udpated', 1), 1);
-        $this->assertFalse($this->Entity->Comments->Update('a', 1), 1);
+        $this->assertTrue($this->Entity->Comments->Update('Updated', 'comment_1'), 1);
+        $this->assertFalse($this->Entity->Comments->Update('a', 'comment_1'), 1);
     }
 
     public function testDestroy()

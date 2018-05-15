@@ -3062,9 +3062,9 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
-jquery-jeditable@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.2.tgz#2f407ad53428029b37c21d3e6e9f957613d67d2f"
+jquery-jeditable@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.3.tgz#777a3a46f05660fbd42b6c7bd17aca7c839eed58"
   dependencies:
     jquery "^3.3.1"
 

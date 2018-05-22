@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<!-- add moment lib TODO rename it to moment if it's only moment inside it-->
+<script src='app/js/moment.bundle.js'></script>
+<script src='app/js/src/relative-moment.js'></script>
+
+<a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
+    <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Go back'|trans }}
+</a>
+{% for revision in revisionsArr %}
+<div class='item'><span class='relative-moment' title='{{ revision.savedate }}'></span> {% if not Entity.entityData.locked %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
+    {{ revision.body|raw }}</div>
+{% endfor %}
+
+{% endblock body %}

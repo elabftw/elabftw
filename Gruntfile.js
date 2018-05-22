@@ -10,64 +10,64 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       options: {
-          banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.homepage %> */\n',
+          banner: '/*! <%= pkg.name %> <%= pkg.homepage %> */\n',
         mangle: false
       },
       dist: {
         files: {
-          'app/js/elabftw.min.js': [
-              'node_modules/jquery/dist/jquery.js',
-              'node_modules/jquery-ui-dist/jquery-ui.js',
-              'node_modules/bootstrap/js/alert.js',
-              'node_modules/bootstrap/js/button.js',
-              'node_modules/bootstrap/js/collapse.js',
-              'node_modules/bootstrap/js/dropdown.js',
+          'web/app/js/elabftw.min.js': [
               'node_modules/vanderlee-colorpicker/jquery.colorpicker.js',
-              'node_modules/keymaster/keymaster.js',
-              'app/js/common.js',
-              'app/js/cornify.js',
-              'app/js/jquery.jeditable.js',
-              'app/js/jquery.rating.js',
-              'app/js/3Dmol-nojquery.js',
-              'app/js/3Dmol-helpers.js',
-              'app/js/prism.js'],
+              'node_modules/jquery-jeditable/src/jquery.jeditable.js',
+              //'web/app/js/src/common.js',
+              'web/app/js/src/cornify.js',
+              'web/app/js/src/jquery.rating.js',
+              'web/app/js/src/3Dmol-nojquery.js',
+              'web/app/js/src/3Dmol-helpers.js',
+              'web/app/js/src/prism.js',
+              'web/app/js/src/keymaster.js'],
 
-          'app/js/chemdoodle/chemdoodle.min.js': [
-              'app/js/chemdoodle/chemdoodle-unpacked.js',
-              'app/js/chemdoodle/chemdoodle-uis-unpacked.js'],
+          'web/app/js/chemdoodle/chemdoodle.min.js': [
+              'web/app/js/src/chemdoodle/chemdoodle-unpacked.js',
+              'web/app/js/src/chemdoodle/chemdoodle-uis-unpacked.js'],
 
-          'app/js/scheduler.min.js': [
-              'node_modules/moment/moment.js',
+          'web/app/js/fullcalendar.min.js': [
               'node_modules/fullcalendar/dist/fullcalendar.js',
               'node_modules/fullcalendar/dist/locale-all.js'],
-          'app/js/team.min.js': 'app/js/team.js',
 
-          'app/js/tinymce-dropzone.min.js': [
-              'node_modules/tinymce/tinymce.js',
-              'app/js/tinymce-langs/*',
+          'web/app/js/team.min.js': 'web/app/js/src/team.js',
+
+          'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
+          'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
+
+          'web/app/js/dropzone.min.js': [
               'node_modules/dropzone/dist/dropzone.js'],
 
-          'app/js/file-saver.min.js': 'node_modules/file-saver/FileSaver.js',
-          'app/js/admin.min.js': 'app/js/admin.js',
-          'app/js/view.min.js': [
-              'app/js/view.js',
-              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js'],
-          'app/js/tabs.min.js': 'app/js/tabs.js',
-          'app/js/sysconfig.min.js': 'app/js/sysconfig.js',
-          'app/js/footer.min.js': 'app/js/footer.js',
-          'app/js/todolist.min.js': 'app/js/todolist.js',
-          'app/js/login.min.js': 'app/js/login.js',
-          'app/js/register.min.js': [
+          'web/app/js/file-saver.min.js': 'node_modules/file-saver/FileSaver.js',
+          'web/app/js/admin.min.js': 'web/app/js/src/admin.js',
+          'web/app/js/view.min.js': [
+              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js',
+              'web/app/js/src/view.js'],
+          'web/app/js/install.min.js': 'web/app/js/src/install.js',
+          'web/app/js/tabs.min.js': 'web/app/js/src/tabs.js',
+          'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
+          'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
+          'web/app/js/login.min.js': 'web/app/js/src/login.js',
+          'web/app/js/register.min.js': [
               'node_modules/jquery.complexify/jquery.complexify.js',
               'node_modules/jquery.complexify/jquery.complexify.banlist.js',
-              'app/js/register.js' ],
-          'app/js/change-pass.min.js': 'app/js/change-pass.js',
-          'app/js/show.min.js': 'app/js/show.js',
-          'app/js/edit.min.js': 'app/js/edit.js',
-          'app/js/search.min.js': 'app/js/search.js',
-          'app/js/ucp.min.js': 'app/js/ucp.js',
-          'app/js/doodle.min.js': 'app/js/doodle.js'
-
+              'web/app/js/src/register.js' ],
+          'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
+          'web/app/js/show.min.js': 'web/app/js/src/show.js',
+          'web/app/js/edit.min.js': 'web/app/js/src/edit.js',
+          'web/app/js/search.min.js': 'web/app/js/src/search.js',
+          'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',
+          'web/app/js/profile.min.js': 'web/app/js/src/profile.js',
+          'web/app/js/uploads.min.js': 'web/app/js/src/uploads.js',
+          'web/app/js/doodle.min.js': 'web/app/js/src/doodle.js',
+          'web/app/js/bootstrap-markdown.min.js': [
+              'node_modules/markdown/lib/markdown.js',
+              'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',
+              'node_modules/bootstrap-markdown-fa5/locale/*' ]
         }
       }
     },
@@ -78,32 +78,35 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'app/css/elabftw.min.css': [
-              'app/css/tagcloud.css',
-              'app/css/jquery.rating.css',
-              'app/css/prism.css',
+          'web/app/css/elabftw.min.css': [
+              'web/app/css/tagcloud.css',
+              'web/app/css/jquery.rating.css',
+              'web/app/css/prism.css',
               'node_modules/dropzone/dist/dropzone.css',
               'node_modules/fullcalendar/dist/fullcalendar.css',
               'node_modules/bootstrap/dist/css/bootstrap.css',
               'node_modules/vanderlee-colorpicker/jquery.colorpicker.css',
               'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
               'node_modules/jquery-ui-dist/jquery-ui.css',
-              'app/css/main.css'],
+              'web/app/css/main.css'],
 
-          'app/css/pdf.min.css': 'app/css/pdf.css'
+          'web/app/css/pdf.min.css': 'web/app/css/pdf.css',
+
+          'web/app/css/bootstrap-markdown.min.css': 'node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css'
         }
       }
     },
     shell: {
+      // you need to have phpDocumentor.phar in the root dir: wget http://phpdoc.org/phpDocumentor.phar
       buildapi: {
-        command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t _api'
+        command: 'php phpDocumentor.phar run -d src/classes -d src/models -d web/app/controllers -d src/views -t _api'
       },
       rununit: {
         command: 'php vendor/bin/codecept run unit'
       },
       // xdebug must be DISABLED
       runtests: {
-        command: 'docker run --rm --name selenium -d --net=host selenium/standalone-chrome && php vendor/bin/codecept run --skip functionnal; cp -f config.php.dev config.php; docker stop selenium'
+        command: 'docker run --rm --name selenium -d --net=host selenium/standalone-chrome && php vendor/bin/codecept run --skip functionnal; docker stop selenium'
       },
       // xdebug must be ENABLED
       runcoverage: {
@@ -116,7 +119,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-uglify-es');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-shell');

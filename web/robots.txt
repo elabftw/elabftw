@@ -1,0 +1,8 @@
+# robots.txt file for elabftw
+# https://www.elabftw.net
+
+User-agent: *
+Disallow: /
+Disallow: /harm/human
+Disallow: /disobey/human
+Disallow: /harm/self

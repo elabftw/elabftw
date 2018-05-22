@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class CommentsTest extends \PHPUnit_Framework_TestCase
+class CommentsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -13,7 +13,8 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $this->assertEquals($this->Entity->Comments->create('Ohai'), 1);
+        $id = $this->Entity->Comments->create('Ohai');
+        $this->assertInternalType("int", $id);
     }
 
     public function testReadAll()
@@ -23,8 +24,8 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Entity->Comments->Update('Udpated', 1), 1);
-        $this->assertFalse($this->Entity->Comments->Update('a', 1), 1);
+        $this->assertTrue($this->Entity->Comments->Update('Updated', 'comment_1'), 1);
+        $this->assertFalse($this->Entity->Comments->Update('a', 'comment_1'), 1);
     }
 
     public function testDestroy()
@@ -35,6 +36,6 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
     public function testDestroyAll()
     {
         $this->assertTrue($this->Entity->Comments->destroyAll());
-        $this->assertFalse(is_array($this->Entity->Comments->readAll()));
+        $this->assertTrue(empty($this->Entity->Comments->readAll()));
     }
 }

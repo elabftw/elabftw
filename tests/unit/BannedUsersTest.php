@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class BannedUsersTest extends \PHPUnit_Framework_TestCase
+class BannedUsersTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

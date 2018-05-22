@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<!--
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+-->
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name='referrer' content='origin'>
+    <link rel="icon" type="image/ico" href="app/img/favicon.ico" />
+    <title>{{ block('title') }} - eLabFTW</title>
+    <!-- see Gruntfile.js to see what gets inside these files -->
+    <!-- CSS -->
+    <link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
+    <!-- JS -->
+    <script src="app/js/main.bundle.js?v=200"></script>
+    <script src="app/js/elabftw.min.js?v=200"></script>
+    <!-- TODO DEBUG -->
+    <script src="app/js/src/common.js"></script>
+</head>
+
+<body>
+
+<!-- container-fluid is from bootstrap -->
+<section id="container" class='container-fluid'>
+
+<!-- begin main menu -->
+<nav class='navbar navbar-expand-lg navbar-dark'>
+    <!-- logo -->
+    <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
+    {% if App.Session.has('auth') or App.Session.has('anon') %}
+    <!-- hamburger menu -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    {% endif %}
+
+    {% if App.Session.has('auth') or App.Session.has('anon') %}
+    <!-- everything in there will be part of the burger -->
+    <div class='collapse navbar-collapse' id='main-nav'>
+        <div class='navbar-nav'>
+            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'experiments.php' ? 'active' }}'
+                href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
+            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'database.php' ? 'active' }}'
+                href='database.php'>{{ 'Database'|trans }}</a>
+
+            {% if not App.Session.has('anon') %}
+            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'team.php' ? 'active' }}'
+                href='team.php'>{{ 'Team'|trans }}</a>
+            {% endif %}
+
+            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'search.php' ? 'active' }}'
+                href='search.php'>{{ 'Search'|trans }}</a>
+            <a class='nav-item nav-link' href='{{ App.teamConfigArr.link_href }}' target='_blank' rel='noopener'>{{ App.teamConfigArr.link_name }}</a>
+
+        </div>
+
+        <!-- SEARCH BAR -->
+        <form class='form-inline ml-auto' id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
+            {% if App.Request.getScriptName|split('/')|last == 'experiments.php' or App.Request.getScriptName|split('/')|last == 'database.php' %}
+            <input class='form-control' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
+            {% endif %}
+        </form>
+    </div>
+    {% endif %}
+</nav>
+
+<div id='real_container'>
+    {% if App.Session.has('auth') %}
+    <div class="user-nav">
+        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>{{ 'My Profile'|trans }}</span> {{ App.Users.userData.firstname|raw }}</a><br>
+        <a class="elab-tooltip" href='ucp.php'><span>{{ 'Settings'|trans }}</span><i class='fas fa-cogs'></i></a> |
+        <a class="elab-tooltip" href='profile.php'><span>{{ 'My Profile'|trans }}</span><i class='fas fa-user'></i></a> |
+        <a class="elab-tooltip todoToggle" href='#'><span>{{ 'Todolist'|trans }}</span><i class='fas fa-list'></i></a> |
+        <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>{{ 'Help'|trans }}</span><i class='fas fa-question-circle'></i></strong></a> |
+        <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><i class='fas fa-sign-out-alt'></i></a>
+    </div>
+    <div id='help_container' class='card m2 help-container'>
+        <p><a href='#' class='close helpClose'>&times</a>
+            <ul>
+                <li class='tip'>
+                    {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://doc.elabftw.net/manual.html'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ "You can use a TODOlist by pressing '%s'."|trans|format(App.Users.userData.sc_create) }}
+                </li>
+                <li class='tip'>
+                    {{ 'You can have experiments templates (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=3'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ 'You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'|trans|format("<a href='admin.php?tab=4'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ 'If you press Ctrl Shift D in the editor, the date will appear under the cursor.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'Custom shortcuts are available (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=1'>", "</a>")|raw }}
+                </li>
+                <li class='tip'>
+                    {{ 'You can duplicate experiments in one click.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'Click a tag to list all items with this tag.'|trans }}
+                </li>
+                <li class='tip'>
+                    {{ 'Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'|trans }}
+                </li>
+            </ul>
+        </p>
+    </div>
+    {% elseif App.Session.has('anon') %}
+    <div class="user-nav">
+        {{ 'Anonymous'|trans }}
+        <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><i class='fas fa-sign-out-alt'></i></a>
+    </div>
+    {% endif %}
+
+<noscript><!-- show warning if javascript is disabled -->
+    <div class='alert alert-danger'>
+        <p><strong>Javascript is disabled.</strong> Please enable Javascript to view eLabFTW in all its glory.</p>
+    </div>
+</noscript>
+<!-- TITLE -->
+<h2>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
+
+<!-- INFO BOX (FLASH MESSAGES) -->
+{% for ok in App.ok %}
+    {{ ok|msg('ok') }}
+{% endfor %}
+{% for ko in App.ko %}
+    {{ ko|msg('ko') }}
+{% endfor %}

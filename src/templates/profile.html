@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<!-- USER INFOS -->
+<section class='box'>
+    <i class='fas fa-user fa-lg mr-1 align-top'></i><h5 class='inline'>{{ 'Infos'|trans }}</h5>
+    <hr>
+    <div>
+        <p>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</p>
+    <p>{{ count }} {% trans %}
+        experiments done since
+        {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
+        <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
+        <div id='api_div'><h4>{{ 'API key'|trans }}</h4>
+            {% if App.Users.userData.api_key|length > 0 %}
+            <input value='{{ App.Users.userData.api_key }}' />
+            {% endif %}
+            <button class='button generateApiKey'>{% trans %}Generate an API Key{% endtrans %}</button></p>
+        </div>
+    </div>
+</section>
+
+<!-- STATUS STAT -->
+<section class='box'>
+    {% if count == 0 %} {# fix division by zero #}
+        {{ 'No statistics available yet.'|trans }}
+    {% else %}
+    <i class='fas fa-chart-pie fa-lg mr-1'></i><h5 class='inline'>{{ 'Statistics'|trans }}</h5>
+        <hr>
+        <!-- BEGIN TEMPORARY DOWNGRADE -->
+        <p>No pretty pie chart until this issue is resolved: <a href='https://github.com/google/google-visualization-issues/issues/1356'>https://github.com/google/google-visualization-issues/issues/1356</a></p>
+        {% for status, percent in UserStats.percentArr %}
+        {{ status }} => {{ percent }}% <br>
+        {% endfor %}
+        <!-- END TEMPORARY DOWNGRADE -->
+        <div id='stats' data-stats='{{ statsJson|raw }}' data-title='{% trans %}
+                Experiment
+                {% plural 2 %}
+                Experiments
+                {% endtrans %}'
+        data-colors='{{ colorsJson|raw }}'></div>
+        <div id='chart_div' class='center'></div>
+    {% endif %}
+</section>
+
+<!-- TAG CLOUD -->
+<section class='box'>
+    <i class='fas fa-cloud fa-lg mr-1'></i><h5 class='inline'>{{ 'Tag cloud'|trans }}</h5>
+    <hr>
+    <div>
+        {# handle minimum tag count #}
+        {% set cloudArr = TagCloud.getCloudArr %}
+        {% if cloudArr|length <= 10 %}
+            {% trans %}
+                Not enough tags to make a tagcloud
+            {% endtrans %}
+        {% else %}
+        {% for tag, class in cloudArr %}
+            <a href='experiments.php?mode=show&tag={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
+        {% endfor %}
+
+        {% endif %}
+    </div>
+</section>
+
+<!--script src='https://www.google.com/jsapi'></script-->
+<!--
+<script src='app/js/profile.min.js'></script>
+-->
+<script src='app/js/src/profile.js'></script>
+{% endblock body %}

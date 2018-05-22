@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class ToolsTest extends \PHPUnit_Framework_TestCase
+class ToolsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -42,6 +42,7 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals('1969.07.21', Tools::formatDate('19690721'));
         $this->assertEquals('1969-07-21', Tools::formatDate('19690721', '-'));
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Tools::formatDate('196907211'));
     }
 
@@ -54,6 +55,7 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckId()
     {
+        $this->expectException(\TypeError::class);
         $this->assertFalse(Tools::checkId('yep'));
         $this->assertFalse(Tools::checkId(-42));
         $this->assertFalse(Tools::checkId(0));
@@ -63,8 +65,8 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
 
     public function testError()
     {
-        $this->assertEquals(Tools::error(), "An error occured!");
-        $this->assertEquals(Tools::error(true), "This section is out of your reach!");
+        $this->assertEquals(Tools::error(), 'An error occured!');
+        $this->assertEquals(Tools::error(true), 'This section is out of your reach!');
     }
 
     public function testGetCalendarLang()

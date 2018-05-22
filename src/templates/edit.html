@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% include('view-edit.html') %}
+<!-- WYSIWYG editor -->
+<script src='app/js/tinymce.bundle.js?v=200'></script>
+<!-- upload files form -->
+<script src='app/js/dropzone.min.js?v=200'></script>
+<!-- add moment lib -->
+<script src='app/js/moment.bundle.js'></script>
+<script src='app/js/src/relative-moment.js'></script>
+
+
+<section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
+    <i class='fas fa-times fa-2x clickable align_right entityDestroy' title='Delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+
+    <!-- TAGS -->
+    <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
+    <div class='tags'>
+        <span id='tags_div'>
+            <!--  build the tag array -->
+            {% if Entity.entityData.tags|length > 0 %}
+                {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+                {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+                {% set inc = 0 %}
+                {% for tag in tagsValueArr %}
+                    <span class='tag clickable'>
+                        <a class='tagDestroy' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[inc] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                            {{ tag|raw }}
+                        </a>
+                    </span>
+                    {% set inc = inc + 1 %}
+                {% endfor %}
+            {% endif %}
+        </span>
+        <input type='text' id='createTagInput' placeholder='{{ 'Add a tag'|trans }}' />
+    </div>
+
+    <!--  MAIN FORM -->
+    <form id='main_form' method='post' action='app/controllers/EntityController.php' enctype='multipart/form-data'>
+        <input name='update' type='hidden' value='true' />
+        <input name='id' type='hidden' value='{{ Entity.id }}' />
+        <input name='type' type='hidden' value='{{ Entity.type }}' />
+
+        <!-- DATE -->
+            <div class='row'>
+                <div class='col-md-4'>
+                    <i class='far fa-calendar-alt mr-1'></i><label for='datepicker'>{{ 'Date'|trans }}</label>
+                    <!-- if firefox has support for it: type = date -->
+                    <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
+                    <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
+                </div>
+
+            {% if Entity.type == 'experiments' %}
+                <!-- VISIBILITY -->
+                <div class='col-md-4'>
+                    <i class='fas fa-eye' title='Visibility'></i>
+                    <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
+                    <select id='visibility_select'>
+                        {% for key, value in TeamGroups.getVisibilityList %}
+                            <option value='{{ key }}'
+                            {{ Entity.entityData.visibility == key ? ' selected' }}
+                            >{{ value|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+                <!-- CATEGORIES (status for exp and itemstypes for items) -->
+                <div class='col-md-4'>
+                    <i class='fas fa-clipboard-check'></i>
+                    <label for='category_select'>
+                    {% if Entity.type == 'experiments' %}
+                    {{ 'Status'|trans }}
+                    {% else %}
+                    {{ 'Category'|trans }}
+                    {% endif %}
+                    </label>
+                    <select id='category_select'>
+                        {% for category in categoryArr %}
+                            <option value='{{ category.category_id }}'
+                            {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if Entity.type == 'items' %}
+                    <!-- STAR RATING -->
+                    <div class='col-md-4' style='margin-top:15px'>
+                        {% for i in range(1, 5) %}
+                        <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </div>
+            <!-- TITLE -->
+            <h4>{{ 'Title'|trans }}</h4>
+            <input id='title_input' type='text' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
+
+            <!-- BODY -->
+            {% if Entity.type == 'experiments' %}
+            <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
+            {% else %}
+                <h4>{{ 'Infos'|trans }}</h4>
+            {% endif %}
+
+            {% if Entity.Users.userData.use_markdown %}
+                <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+            {% else %}
+                <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+            {% endif %}
+
+            <div class='submitButtonDiv'>
+                <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>
+            </div>
+        </form>
+
+    <!-- REVISIONS -->
+    {{ Revisions.showCount|raw }}
+
+    {% if Entity.type == 'experiments' %}
+    <div class='row justify-content-around mt-4'>
+        <!-- STEPS -->
+        <section class='col-md-6'>
+            <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Experiments steps'|trans }}</h4>
+            <br>
+            <div class='mt-2' id='steps_div'>
+                {% for step in stepsArr %}
+
+                <div class='input-group mb-2 '>
+                    <div class='input-group-prepend'>
+                        <div class='input-group-text'>
+                            <input type='checkbox' autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' >
+                        </div>
+                    </div>
+                    <div class='form-control {{ step.finished ? 'finished' }}'>
+                    <span>{{ step.body|raw }}</span>
+                    {% if step.finished %}
+                    <span class='mr-2 text-muted'>
+                        {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+                    </span>
+                    {% endif %}
+                    <a class='align_right stepDestroy' data-stepid='{{ step.id }}'>
+                        <i class='fas fa-lg fa-times clickable'></i>
+                    </a>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+
+            <!-- ADD STEP -->
+            <div class='input-group mb-3'>
+                <div class='input-group-prepend'>
+                    <span class='input-group-text' id='link-input-1'>{{ 'Add a step'|trans }}</span>
+                </div>
+                <input type='text' size='60' id='stepinput' class='form-control' />
+            </div>
+
+        </section>
+        <!-- LINKS -->
+        <section class='col-md-6'>
+            <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
+            <br>
+            <div class='mt-2' id='links_div'>
+                {% if linksArr %}
+                <ul class='list-group'>
+                    {% for link in linksArr %}
+                    <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                            {{ link.title|raw }}</a>
+                        <a class='align_right linkDestroy' data-linkid='{{ link.linkid }}'>
+                            <i class='fas fa-lg fa-times clickable'></i>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <!-- ADDD LINK -->
+            <div class='mt-2'>
+                <div class='input-group mb-3'>
+                    <div class='input-group-prepend'>
+                        <span class='input-group-text' id='link-input-1'>{{ 'Add a link'|trans }}</span>
+                    </div>
+                    <input type='text' id='linkinput' placeholder='{{ 'from the database'|trans }}' class='form-control' />
+                </div>
+            </div>
+        </section>
+    </div>
+    {% endif %}
+</section>
+
+<!-- UPLOAD FORM -->
+<section class='box'>
+    <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Attach a file'|trans }}</h3>
+    <form action='app/controllers/EntityController.php' class='dropzone' id='elabftw-dropzone'></form>
+</section>
+
+{{ include('uploads.html') }}
+
+<!-- DOODLE -->
+<section class='box'>
+    <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
+    <button class='button show-hide' data-type='doodle'>+</button>
+    <div class='canvasDiv'>
+        <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
+        <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
+        <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+    </div>
+</section>
+<script src='app/js/doodle.min.js'></script>
+
+<!-- CHEM EDITOR -->
+{% if Entity.Users.userData.chem_editor %}
+    <div class='box chemdoodle'>
+        <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
+        <button class='button show-hide' data-type='chem'>+</button>
+        <div class='center' style='display:none' id='chem_editor'>
+            <script src='app/js/chemdoodle-canvas.min.js'></script>
+        </div>
+    </div>
+{% endif %}
+
+{% if Entity.Users.userData.close_warning %}
+    <script src='app/js/close-warning.min.js'></script>
+{% endif %}
+<div id='entityInfos'
+    data-upmsg='{{ 'Drop files here to upload'|trans }}'
+    data-maxsize='{{ maxUploadSize }}'
+    data-type='{{ Entity.type }}'
+    data-id='{{ Entity.id }}'
+    data-locale='{{ App.Users.userData.lang }}'
+    data-title='{{ cleanTitle }}'
+    data-confirm="{{ 'Delete this?'|trans }}"
+    data-untitled="{{ 'Untitled'|trans }}"
+    data-lang="{{ Entity.Users.userData.lang }}">
+</div>
+<div id='shortcuts'
+    data-create='{{ Entity.Users.userData.sc_create }}'
+    data-submit='{{ Entity.Users.userData.sc_submit }}'>
+</div>
+<script src='app/js/src/edit.js?v=200'></script>
+{% endblock body %}

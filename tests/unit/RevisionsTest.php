@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class RevisionsTest extends \PHPUnit_Framework_TestCase
+class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -33,7 +33,7 @@ class RevisionsTest extends \PHPUnit_Framework_TestCase
         $new = $this->Experiment->create();
         $this->Experiment->setId($new);
         $this->Revisions = new Revisions($this->Experiment);
-        $this->assertTrue($this->Revisions->create('Ohai', $new));
+        $this->assertTrue($this->Revisions->create('Ohai'));
         $this->assertTrue($this->Revisions->restore($new));
     }
 }

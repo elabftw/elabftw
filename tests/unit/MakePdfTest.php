@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class MakePdfTest extends \PHPUnit_Framework_TestCase
+class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

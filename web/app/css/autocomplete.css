@@ -1,0 +1,74 @@
+.rte-autocomplete{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    z-index: 1000;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    background-clip: padding-box;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+}
+
+.rte-autocomplete:before {
+    content: '';
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+    border-left: 7px solid transparent;
+    position: absolute;
+    top: -7px;
+    left: 9px;
+}
+
+.rte-autocomplete:after {
+    content: '';
+    display: inline-block;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid white;
+    position: absolute;
+    top: -6px;
+    left: 10px;
+}
+
+.rte-autocomplete > .loading {
+	background: url(images/ajax-loader.gif) center no-repeat;
+	height: 16px;
+}
+
+.rte-autocomplete > li > a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 20px;
+    color: #333;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.rte-autocomplete >li > a:hover, .rte-autocomplete > li > a:focus, .rte-autocomplete:hover > a, .rte-autocomplete:focus > a {
+    color: #fff;
+    text-decoration: none;
+    background-color: #0081c2;
+    background-image: linear-gradient(to bottom,#08c,#0077b3);
+    background-repeat: repeat-x;
+}
+
+.rte-autocomplete >.active > a, .rte-autocomplete > .active > a:hover, .rte-autocomplete > .active > a:focus {
+    color: #fff;
+    text-decoration: none;
+    background-color: #0081c2;
+    background-image: linear-gradient(to bottom,#08c,#0077b3);
+    background-repeat: repeat-x;
+    outline: 0;
+}

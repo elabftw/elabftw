@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class IdpsTest extends \PHPUnit_Framework_TestCase
+class IdpsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -37,6 +37,6 @@ class IdpsTest extends \PHPUnit_Framework_TestCase
 
     public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Idps->readAll()));
+        $this->assertInternalType('array', $this->Idps->readAll());
     }
 }

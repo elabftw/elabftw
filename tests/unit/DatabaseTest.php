@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class DatabaseTest extends \PHPUnit_Framework_TestCase
+class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -19,7 +19,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
 
     public function testSetId()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\TypeError::class);
         $this->Database->setId('alpha');
     }
 
@@ -31,8 +31,6 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($this->Database->entityData));
         $this->assertEquals('Untitled', $this->Database->entityData['title']);
         $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
-        $this->expectException(\Exception::class);
-        $this->Database = new Database($this->Users, 'yep');
     }
 
     public function testUpdate()

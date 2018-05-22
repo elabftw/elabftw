@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<script src='app/js/moment.bundle.js'></script>
+<script src='app/js/fullcalendar.min.js?v=200'></script>
+
+<menu>
+    <ul>
+        <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Infos'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
+    </ul>
+</menu>
+
+<!-- TAB 1 SCHEDULER -->
+<div class='divhandle' id='tab1div'>
+    {% if itemsArr|length == 0 %}
+        {{ 'No bookable items.'|trans|msg('warning', false) }}
+    {% elseif Scheduler.Database.id is not null %}
+        <a href='#' id='change-item'>{{ 'Change item'|trans }}</a>
+        <h4><span style='color:#{{ Scheduler.itemData.color }}'>{{ Scheduler.itemData.category }}</span> - {{ Scheduler.itemData.title }}</h4>
+        <div id='scheduler'></div>
+    {% else %}
+    <div class='row'>
+        <div class='col-md-2'>
+            <div class='dropdown'>
+            <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
+                {{ 'Select an equipment'|trans }}
+            <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
+                {% for item in itemsArr %}
+                <li class='dropdown-item'><a data-value='{{ item.title }}' href='team.php?item={{ item.id }}'><span style='color:#{{ item.color }} '>{{ item.category }}</span> - {{ item.title }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- TAB 2 INFOS -->
+<div class='divhandle' id='tab2div'>
+    {{ 'You belong to the %s team. %s'|trans|format(teamArr.team_name, TeamsView.showStats(true))|msg('ok', false) }}
+
+    <table id='teamtable' class='table'>
+        <tr>
+            <th>{{ 'Name'|trans }}</th>
+            <th>{{ 'Phone'|trans }}</th>
+            <th>{{ 'Mobile'|trans }}</th>
+            <th>{{ 'Website'|trans }}</th>
+            <th>{{ 'Skype'|trans }}</th>
+        </tr>
+        {% for user in App.Users.readAllFromTeam %}
+        <tr>
+            <td><a href='mailto:{{ user.email }}'>
+                    <span
+                    {# put sysadmin, admin and chiefs in bold #}
+                    {% if user.usergroup in range(1, 3) %}
+                        style='font-weight:bold'
+                    {% endif %}
+                    >{{ user.fullname|raw }}
+                    </span>
+                </a>
+            </td>
+            <td>{{ user.phone }}</td>
+            <td>{{ user.cellphone }}</td>
+            <td><a href='{{ user.website }}'>{{ user.website }}</a></td>
+            <td>{{ user.skype }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+<!-- TAB 3 TEMPLATE -->
+<div class='divhandle' id='tab3div'>
+<div class='box new-tpl-box'>
+    <h3>{{ 'Experiments Templates'|trans }}</h3>
+    <ul class='nav nav-pills' role='tablist'>
+        {% for template in templatesArr %}
+            <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
+        {% endfor %}
+    </ul>
+    {% for template in templatesArr %}
+    <div class='subdivhandle box' id='subtab_{{ template.id }}div'>
+
+        <h3>{{ template.name|raw }} ({{ template.fullname|raw }})
+            <button class='button import-tpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
+        </h3>
+        <!-- TAGS -->
+        <i class='fas fa-tags'></i>
+        <label>{{ 'Tags'|trans }}</label>
+        <span class='tags'>
+            <!--  build the tag array -->
+            {% if template.tags|length > 0 %}
+                {% set tagsIdArr = template.tags_id|split(',') %}
+                {% set tagsValueArr = template.tags|split('|') %}
+                {% for tag in tagsValueArr %}
+                    <span class='tag'>{{ tag|raw }}</span>
+                {% endfor %}
+            {% endif %}
+        </span>
+
+        <div class='txt' id='e{{ template.id }}'>{{ template.body|raw }}</div>
+
+    </div>
+    {% endfor %}
+</div>
+</div>
+
+<div id='infos'
+    data-lang="{{ lang }}"
+    data-item="{{ selectedItem }}"></div>
+<script src='app/js/tabs.min.js'></script>
+<script src='app/js/src/team.js'></script>
+{% endblock body %}

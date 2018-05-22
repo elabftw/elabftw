@@ -1,9 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
-class ApiTest extends \PHPUnit_Framework_TestCase
+class ApiTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -35,7 +33,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $Entity->setId($id);
         $Api = new Api($Entity);
         $content = $Api->updateEntity('New title', '20170817', 'New body');
-        $this->assertEquals('Success', $content[1]);
+        $this->assertEquals('success', $content['result']);
         // update an entity without write access
         /* TODO
         $Entity = new Experiments(new Users(2), $id);

@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% if not searchPage %}
+<div class='row'>
+    <!-- LEFT MENU - CREATE NEW -->
+    <div class='col-md-2'>
+    {% if not App.Session.get('anon') %}
+        <div class='dropright'>
+<style>
+#dropdownMenu1{ background-color: white;color: #495057;border: 1px solid #ced4da}
+li.dropdown-item > a { color:black;}
+li.dropdown-item:hover a{ color:#29AEB9;}
+</style>
+            <button class='btn dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
+        <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
+            {% if Entity.type == 'experiments' %}
+                <li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>
+                    {% trans %}
+                    Experiment
+                    {% plural 1 %}
+                    Experiments
+                    {% endtrans %}
+                    </a>
+                </li>
+                <div class="dropdown-divider"></div>
+                {% if templatesArr|length > 0 %}
+                <h6 class="dropdown-header">{{ 'Templates'|trans }}</h6>
+                    {% for tpl in templatesArr %}
+                        <li class='dropdown-item'>
+                            <a href='app/controllers/ExperimentsController.php?create=true&tpl={{ tpl.id }}'>{{ tpl.name|raw }}</a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                <h6 class="dropdown-header">{{ 'No templates found'|trans }}</h6>
+                {% endif %}
+                <div class="dropdown-divider"></div>
+                <li class='dropdown-item'><a href='ucp.php?tab=3'>{{ 'Manage templates'|trans }}</a></li>
+            {% else %}
+                {% for category in categoryArr %}
+                    <li class='dropdown-item'>
+                        <a style='color:#{{ category.color }}' href='app/controllers/DatabaseController.php?create={{ category.category_id }}'>{{ category.category }}</a>
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+        </div>
+    {% endif %}
+    </div>
+    <!-- RIGHT MENU -->
+    <!-- we hide this menu for small devices -->
+<div class='col-md-10 hidden-xs'>
+
+    <!-- FILTERS -->
+<form id='filter-order-sort' class='form-inline align_right'>
+<div class='form-group'>
+    <input type='hidden' name='tag' value='{{ tag }}' />
+    <input type='hidden' name='q' value='{{ query }}' />
+
+    <!-- CATEGORY -->
+<select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>
+    <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
+    {% for category in categoryArr %}
+        <option value='{{ category.category_id }}' {{ App.Request.query.get('cat') == category.category_id ? 'selected'}}>
+        {{ category.category }}</option>
+    {% endfor %}
+
+</select>
+<input type='hidden' name='mode' value='show' />
+<button class='btn btn-elab submit-filter'>{{ 'Filter'|trans }}</button>
+
+<!-- ORDER -->
+<select name='order' style='-moz-appearance:none' class='form-control select-order'>
+    <option value=''>{{ 'Order by'|trans }}</option>
+    <option value='cat' {{ App.Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
+    <option value='date' {{ App.Request.query.get('order') == 'date' ? 'selected' }}>{{ 'Date'|trans }}</option>
+    {% if Entity.type == 'database' %}
+        <option value='rating' {{ App.Request.query.get('order') == 'rating' ? 'selected' }}>{{ 'Rating'|trans }}</option>
+    {% else %}
+        <option value='comment' {{ App.Request.query.get('order') == 'comment' ? 'selected' }}>{{ 'Comment'|trans }}</option>
+    {% endif %}
+    <option value='title' {{ App.Request.query.get('order') == 'title' ? 'selected' }}>{{ 'Title'|trans }}</option>
+</select>
+
+<!-- SORT -->
+<select name='sort' style='-moz-appearance:none' class='form-control select-sort'>
+    <option value=''>{{ 'Sort'|trans }}</option>
+    <option value='desc' {{ App.Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
+    <option value='asc' {{ App.Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
+</select>
+<button class='btn btn-elab submit-order'>{{ 'Order'|trans }}</button>
+<button type='reset' class='btn btn-danger submit-reset'>
+    {{ 'Reset'|trans }}
+</button>
+</div>
+</form>
+
+</div>
+</div>
+<hr>
+
+{% endif %}
+
+{% set count = itemsArr|length %}
+
+{% if count == 0 and searchType != '' %}
+    {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
+{% elseif count == 0 and searchType == '' and not App.Session.get('anon') %}
+    {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
+{% else %}
+    <p class='smallgray' style='display:inline'>
+        {{ count }}
+        {% trans %}
+            result shown
+        {% plural count %}
+            results shown
+        {% endtrans %}
+        <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
+        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> - 
+            <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
+    </p>
+
+    <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
+    {% if not searchPage %}
+        <select id='catChecked'>
+            <option selected disabled>
+            {% if Entity.type == 'experiments' %}
+                {{ 'Change status'|trans }}
+            {% else %}
+                {{ 'Change item type'|trans }}
+            {% endif %}
+            </option>
+
+            {% for category in categoryArr %}
+                <option value='{{ category.category_id }}'>{{ category.category }}</option>
+            {% endfor %}
+        </select>
+
+        {% if Entity.type == 'experiments' %}
+        <select id='visChecked'>
+            <option selected disabled>{{ 'Change visibility'|trans }}</option>
+            {% for key, value in visibilityArr %}
+                <option value='{{ key }}'>{{ value }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+    {% endif %}
+        <button data-what = 'zip' class='button csvzip'>{{ 'Make Zip'|trans }}</button>
+        <button data-what='csv' class='button csvzip'>{{ 'Make Csv'|trans }}</button>
+        <button id='deleteChecked' class='button button-delete'>{{ 'Delete'|trans }}</button>
+    </p>
+    <div class='row display-flex'>
+    {% for item in itemsArr %}
+        {% set permissions = Entity.getPermissions(item) %}
+        {% if permissions.read %}
+            {# dim the experiment a bit if it's not yours #}
+            {% set opacity = '1' %}
+            {% set owner = '' %}
+            {% if (Entity.Users.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
+                {% set opacity = '0.7' %}
+                {% set owner = item.fullname %}
+            {% endif %}
+            {% if Entity.Users.userData.single_column_layout %}
+                <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+            {% else %}
+                <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
+            {% endif %}
+            <section class='item' id='parent_{{ item.id }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+
+                <p class='title'>
+                {% if item.locked %}
+                    <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+                {% endif %}
+
+                <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+                </p>
+                {% if item.next_step|length > 0 %}
+                    {% set stepsArr = item.next_step|split('|') %}
+                    {% set next = stepsArr|first %}
+                    <p style='padding-left:20px'>
+                    {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
+                    </p>
+                {% endif %}
+
+                <div data-type='{{ Entity.type }}' id='bodyToggleImg_{{ item.id }}' class='bodyToggleImg clickable'>
+                    <i class='align_right fas fa-plus-circle mr-1' title='Show more'></i>
+                </div>
+                <p style='padding-left:20px'>
+                    {% if searchPage %}
+                        {{ item.fullname|raw }}
+                    {% endif %}
+                    <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' style='width:15px;vertical-align:-3px;' />
+                {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>
+                {% endif %}
+                <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
+                <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
+                {% if item.timestamped %}
+                    <i class='far fa-calendar-check'></i>
+                {% endif %}
+
+                {# show attached if there is a file attached #}
+                {% if item.has_attachment %}
+                    <i class='fas fa-paperclip'></i>
+                {% endif %}
+
+                {% if Entity.type == 'items' and item.rating > 0 %}
+                    {{ item.rating|stars|raw }}
+                {% endif %}
+
+                {{ owner|raw }}
+
+                {% if item.tags is not null %}
+                <span class='tags'><i class='fas fa-tags mr-1'></i>
+                    {% set tagsArr = item.tags|split('|') %}
+                    {% for tag in tagsArr %}
+                    <a href='{{ Entity.page }}.php?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
+                    {% endfor %}
+                {% endif %}
+                </p>
+                <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+            </section>
+            </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+
+    {% if not showAll and not searchPage %}
+        <div class='center'>
+            {% if offset != 0 %}
+                <button class='button button-neutral previous-page'>{{ 'Previous page'|trans }}</button>
+            {% endif %}
+            {% if count >= Entity.Users.userData.limit_nb %}
+                <button class='button next-page'>{{ 'Next page'|trans }}</button>
+            {% endif %}
+            <button class='button button-neutral show-all'>{{ 'Show all'|trans }}</button>
+        </div>
+    {% endif %}
+
+{% endif %}
+
+<div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
+<div id='infos' data-limit='{{ Entity.Users.userData.limit_nb }}' data-offset='{{ offset }}'></div>
+<div id='type' data-type='{{ Entity.type }}'></div>
+<!--
+<script src='app/js/show.min.js'></script>
+-->
+<script src='app/js/src/show.js'></script>
+{% endblock body %}

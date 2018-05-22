@@ -93,7 +93,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '31'),
+('schema', '38'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -122,6 +122,8 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('saml_firstname', NULL),
 ('saml_lastname', NULL),
 ('local_login', '1'),
+('anon_users', '0'),
+('url', NULL),
 ('local_register', '1');
 
 -- --------------------------------------------------------
@@ -173,6 +175,10 @@ INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `use
 (1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '1', 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
 
 -- --------------------------------------------------------
+--
+-- Dumping data for table `idps`
+--
+INSERT INTO `idps` VALUES (1,'OneLogin','https://app.onelogin.com/','https://onelogin.com/','urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST','https://onelogin.com/','urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect','-----BEGIN CERTIFICATE-----\r\nMIIELDCCAxggAwIBAgIUaFt6ppX/TrAJo207cGFEJEdGaLgwDQYJKoZIhvcNAQEF\r\nBQAwXaELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYD\r\nVQQLDAxPbmVMb2dpbiBJZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAy\r\nOTU4MB4XDTE3MDMxOTExMzExNloXDTIyMDMyMDExMzExNlowXzELMAkGA1UEBhMC\r\nVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYDVQQLDAxPbmVMb2dpbiBJ\r\nZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAyOTU4MIIBIjANBgkqhkiG\r\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzNKk3lhtLUJKvyl+0HZF3xpsjYRFT0HR30xA\r\nDhRUGT/7lwVl3SnkgN6Us6NtOdKRFqFntz37s4qkmbzD0tGG6GirIIvgFx8HKhTw\r\nYgjsMsC/+NcS854zB/9pDlwNpZwhjGXZgE9YQUXuiZp1W/1kE+KZANr1KJKjtlsi\r\nWjNWah9VXLKCjQfKHdgYxSiSW9mv/Phz6ZjW0M3wdnJQRGg0iUzDxWhYp7sGUvjI\r\nhPtdb+VCYVm2MymYESXbkXH60kG26TPvvJrELPkAJ54RWsuPkWADBZxIozeS/1He\r\nhjg2vIcH7T/x41+qSN9IzlhWQTYtVCkpR2ShNbXL7AUXMM5bsQIDAQABo4HfMIHc\r\nMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFPERoVBCoadgrSI2Wdy7zPWIUuWyMIGc\r\nBgNVHSMEgZQwgZGAFPERoVBCoadgrSI2Wdy7zPWIUuWyoWOkYTBfMQswCQYDVQQG\r\nEwJVUzEXMBUGA1UECgwOSW5zdGl0dXQgQ3VyaWUxFTATBgNVBAsMDE9uZUxvZ2lu\r\nIElkUDEgMB4GA1UEAwwXT25lTG9naW4gQWNjb3VudCAxMDI5NTiCFGhbeqRV/06w\r\nCaNtO3BhRCRHRmi4MA4GA1UdDwEB/wQEAwIHgDANBgkqhkiG9w0BAQUFAAOCAQEA\r\nZ7CjWWuRdwJFBsUyEewobXi/yYr/AnlmkjNDOJyDGs2DHNHVEmrm7z4LWmzLHWPf\r\nzAu4w55wovJg8jrjhTaFiBO5zcAa/3XQyI4atKKu4KDlZ6cM/2a14mURBhPT6I+Z\r\nZUVeX6411AgWQmohsESXmamEZtd89aOWfwlTFfAw8lbe3tHRkZvD5Y8N5oawvdHS\r\nurapSo8fde/oWUkO8I3JyyTUzlFOA6ri8bbnWz3YnofB5TXoOtdXui1SLuVJu8AB\r\nBEbhgv/m1o36VdOoikJjlZOUjfX5xjEupRkX/YTp0yfNmxt71kjgVLs66b1+dRG1\r\nc2Zk0y2rp0x3y3KG6K61Ug==\r\n-----END CERTIFICATE-----'),(2,'test idp','https://idp.example.org','https://idp.example.org','osef','https://idp.example.org','osef','xauirset');
 
 --
 -- Table structure for table `experiments_comments`
@@ -181,7 +187,15 @@ INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `use
 CREATE TABLE `experiments_comments` (
   `id` int(10) UNSIGNED NOT NULL,
   `datetime` datetime NOT NULL,
-  `exp_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `items_comments` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `datetime` datetime NOT NULL,
+  `item_id` int(11) NOT NULL,
   `comment` text NOT NULL,
   `userid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -418,6 +432,7 @@ CREATE TABLE `teams` (
   `team_id` int(10) UNSIGNED NOT NULL,
   `team_name` text NOT NULL,
   `deletable_xp` tinyint(1) NOT NULL DEFAULT '1',
+  `public_db` tinyint(1) NOT NULL DEFAULT '0',
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -516,12 +531,17 @@ CREATE TABLE `users` (
   `close_warning` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
+  `archived` tinyint(1) NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `api_key` varchar(255) NULL DEFAULT NULL,
   `default_vis` varchar(255) NULL DEFAULT NULL,
   `single_column_layout` tinyint(1) NOT NULL DEFAULT 0,
   `cjk_fonts` tinyint(1) NOT NULL DEFAULT 0,
-  `use_markdown` tinyint(1) NOT NULL DEFAULT 0
+  `pdfa` tinyint(1) NOT NULL DEFAULT 1,
+  `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
+  `use_markdown` tinyint(1) NOT NULL DEFAULT 0,
+  `allow_edit` tinyint(1) NOT NULL DEFAULT 0,
+  `inc_files_pdf` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -570,6 +590,8 @@ ALTER TABLE `experiments`
 ALTER TABLE `experiments_comments`
   ADD PRIMARY KEY (`id`);
 
+ALTER TABLE `items_comments`
+  ADD PRIMARY KEY (`id`);
 --
 -- Indexes for table `experiments_links`
 --

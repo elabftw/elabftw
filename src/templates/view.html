@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% include('view-edit.html') %}
+
+<!-- add moment lib -->
+<script src='app/js/moment.bundle.js'></script>
+<script src='app/js/src/relative-moment.js'></script>
+
+{% if Entity.type == 'experiments' %}
+    {% if Entity.entityData.timestamped %}
+        {{ Ev.showTimestamp|raw }}
+    {% endif %}
+    <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
+        <p class='align_right inline'>
+            <i class='fas fa-clipboard-check' title='{{ 'Status'|trans }}'></i>
+            {{ Entity.entityData.category }}
+            <i class='fas fa-eye' title='{{ 'Visibility'|trans }}'></i>
+            {{ Ev.getVisibility }}
+        </p>
+{% else %}
+    <section class='box'>
+        {% if Entity.entityData.rating > 0 %}
+            <span class='align_right'>{{ Entity.entityData.rating|stars|raw }}</span>
+        {% endif %}
+{% endif %}
+
+<!-- DATE -->
+<div>
+    <i class='far fa-calendar-alt mr-1'></i>{{ Entity.entityData.date|kdate }}
+</div>
+<!-- begin action buttons row -->
+<span class='view-action-buttons'>
+{% if not Entity.isReadOnly and not Entity.entityData.locked %}
+    <a class='elab-tooltip' href='?mode=edit&id={{ Entity.id }}'>
+        <span>{{ 'Edit'|trans }}</span>
+        <i class='fas fa-pencil-alt' style='color:#29AEB9'></i>
+    </a>
+{% endif %}
+
+{% if not App.Session.has('anon') %}
+    <a class='elab-tooltip' href='app/controllers/EntityController.php?duplicate=1&id={{ Entity.id }}&type={{ Entity.type }}'>
+        <span>{{ 'Duplicate'|trans }}</span>
+        <i class='far fa-copy'></i>
+    </a>
+{% endif %}
+
+<a class='elab-tooltip' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <span>{{ 'Make a PDF'|trans }}</span>
+    <i class='fas fa-file-pdf'></i>
+</a>
+
+<a class='elab-tooltip' href='make.php?what=zip&id={{ Entity.id }}&type={{ Entity.type }}'>
+    <span>{{ 'Make a ZIP'|trans }}</span>
+    <i class='fas fa-file-archive'></i>
+</a>
+
+{% if Entity.type == 'items' %}
+<a class='elab-tooltip' href='experiments.php?mode=show&related={{ Entity.id }}'>
+    <span>{{ 'Show related'|trans }}</span>
+    <i class='fas fa-link'></i>
+</a>
+{% endif %}
+
+<!-- LOCK -->
+{% if not Entity.isReadOnly %}
+    {% set lockIcon = 'fa-lock-open' %}
+    {% set alt = 'Lock/Unlock item'|trans %}
+    {% if Entity.entityData.locked %}
+        {% set lockIcon = 'fa-lock' %}
+        {% set alt = Entity.entityData.lockedwhen %}
+    {% endif %}
+    <a class='elab-tooltip' href='#'>
+        <span>{{ alt }}</span>
+        <i id='lock' class='fas {{lockIcon}}'></i>
+    </a>
+{% endif %}
+
+<!-- show timestamp button if not timestamped already -->
+{% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('anon') %}
+    <a class='elab-tooltip' href='#'>
+        <span>{{ 'Timestamp Experiment'|trans }}</span>
+        <i class='far fa-calendar-check' id='confirmTimestamp'></i>
+    </a>
+    <div id='confirmTimestampDiv' style='display:none;' data-wait='{{ 'Please wait…' }}' title='{{ 'Timestamp this experiment?'|trans }}'>
+        <p>
+            <span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>
+            {{ 'Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?'|trans }}
+        </p>
+    </div>
+{% endif %}
+
+</span><!-- end view-action-button -->
+
+<!-- build the tag array -->
+{% if Entity.entityData.tags|length > 0 %}
+<span class='tags'><i class='fas fa-tags'></i>
+    {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+    {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+    {% for key, tag in tagsValueArr %}
+        {# the key allows to get the id stored in tagsIdArr #}
+        <a href='?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
+    {% endfor %}
+{% endif %}
+
+<!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
+<div class='{{ not Entity.isReadOnly and not Entity.entityData.locked ? 'click2Edit clickable' }} title_view'>
+    {% if Entity.type == 'items' %}
+        <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
+    {% endif %}
+    {{ Entity.entityData.title|raw }}
+</div>
+
+<!-- SHOW NEXT STEP -->
+{% set next_step = Entity.entityData.next_step %}
+{% if next_step|length > 0 %}
+    {% set nextStepsArr = next_step|split('|') %}
+    {% set next = nextStepsArr|first %}
+    <p>
+    {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
+    </p>
+{% endif %}
+
+<!--  BODY (show only if not empty) -->
+{% set body = Entity.entityData.body %}
+{% if body != '' %}
+    {% set body = Entity.entityData.body|md2html %}
+    <!-- Workaround for bug #532; long tables result in empty body returned from md2html:
+        If body is empty, reload and don't parse as markdown -->
+    {% if body|trim == '' %}
+        {% set body = Entity.entityData.body %}
+    {% endif %}
+    <div id='body_view' class='txt'>{{ body|raw }}</div>
+    <br>
+{% endif %}
+
+{% if Entity.type == 'experiments' %}
+    <!-- STEPS -->
+    {% if stepsArr %}
+        <ul class='list-group'>
+            {% for step in stepsArr %}
+            <li class='list-group-item {{ step.finished ? 'finished' }}'>
+                <i class='fas fa-{{ step.finished ? 'check-square' : 'square' }} mr-1'></i>{{ step.body|raw }}
+        {% if step.finished %}
+        <span class='mr-2 text-muted'>
+            {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+        </span>
+        {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class='mt-2'>
+    <!-- LINKS -->
+    {% if linksArr %}
+        <ul class='list-group'>
+            {% for link in linksArr %}
+            <li class='list-group-item'>
+                <i class='fas fa-link mr-1'></i>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                    {{ link.title|raw }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
+
+    <!-- eLabID -->
+    <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
+{% endif %}
+
+{% if Entity.type == 'items' %}
+    <!-- SHOW USER -->
+    {{ 'Last modified by'|trans }} {{ Entity.entityData.fullname|raw }}
+{% endif %}
+
+</section>
+
+{{ include('uploads.html') }}
+
+{% if App.Session.get('auth') %}
+    <section id='comment_container'>
+        <div id='comment' class='box'>
+            <i class='fas fa-comments mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Comments'|trans }}</h3>
+
+            {% if commentsArr %}
+                {% for comment in commentsArr %}
+                    <div class='box'>
+                        <div class='comment-header'>
+                        <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
+                        <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
+                        {% if comment.userid == Entity.Users.userid %}
+                        <i class='fas fa-times fa-lg clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
+                        {% endif %}
+                        </div>
+                        <!-- .editable uses the id of the element to send to the controller -->
+                        <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userid ? "editable" }}' data-itemid='{{ Entity.id }}' data-type='{{ Entity.type }}' id='comment_{{ comment.id }}' data-indicator='{{ 'Saving'|trans }}' data-submit='{{ 'Save'|trans }}' data-cancel='{{ 'Cancel'|trans }}'>{{ comment.comment|raw }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <textarea id='commentsCreateArea' placeholder='{{ 'Add a comment'|trans }}'></textarea>
+            <div id='commentsCreateButtonDiv' class='submitButtonDiv'>
+                <button class='button' id='commentsCreateButton' data-expid='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+            </div>
+        </div>
+    </section>
+
+{% endif %}
+
+<!-- REVISIONS -->
+{{ Revisions.showCount|raw }}
+
+<div id='entityInfos'
+    data-title='{{ cleanTitle }}'
+    data-type='{{ Entity.type }}'
+    data-id='{{ Entity.id }}'
+    data-locale='{{ App.Users.userData.lang }}'
+    data-confirm="{{ 'Delete this?'|trans }}">
+</div>
+<div id='shortcuts'
+    data-create='{{ Entity.Users.userData.sc_create }}'
+    data-edit='{{ Entity.Users.userData.sc_edit }}'>
+</div>
+
+<!--
+<script src='app/js/view.min.js'></script>
+-->
+<script src='app/js/src/view.js'></script>
+{% endblock body %}

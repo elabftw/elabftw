@@ -1,0 +1,40 @@
+<!-- UPLOADED FILES -->
+<div id='filesdiv'>
+{% set uploadsArr = Entity.Uploads.readAll %}
+{% if uploadsArr|length > 0 %}
+    <div class='box'>
+        <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{% trans %}Attached file
+            {% plural uploadsArr|length %}
+            Attached files
+            {% endtrans %}
+        </h3>
+        {% if mode == 'edit' %}
+        <i class='fas fa-eye clickable align_right' title='Toggle visibility' id='hideUploads'></i>
+        {% endif %}
+
+        <div class='row' id='uploadsDiv'>
+        {% for upload in uploadsArr %}
+            <div class='col-md-4 col-sm-6'>
+                <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>
+                    {% if mode == 'edit' %}
+                    <a class='align_right uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
+                        data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}'>
+                        <i class='fas fa-times clickable'></i>
+                    </a>
+                    {% endif %}
+
+                    {{ Uv.displayUpload(mode, upload)|raw }}
+
+                    {% if mode == 'edit' %}
+                    <div class='replacer clickable' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
+                        <i class='fas fa-sync-alt mr-1'></i><p class='inline'>{{ 'Upload a new version of this file'|trans }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endif %}
+</div>
+<script src='app/js/uploads.min.js'></script>

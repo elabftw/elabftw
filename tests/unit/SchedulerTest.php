@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use PDO;
 
-class SchedulerTest extends \PHPUnit_Framework_TestCase
+class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

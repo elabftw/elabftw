@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class TagsTest extends \PHPUnit_Framework_TestCase
+class TagsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {

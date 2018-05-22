@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-class ExperimentsTest extends \PHPUnit_Framework_TestCase
+class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
@@ -27,7 +27,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 
     public function testSetId()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\TypeError::class);
         $this->Experiments->setId('alpha');
     }
 
@@ -39,8 +39,6 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
         $this->assertEquals('20160729', $experiment['date']);
-        $this->expectException(\Exception::class);
-        $this->Experiments->setId('a9999999999');
     }
 
     public function testReadRelated()

@@ -12,7 +12,7 @@
         "ext-pdo": "*",
         "ext-zip": "*",
         "defuse/php-encryption": "2.2.*",
-        "mpdf/mpdf": "^7.0",
+        "mpdf/mpdf": "^7.1",
         "swiftmailer/swiftmailer":"^6.0.2",
         "onelogin/php-saml": "^2.10",
         "guzzlehttp/guzzle": "^6.3",

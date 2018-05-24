@@ -102,7 +102,7 @@ class Auth
             $this->userData = $req->fetch();
             return true;
         }
-        throw new Exception('Cannot set user data from email!');
+        return false;
     }
 
     /**

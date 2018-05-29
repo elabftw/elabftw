@@ -510,6 +510,7 @@
         tinymce.init({
             mode : 'specific_textareas',
             editor_selector : 'mceditable',
+            browser_spellcheck : true,
             content_css : 'app/css/tinymce.css',
             plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample',
             pagebreak_separator: '<pagebreak>',

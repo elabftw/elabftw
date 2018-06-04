@@ -30,7 +30,7 @@
   "devDependencies": {
     "apidoc": "^0.17.6",
     "expose-loader": "^0.7.5",
-    "grunt": "^1.0.2",
+    "grunt": "^1.0.3",
     "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-uglify": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "^1.1.0",

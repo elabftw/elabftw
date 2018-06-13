@@ -10,4 +10,8 @@ ignore:
     - bootstrap:
         reason: elab not affected
         expires: '2018-03-25T16:14:43.002Z'
+  'npm:bootstrap:20180529':
+    - bootstrap:
+        reason: not affected
+        expires: '2018-07-13T12:32:23.521Z'
 patch: {}

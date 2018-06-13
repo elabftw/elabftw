@@ -18,7 +18,7 @@
     "fullcalendar": "3.9.0",
     "grunt-contrib-uglify-es": "gruntjs/grunt-contrib-uglify#harmony",
     "jquery": "^3.3.1",
-    "jquery-jeditable": "2.0.2",
+    "jquery-jeditable": "2.0.3",
     "jquery-ui-dist": "^1.12.1",
     "jquery.complexify": "^0.5.2",
     "markdown": "^0.5.0",
@@ -36,9 +36,9 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-shell": "^2.1.0",
     "lodash": "^4.17.5",
-    "snyk": "^1.73",
-    "webpack": "^4.6",
-    "webpack-cli": "^2.0"
+    "snyk": "^1.82",
+    "webpack": "^4.12",
+    "webpack-cli": "^3.0"
   },
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/classes",

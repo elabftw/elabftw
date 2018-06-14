@@ -1508,7 +1508,7 @@ grunt-contrib-cssmin@^2.2.1:
     clean-css "~4.1.1"
     maxmin "^2.1.0"
 
-grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony, grunt-contrib-uglify@gruntjs/grunt-contrib-uglify#harmony:
+grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
   version "3.3.0"
   resolved "https://codeload.github.com/gruntjs/grunt-contrib-uglify/tar.gz/ccb95a70cad6a4e9e902d3bd5d0e38a4de09a1e1"
   dependencies:
@@ -3936,8 +3936,8 @@ watchpack@^1.5.0:
     neo-async "^2.5.0"
 
 webpack-cli@^3.0:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-3.0.4.tgz#55d6ad2cdd608de8c0f757dde5bc4bf5bd2dec68"
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-3.0.6.tgz#5d414e66c6576d4050c1e6b7ab3ecf9969106525"
   dependencies:
     chalk "^2.4.1"
     cross-spawn "^6.0.5"

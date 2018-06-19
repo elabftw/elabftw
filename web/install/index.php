@@ -125,6 +125,7 @@ try {
         $url = Tools::getUrlFromRequest($Request);
         // not pretty but gets the job done
         $url = str_replace('install/', '', $url);
+        $url = str_replace(':80', ':443', $url);
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
             $url . "'>$url</a>";
         throw new Exception($message);

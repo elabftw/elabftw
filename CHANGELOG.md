@@ -2,8 +2,10 @@
 
 The changelog is available here:
 
-https://github.com/elabftw/elabdoc/blob/master/doc/changelog.rst
+https://doc.elabftw.net/changelog.html
+Source file: https://github.com/elabftw/elabdoc/blob/master/doc/changelog.rst
 
-To see what is coming up in the next release, look at the same file but in the `next` branch:
+To see what is coming up in the next release, look at the `next` branch:
 
-https://github.com/elabftw/elabdoc/blob/next/doc/changelog.rst
+https://elabftw.readthedocs.io/en/next/changelog.html
+Source file: https://github.com/elabftw/elabdoc/blob/next/doc/changelog.rst

@@ -3,8 +3,8 @@
 {% block body %}
 
 <!-- add moment lib TODO rename it to moment if it's only moment inside it-->
-<script src='app/js/moment.bundle.js'></script>
-<script src='app/js/src/relative-moment.js'></script>
+<script src='app/js/moment.bundle.js?v={{ v }}'></script>
+<script src='app/js/src/relative-moment.js?v={{ v }}'></script>
 
 <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
     <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Go back'|trans }}

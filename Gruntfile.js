@@ -18,7 +18,7 @@ module.exports = function(grunt) {
           'web/app/js/elabftw.min.js': [
               'node_modules/vanderlee-colorpicker/jquery.colorpicker.js',
               'node_modules/jquery-jeditable/src/jquery.jeditable.js',
-              //'web/app/js/src/common.js',
+              'web/app/js/src/common.js',
               'web/app/js/src/cornify.js',
               'web/app/js/src/jquery.rating.js',
               'web/app/js/src/3Dmol-nojquery.js',
@@ -97,10 +97,6 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      // you need to have phpDocumentor.phar in the root dir: wget http://phpdoc.org/phpDocumentor.phar
-      buildapi: {
-        command: 'php phpDocumentor.phar run -d src/classes -d src/models -d web/app/controllers -d src/views -t _api'
-      },
       rununit: {
         command: 'php vendor/bin/codecept run unit'
       },
@@ -128,7 +124,6 @@ module.exports = function(grunt) {
   grunt.registerTask('yarn', 'shell:yarninstall');
   grunt.registerTask('default', ['yarn', 'uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
-  grunt.registerTask('api', 'shell:buildapi');
   grunt.registerTask('test', 'shell:runtests');
   grunt.registerTask('unit', 'shell:rununit');
   grunt.registerTask('cov', 'shell:runcoverage');

@@ -5,8 +5,8 @@
 {% include('view-edit.html') %}
 
 <!-- add moment lib -->
-<script src='app/js/moment.bundle.js'></script>
-<script src='app/js/src/relative-moment.js'></script>
+<script src='app/js/moment.bundle.js?v={{ v }}'></script>
+<script src='app/js/src/relative-moment.js?v={{ v }}'></script>
 
 {% if Entity.type == 'experiments' %}
     {% if Entity.entityData.timestamped %}
@@ -224,8 +224,5 @@
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 
-<!--
-<script src='app/js/view.min.js'></script>
--->
-<script src='app/js/src/view.js'></script>
+<script src='app/js/view.min.js?v={{ v }}'></script>
 {% endblock body %}

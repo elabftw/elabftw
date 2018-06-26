@@ -120,6 +120,10 @@ class App
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
 
+        // add the version as a global var so we can have it for the ?v=x.x.x for js files
+        $ReleaseCheck = new ReleaseCheck($this->Config);
+        $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
+
         return $TwigEnvironment;
     }
 

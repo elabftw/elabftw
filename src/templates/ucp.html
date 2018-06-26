@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<script src='app/js/tinymce.bundle.js?v=200'></script>
-<script src="app/js/dropzone.min.js?v=200"></script>
+<script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
+<script src="app/js/dropzone.min.js?v={{ v }}"></script>
 
 <menu>
     <ul>
@@ -335,12 +335,9 @@
 <!-- END PAGE -->
 
 <!-- to export templates -->
-<script src='app/js/file-saver.min.js'></script>
-<script src='app/js/tabs.min.js'></script>
+<script src='app/js/file-saver.min.js?v={{ v }}'></script>
+<script src='app/js/tabs.min.js?v={{ v }}'></script>
 <div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
 <div id='entityInfos' data-confirm="{{ 'Delete this?'|trans }}"></div>
-<!--
-<script src='app/js/ucp.min.js'></script>
--->
-<script src='app/js/src/ucp.js'></script>
+<script src='app/js/ucp.min.js?v={{ v }}'></script>
 {% endblock body %}

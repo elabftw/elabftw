@@ -4217,8 +4217,8 @@ webpack-sources@^1.0.1, webpack-sources@^1.1.0:
     source-map "~0.6.1"
 
 webpack@^4.12:
-  version "4.12.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.12.1.tgz#9108078c67fdd72c2609cea22af87d7aed2acb08"
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.12.2.tgz#d2b8418eb40cedcbf2c1f5905d23a99546011ce9"
   dependencies:
     "@webassemblyjs/ast" "1.5.12"
     "@webassemblyjs/helper-module-context" "1.5.12"

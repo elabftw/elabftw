@@ -38,7 +38,6 @@ class Experiments extends AbstractEntity
     {
         parent::__construct($users, $id);
         $this->page = 'experiments';
-        //TODO remove type and check with instanceof, rename to table because it's used as table
         $this->type = 'experiments';
 
         $this->Links = new Links($this);

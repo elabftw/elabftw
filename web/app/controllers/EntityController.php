@@ -68,7 +68,6 @@ try {
     }
 
     // DUPLICATE
-    // TODO should be post
     if ($Request->query->has('duplicate')) {
         $Entity->canOrExplode('read');
         $id = $Entity->duplicate();

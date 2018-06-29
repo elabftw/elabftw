@@ -267,6 +267,11 @@ class Experiments extends AbstractEntity
      */
     public function duplicate(): int
     {
+        // anon cannot duplicate anything
+        if (isset($this->Users->userData['anon']) && $this->Users->userData['anon'] === true) {
+            throw new Exception(Tools::error(true));
+        }
+
         $experiment = $this->read();
 
         // let's add something at the end of the title to show it's a duplicate
@@ -301,7 +306,6 @@ class Experiments extends AbstractEntity
      */
     public function destroy(): bool
     {
-        // delete the experiment
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id);

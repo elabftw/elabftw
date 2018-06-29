@@ -21,9 +21,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
+    /*
     if ($App->Session->has('anon')) {
         throw new Exception(Tools::error(true));
     }
+     */
 
     $Response = new JsonResponse();
     // id of the item (experiment or database item)
@@ -66,6 +68,7 @@ try {
     }
 
     // DUPLICATE
+    // TODO should be post
     if ($Request->query->has('duplicate')) {
         $Entity->canOrExplode('read');
         $id = $Entity->duplicate();
@@ -78,7 +81,6 @@ try {
      */
 
     // GET BODY
-    // TODO not working as anon
     if ($Request->request->has('getBody')) {
         $permissions = $Entity->getPermissions();
         if ($permissions['read'] === false) {
@@ -136,6 +138,7 @@ try {
 
     // QUICKSAVE
     if ($Request->request->has('quickSave')) {
+        $Entity->canOrExplode('write');
         if ($Entity->update(
             $Request->request->get('title'),
             $Request->request->get('date'),
@@ -155,7 +158,6 @@ try {
 
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
-        $Response = new JsonResponse();
         $Entity->canOrExplode('write');
 
         if ($Entity->updateCategory($Request->request->get('categoryId'))) {
@@ -194,6 +196,7 @@ try {
 
     // DELETE TAG
     if ($Request->request->has('destroyTag')) {
+        $Entity->canOrExplode('write');
         if (Tools::checkId($Request->request->get('tag_id')) === false) {
             throw new Exception('Bad id value');
         }
@@ -203,6 +206,7 @@ try {
 
     // UPDATE FILE COMMENT
     if ($Request->request->has('updateFileComment')) {
+        $Entity->canOrExplode('write');
         try {
             $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
 
@@ -237,6 +241,7 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
+        $Entity->canOrExplode('write');
         try {
             if ($Entity->Uploads->create($Request)) {
                 $Response->setData(array(
@@ -275,6 +280,7 @@ try {
 
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
+        $Entity->canOrExplode('write');
         if ($Entity->Uploads->replace($Request)) {
             $Session->getFlashBag()->add('ok', _('File replaced successfully'));
         } else {
@@ -315,7 +321,6 @@ try {
 
     // DESTROY ENTITY
     if ($Request->request->has('destroy')) {
-        $Response = new JsonResponse();
 
         // check write permissions
         $Entity->canOrExplode('write');
@@ -341,7 +346,7 @@ try {
     $Response->send();
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Logs->create('Error', $Session->get('userid') ?? 'anon', $e->getMessage());
     $Response = new JsonResponse();
     $Response->setData(array(
         'res' => false,

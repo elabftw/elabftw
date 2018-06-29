@@ -386,9 +386,7 @@ abstract class AbstractEntity
      */
     public function getPermissions(?array $item = null): array
     {
-        if (!isset($this->entityData) && !isset($item)) {
-        // TODO should be replaceable by this
-        //if ($this->entityData === null && $item === null) {
+        if ($this->entityData === null && $item === null) {
             $this->populate();
             if (empty($this->entityData)) {
                 return array('read' => false, 'write' => false);

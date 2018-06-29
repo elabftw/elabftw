@@ -68,7 +68,6 @@ class Update
         $current_schema = (int) $this->Config->configArr['schema'];
 
         if ($current_schema === self::REQUIRED_SCHEMA) {
-        $this->cleanTmp();
             return true;
         }
 

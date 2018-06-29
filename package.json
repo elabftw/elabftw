@@ -36,8 +36,8 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-shell": "^2.1.0",
     "lodash": "^4.17.5",
-    "snyk": "^1.85",
-    "webpack": "^4.12",
+    "snyk": "^1.87",
+    "webpack": "^4.13",
     "webpack-cli": "^3.0"
   },
   "scripts": {

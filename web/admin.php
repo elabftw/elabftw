@@ -29,6 +29,8 @@ try {
 
     $ItemsTypes = new ItemsTypes($App->Users);
     $Status = new Status($App->Users);
+    $ExperimentsTags = new Tags(new Experiments($App->Users));
+    $ItemsTags = new Tags(new Database($App->Users));
     $TeamGroups = new TeamGroups($App->Users);
     $Templates = new Templates($App->Users);
 
@@ -41,8 +43,14 @@ try {
     // all users
     $usersArr = $App->Users->readAllFromTeam();
 
+    // all the tags for the team
+    $experimentsTagsArr = $ExperimentsTags->readAll();
+    $itemsTagsArr = $ItemsTags->readAll();
+
     $template = 'admin.html';
     $renderArr = array(
+        'experimentsTagsArr' => $experimentsTagsArr,
+        'itemsTagsArr' => $itemsTagsArr,
         'FormKey' => $FormKey,
         'fromSysconfig' => false,
         'itemsTypesArr' => $itemsTypesArr,

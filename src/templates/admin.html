@@ -37,6 +37,7 @@
         <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
         <li class='tabhandle' id='tab7'>{{ 'Import CSV'|trans }}</li>
         <li class='tabhandle' id='tab8'>{{ 'Import ZIP'|trans }}</li>
+        <li class='tabhandle' id='tab9'>{{ 'Tag manager'|trans }}</li><span class='beta'>alpha</span>
     </ul>
 </menu>
 
@@ -406,7 +407,28 @@
     </div>
 </div>
 
+<!-- TAB 9 TAG MANAGER -->
+<div class='divhandle' id='tab9div'>
+    <div class='box'>
+        <h3>{{ 'Manage tags'|trans }}</h3>
+        <h5>{{ 'Tags for experiments'|trans }}</h5>
+        {% for tag in experimentsTagsArr %}
+            <p><span class='tag-editable editable' data-type='experiments' data-tag='{{ tag.tag }}'>{{ tag.tag }}</span> ({{ tag.nbtag }})</p>
+        {% endfor %}
+
+        <h4>{{ 'Tags for database items'|trans }}</h4>
+        {% for tag in itemsTagsArr %}
+            <p><span class='tag-editable editable' data-type='database' data-tag='{{ tag.tag }}'>{{ tag.tag }}</span> ({{ tag.nbtag }})</p>
+        {% endfor %}
+
+
+    </div>
+</div>
+
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
+<!--
 <script src='app/js/admin.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/admin.js?v={{ v }}'></script>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 {% endblock body %}

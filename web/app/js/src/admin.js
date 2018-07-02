@@ -333,6 +333,22 @@
         $('#itemsTypesColor').val(colorInput);
         $('#statusColor').val(colorInput);
 
+        $('.tag-editable').editable(function(value, settings) {
+            $.post('app/controllers/TagsController.php', {
+                update: true,
+                newtag: value,
+                type: $(this).data('type'),
+                tag: $(this).data('tag')
+            });
+
+            return(value);
+            }, {
+         tooltip : 'Click to edit',
+         indicator : 'Saving...',
+         onblur: 'submit',
+         style : 'display:inline'
+        });
+
         // EDITOR
         tinymce.init({
             mode : "specific_textareas",

@@ -169,6 +169,23 @@ class Tags implements CrudInterface
     }
 
     /**
+     * Update a tag
+     *
+     * @param string $tag tag value
+     * @param string $newtag new tag value
+     * @return bool
+     */
+    public function update(string $tag, string $newtag): bool
+    {
+        $sql = "UPDATE " . $this->Entity->type . "_tags SET tag = :newtag WHERE tag = :tag";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tag', $tag);
+        $req->bindParam(':newtag', $newtag);
+
+        return $req->execute();
+    }
+
+    /**
      * Destroy a tag
      *
      * @param int $id id of the tag

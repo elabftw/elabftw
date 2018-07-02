@@ -410,17 +410,10 @@
 <!-- TAB 9 TAG MANAGER -->
 <div class='divhandle' id='tab9div'>
     <div class='box'>
-        <h3>{{ 'Manage tags'|trans }}</h3>
-        <h5>{{ 'Tags for experiments'|trans }}</h5>
-        {% for tag in experimentsTagsArr %}
-            <p><span class='tag-editable editable' data-type='experiments' data-tag='{{ tag.tag }}'>{{ tag.tag }}</span> ({{ tag.nbtag }})</p>
+        <h3>{{ 'Manage tags of the team'|trans }}</h3>
+        {% for tag in tagsArr %}
+            <p><span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag }}</span> ({{ tag.nbtag }})</p>
         {% endfor %}
-
-        <h4>{{ 'Tags for database items'|trans }}</h4>
-        {% for tag in itemsTagsArr %}
-            <p><span class='tag-editable editable' data-type='database' data-tag='{{ tag.tag }}'>{{ tag.tag }}</span> ({{ tag.nbtag }})</p>
-        {% endfor %}
-
 
     </div>
 </div>

@@ -177,7 +177,8 @@ abstract class AbstractEntity
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
-        $tagsSelect = ", GROUP_CONCAT(DISTINCT tagt.tag ORDER BY tagt.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tagt.id) as tags_id";
+        $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+        $tagsJoin = "LEFT JOIN tags2entity ON (" . $this->type . ".id = tags2entity.item_id) LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,
@@ -198,7 +199,7 @@ abstract class AbstractEntity
                 AS stepst ON (
                 experiments.id = steps_item_id
                 AND stepst.finished = 0)";
-            $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
+
             $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
             $commentsJoin = "LEFT JOIN (
                 SELECT MAX(experiments_comments.datetime) AS recent_comment,
@@ -226,11 +227,10 @@ abstract class AbstractEntity
 
             $from = "FROM items
                 LEFT JOIN items_types ON (items.type = items_types.id)
-                LEFT JOIN users ON (users.userid = items.userid)
-                LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)";
+                LEFT JOIN users ON (users.userid = items.userid)";
             $where = "WHERE items.team = :team";
 
-            $sql .= ' ' . $tagsSelect . ' ' . $from . ' ' . $uploadsJoin . ' ' . $where;
+            $sql .= ' ' . $tagsSelect . ' ' . $from . ' ' . $uploadsJoin . ' ' . $tagsJoin . ' ' . $where;
         } else {
             throw new Exception('Nope.');
         }

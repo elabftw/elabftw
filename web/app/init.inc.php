@@ -66,7 +66,7 @@ try {
             }
         }
     } catch (Exception $e) {
-        $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage());
+        $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage() . " (" . $e->getLine() . ")");
     }
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//

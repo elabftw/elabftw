@@ -33,7 +33,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 40;
+    private const REQUIRED_SCHEMA = 41;
 
     /**
      * Init Update with Config and Db
@@ -91,6 +91,11 @@ class Update
             // 20180513 v2.0.0
             $this->schema40();
             $this->updateSchema(40);
+        }
+        if ($current_schema < 41) {
+            // 20180602 v2.0.0
+            $this->schema41();
+            $this->updateSchema(41);
         }
         // place new schema functions above this comment
 
@@ -185,6 +190,137 @@ class Update
         $sql = "ALTER TABLE `users` ADD `allow_edit` TINYINT(1) NOT NULL DEFAULT '0'";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem updating to schema 40!');
+        }
+    }
+
+    /**
+     * Merge the experiments_tags, items_tags and experiments_tpl_tags tables into tags and tags2entity tables.
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema41(): void
+    {
+        // first create the tags table
+        $sql = "CREATE TABLE IF NOT EXISTS `tags` ( `id` INT NOT NULL AUTO_INCREMENT , `team` INT NOT NULL , `tag` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`))";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem creating table tags!');
+        }
+
+        // now create the mapping table
+        // TODO add foreign key
+        $sql = "CREATE TABLE IF NOT EXISTS `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL)";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem creating table tags2entity!');
+        }
+
+        // fetch existing tags
+        $sql = "SELECT experiments_tags.*, users.team FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid)";
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        $experimentsTags = $req->fetchAll();
+
+        // same for items tags
+        $sql = "SELECT * FROM items_tags";
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        $itemsTags = $req->fetchAll();
+
+        // same for experiments_tpl_tags
+        $sql = "SELECT experiments_tpl_tags.*, users.team FROM experiments_tpl_tags INNER JOIN users ON (experiments_tpl_tags.userid = users.userid)";
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        $tplTags = $req->fetchAll();
+
+        // now the insert part
+        $insertSql = "INSERT INTO tags (team, tag) VALUES (:team, :tag)";
+        $insertReq = $this->Db->prepare($insertSql);
+
+        $insertSql2 = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
+        $insertReq2 = $this->Db->prepare($insertSql2);
+
+        foreach($experimentsTags as $tag) {
+            // check if the tag doesn't exist already for the team
+            $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tag', $tag['tag']);
+            $req->bindParam(':team', $tag['team']);
+            $req->execute();
+            $res = $req->fetchColumn();
+            if ((int) $req->rowCount() === 0) {
+                // tag doesn't exist already
+                $insertReq->bindParam(':team', $tag['team']);
+                $insertReq->bindParam(':tag', $tag['tag']);
+                $insertReq->execute();
+                $lastId = $this->Db->lastInsertId();
+
+                // now reference it
+                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindValue(':item_type', 'experiments');
+                $insertReq2->bindParam(':tag_id', $lastId);
+                $insertReq2->execute();
+            } else {
+                // tag exists, reference it for the entity
+                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindValue(':item_type', 'experiments');
+                $insertReq2->bindParam(':tag_id', $res);
+                $insertReq2->execute();
+            }
+        }
+
+        foreach($itemsTags as $tag) {
+            // check if the tag doesn't exist already for the team
+            $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tag', $tag['tag']);
+            $req->bindParam(':team', $tag['team_id']);
+            $req->execute();
+            $res = $req->fetchColumn();
+            if ((int) $req->rowCount() === 0) {
+                // tag doesn't exist already
+                $insertReq->bindParam(':team', $tag['team_id']);
+                $insertReq->bindParam(':tag', $tag['tag']);
+                $insertReq->execute();
+                $lastId = $this->Db->lastInsertId();
+                // now reference it
+                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindValue(':item_type', 'experiments');
+                $insertReq2->bindParam(':tag_id', $lastId);
+                $insertReq2->execute();
+            } else {
+                // get the id of the tag so we can insert it in the tags2entity table
+                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindValue(':item_type', 'items');
+                $insertReq2->bindParam(':tag_id', $res);
+                $insertReq2->execute();
+            }
+        }
+
+        foreach($tplTags as $tag) {
+            // check if the tag doesn't exist already for the team
+            $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tag', $tag['tag']);
+            $req->bindParam(':team', $tag['team']);
+            $req->execute();
+            $res = $req->fetchColumn();
+            if ((int) $req->rowCount() === 0) {
+                // tag doesn't exist already
+                $insertReq->bindParam(':team', $tag['team']);
+                $insertReq->bindParam(':tag', $tag['tag']);
+                $insertReq->execute();
+                $lastId = $this->Db->lastInsertId();
+                // now reference it
+                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindValue(':item_type', 'experiments');
+                $insertReq2->bindParam(':tag_id', $lastId);
+                $insertReq2->execute();
+            } else {
+                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindValue(':item_type', 'experiments_templates');
+                $insertReq2->bindParam(':tag_id', $res);
+                $insertReq2->execute();
+            }
         }
     }
 }

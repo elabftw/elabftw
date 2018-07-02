@@ -26,11 +26,7 @@ try {
         throw new Exception(Tools::error(true));
     }
 
-    if ($Request->request->get('type') === 'experiments') {
-        $Entity = new Experiments($App->Users);
-    } else {
-        $Entity = new Database($App->Users);
-    }
+    $Entity = new Experiments($App->Users);
 
     $Tags = new Tags($Entity);
 

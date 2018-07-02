@@ -337,7 +337,6 @@
             $.post('app/controllers/TagsController.php', {
                 update: true,
                 newtag: value,
-                type: $(this).data('type'),
                 tag: $(this).data('tag')
             });
 

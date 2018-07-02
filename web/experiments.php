@@ -118,7 +118,7 @@ try {
         // TAG FILTER
         if ($Request->query->get('tag') != '') {
             $tag = filter_var($Request->query->get('tag'), FILTER_SANITIZE_STRING);
-            $Entity->tagFilter = " AND tagt.tag LIKE '" . $tag . "'";
+            $Entity->tagFilter = " AND tags.tag LIKE '" . $tag . "'";
             $searchType = 'tag';
         }
         // QUERY FILTER

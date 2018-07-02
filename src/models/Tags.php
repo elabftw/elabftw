@@ -72,22 +72,13 @@ class Tags implements CrudInterface
     {
         $tagFilter = "";
         if ($term !== null) {
-            $tagFilter = " AND " . $this->Entity->type . "_tags.tag LIKE '%$term%'";
+            $tagFilter = " AND tags.tag LIKE '%$term%'";
         }
-        if ($this->Entity->type === 'experiments') {
-            $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
-                FROM experiments_tags
-                INNER JOIN users ON (experiments_tags.userid = users.userid)
-                WHERE users.team = :team
-                $tagFilter
-                GROUP BY tag ORDER BY tag ASC";
-        } else {
-            $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
-                FROM items_tags
-                WHERE team_id = :team
-                $tagFilter
-                GROUP BY tag ORDER BY tag ASC";
-        }
+        $sql = "SELECT DISTINCT tag, COUNT(*) AS nbtag
+            FROM tags
+            WHERE team = :team
+            $tagFilter
+            GROUP BY tag ORDER BY tag ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Entity->Users->userData['team']);
         $req->execute();
@@ -177,10 +168,11 @@ class Tags implements CrudInterface
      */
     public function update(string $tag, string $newtag): bool
     {
-        $sql = "UPDATE " . $this->Entity->type . "_tags SET tag = :newtag WHERE tag = :tag";
+        $sql = "UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':newtag', $newtag);
+        $req->bindParam(':team', $this->Entity->Users->userData['team']);
 
         return $req->execute();
     }

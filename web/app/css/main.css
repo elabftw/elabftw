@@ -900,6 +900,7 @@ input[type='checkbox']{
     padding: 0 5px;
 }
 
+/* TAGS */
 .tags {
     line-height: 150%;
     margin-bottom: 10px;
@@ -912,18 +913,20 @@ input[type='checkbox']{
 .tags a:hover {
     color: #343434;
 }
-.tag a:hover {
-    color: red;
+.tag:hover {
+    color: #990000;
 }
 
 .tag {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
-    line-height: 160%;
+    line-height: 300%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: #5d5d5d;
+    margin: auto 5px;
+    padding: 0 5px;
 }
-.tag a {
-    padding: 5px 5px 5px 5px;
-    text-decoration: none;
-}
+/* END TAGS */
 
 .smallgray{
     display:block;

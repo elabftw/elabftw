@@ -21,27 +21,19 @@
             <!-- END SEARCH IN -->
 
             <!-- SEARCH WITH TAG -->
-            {% set tagExpOptions = Experiments.Tags.generateTagList(tagsArr) %}
-            {% set tagDbOptions = Database.Tags.generateTagList(tagsArr) %}
-
-            <div class='col-md-3' id='tag_exp'>
-                <label for='tag_exp'>{{ 'With the tag'|trans }}</label>
-                <select multiple name='tag_exp[]' style='max-width:80%'>
-                    {{ tagExpOptions|raw }}
-                </select>
-            </div>
-
-            <div class='col-md-3' id='tag_db'>
-                <label for='tag_db'>{{ 'With the tag'|trans }}</label>
-                <select multiple name='tag_db[]'>
-                    {{ tagDbOptions|raw }}
+            <div class='col-md-3'>
+                <label for='tags-select'>{{ 'With the tag'|trans }}</label>
+                <select multiple name='tags[]' id='tags-select' style='max-width:80%'>
+                    {% for tag in tagsArr %}
+                    <option value='{{ tag.tag }}' {{ tag.tag in selectedTagsArr ? 'selected' }}>{{ tag.tag|raw }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <!-- END SEARCH WITH TAG -->
 
             <!-- VISIBILITY SEARCH -->
             <div class='col-md-6'>
-                <label for'visibility'>{{ 'And visibility is:'|trans }} </label><br>
+                <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
                 <select id='visibility' name='vis'>
                     <option value=''>{{ 'Select visibility'|trans }}</option>
                     <option value='organization' {{ Request.query.get('vis') == 'organization' ? 'selected' }}>{{ 'Organization'|trans }}</option>
@@ -60,7 +52,6 @@
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
                 <label for'searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
-                <!-- when you change this select, you reload the page so the tag selector loads the correct tags -->
                 <select id='searchonly' name='owner'>
                     <option value=''>{{ 'Yourself'|trans }}</option>
                     <!-- add an option to search in the whole team (owner = 0) -->

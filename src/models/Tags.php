@@ -137,30 +137,6 @@ class Tags implements CrudInterface
     }
 
     /**
-     * Get the tag list as option html tag for the search page. Will disappear in search.html once it exists...
-     *
-     * @param array $selected the selected tag(s)
-     * @deprecated
-     * @return string html for include in a select input
-     */
-    public function generateTagList(array $selected): string
-    {
-        $tagsArr = $this->readAll();
-
-        $tagList = "";
-
-        foreach ($tagsArr as $tag) {
-            $tagList .= "<option value='" . $tag['tag'] . "'";
-            if (in_array($tag['tag'], $selected, true)) {
-                $tagList .= " selected='selected'";
-            }
-            $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";
-        }
-
-        return $tagList;
-    }
-
-    /**
      * Update a tag
      *
      * @param string $tag tag value

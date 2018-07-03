@@ -20,6 +20,8 @@ $App->pageTitle = _('Search');
 
 $Experiments = new Experiments($App->Users);
 $Database = new Database($App->Users);
+$Tags = new Tags($Experiments);
+$tagsArr = $Tags->readAll();
 
 $ItemsTypes = new ItemsTypes($App->Users);
 $categoryArr = $ItemsTypes->readAll();
@@ -70,12 +72,9 @@ if (isset($_GET['andor']) && ($_GET['andor'] === 'or')) {
 }
 
 // TAGS
-$tagsArr = array();
-if (isset($_GET['type']) && $_GET['type'] === 'experiments' && isset($_GET['tag_exp'])) {
-        $tagsArr = $_GET['tag_exp'];
-}
-if (isset($_GET['type']) && $_GET['type'] === 'database' && isset($_GET['tag_db'])) {
-        $tagsArr = $_GET['tag_db'];
+$selectedTagsArr = array();
+if (isset($_GET['tags']) && !empty($_GET['tags'])) {
+    $selectedTagsArr = $_GET['tags'];
 }
 
 // VISIBILITY
@@ -109,6 +108,7 @@ $renderArr = array(
     'title' => $title,
     'body' => $body,
     'andor' => $andor,
+    'selectedTagsArr' => $selectedTagsArr,
     'tagsArr' => $tagsArr
 );
 echo $App->render('search.html', $renderArr);
@@ -184,8 +184,8 @@ if (isset($_GET)) {
     }
 
     // Tag search
-    if (!empty($tagsArr)) {
-        foreach ($tagsArr as $tag) {
+    if (!empty($selectedTagsArr)) {
+        foreach ($selectedTagsArr as $tag) {
             $tag = filter_var($tag, FILTER_SANITIZE_STRING);
             //$sqlTag .= " AND EXISTS (SELECT 1 FROM tags AS tagst LEFT JOIN tags2entity ON(" . $table . ".id = tags2entity.item_id) WHERE tags2entity.tag_id = tagst.id) WHERE tagst.tag LIKE '%" . $tag . "%') ";
             $sqlTag .= " AND tags.tag LIKE '%" . $tag . "%' ";
@@ -226,11 +226,10 @@ if (isset($_GET)) {
             if (isset($_GET['owner'])) {
                 if (Tools::checkId((int) $_GET['owner']) !== false) {
                     $owner = $_GET['owner'];
-                    $sqlUserid = " AND experiments.userid = " . $owner;
                 } elseif (empty($_GET['owner'])) {
                     $owner = $App->Users->userid;
-                    $sqlUserid = " AND experiments.userid = " . $owner;
                 }
+                $sqlUserid = " AND experiments.userid = " . $owner;
                 if ($_GET['owner'] === '0') {
                     $sqlUserid = '';
                 }

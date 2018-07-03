@@ -60,6 +60,7 @@ module.exports = function(grunt) {
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/edit.min.js': 'web/app/js/src/edit.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
+          'web/app/js/tags.min.js': 'web/app/js/src/tags.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',
           'web/app/js/profile.min.js': 'web/app/js/src/profile.js',
           'web/app/js/uploads.min.js': 'web/app/js/src/uploads.js',

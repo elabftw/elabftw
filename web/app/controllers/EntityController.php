@@ -21,12 +21,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 try {
-    /*
-    if ($App->Session->has('anon')) {
-        throw new Exception(Tools::error(true));
-    }
-     */
-
     $Response = new JsonResponse();
     // id of the item (experiment or database item)
     $id = 1;
@@ -40,7 +34,7 @@ try {
     if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users, $id);
-    } elseif ($Request->request->get('type') === 'tpl') {
+    } elseif ($Request->request->get('type') === 'experiments_tpl') {
         $Entity = new Templates($App->Users, $id);
     } else {
         $Entity = new Database($App->Users, $id);
@@ -180,6 +174,7 @@ try {
     }
 
     // CREATE TAG
+    /*
     if ($Request->request->has('createTag')) {
         $Entity->canOrExplode('write');
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
@@ -192,16 +187,18 @@ try {
 
         $Entity->Tags->create($tag);
     }
+     */
 
+    /*
     // DELETE TAG
     if ($Request->request->has('destroyTag')) {
-        $Entity->canOrExplode('write');
         if (Tools::checkId($Request->request->get('tag_id')) === false) {
             throw new Exception('Bad id value');
         }
         $Entity->canOrExplode('write');
         $Entity->Tags->destroy($Request->request->get('tag_id'));
     }
+     */
 
     // UPDATE FILE COMMENT
     if ($Request->request->has('updateFileComment')) {

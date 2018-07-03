@@ -33,6 +33,21 @@ CREATE TABLE `experiments_tpl_tags` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- tags
+--
+CREATE TABLE`tags` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `team` INT NOT NULL ,
+    `tag` VARCHAR(255) NOT NULL ,
+    PRIMARY KEY (`id`)
+);
+
+--
+-- tags2entity
+--
+CREATE TABLE `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL);
+
 -- --------------------------------------------------------
 --
 -- Table structure for table `experiments_steps`

@@ -208,7 +208,7 @@ class Update
         }
 
         // now create the mapping table
-        // TODO add foreign key
+        // TODO add foreign key or something
         $sql = "CREATE TABLE IF NOT EXISTS `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL)";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem creating table tags2entity!');

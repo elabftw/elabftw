@@ -300,7 +300,7 @@
                 {% for key, tag in tagsValueArr %}
                     {# the key allows to get the id stored in tagsIdArr #}
                     <span class='tag'>
-                        <a class='tagDestroy' data-type='experiments_template' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                        <a class='tagUnreferenceForTemplate clickable' data-type='experiments_tpl' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
                             {{ tag|raw }}
                         </a>
                     </span>
@@ -340,4 +340,5 @@
 <div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
 <div id='entityInfos' data-confirm="{{ 'Delete this?'|trans }}"></div>
 <script src='app/js/ucp.min.js?v={{ v }}'></script>
+<script src='app/js/src/tags.js'></script>
 {% endblock body %}

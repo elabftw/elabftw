@@ -411,17 +411,21 @@
 <div class='divhandle' id='tab9div'>
     <div class='box'>
         <h3>{{ 'Manage tags of the team'|trans }}</h3>
+        <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it.' }}</p>
+        <div id='tag_manager'>
         {% for tag in tagsArr %}
-            <p><span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag }}</span> ({{ tag.nbtag }})</p>
+        <p><i class='fas fa-times clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
         {% endfor %}
+        </div>
 
     </div>
 </div>
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
-<!--
 <script src='app/js/admin.min.js?v={{ v }}'></script>
--->
+<!--
 <script src='app/js/src/admin.js?v={{ v }}'></script>
+-->
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
+<script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

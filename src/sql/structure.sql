@@ -40,6 +40,23 @@ CREATE TABLE `config` (
   PRIMARY KEY (`conf_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- tags
+--
+DROP TABLE IF EXISTS `tags`;
+CREATE TABLE`tags` (
+    `id` INT NOT NULL AUTO_INCREMENT ,
+    `team` INT NOT NULL ,
+    `tag` VARCHAR(255) NOT NULL ,
+    PRIMARY KEY (`id`)
+);
+
+--
+-- tags2entity
+--
+DROP TABLE IF EXISTS `tags2entity`;
+CREATE TABLE `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL);
+
 -- --------------------------------------------------------
 --
 -- Table structure for table `experiments_steps`

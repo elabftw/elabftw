@@ -121,9 +121,9 @@ class Templates extends AbstractEntity
         $sql = "SELECT experiments_templates.id,
             experiments_templates.body,
             experiments_templates.name,
-            GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id
+            GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
             FROM experiments_templates
-            LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
+            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id) LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             WHERE experiments_templates.userid = :userid
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
@@ -145,9 +145,9 @@ class Templates extends AbstractEntity
             experiments_templates.body,
             experiments_templates.name,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            GROUP_CONCAT(tagt.tag SEPARATOR '|') as tags, GROUP_CONCAT(tagt.id) as tags_id
+            GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
             FROM experiments_templates
-            LEFT JOIN experiments_tpl_tags AS tagt ON (experiments_templates.id = tagt.item_id)
+            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id) LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
             WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
             AND experiments_templates.team = :team

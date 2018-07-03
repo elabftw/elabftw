@@ -266,6 +266,7 @@
             }
         }
 
+        /*
         class Tag {
 
             constructor() {
@@ -352,6 +353,7 @@
 
         // END TAGS
         ///////////
+        */
 
         // DESTROY ENTITY
         const EntityC = new Entity();

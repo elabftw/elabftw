@@ -26,7 +26,7 @@
                 {% set inc = 0 %}
                 {% for tag in tagsValueArr %}
                     <span class='tag clickable'>
-                        <a class='tagDestroy' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[inc] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                        <a class='tagUnreference' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[inc] }}' data-confirm="{{ 'Delete this?'|trans }}">
                             {{ tag|raw }}
                         </a>
                     </span>
@@ -241,4 +241,5 @@
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
 <script src='app/js/edit.min.js?v={{ v }}'></script>
+<script src='app/js/src/tags.js'></script>
 {% endblock body %}

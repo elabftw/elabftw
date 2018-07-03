@@ -45,12 +45,6 @@ try {
      *
      */
 
-    // GET TAG LIST
-    if ($Request->query->has('term') && $Request->query->has('tag')) {
-        $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
-        $Response->setData($Entity->Tags->getList($term));
-    }
-
     // GET MENTION LIST
     if ($Request->query->has('term') && $Request->query->has('mention')) {
         $userFilter = false;

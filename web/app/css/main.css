@@ -117,7 +117,6 @@ select{
 .form-control{
     -moz-appearance:none;
     -webkit-appearance:none;
-    /*background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;*/
     padding-right: 31px;
 }
 
@@ -145,23 +144,8 @@ img {
 }
 
 /* TODO remove and use bootstrap for these stuff */
-.inline {
-    display: inline;
-}
-.center {
-    text-align: center;
-}
-
-.hidden {
-    display:none;
-}
-
 .align_right{
     float: right;
-}
-
-.align_left{
-    text-align: left;
 }
 
 .strong {

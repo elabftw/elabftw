@@ -177,7 +177,7 @@
 
         </section>
 
-        <div style='margin-top:30px;' class='center'>
+        <div class='text-center mt-3'>
             <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
         </div>
 
@@ -271,7 +271,7 @@
     <div class='subdivhandle' id='subtab_1div'>
         <div class='mb-2'>
         <i class='fas fa-upload' title='Import template'></i>
-        <p id='import-from-file' class='inline clickable'>{{ 'Import from File'|trans }}</p>
+        <p id='import-from-file' class='d-inline clickable'>{{ 'Import from File'|trans }}</p>
         </div>
         <form action='app/controllers/UcpController.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
@@ -280,7 +280,7 @@
             <br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not App.Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
-            <div class='center'>
+            <div class='text-center'>
                 <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
             </div>
         </form>
@@ -324,7 +324,7 @@
                 {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
                 <label class='block'>{{ 'Template content'|trans }}</label>
                 <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
-                <div class='center'>
+                <div class='text-center'>
                     <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
                 </div>
             </form>

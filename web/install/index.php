@@ -229,7 +229,7 @@ try {
     <p class='smallgray'>(should be a very complicated one that you won't have to remember)</p>
     </p>
 
-    <div class='center' style='margin-top:8px'>
+    <div class='text-center mt-2'>
     <button type='button' id='test_sql_button' class='button'>Test MySQL connection to continue</button>
     </div>
 
@@ -244,7 +244,7 @@ try {
     <code>$ scp /path/to/downloaded/config.php your-user@12.34.56.78:<?= dirname(__DIR__, 2) ?></code>
     <p>If you want to modify some parameters afterwards, just edit this file directly.</p>
 
-    <div class='center' style='margin-top:8px'>
+    <div class='text-center mt-2'>
         <button type="submit" name="Submit" class='button'>INSTALL eLabFTW</button>
     </div>
     </form>

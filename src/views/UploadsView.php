@@ -87,7 +87,7 @@ class UploadsView
             // not an image
             // special case for mol files, only in view mode
         } elseif ($mode === 'view' && $ext === 'mol' && $this->Uploads->Entity->Users->userData['chem_editor']) {
-            $html .= "<div class='center'><canvas class='molFile' id='molFile_" . $upload['id'] .
+            $html .= "<div class='text-center'><canvas class='molFile' id='molFile_" . $upload['id'] .
                 "' data-molpath='app/download.php?f=" . $filepath . "'></canvas></div>";
         // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $molExtensions, true)) {
@@ -115,7 +115,7 @@ class UploadsView
 
         if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
             $comment = "<i class='fas fa-comments'></i>
-                        <p class='file-comment editable inline' id='filecomment_" . $upload['id'] . "'>" .
+                        <p class='file-comment editable d-inline' id='filecomment_" . $upload['id'] . "'>" .
             $upload['comment'] . "</p>";
             $html .= $comment;
         }
@@ -123,7 +123,7 @@ class UploadsView
         // INSERT IN TEXT
         if ($mode === 'edit' && preg_match('/(jpg|jpeg|png|gif|svg)$/i', $ext)) {
             $html .= "<div class='inserter clickable' data-link='" . $upload['long_name'] .
-                "'><i class='fas fa-image mr-1'></i><p class='inline'>" . _('Insert in text at cursor position') . "</p></div>";
+                "'><i class='fas fa-image mr-1'></i><p class='d-inline'>" . _('Insert in text at cursor position') . "</p></div>";
         }
 
         $html .= "</div>";

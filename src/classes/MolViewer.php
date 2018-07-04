@@ -82,7 +82,7 @@ class MolViewer
         //$controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-trans'>" . _('Transparent Surface') . "</a></li>";
 
         $controls .= "</ul>";
-        //$controls .= "<button class='btn btn-default btn-xs align_left rmSurface' data-toggle='tooltip' data-placement='bottom' title='{$removeSurfacesText}' data-divid='{$this->divId}'><span class='glyphicon glyphicon-erase'></span></button>";
+        //$controls .= "<button class='btn btn-default btn-xs rmSurface' data-toggle='tooltip' data-placement='bottom' title='{$removeSurfacesText}' data-divid='{$this->divId}'><span class='glyphicon glyphicon-erase'></span></button>";
         $controls .= "</div>";
 
         return $controls;

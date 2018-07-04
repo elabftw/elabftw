@@ -111,7 +111,7 @@ try {
         $redirect = true;
 
         if ($Request->request->has('lang')) {
-            $tab = '3';
+            $tab = '1';
         }
 
         if ($Request->request->has('stampshare')) {

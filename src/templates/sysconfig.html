@@ -38,9 +38,9 @@
 
 <menu>
     <ul>
-        <li class='tabhandle' id='tab1'>{{ 'Teams'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Users'|trans }}</li>
-        <li class='tabhandle' id='tab3'>{{ 'Server'|trans }}</li>
+        <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Teams'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
         <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
         <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
@@ -49,77 +49,15 @@
     </ul>
 </menu>
 
-<!-- TAB 1 TEAMS -->
+<!-- TAB 1 SERVER -->
 <div class='divhandle' id='tab1div'>
-    <div id='teamsDiv'>
-        <!-- STATS -->
-        <div class='box'>
-            <h3>{{ 'Usage Statistics'|trans }}</h3>
-            <hr>
-            <p>{{ TeamsView.showStats|raw }}</p>
-        </div>
-
-        <!-- CREATE TEAM -->
-        <div class='box'>
-            <h3>{{ 'Add a New Team'|trans }}</h3>
-            <hr>
-            <input class='clean-form col-3-form' required type='text' placeholder='Pasteur lab' id='teamsName' />
-            <button id='teamsCreateButton' class='button'>{{ 'Save'|trans }}</button>
-        </div>
-
-        <!-- DISPLAY TEAMS -->
-        <div class='box'>
-            <h3>{{ 'Edit Existing Teams'|trans }}</h3>
-            <hr>
-
-            {% for team in teamsArr %}
-            {% set count = TeamsView.Teams.getStats(team.team_id) %}
-            <label for='teamName_{{ team.team_id }}'>Team Name</label>
-            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.team_id }}' type='text' value='{{ team.team_name }}' />
-            <label for='teamOrgid_{{ team.team_id }}'>Team Organisation ID</label>
-            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamOrgid_{{ team.team_id }}' type='text' value='{{ team.team_orgid }}' />
-            <button data-id='{{ team.team_id }}' disabled id='teamsUpdateButton_{{ team.team_id }}' class='button teamsUpdateButton'>
-                {{ 'Save'|trans }}
-            </button>
-            {% if count.totusers == 0 %}
-            <button data-id='{{ team.team_id }}' id='teamsDestroyButton_{{ team.team_id }}' class='button button-delete teamsDestroyButton'>
-                {{ 'Delete'|trans }}
-            </button>
-            {% else %}
-            <button data-id='{{ team.team_id }}' id='teamsArchiveButton_{{ team.team_id }}' class='button button-neutral teamsArchiveButton'>
-                {{ 'Archive'|trans }}
-            </button>
-            {% endif %}
-            <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
-            {% trans %}
-            Experiment
-            {% plural count.totxp %}
-            Experiments
-            {% endtrans %}
-            : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
-            {% endfor %}
-        </div>
-
-        <!-- MASS EMAIL -->
-        <div class='box'>
-            <h3>{{ 'Send a Mass Email'|trans }}</h3><hr>
-            <p>{{ 'Email Subject'|trans }}<br>
-                <input class='clean-form col-3-form' type='text' id='massSubject' size='45' /><br>
-                {{ 'Email Body'|trans }}<br>
-                <textarea class='clean-form col-textarea-form' id='massBody'></textarea><br>
-                <button id='massSend' class='button'>{{ 'Send'|trans }}</button>
-            </p>
-        </div>
+    <!-- STATS -->
+    <div class='box'>
+        <h3>{{ 'Usage Statistics'|trans }}</h3>
+        <hr>
+        <p>{{ TeamsView.showStats|raw }}</p>
     </div>
-</div>
 
-<!-- TAB 2 USERS -->
-<div class='divhandle' id='tab2div'>
-    {{ include('editusers.html') }}
-</div>
-
-<!-- TAB 3 SERVER -->
-<div class='divhandle' id='tab3div'>
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
         <h3>{{ 'Under the Hood'|trans }}</h3>
         <hr>
@@ -175,6 +113,58 @@
             <li><p>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</p></li>
         </ul>
     </div>
+</div>
+
+<!-- TAB 2 TEAMS -->
+<div class='divhandle' id='tab2div'>
+    <div id='teamsDiv'>
+        <!-- CREATE TEAM -->
+        <div class='box'>
+            <h3>{{ 'Add a New Team'|trans }}</h3>
+            <hr>
+            <input class='clean-form col-3-form' required type='text' placeholder='Pasteur lab' id='teamsName' />
+            <button id='teamsCreateButton' class='button'>{{ 'Save'|trans }}</button>
+        </div>
+
+        <!-- DISPLAY TEAMS -->
+        <div class='box'>
+            <h3>{{ 'Edit Existing Teams'|trans }}</h3>
+            <hr>
+
+            {% for team in teamsArr %}
+            {% set count = TeamsView.Teams.getStats(team.team_id) %}
+            <label for='teamName_{{ team.team_id }}'>Team Name</label>
+            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.team_id }}' type='text' value='{{ team.team_name }}' />
+            <label for='teamOrgid_{{ team.team_id }}'>Team Organisation ID</label>
+            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamOrgid_{{ team.team_id }}' type='text' value='{{ team.team_orgid }}' />
+            <button data-id='{{ team.team_id }}' disabled id='teamsUpdateButton_{{ team.team_id }}' class='button teamsUpdateButton'>
+                {{ 'Save'|trans }}
+            </button>
+            {% if count.totusers == 0 %}
+            <button data-id='{{ team.team_id }}' id='teamsDestroyButton_{{ team.team_id }}' class='button button-delete teamsDestroyButton'>
+                {{ 'Delete'|trans }}
+            </button>
+            {% else %}
+            <button data-id='{{ team.team_id }}' id='teamsArchiveButton_{{ team.team_id }}' class='button button-neutral teamsArchiveButton'>
+                {{ 'Archive'|trans }}
+            </button>
+            {% endif %}
+            <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
+            {% trans %}
+            Experiment
+            {% plural count.totxp %}
+            Experiments
+            {% endtrans %}
+            : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<!-- TAB 3 USERS -->
+<div class='divhandle' id='tab3div'>
+    {{ include('editusers.html') }}
 </div>
 
 <!-- TAB 4 TIMESTAMP -->
@@ -318,6 +308,16 @@
         <button id='testemailButton' class='button'>{{ 'Send'|trans }}</button>
     </div>
 
+    <!-- MASS EMAIL -->
+    <div class='box'>
+        <h3>{{ 'Send a Mass Email'|trans }}</h3><hr>
+        <p>{{ 'Email Subject'|trans }}<br>
+            <input class='clean-form col-3-form' type='text' id='massSubject' size='45' /><br>
+            {{ 'Email Body'|trans }}<br>
+            <textarea class='clean-form col-textarea-form' id='massBody'></textarea><br>
+            <button id='massSend' class='button'>{{ 'Send'|trans }}</button>
+        </p>
+    </div>
 </div>
 
 <!-- TAB 7 LOGS -->

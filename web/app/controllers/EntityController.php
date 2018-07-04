@@ -167,33 +167,6 @@ try {
         }
     }
 
-    // CREATE TAG
-    /*
-    if ($Request->request->has('createTag')) {
-        $Entity->canOrExplode('write');
-        // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        // also remove | because we use this as separator for tags in SQL
-        $tag = str_replace(array('\\', '|'), array('', ' '), $Request->request->filter('tag', null, FILTER_SANITIZE_STRING));
-        // empty tags are disallowed
-        if ($tag === '') {
-            throw new Exception(_('Tag is too short!'));
-        }
-
-        $Entity->Tags->create($tag);
-    }
-     */
-
-    /*
-    // DELETE TAG
-    if ($Request->request->has('destroyTag')) {
-        if (Tools::checkId($Request->request->get('tag_id')) === false) {
-            throw new Exception('Bad id value');
-        }
-        $Entity->canOrExplode('write');
-        $Entity->Tags->destroy($Request->request->get('tag_id'));
-    }
-     */
-
     // UPDATE FILE COMMENT
     if ($Request->request->has('updateFileComment')) {
         $Entity->canOrExplode('write');

@@ -27,7 +27,7 @@
                     $.post(this.controller, {
                         destroy: true,
                         id: id,
-                        type: 'tpl'
+                        type: 'experiments_tpl'
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');

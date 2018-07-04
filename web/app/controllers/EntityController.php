@@ -289,7 +289,7 @@ try {
         $Entity->canOrExplode('write');
 
         // check for deletable xp
-        if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp']) {
+        if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')) {
             throw new Exception(Tools::error(true));
         }
 

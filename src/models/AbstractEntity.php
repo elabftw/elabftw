@@ -178,7 +178,7 @@ abstract class AbstractEntity
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
         $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-        $tagsJoin = "LEFT JOIN tags2entity ON (" . $this->type . ".id = tags2entity.item_id) LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
+        $tagsJoin = "LEFT JOIN tags2entity ON (" . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
 
         if ($this instanceof Experiments) {
             $select = "SELECT DISTINCT " . $this->type . ".*,

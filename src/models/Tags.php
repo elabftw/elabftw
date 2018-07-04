@@ -112,7 +112,7 @@ class Tags implements CrudInterface
             $insertReq = $this->Db->prepare($insertSql);
             $type = $this->Entity->type;
             // an experiment template transforms into an experiment
-            if ($type === 'experiments_templates') {
+            if ($type === 'experiments_tpl') {
                 $type = 'experiments';
             }
             while ($tags = $req->fetch()) {

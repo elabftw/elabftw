@@ -377,8 +377,10 @@
             quickSave(type, id);
         }
 
-        // TODO
-        //$('.markdown-textarea').markdown({autofocus:false,savable:false, iconlibrary: 'fa'});
+        // DISPLAY MARKDOWN EDITOR
+        if ($('#body_area').hasClass('markdown-textarea')) {
+            $('.markdown-textarea').markdown({autofocus:false,savable:false, iconlibrary: 'fa'});
+        }
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {

@@ -13,40 +13,41 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 /**
- * Generate and display a tag cloud for a given user
+ * Generate and display a tag cloud for a given team
  */
 class TagCloud
 {
     /** @var Db $Db SQL Database */
     private $Db;
 
-    /** @var string $userid id of our user */
-    private $userid;
+    /** @var int $team id of the team */
+    private $team;
 
     /**
-     * Init the object with a userid
+     * Constructor
      *
-     * @param string $userid
+     * @param int $team
      */
-    public function __construct($userid)
+    public function __construct(int $team)
     {
-        $this->userid = $userid;
+        $this->team = $team;
         $this->Db = Db::getConnection();
     }
 
     /**
-     * Read all the tags from user
+     * Read all the tags from the team
      *
      * @return array
      */
     private function readAll(): array
     {
-        $sql = "SELECT tag, COUNT(*) AS total
-            FROM experiments_tags
-            WHERE userid = :userid
+        $sql = "SELECT tag, COUNT(tag_id) AS total
+            FROM tags
+            LEFT JOIN tags2entity ON (tags.id = tags2entity.tag_id)
+            WHERE team = :team
             GROUP BY tag ORDER BY total DESC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':team', $this->team);
         $req->execute();
 
         return $req->fetchAll();

@@ -55,12 +55,9 @@ try {
     }
     $colorsJson = json_encode($colors);
 
-    $TagCloud = new TagCloud($App->Users->userid);
-
     $template = 'profile.html';
     $renderArr = array(
         'UserStats' => $UserStats,
-        'TagCloud' => $TagCloud,
         'colorsJson' => $colorsJson,
         'statsJson' => $statsJson,
         'count' => $count

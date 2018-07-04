@@ -165,19 +165,6 @@ CREATE TABLE `items_revisions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Table structure for table `experiments_tags`
---
-
-DROP TABLE IF EXISTS `experiments_tags`;
-CREATE TABLE `experiments_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tag` varchar(255) NOT NULL,
-  `item_id` int(10) unsigned NOT NULL,
-  `userid` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
 -- Table structure for table `experiments_templates`
 --
 
@@ -224,18 +211,6 @@ CREATE TABLE `items` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `items_tags`
---
-
-DROP TABLE IF EXISTS `items_tags`;
-CREATE TABLE `items_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tag` varchar(255) NOT NULL,
-  `item_id` int(10) unsigned NOT NULL,
-  `team_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table `items_types`
@@ -442,17 +417,6 @@ CREATE TABLE IF NOT EXISTS `idps` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
-
---
--- experiments_tpl_tags
---
-CREATE TABLE IF NOT EXISTS `experiments_tpl_tags` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `tag` VARCHAR(255) NOT NULL,
-    `item_id` INT UNSIGNED NOT NULL,
-    `userid` INT UNSIGNED NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* the groups */
 INSERT INTO `groups` (`group_id`, `group_name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES

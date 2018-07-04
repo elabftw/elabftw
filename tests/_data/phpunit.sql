@@ -23,17 +23,6 @@ CREATE DATABASE IF NOT EXISTS `phpunit` DEFAULT CHARACTER SET utf8 COLLATE utf8_
 USE `phpunit`;
 
 --
--- experiments_tpl_tags
---
-CREATE TABLE `experiments_tpl_tags` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `tag` VARCHAR(255) NOT NULL,
-    `item_id` INT UNSIGNED NOT NULL,
-    `userid` INT UNSIGNED NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
 -- tags
 --
 CREATE TABLE`tags` (
@@ -251,19 +240,6 @@ INSERT INTO `experiments_revisions` (`id`, `item_id`, `body`, `savedate`, `useri
 -- --------------------------------------------------------
 
 --
--- Table structure for table `experiments_tags`
---
-
-CREATE TABLE `experiments_tags` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `tag` varchar(255) NOT NULL,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `experiments_templates`
 --
 
@@ -353,19 +329,6 @@ CREATE TABLE `items_revisions` (
 
 INSERT INTO `items_revisions` (`id`, `item_id`, `body`, `savedate`, `userid`) VALUES
 (1, 1, '<p>Go to the admin panel to edit/add more items types!</p>', '2016-07-29 21:21:22', 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `items_tags`
---
-
-CREATE TABLE `items_tags` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `tag` varchar(255) NOT NULL,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `team_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -620,12 +583,6 @@ ALTER TABLE `experiments_revisions`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `experiments_tags`
---
-ALTER TABLE `experiments_tags`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
@@ -647,12 +604,6 @@ ALTER TABLE `items`
 -- Indexes for table `items_revisions`
 --
 ALTER TABLE `items_revisions`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `items_tags`
---
-ALTER TABLE `items_tags`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -739,11 +690,6 @@ ALTER TABLE `experiments_links`
 ALTER TABLE `experiments_revisions`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
--- AUTO_INCREMENT for table `experiments_tags`
---
-ALTER TABLE `experiments_tags`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
 -- AUTO_INCREMENT for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
@@ -763,11 +709,6 @@ ALTER TABLE `items`
 --
 ALTER TABLE `items_revisions`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `items_tags`
---
-ALTER TABLE `items_tags`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `items_types`
 --

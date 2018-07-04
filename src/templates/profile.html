@@ -43,26 +43,6 @@
     {% endif %}
 </section>
 
-<!-- TAG CLOUD -->
-<section class='box'>
-    <i class='fas fa-cloud fa-lg mr-1'></i><h5 class='inline'>{{ 'Tag cloud'|trans }}</h5>
-    <hr>
-    <div>
-        {# handle minimum tag count #}
-        {% set cloudArr = TagCloud.getCloudArr %}
-        {% if cloudArr|length <= 10 %}
-            {% trans %}
-                Not enough tags to make a tagcloud
-            {% endtrans %}
-        {% else %}
-        {% for tag, class in cloudArr %}
-            <a href='experiments.php?mode=show&tag={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
-        {% endfor %}
-
-        {% endif %}
-    </div>
-</section>
-
 <!--script src='https://www.google.com/jsapi'></script-->
 <script src='app/js/profile.min.js?v={{ v }}'></script>
 {% endblock body %}

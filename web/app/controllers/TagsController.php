@@ -71,6 +71,13 @@ try {
         $Tags->update($Request->request->get('tag'), $Request->request->get('newtag'));
     }
 
+    // DEDUPLICATE TAG
+    if ($Request->request->has('deduplicate') && $Session->get('is_admin')) {
+        $deduplicated = $Tags->deduplicate($Request->request->get('tag'));
+        $Response->setData(array('res' => true, 'msg' => "Removed $deduplicated duplicates"));
+    }
+
+
     // UNREFERENCE TAG
     if ($Request->request->has('unreferenceTag')) {
         if (Tools::checkId($Request->request->get('tag_id')) === false) {

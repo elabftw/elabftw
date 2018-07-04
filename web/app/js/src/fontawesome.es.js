@@ -17,6 +17,7 @@ import {
     faChevronCircleLeft,
     faChevronRight,
     faClipboardCheck,
+    faClone,
     faCloud,
     faCode,
     faCogs,
@@ -69,6 +70,7 @@ fontawesome.library.add(faCheckSquare);
 fontawesome.library.add(faChevronCircleLeft);
 fontawesome.library.add(faChevronRight);
 fontawesome.library.add(faClipboardCheck);
+fontawesome.library.add(faClone);
 fontawesome.library.add(faCloud);
 fontawesome.library.add(faCode);
 fontawesome.library.add(faCogs);

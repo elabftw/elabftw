@@ -414,7 +414,7 @@
         <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it.' }}</p>
         <div id='tag_manager'>
         {% for tag in tagsArr %}
-        <p><i class='fas fa-times clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
+        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-times clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
         {% endfor %}
         </div>
     </div>
@@ -426,5 +426,8 @@
 <script src='app/js/src/admin.js?v={{ v }}'></script>
 -->
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
+<!--
+<script src='app/js/src/tags.js?v={{ v }}'></script>
+-->
 <script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

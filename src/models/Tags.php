@@ -160,6 +160,56 @@ class Tags implements CrudInterface
     }
 
     /**
+     * If we have the same tag (after correcting a typo),
+     * remove the tags that are the same and reference only one
+     *
+     * @param string $tag the tag to dedup
+     * @return int the number of duplicates removed
+     */
+    public function deduplicate(string $tag): int
+    {
+        $sql = "SELECT * FROM tags WHERE tag = :tag AND team = :team";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':tag', $tag);
+        $req->bindParam(':team', $this->Entity->Users->userData['team']);
+        $req->execute();
+        $count = $req->rowCount();
+        if ($count < 2) {
+            return 0;
+        }
+
+        // ok we have several tags that are the same in the same team
+        // we want to update the reference mentionning them for the original tag id
+        $tags = $req->fetchAll();
+        // the first tag we find is the one we keep
+        $targetTagId = $tags[0]['id'];
+
+        // the trash
+        $tagsToDelete = array_slice($tags, 1);
+
+        // skip the first tag because we want to keep it
+        foreach ($tagsToDelete as $tag) {
+            $sql = "UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id";
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':target_tag_id', $targetTagId);
+            $req->bindParam(':tag_id', $tag['id']);
+            $req->execute();
+        }
+
+        // now delete the duplicate tags from the tags table
+        $sql = "DELETE FROM tags WHERE id = :id";
+        $req = $this->Db->prepare($sql);
+        foreach ($tagsToDelete as $tag) {
+            $req->bindParam(':id', $tag['id']);
+            $req->execute();
+        }
+
+        return count($tagsToDelete);
+
+    }
+
+
+    /**
      * Unreference a tag from an entity
      *
      * @param int $tagId id of the tag

@@ -59,6 +59,17 @@
                 }
             }
 
+            // DEDUPLICATE
+            deduplicate(tag) {
+                $.post(this.controller, {
+                    deduplicate: true,
+                    tag: tag
+                }).done(function (data) {
+                    notif(data.msg, 'ok');
+                    $('#tag_manager').load(location + '?tab=9 #tag_manager');
+                });
+            }
+
             // REMOVE THE TAG FROM AN ENTITY
             unreference(tagId) {
                 if (confirm(confirmText)) {
@@ -139,6 +150,11 @@
                     response(data);
                 });
             }
+        });
+
+        // DEDUPLICATE
+        $(document).on('click', '.tagDeduplicate', function() {
+            TagC.deduplicate($(this).data('tag'));
         });
 
         // UNREFERENCE (remove link between tag and entity)

@@ -68,10 +68,16 @@ try {
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
         $Email = new Email($App->Config);
-        if ($Email->testemailSend($Request->request->get('testemailEmail'))) {
-            $res = true;
-            $msg = _('Email sent');
+        try {
+            if ($Email->testemailSend($Request->request->get('testemailEmail'))) {
+                $res = true;
+                $msg = _('Email sent');
+            }
+        } catch (Exception $e) {
+            $res = false;
+            $msg = $e->getMessage();
         }
+
     }
 
     // SEND MASS EMAIL

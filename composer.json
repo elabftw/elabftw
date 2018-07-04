@@ -7,6 +7,7 @@
         "ext-ctype": "*",
         "ext-curl":"*",
         "ext-gettext":"*",
+        "ext-intl": "*",
         "ext-openssl":"*",
         "ext-gd":"*",
         "ext-pdo": "*",

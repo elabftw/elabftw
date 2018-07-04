@@ -245,7 +245,7 @@ abstract class AbstractEntity
             $this->tagFilter . ' ' .
             $this->queryFilter . ' ' .
             $this->visibilityFilter . ' ' .
-            " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit . " " . $this->offset;
+            " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . ", " . $this->type . ".id " . $this->sort . " " . $this->limit . " " . $this->offset;
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team']);

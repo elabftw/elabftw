@@ -59,16 +59,8 @@ if (isset($_GET['body']) && !empty($_GET['body'])) {
 
 // ANDOR
 $andor = ' AND ';
-if (isset($_GET['andor']) && ($_GET['andor'] === 'and')) {
-    $andSel = " selected='selected'";
-} else {
-    $andSel = '';
-}
 if (isset($_GET['andor']) && ($_GET['andor'] === 'or')) {
-    $orSel = " selected='selected'";
     $andor = ' OR ';
-} else {
-    $orSel = '';
 }
 
 // TAGS

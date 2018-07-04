@@ -266,95 +266,6 @@
             }
         }
 
-        /*
-        class Tag {
-
-            constructor() {
-                this.controller = 'app/controllers/EntityController.php';
-            }
-
-            saveOnEnter(e) {
-                // if the key that was pressed was Enter (ascii code 13)
-                if (e.which === 13) {
-                    this.save();
-                }
-            }
-
-            save() {
-                // get tag
-                const tag = $('#createTagInput').val();
-                // do nothing if input is empty
-                if (tag.length > 0) {
-                    // POST request
-                    $.post(this.controller, {
-                        createTag: true,
-                        tag: tag,
-                        id: id,
-                        type: type
-                    }).done(function () {
-                        $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
-                        // clear input field
-                        $('#createTagInput').val('');
-                    });
-                }
-            }
-
-            destroy(tagId) {
-                if (confirm(confirmText)) {
-                    $.post(this.controller, {
-                        destroyTag: true,
-                        type: type,
-                        id: id,
-                        tag_id: tagId
-                    }).done(function() {
-                        $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
-                    });
-                }
-            }
-        }
-
-
-        ///////
-        // TAGS
-        const TagC = new Tag();
-
-        // CREATE
-        // listen keypress, add tag when it's enter
-        $(document).on('keypress', '#createTagInput', function(e) {
-            TagC.saveOnEnter(e);
-        });
-        // also add the tag if the focus is lost because it looks like it's not obvious for people to use the enter key
-        $(document).on('blur', '#createTagInput', function() {
-            TagC.save();
-        });
-
-        // AUTOCOMPLETE
-        let cache = {};
-        $('#createTagInput').autocomplete({
-            source: function(request, response) {
-                let term = request.term;
-                if (term in cache) {
-                    response(cache[term]);
-                    return;
-                }
-                $.getJSON("app/controllers/EntityController.php?tag=1&type=" + type + "&id=" + id, request, function(data, status, xhr) {
-                    cache[term] = data;
-                    response(data);
-                });
-            }
-        });
-
-        // DESTROY
-        $(document).on('click', '.tagDestroy', function() {
-            //Tag.destroy($(this).data('tagid'));
-            TagC.destroy($(this).data('tagid'));
-
-        });
-
-        // END TAGS
-        ///////////
-        */
-
         // DESTROY ENTITY
         const EntityC = new Entity();
         $(document).on('click', '.entityDestroy', function() {
@@ -394,6 +305,7 @@
             LinkC.create(e);
         });
         // AUTOCOMPLETE
+        let cache = {};
         $( '#linkinput' ).autocomplete({
             source: function(request, response) {
                 let term = request.term;

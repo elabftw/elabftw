@@ -28,7 +28,7 @@ class Templates extends AbstractEntity
     public function __construct(Users $users, ?int $id = null)
     {
         parent::__construct($users, $id);
-        $this->type = 'experiments_tpl';
+        $this->type = 'experiments_templates';
     }
 
     /**

@@ -110,9 +110,14 @@ class Tags implements CrudInterface
         if ($req->rowCount() > 0) {
             $insertSql = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
             $insertReq = $this->Db->prepare($insertSql);
+            $type = $this->Entity->type;
+            // an experiment template transforms into an experiment
+            if ($type === 'experiments_templates') {
+                $type = 'experiments';
+            }
             while ($tags = $req->fetch()) {
                 $insertReq->bindParam(':item_id', $newId);
-                $insertReq->bindParam(':item_type', $this->Entity->type);
+                $insertReq->bindParam(':item_type', $type);
                 $insertReq->bindParam(':tag_id', $tags['tag_id']);
                 $insertReq->execute();
             }

@@ -7,7 +7,7 @@
             <!-- SEARCH IN-->
             <div class='col-md-3'>
                 <label for='searchin'>{{ 'Search in'|trans }}</label>
-                <select name='type' id='searchin'>
+                <select name='type' id='searchin' class='custom-select'>
                     <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
                     <option disabled>----------------</option>
                     <option value='database' {{ Request.query.get('type') == 'database' ? 'selected' }}>{{ 'Database'|trans }}</option>
@@ -23,7 +23,7 @@
             <!-- SEARCH WITH TAG -->
             <div class='col-md-3'>
                 <label for='tags-select'>{{ 'With the tag'|trans }}</label>
-                <select multiple name='tags[]' id='tags-select' style='max-width:80%'>
+                <select multiple name='tags[]' id='tags-select' class='custom-select'>
                     {% for tag in tagsArr %}
                     <option value='{{ tag.tag }}' {{ tag.tag in selectedTagsArr ? 'selected' }}>{{ tag.tag|raw }}</option>
                     {% endfor %}
@@ -34,7 +34,7 @@
             <!-- VISIBILITY SEARCH -->
             <div class='col-md-6'>
                 <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-                <select id='visibility' name='vis'>
+                <select id='visibility' name='vis' class='custom-select'>
                     <option value=''>{{ 'Select visibility'|trans }}</option>
                     <option value='organization' {{ Request.query.get('vis') == 'organization' ? 'selected' }}>{{ 'Organization'|trans }}</option>
                     <option value='team' {{ Request.query.get('vis') == 'team' ? 'selected' }}>{{ 'Team'|trans }}</option>
@@ -52,7 +52,7 @@
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
                 <label for'searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
-                <select id='searchonly' name='owner'>
+                <select id='searchonly' name='owner' class='custom-select mb-3'>
                     <option value=''>{{ 'Yourself'|trans }}</option>
                     <!-- add an option to search in the whole team (owner = 0) -->
                     <option value='0' {{ Request.query.get('owner') == '0' ? 'selected' }}>{{ 'All the team'|trans }}</option>
@@ -94,7 +94,7 @@
             <!-- STATUS -->
             <div class='col-md-4'>
                 <label for='status'>{{ 'And status is'|trans }}</label>
-                <select id='status' name='status'>
+                <select id='status' name='status' class='custom-select'>
                     <option value=''>{{ 'select status'|trans }}</option>
                     {% for status in statusArr %}
                         <option value='{{ status.category_id }}' {{ Request.query.get('status') == status.category_id ? 'selected' }}>
@@ -115,8 +115,8 @@
                 <input id='body' name='body' type='text' value='{{ body }}'/>
 
                 <!-- AND / OR -->
-                <select class='mt-2' id='andor' name='andor'>
-                    <option value='' disabled selected>{{ 'Space means'|trans }}</option>
+                <label for='andor'>{{ 'Space means'|trans }}</label>
+                <select class='mt-2 custom-select-sm' id='andor' name='andor'>
                     <option value='and' {{ Request.query.get('andor') == 'and' ? 'selected' }}>{{ 'and'|trans }}</option>
                     <option value='or' {{ Request.query.get('andor') == 'or' ? 'selected' }}>{{ 'or'|trans }}</option>
                 </select>
@@ -126,7 +126,7 @@
             <!-- RATING -->
             <div class='col-md-4'>
                 <label for='rating'>{{ 'And rating is'|trans }}</label>
-                <select id='rating' name='rating'>
+                <select id='rating' name='rating' class='custom-select'>
                     <option value=''>{{ 'select number of stars'|trans }}</option>
                     <option value='no'>{{ 'Unrated'|trans }}</option>
                     {% for i in range(1, 5) %}

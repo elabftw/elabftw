@@ -642,6 +642,10 @@ tr:nth-child(odd) {
     font-size: 115%;
 }
 
+.searchform input {
+    background-color: #fff;
+}
+
 /* OVERLAY */
 .overlay {
     display: flex;

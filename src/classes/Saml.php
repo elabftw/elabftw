@@ -43,13 +43,13 @@ class Saml
      * If the $id is null, the idp part of the settings will be empty
      * but it's ok because we don't always need it
      *
-     * @param int|null $id Id of the IDP
+     * @param int $id Id of the IDP
      */
-    private function setSettings($id): void
+    private function setSettings(int $id): void
     {
         $idpsArr = array();
         if ($id !== null) {
-            $idpsArr = $this->Idps->read($id);
+            $idpsArr = $this->Idps->read((int) $id);
         }
 
         $this->settings = array(
@@ -164,9 +164,9 @@ class Saml
      * @param int|null $id Return the settings array with infos from Idp with id $id
      * @return array
      */
-    public function getSettings($id = null): array
+    public function getSettings(?int $id = null): array
     {
-        $this->setSettings($id);
+        $this->setSettings((int) $id);
         return $this->settings;
     }
 }

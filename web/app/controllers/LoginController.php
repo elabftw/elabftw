@@ -16,10 +16,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-try {
-    // default location for redirect
-    $location = '../../login.php';
+// default location for redirect
+$location = '../../login.php';
 
+try {
     $FormKey = new FormKey($Session);
     $Saml = new Saml($App->Config, new Idps);
 
@@ -83,8 +83,7 @@ try {
 
 } catch (Exception $e) {
     $Session->getFlashBag()->add('ko', $e->getMessage());
-
-} finally {
-    $Response = new RedirectResponse($location);
-    $Response->send();
 }
+
+$Response = new RedirectResponse($location);
+$Response->send();

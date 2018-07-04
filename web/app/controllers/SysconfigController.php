@@ -33,14 +33,6 @@ try {
     $Teams = new Teams($App->Users);
     $Response = new JsonResponse();
 
-    // PROMOTE SYSADMIN
-    if ($Request->request->has('promoteSysadmin')) {
-        if ($App->Users->promoteSysadmin($Request->request->get('email'))) {
-            $res = true;
-            $msg = _('User promoted');
-        }
-    }
-
     // CREATE TEAM
     if ($Request->request->has('teamsCreate')) {
         if ($Teams->create($Request->request->get('teamsName')) !== false) {

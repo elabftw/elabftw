@@ -815,26 +815,6 @@ class Users
     }
 
     /**
-     * Make a user sysadmin
-     *
-     * @param string $email Email of user to promote
-     * @return bool
-     */
-    public function promoteSysadmin(string $email): bool
-    {
-        // check we have a valid email
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception('Email malformed');
-        }
-
-        $sql = "UPDATE users SET usergroup = 1 WHERE email = :email AND archived = 0";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-
-        return $req->execute();
-    }
-
-    /**
      * Generate an API key and store it
      *
      * @throws Exception

@@ -73,23 +73,6 @@
             notif('Feature not yet implemented :)', 'ok');
         });
 
-        // PROMOTE SYSADMIN
-        $(document).on('click', '#promoteSysadminButton', function() {
-            document.getElementById('promoteSysadminButton').disabled = true;
-            var email = $('#promoteSysadmin').val();
-            $.post('app/controllers/SysconfigController.php', {
-                promoteSysadmin: true,
-                email: email
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                    $('#teamsDiv').load('sysconfig.php #teamsDiv');
-                } else {
-                    notif(data.msg, 'ko');
-                }
-            });
-        });
-
         // MAIL METHOD in a function because is also called in document ready
         function toggleMailMethod(method) {
             switch (method) {

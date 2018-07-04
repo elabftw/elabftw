@@ -83,6 +83,7 @@ try {
 
     // ARCHIVE USER
     if ($Request->request->has('usersArchive')) {
+
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
@@ -106,8 +107,7 @@ try {
 
 
     // DESTROY
-    if ($FormKey->validate($Request->request->get('formkey'))
-        && $Request->request->has('usersDestroy')) {
+    if ($Request->request->has('usersDestroy') && $FormKey->validate($Request->request->get('formkey'))) {
 
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');

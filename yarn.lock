@@ -2379,6 +2379,10 @@ markdown@^0.5.0:
   dependencies:
     nopt "~2.1.1"
 
+mathjax@^2.7.4:
+  version "2.7.4"
+  resolved "https://registry.yarnpkg.com/mathjax/-/mathjax-2.7.4.tgz#a88c55392b69a9715813cdc041ce02de6548a603"
+
 maxmin@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/maxmin/-/maxmin-1.1.0.tgz#71365e84a99dd8f8b3f7d5fde2f00d1e7f73be61"

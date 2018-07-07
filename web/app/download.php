@@ -56,6 +56,9 @@ try {
     // the zip archives will be in the tmp folder
     if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv')) {
         $file_path = $elabRoot . '/cache/elab/' . $long_filename;
+        if (getenv('SANDSTORM')) {
+            $file_path = '/tmp/' . $long_filename;
+        }
     } else {
         $file_path = $elabRoot . '/uploads/' . $final_filename;
     }

@@ -114,6 +114,22 @@ try {
         $App->Users->userData['is_admin'] = 0;
         $App->Users->userData['is_sysadmin'] = 0;
     }
+    // SANDSTORM
+    if (getenv('SANDSTORM')) {
+        $Users = new Users(1);
+        $Users->userData['team'] = 1;
+        $App->loadUser($Users);
+        $App->Request->getSession()->set('auth', 1);
+        $App->Request->getSession()->set('userid', 1);
+        $App->Request->getSession()->set('is_admin', 1);
+        $App->Request->getSession()->set('is_sysadmin', 1);
+        $App->Users->userData['limit_nb'] = 15;
+        $App->Users->userData['firstname'] = urldecode($Request->headers->get('X-Sandstorm-Username'));
+        $App->Users->userData['is_admin'] = 1;
+        $App->Users->userData['team'] = 1;
+        $App->Users->userData['is_sysadmin'] = 1;
+        $App->Users->userData['lang'] = 'en_GB';
+    }
 
     // GET THE LANG
     if ($Request->getSession()->has('auth')) {

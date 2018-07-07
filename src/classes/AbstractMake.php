@@ -75,6 +75,9 @@ abstract class AbstractMake
     protected function getTmpPath(): string
     {
         $tmpPath = dirname(__DIR__, 2) . '/cache/elab/';
+        if (getenv('SANDSTORM')) {
+            $tmpPath = '/tmp/';
+        }
         if (!is_dir($tmpPath) && !mkdir($tmpPath) && !is_dir($tmpPath)) {
             throw new RuntimeException('Unable to create the cache directory (' . $tmpPath . ')');
         }

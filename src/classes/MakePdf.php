@@ -54,6 +54,9 @@ class MakePdf extends AbstractMake
 
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
         $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
+        if (getenv('SANDSTORM')) {
+            $tmpDir = '/tmp/';
+        }
         if (!is_dir($tmpDir) && !mkdir($tmpDir) && !is_dir($tmpDir)) {
             throw new Exception("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }

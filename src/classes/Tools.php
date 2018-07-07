@@ -375,7 +375,7 @@ class Tools
      */
     public static function getUrlFromRequest(Request $Request): string
     {
-        return 'https://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
+        return $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
     }
 
     /**

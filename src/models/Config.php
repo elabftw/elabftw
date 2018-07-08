@@ -36,6 +36,11 @@ class Config
     {
         $this->Db = Db::getConnection();
         $this->configArr = $this->read();
+        // this should only run once: just after a fresh install
+        if (empty($this->configArr)) {
+            $this->populate();
+            $this->configArr = $this->read();
+        }
     }
 
     /**

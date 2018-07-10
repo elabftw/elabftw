@@ -283,11 +283,6 @@ class Auth
             return true;
         }
 
-        // everyone is already logged in on sandstorm
-        if (getenv('SANDSTORM')) {
-            return true;
-        }
-
         // now try to login with the cookie
         if ($this->loginWithCookie()) {
             // successful login thanks to our cookie friend

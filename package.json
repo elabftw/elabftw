@@ -24,7 +24,7 @@
     "markdown": "^0.5.0",
     "mathjax": "^2.7.4",
     "popper.js": "^1.14",
-    "tinymce": "^4.7",
+    "tinymce": "^4.8",
     "tinymce-mention": "^4.0.2",
     "vanderlee-colorpicker": "^1.2.16"
   },

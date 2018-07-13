@@ -439,9 +439,9 @@ bootstrap-markdown-fa5@^2.10.0:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/bootstrap-markdown-fa5/-/bootstrap-markdown-fa5-2.10.0.tgz#31d4b680d17acb49273960713706db76ef34c6f6"
 
-bootstrap@^4.1.0:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.1.1.tgz#3aec85000fa619085da8d2e4983dfd67cf2114cb"
+bootstrap@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.1.2.tgz#aee2a93472e61c471fc79fb475531dcbc87de326"
 
 bops@~0.1.1:
   version "0.1.1"
@@ -1155,7 +1155,7 @@ escodegen@1.x.x:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-scope@^3.7.1:
+eslint-scope@3.7.1, eslint-scope@^3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-3.7.1.tgz#3d63c3edfda02e06e01a452ad88caacc7cdcb6e8"
   dependencies:

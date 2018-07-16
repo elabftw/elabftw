@@ -13,12 +13,12 @@
         "ext-zip": "*",
         "defuse/php-encryption": "2.2.*",
         "mpdf/mpdf": "^7.1",
-        "swiftmailer/swiftmailer":"^6.1.0",
+        "swiftmailer/swiftmailer":"6.1.*",
         "onelogin/php-saml": "^2.14",
         "guzzlehttp/guzzle": "^6.3",
         "michelf/php-markdown": "^1.7",
         "symfony/http-foundation": "^4.1",
-        "twig/twig": "~2.0",
+        "twig/twig": "2.5.*",
         "twig/extensions": "^1.5"
 
     },

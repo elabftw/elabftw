@@ -61,6 +61,10 @@ try {
 
             // GET TEAM
             $teamAttribute = $Saml->Config->configArr['saml_team'];
+            // we didn't receive any team attribute for some reason
+            if (empty($teamAttribute)) {
+                throw new Exception('Team attribute is empty!');
+            }
             $team = $Session->get('samlUserdata')[$teamAttribute];
             if (is_array($team)) {
                 $team = $team[0];

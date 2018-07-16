@@ -56,8 +56,11 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
-
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            throw new Exception(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
+        }
+        return $res;
     }
 
     /**

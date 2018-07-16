@@ -92,7 +92,7 @@ CREATE TABLE `experiments` (
   `timestampedby` int(11) DEFAULT NULL,
   `timestamptoken` text,
   `timestampedwhen` timestamp NULL,
-  `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `visibility` varchar(255) NOT NULL DEFAULT 'team',
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -208,6 +208,7 @@ CREATE TABLE `items` (
   `type` int(10) unsigned NOT NULL,
   `locked` tinyint(3) unsigned DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
+  `visibility` varchar(255) NOT NULL DEFAULT 'team',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

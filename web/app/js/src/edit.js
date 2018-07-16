@@ -331,9 +331,10 @@
         // VISIBILITY SELECT
         $(document).on('change', '#visibility_select', function() {
             const visibility = $(this).val();
-            $.post("app/controllers/ExperimentsController.php", {
+            $.post("app/controllers/EntityController.php", {
                 updateVisibility: true,
                 id: id,
+                type: type,
                 visibility: visibility
             }).done(function(data) {
                 if (data.res) {

@@ -67,6 +67,8 @@ try {
         $categoryArr = $ItemsTypes->readAll();
         $Revisions = new Revisions($Entity);
         $UploadsView = new UploadsView($Entity->Uploads);
+        $TeamGroups = new TeamGroups($Entity->Users);
+        $visibilityArr = $TeamGroups->getVisibilityList();
 
         $template = 'edit.html';
 
@@ -77,11 +79,15 @@ try {
             'Uv' => $UploadsView,
             'categoryArr' => $categoryArr,
             'mode' => 'edit',
-            'maxUploadSize' => Tools::getMaxUploadSize()
+            'maxUploadSize' => Tools::getMaxUploadSize(),
+            'visibilityArr' => $visibilityArr
         );
 
     // DEFAULT MODE IS SHOW
     } else {
+        $TeamGroups = new TeamGroups($Entity->Users);
+        $visibilityArr = $TeamGroups->getVisibilityList();
+
         // if this variable is not empty the error message shown will be different if there are no results
         $searchType = null;
         $query = '';
@@ -176,7 +182,8 @@ try {
             'offset' => $offset,
             'query' => $query,
             'searchType' => $searchType,
-            'showAll' => $showAll
+            'showAll' => $showAll,
+            'visibilityArr' => $visibilityArr
         );
     }
 

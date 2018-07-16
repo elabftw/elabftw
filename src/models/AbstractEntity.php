@@ -315,7 +315,19 @@ abstract class AbstractEntity
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
         if ($this instanceof Database) {
-            $req->bindParam(':userid', $this->Users->userid);
+            // if we are the admin doing an edit on a visibility = user item, we don't want to change the userid
+            // first get the visibility
+            $sql = "SELECT userid, visibility FROM items WHERE id = :id";
+            $req2 = $this->Db->prepare($sql);
+            $req2->bindParam(':id', $this->id);
+            $req2->execute();
+            $res = $req2->fetch();
+
+            $newUserid = $this->Users->userid;
+            if ($res['visibility'] === 'user') {
+                $newUserid = $res['userid'];
+            }
+            $req->bindParam(':userid', $newUserid);
         }
         $req->bindParam(':id', $this->id);
 
@@ -355,6 +367,60 @@ abstract class AbstractEntity
     }
 
     /**
+     * Check if we have a correct value for visibility
+     *
+     * @param string $visibility
+     * @return bool
+     */
+    public function checkVisibility(string $visibility): bool
+    {
+        $validArr = array(
+            'public',
+            'organization',
+            'team',
+            'user'
+        );
+
+        if (in_array($visibility, $validArr)) {
+            return true;
+        }
+
+        // or we might have a TeamGroup, so an int
+        return (bool) Tools::checkId((int) $visibility);
+    }
+
+    /**
+     * Update the visibility for an entity
+     *
+     * @param string $visibility
+     * @return bool
+     */
+    public function updateVisibility(string $visibility): bool
+    {
+        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':visibility', $visibility);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
+
+    /**
+     * If int, get the name of the team group instead of a number
+     *
+     * @return string
+     */
+    public function getVisibility(): string
+    {
+        $TeamGroups = new TeamGroups($this->Users);
+        if (Tools::checkId((int) $this->entityData['visibility']) !== false) {
+            return $TeamGroups->readName((int) $this->entityData['visibility']);
+        }
+        return ucfirst($this->entityData['visibility']);
+    }
+
+
+    /**
      * Check if we have the permission to read/write or throw an exception
      *
      * @param string $rw read or write
@@ -379,6 +445,7 @@ abstract class AbstractEntity
 
     /**
      * Verify we can read/write an item
+     * Here be dragons! Cognitive load > 9000
      *
      * @param array|null $item one item array
      * @throws Exception
@@ -456,13 +523,55 @@ abstract class AbstractEntity
                 return array('read' => true, 'write' => true);
             }
         } elseif ($this instanceof Database) {
-            // for DB items, we only need to be in the same team
-            if ($item['team'] === $this->Users->userData['team']) {
+            // admin has read/write access to everything in the team
+            if ($this->Users->userData['is_admin'] && $item['team'] === $this->Users->userData['team']) {
+                return array('read' => true, 'write' => true);
+            }
+
+            // if we are in same team and visibility is not a group or user, we can read/write fo' shizzle ma nizzle
+            if ($item['team'] === $this->Users->userData['team'] && (Tools::checkId((int) $item['visibility']) === false && $item['visibility'] !== 'user')) {
                 $ret = array('read' => true, 'write' => true);
+                // anon don't get to write anything
                 if (isset($this->Users->userData['anon'])) {
                     $ret['write'] = false;
                 }
                 return $ret;
+            }
+            // ok we are not in the same team as item
+
+            // if the vis. setting is public, we can see it for sure
+            if ($item['visibility'] === 'public') {
+                return array('read' => true, 'write' => false);
+            }
+
+            // if it's organization, we need to be logged in
+            if (($item['visibility'] === 'organization') && $this->Users->userid) {
+                return array('read' => true, 'write' => false);
+            }
+
+            // if the vis. setting is team, check we are in the same team than the $item
+            // we also check for anon because anon will have the same team as real team member
+            if (($item['visibility'] === 'team') &&
+                ($item['team'] == $this->Users->userData['team']) &&
+                !isset($this->Users->userData['anon'])) {
+                return array('read' => true, 'write' => true);
+            }
+
+            // for user vis. we need to be the user that last edited it
+            if (($item['visibility'] === 'user') &&
+                ($item['team'] == $this->Users->userData['team']) &&
+                !isset($this->Users->userData['anon']) &&
+                ($item['userid'] === $this->Users->userid)) {
+
+                return array('read' => true, 'write' => true);
+            }
+
+            // if the vis. setting is a team group, check we are in the group
+            if (Tools::checkId((int) $item['visibility']) !== false) {
+                $TeamGroups = new TeamGroups($this->Users);
+                if ($TeamGroups->isInTeamGroup((int) $this->Users->userid, (int) $item['visibility'])) {
+                    return array('read' => true, 'write' => true);
+                }
             }
         }
 

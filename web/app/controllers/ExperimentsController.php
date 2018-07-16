@@ -42,6 +42,7 @@ try {
     }
 
     // UPDATE VISIBILITY
+    /*
     if ($Request->request->has('updateVisibility')) {
         $Response = new JsonResponse();
         $Entity->canOrExplode('write');
@@ -62,6 +63,7 @@ try {
             ));
         }
     }
+     */
 
     // CREATE STEP
     if ($Request->request->has('createStep')) {

@@ -81,6 +81,7 @@ try {
 
         // TEAM GROUPS
         $TeamGroups = new TeamGroups($Entity->Users);
+        $visibilityArr = $TeamGroups->getVisibilityList();
 
         // LINKS
         $linksArr = $Entity->Links->readAll();
@@ -93,7 +94,6 @@ try {
         $renderArr = array(
             'Entity' => $Entity,
             'Revisions' => $Revisions,
-            'TeamGroups' => $TeamGroups,
             'Uv' => $UploadsView,
             'categoryArr' => $categoryArr,
             'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
@@ -101,7 +101,8 @@ try {
             'linksArr' => $linksArr,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
-            'stepsArr' => $stepsArr
+            'stepsArr' => $stepsArr,
+            'visibilityArr' => $visibilityArr
         );
 
     // DEFAULT MODE IS SHOW

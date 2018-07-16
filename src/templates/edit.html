@@ -42,32 +42,30 @@
         <input name='id' type='hidden' value='{{ Entity.id }}' />
         <input name='type' type='hidden' value='{{ Entity.type }}' />
 
-        <!-- DATE -->
             <div class='row'>
-                <div class='col-md-4'>
+                <!-- DATE -->
+                <div class='col-md-3'>
                     <i class='far fa-calendar-alt mr-1'></i><label for='datepicker'>{{ 'Date'|trans }}</label>
                     <!-- if firefox has support for it: type = date -->
                     <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=825294 -->
                     <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
                 </div>
 
-            {% if Entity.type == 'experiments' %}
                 <!-- VISIBILITY -->
-                <div class='col-md-4'>
+                <div class='col-md-3'>
                     <i class='fas fa-eye' title='Visibility'></i>
                     <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
                     <select id='visibility_select'>
-                        {% for key, value in TeamGroups.getVisibilityList %}
+                        {% for key, value in visibilityArr %}
                             <option value='{{ key }}'
                             {{ Entity.entityData.visibility == key ? ' selected' }}
                             >{{ value|trans }}</option>
                         {% endfor %}
                     </select>
                 </div>
-            {% endif %}
 
                 <!-- CATEGORIES (status for exp and itemstypes for items) -->
-                <div class='col-md-4'>
+                <div class='col-md-3'>
                     <i class='fas fa-clipboard-check'></i>
                     <label for='category_select'>
                     {% if Entity.type == 'experiments' %}
@@ -85,7 +83,7 @@
                 </div>
                 {% if Entity.type == 'items' %}
                     <!-- STAR RATING -->
-                    <div class='col-md-4' style='margin-top:15px'>
+                    <div class='col-md-3' style='margin-top:15px'>
                         {% for i in range(1, 5) %}
                         <input data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
                         {% endfor %}

@@ -67,6 +67,29 @@ try {
      *
      */
 
+    // UPDATE VISIBILITY
+    if ($Request->request->has('updateVisibility')) {
+        $Response = new JsonResponse();
+        $Entity->canOrExplode('write');
+
+        if (!$Entity->checkVisibility($Request->request->get('visibility'))) {
+            throw new Exception('Bad visibility argument');
+        }
+
+        if ($Entity->updateVisibility($Request->request->get('visibility'))) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+
     // GET BODY
     if ($Request->request->has('getBody')) {
         $permissions = $Entity->getPermissions();

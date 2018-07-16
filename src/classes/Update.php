@@ -33,7 +33,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 41;
+    private const REQUIRED_SCHEMA = 42;
 
     /**
      * Init Update with Config and Db
@@ -96,6 +96,11 @@ class Update
             // 20180602 v2.0.0
             $this->schema41();
             $this->updateSchema(41);
+        }
+        if ($current_schema < 42) {
+            // 20180716 v2.0.0
+            $this->schema42();
+            $this->updateSchema(42);
         }
         // place new schema functions above this comment
 
@@ -322,4 +327,19 @@ class Update
             }
         }
     }
+
+    /**
+     * Add visibility to Db items
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema42(): void
+    {
+        $sql = "ALTER TABLE `items` ADD `visibility` VARCHAR(255) NOT NULL DEFAULT 'team'";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem adding visibility to database items (schema 42)!');
+        }
+    }
+
 }

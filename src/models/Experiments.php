@@ -121,45 +121,6 @@ class Experiments extends AbstractEntity
     }
 
     /**
-     * Check if we have a correct value
-     *
-     * @param string $visibility
-     * @return bool
-     */
-    public function checkVisibility(string $visibility): bool
-    {
-        $validArr = array(
-            'public',
-            'organization',
-            'team',
-            'user'
-        );
-
-        if (in_array($visibility, $validArr)) {
-            return true;
-        }
-
-        // or we might have a TeamGroup, so an int
-        return (bool) Tools::checkId((int) $visibility);
-    }
-
-    /**
-     * Update the visibility for an experiment
-     *
-     * @param string $visibility
-     * @return bool
-     */
-    public function updateVisibility(string $visibility): bool
-    {
-        $sql = "UPDATE experiments SET visibility = :visibility WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':visibility', $visibility);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $req->execute();
-    }
-
-    /**
      * Update the status for an experiment
      *
      * @param int $status Id of the status

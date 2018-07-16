@@ -54,7 +54,9 @@ jobs:
         - ./node_modules
         - ./vendor
     # This is based on your 1.0 configuration file or project settings
-    - run: mysql -uroot < tests/_data/phpunit.sql
+    - run: mysql -uroot -e "create database phpunit;"
+    - run: mysql -uroot phpunit < src/sql/structure.sql
+    - run: mysql -uroot phpunit < tests/_data/phpunit.sql
     # Test
     - run: yarn run unit
     - run: yarn run vulns

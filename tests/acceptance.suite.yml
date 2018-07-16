@@ -8,7 +8,7 @@ class_name: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: https://elab.local
+            url: 'https://elab.local:3148'
             browser: chrome
         - \Helper\Acceptance
         - Db:
@@ -17,5 +17,5 @@ modules:
             password: ''
             dump: 'tests/_data/phpunit.sql'
             populate: true
-            cleanup: true
+            #cleanup: true
             #reconnect: true

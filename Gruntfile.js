@@ -101,10 +101,6 @@ module.exports = function(grunt) {
       rununit: {
         command: 'php vendor/bin/codecept run unit'
       },
-      // xdebug must be DISABLED
-      runtests: {
-        command: 'docker run --rm --name selenium -d --net=host selenium/standalone-chrome && php vendor/bin/codecept run --skip functionnal; docker stop selenium'
-      },
       // xdebug must be ENABLED
       runcoverage: {
         command: 'php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html'
@@ -125,7 +121,6 @@ module.exports = function(grunt) {
   grunt.registerTask('yarn', 'shell:yarninstall');
   grunt.registerTask('default', ['yarn', 'uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
-  grunt.registerTask('test', 'shell:runtests');
   grunt.registerTask('unit', 'shell:rununit');
   grunt.registerTask('cov', 'shell:runcoverage');
 

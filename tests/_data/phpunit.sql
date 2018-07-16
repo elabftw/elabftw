@@ -300,7 +300,7 @@ CREATE TABLE `items` (
   `type` int(10) UNSIGNED NOT NULL,
   `locked` tinyint(3) UNSIGNED DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `visibility` varchar(255) NOT NULL DEFAULT 'team',
+  `visibility` varchar(255) NOT NULL DEFAULT 'team'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

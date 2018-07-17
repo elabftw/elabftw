@@ -24,11 +24,12 @@ plugins:
         enabled: false
 exclude_patterns:
 - web/app/js/chemdoodle
+- web/app/js/langs
+- web/app/js/mathjax
+- web/app/js/plugins
+- web/app/js/skins
 - web/app/js/src/prism.js
 - web/app/js/src/3Dmol-nojquery.js
-- web/app/js/plugins
-- web/app/js/langs
 - web/app/js/themes
-- web/app/js/skins
 - vendor/*
 - tests/*

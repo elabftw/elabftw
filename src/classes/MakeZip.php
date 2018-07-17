@@ -53,6 +53,7 @@ class MakeZip extends AbstractMake
      * @param AbstractEntity $entity
      * @param string $idList 1+3+5+8
      * @throws Exception if we don't have ZipArchive extension
+     * @return void
      */
     public function __construct(AbstractEntity $entity, $idList)
     {
@@ -60,9 +61,7 @@ class MakeZip extends AbstractMake
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
-            throw new Exception(
-                _('You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file.')
-            );
+            throw new Exception('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
         $this->idList = $idList;
@@ -242,7 +241,7 @@ class MakeZip extends AbstractMake
         $this->Zip->close();
         // check if it failed for some reason
         if (!is_file($this->filePath)) {
-            throw new Exception(_('Error making the zip archive!'));
+            throw new Exception('Error making the zip archive!');
         }
     }
 
@@ -262,8 +261,9 @@ class MakeZip extends AbstractMake
     }
 
     /**
-     * Clean up the temporary files (csv, txt and pdf)
+     * Clean up the temporary files (csv and pdf)
      *
+     * @return void
      */
     public function __destruct()
     {

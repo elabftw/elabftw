@@ -1,15 +1,12 @@
-# Codeception Test Suite Configuration
-#
-# Suite for acceptance tests.
-# Perform tests in browser using the WebDriver or PhpBrowser.
-# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+# config file for codeception acceptance tests
 
 class_name: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: 'https://elab.local:3148'
+            url: 'https://elab.local'
             browser: 'chrome'
+            # we use chromedriver --url-base=/wd/hub
             port: 9515
         - \Helper\Acceptance
         - Db:
@@ -18,5 +15,3 @@ modules:
             password: ''
             dump: 'tests/_data/phpunit.sql'
             populate: true
-            #cleanup: true
-            #reconnect: true

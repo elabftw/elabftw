@@ -112,7 +112,9 @@
             <li><p>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</p></li>
             <li><p>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</p></li>
             <li><p>{{ 'Maximum file size for uploaded files'|trans }}: {{ phpInfos.4 }}</p></li>
-            <li><p>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</p></li>
+            {% if phpInfos.5|length > 1 %}
+                <li><p>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</p></li>
+            {% endif %}
         </ul>
     </div>
 </div>

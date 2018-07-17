@@ -75,7 +75,6 @@ try {
                 }
             }
             $Config = new Config();
-            $Config->populate();
             $Teams = new Teams(new Users());
             $Teams->create('Default team');
             header('Location: ../register.php');

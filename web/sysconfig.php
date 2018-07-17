@@ -35,7 +35,14 @@ try {
     $ReleaseCheck = new ReleaseCheck($App->Config);
     $langsArr = Tools::getLangsArr();
 
-    $phpInfos = array(PHP_OS, PHP_VERSION, PHP_INT_MAX, PHP_SYSCONFDIR);
+    $phpInfos = array(
+        PHP_OS,
+        PHP_VERSION,
+        PHP_INT_MAX,
+        PHP_SYSCONFDIR,
+        ini_get('upload_max_filesize'),
+        ini_get('date.timezone')
+    );
 
     $template = 'sysconfig.html';
     $renderArr = array(

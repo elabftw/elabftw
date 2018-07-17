@@ -131,34 +131,27 @@
 
         class Link {
 
-            // the argument here is the event (needed to detect which key is pressed)
-            create(e) {
-                let keynum;
-                if (e.which) {
-                    keynum = e.which;
-                }
-                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get link
-                    let link = decodeURIComponent($('#linkinput').val());
-                    // fix for user pressing enter with no input
-                    if (link.length > 0) {
-                        // parseint will get the id, and not the rest (in case there is number in title)
-                        link = parseInt(link, 10);
-                        if (!isNaN(link)) {
-                            $.post(controller, {
-                                createLink: true,
-                                id: id,
-                                linkId: link
-                            })
-                            // reload the link list
-                            .done(function () {
-                                $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
-                                // clear input field
-                                $("#linkinput").val("");
-                            });
-                        } // end if input is bad
-                    } // end if input < 0
-                } // end if key is enter
+            create() {
+                // get link
+                let link = decodeURIComponent($('#linkinput').val());
+                // fix for user pressing enter with no input
+                if (link.length > 0) {
+                    // parseint will get the id, and not the rest (in case there is number in title)
+                    link = parseInt(link, 10);
+                    if (!isNaN(link)) {
+                        $.post(controller, {
+                            createLink: true,
+                            id: id,
+                            linkId: link
+                        })
+                        // reload the link list
+                        .done(function () {
+                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
+                            // clear input field
+                            $("#linkinput").val("");
+                        });
+                    } // end if input is bad
+                } // end if input < 0
             }
 
             destroy(linkId) {
@@ -302,8 +295,17 @@
         // CREATE
         // listen keypress, add link when it's enter
         $('#linkinput').keypress(function (e) {
-            LinkC.create(e);
+            // Enter is ascii code 13
+            if (e.which === 13) {
+                LinkC.create();
+            }
         });
+
+        // also add the link if the focus is lost because it looks like it's not obvious for people to use the enter key
+        $(document).on('blur', '#linkinput', function() {
+            LinkC.create();
+        });
+
         // AUTOCOMPLETE
         let cache = {};
         $( '#linkinput' ).autocomplete({

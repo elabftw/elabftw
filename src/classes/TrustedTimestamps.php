@@ -110,7 +110,7 @@ class TrustedTimestamps extends AbstractMake
     {
         // if there is a config in the team, use that
         // otherwise use the general config if we can
-        if (\mb_strlen($this->teamConfigArr['stampprovider']) > 2) {
+        if (\mb_strlen($this->teamConfigArr['stampprovider'] ?? "") > 2) {
             $config = $this->teamConfigArr;
         } elseif ($this->Config->configArr['stampshare']) {
             $config = $this->Config->configArr;
@@ -121,7 +121,7 @@ class TrustedTimestamps extends AbstractMake
         $login = $config['stamplogin'];
 
 
-        if (\mb_strlen($config['stamppass']) > 0) {
+        if (\mb_strlen($config['stamppass'] ?? "") > 0) {
             $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } else {
             $password = '';

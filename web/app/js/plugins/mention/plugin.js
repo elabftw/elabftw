@@ -37,7 +37,7 @@
             source: [],
             delay: 500,
             queryBy: 'name',
-            items: 10
+            items: 25
         }, options);
 
         this.matcher = this.options.matcher || this.matcher;

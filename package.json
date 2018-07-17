@@ -41,9 +41,6 @@
     "webpack": "^4.16",
     "webpack-cli": "^3.0"
   },
-  "resolutions": {
-    "eslint-scope": "3.7.1"
-  },
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/classes",
     "build": "webpack-cli --config builder.js",

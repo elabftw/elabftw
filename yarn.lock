@@ -1156,9 +1156,9 @@ escodegen@1.x.x:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-scope@3.7.1, eslint-scope@^4.0.0:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-3.7.1.tgz#3d63c3edfda02e06e01a452ad88caacc7cdcb6e8"
+eslint-scope@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-4.0.0.tgz#50bf3071e9338bcdc43331794a0cb533f0136172"
   dependencies:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
@@ -1609,7 +1609,7 @@ grunt-contrib-cssmin@^2.2.1:
     clean-css "~4.1.1"
     maxmin "^2.1.0"
 
-grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony, grunt-contrib-uglify@gruntjs/grunt-contrib-uglify#harmony:
+grunt-contrib-uglify-es@gruntjs/grunt-contrib-uglify#harmony:
   version "3.3.0"
   resolved "https://codeload.github.com/gruntjs/grunt-contrib-uglify/tar.gz/ccb95a70cad6a4e9e902d3bd5d0e38a4de09a1e1"
   dependencies:
@@ -3604,8 +3604,8 @@ snyk-try-require@1.3.1, snyk-try-require@^1.1.1:
     then-fs "^2.0.0"
 
 snyk@^1.88:
-  version "1.88.4"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.88.4.tgz#b021eb861f86f5c18d6ec628f08aa4938572dcd8"
+  version "1.89.0"
+  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.89.0.tgz#254fa9bef8bbf0e1d5b10540312fcce4aa71507c"
   dependencies:
     abbrev "^1.1.1"
     ansi-escapes "^3.1.0"

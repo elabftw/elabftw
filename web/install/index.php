@@ -23,6 +23,9 @@ session_start();
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 $configFilePath = \dirname(__DIR__, 2) . '/config.php';
 $errflag = false;
+// we disable errors to avoid having notice stopping the redirect
+error_reporting(E_ERROR);
+
 
 try {
     // create Request object

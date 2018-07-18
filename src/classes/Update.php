@@ -288,7 +288,7 @@ class Update
                 $lastId = $this->Db->lastInsertId();
                 // now reference it
                 $insertReq2->bindParam(':item_id', $tag['item_id']);
-                $insertReq2->bindValue(':item_type', 'experiments');
+                $insertReq2->bindValue(':item_type', 'items');
                 $insertReq2->bindParam(':tag_id', $lastId);
                 $insertReq2->execute();
             } else {
@@ -316,12 +316,12 @@ class Update
                 $lastId = $this->Db->lastInsertId();
                 // now reference it
                 $insertReq2->bindParam(':item_id', $tag['item_id']);
-                $insertReq2->bindValue(':item_type', 'experiments');
+                $insertReq2->bindValue(':item_type', 'experiments_tpl');
                 $insertReq2->bindParam(':tag_id', $lastId);
                 $insertReq2->execute();
             } else {
                 $insertReq2->bindParam(':item_id', $tag['item_id']);
-                $insertReq2->bindValue(':item_type', 'experiments_templates');
+                $insertReq2->bindValue(':item_type', 'experiments_tpl');
                 $insertReq2->bindParam(':tag_id', $res);
                 $insertReq2->execute();
             }

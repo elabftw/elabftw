@@ -26,7 +26,7 @@ Then you are at the right place !
 It is accessed _via_ the browser by the users. Several research teams can be hosted on the same install, so **eLabFTW** can be installed at the institute level and host everyone at the same place (this is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers across the globe).
 
 Click the image below to see it in bigger size:
-[![Demo gif](https://i.imgur.com/SRHsIEM.gif)](https://gfycat.com/ImpressivePoliteAsiaticmouflon)
+[![Demo gif](https://i.imgur.com/pH6Qvwf.gif)](https://gfycat.com/WillingIncompleteAstarte)
 
 **eLabFTW** is designed to be installed on a server, and people from the team would just log into it from their browser.
 

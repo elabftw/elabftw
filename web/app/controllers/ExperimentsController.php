@@ -41,30 +41,6 @@ try {
         $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
     }
 
-    // UPDATE VISIBILITY
-    /*
-    if ($Request->request->has('updateVisibility')) {
-        $Response = new JsonResponse();
-        $Entity->canOrExplode('write');
-
-        if (!$Entity->checkVisibility($Request->request->get('visibility'))) {
-            throw new Exception('Bad visibility argument');
-        }
-
-        if ($Entity->updateVisibility($Request->request->get('visibility'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
-     */
-
     // CREATE STEP
     if ($Request->request->has('createStep')) {
         $Response = new JsonResponse();

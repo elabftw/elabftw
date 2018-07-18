@@ -66,7 +66,6 @@ class MolViewer
 
         // Label of dropdown list and clean button
         $styleText = _('Style');
-        //$removeSurfacesText = _('Remove Surfaces');
 
         $controls = "<div style='padding-bottom: 5px' class='btn-group'>";
         $controls .= "<button type='button' class='btn btn-default btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" . $styleText . " <span class='caret'></span></button>";
@@ -78,11 +77,8 @@ class MolViewer
         $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-line'>" . _('Line') . "</a></li>";
         $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-sphere'>" . _('Sphere') . "</a></li>";
         $controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-stick'>" . _('Stick') . "</a></li>";
-        //$controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-solid'>" . _('Solid Surface') . "</a></li>";
-        //$controls .= "<li><a data-divid='" . $this->divId . "' class='3dmol-trans'>" . _('Transparent Surface') . "</a></li>";
 
         $controls .= "</ul>";
-        //$controls .= "<button class='btn btn-default btn-xs rmSurface' data-toggle='tooltip' data-placement='bottom' title='{$removeSurfacesText}' data-divid='{$this->divId}'><span class='glyphicon glyphicon-erase'></span></button>";
         $controls .= "</div>";
 
         return $controls;

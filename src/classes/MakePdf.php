@@ -343,7 +343,7 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-        $date = date_create($this->Entity->entityData['date']);
+        $date = date_create($this->Entity->entityData['date'] ?? Tools::kdate());
         $date_str = date_format($date, 'Y-m-d');
 
         // add a CJK font for the body if we want CJK fonts

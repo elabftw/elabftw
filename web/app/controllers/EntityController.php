@@ -201,12 +201,12 @@ try {
             }
 
             $id_arr = \explode('_', $Request->request->get('comment_id'));
-            if (Tools::checkId($id_arr[1]) === false) {
+            if (Tools::checkId((int) $id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }
             $id = $id_arr[1];
 
-            if ($Entity->Uploads->updateComment($id, $comment)) {
+            if ($Entity->Uploads->updateComment((int) $id, $comment)) {
                 $Response->setData(array(
                     'res' => true,
                     'msg' => _('Saved')

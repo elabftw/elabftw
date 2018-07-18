@@ -211,7 +211,7 @@ class MakeZip extends AbstractMake
 
             $this->nameFolder();
             $this->addTimestampFiles($id);
-            if ($uploadedFilesArr) {
+            if (!empty($uploadedFilesArr)) {
                 $this->addAttachedFiles($uploadedFilesArr);
             }
             $this->addCsv($id);

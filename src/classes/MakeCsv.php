@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use RuntimeException;
+
 /**
  * Make a CSV file from a list of id and a type
  */
@@ -114,6 +116,10 @@ class MakeCsv extends AbstractMake
     private function writeCsv(): void
     {
         $fp = fopen($this->filePath, 'w+b');
+        if ($fp === false) {
+            throw new RuntimeException('Error: could not create csv file!');
+        }
+
         // utf8 headers
         fwrite($fp, "\xEF\xBB\xBF");
         foreach ($this->list as $fields) {

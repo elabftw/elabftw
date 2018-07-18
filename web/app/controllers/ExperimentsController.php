@@ -193,7 +193,7 @@ try {
     }
 
     // DECODE ASN1 TOKEN
-    if ($Request->request->has('asn1') && is_readable(ELAB_ROOT . "uploads/" . $Request->request->get('asn1'))) {
+    if ($Request->request->has('asn1') && is_readable(dirname(__DIR__, 3) . "/uploads/" . $Request->request->get('asn1'))) {
         $Response = new JsonResponse();
         $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($App->Users), $Entity);
 

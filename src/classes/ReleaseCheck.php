@@ -110,6 +110,9 @@ class ReleaseCheck
 
         // read the response
         $versions = parse_ini_string((string) $response->getBody(), true);
+        if ($versions === false) {
+            return false;
+        }
         // get the latest version
         $this->version = array_keys($versions)[0];
         $this->releaseDate = $versions[$this->version]['date'];
@@ -118,7 +121,7 @@ class ReleaseCheck
             return false;
         }
         $this->success = true;
-        return true;
+        return $this->success;
     }
 
     /**

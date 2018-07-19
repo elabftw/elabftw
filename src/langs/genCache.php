@@ -6,8 +6,8 @@
  *
  * Usage: php src/langs/genCache.php
  */
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-$tplDir = dirname(__DIR__, 2) . '/src/templates';
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
+$tplDir = \dirname(__DIR__, 2) . '/src/templates';
 $tmpDir = '/tmp/elabftw-twig-cache/';
 
 $loader = new \Twig_Loader_Filesystem($tplDir);

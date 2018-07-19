@@ -37,7 +37,7 @@ class TrustedTimestamps extends AbstractMake
     /** @var array $teamConfigArr array with config of the team */
     private $teamConfigArr;
 
-    /** @var string $pdfPath full path to pdf (ELAB_ROOT . uploads/ . $pdfFileName) */
+    /** @var string $pdfPath full path to pdf */
     private $pdfPath;
 
     /** @var string $pdfRealName name of the pdf (elabid-timestamped.pdf) */
@@ -378,7 +378,7 @@ class TrustedTimestamps extends AbstractMake
      */
     private function validate(): bool
     {
-        $elabRoot = dirname(__DIR__, 2);
+        $elabRoot = \dirname(__DIR__, 2);
         $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg($elabRoot . '/' . $this->stampParams['stampcert']);
 
         $opensslResult = $this->runOpenSSL($cmd);
@@ -440,7 +440,7 @@ class TrustedTimestamps extends AbstractMake
             throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
         }
 
-        $elabRoot = dirname(__DIR__, 2);
+        $elabRoot = \dirname(__DIR__, 2);
         chdir($elabRoot . '/src/dfn-cert/timestampverifier/');
         $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
         $javaRes = $this->runSh($cmd);
@@ -504,7 +504,7 @@ class TrustedTimestamps extends AbstractMake
      */
     public function decodeAsn1($token): string
     {
-        $elabRoot = dirname(__DIR__, 2);
+        $elabRoot = \dirname(__DIR__, 2);
         $cmd = "asn1parse -inform DER -in " . escapeshellarg($elabRoot . '/uploads/' . $token);
 
         $opensslResult = $this->runOpenSSL($cmd);

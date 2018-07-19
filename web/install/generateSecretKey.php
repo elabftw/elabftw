@@ -15,5 +15,5 @@ use Defuse\Crypto\Key;
  * Generate a secret key for the config file
  *
  */
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 echo Key::createNewRandomKey()->saveToAsciiSafeString();

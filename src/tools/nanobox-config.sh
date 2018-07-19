@@ -12,7 +12,6 @@ writeConfigFile() {
 	define('DB_NAME', 'elabftw');
 	define('DB_USER', 'root');
 	define('DB_PASSWORD', '${db_password}');
-	define('ELAB_ROOT', '/app/');
     define('SECRET_KEY', '${secret_key}');"
 	echo "$config" > "$config_path"
 }

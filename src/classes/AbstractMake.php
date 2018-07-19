@@ -63,7 +63,7 @@ abstract class AbstractMake
      */
     protected function getUploadsPath(): string
     {
-        return dirname(__DIR__, 2) . '/uploads/';
+        return \dirname(__DIR__, 2) . '/uploads/';
     }
 
     /**
@@ -74,7 +74,7 @@ abstract class AbstractMake
      */
     protected function getTmpPath(): string
     {
-        $tmpPath = dirname(__DIR__, 2) . '/cache/elab/';
+        $tmpPath = \dirname(__DIR__, 2) . '/cache/elab/';
         if (!is_dir($tmpPath) && !mkdir($tmpPath) && !is_dir($tmpPath)) {
             throw new RuntimeException('Unable to create the cache directory (' . $tmpPath . ')');
         }

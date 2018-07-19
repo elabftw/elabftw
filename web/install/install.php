@@ -69,8 +69,6 @@ try {
 
     // BUILD CONFIG FILE
 
-    // DEPRECATED TODO
-    $elab_root = dirname(__DIR__, 2) . '/';
     // make a new secret key
     $new_key = Key::createNewRandomKey();
 
@@ -80,7 +78,6 @@ try {
     define('DB_NAME', '" . $db_name . "');
     define('DB_USER', '" . $db_user . "');
     define('DB_PASSWORD', '" . $db_password . "');
-    define('ELAB_ROOT', '" . $elab_root . "');
     define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');";
 
     // we try to write content to file and propose the file for download if we can't write to it

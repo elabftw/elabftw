@@ -118,7 +118,7 @@ class Update
      */
     private function cleanTmp(): void
     {
-        $dir = dirname(__DIR__, 2) . '/cache/elab';
+        $dir = \dirname(__DIR__, 2) . '/cache/elab';
         if (!is_dir($dir)) {
             return;
         }

@@ -143,7 +143,7 @@ class Teams implements CrudInterface
         /* TODO provide an upload button
         if (isset($post['stampcert'])) {
             $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
-            $elabRoot = dirname(__DIR__, 2);
+            $elabRoot = \dirname(__DIR__, 2);
             if (!is_readable(realpath($elabRoot . '/web/' . $cert_chain))) {
                 throw new Exception('Cannot read provided certificate file.');
             }

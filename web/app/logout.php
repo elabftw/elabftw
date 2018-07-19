@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // create Request object
 $Request = Request::createFromGlobals();

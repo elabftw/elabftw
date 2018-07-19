@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * It loads the config file, connects to the database,
  * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
  */
-require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 try {
     // CREATE REQUEST OBJECT
@@ -33,7 +33,7 @@ try {
     $Request->setSession($Session);
 
     // LOAD CONFIG.PHP
-    $configFilePath = dirname(__DIR__, 2) . '/config.php';
+    $configFilePath = \dirname(__DIR__, 2) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';

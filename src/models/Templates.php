@@ -91,8 +91,13 @@ class Templates extends AbstractEntity
         $req->bindParam(':body', $template['body']);
         $req->bindParam(':userid', $this->Users->userid);
         $req->execute();
+        $newId = $this->Db->lastInsertId();
 
-        return (int) $this->Db->lastInsertId();
+        // copy tags
+        $Tags = new Tags($this);
+        $Tags->copyTags($newId);
+
+        return $newId;
     }
 
     /**

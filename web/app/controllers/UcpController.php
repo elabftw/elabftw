@@ -49,7 +49,7 @@ try {
 
     // TAB 3 : EXPERIMENTS TEMPLATES
 
-    // DUPLICATE TPL
+    // DUPLICATE/IMPORT TPL
     if ($Request->request->has('import_tpl')) {
         $Response = new JsonResponse();
         $Templates = new Templates($App->Users, $Request->request->get('id'));

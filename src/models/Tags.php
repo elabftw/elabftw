@@ -98,9 +98,10 @@ class Tags implements CrudInterface
      * Copy the tags from one experiment/item to an other.
      *
      * @param int $newId The id of the new experiment/item that will receive the tags
+     * @param bool $toExperiments convert to experiments type (when creating from tpl)
      * @return void
      */
-    public function copyTags(int $newId): void
+    public function copyTags(int $newId, bool $toExperiments = false): void
     {
         $sql = "SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type";
         $req = $this->Db->prepare($sql);
@@ -110,11 +111,13 @@ class Tags implements CrudInterface
         if ($req->rowCount() > 0) {
             $insertSql = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
             $insertReq = $this->Db->prepare($insertSql);
+
             $type = $this->Entity->type;
             // an experiment template transforms into an experiment
-            if ($type === 'experiments_tpl') {
+            if ($toExperiments) {
                 $type = 'experiments';
             }
+
             while ($tags = $req->fetch()) {
                 $insertReq->bindParam(':item_id', $newId);
                 $insertReq->bindParam(':item_type', $type);

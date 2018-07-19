@@ -89,7 +89,7 @@ class Experiments extends AbstractEntity
         // insert the tags from the template
         if ($tpl !== null) {
             $Tags = new Tags($Templates);
-            $Tags->copyTags($newId);
+            $Tags->copyTags($newId, true);
         }
 
         return $newId;

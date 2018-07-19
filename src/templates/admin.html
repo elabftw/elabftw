@@ -242,6 +242,7 @@
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
+                    <li class='list-inline-item'><i class='fas fa-sort'></i></li>
                     <li class='list-inline-item'>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
                     <li class='list-inline-item' style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
                     </li>
@@ -318,7 +319,7 @@
 
         <ul class='draggable list-group sortable sortable-itemstypes' data-type='items'>
             {% for itemType in itemsTypesArr %}
-            <li class='list-group-item' id='itemstypesOrder_{{ itemType.category_id }}'>{{ itemType.ordering }}
+            <li class='list-group-item' id='itemstypesOrder_{{ itemType.category_id }}'><i class='fas fa-sort'></i>
                 <span style='color:#{{ itemType.color }}'>{{ itemType.category }}</span>
             </li>
             {% endfor %}

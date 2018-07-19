@@ -54,6 +54,7 @@ import {
     faQuoteLeft,
     faSearch,
     faSignOutAlt,
+    faSort,
     faSquare,
     faStar,
     faSyncAlt,
@@ -107,6 +108,7 @@ fontawesome.library.add(faQuestionCircle);
 fontawesome.library.add(faQuoteLeft);
 fontawesome.library.add(faSearch);
 fontawesome.library.add(faSignOutAlt);
+fontawesome.library.add(faSort);
 fontawesome.library.add(faSquare);
 fontawesome.library.add(faStar);
 fontawesome.library.add(faSyncAlt);

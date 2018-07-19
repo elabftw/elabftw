@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -24,7 +26,7 @@ $Response = new JsonResponse();
 
 try {
 
-    if (!$Session->get('is_admin')) {
+    if (!$App->Session->get('is_admin')) {
         throw new Exception('Non admin user tried to access admin panel.');
     }
 

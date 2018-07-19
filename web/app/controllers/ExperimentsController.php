@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Experiments

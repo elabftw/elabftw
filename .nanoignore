@@ -1,0 +1,12 @@
+.git
+.gitignore
+config.php*
+cache
+uploads
+_apidoc
+_srcdoc
+vendor
+web/app/js/*.min.js
+web/app/js/*.bundle.js
+web/app/css/*.min.css
+tests

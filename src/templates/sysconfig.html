@@ -44,8 +44,7 @@
         <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
         <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
-        <li class='tabhandle' id='tab7'>{{ 'Logs'|trans }}</li>
-        <li class='tabhandle' id='tab8'>{{ 'SAML'|trans }}</li><span class='beta'>beta</span>
+        <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li><span class='beta'>beta</span>
     </ul>
 </menu>
 
@@ -324,28 +323,8 @@
     </div>
 </div>
 
-<!-- TAB 7 LOGS -->
+<!-- TAB 7 SAML -->
 <div class='divhandle' id='tab7div'>
-    <div id='logsDiv'>
-        <div class='box'>
-            <ul class='clean-list'>
-                {% if logsArr %}
-                    {% for log in logsArr %}
-                        <li>⚫ {{ log.datetime }} [ {{ log.type }} ] {{ log.body }} ({{ log.user }})</li>
-                    {% endfor %}
-                {% else %}
-                    <li>{{ 'Nothing to display'|trans }}</li>
-                {% endif %}
-            </ul>
-        </div>
-        <div class='submitButtonDiv'>
-            <button id='logsDestroyButton' class='button button-delete'>{{ 'Clear'|trans }}</button>
-        </div>
-    </div>
-</div>
-
-<!-- TAB 8 SAML -->
-<div class='divhandle' id='tab8div'>
     <div class='box'>
         <form method='post' action='app/controllers/SysconfigController.php'>
             <h3>Service provider (this instance of eLabFTW)</h3>

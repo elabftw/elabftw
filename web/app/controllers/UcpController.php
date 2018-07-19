@@ -127,7 +127,7 @@ try {
     }
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     if ($redirect) {

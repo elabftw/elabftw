@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+
 try {
     if ($App->Session->has('anon')) {
         throw new Exception(Tools::error(true));
@@ -56,9 +58,8 @@ try {
     }
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $Session->getFlashBag()->add('ko', Tools::error());
     $Response = new RedirectResponse("../../database.php");
-} finally {
-    $Response->send();
 }
+$Response->send();

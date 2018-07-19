@@ -104,13 +104,13 @@ try {
             throw new Exception('Error updating password');
         }
 
-        $App->Logs->create('Info', $App->Users->userData['email'], 'Password was changed for this user.');
+        $App->Log->info('Password was changed for this user', array('userid' => $App->Session->get('userid')));
         $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 
 } catch (Exception $e) {
     // log the error
-    $App->Logs->create('Error', $Request->server->get('REMOTE_ADDR'), $e->getMessage());
+    $App->Log->warning('Reset password failed attempt', array(array('ip' => $Request->server->get('REMOTE_ADDR')), array('exception' => $e)));
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {
     $Response = new RedirectResponse("../../login.php");

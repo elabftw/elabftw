@@ -60,6 +60,10 @@ try {
         $file_path = $elabRoot . '/uploads/' . $final_filename;
     }
 
+    if (!is_readable($file_path)) {
+        throw new Exception('File not found!');
+    }
+
     // MIME
     $mtype = 'application/force-download';
 
@@ -89,19 +93,21 @@ try {
     header('Content-Length: ' . $fsize);
 
     // DOWNLOAD
-    $file = @fopen($file_path, 'rb');
-    if ($file) {
-        while (!feof($file)) {
-            echo fread($file, 1024 * 8);
-            flush();
-            if (connection_status() !== 0) {
-                fclose($file);
-            }
+    $file = fopen($file_path, 'rb');
+    if ($file === false) {
+        throw new Exception('Error opening the file!');
+    }
+    while (!feof($file)) {
+        echo fread($file, 1024 * 8);
+        flush();
+        if (connection_status() !== 0) {
+            fclose($file);
         }
-        fclose($file);
+    fclose($file);
     }
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Log->error('', array('exception' => $e));
+    $Session->getFlashBag()->add('ko', $e->getMessage());
     header('Location: ../experiments.php');
 }

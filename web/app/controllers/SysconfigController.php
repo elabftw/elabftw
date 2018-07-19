@@ -89,14 +89,6 @@ try {
         }
     }
 
-    // DESTROY LOGS
-    if ($Request->request->has('logsDestroy')) {
-        if ($App->Logs->destroyAll()) {
-            $res = true;
-            $msg = _('Logs cleared');
-        }
-    }
-
     // CLEAR SMTP PASS
     if ($Request->query->get('clearSmtppass')) {
         if (!$App->Config->update(array('smtp_password' => null))) {
@@ -152,7 +144,7 @@ try {
     ));
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     // we can show error message to sysadmin
     $Session->getFlashBag()->add('ko', $e->getMessage());
 } finally {

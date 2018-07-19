@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+
 try {
 
     if ($App->Session->has('anon')) {
@@ -30,8 +32,6 @@ try {
     } else {
         $Entity = new Database($App->Users);
     }
-
-    $Response = new JsonResponse();
 
     $res = false;
     $msg = Tools::error();
@@ -64,8 +64,8 @@ try {
         'res' => $res,
         'msg' => $msg
     ));
-    $Response->send();
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
 }
+$Response->send();

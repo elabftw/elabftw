@@ -21,8 +21,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+
 try {
-    $Response = new JsonResponse();
 
     if ($App->Session->has('anon')) {
         throw new Exception(Tools::error(true));
@@ -158,7 +159,7 @@ try {
                 ));
             }
         } catch (Exception $e) {
-            $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+            $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
             $Response->setData(array(
                 'res' => false,
                 'msg' => $e->getMessage()
@@ -205,10 +206,11 @@ try {
         ));
     }
 
-    $Response->send();
 
 } catch (Exception $e) {
-    $App->Log->error($e->getMessage(), array('userid' => $Session->get('userid')));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $Session->getFlashBag()->add('ko', Tools::error());
     header('Location: ../../experiments.php');
 }
+
+$Response->send();

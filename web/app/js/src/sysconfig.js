@@ -136,21 +136,6 @@
             });
         });
 
-        // LOGS
-        $(document).on('click', '#logsDestroyButton', function() {
-            document.getElementById('logsDestroyButton').disabled = true;
-            $.post('app/controllers/SysconfigController.php', {
-                logsDestroy: true
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                    $('#logsDiv').load('sysconfig.php #logsDiv');
-                } else {
-                    notif(data.msg, 'ko');
-                }
-            });
-        });
-
         $(document).on('click', '#editSmtpPassword', function() {
             $('#hidden_smtp_password').toggle();
         });

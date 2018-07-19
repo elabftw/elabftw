@@ -28,7 +28,6 @@ try {
 
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
-    $logsArr = $App->Logs->readAll();
     $TeamsView = new TeamsView(new Teams($App->Users));
     $teamsArr = $TeamsView->Teams->readAll();
     $usersArr = $App->Users->readAll();
@@ -52,13 +51,12 @@ try {
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
         'phpInfos' => $phpInfos,
-        'logsArr' => $logsArr,
         'teamsArr' => $teamsArr,
         'usersArr' => $usersArr
     );
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
 

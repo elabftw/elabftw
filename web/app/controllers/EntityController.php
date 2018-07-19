@@ -20,8 +20,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+
 try {
-    $Response = new JsonResponse();
     // id of the item (experiment or database item)
     $id = 1;
 
@@ -329,14 +330,12 @@ try {
         }
     }
 
-    $Response->send();
-
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid') ?? 'anon', $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('exception' => $e)));
     $Response = new JsonResponse();
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage()
     ));
-    $Response->send();
 }
+$Response->send();

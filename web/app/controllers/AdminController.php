@@ -20,13 +20,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+
 try {
 
     if (!$Session->get('is_admin')) {
         throw new Exception('Non admin user tried to access admin panel.');
     }
-
-    $Response = new JsonResponse();
 
     // UPDATE ORDERING
     if ($Request->request->has('updateOrdering')) {
@@ -87,7 +87,6 @@ try {
     }
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $App->Session->get('userid'), $e->getMessage());
-} finally {
-    $Response->send();
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
 }
+$Response->send();

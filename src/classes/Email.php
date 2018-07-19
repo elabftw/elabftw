@@ -15,6 +15,8 @@ namespace Elabftw\Elabftw;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Exception;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SendmailTransport;
@@ -198,8 +200,10 @@ class Email
         try {
             $mailer->send($message);
         } catch (Exception $e) {
-            $Logs = new Logs();
-            $Logs->create('Error', 'smtp', $e->getMessage());
+            // FIXME should be injected
+            $Log = new Logger('elabftw');
+            $Log->pushHandler(new ErrorLogHandler());
+            $Log->error('Error sending email', array('exception' => $e));
             throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
         }
     }

@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * Experiments View
  * @deprecated should be a twig template
@@ -62,6 +64,9 @@ class UploadsView
         // get file extension
         $ext = Tools::getExt($upload['real_name']);
         $filepath = \dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
+        if (!\is_readable($filepath)) {
+            return "ERROR: file not found! (" . \substr($filepath, 0, 42) . "…)";
+        }
         $thumbpath = $filepath . '_th.jpg';
 
         // Make thumbnail only if it isn't done already

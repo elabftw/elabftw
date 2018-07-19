@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Monolog\Logger;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -49,7 +50,7 @@ try {
     // PDO will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $App = new App($Request, new Config(), new Logs());
+        $App = new App($Request, new Config(), new Logger('elabftw'));
     } catch (PDOException $e) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
         header('Location: ' . $url);

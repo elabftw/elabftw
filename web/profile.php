@@ -20,6 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Profile');
 
+$Response = new Response();
+$Response->prepare($Request);
+
 try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
@@ -64,13 +67,9 @@ try {
     );
 
 } catch (Exception $e) {
-    $App->Logs->create('Error', $Session->get('userid'), $e->getMessage());
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
-} finally {
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
-    $Response->send();
 }
+
+$Response->setContent($App->render($template, $renderArr));
+$Response->send();

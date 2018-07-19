@@ -15,10 +15,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-try {
-    // default location to redirect to
-    $location = '../../login.php';
+// default location to redirect to
+$location = '../../login.php';
 
+try {
     // check for disabled local register
     if ($App->Config->configArr['local_register'] === '0') {
         throw new Exception('Registration is disabled.');
@@ -57,11 +57,13 @@ try {
     // store the email here so we can put it in the login field
     $Session->set('email', $Request->request->get('email'));
 
+    // log user creation
+    $App->Log->info('New user created');
+
 } catch (Exception $e) {
     $Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '../../register.php';
-
-} finally {
-    $Response = new RedirectResponse($location);
-    $Response->send();
 }
+
+$Response = new RedirectResponse($location);
+$Response->send();

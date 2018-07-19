@@ -45,14 +45,14 @@ data.mysql:
     image: nanobox/mysql:5.7
     config:
         users:
-            - username: root
-        meta:
-            privileges:
-            - privilege: ALL PRIVILEGES
-            'on': "*.*"
-            with_grant: true
-            databases:
-            - elabftw
+            - username: elabftw
+              meta:
+                privileges:
+                  - privilege: ALL PRIVILEGES
+                    'on': elabftw.*
+                    with_grant: true
+                databases:
+                    - elabftw
 
 data.storage:
     image: nanobox/unfs:0.9

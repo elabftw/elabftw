@@ -9,7 +9,7 @@ config.php*
 *.min.js
 *.bundle.js
 node_modules/*
-./web/test.php
+web/test.php
 tests/_output/*
 tests/_support/_generated*
 uploads

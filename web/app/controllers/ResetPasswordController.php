@@ -51,7 +51,8 @@ try {
         $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(\SECRET_KEY));
 
         // the deadline is the encrypted epoch of now +1 hour
-        $deadline = Crypto::encrypt(time() + 3600, Key::loadFromAsciiSafeString(\SECRET_KEY));
+        $deadline = \time() + 3600;
+        $deadline = Crypto::encrypt((string) $deadline, Key::loadFromAsciiSafeString(\SECRET_KEY));
 
         // build the reset link
         $resetLink = Tools::getUrl($Request) . '/change-pass.php';

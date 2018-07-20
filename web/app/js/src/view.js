@@ -12,7 +12,7 @@
 
     $(document).ready(function() {
         // add the title in the page name (see #324)
-        document.title = $('.title_view').text() + ' − eLabFTW';
+        document.title = $('.title_view').text() + ' - eLabFTW';
 
         var type = $('#entityInfos').data('type');
         var id = $('#entityInfos').data('id');

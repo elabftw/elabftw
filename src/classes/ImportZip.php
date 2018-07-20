@@ -72,6 +72,9 @@ class ImportZip extends AbstractImport
     {
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
+        if ($content === false) {
+            throw new RuntimeException('Unable to read the json file!');
+        }
         $this->json = json_decode($content, true);
         if (isset($this->json[0]['elabid'])) {
             $this->type = 'experiments';

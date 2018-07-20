@@ -82,7 +82,7 @@ abstract class AbstractImport
      * Look at mime type. not a trusted source, but it can prevent dumb errors
      * There is null in the mimes array because it can happen that elabftw files are like that.
      *
-     * @throws Exception if the mime type is not whitelisted
+     * @throws RuntimeException if the mime type is not whitelisted
      * @return bool
      */
     protected function checkMimeType(): bool

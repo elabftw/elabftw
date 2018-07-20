@@ -382,6 +382,9 @@ class Uploads implements CrudInterface
 
             // create a new, "virtual" image
             $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
+            if ($virtualImage === false) {
+                return false;
+            }
 
             // copy source image at a resized size
             imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);

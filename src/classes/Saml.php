@@ -47,7 +47,7 @@ class Saml
      */
     private function setSettings(int $id): void
     {
-        $idpsArr = $this->Idps->read((int) $id);
+        $idpsArr = $this->Idps->read($id);
 
         $this->settings = array(
             // If 'strict' is True, then the PHP Toolkit will reject unsigned

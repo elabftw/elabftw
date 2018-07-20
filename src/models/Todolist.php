@@ -51,7 +51,7 @@ class Todolist implements CrudInterface
             throw new Exception('Error inserting todoitem!');
         }
 
-        return (int) $this->Db->lastInsertId();
+        return $this->Db->lastInsertId();
     }
 
     /**

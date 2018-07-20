@@ -62,11 +62,13 @@ class App
     /**
      * Constructor
      *
+     * @param Session $session
      * @param Request $request
      * @param Config $config
      * @param Logger $log
      */
     public function __construct(
+        Session $session,
         Request $request,
         Config $config,
         Logger $log
@@ -75,10 +77,10 @@ class App
         $this->Config = $config;
         $this->Log = $log;
         $this->Log->pushHandler(new ErrorLogHandler());
-        $this->Users = new Users(null, new Auth($request), new Config());
+        $this->Users = new Users(null, new Auth($request, $session), new Config());
 
         $this->Db = Db::getConnection();
-        $this->Session = $this->Request->getSession();
+        $this->Session = $session;
         $this->Twig = $this->getTwig();
 
         $this->ok = $this->Session->getFlashBag()->get('ok', array());

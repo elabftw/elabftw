@@ -54,7 +54,7 @@ class Tags implements CrudInterface
         $tagId = $req->fetchColumn();
 
         // tag doesn't exist already
-        if ((int) $req->rowCount() === 0) {
+        if ($req->rowCount() === 0) {
             $insertSql = "INSERT INTO tags (team, tag) VALUES (:team, :tag)";
             $insertReq = $this->Db->prepare($insertSql);
             $insertReq->bindParam(':tag', $tag);
@@ -237,7 +237,7 @@ class Tags implements CrudInterface
 
         $res3 = true;
         if (\count($tags) === 0) {
-            $res3 = $this->destroy((int) $tagId);
+            $res3 = $this->destroy($tagId);
         }
 
         return $res1 && $res2 && $res3;

@@ -31,7 +31,7 @@ class TeamsView
     /**
      * Output a line of stats for a team or for all
      *
-     * @param bool team set to true to get stats from the team
+     * @param bool $team set to true to get stats from the team
      * @return string stats
      */
     public function showStats(bool $team = false): string

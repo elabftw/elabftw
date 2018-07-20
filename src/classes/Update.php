@@ -250,7 +250,7 @@ class Update
             $req->bindParam(':team', $tag['team']);
             $req->execute();
             $res = $req->fetchColumn();
-            if ((int) $req->rowCount() === 0) {
+            if ($req->rowCount() === 0) {
                 // tag doesn't exist already
                 $insertReq->bindParam(':team', $tag['team']);
                 $insertReq->bindParam(':tag', $tag['tag']);
@@ -279,7 +279,7 @@ class Update
             $req->bindParam(':team', $tag['team_id']);
             $req->execute();
             $res = $req->fetchColumn();
-            if ((int) $req->rowCount() === 0) {
+            if ($req->rowCount() === 0) {
                 // tag doesn't exist already
                 $insertReq->bindParam(':team', $tag['team_id']);
                 $insertReq->bindParam(':tag', $tag['tag']);
@@ -307,7 +307,7 @@ class Update
             $req->bindParam(':team', $tag['team']);
             $req->execute();
             $res = $req->fetchColumn();
-            if ((int) $req->rowCount() === 0) {
+            if ($req->rowCount() === 0) {
                 // tag doesn't exist already
                 $insertReq->bindParam(':team', $tag['team']);
                 $insertReq->bindParam(':tag', $tag['tag']);

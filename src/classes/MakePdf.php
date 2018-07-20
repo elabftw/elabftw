@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use RuntimeException;
 use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -55,7 +55,7 @@ class MakePdf extends AbstractMake
         // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
         $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
         if (!is_dir($tmpDir) && !mkdir($tmpDir) && !is_dir($tmpDir)) {
-            throw new Exception("Could not create the $tmpDir directory! Please check permissions on this folder.");
+            throw new RuntimeException("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }
 
         // create the pdf
@@ -210,7 +210,11 @@ class MakePdf extends AbstractMake
      */
     private function addCss(): string
     {
-        return file_get_contents(\dirname(__DIR__, 2) . '/web/app/css/pdf.min.css');
+        $css = file_get_contents(\dirname(__DIR__, 2) . '/web/app/css/pdf.min.css');
+        if ($css === false) {
+            throw new RuntimeException('Cannot read the minified css file!');
+        }
+        return $css;
     }
 
     /**
@@ -343,8 +347,8 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-        $date = date_create($this->Entity->entityData['date'] ?? Tools::kdate());
-        $date_str = date_format($date, 'Y-m-d');
+        $date = \date_create($this->Entity->entityData['date'] ?? Tools::kdate());
+        $date_str = \date_format($date, 'Y-m-d');
 
         // add a CJK font for the body if we want CJK fonts
         $cjkStyle = "";

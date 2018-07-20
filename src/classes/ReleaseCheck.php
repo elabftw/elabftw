@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use GuzzleHttp\Exception\RequestException;
+use RuntimeException;
 
 /**
  * Use this to check for latest version
@@ -86,7 +87,11 @@ class ReleaseCheck
      */
     private function validateVersion(): int
     {
-        return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
+        $res = preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
+        if ($res === false) {
+            throw new RuntimeException('Could not parse version!');
+        }
+        return $res;
     }
 
     /**

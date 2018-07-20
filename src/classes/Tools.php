@@ -165,7 +165,7 @@ class Tools
                 return self::DEFAULT_UPLOAD_SIZE;
         }
 
-        return $value;
+        return (int) $value;
     }
 
     /**

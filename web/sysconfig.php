@@ -12,6 +12,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,6 +33,12 @@ try {
     $teamsArr = $TeamsView->Teams->readAll();
     $usersArr = $App->Users->readAll();
     $ReleaseCheck = new ReleaseCheck($App->Config);
+    try {
+        $ReleaseCheck->getUpdatesIni();
+    } catch(RuntimeException $e) {
+        $App->Log->warning('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    }
+
     $langsArr = Tools::getLangsArr();
 
     $phpInfos = array(

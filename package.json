@@ -45,6 +45,7 @@
     "build": "webpack-cli --config builder.js",
     "buildall": "grunt && webpack-cli --config builder.js",
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
+    "phpstan": "phpstan analyse -l 7 src",
     "srcdoc": "phpDocumentor run -d src/classes -d src/models -d web/app/controllers -d src/views -t _srcdoc",
     "test": "tests/run.sh",
     "unit": "php vendor/bin/codecept run unit",

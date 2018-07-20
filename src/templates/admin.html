@@ -127,7 +127,7 @@
     <ul class='list-group'>
         <li class='list-group-item danger-zone-area'>
             <p>{{ 'DANGER ZONE'|trans }}</p><hr>
-            <p><strong>{{ 'Delete an account'|trans }}</strong></p>
+            <p class='font-weight-bold'>{{ 'Delete an account'|trans }}</p>
             <form action='app/controllers/UsersController.php' method='post'>
                 <!-- form key -->
                 {{ FormKey.getFormkey|raw }}
@@ -348,7 +348,7 @@
         <hr>
         <p style='text-align:justify'>
             {{ "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file. The third column should be the title."|trans|raw }}
-            <span class='strong'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
+            <span class='font-weight-bold'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
         </p>
 
         <label class='block' for='item_selector_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
@@ -379,7 +379,7 @@
         <hr>
         <p>
             {{ "This page will allow you to import a .elabftw.zip archive."|trans }}
-            <br><span class='strong'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
+            <br><span class='font-weight-bold'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
         </p>
 
         <label class='block' for='item_selector_zip'>{{ '1. Select where to import:'|trans }}</label>

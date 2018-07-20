@@ -143,13 +143,8 @@ img {
     margin-right: 3px;
 }
 
-/* TODO remove and use bootstrap for these stuff */
 .align_right{
     float: right;
-}
-
-.strong {
-    font-weight: bold;
 }
 
 hr {

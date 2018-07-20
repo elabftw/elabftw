@@ -342,18 +342,6 @@ class Tools
     }
 
     /**
-     * This is used to include the title in the page name (see #324)
-     * It removes #, ' and " and appends "- eLabFTW"
-     *
-     * @param string $title
-     * @return string
-     */
-    public static function getCleanTitle(string $title): string
-    {
-        return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
-    }
-
-    /**
      * Return a full URL of the elabftw install.
      * Will first check for config value of 'url' or try to guess from Request
      *

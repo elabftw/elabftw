@@ -59,7 +59,6 @@ try {
             'linksArr' => $linksArr,
             'stepsArr' => $stepsArr,
             'commentsArr' => $commentsArr,
-            'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'mode' => 'view'
         );
 
@@ -96,7 +95,6 @@ try {
             'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'categoryArr' => $categoryArr,
-            'cleanTitle' => Tools::getCleanTitle($Entity->entityData['title']),
             'lang' => Tools::getCalendarLang($App->Users->userData['lang']),
             'linksArr' => $linksArr,
             'maxUploadSize' => Tools::getMaxUploadSize(),

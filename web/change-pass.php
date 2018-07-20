@@ -32,7 +32,7 @@ try {
     }
 
     // check deadline (fix #297)
-    $deadline = Crypto::decrypt($Request->query->get('deadline'), Key::loadFromAsciiSafeString(SECRET_KEY));
+    $deadline = Crypto::decrypt($Request->query->get('deadline'), Key::loadFromAsciiSafeString(\SECRET_KEY));
 
     if ($deadline < time()) {
         throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));

@@ -122,7 +122,7 @@ class TrustedTimestamps extends AbstractMake
 
 
         if (\mb_strlen($config['stamppass'] ?? "") > 0) {
-            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } else {
             $password = '';
         }

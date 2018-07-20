@@ -151,7 +151,7 @@ class Teams implements CrudInterface
          */
 
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
-            $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+            $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } else {
             $teamConfigArr = $this->read();
             $stamppass = $teamConfigArr['stamppass'];

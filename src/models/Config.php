@@ -84,7 +84,7 @@ class Config
          */
 
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
-            $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+            $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } elseif (isset($post['stamppass'])) {
             unset($post['stamppass']);
         }

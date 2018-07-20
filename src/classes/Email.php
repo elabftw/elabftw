@@ -97,7 +97,7 @@ class Email
                 $transport->setUsername($this->Config->configArr['smtp_username'])
                 ->setPassword(Crypto::decrypt(
                     $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(SECRET_KEY)
+                    Key::loadFromAsciiSafeString(\SECRET_KEY)
                 ));
             }
         } else {

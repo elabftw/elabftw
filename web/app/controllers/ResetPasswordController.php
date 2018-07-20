@@ -48,10 +48,10 @@ try {
         }
 
         // the key (token) is the encrypted user's mail address
-        $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(SECRET_KEY));
+        $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(\SECRET_KEY));
 
         // the deadline is the encrypted epoch of now +1 hour
-        $deadline = Crypto::encrypt(time() + 3600, Key::loadFromAsciiSafeString(SECRET_KEY));
+        $deadline = Crypto::encrypt(time() + 3600, Key::loadFromAsciiSafeString(\SECRET_KEY));
 
         // build the reset link
         $resetLink = Tools::getUrl($Request) . '/change-pass.php';

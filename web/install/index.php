@@ -50,7 +50,7 @@ try {
         $sql = 'SELECT COUNT(DISTINCT `table_name`) AS tablesCount
             FROM `information_schema`.`columns` WHERE `table_schema` = :db_name';
         $req = $Db->prepare($sql);
-        $req->bindValue(':db_name', DB_NAME);
+        $req->bindValue(':db_name', \DB_NAME);
         $req->execute();
         $res = $req->fetch();
         if ($res['tablesCount'] < 2) {

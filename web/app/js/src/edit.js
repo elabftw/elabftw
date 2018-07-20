@@ -195,32 +195,25 @@
 
         class Step {
 
-            // the argument here is the event (needed to detect which key is pressed)
-            create(e) {
-                let keynum;
-                if (e.which) {
-                    keynum = e.which;
-                }
-                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get body
-                    let body = decodeURIComponent($('#stepinput').val());
-                    // fix for user pressing enter with no input
-                    if (body.length > 0) {
-                        $.post(controller, {
-                            createStep: true,
-                            id: id,
-                            body: body
-                        })
-                        // reload the step list
-                        .done(function() {
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
-                            relativeMoment();
-                        });
-                            // clear input field
-                            $("#stepinput").val("");
-                        });
-                    } // end if input < 0
-                } // end if key is enter
+            create() {
+                // get body
+                let body = decodeURIComponent($('#stepinput').val());
+                // fix for user pressing enter with no input
+                if (body.length > 0) {
+                    $.post(controller, {
+                        createStep: true,
+                        id: id,
+                        body: body
+                    })
+                    // reload the step list
+                    .done(function() {
+                        $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                        relativeMoment();
+                    });
+                        // clear input field
+                        $("#stepinput").val("");
+                    });
+                } // end if input < 0
             }
 
             finish(stepId) {
@@ -270,8 +263,11 @@
         const StepC = new Step();
 
         // CREATE
-        $('#stepinput').keypress(function (e) {
-            StepC.create(e);
+        $(document).on('keypress blur', '#stepinput', function (e) {
+            // Enter is ascii code 13
+            if (e.which === 13 || e.type === 'focusout') {
+                StepC.create();
+            }
         });
 
         // STEP IS DONE
@@ -293,17 +289,12 @@
         const LinkC = new Link();
 
         // CREATE
-        // listen keypress, add link when it's enter
-        $('#linkinput').keypress(function (e) {
+        // listen keypress, add link when it's enter or on blur
+        $(document).on('keypress blur', '#linkinput', function (e) {
             // Enter is ascii code 13
-            if (e.which === 13) {
+            if (e.which === 13 || e.type === 'focusout') {
                 LinkC.create();
             }
-        });
-
-        // also add the link if the focus is lost because it looks like it's not obvious for people to use the enter key
-        $(document).on('blur', '#linkinput', function() {
-            LinkC.create();
         });
 
         // AUTOCOMPLETE

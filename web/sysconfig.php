@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('eLabFTW Configuration');
+$Response = new Response();
+$Response->prepare($Request);
 
 try {
     if ($Session->get('is_sysadmin') != 1) {
@@ -66,10 +68,7 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
-} finally {
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
-    $Response->send();
 }
+
+$Response->setContent($App->render($template, $renderArr));
+$Response->send();

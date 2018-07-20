@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = ngettext('Experiment', 'Experiments', 2);
+$Response = new Response();
+$Response->prepare($Request);
 
 try {
     $Entity = new Experiments($App->Users);
@@ -238,9 +240,7 @@ try {
     }
     $template = 'error.html';
     $renderArr = array('error' => $message);
-} finally {
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
-    $Response->send();
 }
+
+$Response->setContent($App->render($template, $renderArr));
+$Response->send();

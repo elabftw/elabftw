@@ -14,7 +14,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         $Session = new Session();
 
         $Request->setSession($Session);
-        $this->Auth = new Auth($Request);
+        $this->Auth = new Auth($Request, $Session);
     }
 
     public function testCheckCredentials()

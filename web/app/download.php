@@ -103,8 +103,8 @@ try {
         if (connection_status() !== 0) {
             fclose($file);
         }
-    fclose($file);
     }
+    fclose($file);
 
 } catch (Exception $e) {
     $App->Log->error('', array('exception' => $e));

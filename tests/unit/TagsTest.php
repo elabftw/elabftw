@@ -12,11 +12,12 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $id = $this->Experiments->Tags->create('my tag');
+        $id = $this->Experiments->Tags->create('new tag');
         $this->assertTrue((bool) Tools::checkId($id));
 
         $Database = new Database($this->Users, 1);
         $Tags = new Tags($Database);
-        $id =$Tags->create('my tag');
+        $id =$Tags->create('tag2222');
         $this->assertTrue((bool) Tools::checkId($id));
     }
 
@@ -31,10 +32,24 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($Tags->readAll()));
     }
 
+    public function testUpdate()
+    {
+        $this->assertTrue($this->Experiments->Tags->update('my tag', 'new tag'));
+    }
+    public function testDeduplicate()
+    {
+        $this->assertEquals(0, $this->Experiments->Tags->deduplicate('notduptag'));
+        $this->assertEquals(1, $this->Experiments->Tags->deduplicate('new tag'));
+    }
+    public function testUnreference()
+    {
+        $this->assertTrue($this->Experiments->Tags->unreference(1));
+    }
+
     public function testGetList()
     {
-        $res = $this->Experiments->Tags->getList('my');
-        $this->assertEquals('my tag', $res[0]);
+        $res = $this->Experiments->Tags->getList('tag2');
+        $this->assertEquals('tag2222', $res[0]);
     }
 
     public function testDestroy()

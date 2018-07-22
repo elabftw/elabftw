@@ -47,4 +47,6 @@ try {
     }
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $Session->getFlashBag()->add('ko', $e->getMessage());
+    header("Location: ../../" . $Entity->page . ".php?mode=view&id=" . $Request->query->get('item_id'));
 }

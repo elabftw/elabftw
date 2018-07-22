@@ -50,15 +50,16 @@ try {
 
         // REVISIONS
         $Revisions = new Revisions($Entity);
+        $revNum = $Revisions->readCount();
 
         $template = 'view.html';
 
         $renderArr = array(
             'Ev' => $EntityView,
             'Entity' => $Entity,
-            'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'linksArr' => $linksArr,
+            'revNum' => $revNum,
             'stepsArr' => $stepsArr,
             'commentsArr' => $commentsArr,
             'mode' => 'view'
@@ -76,6 +77,7 @@ try {
 
         // REVISIONS
         $Revisions = new Revisions($Entity);
+        $revNum = $Revisions->readCount();
 
         // UPLOADS
         $UploadsView = new UploadsView($Entity->Uploads);
@@ -94,13 +96,13 @@ try {
 
         $renderArr = array(
             'Entity' => $Entity,
-            'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'categoryArr' => $categoryArr,
             'lang' => Tools::getCalendarLang($App->Users->userData['lang']),
             'linksArr' => $linksArr,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
+            'revNum' => $revNum,
             'stepsArr' => $stepsArr,
             'visibilityArr' => $visibilityArr
         );

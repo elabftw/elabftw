@@ -79,28 +79,6 @@ class Revisions implements CrudInterface
         return (int) $req->fetchColumn();
     }
 
-
-    /**
-     * Output HTML for displaying revisions
-     *
-     * @return string html with the count
-     */
-    public function showCount(): string
-    {
-        $html = '';
-        $count = $this->readCount();
-
-        if ($count > 0) {
-            $html .= "<span class='align_right'><i class='fas fa-history mr-1'></i>";
-            $html .= "<a href='revisions.php?type=" . $this->Entity->type . "&item_id=" .
-                $this->Entity->id . "'>" . $count . " " .
-                ngettext('revision available', 'revisions available', $count) . "</a>";
-            $html .= "</span>";
-        }
-
-        return $html;
-    }
-
     /**
      * Read all revisions for an item
      *

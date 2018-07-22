@@ -20,6 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('User Control Panel');
 
+$Response = new Response();
+$Response->prepare($Request);
+
 try {
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readAll();
@@ -37,10 +40,6 @@ try {
 } catch (Exception $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
-} finally {
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
-    $Response->send();
 }
+$Response->setContent($App->render($template, $renderArr));
+$Response->send();

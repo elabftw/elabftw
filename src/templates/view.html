@@ -181,7 +181,9 @@
     {{ 'Last modified by'|trans }} {{ Entity.entityData.fullname|raw }}
 {% endif %}
 
+
 </section>
+
 
 {{ include('uploads.html') }}
 
@@ -216,7 +218,12 @@
 {% endif %}
 
 <!-- REVISIONS -->
-{{ Revisions.showCount|raw }}
+{% if revNum > 0 %}
+    <span class='align_right'><i class='fas fa-history mr-1'></i>
+        <a href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'>{{ revNum }}
+            {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+    </span>
+{% endif %}
 
 <div id='entityInfos'
     data-type='{{ Entity.type }}'

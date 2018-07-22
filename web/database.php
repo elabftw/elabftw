@@ -40,6 +40,8 @@ try {
         // check permissions
         $Entity->canOrExplode('read');
         $UploadsView = new UploadsView($Entity->Uploads);
+        $Revisions = new Revisions($Entity);
+        $revNum = $Revisions->readCount();
         // the mode parameter is for the uploads tpl
         $template = 'view.html';
 
@@ -50,7 +52,8 @@ try {
             'Entity' => $Entity,
             'Uv' => $UploadsView,
             'commentsArr' => $commentsArr,
-            'mode' => 'view'
+            'mode' => 'view',
+            'revNum' => $revNum
         );
 
     // EDIT
@@ -68,6 +71,7 @@ try {
         $ItemsTypes = new ItemsTypes($Entity->Users);
         $categoryArr = $ItemsTypes->readAll();
         $Revisions = new Revisions($Entity);
+        $revNum = $Revisions->readCount();
         $UploadsView = new UploadsView($Entity->Uploads);
         $TeamGroups = new TeamGroups($Entity->Users);
         $visibilityArr = $TeamGroups->getVisibilityList();
@@ -77,11 +81,11 @@ try {
         $renderArr = array(
             'Entity' => $Entity,
             'Categories' => $ItemsTypes,
-            'Revisions' => $Revisions,
             'Uv' => $UploadsView,
             'categoryArr' => $categoryArr,
             'mode' => 'edit',
             'maxUploadSize' => Tools::getMaxUploadSize(),
+            'revNum' => $revNum,
             'visibilityArr' => $visibilityArr
         );
 

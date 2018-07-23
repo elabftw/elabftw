@@ -187,10 +187,10 @@ class Tags implements CrudInterface
         // the first tag we find is the one we keep
         $targetTagId = $tags[0]['id'];
 
-        // the trash
+        // skip the first tag because we want to keep it
+        // array holding all the tags we want to see disappear
         $tagsToDelete = array_slice($tags, 1);
 
-        // skip the first tag because we want to keep it
         foreach ($tagsToDelete as $tag) {
             $sql = "UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id";
             $req = $this->Db->prepare($sql);

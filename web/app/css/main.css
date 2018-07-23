@@ -100,9 +100,6 @@ input, select, textarea {
     color:#797979;
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
-    /*
-    margin:5px 0;
-    */
 }
 .disabled-input{
     color:#989898;
@@ -150,12 +147,6 @@ img {
 hr {
     margin: 10px 0 20px 0;
     color: #dcdddc;
-}
-
-.danger-zone-area hr {
-    margin: 10px 0 20px 0;
-    color: #e6614c;
-    border-top: 1px solid;
 }
 
 /* TITLES */
@@ -723,21 +714,6 @@ input[type='checkbox']{
     float:left;
 }
 
-.danger-zone-area{
-    border-color: #e6614c;
-    background-color: #ffc1b7;
-    color: #e6614c;
-    margin: 10px 0 0;
-}
-.danger-zone-area p, .danger-zone-area p {
-    font-size: 120%;
-    color: #e6614c;
-}
-
-.danger-zone-area label{
-    color: #e6614c;
-}
-
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
 .select-order, .select-filter-status, .select-filter-cat, .select-sort {
     float:left;
@@ -820,16 +796,8 @@ input[type='checkbox']{
     color: #FFFFFF;
     font-size: 11px;
     text-transform: uppercase;
-    /*
-    background-color: #29AEB9;
-    */
     margin: 0 5px;
     letter-spacing: 1px;
-}
-.editable button:hover {
-    /*
-    background-color: #1F8591;
-    */
 }
 
 .editable input{
@@ -916,9 +884,8 @@ input[type='checkbox']{
     color:#a2a2a2;
     font-size: 80%;
 }
-/* ucp.php */
 
-/* on ucp.php */
+/* ucp.php */
 #currpass {
     background-color: #c4f9ff;
     border: 1px solid #29AEB9;
@@ -963,22 +930,22 @@ footer div a:hover {
     color: #29AEB9;
 }
 
-.footer_left {
+.footer-left {
     text-transform:uppercase;
     text-align: left;
     float: left;
 }
-.footer_right {
-    text-align: right;
-    float: right;
-    margin: 0 0 20px 0;
-
-}
-
-.footer_left a {
+.footer-left a {
     border-right: 1px #ccc solid;
     padding:0 5px;
 }
+
+.footer-right {
+    text-align: right;
+    float: right;
+    margin: 0 0 20px 0;
+}
+
 
 /* print only the main div */
 @media print {
@@ -1061,7 +1028,6 @@ code {
     font-size: 60%;
     display: none;
     text-decoration: none;
-    /*color: #303030;*/
 }
 
 /* fix the padding for sortable list */

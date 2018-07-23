@@ -123,9 +123,8 @@
 
     <!-- DELETE USER -->
     <ul class='list-group'>
-        <li class='list-group-item danger-zone-area'>
-            <p>{{ 'DANGER ZONE'|trans }}</p><hr>
-            <p class='font-weight-bold'>{{ 'Delete an account'|trans }}</p>
+        <li class='list-group-item alert-danger mt-3'>
+            <h3 class='font-weight-bold'>{{ 'Delete an account'|trans }}</h3>
             <form action='app/controllers/UsersController.php' method='post'>
                 <!-- form key -->
                 {{ FormKey.getFormkey|raw }}

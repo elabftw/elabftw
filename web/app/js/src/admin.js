@@ -261,10 +261,12 @@
             });
         });
 
-        // COMMON
-        $('.item-selector').on('change', function() {
+
+        // IMPORT
+        $('.importBlock').hide();
+        $('.itemSelector').on('change', function() {
             document.cookie = 'importTarget=' + this.value;
-            $('.import_block').show();
+            $(this).next('.importBlock').show();
         });
 
         // validate on enter
@@ -316,9 +318,6 @@
                 });
             }
         });
-
-        // IMPORT
-        $('.import_block').hide();
 
         // COLORPICKER
         $('.colorpicker').colorpicker({

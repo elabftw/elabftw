@@ -35,9 +35,8 @@
         <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
         <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
-        <li class='tabhandle' id='tab7'>{{ 'Import CSV'|trans }}</li>
-        <li class='tabhandle' id='tab8'>{{ 'Import ZIP'|trans }}</li>
-        <li class='tabhandle' id='tab9'>{{ 'Tag manager'|trans }}</li><span class='beta'>new</span>
+        <li class='tabhandle' id='tab7'>{{ 'Import'|trans }}</li>
+        <li class='tabhandle' id='tab8'>{{ 'Tag manager'|trans }}</li><span class='beta'>new</span>
     </ul>
 </menu>
 
@@ -341,25 +340,25 @@
     </div>
 </div>
 
-<!-- TAB 7 IMPORT CSV -->
+<!-- TAB 7 IMPORT -->
 <div class='divhandle' id='tab7div'>
     <div class='box'>
         <h3>{{ 'Import a CSV File'|trans }}</h3>
         <hr>
         <p style='text-align:justify'>
-            {{ "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file. The third column should be the title."|trans|raw }}
+            {{ "Import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file. The third column should be the title."|trans|raw }}
             <span class='font-weight-bold'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
         </p>
 
         <label class='block' for='item_selector_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
-        <select class='clean-form col-3-form item-selector' id='item_selector_csv'>
+        <select class='clean-form col-3-form itemSelector' id='item_selector_csv'>
             <option selected disabled>--------</option>
             {% for itemsType in itemsTypesArr %}
                 <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
             {% endfor %}
         </select>
 
-        <div class='import_block'>
+        <div class='importBlock'>
             <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
                 <label class='block' for='uploader'>{{ '2. Select a CSV file to import:'|trans }}</label>
                 <input id='uploader' name='file' type='file' accept='.csv' />
@@ -370,20 +369,17 @@
             </form>
         </div>
     </div>
-</div>
 
-<!-- TAB 8 IMPORT ZIP -->
-<div class='divhandle' id='tab8div'>
     <div class='box'>
         <h3>{{ 'Import a ZIP File'|trans }}</h3>
         <hr>
         <p>
-            {{ "This page will allow you to import a .elabftw.zip archive."|trans }}
+            {{ "Import a .elabftw.zip archive."|trans }}
             <br><span class='font-weight-bold'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
         </p>
 
         <label class='block' for='item_selector_zip'>{{ '1. Select where to import:'|trans }}</label>
-        <select class='clean-form col-3-form item-selector' id='item_selector_zip'>
+        <select class='clean-form col-3-form itemSelector' id='item_selector_zip'>
             <option selected disabled>-------</option>
             <option class='disabled-input' disabled>Import items</option>
             {% for itemsType in itemsTypesArr %}
@@ -394,8 +390,8 @@
             {% for user in usersArr %}
                 <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>
             {% endfor %}
-        </select><br>
-        <div class='import_block'>
+        </select>
+        <div class='importBlock'>
             <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
                 <label class='block' for='uploader'>{{ '2. Select a ZIP file to import:'|trans }}</label>
                 <input id='uploader' name='file' type='file' accept='.elabftw.zip' />
@@ -408,8 +404,8 @@
     </div>
 </div>
 
-<!-- TAB 9 TAG MANAGER -->
-<div class='divhandle' id='tab9div'>
+<!-- TAB 8 TAG MANAGER -->
+<div class='divhandle' id='tab8div'>
     <div class='box'>
         <h3>{{ 'Manage tags of the team'|trans }}</h3>
         <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it.' }}</p>

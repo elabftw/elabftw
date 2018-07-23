@@ -6,9 +6,8 @@
     <form method='post' action='app/controllers/UsersController.php'>
         <input type='hidden' name='usersValidate' value='true' />
         {{ FormKey.getFormkey|raw }}
-        <div class='alert alert-danger'>
-            <span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
-            {{ 'There are users waiting for validation of their account:'|trans }}
+        <div class='box'>
+            {{ 'There are users waiting for validation of their account:'|trans|msg('ko', false) }}
             <ul>
             {% for user in unvalidatedUsersArr %}
                 <li>
@@ -419,12 +418,6 @@
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
 <script src='app/js/admin.min.js?v={{ v }}'></script>
-<!--
-<script src='app/js/src/admin.js?v={{ v }}'></script>
--->
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
-<!--
-<script src='app/js/src/tags.js?v={{ v }}'></script>
--->
 <script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

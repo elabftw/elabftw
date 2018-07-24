@@ -32,10 +32,7 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            'jquery-ui': 'jquery-ui-dist/jquery-ui.js',
-            '@fortawesome/fontawesome-free-solid$': '@fortawesome/fontawesome-free-solid/shakable.es.js',
-            '@fortawesome/fontawesome-free-regular$': '@fortawesome/fontawesome-free-regular/shakable.es.js',
-            '@fortawesome/fontawesome-free-brands$': '@fortawesome/fontawesome-free-brands/shakable.es.js'
+            'jquery-ui': 'jquery-ui-dist/jquery-ui.js'
         }
     },
     mode: 'production',

@@ -2122,8 +2122,8 @@ isstream@0.1.x, isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
 jquery-jeditable@2.0:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.5.tgz#358362733789bad7f239e5e666ec6f60e2b6022f"
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.6.tgz#ede3c2fe5aa7dc871f21d99a91b5b76e279560a3"
   dependencies:
     jquery "^3.3.1"
 

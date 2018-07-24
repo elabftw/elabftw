@@ -1,4 +1,12 @@
-/*
+/**
+ * builder.js
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ *
  * Config file for webpack
  *
  * This is in fact webpack.config.js but I renamed it builder.js

@@ -9,7 +9,6 @@
  *
  * In this file we define which icons we import (tree shaking feature) from font-awesome
  * This way we don't import all the icons \o/
- *
  */
 
 // CORE

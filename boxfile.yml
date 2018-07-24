@@ -1,3 +1,4 @@
+# this file allows one to run elabftw on nanobox.io
 run.config:
     engine: php
     engine.config:

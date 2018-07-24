@@ -1583,8 +1583,8 @@ glob@~7.0.0:
     path-is-absolute "^1.0.0"
 
 global-modules-path@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/global-modules-path/-/global-modules-path-2.2.0.tgz#24648267c65d02604c5549f04b46ac8973b4ba40"
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/global-modules-path/-/global-modules-path-2.3.0.tgz#b0e2bac6beac39745f7db5c59d26a36a0b94f7dc"
 
 globule@^1.0.0:
   version "1.2.1"
@@ -2122,8 +2122,8 @@ isstream@0.1.x, isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
 jquery-jeditable@2.0:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.5.tgz#358362733789bad7f239e5e666ec6f60e2b6022f"
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.6.tgz#ede3c2fe5aa7dc871f21d99a91b5b76e279560a3"
   dependencies:
     jquery "^3.3.1"
 
@@ -4241,8 +4241,8 @@ webpack-sources@^1.0.1, webpack-sources@^1.1.0:
     source-map "~0.6.1"
 
 webpack@^4.16:
-  version "4.16.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.16.1.tgz#2c4b89ea648125c3e67bcca6adf49ce2c14b2d31"
+  version "4.16.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.16.2.tgz#c3e0e771adc94582e0543dd18d7436066051e885"
   dependencies:
     "@webassemblyjs/ast" "1.5.13"
     "@webassemblyjs/helper-module-context" "1.5.13"

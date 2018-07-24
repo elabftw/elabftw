@@ -45,7 +45,10 @@ jobs:
     - run: sudo docker-php-ext-enable gmagick
     # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
     - run: yarn install
-    - run: yarn run buildall
+    - run:
+        name: Build all
+        command: yarn run buildall
+        no_output_timeout: 20m
     - run: composer install --no-interaction
     # Save dependency cache
     - save_cache:

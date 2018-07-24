@@ -1107,3 +1107,8 @@ figure.image figcaption {
     margin: 6px 8px 6px 8px;
     text-align: center;
 }
+
+/* make the markdown editor full width */
+.markdown-textarea {
+    width: 100%;
+}

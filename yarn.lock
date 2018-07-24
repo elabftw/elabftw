@@ -435,9 +435,9 @@ body@^5.1.0:
     raw-body "~1.1.0"
     safe-json-parse "~1.0.1"
 
-bootstrap-markdown-fa5@^2.10.0:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/bootstrap-markdown-fa5/-/bootstrap-markdown-fa5-2.10.0.tgz#31d4b680d17acb49273960713706db76ef34c6f6"
+bootstrap-markdown-fa5@^2.10.2:
+  version "2.10.2"
+  resolved "https://registry.yarnpkg.com/bootstrap-markdown-fa5/-/bootstrap-markdown-fa5-2.10.2.tgz#600eb34a8924aec5296e3e4fbaa32e8880d780d7"
 
 bootstrap@^4.1.2:
   version "4.1.2"

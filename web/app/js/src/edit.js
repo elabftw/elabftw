@@ -373,7 +373,7 @@
 
         // DISPLAY MARKDOWN EDITOR
         if ($('#body_area').hasClass('markdown-textarea')) {
-            $('.markdown-textarea').markdown({autofocus:false,savable:false, iconlibrary: 'fa'});
+            $('.markdown-textarea').markdown();
         }
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT

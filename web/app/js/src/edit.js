@@ -418,14 +418,15 @@
 
         // EDITOR
         tinymce.init({
-            mode : 'specific_textareas',
-            editor_selector : 'mceditable',
-            browser_spellcheck : true,
-            content_css : 'app/css/tinymce.css',
-            plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample',
+            mode: 'specific_textareas',
+            editor_selector: 'mceditable',
+            browser_spellcheck: true,
+            content_css: 'app/css/tinymce.css',
+            plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample',
             pagebreak_separator: '<pagebreak>',
             toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | image link | save',
-            removed_menuitems : 'newdocument',
+            removed_menuitems: 'newdocument',
+            image_caption: true,
             codesample_languages: [
                 {text: 'Bash', value: 'bash'},
                 {text: 'C', value: 'c'},
@@ -450,7 +451,7 @@
                 quickSave(type, id);
             },
             // keyboard shortcut to insert today's date at cursor in editor
-            setup : function(editor) {
+            setup: function(editor) {
                 editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
                 editor.on('keydown', function(event) {
                     clearTimeout(typingTimer);
@@ -479,7 +480,7 @@
                     }
                 }
             },
-            language : $('#entityInfos').data('lang'),
+            language: $('#entityInfos').data('lang'),
             style_formats_merge: true,
             style_formats: [
                 {
@@ -500,6 +501,5 @@
                  }
             ]
         });
-
     });
 }());

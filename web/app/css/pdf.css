@@ -154,3 +154,9 @@ tr:nth-child(odd) {
     border-radius: 5mm;
 }
 
+/* caption for tinymce */
+figure.image figcaption {
+    margin: 2px 0 6px 0;
+    border: 1px solid gray;
+    text-align: center;
+}

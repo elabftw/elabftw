@@ -1090,3 +1090,20 @@ code {
 .pseudo-link:hover {
     color: #29AEB9;
 }
+
+/* caption for tinymce */
+figure.image {
+    display: inline-block;
+    border: 1px solid gray;
+    margin: 0 2px 0 1px;
+    background: #f5f2f0;
+}
+
+figure.image img {
+    margin: 8px 8px 0 8px;
+}
+
+figure.image figcaption {
+    margin: 6px 8px 6px 8px;
+    text-align: center;
+}

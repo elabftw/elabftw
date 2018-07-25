@@ -36,7 +36,7 @@ try {
     if ($Request->query->get('mode') === 'view') {
 
         // set id
-        $Entity->setId($Request->query->get('id'));
+        $Entity->setId((int) $Request->query->get('id'));
         // check permissions
         $Entity->canOrExplode('read');
         $UploadsView = new UploadsView($Entity->Uploads);
@@ -60,7 +60,7 @@ try {
     } elseif ($Request->query->get('mode') === 'edit') {
 
         // set id
-        $Entity->setId($Request->query->get('id'));
+        $Entity->setId((int) $Request->query->get('id'));
         // check permissions
         $Entity->canOrExplode('write');
         // a locked item cannot be edited

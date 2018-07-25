@@ -30,7 +30,7 @@ try {
 
     $Entity = new Database($App->Users);
     if ($Request->request->has('id')) {
-        $Entity->setId($Request->request->get('id'));
+        $Entity->setId((int) $Request->request->get('id'));
     }
 
     // CREATE

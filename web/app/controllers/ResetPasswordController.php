@@ -86,7 +86,7 @@ try {
     if ($Request->request->has('password') &&
         $Request->request->get('password') === $Request->request->get('cpassword')) {
 
-        $App->Users->setId($Request->request->get('userid'));
+        $App->Users->setId((int) $Request->request->get('userid'));
 
         // Validate key
         if ($App->Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(SECRET_KEY))) {

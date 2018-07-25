@@ -39,7 +39,7 @@ try {
 
     $selectedItem = null;
     if ($Request->query->get('item')) {
-        $Scheduler->Database->setId($Request->query->get('item'));
+        $Scheduler->Database->setId((int) $Request->query->get('item'));
         $selectedItem = $Request->query->get('item');
 
         $Scheduler->populate();

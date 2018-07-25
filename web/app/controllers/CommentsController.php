@@ -38,7 +38,7 @@ try {
 
     // CREATE
     if ($Request->request->has('create')) {
-        $Entity->setId($Request->request->get('id'));
+        $Entity->setId((int) $Request->request->get('id'));
         $commentId = $Entity->Comments->create($Request->request->get('comment'));
         $res = true;
         $msg = $commentId;

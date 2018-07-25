@@ -32,7 +32,7 @@ try {
         throw new Exception('Bad type!');
     }
 
-    $Entity->setId($Request->query->get('item_id'));
+    $Entity->setId((int) $Request->query->get('item_id'));
     $Entity->canOrExplode('write');
 
     $Revisions = new Revisions($Entity);

@@ -33,7 +33,7 @@ try {
 
     // VIEW
     if ($Request->query->get('mode') === 'view') {
-        $Entity->setId($Request->query->get('id'));
+        $Entity->setId((int) $Request->query->get('id'));
         $Entity->canOrExplode('read');
 
         // LINKS
@@ -67,7 +67,7 @@ try {
 
     // EDIT
     } elseif ($Request->query->get('mode') === 'edit') {
-        $Entity->setId($Request->query->get('id'));
+        $Entity->setId((int) $Request->query->get('id'));
         // check permissions
         $Entity->canOrExplode('write');
         // a locked experiment cannot be edited

@@ -29,7 +29,7 @@ try {
 
     // CREATE
     if ($Request->request->has('create')) {
-        $Database->setId($Request->request->get('item'));
+        $Database->setId((int) $Request->request->get('item'));
         if ($Scheduler->create(
             $Request->request->get('start'),
             $Request->request->get('end'),
@@ -42,7 +42,7 @@ try {
 
     // READ
     if ($Request->request->has('read')) {
-        $Database->setId($Request->request->get('item'));
+        $Database->setId((int) $Request->request->get('item'));
         $Response->setData($Scheduler->read());
         $Response->send();
         exit;
@@ -50,7 +50,7 @@ try {
 
     // UPDATE START
     if ($Request->request->has('updateStart')) {
-        $Scheduler->setId($Request->request->get('id'));
+        $Scheduler->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] === $Session->get('userid')) {
             if ($Scheduler->updateStart($Request->request->get('start'), $Request->request->get('end'))) {
@@ -61,7 +61,7 @@ try {
     }
     // UPDATE END
     if ($Request->request->has('updateEnd')) {
-        $Scheduler->setId($Request->request->get('id'));
+        $Scheduler->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] == $Session->get('userid')) {
             if ($Scheduler->updateEnd($Request->request->get('end'))) {
@@ -72,7 +72,7 @@ try {
     }
     // DESTROY
     if ($Request->request->has('destroy')) {
-        $Scheduler->setId($Request->request->get('id'));
+        $Scheduler->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] == $Session->get('userid')) {
             if ($Scheduler->destroy()) {

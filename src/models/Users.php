@@ -604,12 +604,14 @@ class Users
             throw new Exception(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
-        if (\mb_strlen($params['newpass']) >= Auth::MIN_PASSWORD_LENGTH) {
+        if (!empty($params['newpass'])) {
             if ($params['newpass'] != $params['cnewpass']) {
                 throw new Exception(_('The passwords do not match!'));
             }
 
-            $this->updatePassword($params['newpass']);
+            if (!$this->updatePassword($params['newpass'])) {
+                throw new Exception('Error updating password.');
+            }
         }
 
         $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
@@ -672,30 +674,10 @@ class Users
         $salt = \hash("sha512", \uniqid((string) \mt_rand(), true));
         $passwordHash = \hash("sha512", $salt . $password);
 
-        $sql = "UPDATE users SET salt = :salt, password = :password WHERE userid = :userid";
+        $sql = "UPDATE users SET salt = :salt, password = :password, token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
-        $req->bindParam(':userid', $userid);
-
-        // remove token for this user
-        if (!$this->invalidateToken($userid)) {
-            throw new Exception('Cannot invalidate token');
-        }
-
-        return $req->execute();
-    }
-
-    /**
-     * Invalidate token for a user
-     *
-     * @param int $userid
-     * @return bool
-     */
-    private function invalidateToken(int $userid): bool
-    {
-        $sql = "UPDATE users SET token = null WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
 
         return $req->execute();

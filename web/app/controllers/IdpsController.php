@@ -8,15 +8,20 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Controller for IDPs
  *
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
+$redirect = true;
 
 try {
     $Idps = new Idps();
@@ -45,7 +50,7 @@ try {
     // UPDATE IDP
     if ($Request->request->has('idpsUpdate')) {
         if ($Idps->update(
-            $Request->request->get('id'),
+            (int) $Request->request->get('id'),
             $Request->request->get('name'),
             $Request->request->get('entityid'),
             $Request->request->get('ssoUrl'),
@@ -62,10 +67,18 @@ try {
 
     // DESTROY IDP
     if ($Request->request->has('idpsDestroy')) {
-        if ($Idps->destroy($Request->request->get('id'))) {
-            $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+        $Response = new JsonResponse();
+        $redirect = false;
+        if ($Idps->destroy((int) $Request->request->get('id'))) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Item deleted successfully')
+            ));
         } else {
-            $Session->getFlashBag()->add('ko', Tools::error());
+            $Response->setData(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -73,6 +86,8 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     // we can show error message to sysadmin
     $Session->getFlashBag()->add('ko', $e->getMessage());
-} finally {
-    header('Location: ../../sysconfig.php?tab=8');
 }
+if ($redirect) {
+    $Response = new RedirectResponse('../../sysconfig.php?tab=7');
+}
+$Response->send();

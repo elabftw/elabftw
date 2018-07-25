@@ -42,6 +42,7 @@ class Idps implements CrudInterface
      * @param string $sloUrl Single Log Out URL
      * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
+     *
      * @return int last insert id
      */
     public function create(string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): int

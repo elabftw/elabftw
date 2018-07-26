@@ -133,7 +133,7 @@
 
             create() {
                 // get link
-                let link = decodeURIComponent($('#linkinput').val());
+                let link = $('#linkinput').val();
                 // fix for user pressing enter with no input
                 if (link.length > 0) {
                     // parseint will get the id, and not the rest (in case there is number in title)
@@ -197,7 +197,7 @@
 
             create() {
                 // get body
-                let body = decodeURIComponent($('#stepinput').val());
+                let body = $('#stepinput').val();
                 // fix for user pressing enter with no input
                 if (body.length > 0) {
                     $.post(controller, {

@@ -1,8 +1,11 @@
 #!/bin/bash
-# generate the .po file
+# https://www.elabftw.net
 
+# generate the .po file for french lang
+# it can then be imported in poeditor for the other languages
 # first generate the cache files of twig templates
-#php src/langs/genCache.php
+# $ php src/tools/generate-cache.php
+
 # add it to the list
 find /tmp/elabftw-twig-cache -name '*.php' >> /tmp/list
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-24 16:12+0200\n"
+"POT-Creation-Date: 2018-07-26 18:36+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
@@ -214,7 +214,7 @@ msgstr ""
 #: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:804
 #: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:944
 #: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:985
-#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:1053
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:1059
 #: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:224
 #: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:534
 #: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:565
@@ -609,6 +609,30 @@ msgstr "Corps de l'email"
 msgid "Name"
 msgstr "Nom"
 
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:1007
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:70
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:108
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:598
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:546
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:639
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:705
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:805
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:491
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:1005
+#: /tmp/elabftw-twig-cache/42/42448f30413290fa050d998a836a85612d6f376cf9ee10cfc5d5d59026ca5529.php:74
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:70
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:108
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:598
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:546
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:639
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:705
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:805
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:491
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:1005
+#: /tmp/elabftw-twig-cache/4f/4f0506ed3f90b5caab20107eb5a49949e9f734dbaeb54f601b95bc8c0de7d6a5.php:74
+msgid "Delete this?"
+msgstr "Supprimer ça ?"
+
 #: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:26
 #: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:26
 msgid "Edit Users"
@@ -736,29 +760,6 @@ msgstr "Se connecter en visiteur anonyme"
 #: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:64
 msgid "------ Select a team ------"
 msgstr "------ Choisissez une équipe ------"
-
-#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:70
-#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:108
-#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:598
-#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:546
-#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:639
-#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:705
-#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:805
-#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:491
-#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:1005
-#: /tmp/elabftw-twig-cache/42/42448f30413290fa050d998a836a85612d6f376cf9ee10cfc5d5d59026ca5529.php:74
-#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:70
-#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:108
-#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:598
-#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:546
-#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:639
-#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:705
-#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:805
-#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:491
-#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:1005
-#: /tmp/elabftw-twig-cache/4f/4f0506ed3f90b5caab20107eb5a49949e9f734dbaeb54f601b95bc8c0de7d6a5.php:74
-msgid "Delete this?"
-msgstr "Supprimer ça ?"
 
 #: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:76
 #: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:673
@@ -2192,9 +2193,8 @@ msgstr ""
 msgid "Anonymous"
 msgstr "Anonyme"
 
-#: web/app/controllers/IdpsController.php:39
-#: web/app/controllers/IdpsController.php:57
-#: web/app/controllers/IdpsController.php:66
+#: web/app/controllers/IdpsController.php:44
+#: web/app/controllers/IdpsController.php:62
 #: web/app/controllers/SysconfigController.php:97
 #: web/app/controllers/SysconfigController.php:152
 #: web/app/controllers/UsersController.php:80
@@ -2202,6 +2202,13 @@ msgstr "Anonyme"
 #: web/app/controllers/AdminController.php:71
 msgid "Configuration updated successfully."
 msgstr "Configuration mise à jour avec succès."
+
+#: web/app/controllers/IdpsController.php:75
+#: web/app/controllers/EntityController.php:323
+#: web/app/controllers/TodolistController.php:73
+#: web/app/controllers/TodolistController.php:81
+msgid "Item deleted successfully"
+msgstr "L'item a été supprimé avec succès"
 
 #: web/app/controllers/ItemsTypesController.php:43
 #: web/app/controllers/ItemsTypesController.php:57
@@ -2227,8 +2234,8 @@ msgstr "Configuration mise à jour avec succès."
 #: web/app/controllers/DatabaseController.php:50
 #: web/app/controllers/UsersController.php:44
 #: web/app/controllers/UsersController.php:97
-#: web/app/controllers/UcpController.php:59
-#: web/app/controllers/UcpController.php:119
+#: web/app/controllers/UcpController.php:60
+#: web/app/controllers/UcpController.php:120
 #: web/app/controllers/TodolistController.php:54
 #: web/app/controllers/TodolistController.php:65
 #: web/app/controllers/SchedulerController.php:39
@@ -2318,12 +2325,6 @@ msgstr "Soyez sûr de retirer toute référence à ce fichier dans l'expérience
 msgid "File deleted successfully"
 msgstr "Le fichier a été supprimé avec succès"
 
-#: web/app/controllers/EntityController.php:323
-#: web/app/controllers/TodolistController.php:73
-#: web/app/controllers/TodolistController.php:81
-msgid "Item deleted successfully"
-msgstr "L'item a été supprimé avec succès"
-
 #: web/app/controllers/TagsController.php:57
 msgid "Tag is too short!"
 msgstr "Le tag est trop court!"
@@ -2341,27 +2342,27 @@ msgstr "Le paramètre id n'est pas valide !"
 msgid "Revision restored successfully."
 msgstr "Révision restaurée avec succès."
 
-#: web/app/controllers/UcpController.php:30
+#: web/app/controllers/UcpController.php:31
 msgid "Preferences updated."
 msgstr "Vos préférences on été mises à jour."
 
-#: web/app/controllers/UcpController.php:43
+#: web/app/controllers/UcpController.php:44
 msgid "Profile updated."
 msgstr "Profil mis à jour."
 
-#: web/app/controllers/UcpController.php:76
+#: web/app/controllers/UcpController.php:77
 msgid "You must specify a name for the template!"
 msgstr "Il faut spécifier un nom pour le modèle !"
 
-#: web/app/controllers/UcpController.php:80
+#: web/app/controllers/UcpController.php:81
 msgid "The template name must be 3 characters long."
 msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
 
-#: web/app/controllers/UcpController.php:90
+#: web/app/controllers/UcpController.php:91
 msgid "Experiment template successfully added."
 msgstr "Modèle d'expérience ajouté avec succès."
 
-#: web/app/controllers/UcpController.php:104
+#: web/app/controllers/UcpController.php:105
 msgid "Template successfully edited."
 msgstr "Modèle d'expérience édité avec succès."
 
@@ -2429,7 +2430,7 @@ msgstr ""
 msgid "You cannot restore a revision of a locked item!"
 msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
 
-#: src/models/Users.php:98 src/models/Users.php:620
+#: src/models/Users.php:98 src/models/Users.php:622
 msgid "Someone is already using that email address!"
 msgstr "Cette adresse email est déjà enregistrée !"
 
@@ -2441,16 +2442,16 @@ msgstr "Seul un sysadmin peut nommer un autre sysadmin."
 msgid "Please input your current password!"
 msgstr "Entrez votre mot de passe!"
 
-#: src/models/Users.php:720
+#: src/models/Users.php:702
 #, php-format
 msgid "User %s (%s) now has an active account."
 msgstr "L'utilisateur %s (%s) a désormais un compte actif."
 
-#: src/models/Users.php:769
+#: src/models/Users.php:751
 msgid "Wrong password!"
 msgstr "Mauvais mot de passe !"
 
-#: src/models/Users.php:776
+#: src/models/Users.php:758
 msgid "No user with this email or user not in your team"
 msgstr ""
 "Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre équipe"
@@ -2528,30 +2529,6 @@ msgstr "Cette section est hors de votre portée !"
 msgid "An error occured!"
 msgstr "Une erreur est survenue!"
 
-#: src/classes/MolViewer.php:68
-msgid "Style"
-msgstr "Style"
-
-#: src/classes/MolViewer.php:75
-msgid "Cartoon (proteins only)"
-msgstr "Cartoon (seulement pour les protéines)"
-
-#: src/classes/MolViewer.php:76
-msgid "Cross"
-msgstr "Croix"
-
-#: src/classes/MolViewer.php:77
-msgid "Line"
-msgstr "Ligne"
-
-#: src/classes/MolViewer.php:78
-msgid "Sphere"
-msgstr "Sphère"
-
-#: src/classes/MolViewer.php:79
-msgid "Stick"
-msgstr "Bâton"
-
 #: src/classes/TrustedTimestamps.php:118
 msgid "Please configure Timestamping in the admin panel."
 msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
@@ -2585,7 +2562,31 @@ msgstr "Télécharger le jeton d'horodatage"
 msgid "Decode token"
 msgstr "Lire le jeton d'horodatage"
 
-#: src/views/UploadsView.php:131
+#: src/views/UploadsView.php:109
+msgid "Style"
+msgstr "Style"
+
+#: src/views/UploadsView.php:113
+msgid "Cartoon (proteins only)"
+msgstr "Cartoon (seulement pour les protéines)"
+
+#: src/views/UploadsView.php:114
+msgid "Cross"
+msgstr "Croix"
+
+#: src/views/UploadsView.php:115
+msgid "Line"
+msgstr "Ligne"
+
+#: src/views/UploadsView.php:116
+msgid "Sphere"
+msgstr "Sphère"
+
+#: src/views/UploadsView.php:117
+msgid "Stick"
+msgstr "Bâton"
+
+#: src/views/UploadsView.php:149
 msgid "Insert in text at cursor position"
 msgstr "Insérer dans le texte à la position du curseur"
 

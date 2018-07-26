@@ -1,10 +1,10 @@
 <?php
 /**
- * genCache.php
+ * generate-cache.php
  * force the generation of Twig cache files
  * so we can use them for gettext po/mo generation
  *
- * Usage: php src/langs/genCache.php
+ * Usage: php src/tools/generate-cache.php
  */
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 $tplDir = \dirname(__DIR__, 2) . '/src/templates';
@@ -32,7 +32,7 @@ $Twig->addFilter($starsFilter);
 $Twig->addFilter($bytesFilter);
 $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
-// iterate over all your templates
+// iterate over all the templates
 foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($tplDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
     // force compilation
     if ($file->isFile()) {

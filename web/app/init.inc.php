@@ -78,6 +78,14 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
+
+    // autologin as anon if it's allowed by sysadmin
+    $autoAnon = array('experiments.php', 'database.php', 'search.php');
+    if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth') ) {
+        $App->Users->Auth->loginAsAnon(1);
+    }
+
+
     if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {
         // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 

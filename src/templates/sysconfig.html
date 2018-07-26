@@ -97,6 +97,13 @@
         </select>
         <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
 
+        <label for='open_science' class='block'>{{ 'Switch this instance in open science mode:'|trans }}</label>
+        <select id='open_science' name="open_science" class="clean-form col-3-form">
+            <option {{ App.Config.configArr.open_science == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+            <option {{ App.Config.configArr.open_science == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
+        <p class='smallgray'>{{ 'This allows search engines to crawl the site.'|trans }}</p>
+
         <div class='submitButtonDiv'>
             <button type='submit' class='button'>{{ 'Save'|trans }}</button>
         </div>

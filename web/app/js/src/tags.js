@@ -115,11 +115,11 @@
         // TAGS
         const TagC = new Tag();
 
-        // CREATE
-        $(document).on('keypress', '.createTagInput', function(e) {
-            if (e.which === 13) {
-                const id = $(this).data('id');
-                TagC.saveForTemplate(id);
+        // CREATE for templates
+        $(document).on('keypress blur', '.createTagInput', function(e) {
+            // Enter is ascii code 13
+            if (e.which === 13 || e.type === 'focusout') {
+                TagC.saveForTemplate($(this).data('id'));
             }
         });
 

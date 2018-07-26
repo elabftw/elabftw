@@ -37,7 +37,7 @@ try {
     $ReleaseCheck = new ReleaseCheck($App->Config);
     try {
         $ReleaseCheck->getUpdatesIni();
-    } catch(RuntimeException $e) {
+    } catch (RuntimeException $e) {
         $App->Log->warning('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     }
 

@@ -10,12 +10,12 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40101 SET character_set_client = utf8 */;
+/*!40101 SET character_set_client = utf8mb4 */;
 
 --
 -- Table structure for table `banned_users`
@@ -27,7 +27,7 @@ CREATE TABLE `banned_users` (
   `user_infos` text NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `config`
@@ -38,7 +38,7 @@ CREATE TABLE `config` (
   `conf_name` varchar(255) NOT NULL,
   `conf_value` text,
   PRIMARY KEY (`conf_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- tags
@@ -70,7 +70,7 @@ CREATE TABLE `experiments_steps` (
             `finished` TINYINT(1) NOT NULL DEFAULT '0',
             `finished_time` DATETIME NULL DEFAULT NULL,
             PRIMARY KEY (`id`)
-        )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 --
 -- Table structure for table `experiments`
 --
@@ -95,7 +95,7 @@ CREATE TABLE `experiments` (
   `visibility` varchar(255) NOT NULL DEFAULT 'team',
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `experiments_comments`
@@ -109,7 +109,7 @@ CREATE TABLE `experiments_comments` (
   `comment` text NOT NULL,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `items_comments`
@@ -123,7 +123,7 @@ CREATE TABLE `items_comments` (
   `comment` text NOT NULL,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 --
 -- Table structure for table `experiments_links`
 --
@@ -134,7 +134,7 @@ CREATE TABLE `experiments_links` (
   `item_id` int(10) unsigned NOT NULL,
   `link_id` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `experiments_revisions`
@@ -148,7 +148,7 @@ CREATE TABLE `experiments_revisions` (
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `items_revisions`
@@ -162,7 +162,7 @@ CREATE TABLE `items_revisions` (
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `experiments_templates`
@@ -177,7 +177,7 @@ CREATE TABLE `experiments_templates` (
   `userid` int(10) unsigned DEFAULT NULL,
   `ordering` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `groups`
@@ -191,7 +191,7 @@ CREATE TABLE `groups` (
   `is_admin` text NOT NULL,
   `can_lock` text NOT NULL,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `items`
@@ -210,7 +210,7 @@ CREATE TABLE `items` (
   `userid` int(10) unsigned NOT NULL,
   `visibility` varchar(255) NOT NULL DEFAULT 'team',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 --
@@ -227,21 +227,7 @@ CREATE TABLE `items_types` (
   `ordering` int(10) unsigned DEFAULT NULL,
   `bookable` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Table structure for table `logs`
---
-
-DROP TABLE IF EXISTS `logs`;
-CREATE TABLE `logs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `user` text COLLATE utf8_unicode_ci,
-  `body` text COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `status`
@@ -257,7 +243,7 @@ CREATE TABLE `status` (
   `is_default` tinyint(1) DEFAULT NULL,
   `ordering` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `teams`
@@ -279,7 +265,7 @@ CREATE TABLE `teams` (
   `stamphash` varchar(10) DEFAULT 'sha256',
   `team_orgid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`team_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `uploads`
@@ -298,7 +284,7 @@ CREATE TABLE `uploads` (
   `hash` varchar(128) DEFAULT NULL,
   `hash_algorithm` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `users`
@@ -343,7 +329,7 @@ CREATE TABLE `users` (
   `allow_edit` tinyint(1) NOT NULL DEFAULT 0,
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 --
@@ -354,7 +340,7 @@ CREATE TABLE IF NOT EXISTS `team_groups` (
   `id` int(10) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   `team` int(10) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for table `team_groups`
@@ -371,7 +357,7 @@ ALTER TABLE `team_groups`
 CREATE TABLE IF NOT EXISTS `users2team_groups` (
   `userid` int(10) unsigned NOT NULL,
   `groupid` int(10) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `team_events`
@@ -386,7 +372,7 @@ CREATE TABLE IF NOT EXISTS `team_events` (
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- todolist
@@ -399,7 +385,7 @@ CREATE TABLE IF NOT EXISTS `todolist` (
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 --
@@ -415,7 +401,7 @@ CREATE TABLE IF NOT EXISTS `idps` (
   `slo_binding` VARCHAR(255) NOT NULL,
   `x509` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 

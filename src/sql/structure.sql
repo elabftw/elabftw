@@ -35,7 +35,7 @@ CREATE TABLE `banned_users` (
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
-  `conf_name` varchar(255) NOT NULL,
+  `conf_name` varchar(100) NOT NULL,
   `conf_value` text,
   PRIMARY KEY (`conf_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -128,7 +128,7 @@ class Experiments extends AbstractEntity
      */
     public function updateCategory(int $status): bool
     {
-        $sql = "UPDATE experiments SET status = :status WHERE id = :id";
+        $sql = "UPDATE experiments SET status = :status WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $status);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

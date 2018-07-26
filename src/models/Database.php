@@ -84,7 +84,7 @@ class Database extends AbstractEntity
      */
     public function updateCategory(int $category): bool
     {
-        $sql = "UPDATE items SET type = :type WHERE id = :id";
+        $sql = "UPDATE items SET type = :type WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $category);
         $req->bindParam(':id', $this->id);

@@ -397,7 +397,7 @@ abstract class AbstractEntity
      */
     public function updateVisibility(string $visibility): bool
     {
-        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id";
+        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':visibility', $visibility);
         $req->bindParam(':id', $this->id);

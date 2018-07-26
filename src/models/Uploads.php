@@ -184,7 +184,7 @@ class Uploads implements CrudInterface
      */
     protected function getCleanName(): string
     {
-        $hash = hash("sha512", \uniqid((string) \mt_rand(), true));
+        $hash = \hash("sha512", \bin2hex(\random_bytes(16)));
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
         $folderPath = $this->uploadsPath . $folder;

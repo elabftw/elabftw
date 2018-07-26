@@ -146,11 +146,11 @@ class Auth
      */
     private function setToken(): bool
     {
-        $token = hash('sha256', \uniqid((string) \mt_rand(), true));
+        $token = \hash('sha256', \bin2hex(\random_bytes(16)));
 
         // create cookie
         // name, value, expire, path, domain, secure, httponly
-        setcookie('token', $token, time() + 2592000, '/', '', true, true);
+        \setcookie('token', $token, time() + 2592000, '/', '', true, true);
 
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";

@@ -106,12 +106,12 @@ class Users
         $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
-        $salt = \hash("sha512", \uniqid((string) \mt_rand(), true));
+        $salt = \hash("sha512", \bin2hex(\random_bytes(16)));
         // Create hash
         $passwordHash = \hash("sha512", $salt . $password);
 
         // Registration date is stored in epoch
-        $registerDate = time();
+        $registerDate = \time();
 
         // get the group for the new user
         $group = $this->getGroup($team);
@@ -671,7 +671,7 @@ class Users
 
         $this->Auth->checkPasswordLength($password);
 
-        $salt = \hash("sha512", \uniqid((string) \mt_rand(), true));
+        $salt = \hash("sha512", \bin2hex(\random_bytes(16)));
         $passwordHash = \hash("sha512", $salt . $password);
 
         $sql = "UPDATE users SET salt = :salt, password = :password, token = null WHERE userid = :userid";

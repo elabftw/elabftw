@@ -53,7 +53,7 @@ class ImportZip extends AbstractImport
 
         $this->target = $this->getTarget();
         // this is where we will extract the zip
-        $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \uniqid((string) \mt_rand(), true);
+        $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \bin2hex(\random_bytes(16));
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
             throw new RuntimeException('Unable to create temporary folder! (' . $this->tmpPath . ')');
         }

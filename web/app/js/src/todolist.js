@@ -10,6 +10,17 @@
 (function() {
     'use strict';
 
+    // TODOLIST TOGGLE
+    // use shortcut
+    key($('#todoSc').data('toggle'), function() {
+        $('#todoList').toggle();
+    });
+    // or click the button
+    $(document).on('click', '.todoToggle', function() {
+        $('#todoList').toggle();
+    });
+
+
     var Todolist = {
         controller: 'app/controllers/TodolistController.php',
         // add a todo item
@@ -77,9 +88,6 @@
 
     $('#todo-form').submit(function(e) {
         Todolist.create(e);
-    });
-    $(document).on('click', '.todoToggle', function() {
-        $('#todoList').toggle();
     });
     $(document).on('click', '.todoDestroyAll', function() {
         Todolist.destroyAll();

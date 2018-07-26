@@ -19,11 +19,6 @@ $(document).ready(function() {
         $('#help_container').hide();
     });
 
-    // TODOLIST TOGGLE
-    key($('#todoSc').data('toggle'), function() {
-        $('#todoList').toggle();
-    });
-
     // MAKE THE FILE COMMENT FIELD EDITABLE
     //$('#files_div').on('mouseover', '.file-comment', function() {
     $('.file-comment.editable').each(function() {
@@ -218,7 +213,7 @@ function makeEditableFileComment(element) {
     });
 }
 
-// SEARCH PAGE
+// insert a get param in the url and reload the page
 function insertParamAndReload(key, value) {
     key = escape(key); value = escape(value);
 
@@ -242,34 +237,4 @@ function insertParamAndReload(key, value) {
         // reload the page
         document.location.search = kvp.join('&');
     }
-}
-
-// UCP
-
-// for importing user template
-function readFile(file, onLoadCallback){
-    // check for the various File API support
-    if (!window.FileReader) {
-        alert('Please use a modern web browser. Import aborted.');
-        return false;
-    }
-    var reader = new FileReader();
-    reader.onload = onLoadCallback;
-    reader.readAsText(file);
-}
-
-// parse the query from url
-// from  http://stackoverflow.com/a/1099670
-function getQueryParams(qs) {
-    qs = qs.split('+').join(' ');
-
-    var params = {},
-    tokens,
-    re = /[?&]?([^=]+)=([^&]*)/g;
-
-    while ((tokens = re.exec(qs)) !== null) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
-
-    return params;
 }

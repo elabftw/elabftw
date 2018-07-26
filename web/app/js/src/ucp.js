@@ -54,7 +54,12 @@
         // input to upload an elabftw.tpl file
         $('#import_tpl').hide().on('change', function(e) {
             var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "").replace("C:\\fakepath\\", "");
-            readFile(this.files[0], function(e) {
+            if (!window.FileReader) {
+                alert('Please use a modern web browser. Import aborted.');
+                return false;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
                 // switch for markdown mode
                 if ($('#new_tpl_txt').hasClass('mceditable')) {
                     tinyMCE.get('new_tpl_txt').setContent(e.target.result);
@@ -63,7 +68,9 @@
                 }
                 $('#new_tpl_name').val(title);
                 $('#import_tpl').hide();
-            });
+            };
+
+            reader.readAsText(this.files[0]);
         });
 
         $('.nav-pills').sortable({

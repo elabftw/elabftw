@@ -21079,8 +21079,18 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 
             // ELABFTW CUSTOMIZATION
             // save directly in a file and upload it
-            var query = getQueryParams(document.location.search);
-            var item = query.id;
+
+            // get query params from url
+            // from  http://stackoverflow.com/a/1099670
+            var qs = document.location.search.split('+').join(' ');
+            var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while ((tokens = re.exec(qs)) !== null) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+            }
+            var item = params.id;
             var page = location.pathname.substring(1);
             var type = 'experiments';
             if (page === 'database.php') {

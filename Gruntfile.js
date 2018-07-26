@@ -18,13 +18,13 @@ module.exports = function(grunt) {
           'web/app/js/elabftw.min.js': [
               'node_modules/vanderlee-colorpicker/jquery.colorpicker.js',
               'node_modules/jquery-jeditable/src/jquery.jeditable.js',
-              'web/app/js/src/common.js',
+              'web/app/js/src/keymaster.js',
               'web/app/js/src/cornify.js',
               'web/app/js/src/jquery.rating.js',
               'web/app/js/src/3Dmol-nojquery.js',
               'web/app/js/src/3Dmol-helpers.js',
               'web/app/js/src/prism.js',
-              'web/app/js/src/keymaster.js'],
+              'web/app/js/src/common.js'],
 
           'web/app/js/chemdoodle/chemdoodle.min.js': [
               'web/app/js/src/chemdoodle/chemdoodle-unpacked.js',

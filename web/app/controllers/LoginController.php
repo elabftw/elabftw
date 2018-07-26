@@ -56,6 +56,14 @@ try {
             $rememberme = 'off';
         }
 
+        // increase failed attempts counter
+        if (!$Session->has('failed_attempt')) {
+            $Session->set('failed_attempt', 1);
+        } else {
+            $n = $Session->get('failed_attempt');
+            $n++;
+            $Session->set('failed_attempt', $n);
+        }
         // the actual login
         if ($App->Users->Auth->login($Request->request->get('email'), $Request->request->get('password'), $rememberme)) {
             if ($Request->cookies->has('redirect')) {
@@ -71,13 +79,6 @@ try {
                 'ko',
                 _("Login failed. Either you mistyped your password or your account isn't activated yet.")
             );
-            if (!$Session->has('failed_attempt')) {
-                $Session->set('failed_attempt', 1);
-            } else {
-                $n = $Session->get('failed_attempt');
-                $n++;
-                $Session->set('failed_attempt', $n);
-            }
         }
     }
 

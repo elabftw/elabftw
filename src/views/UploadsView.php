@@ -96,14 +96,32 @@ class UploadsView
                 "' data-molpath='app/download.php?f=" . $filepath . "'></canvas></div>";
         // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $molExtensions, true)) {
-            // try to be clever and use cartoon representation for pdb files
+            $molStyle = "stick";
+            // use cartoon representation for pdb files
             if ($ext === 'pdb') {
-                $isProtein = true;
-            } else {
-                $isProtein = false;
+                $molStyle = "cartoon:color=spectrum";
             }
-            $molviewer = new MolViewer($upload['id'], $filepath, $isProtein);
-            $html .= $molviewer->getViewerDiv();
+            // the id of the div with the representation of the molecule
+            $molDivId = '3Dmol_' . $upload['id'];
+
+            // build control dropdown to change the representation style
+            $controls = "<div style='padding-bottom: 5px' class='btn-group'>";
+            $controls .= "<button type='button' class='btn btn-secondary btn-xs dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>" . _('Style') . " <span class='caret'></span></button>";
+            $controls .= "<ul class='dropdown-menu clickable'>";
+
+            // Build dropdown menu
+            $controls .= "<li class='dropdown-item'><span data-divid='" . $molDivId . "' class='3dmol-cartoon'>" . _('Cartoon (proteins only)') . "</span></li>";
+            $controls .= "<li class='dropdown-item'><span data-divid='" . $molDivId . "' class='3dmol-cross'>" . _('Cross') . "</span/></li>";
+            $controls .= "<li class='dropdown-item'><span data-divid='" . $molDivId . "' class='3dmol-line'>" . _('Line') . "</span/></li>";
+            $controls .= "<li class='dropdown-item'><span data-divid='" . $molDivId . "' class='3dmol-sphere'>" . _('Sphere') . "</span/></li>";
+            $controls .= "<li class='dropdown-item'><span data-divid='" . $molDivId . "' class='3dmol-stick'>" . _('Stick') . "</span/></li>";
+
+            $controls .= "</ul>";
+            $controls .= "</div>";
+            $molDiv = "<div class='row viewer_3Dmoljs' data-href='app/download.php?f=" . $filepath .
+                "' data-style='" . $molStyle . "' data-backgroundcolor='0xffffff' id='" . $molDivId . "'></div>";
+            $html .= $controls . $molDiv;
+
         } else {
             $html .= "<i class='fas " . Tools::getIconFromExtension($ext) . " thumb rounded mx-auto d-block'></i>";
         }

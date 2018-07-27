@@ -3964,8 +3964,8 @@ tinymce-mention@^4.0.2:
     jquery ">=1.8.3"
 
 tinymce@^4.7:
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.0.tgz#3c4c88701d0526374efb45bafbb820c7715e2356"
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.1.tgz#09f4b654f4d8eef0501fc1c3036b5e9cd33d9863"
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"
@@ -4241,8 +4241,8 @@ webpack-sources@^1.0.1, webpack-sources@^1.1.0:
     source-map "~0.6.1"
 
 webpack@^4.16:
-  version "4.16.2"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.16.2.tgz#c3e0e771adc94582e0543dd18d7436066051e885"
+  version "4.16.3"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.16.3.tgz#861be3176d81e7e3d71c66c8acc9bba35588b525"
   dependencies:
     "@webassemblyjs/ast" "1.5.13"
     "@webassemblyjs/helper-module-context" "1.5.13"

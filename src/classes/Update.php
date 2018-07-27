@@ -33,7 +33,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 42;
+    private const REQUIRED_SCHEMA = 43;
 
     /**
      * Init Update with Config and Db

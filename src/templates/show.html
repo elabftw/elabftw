@@ -11,37 +11,39 @@
 <style>
 #dropdownMenu1{ background-color: white;color: #495057;border: 1px solid #ced4da}
 li.dropdown-item > a { color:black;}
-li.dropdown-item:hover a{ color:#29AEB9;}
+li.dropdown-item:hover{ color:#29AEB9;}
 </style>
             <button class='btn dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
             {% if Entity.type == 'experiments' %}
-                <li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>
+                <a href='app/controllers/ExperimentsController.php?create=true'><li class='dropdown-item'>
                     {% trans %}
                     Experiment
                     {% plural 1 %}
                     Experiments
                     {% endtrans %}
-                    </a>
-                </li>
+                </li></a>
                 <div class="dropdown-divider"></div>
                 {% if templatesArr|length > 0 %}
                 <h6 class="dropdown-header">{{ 'Templates'|trans }}</h6>
                     {% for tpl in templatesArr %}
+                        <a href='app/controllers/ExperimentsController.php?create=true&tpl={{ tpl.id }}'>
                         <li class='dropdown-item'>
-                            <a href='app/controllers/ExperimentsController.php?create=true&tpl={{ tpl.id }}'>{{ tpl.name|raw }}</a>
-                        </li>
+                            {{ tpl.name|raw }}
+                        </li></a>
                     {% endfor %}
                 {% else %}
                 <h6 class="dropdown-header">{{ 'No templates found'|trans }}</h6>
                 {% endif %}
                 <div class="dropdown-divider"></div>
-                <li class='dropdown-item'><a href='ucp.php?tab=3'>{{ 'Manage templates'|trans }}</a></li>
+                    <a href='ucp.php?tab=3'>
+                        <li class='dropdown-item'>{{ 'Manage templates'|trans }}</li>
+                    </a>
             {% else %}
                 {% for category in categoryArr %}
-                    <li class='dropdown-item'>
-                        <a style='color:#{{ category.color }}' href='app/controllers/DatabaseController.php?create={{ category.category_id }}'>{{ category.category }}</a>
-                    </li>
+                    <a href='app/controllers/DatabaseController.php?create={{ category.category_id }}'>
+                        <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
+                    </a>
                 {% endfor %}
             {% endif %}
         </ul>

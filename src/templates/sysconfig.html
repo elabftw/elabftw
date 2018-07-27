@@ -83,6 +83,22 @@
             <option value='1'{{ App.Config.configArr.anon_users ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
             <option value='0'{{ not App.Config.configArr.anon_users ? " selected='selected'" }}>{{ 'No'|trans }}</option>
         </select>
+        <p class='smallgray'>{{ 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans }}</p>
+
+        <label for='open_science' class='block'>{{ 'Switch this instance in open science mode:'|trans }}</label>
+        <select id='open_science' name="open_science" class="clean-form col-3-form">
+            <option {{ App.Config.configArr.open_science == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+            <option {{ App.Config.configArr.open_science == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+        </select>
+        <p class='smallgray'>{{ 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans }}</p>
+
+        <label for='open_team' class='block'>{{ 'Select which team will be open to the world in open science mode:'|trans }}</label>
+        <select id='open_team' name="open_team" class="clean-form col-3-form">
+            {% for team in teamsArr %}
+            <option {{ App.Config.configArr.open_team == team.team_id ? ' selected' }} value='{{ team.team_id }}'>{{ team.team_name }}</option>
+            {% endfor %}
+        </select>
+        <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
 
         <label for='local_register' class='block'>{{ 'Enable local account creation:'|trans }}</label>
         <select id='local_register' name="local_register" class="clean-form col-3-form">
@@ -96,13 +112,6 @@
             <option {{ App.Config.configArr.local_login == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
         </select>
         <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
-
-        <label for='open_science' class='block'>{{ 'Switch this instance in open science mode:'|trans }}</label>
-        <select id='open_science' name="open_science" class="clean-form col-3-form">
-            <option {{ App.Config.configArr.open_science == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-            <option {{ App.Config.configArr.open_science == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-        </select>
-        <p class='smallgray'>{{ 'This allows search engines to crawl the site.'|trans }}</p>
 
         <div class='submitButtonDiv'>
             <button type='submit' class='button'>{{ 'Save'|trans }}</button>

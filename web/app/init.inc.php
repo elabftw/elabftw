@@ -80,11 +80,13 @@ try {
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
 
     // autologin as anon if it's allowed by sysadmin
-    $autoAnon = array('experiments.php', 'database.php', 'search.php');
-    if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth') ) {
-        $App->Users->Auth->loginAsAnon(1);
+    if ($App->Config->configArr['open_science']) {
+        // only autologin on selected pages and if we are not authenticated with an account
+        $autoAnon = array('experiments.php', 'database.php', 'search.php');
+        if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth') ) {
+            $App->Users->Auth->loginAsAnon($App->Config->configArr['open_team'] ?? 1);
+        }
     }
-
 
     if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {
         // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE

@@ -33,7 +33,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 42;
+    private const REQUIRED_SCHEMA = 43;
 
     /**
      * Init Update with Config and Db
@@ -101,6 +101,11 @@ class Update
             // 20180716 v2.0.0
             $this->schema42();
             $this->updateSchema(42);
+        }
+        if ($current_schema < 43) {
+            // 20180727 v2.0.0
+            $this->schema43();
+            $this->updateSchema(43);
         }
         // place new schema functions above this comment
 
@@ -341,4 +346,17 @@ class Update
         }
     }
 
+    /**
+     * Add open_science to config
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema43(): void
+    {
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('open_science', '0'), ('open_team', NULL);";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem adding open_science and open_team to config (schema 43)!');
+        }
+    }
 }

@@ -179,10 +179,6 @@ class Email
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return null;
         }
-        // get url
-        $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/admin.php';
-
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = (new Swift_Message())
@@ -193,7 +189,7 @@ class Email
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
         // generate Swift_Mailer instance
         $mailer = $this->getMailer();
         // SEND EMAIL

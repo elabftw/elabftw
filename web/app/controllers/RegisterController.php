@@ -29,7 +29,7 @@ try {
         throw new Exception('Only humans can register an account!');
     }
 
-    if ((Tools::checkId($Request->request->get('team')) === false) ||
+    if ((Tools::checkId((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
         !$Request->request->get('lastname') ||
         !$Request->request->get('email') ||

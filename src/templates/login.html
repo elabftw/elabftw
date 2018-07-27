@@ -53,7 +53,8 @@
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
         <form method='post' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
-            <select name='idp_id'>
+            <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
+            <select name='idp_id' id='idp_login_select'>
                 {% for idp in idpsArr %}
                     <option value='{{ idp.id }}'>{{ idp.name }}</option>
                 {% endfor %}
@@ -66,8 +67,8 @@
         <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
         <br>
         <form method='post' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
-            <select name='team_id'>
-                <option selected disabled>{{ '------ Select a team ------'|trans }}</option>
+            <label for='anon_login_select'>{{ 'Select a team'|trans }}</label>
+            <select name='team_id' id='anon_login_select'>
                 {% for team in teamsArr %}
                     <option value='{{ team.team_id }}'>{{ team.team_name }}</option>
                 {% endfor %}

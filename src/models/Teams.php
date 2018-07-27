@@ -39,6 +39,21 @@ class Teams implements CrudInterface
     }
 
     /**
+     * Check if the team exists from the id
+     *
+     * @param int $id team id
+     * @return bool
+     */
+    public function isExisting(int $id): bool
+    {
+        $sql = 'SELECT team_id FROM teams WHERE team_id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->execute();
+        return (bool) $req->fetch();
+    }
+
+    /**
      * Check if the team exists already and create one if not
      *
      * @param string $name Name of the team (case sensitive)

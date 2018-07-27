@@ -75,8 +75,11 @@ class Idps implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
-
-        return $req->fetch();
+        $res = $req->fetch();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

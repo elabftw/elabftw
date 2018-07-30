@@ -32,9 +32,9 @@ class Users
     public $needValidation = false;
 
     /** @var array $userData what you get when you read() */
-    public $userData;
+    public $userData = array();
 
-    /** @var int $userid our userid */
+    /** @var int|null $userid our userid */
     public $userid;
 
     /**

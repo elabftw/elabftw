@@ -180,7 +180,9 @@ class Config
             ('local_register', '1'),
             ('anon_users', '0'),
             ('url', NULL),
-            ('schema', :schema);";
+            ('schema', :schema),
+            ('open_science', '0'),
+            ('open_team', NULL);";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

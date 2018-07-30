@@ -102,6 +102,11 @@ class Update
             $this->schema42();
             $this->updateSchema(42);
         }
+        if ($current_schema < 43) {
+            // 20180727 v2.0.0
+            $this->schema43();
+            $this->updateSchema(43);
+        }
         // place new schema functions above this comment
 
         $this->cleanTmp();
@@ -341,4 +346,17 @@ class Update
         }
     }
 
+    /**
+     * Add open_science to config
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema43(): void
+    {
+        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('open_science', '0'), ('open_team', NULL);";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem adding open_science and open_team to config (schema 43)!');
+        }
+    }
 }

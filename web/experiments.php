@@ -174,7 +174,7 @@ try {
         }
 
         // PAGINATION
-        $limit = $App->Users->userData['limit_nb'];
+        $limit = $App->Users->userData['limit_nb'] ?? 15;
         if ($Request->query->has('limit') && Tools::checkId((int) $Request->query->get('limit')) !== false) {
             $limit = $Request->query->get('limit');
         }

@@ -123,7 +123,7 @@ class MakePdf extends AbstractMake
     {
         if ($this->Entity instanceof Experiments && $this->Entity->entityData['locked']) {
             // get info about the locker
-            $Locker = new Users($this->Entity->entityData['lockedby']);
+            $Locker = new Users((int) $this->Entity->entityData['lockedby']);
 
             // separate the date and time
             $lockdate = explode(' ', $this->Entity->entityData['lockedwhen']);

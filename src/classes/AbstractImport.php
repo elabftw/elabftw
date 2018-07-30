@@ -48,6 +48,7 @@ abstract class AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
         $this->Cookies = $request->cookies;
+        $this->target = $this->getTarget();
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
             throw new RuntimeException($this->UploadedFile->getErrorMessage());
@@ -70,7 +71,7 @@ abstract class AbstractImport
      * @throws RuntimeException
      * @return int The type of item
      */
-    protected function getTarget(): int
+    private function getTarget(): int
     {
         if ($this->Cookies->get('importTarget') !== false) {
             return (int) $this->Cookies->get('importTarget');

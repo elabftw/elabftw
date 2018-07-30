@@ -26,7 +26,7 @@ trait EntityTrait
     /** @var Users $Users our user */
     public $Users;
 
-    /** @var int $id Id of the entity */
+    /** @var int|null $id Id of the entity */
     public $id;
 
     /**

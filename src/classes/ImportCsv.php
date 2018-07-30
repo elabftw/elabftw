@@ -38,7 +38,6 @@ class ImportCsv extends AbstractImport
     {
         parent::__construct($users, $request);
 
-        $this->target = $this->getTarget();
         $this->openFile();
         $this->readCsv();
     }

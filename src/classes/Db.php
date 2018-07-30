@@ -23,7 +23,7 @@ final class Db
     /** @var PDO $connection Connection to PDO */
     private $connection;
 
-    /** @var Db $instance store the single instance of the class */
+    /** @var Db|null $instance store the single instance of the class */
     private static $instance;
 
     /** @var int $nq total number of queries */

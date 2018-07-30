@@ -51,7 +51,6 @@ class ImportZip extends AbstractImport
     {
         parent::__construct($users, $request);
 
-        $this->target = $this->getTarget();
         // this is where we will extract the zip
         $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \bin2hex(\random_bytes(16));
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
@@ -140,7 +139,7 @@ class ImportZip extends AbstractImport
             $this->Entity = new Database($this->Users, $newItemId);
         }
 
-        if (\mb_strlen($item['tags']) > 1) {
+        if (\mb_strlen($item['tags'] ?? '') > 1) {
             $this->tagsDbInsert($item['tags']);
         }
     }
@@ -216,7 +215,7 @@ class ImportZip extends AbstractImport
         $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
         $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file) : unlink($file);
+            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
         }
         // and remove folder itself
         rmdir($this->tmpPath);

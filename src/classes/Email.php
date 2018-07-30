@@ -173,11 +173,12 @@ class Email
      *
      * @param int $team
      * @throws Exception
+     * @return void
      */
-    public function alertAdmin($team)
+    public function alertAdmin($team): void
     {
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
-            return null;
+            return;
         }
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
@@ -207,12 +208,13 @@ class Email
     /**
      * Alert a user that they are validated
      *
-     * @param string|null $email
+     * @param string $email email of the newly validated user
+     * @return void
      */
-    public function alertUserIsValidated($email)
+    public function alertUserIsValidated($email): void
     {
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
-            return null;
+            return;
         }
 
         // now let's get the URL so we can have a nice link in the email

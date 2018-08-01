@@ -28,9 +28,6 @@
         "codeception/codeception": "^2",
         "pyrech/composer-changelogs": "^1.5"
     },
-    "conflict": {
-        "codeception/stub": ">=2.0.2"
-    },
     "autoload": {
         "psr-4": {
             "Elabftw\\Elabftw\\" : ["src/classes", "src/models", "src/views"]

@@ -39,9 +39,9 @@ class Uploads implements CrudInterface
     /**
      * Constructor
      *
-     * @param AbstractEntity $entity instance of Experiments or Database
+     * @param AbstractEntity|null $entity instance of Experiments or Database
      */
-    public function __construct(AbstractEntity $entity)
+    public function __construct(?AbstractEntity $entity = null)
     {
         $this->Entity = $entity;
         $this->Db = Db::getConnection();
@@ -246,18 +246,16 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Read infos from an upload ID and type
-     * Type can be experiments, timestamp-pdf, items, timestamp-token
+     * Read infos from an upload ID
      *
      * @param int $id id of the uploaded item
      * @return array
      */
     public function readFromId(int $id): array
     {
-        $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
+        $sql = "SELECT * FROM uploads WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
         return $req->fetch();

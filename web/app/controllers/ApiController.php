@@ -53,6 +53,9 @@ try {
 
     // load Entity
     if ($endpoint === 'uploads') {
+        if ($id === null) {
+            throw new Exception('You need to specify an ID');
+        }
         $Entity = new Uploads();
         $uploadData = $Entity->readFromId($id);
         // check user owns the file

@@ -497,7 +497,7 @@ abstract class AbstractEntity
                     }
 
                     // if it's organization, we need to be logged in
-                    if (($item['visibility'] === 'organization') && $this->Users->userid) {
+                    if (($item['visibility'] === 'organization') && $this->Users->userid !== null) {
                         return array('read' => true, 'write' => false);
                     }
 
@@ -512,7 +512,7 @@ abstract class AbstractEntity
                     // if the vis. setting is a team group, check we are in the group
                     if (Tools::checkId((int) $item['visibility']) !== false) {
                         $TeamGroups = new TeamGroups($this->Users);
-                        if ($TeamGroups->isInTeamGroup($this->Users->userid, (int) $item['visibility'])) {
+                        if ($TeamGroups->isInTeamGroup((int) $this->Users->userid, (int) $item['visibility'])) {
                             return array('read' => true, 'write' => false);
                         }
                     }
@@ -545,7 +545,7 @@ abstract class AbstractEntity
             }
 
             // if it's organization, we need to be logged in
-            if (($item['visibility'] === 'organization') && $this->Users->userid) {
+            if (($item['visibility'] === 'organization') && $this->Users->userid !== null) {
                 return array('read' => true, 'write' => false);
             }
 

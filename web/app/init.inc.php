@@ -83,7 +83,7 @@ try {
     if ($App->Config->configArr['open_science']) {
         // only autologin on selected pages and if we are not authenticated with an account
         $autoAnon = array('experiments.php', 'database.php', 'search.php');
-        if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth') ) {
+        if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
             $App->Users->Auth->loginAsAnon($App->Config->configArr['open_team'] ?? 1);
         }
     }

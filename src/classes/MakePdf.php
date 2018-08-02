@@ -358,6 +358,16 @@ class MakePdf extends AbstractMake
             $cjkStyle = " style='" . $cjkFont . "'";
         }
 
+        $pdfSig = '';
+        $Request = Request::createFromGlobals();
+        if ($Request->cookies->get('pdf_sig') === '1') {
+            $pdfSig = "<div class='footer-block signatures'>
+User's signature:<br><br>
+Witness's name:<br><br>
+Witness's signature:<br><br>
+</div>";
+        }
+
         // we add a custom style for td for bug #350
         return '
 <html>
@@ -380,8 +390,8 @@ class MakePdf extends AbstractMake
         </p>
     </div>
 </htmlpageheader>
-<htmlpagefooter name="footer">
-    <div id="footer">
+<htmlpagefooter name="footer">' . $pdfSig . '
+    <div class="footer-block footer">
         PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
         <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
     </div>

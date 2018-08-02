@@ -119,6 +119,11 @@
               {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
             />
             <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
+            <br>
+            <input id='pdf_sig' type='checkbox' name='pdf_sig'
+              {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
+            />
+            <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)' }}</label>
 
             </p>
         </section>

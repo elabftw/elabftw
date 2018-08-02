@@ -136,7 +136,7 @@ tr:nth-child(odd) {
     margin-top: 1em;
 }
 
-#header, #footer, h1, h2, h3, h4, table {
+#header, .footer, h1, h2, h3, h4, table {
     font-family: "Lato", sans-serif;
 }
 
@@ -144,14 +144,21 @@ tr:nth-child(odd) {
     border-bottom: 1px solid #dcdddc;
 }
 
-#footer {
+.footer-block {
     background-color: #e2e2e2;
     padding: 10px 0;
     width: 100%;
     font-size: 80%;
-    text-align: center;
     border-top: 1px solid #dcdddc;
-    border-radius: 5mm;
+    border-radius: 5px;
+}
+
+.signatures {
+    padding-left: 10px;
+}
+
+.footer {
+    text-align: center;
 }
 
 /* caption for tinymce */

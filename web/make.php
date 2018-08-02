@@ -67,7 +67,7 @@ try {
     }
 
     // the pdf is shown directly, but for csv or zip we want a download page
-    if (\in_array($Request->query->get('what'), array('csv', 'zip'), true)) {
+    if (\in_array($Request->query->get('what'), array('csv', 'zip'), true) && !$Request->cookies->has('stream_zip')) {
 
         $filesize = Tools::formatBytes(filesize($Make->filePath));
 

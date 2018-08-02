@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use ZipStream\Option\Archive as ArchiveOptions;
+use ZipStream\ZipStream;
 
 /**
  * Make a zip archive from experiment or db item
@@ -61,7 +62,7 @@ class MakeStreamZip extends AbstractMake
         $opt = new ArchiveOptions();
         //$opt->setZeroHeader(true);
         $opt->setEnableZip64(false);
-        $this->Zip = new \ZipStream\ZipStream('elabftw-export.zip', $opt);
+        $this->Zip = new ZipStream('elabftw-export.zip', $opt);
 
         $this->idList = $idList;
 

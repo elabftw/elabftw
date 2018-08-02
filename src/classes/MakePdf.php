@@ -363,8 +363,8 @@ class MakePdf extends AbstractMake
         if ($Request->cookies->get('pdf_sig') === '1') {
             $pdfSig = "<div class='footer-block signatures'>
 User's signature:<br><br>
-Witness's name:<br><br>
-Witness's signature:<br><br>
+Witness' name:<br><br>
+Witness' signature:<br><br>
 </div>";
         }
 

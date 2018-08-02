@@ -3,18 +3,16 @@
     <h2>{{ 'Todolist'|trans }}</h2>
     <form id="todo-form">
         <input id="todo" type="text" />
-        <input id="submit" type="submit" class='button' value="{{ 'Add'|trans }}">
+        <input type="submit" class='button button-add-todolist' value="{{ 'Add'|trans }}">
     </form>
-    <p>
-        <ul id='todoItems-list'>
-            {% for todoItem in App.todoItems %}
-            <li id='todoItem_{{ todoItem['id'] }}'>
-                <i class='fas fa-times clickable align_right destroyTodoItem' data-id='{{ todoItem.id }}'></i>
-                <span style='font-size:60%;display:block;'>{{ todoItem['creation_time'] }}</span>
-                <span id='todoItem_{{ todoItem['id'] }}' class='todoitem editable'>{{ todoItem.body }}</span></li>
-            {% endfor %}
-        </ul>
-    </p>
+    <ul id='todoItems-list'>
+        {% for todoItem in App.todoItems %}
+        <li id='todoItem_{{ todoItem['id'] }}' class='todoItem-li'>
+            <i class='fas fa-times clickable align_right destroyTodoItem' data-id='{{ todoItem.id }}'></i>
+            <span style='font-size:60%;display:block;'>{{ todoItem['creation_time'] }}</span>
+            <span id='todoItem_{{ todoItem['id'] }}' class='todoitem editable'>{{ todoItem.body }}</span></li>
+        {% endfor %}
+    </ul>
     <a href="#" style='float:left' class='todoDestroyAll'>Clear All</a>
 </div>
 

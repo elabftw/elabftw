@@ -80,40 +80,39 @@
         <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><i class='fas fa-sign-out-alt'></i></a>
     </div>
     <div id='help_container' class='card m2 help-container'>
-        <p><a href='#' class='close helpClose'>&times</a>
-            <ul>
-                <li class='tip'>
-                    {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://doc.elabftw.net/manual.html'>", "</a>")|raw }}
-                </li>
-                <li class='tip'>
-                    {{ "You can use a TODOlist by pressing '%s'."|trans|format(App.Users.userData.sc_todo) }}
-                </li>
-                <li class='tip'>
-                    {{ 'You can have experiments templates (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=3'>", "</a>")|raw }}
-                </li>
-                <li class='tip'>
-                    {{ 'You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items.'|trans }}
-                </li>
-                <li class='tip'>
-                    {{ 'The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'|trans|format("<a href='admin.php?tab=4'>", "</a>")|raw }}
-                </li>
-                <li class='tip'>
-                    {{ 'If you press Ctrl Shift D in the editor, the date will appear under the cursor.'|trans }}
-                </li>
-                <li class='tip'>
-                    {{ 'Custom shortcuts are available (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=1'>", "</a>")|raw }}
-                </li>
-                <li class='tip'>
-                    {{ 'You can duplicate experiments in one click.'|trans }}
-                </li>
-                <li class='tip'>
-                    {{ 'Click a tag to list all items with this tag.'|trans }}
-                </li>
-                <li class='tip'>
-                    {{ 'Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'|trans }}
-                </li>
-            </ul>
-        </p>
+        <a href='#' class='close helpClose'>&times</a>
+        <ul>
+            <li class='tip'>
+                {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://doc.elabftw.net/manual.html'>", "</a>")|raw }}
+            </li>
+            <li class='tip'>
+                {{ "You can use a TODOlist by pressing '%s'."|trans|format(App.Users.userData.sc_todo) }}
+            </li>
+            <li class='tip'>
+                {{ 'You can have experiments templates (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=3'>", "</a>")|raw }}
+            </li>
+            <li class='tip'>
+                {{ 'You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items.'|trans }}
+            </li>
+            <li class='tip'>
+                {{ 'The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'|trans|format("<a href='admin.php?tab=4'>", "</a>")|raw }}
+            </li>
+            <li class='tip'>
+                {{ 'If you press Ctrl Shift D in the editor, the date will appear under the cursor.'|trans }}
+            </li>
+            <li class='tip'>
+                {{ 'Custom shortcuts are available (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=1'>", "</a>")|raw }}
+            </li>
+            <li class='tip'>
+                {{ 'You can duplicate experiments in one click.'|trans }}
+            </li>
+            <li class='tip'>
+                {{ 'Click a tag to list all items with this tag.'|trans }}
+            </li>
+            <li class='tip'>
+                {{ 'Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'|trans }}
+            </li>
+        </ul>
     </div>
     {% elseif App.Session.has('anon') %}
     <div class="user-nav">

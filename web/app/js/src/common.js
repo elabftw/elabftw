@@ -20,12 +20,10 @@ $(document).ready(function() {
     });
 
     // MAKE THE FILE COMMENT FIELD EDITABLE
-    //$('#files_div').on('mouseover', '.file-comment', function() {
     $('.file-comment.editable').each(function() {
         makeEditableFileComment($(this));
     });
     // MAKE THE COMMENT FIELD EDITABLE
-    //$('#comment_container').on('mouseover', '.comment.editable', function() {
     $('.comment.editable').each(function() {
         makeEditableComment($(this));
     });

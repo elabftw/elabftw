@@ -1040,6 +1040,10 @@ input#todo {
 #todoItems-list.ui-sortable {
     padding-left: 0;
 }
+/* fix add button too close to first item on small screen */
+#todoItems-list li:first-child {
+    margin-top: 5px;
+}
 
 .destroyTodoItem:hover {
     color: #e6614c;

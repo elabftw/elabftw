@@ -144,7 +144,7 @@ try {
         }
 
         // now get pref from the filter-order-sort menu
-        if ($Request->query->has('order')) {
+        if ($Request->query->has('order') && !empty($Request->query->get('order'))) {
             $order = $Request->query->get('order');
         }
 

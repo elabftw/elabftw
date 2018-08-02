@@ -545,6 +545,14 @@ class Users
             $new_default_vis = $params['default_vis'];
         }
 
+        // STREAM ZIP
+        // only use cookie here because it's temporary code
+        if ($params['stream_zip']) {
+            \setcookie('stream_zip', '1', time() + 2592000, '/', '', true, true);
+        } else {
+            \setcookie('stream_zip', '0', time() - 3600, '/', '', true, true);
+        }
+
         $sql = "UPDATE users SET
             limit_nb = :new_limit,
             orderby = :new_orderby,

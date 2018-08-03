@@ -138,7 +138,7 @@ class UploadsView
 
         if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
             $comment = "<i class='fas fa-comments'></i>
-                        <p class='file-comment editable d-inline' data-itemid='" . $upload['item_id'] . "' id='filecomment_" . $upload['id'] . "'>" .
+                        <p class='file-comment editable d-inline' data-type='" . $upload['type'] . "' data-itemid='" . $upload['item_id'] . "' id='filecomment_" . $upload['id'] . "'>" .
             $upload['comment'] . "</p>";
             $html .= $comment;
         }

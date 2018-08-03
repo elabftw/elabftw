@@ -38,7 +38,7 @@
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                     $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
                         // make the comment zone editable (fix issue #54)
-                        makeEditableFileComment($('#entityInfos').data('type'), $('#entityInfos').data('id'));
+                        makeEditableFileComment();
                     });
                 }
             });

@@ -21,7 +21,7 @@ $(document).ready(function() {
 
     // MAKE THE FILE COMMENT FIELD EDITABLE
     $('.file-comment.editable').each(function() {
-        makeEditableFileComment($(this));
+        makeEditableFileComment();
     });
     // MAKE THE COMMENT FIELD EDITABLE
     $('.comment.editable').each(function() {
@@ -174,14 +174,14 @@ function makeEditableComment(element) {
 }
 
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment(element) {
+function makeEditableFileComment() {
     $('.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
-            type: $(element).data('type'),
+            type: $(this).data('type'),
             comment : value,
             comment_id : $(this).attr('id'),
-            id: $(element).data('itemid')
+            id: $(this).data('itemid')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');
@@ -197,7 +197,6 @@ function makeEditableFileComment(element) {
         indicator : 'Saving...',
         name : 'fileComment',
         onedit: function() {
-            console.log($(this).text());
             if ($(this).text() === 'Click to add a comment') {
                 $(this).text('');
             }

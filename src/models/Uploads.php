@@ -43,7 +43,9 @@ class Uploads implements CrudInterface
      */
     public function __construct(?AbstractEntity $entity = null)
     {
-        $this->Entity = $entity;
+        if ($entity !== null) {
+            $this->Entity = $entity;
+        }
         $this->Db = Db::getConnection();
         $this->uploadsPath = \dirname(__DIR__, 2) . '/uploads/';
     }

@@ -232,11 +232,9 @@ class Experiments extends AbstractEntity
             throw new Exception(Tools::error(true));
         }
 
-        $experiment = $this->read();
-
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
-        $title = $experiment['title'] . ' I';
+        $title = $this->entityData['title'] . ' I';
 
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
             VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
@@ -245,10 +243,10 @@ class Experiments extends AbstractEntity
             'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Tools::kdate(),
-            'body' => $experiment['body'],
+            'body' => $this->entityData['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
-            'visibility' => $experiment['visibility'],
+            'visibility' => $this->entityData['visibility'],
             'userid' => $this->Users->userid));
         $newId = $this->Db->lastInsertId();
 

@@ -236,7 +236,7 @@ class MakeZip extends AbstractMake
         }
 
         // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFromString(".elabftw.json", json_encode($this->jsonArr));
+        $this->Zip->addFromString(".elabftw.json", (string) json_encode($this->jsonArr));
 
         $this->Zip->close();
         // check if it failed for some reason

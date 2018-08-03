@@ -69,15 +69,6 @@ class Users
             throw new Exception('Bad userid');
         }
         $this->userid = $userid;
-        $this->populate();
-    }
-
-    /**
-     * Populate userData with read()
-     *
-     */
-    private function populate(): void
-    {
         $this->userData = $this->read($this->userid);
     }
 

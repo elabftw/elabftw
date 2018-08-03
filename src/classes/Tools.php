@@ -133,8 +133,8 @@ class Tools
      */
     public static function getMaxUploadSize(): int
     {
-        $max_size = trim(ini_get('upload_max_filesize'));
-        $post_max_size = trim(ini_get('post_max_size'));
+        $max_size = trim((string) ini_get('upload_max_filesize'));
+        $post_max_size = trim((string) ini_get('post_max_size'));
 
         if (empty($max_size) || empty($post_max_size)) {
             return self::DEFAULT_UPLOAD_SIZE;

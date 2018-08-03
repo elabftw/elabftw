@@ -237,7 +237,7 @@ class Tags implements CrudInterface
 
         $res3 = true;
         if (\count($tags) === 0) {
-            $res3 = $this->destroy($tagId);
+            $res3 = $this->destroy((int) $tagId);
         }
 
         return $res1 && $res2 && $res3;

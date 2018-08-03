@@ -278,7 +278,9 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Update the comment of a file
+     * Update the comment of a file. We also pass the itemid to make sure we update
+     * the comment associated with the item sent to the controller. Because write access
+     * is checked on this value.
      *
      * @param int $id id of the file
      * @param string $comment
@@ -287,9 +289,10 @@ class Uploads implements CrudInterface
     public function updateComment(int $id, string $comment): bool
     {
         // SQL to update single file comment
-        $sql = "UPDATE uploads SET comment = :comment WHERE id = :id";
+        $sql = "UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':comment', $comment);
 
         return $req->execute();

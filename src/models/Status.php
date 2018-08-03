@@ -59,9 +59,9 @@ class Status extends AbstractCategory
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
-        $req->bindParam(':team', $team);
-        $req->bindParam(':is_timestampable', $isTimestampable);
-        $req->bindValue(':is_default', $default);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':is_timestampable', $isTimestampable, PDO::PARAM_INT);
+        $req->bindValue(':is_default', $default, PDO::PARAM_INT);
 
         $req->execute();
 
@@ -96,7 +96,7 @@ class Status extends AbstractCategory
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -145,7 +145,7 @@ class Status extends AbstractCategory
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         return $req->execute();
     }

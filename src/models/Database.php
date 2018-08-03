@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * All about the database items
@@ -70,8 +71,8 @@ class Database extends AbstractEntity
     {
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':rating', $rating);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -86,8 +87,8 @@ class Database extends AbstractEntity
     {
         $sql = "UPDATE items SET type = :type WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $category);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $category, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -132,7 +133,7 @@ class Database extends AbstractEntity
         // delete the database item
         $sql = "DELETE FROM items WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         $result[] = $this->Tags->destroyAll();
@@ -143,13 +144,13 @@ class Database extends AbstractEntity
         // get all experiments with that item linked
         $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $this->id);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         while ($links = $req->fetch()) {
             $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
             $delete_req = $this->Db->prepare($delete_sql);
-            $delete_req->bindParam(':links_id', $links['id']);
+            $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
             $result[] = $delete_req->execute();
         }
 
@@ -171,7 +172,7 @@ class Database extends AbstractEntity
         // get what is the current state
         $sql = "SELECT locked FROM items WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
         $locked = (int) $req->fetchColumn();
         if ($locked === 1) {
@@ -184,7 +185,7 @@ class Database extends AbstractEntity
         $sql = "UPDATE items SET locked = :locked WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', $locked);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

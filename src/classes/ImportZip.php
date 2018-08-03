@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use FilesystemIterator;
+use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
@@ -89,7 +90,7 @@ class ImportZip extends AbstractImport
     {
         $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
         return (int) $req->fetchColumn();
     }
@@ -111,17 +112,17 @@ class ImportZip extends AbstractImport
                 VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         if ($this->type === 'items') {
-            $req->bindParam(':userid', $this->Users->userid);
-            $req->bindParam(':type', $this->target);
+            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+            $req->bindParam(':type', $this->target, PDO::PARAM_INT);
         } else {
             $req->bindValue(':visibility', 'team');
             $req->bindValue(':status', $this->getDefaultStatus());
-            $req->bindParam(':userid', $this->target);
+            $req->bindParam(':userid', $this->target, PDO::PARAM_INT);
             $req->bindParam(':elabid', $item['elabid']);
         }
 

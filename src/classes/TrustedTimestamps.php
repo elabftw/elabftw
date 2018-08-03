@@ -359,8 +359,8 @@ class TrustedTimestamps extends AbstractMake
         $req->bindParam(':real_name', $realName);
         $req->bindParam(':long_name', $longName);
         $req->bindValue(':comment', "Timestamp token");
-        $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
@@ -462,7 +462,7 @@ class TrustedTimestamps extends AbstractMake
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         if (!$req->execute()) {
             throw new Exception('Cannot get elabid!');
         }
@@ -485,8 +485,8 @@ class TrustedTimestamps extends AbstractMake
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
-        $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':type', 'exp-pdf-timestamp');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);

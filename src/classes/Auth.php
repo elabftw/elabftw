@@ -128,7 +128,7 @@ class Auth
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
         $perm_req = $this->Db->prepare($perm_sql);
-        $perm_req->bindParam(':group_id', $this->userData['usergroup']);
+        $perm_req->bindParam(':group_id', $this->userData['usergroup'], PDO::PARAM_INT);
         $perm_req->execute();
         $group = $perm_req->fetch(PDO::FETCH_ASSOC);
 
@@ -156,7 +156,7 @@ class Auth
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
-        $req->bindParam(':userid', $this->userData['userid']);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
         return $req->execute();
     }

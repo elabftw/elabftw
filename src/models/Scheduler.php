@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
+
 /**
  * All about the team's scheduler
  */
@@ -60,12 +62,12 @@ class Scheduler
         $sql = "INSERT INTO team_events(team, item, start, end, userid, title)
             VALUES(:team, :item, :start, :end, :userid, :title)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Database->Users->userData['team']);
-        $req->bindParam(':item', $this->Database->id);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':item', $this->Database->id, PDO::PARAM_INT);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
         $req->bindParam(':title', $title);
-        $req->bindParam(':userid', $this->Database->Users->userid);
+        $req->bindParam(':userid', $this->Database->Users->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -84,8 +86,8 @@ class Scheduler
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.team = :team AND team_events.item = :item";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Database->Users->userData['team']);
-        $req->bindParam(':item', $this->Database->id);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':item', $this->Database->id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -100,7 +102,7 @@ class Scheduler
     {
         $sql = "SELECT * from team_events WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch();
@@ -119,8 +121,8 @@ class Scheduler
         $req = $this->Db->prepare($sql);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
-        $req->bindParam(':team', $this->Database->Users->userData['team']);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -136,8 +138,8 @@ class Scheduler
         $sql = "UPDATE team_events SET end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':end', $end);
-        $req->bindParam(':team', $this->Database->Users->userData['team']);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -151,8 +153,8 @@ class Scheduler
     {
         $sql = "DELETE FROM team_events WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':userid', $this->Database->Users->userid);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Database->Users->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }

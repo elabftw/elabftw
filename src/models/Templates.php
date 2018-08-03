@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
 /**
  * All about the templates
  */
@@ -50,10 +51,10 @@ class Templates extends AbstractEntity
 
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
-        $req->bindParam('userid', $userid);
+        $req->bindParam('userid', $userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -86,10 +87,10 @@ class Templates extends AbstractEntity
 
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':name', $template['name']);
         $req->bindParam(':body', $template['body']);
-        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->execute();
         $newId = $this->Db->lastInsertId();
 
@@ -109,8 +110,8 @@ class Templates extends AbstractEntity
     {
         $sql = "SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch();
@@ -133,7 +134,7 @@ class Templates extends AbstractEntity
             WHERE experiments_templates.userid = :userid
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -160,8 +161,8 @@ class Templates extends AbstractEntity
             AND experiments_templates.team = :team
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid']);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -181,7 +182,7 @@ class Templates extends AbstractEntity
 
         $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchColumn();
@@ -202,7 +203,7 @@ class Templates extends AbstractEntity
             body = :body
             WHERE userid = 0 AND team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':body', $body);
 
         return $req->execute();
@@ -229,8 +230,8 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userid);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -244,8 +245,8 @@ class Templates extends AbstractEntity
     {
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $res1 = $req->execute();
 
         $res2 = $this->Tags->destroyAll();

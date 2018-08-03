@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use FilesystemIterator;
+use PDO;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -252,26 +253,26 @@ class Update
             $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag['tag']);
-            $req->bindParam(':team', $tag['team']);
+            $req->bindParam(':team', $tag['team'], PDO::PARAM_INT);
             $req->execute();
             $res = $req->fetchColumn();
             if ($req->rowCount() === 0) {
                 // tag doesn't exist already
-                $insertReq->bindParam(':team', $tag['team']);
+                $insertReq->bindParam(':team', $tag['team'], PDO::PARAM_INT);
                 $insertReq->bindParam(':tag', $tag['tag']);
                 $insertReq->execute();
                 $lastId = $this->Db->lastInsertId();
 
                 // now reference it
-                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindParam(':item_id', $tag['item_id'], PDO::PARAM_INT);
                 $insertReq2->bindValue(':item_type', 'experiments');
-                $insertReq2->bindParam(':tag_id', $lastId);
+                $insertReq2->bindParam(':tag_id', $lastId, PDO::PARAM_INT);
                 $insertReq2->execute();
             } else {
                 // tag exists, reference it for the entity
-                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindParam(':item_id', $tag['item_id'], PDO::PARAM_INT);
                 $insertReq2->bindValue(':item_type', 'experiments');
-                $insertReq2->bindParam(':tag_id', $res);
+                $insertReq2->bindParam(':tag_id', $res, PDO::PARAM_INT);
                 $insertReq2->execute();
             }
         }
@@ -281,25 +282,25 @@ class Update
             $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag['tag']);
-            $req->bindParam(':team', $tag['team_id']);
+            $req->bindParam(':team', $tag['team_id'], PDO::PARAM_INT);
             $req->execute();
             $res = $req->fetchColumn();
             if ($req->rowCount() === 0) {
                 // tag doesn't exist already
-                $insertReq->bindParam(':team', $tag['team_id']);
+                $insertReq->bindParam(':team', $tag['team_id'], PDO::PARAM_INT);
                 $insertReq->bindParam(':tag', $tag['tag']);
                 $insertReq->execute();
                 $lastId = $this->Db->lastInsertId();
                 // now reference it
-                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindParam(':item_id', $tag['item_id'], PDO::PARAM_INT);
                 $insertReq2->bindValue(':item_type', 'items');
-                $insertReq2->bindParam(':tag_id', $lastId);
+                $insertReq2->bindParam(':tag_id', $lastId, PDO::PARAM_INT);
                 $insertReq2->execute();
             } else {
                 // get the id of the tag so we can insert it in the tags2entity table
-                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindParam(':item_id', $tag['item_id'], PDO::PARAM_INT);
                 $insertReq2->bindValue(':item_type', 'items');
-                $insertReq2->bindParam(':tag_id', $res);
+                $insertReq2->bindParam(':tag_id', $res, PDO::PARAM_INT);
                 $insertReq2->execute();
             }
         }
@@ -309,24 +310,24 @@ class Update
             $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':tag', $tag['tag']);
-            $req->bindParam(':team', $tag['team']);
+            $req->bindParam(':team', $tag['team'], PDO::PARAM_INT);
             $req->execute();
             $res = $req->fetchColumn();
             if ($req->rowCount() === 0) {
                 // tag doesn't exist already
-                $insertReq->bindParam(':team', $tag['team']);
+                $insertReq->bindParam(':team', $tag['team'], PDO::PARAM_INT);
                 $insertReq->bindParam(':tag', $tag['tag']);
                 $insertReq->execute();
                 $lastId = $this->Db->lastInsertId();
                 // now reference it
-                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindParam(':item_id', $tag['item_id'], PDO::PARAM_INT);
                 $insertReq2->bindValue(':item_type', 'experiments_tpl');
-                $insertReq2->bindParam(':tag_id', $lastId);
+                $insertReq2->bindParam(':tag_id', $lastId, PDO::PARAM_INT);
                 $insertReq2->execute();
             } else {
-                $insertReq2->bindParam(':item_id', $tag['item_id']);
+                $insertReq2->bindParam(':item_id', $tag['item_id'], PDO::PARAM_INT);
                 $insertReq2->bindValue(':item_type', 'experiments_tpl');
-                $insertReq2->bindParam(':tag_id', $res);
+                $insertReq2->bindParam(':tag_id', $res, PDO::PARAM_INT);
                 $insertReq2->execute();
             }
         }

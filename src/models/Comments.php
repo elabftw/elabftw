@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -51,9 +52,9 @@ class Comments implements CrudInterface
             VALUES(:datetime, :item_id, :comment, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':datetime', date('Y-m-d H:i:s'));
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
 
         $this->alertOwner();
 
@@ -79,7 +80,7 @@ class Comments implements CrudInterface
         // get the first and lastname of the commenter
         $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
         $req->execute();
         $commenter = $req->fetch();
 
@@ -87,7 +88,7 @@ class Comments implements CrudInterface
         $sql = "SELECT email, userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users
             WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
         $users = $req->fetch();
 
@@ -137,7 +138,7 @@ class Comments implements CrudInterface
             LEFT JOIN users ON (" . $this->Entity->type . "_comments.userid = users.userid)
             WHERE item_id = :id ORDER BY " . $this->Entity->type . "_comments.datetime ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
         if ($req->rowCount() > 0) {
             return $req->fetchAll();
@@ -169,8 +170,8 @@ class Comments implements CrudInterface
             WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -185,8 +186,8 @@ class Comments implements CrudInterface
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -200,7 +201,7 @@ class Comments implements CrudInterface
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

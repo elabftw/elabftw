@@ -54,9 +54,9 @@ class Revisions implements CrudInterface
                 VALUES(:item_id, :body, :userid)";
 
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':item_id', $this->Entity->id);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
             $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->Entity->Users->userid);
+            $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
 
             return $req->execute();
         }
@@ -73,7 +73,7 @@ class Revisions implements CrudInterface
         $sql = "SELECT COUNT(*) FROM " . $this->Entity->type . "_revisions
              WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
 
         return (int) $req->fetchColumn();
@@ -89,7 +89,7 @@ class Revisions implements CrudInterface
         $sql = "SELECT * FROM " . $this->Entity->type . "_revisions
             WHERE item_id = :item_id ORDER BY savedate DESC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -105,7 +105,7 @@ class Revisions implements CrudInterface
     {
         $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':rev_id', $revId);
+        $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchColumn();

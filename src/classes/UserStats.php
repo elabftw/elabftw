@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
+
 /**
  * Generate and display experiments statistics for a user
  */
@@ -77,8 +79,8 @@ class UserStats
                 WHERE userid = :userid
                 AND status = :status";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->Users->userid);
-            $req->bindParam(':status', $key);
+            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+            $req->bindParam(':status', $key, PDO::PARAM_INT);
             $req->execute();
             $this->countArr[$key] = $req->fetchColumn();
         }

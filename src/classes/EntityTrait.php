@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use InvalidArgumentException;
+use PDO;
 
 /**
  * For things that are used by experiments, database, status, item types, templates, …
@@ -82,9 +83,9 @@ trait EntityTrait
             // the table param is whitelisted here
             $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND " . $userOrTeam . " = :userOrTeam";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':ordering', $ordering);
+            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':userOrTeam', $userOrTeamValue);
-            $req->bindParam(':id', $id);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
             $success[] = $req->execute();
         }
 

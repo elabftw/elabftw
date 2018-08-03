@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * The kind of items you can have in the database for a team
@@ -64,7 +65,7 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -78,8 +79,8 @@ class ItemsTypes extends AbstractCategory
     {
         $sql = "SELECT template FROM items_types WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         if ($req->rowCount() === 0) {
@@ -104,7 +105,7 @@ class ItemsTypes extends AbstractCategory
             items_types.ordering
             from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -120,7 +121,7 @@ class ItemsTypes extends AbstractCategory
     {
         $sql = "SELECT color FROM items_types WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchColumn();
@@ -153,8 +154,8 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $this->Users->userData['team']);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -169,7 +170,7 @@ class ItemsTypes extends AbstractCategory
     {
         $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $id);
+        $req->bindParam(':type', $id, PDO::PARAM_INT);
         $req->execute();
         return (int) $req->fetchColumn();
     }
@@ -188,8 +189,8 @@ class ItemsTypes extends AbstractCategory
         }
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         return $req->execute();
     }

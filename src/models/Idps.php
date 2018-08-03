@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * Store informations about different identity providers for auth with SAML
@@ -73,7 +74,7 @@ class Idps implements CrudInterface
     {
         $sql = "SELECT * FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
         $res = $req->fetch();
         if ($res === false) {
@@ -121,7 +122,7 @@ class Idps implements CrudInterface
             x509 = :x509
             WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
         $req->bindParam(':sso_url', $ssoUrl);
@@ -143,7 +144,7 @@ class Idps implements CrudInterface
     {
         $sql = "DELETE FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }

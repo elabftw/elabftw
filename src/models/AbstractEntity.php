@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * The mother class of Experiments and Database
@@ -248,7 +249,7 @@ abstract class AbstractEntity
             " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . ", " . $this->type . ".id " . $this->sort . " " . $this->limit . " " . $this->offset;
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         $itemsArr = $req->fetchAll();
@@ -319,7 +320,7 @@ abstract class AbstractEntity
             // first get the visibility
             $sql = "SELECT userid, visibility FROM items WHERE id = :id";
             $req2 = $this->Db->prepare($sql);
-            $req2->bindParam(':id', $this->id);
+            $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
             $req2->execute();
             $res = $req2->fetch();
 
@@ -327,9 +328,9 @@ abstract class AbstractEntity
             if ($res['visibility'] === 'user') {
                 $newUserid = $res['userid'];
             }
-            $req->bindParam(':userid', $newUserid);
+            $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
         }
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -400,7 +401,7 @@ abstract class AbstractEntity
         $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':visibility', $visibility);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

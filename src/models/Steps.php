@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
+
 /**
  * All about the experiments steps
  */
@@ -46,7 +48,7 @@ class Steps implements CrudInterface
         $body = str_replace('|', ' ', $body);
         $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id);
+        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
 
         return $req->execute();
@@ -64,7 +66,7 @@ class Steps implements CrudInterface
             finished_time = NOW()
             WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $stepid);
+        $req->bindParam(':id', $stepid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -78,7 +80,7 @@ class Steps implements CrudInterface
     {
         $sql = "SELECT * FROM experiments_steps WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id);
+        $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -95,7 +97,7 @@ class Steps implements CrudInterface
     {
         $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
         $stepreq = $this->Db->prepare($stepsql);
-        $stepreq->bindParam(':id', $id);
+        $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $stepreq->execute();
 
         while ($steps = $stepreq->fetch()) {
@@ -118,7 +120,7 @@ class Steps implements CrudInterface
     {
         $sql = "DELETE FROM experiments_steps WHERE id= :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -132,7 +134,7 @@ class Steps implements CrudInterface
     {
         $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id);
+        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

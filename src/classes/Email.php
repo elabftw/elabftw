@@ -17,6 +17,7 @@ use Defuse\Crypto\Key;
 use Exception;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
+use PDO;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SendmailTransport;
@@ -55,7 +56,7 @@ class Email
 
         $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
         $req = $Db->prepare($sql);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();
 
         while ($email = $req->fetchColumn()) {

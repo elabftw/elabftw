@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
 
 /**
  * All about the tag
@@ -49,7 +50,7 @@ class Tags implements CrudInterface
         $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
-        $req->bindParam(':team', $this->Entity->Users->userData['team']);
+        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
         $tagId = $req->fetchColumn();
 
@@ -58,14 +59,14 @@ class Tags implements CrudInterface
             $insertSql = "INSERT INTO tags (team, tag) VALUES (:team, :tag)";
             $insertReq = $this->Db->prepare($insertSql);
             $insertReq->bindParam(':tag', $tag);
-            $insertReq->bindParam(':team', $this->Entity->Users->userData['team']);
+            $insertReq->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
             $insertReq->execute();
             $tagId = $this->Db->lastInsertId();
         }
         // now reference it
-        $insertReq2->bindParam(':item_id', $this->Entity->id);
+        $insertReq2->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $insertReq2->bindParam(':item_type', $this->Entity->type);
-        $insertReq2->bindParam(':tag_id', $tagId);
+        $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
 
         return $insertReq2->execute();
     }
@@ -88,7 +89,7 @@ class Tags implements CrudInterface
             $tagFilter
             ORDER BY tag ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Entity->Users->userData['team']);
+        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -105,7 +106,7 @@ class Tags implements CrudInterface
     {
         $sql = "SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':item_type', $this->Entity->type);
         $req->execute();
         if ($req->rowCount() > 0) {
@@ -119,9 +120,9 @@ class Tags implements CrudInterface
             }
 
             while ($tags = $req->fetch()) {
-                $insertReq->bindParam(':item_id', $newId);
+                $insertReq->bindParam(':item_id', $newId, PDO::PARAM_INT);
                 $insertReq->bindParam(':item_type', $type);
-                $insertReq->bindParam(':tag_id', $tags['tag_id']);
+                $insertReq->bindParam(':tag_id', $tags['tag_id'], PDO::PARAM_INT);
                 $insertReq->execute();
             }
         }
@@ -157,7 +158,7 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':newtag', $newtag);
-        $req->bindParam(':team', $this->Entity->Users->userData['team']);
+        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -174,7 +175,7 @@ class Tags implements CrudInterface
         $sql = "SELECT * FROM tags WHERE tag = :tag AND team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
-        $req->bindParam(':team', $this->Entity->Users->userData['team']);
+        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
         $count = $req->rowCount();
         if ($count < 2) {
@@ -194,8 +195,8 @@ class Tags implements CrudInterface
         foreach ($tagsToDelete as $tag) {
             $sql = "UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':target_tag_id', $targetTagId);
-            $req->bindParam(':tag_id', $tag['id']);
+            $req->bindParam(':target_tag_id', $targetTagId, PDO::PARAM_INT);
+            $req->bindParam(':tag_id', $tag['id'], PDO::PARAM_INT);
             $req->execute();
         }
 
@@ -203,7 +204,7 @@ class Tags implements CrudInterface
         $sql = "DELETE FROM tags WHERE id = :id";
         $req = $this->Db->prepare($sql);
         foreach ($tagsToDelete as $tag) {
-            $req->bindParam(':id', $tag['id']);
+            $req->bindParam(':id', $tag['id'], PDO::PARAM_INT);
             $req->execute();
         }
 
@@ -222,22 +223,22 @@ class Tags implements CrudInterface
     {
         $sql = "DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
         $res1 = $req->execute();
 
         // now check if another entity is referencing it, if not, remove it from the tags table
         $sql = "SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId);
+        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
 
         $res2 = $req->execute();
         $tags = $req->fetchAll();
 
         $res3 = true;
         if (\count($tags) === 0) {
-            $res3 = $this->destroy((int) $tagId);
+            $res3 = $this->destroy($tagId);
         }
 
         return $res1 && $res2 && $res3;
@@ -254,13 +255,13 @@ class Tags implements CrudInterface
         // first unreference the tag
         $sql = "DELETE FROM tags2entity WHERE tag_id = :tag_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId);
+        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $res1 = $req->execute();
 
         // now delete it from the tags table
         $sql = "DELETE FROM tags WHERE id = :tag_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $tagId);
+        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $res2 = $req->execute();
 
         return $res1 && $res2;
@@ -278,7 +279,7 @@ class Tags implements CrudInterface
     {
         $sql = "DELETE FROM tags2entity WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

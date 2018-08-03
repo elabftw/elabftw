@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * Users
@@ -135,7 +136,7 @@ class Users
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
         $req->bindParam(':firstname', $firstname);
@@ -234,7 +235,7 @@ class Users
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();
         $test = $req->fetch();
 
@@ -254,7 +255,7 @@ class Users
             LEFT JOIN groups ON groups.group_id = users.usergroup
             WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch();
@@ -408,7 +409,7 @@ class Users
         $req->bindParam(':email', $email);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $usergroup);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -593,7 +594,7 @@ class Users
         $req->bindParam(':new_use_markdown', $new_use_markdown);
         $req->bindParam(':new_allow_edit', $new_allow_edit);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -657,7 +658,7 @@ class Users
         $req->bindParam(':cellphone', $params['cellphone']);
         $req->bindParam(':skype', $params['skype']);
         $req->bindParam(':website', $params['website']);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -685,7 +686,7 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -702,7 +703,7 @@ class Users
 
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         if ($req->execute()) {
             $msg = sprintf(
@@ -730,15 +731,15 @@ class Users
     {
         $sql = "UPDATE users SET archived = 1, token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $res1 = $req->execute();
 
         $sql = "UPDATE experiments
             SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
-        $req->bindParam(':lockedby', $this->userid);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':lockedby', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $res2 = $req->execute();
 
         return $res1 && $res2;
@@ -769,17 +770,17 @@ class Users
 
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid']);
+        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid']);
+        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid']);
+        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $result[] = $req->execute();
 
         // get all filenames
@@ -797,7 +798,7 @@ class Users
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid']);
+        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $result[] = $req->execute();
 
         return !in_array(0, $result);
@@ -816,7 +817,7 @@ class Users
         $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':api_key', $apiKey);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }

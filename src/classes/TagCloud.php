@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use PDO;
+
 /**
  * Generate and display a tag cloud for a given team
  */
@@ -47,7 +49,7 @@ class TagCloud
             WHERE team = :team
             GROUP BY tag ORDER BY total DESC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();

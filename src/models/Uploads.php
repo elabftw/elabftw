@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Gmagick;
+use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -238,8 +239,8 @@ class Uploads implements CrudInterface
         // comment can be edited after upload
         // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
         $req->bindValue(':comment', $comment);
-        $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':userid', $this->Entity->Users->userid);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -257,7 +258,7 @@ class Uploads implements CrudInterface
     {
         $sql = "SELECT * FROM uploads WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch();
@@ -272,7 +273,7 @@ class Uploads implements CrudInterface
     {
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
@@ -293,8 +294,8 @@ class Uploads implements CrudInterface
         // SQL to update single file comment
         $sql = "UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':comment', $comment);
 
         return $req->execute();
@@ -449,7 +450,7 @@ class Uploads implements CrudInterface
         // to avoid someone deleting files saying it's DB whereas it's exp
         $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
 
         return $req->execute();

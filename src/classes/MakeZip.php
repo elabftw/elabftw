@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 use ZipArchive;
 
 /**
@@ -108,7 +109,7 @@ class MakeZip extends AbstractMake
      * @param int $id The id of current item we are zipping
      * @return void
      */
-    private function addTimestampFiles($id): void
+    private function addTimestampFiles(int $id): void
     {
         if ($this->Entity instanceof Experiments && $this->Entity->entityData['timestamped']) {
             // SQL to get the path of the token
@@ -116,7 +117,7 @@ class MakeZip extends AbstractMake
                 type = 'timestamp-token'
                 OR type = 'exp-pdf-timestamp') LIMIT 2";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':id', $id);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
             $req->execute();
             $uploads = $req->fetchAll();
             foreach ($uploads as $upload) {

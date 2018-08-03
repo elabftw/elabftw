@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * All about the experiments links
@@ -51,8 +52,8 @@ class Links implements CrudInterface
 
         $sql = 'INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':link_id', $link);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -74,7 +75,7 @@ class Links implements CrudInterface
             LEFT JOIN items_types ON (items.type = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -92,7 +93,7 @@ class Links implements CrudInterface
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
         $linkreq = $this->Db->prepare($linksql);
-        $linkreq->bindParam(':id', $id);
+        $linkreq->bindParam(':id', $id, PDO::PARAM_INT);
         $linkreq->execute();
 
         while ($links = $linkreq->fetch()) {
@@ -115,7 +116,7 @@ class Links implements CrudInterface
     {
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -129,7 +130,7 @@ class Links implements CrudInterface
     {
         $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

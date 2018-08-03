@@ -48,7 +48,7 @@ class Teams implements CrudInterface
     {
         $sql = 'SELECT team_id FROM teams WHERE team_id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->execute();
         return (bool) $req->fetch();
     }
@@ -126,7 +126,7 @@ class Teams implements CrudInterface
     {
         $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team_id', $this->Users->userData['team']);
+        $req->bindParam(':team_id', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch();
@@ -203,15 +203,15 @@ class Teams implements CrudInterface
             stampcert = :stampcert
             WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':deletable_xp', $deletableXp);
-        $req->bindParam(':public_db', $publicDb);
+        $req->bindParam(':deletable_xp', $deletableXp, PDO::PARAM_INT);
+        $req->bindParam(':public_db', $publicDb, PDO::PARAM_INT);
         $req->bindParam(':link_name', $linkName);
         $req->bindParam(':link_href', $linkHref);
         $req->bindParam(':stamplogin', $post['stamplogin']);
         $req->bindParam(':stamppass', $stamppass);
         $req->bindParam(':stampprovider', $post['stampprovider']);
         $req->bindParam(':stampcert', $post['stampcert']);
-        $req->bindParam(':team_id', $this->Users->userData['team']);
+        $req->bindParam(':team_id', $this->Users->userData['team'], PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -234,7 +234,7 @@ class Teams implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':orgid', $orgid);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -253,22 +253,22 @@ class Teams implements CrudInterface
         if ($count['totxp'] === '0' && $count['totdb'] === '0' && $count['totusers'] === '0') {
             $sql = "DELETE FROM teams WHERE team_id = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result1 = $req->execute();
 
             $sql = "DELETE FROM status WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result2 = $req->execute();
 
             $sql = "DELETE FROM items_types WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result3 = $req->execute();
 
             $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team_id', $id);
+            $req->bindParam(':team_id', $id, PDO::PARAM_INT);
             $result4 = $req->execute();
 
             return $result1 && $result2 && $result3 && $result4;
@@ -295,7 +295,7 @@ class Teams implements CrudInterface
     {
         $sql = "UPDATE teams SET stamppass = NULL WHERE team_id = :team_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team_id', $this->Users->userData['team']);
+        $req->bindParam(':team_id', $this->Users->userData['team'], PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -334,7 +334,7 @@ class Teams implements CrudInterface
         (SELECT COUNT(experiments.id) FROM experiments
             WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch(PDO::FETCH_NAMED);

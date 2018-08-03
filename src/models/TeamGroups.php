@@ -48,7 +48,7 @@ class TeamGroups implements CrudInterface
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -64,7 +64,7 @@ class TeamGroups implements CrudInterface
 
         $sql = "SELECT id, name FROM team_groups WHERE team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
         $groups = $req->fetchAll();
@@ -75,7 +75,7 @@ class TeamGroups implements CrudInterface
         $req = $this->Db->prepare($sql);
 
         foreach ($groups as $group) {
-            $req->bindParam(':groupid', $group['id']);
+            $req->bindParam(':groupid', $group['id'], PDO::PARAM_INT);
             $req->execute();
             $usersInGroup = $req->fetchAll();
             $fullGroups[] = array(
@@ -153,8 +153,8 @@ class TeamGroups implements CrudInterface
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':name', $name);
-            $req->bindParam(':team', $this->Users->userData['team']);
-            $req->bindParam(':id', $idArr[1]);
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+            $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
 
             if ($req->execute()) {
                 // the group name is returned so it gets back into jeditable input field
@@ -202,7 +202,7 @@ class TeamGroups implements CrudInterface
 
         $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $success[] = $req->execute();
 
         $sql = "DELETE FROM team_groups WHERE id = :id";
@@ -233,7 +233,7 @@ class TeamGroups implements CrudInterface
     {
         $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':groupid', $groupid);
+        $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
         $req->execute();
         $authUsersArr = array();
         while ($authUsers = $req->fetch()) {

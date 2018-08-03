@@ -109,7 +109,7 @@ class Experiments extends AbstractEntity
         $sql = "SELECT item_id FROM experiments_links
             WHERE link_id = :link_id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $itemId);
+        $req->bindParam(':link_id', $itemId, PDO::PARAM_INT);
         $req->execute();
         while ($data = $req->fetch()) {
             $this->setId((int) $data['item_id']);
@@ -130,7 +130,7 @@ class Experiments extends AbstractEntity
     {
         $sql = "UPDATE experiments SET status = :status WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':status', $status);
+        $req->bindParam(':status', $status, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
@@ -146,7 +146,7 @@ class Experiments extends AbstractEntity
         $currentStatus = (int) $this->entityData['category_id'];
         $sql = "SELECT is_timestampable FROM status WHERE id = :status;";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':status', $currentStatus);
+        $req->bindParam(':status', $currentStatus, PDO::PARAM_INT);
         $req->execute();
         return (bool) $req->fetchColumn();
     }
@@ -173,8 +173,8 @@ class Experiments extends AbstractEntity
         $req->bindParam(':when', $responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $responsefilePath);
-        $req->bindParam(':userid', $this->Users->userid);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -192,7 +192,7 @@ class Experiments extends AbstractEntity
         // all the others are made not default
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team']);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
         $status = $req->fetchColumn();
 
@@ -201,7 +201,7 @@ class Experiments extends AbstractEntity
         if (!$status) {
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':team', $this->Users->userData['team']);
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->execute();
             $status = $req->fetchColumn();
         }
@@ -266,7 +266,7 @@ class Experiments extends AbstractEntity
     {
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
 
         $this->Comments->destroyAll();
@@ -293,7 +293,7 @@ class Experiments extends AbstractEntity
             // Get the first name of the locker to show in error message
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->entityData['lockedby']);
+            $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
             $req->execute();
             throw new Exception(
                 _('This experiment was locked by') .
@@ -316,9 +316,9 @@ class Experiments extends AbstractEntity
         $sql = "UPDATE experiments
             SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':locked', $locked);
-        $req->bindParam(':lockedby', $this->Users->userid);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':locked', $locked, PDO::PARAM_INT);
+        $req->bindParam(':lockedby', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

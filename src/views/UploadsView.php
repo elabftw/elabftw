@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * Experiments View
  * @deprecated should be a twig template

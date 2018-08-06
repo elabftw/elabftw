@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
 use PDO;
 
 /**
@@ -30,7 +29,6 @@ class Links implements CrudInterface
      * Constructor
      *
      * @param Experiments $entity
-     * @throws Exception
      */
     public function __construct(Experiments $entity)
     {
@@ -42,7 +40,6 @@ class Links implements CrudInterface
      * Add a link to an experiment
      *
      * @param int $link ID of database item
-     * @throws Exception
      * @return bool
      */
     public function create(int $link): bool

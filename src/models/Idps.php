@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
 use PDO;
 
 /**
@@ -26,7 +25,6 @@ class Idps implements CrudInterface
     /**
      * Constructor
      *
-     * @throws Exception
      */
     public function __construct()
     {

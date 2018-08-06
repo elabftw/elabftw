@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use PDOException;
 use PDO;
 
 /**
@@ -32,7 +32,7 @@ final class Db
     /**
      * Construct of a singleton is private
      *
-     * @throws Exception If it cannot connect to the database
+     * @throws PDOException If it cannot connect to the database
      */
     private function __construct()
     {
@@ -56,7 +56,7 @@ final class Db
     /**
      * Return the instance of the class
      *
-     * @throws Exception If connection to database failed
+     * @throws PDOException If connection to database failed
      * @return Db The instance of the class
      */
     public static function getConnection(): Db

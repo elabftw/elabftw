@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -165,7 +164,6 @@ class Api
     /**
      * Read an entity in full
      *
-     * @throws Exception
      * @return array<mixed, mixed>
      */
     public function getEntity(): array
@@ -208,7 +206,6 @@ class Api
      * @param string $title Title
      * @param string $date Date
      * @param string $body Body
-     * @throws Exception
      * @return array{error?:string, result?:string}
      */
     public function updateEntity(string $title, string $date, string $body): array

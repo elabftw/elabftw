@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use DateTime;
-use Exception;
 
 /**
  * Experiments View
@@ -28,7 +27,6 @@ class ExperimentsView
      * Need an instance of Experiments
      *
      * @param Experiments $entity
-     * @throws Exception
      */
     public function __construct(Experiments $entity)
     {

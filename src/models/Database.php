@@ -154,7 +154,7 @@ class Database extends AbstractEntity
             $result[] = $delete_req->execute();
         }
 
-        if (in_array(false, $result)) {
+        if (\in_array(false, $result, true)) {
             throw new Exception('Error deleting item.');
         }
 

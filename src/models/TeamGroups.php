@@ -103,7 +103,7 @@ class TeamGroups implements CrudInterface
         foreach ($groups as $group) {
             // only add the teamGroup to the list if user is part of it
             foreach ($group['users'] as $userInGroup) {
-                if (in_array($this->Users->userData['fullname'], $userInGroup)) {
+                if (\in_array($this->Users->userData['fullname'], $userInGroup, true)) {
                     $idArr[] = $group['id'];
                     $nameArr[] = $group['name'];
                 }
@@ -215,7 +215,7 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $success[] = $req->execute();
 
-        if (in_array(false, $success)) {
+        if (\in_array(false, $success, true)) {
             throw new Exception('Error removing group');
         }
 
@@ -237,10 +237,10 @@ class TeamGroups implements CrudInterface
         $req->execute();
         $authUsersArr = array();
         while ($authUsers = $req->fetch()) {
-            $authUsersArr[] = $authUsers['userid'];
+            $authUsersArr[] = (int) $authUsers['userid'];
         }
 
-        return in_array($userid, $authUsersArr);
+        return \in_array($userid, $authUsersArr, true);
     }
 
     /**

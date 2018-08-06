@@ -93,7 +93,7 @@ class UploadsView
             $html .= "<div class='text-center'><canvas class='molFile' id='molFile_" . $upload['id'] .
                 "' data-molpath='app/download.php?f=" . $filepath . "'></canvas></div>";
         // if this is something 3Dmol.js can handle
-        } elseif (in_array($ext, $molExtensions, true)) {
+        } elseif (\in_array($ext, $molExtensions, true)) {
             $molStyle = "stick";
             // use cartoon representation for pdb files
             if ($ext === 'pdb') {

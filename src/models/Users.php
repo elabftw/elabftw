@@ -431,7 +431,7 @@ class Users
         // ORDER BY
         $new_orderby = null;
         $whitelistOrderby = array(null, 'cat', 'date', 'title', 'comment');
-        if (isset($params['orderby']) && in_array($params['orderby'], $whitelistOrderby)) {
+        if (isset($params['orderby']) && \in_array($params['orderby'], $whitelistOrderby, true)) {
             $new_orderby = $params['orderby'];
         }
 
@@ -493,7 +493,7 @@ class Users
         // PDF format
         $new_pdf_format = 'A4';
         $formatsArr = array('A4', 'LETTER', 'ROYAL');
-        if (in_array($params['pdf_format'], $formatsArr)) {
+        if (\in_array($params['pdf_format'], $formatsArr, true)) {
             $new_pdf_format = $params['pdf_format'];
         }
 
@@ -798,7 +798,7 @@ class Users
         $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $result[] = $req->execute();
 
-        return !in_array(0, $result);
+        return !\in_array(false, $result, true);
     }
 
     /**

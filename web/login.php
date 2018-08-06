@@ -55,7 +55,7 @@ try {
     }
 
     // Check if we are banned after too much failed login attempts
-    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
+    if (\in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
         throw new Exception(_('You cannot login now because of too many failed login attempts.'));
     }
 

@@ -95,10 +95,10 @@ class App
     private function getTwig(): \Twig_Environment
     {
         $elabRoot = \dirname(__DIR__, 2);
-        $loader = new \Twig_Loader_Filesystem($elabRoot . '/src/templates');
-        $cache = $elabRoot . '/cache/twig';
+        $loader = new \Twig_Loader_Filesystem("$elabRoot/src/templates");
+        $cache = "$elabRoot/cache/twig";
         if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new RuntimeException('Unable to create the cache directory (' . $cache . ')');
+            throw new RuntimeException("Unable to create the cache directory ($cache)");
         }
         $options = array();
 

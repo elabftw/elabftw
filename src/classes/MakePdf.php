@@ -144,7 +144,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
         $linksArr = $this->Entity->Links->readAll();
-        if (\count($linksArr) === 0) {
+        if (empty($linksArr)) {
             return $html;
         }
 
@@ -279,7 +279,7 @@ class MakePdf extends AbstractMake
         $html = '';
 
         $stepsArr = $this->Entity->Steps->readAll();
-        if (\count($stepsArr) === 0) {
+        if (empty($stepsArr)) {
             return $html;
         }
 

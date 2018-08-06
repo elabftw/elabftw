@@ -337,7 +337,7 @@ class Uploads implements CrudInterface
                                 'application/pdf',
                                 'application/postscript');
 
-            if (in_array($mime, $allowed_mime)) {
+            if (\in_array($mime, $allowed_mime, true)) {
                 // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files
                 // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
                 // works in those cases
@@ -470,7 +470,7 @@ class Uploads implements CrudInterface
             $resultsArr[] = $this->destroy((int) $upload['id']);
         }
 
-        if (in_array(false, $resultsArr)) {
+        if (\in_array(false, $resultsArr, true)) {
             throw new Exception('Error deleting uploads.');
         }
 

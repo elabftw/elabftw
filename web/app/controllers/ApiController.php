@@ -35,7 +35,7 @@ try {
     $Users->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
 
     $availMethods = array('GET', 'POST');
-    if (!in_array($Request->server->get('REQUEST_METHOD'), $availMethods, true)) {
+    if (!\in_array($Request->server->get('REQUEST_METHOD'), $availMethods, true)) {
         throw new Exception('Incorrect HTTP verb! Available verbs are: ' . implode(', ', $availMethods));
     }
 

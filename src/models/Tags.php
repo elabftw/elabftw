@@ -237,7 +237,7 @@ class Tags implements CrudInterface
         $tags = $req->fetchAll();
 
         $res3 = true;
-        if (\count($tags) === 0) {
+        if (empty($tags)) {
             $res3 = $this->destroy($tagId);
         }
 

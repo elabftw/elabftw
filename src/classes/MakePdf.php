@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use DateTime;
 use RuntimeException;
 use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
@@ -347,8 +348,7 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-        $date = \date_create($this->Entity->entityData['date'] ?? Tools::kdate());
-        $date_str = \date_format($date, 'Y-m-d');
+        $date = new DateTime($this->Entity->entityData['date'] ?? Tools::kdate());
 
         // add a CJK font for the body if we want CJK fonts
         $cjkStyle = "";
@@ -380,7 +380,7 @@ Witness' signature:<br><br>
     <div id="header">
         <h1>' . $this->Entity->entityData['title'] . '</h1>
         <p style="float:left; width:90%;">
-            <strong>Date:</strong> ' . $date_str . '<br />
+            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
             <strong>Tags:</strong> <em>' .
                 \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '

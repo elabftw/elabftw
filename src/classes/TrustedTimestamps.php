@@ -20,6 +20,7 @@ use Defuse\Crypto\Key;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -191,9 +192,8 @@ class TrustedTimestamps extends AbstractMake
             $this->stampParams['hash'] . " -no_nonce -out " . escapeshellarg($this->requestfilePath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
-        $retcode = $opensslResult['retcode'];
 
-        if ($retcode !== 0) {
+        if ($opensslResult['retcode'] !== 0) {
             throw new Exception("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
         }
 
@@ -219,9 +219,8 @@ class TrustedTimestamps extends AbstractMake
         $cmd = "ts -reply -in " . escapeshellarg($this->responsefilePath) . " -text";
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
-        $retcode = $opensslResult['retcode'];
 
-        if ($retcode !== 0) {
+        if ($opensslResult['retcode'] !== 0) {
             throw new Exception("The reply failed: " . implode(", ", $retarray));
         }
 
@@ -337,10 +336,10 @@ class TrustedTimestamps extends AbstractMake
      * Save the binaryToken to a .asn1 file
      *
      * @throws Exception
-     * @param string $binaryToken asn1 response from TSA
+     * @param StreamInterface $binaryToken asn1 response from TSA
      * @return void
      */
-    private function saveToken($binaryToken): void
+    private function saveToken(StreamInterface $binaryToken): void
     {
         $longName = $this->getUniqueString() . ".asn1";
         $filePath = $this->getUploadsPath() . $longName;
@@ -383,7 +382,6 @@ class TrustedTimestamps extends AbstractMake
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
-        $retcode = $opensslResult['retcode'];
 
         /*
          * just 2 "normal" cases:
@@ -397,7 +395,7 @@ class TrustedTimestamps extends AbstractMake
             throw new Exception('$retarray must be an array.');
         }
 
-        if ($retcode === 0 && (strtolower(trim($retarray[0])) === "verification: ok" ||
+        if ($opensslResult['retcode'] === 0 && (strtolower(trim($retarray[0])) === "verification: ok" ||
             strtolower(trim($retarray[1])) === "verification: ok")) {
             return true;
         }
@@ -509,9 +507,8 @@ class TrustedTimestamps extends AbstractMake
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
-        $retcode = $opensslResult['retcode'];
 
-        if ($retcode !== 0) {
+        if ($opensslResult['retcode'] !== 0) {
             throw new Exception("Error decoding ASN1 file: " . implode(", ", $retarray));
         }
 
@@ -536,6 +533,9 @@ class TrustedTimestamps extends AbstractMake
         $utctimeArr = explode(":", $retarray[142]);
         $utctime = rtrim($utctimeArr[3], 'Z');
         $timestamp = \DateTime::createFromFormat('ymdHis', $utctime);
+        if ($timestamp === false) {
+            return 'Error: Could not parse timestamp!';
+        }
 
         $countryArr = explode(":", $retarray[31]);
         $country = $countryArr[3];

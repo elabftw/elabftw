@@ -25,29 +25,29 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $id = $this->Entity->Comments->create('Ohai');
+        $id = $this->Comments->create('Ohai');
         $this->assertInternalType("int", $id);
     }
 
     public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Entity->Comments->readAll()));
+        $this->assertTrue(is_array($this->Comments->readAll()));
     }
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Entity->Comments->Update('Updated', 'comment_1'), 1);
-        $this->assertFalse($this->Entity->Comments->Update('a', 'comment_1'), 1);
+        $this->assertTrue($this->Comments->Update('Updated', 'comment_1'), 1);
+        $this->assertFalse($this->Comments->Update('a', 'comment_1'), 1);
     }
 
     public function testDestroy()
     {
-        $this->assertTrue($this->Entity->Comments->destroy(1, 1));
+        $this->assertTrue($this->Comments->destroy(1, 1));
     }
 
     public function testDestroyAll()
     {
-        $this->assertTrue($this->Entity->Comments->destroyAll());
-        $this->assertTrue(empty($this->Entity->Comments->readAll()));
+        $this->assertTrue($this->Comments->destroyAll());
+        $this->assertTrue(empty($this->Comments->readAll()));
     }
 }

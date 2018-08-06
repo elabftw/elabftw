@@ -21,21 +21,26 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Comments implements CrudInterface
 {
+    /** @var AbstractEntity $Entity instance of Experiments or Database */
+    public $Entity;
+
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** @var AbstractEntity $Entity instance of Experiments or Database */
-    public $Entity;
+    /** @var Email $Email instance of Email */
+    private $Email;
 
     /**
      * Constructor
      *
      * @param AbstractEntity $entity
+     * @param Email $email
      */
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, Email $email)
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
+        $this->Email = $email;
     }
 
     /**
@@ -119,10 +124,8 @@ class Comments implements CrudInterface
             $commenter['fullname'],
             $url
         ) . $footer);
-        $Email = new Email(new Config());
-        $mailer = $Email->getMailer();
 
-        return $mailer->send($message);
+        return $this->Email->send($message);
     }
 
     /**

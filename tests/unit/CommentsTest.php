@@ -9,6 +9,18 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Users = new Users(1);
         $this->Entity = new Experiments($this->Users, 1);
+
+        // create mock object for Email because we don't want to actually send emails
+        $this->mockEmail = $this->getMockBuilder('\Elabftw\Elabftw\Email')
+             ->disableOriginalConstructor()
+             ->setMethods(array('send'))
+             ->getMock();
+
+        $this->mockEmail->expects($this->any())
+             ->method('send')
+             ->will($this->returnValue(1));
+
+        $this->Comments = new Comments($this->Entity, $this->mockEmail);
     }
 
     public function testCreate()

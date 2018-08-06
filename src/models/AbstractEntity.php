@@ -104,7 +104,7 @@ abstract class AbstractEntity
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
-        $this->Comments = new Comments($this);
+        $this->Comments = new Comments($this, new Email(new Config()));
 
         if ($id !== null) {
             $this->setId($id);

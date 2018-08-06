@@ -72,10 +72,8 @@ try {
         ->setTo(array($email => $user['fullname']))
         // Give it a body
         ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $Request->server->get('HTTP_USER_AGENT'), $resetLink) . $footer);
-        // generate Swift_Mailer instance
-        $mailer = $Email->getMailer();
         // now we try to send the email
-        if (!$mailer->send($message)) {
+        if (!$Email->send($message)) {
             throw new Exception(_('There was a problem sending the email! Error was logged.'));
         }
 

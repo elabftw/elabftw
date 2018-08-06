@@ -76,7 +76,7 @@ class Email
      *
      * @return Swift_Mailer
      */
-    public function getMailer(): Swift_Mailer
+    private function getMailer(): Swift_Mailer
     {
 
         // Choose mail transport method; either smtp or sendmail
@@ -107,6 +107,18 @@ class Email
         }
 
         return new Swift_Mailer($transport);
+    }
+
+    /**
+     * Send an email
+     *
+     * @param Swift_Message $message
+     * @return int number of email sent
+     */
+    public function send(Swift_Message $message): int
+    {
+        $mailer = $this->getMailer();
+        return $mailer->send($message);
     }
 
     /**

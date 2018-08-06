@@ -158,7 +158,7 @@ class MakeZip extends AbstractMake
             $i++;
             $realName = $file['real_name'];
             // if we have a file with the same name, it shouldn't overwrite the previous one
-            if (in_array($realName, $real_names_so_far)) {
+            if (in_array($realName, $real_names_so_far, true)) {
                 $realName = $i . '_' . $realName;
             }
             $real_names_so_far[] = $realName;

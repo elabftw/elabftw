@@ -65,7 +65,7 @@ trait EntityTrait
             'todolist'
         );
 
-        if (!in_array($post['table'], $whitelist)) {
+        if (!in_array($post['table'], $whitelist, true)) {
             throw new InvalidArgumentException('Wrong table.');
         }
 
@@ -89,6 +89,6 @@ trait EntityTrait
             $success[] = $req->execute();
         }
 
-        return !in_array(false, $success);
+        return !in_array(false, $success, true);
     }
 }

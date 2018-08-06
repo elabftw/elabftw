@@ -92,7 +92,7 @@ abstract class AbstractImport
             'text/csv', 'text/tsv',
             'application/zip', 'application/force-download', 'application/x-zip-compressed');
 
-        if (in_array($this->UploadedFile->getMimeType(), $mimes)) {
+        if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
             return true;
         }
         throw new RuntimeException("This doesn't look like the right kind of file. Import aborted.");

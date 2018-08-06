@@ -144,7 +144,7 @@ try {
 
     // CACHE FOLDER
     $cacheDir = dirname(__DIR__, 2) . '/cache';
-    if (!is_dir($cacheDir) && !mkdir($cacheDir) && !is_dir($cacheDir)) {
+    if (!is_dir($cacheDir) && !mkdir($cacheDir, 0700) && !is_dir($cacheDir)) {
         $message = sprintf(
             "Unable to create 'cache' folder! (%s) You need to do it manually. %sClick here to discover how%s.",
             $cacheDir,
@@ -161,7 +161,7 @@ try {
     // UPLOADS FOLDER
     $uploadsDir = dirname(__DIR__, 2) . '/uploads';
 
-    if (!is_dir($uploadsDir) && !mkdir($uploadsDir) && !is_dir($uploadsDir)) {
+    if (!is_dir($uploadsDir) && !mkdir($uploadsDir, 0700) && !is_dir($uploadsDir)) {
         $message = sprintf(
             "Unable to create 'uploads' folder! (%s) You need to do it manually. %sClick here to discover how%s.",
             $uploadsDir,

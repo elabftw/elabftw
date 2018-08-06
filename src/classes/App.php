@@ -97,7 +97,7 @@ class App
         $elabRoot = \dirname(__DIR__, 2);
         $loader = new \Twig_Loader_Filesystem($elabRoot . '/src/templates');
         $cache = $elabRoot . '/cache/twig';
-        if (!is_dir($cache) && !mkdir($cache) && !is_dir($cache)) {
+        if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
             throw new RuntimeException('Unable to create the cache directory (' . $cache . ')');
         }
         $options = array();

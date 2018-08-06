@@ -75,7 +75,7 @@ abstract class AbstractMake
     protected function getTmpPath(): string
     {
         $tmpPath = \dirname(__DIR__, 2) . '/cache/elab/';
-        if (!is_dir($tmpPath) && !mkdir($tmpPath) && !is_dir($tmpPath)) {
+        if (!is_dir($tmpPath) && !mkdir($tmpPath, 0700, true) && !is_dir($tmpPath)) {
             throw new RuntimeException('Unable to create the cache directory (' . $tmpPath . ')');
         }
 

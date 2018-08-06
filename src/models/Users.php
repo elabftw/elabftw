@@ -51,12 +51,9 @@ class Users
         if ($userid !== null) {
             $this->setId($userid);
         }
-        if ($auth !== null) {
-            $this->Auth = $auth;
-        }
-        if ($config !== null) {
-            $this->Config = $config;
-        }
+
+        $this->Auth = $auth;
+        $this->Config = $config;
     }
 
     /**

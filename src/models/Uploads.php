@@ -191,7 +191,7 @@ class Uploads implements CrudInterface
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
         $folderPath = $this->uploadsPath . $folder;
-        if (!is_dir($folderPath) && !mkdir($folderPath) && !is_dir($folderPath)) {
+        if (!is_dir($folderPath) && !mkdir($folderPath, 0700, true) && !is_dir($folderPath)) {
             throw new Exception('Cannot create folder! Check permissions of uploads folder.');
         }
         return $folder . '/' . $hash;

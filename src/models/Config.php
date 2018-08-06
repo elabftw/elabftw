@@ -103,7 +103,7 @@ class Config
 
         // encrypt password
         if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
-            $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
+            $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         }
 
         // loop the array and update config

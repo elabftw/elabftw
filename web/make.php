@@ -36,9 +36,9 @@ try {
             break;
 
         case 'zip':
+            ini_set('max_execution_time', 300);
             // use experimental stream zip feature
             if ($Request->cookies->has('stream_zip')) {
-                ini_set('max_execution_time', 300);
                 $Make = new MakeStreamZip($Entity, $Request->query->get('id'));
                 $Response = new StreamedResponse();
                 $Response->headers->set('X-Accel-Buffering', 'no');

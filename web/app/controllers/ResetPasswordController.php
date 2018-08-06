@@ -87,7 +87,7 @@ try {
         $App->Users->setId((int) $Request->request->get('userid'));
 
         // Validate key
-        if ($App->Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(SECRET_KEY))) {
+        if ($App->Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(\SECRET_KEY))) {
             throw new Exception('Wrong key for resetting password');
         }
 

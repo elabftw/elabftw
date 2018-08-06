@@ -91,7 +91,7 @@ class MakeCsv extends AbstractMake
      */
     private function addLine(): void
     {
-        if ($this->Entity->type === 'experiments') {
+        if ($this->Entity instanceof Experiments) {
             $elabidOrRating = $this->Entity->entityData['elabid'];
         } else {
             $elabidOrRating = $this->Entity->entityData['rating'];

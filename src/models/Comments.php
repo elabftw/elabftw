@@ -76,11 +76,12 @@ class Comments implements CrudInterface
      */
     private function alertOwner(): int
     {
-        if ($this->Entity instanceof Database) {
+        $Config = new Config();
+
+        // don't do it for Db items or if email is not configured
+        if ($this->Entity instanceof Database || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return 0;
         }
-
-        $Config = new Config();
 
         // get the first and lastname of the commenter
         $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";

@@ -30,8 +30,11 @@
             </button>
             <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
                 {% for item in itemsArr %}
-                <li class='dropdown-item'><a data-value='{{ item.title }}' href='team.php?item={{ item.id }}'><span style='color:#{{ item.color }} '>{{ item.category }}</span> - {{ item.title }}</a>
-                </li>
+                <a data-value='{{ item.title }}' href='team.php?item={{ item.id }}'>
+                    <li class='dropdown-item'>
+                        <span style='color:#{{ item.color }} '>{{ item.category }}</span> - {{ item.title }}
+                    </li>
+                </a>
                 {% endfor %}
             </ul>
             </div>

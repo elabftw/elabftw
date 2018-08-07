@@ -156,7 +156,7 @@ class MakeStreamZip extends AbstractMake
     private function addPdf(): void
     {
         $MakePdf = new MakePdf($this->Entity, true);
-        $MakePdf->output(true);
+        $MakePdf->outputToFile();
         $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getCleanName(), $MakePdf->filePath);
         $this->trash[] = $MakePdf->filePath;
     }

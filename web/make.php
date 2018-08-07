@@ -59,7 +59,7 @@ try {
             $Entity->setId((int) $Request->query->get('id'));
             $Entity->canOrExplode('read');
             $Make = new MakePdf($Entity);
-            $Make->output();
+            $Make->outputToBrowser();
             break;
 
         default:

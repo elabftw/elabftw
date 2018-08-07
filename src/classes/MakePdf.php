@@ -53,12 +53,31 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Build content and output something
+     * Generate pdf and output it to a file
      *
-     * @param bool|null $toFile Do we want to write it to a file ?
      * @return void
      */
-    public function output($toFile = false): void
+    public function outputToFile(): void
+    {
+        $this->generate()->Output($this->filePath, 'F');
+    }
+
+    /**
+     * Generate pdf and output it to the browser
+     *
+     * @return void
+     */
+    public function outputToBrowser(): void
+    {
+        $this->generate()->Output($this->getCleanName(), 'I');
+    }
+
+    /**
+     * Build the pdf
+     *
+     * @return Mpdf
+     */
+    private function generate(): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -95,12 +114,7 @@ class MakePdf extends AbstractMake
             $mpdf->PDFA = true;
         }
 
-        // output
-        if ($toFile) {
-            $mpdf->Output($this->filePath, 'F');
-        } else {
-            $mpdf->Output($this->getCleanName(), 'I');
-        }
+        return $mpdf;
     }
 
     /**

@@ -95,7 +95,7 @@ class TrustedTimestamps extends AbstractMake
     {
         try {
             $MakePdf = new MakePdf($this->Entity);
-            $MakePdf->output(true);
+            $MakePdf->outputToFile();
             $this->pdfPath = $MakePdf->filePath;
             $this->pdfLongName = $MakePdf->fileName;
         } catch (Exception $e) {

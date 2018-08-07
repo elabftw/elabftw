@@ -66,7 +66,7 @@ try {
 
     // UPDATE USERS
     if ($Request->request->has('usersUpdate')) {
-        $tab = 2;
+        $tab = 3;
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }

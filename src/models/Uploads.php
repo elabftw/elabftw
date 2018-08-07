@@ -417,7 +417,7 @@ class Uploads implements CrudInterface
         }
         $fullPath = $this->uploadsPath . $upload['long_name'];
         // check user is same as the previously uploaded file
-        if ($upload['userid'] !== $this->Entity->Users->userid) {
+        if ((int) $upload['userid'] !== $this->Entity->Users->userid) {
             return false;
         }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);

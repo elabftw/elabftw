@@ -87,7 +87,7 @@ class ReleaseCheck
      */
     private function validateVersion(): int
     {
-        $res = preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
+        $res = preg_match('/^[0-99]+\.[0-99]+\.[0-99]+.*$/', $this->version);
         if ($res === false) {
             throw new RuntimeException('Could not parse version!');
         }

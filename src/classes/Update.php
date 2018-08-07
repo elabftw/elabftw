@@ -73,7 +73,7 @@ class Update
         }
 
         if ($current_schema < 37) {
-            throw new Exception('Please update first to latest version from 1.8 branch before updating to 2.0 branch!');
+            throw new Exception('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
 
         $msg_arr = array();

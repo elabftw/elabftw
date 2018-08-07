@@ -175,7 +175,7 @@ class MakeZip extends AbstractMake
      */
     private function addPdf(): void
     {
-        $MakePdf = new MakePdf($this->Entity);
+        $MakePdf = new MakePdf($this->Entity, true);
         $MakePdf->output(true);
         $this->Zip->addFile($MakePdf->filePath, $this->folder . '/' . $MakePdf->getCleanName());
         $this->trash[] = $MakePdf->filePath;

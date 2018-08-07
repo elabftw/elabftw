@@ -81,6 +81,7 @@ class TrustedTimestamps extends AbstractMake
 
         /** set the name of the pdf (elabid + -timestamped.pdf) */
         $this->pdfRealName = $this->getCleanName();
+        $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         $this->generatePdf();
     }
 
@@ -94,7 +95,7 @@ class TrustedTimestamps extends AbstractMake
     {
         try {
             $MakePdf = new MakePdf($this->Entity);
-            $MakePdf->output(true, true);
+            $MakePdf->output(true);
             $this->pdfPath = $MakePdf->filePath;
             $this->pdfLongName = $MakePdf->fileName;
         } catch (Exception $e) {
@@ -184,7 +185,6 @@ class TrustedTimestamps extends AbstractMake
      */
     private function createRequestfile(): void
     {
-        $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         // we don't keep this file around
         $this->trash[] = $this->requestfilePath;
 

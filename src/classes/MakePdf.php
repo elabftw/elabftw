@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MakePdf extends AbstractMake
 {
-    /** @var string $fileName a sha512 sum */
+    /** @var string $fileName a sha512 sum.pdf */
     public $fileName;
 
     /** @var string $filePath the full path of the file */
@@ -32,10 +32,20 @@ class MakePdf extends AbstractMake
      * Constructor
      *
      * @param AbstractEntity $entity Experiments or Database
+     * @param bool $temporary do we need to save it in cache folder or uploads folder
      */
-    public function __construct(AbstractEntity $entity)
+    public function __construct(AbstractEntity $entity, $temporary = false)
     {
         parent::__construct($entity);
+
+        $this->fileName = $this->getUniqueString() . '.pdf';
+
+        if ($temporary) {
+            $this->filePath = $this->getTmpPath() . $this->fileName;
+        } else {
+            $this->filePath = $this->getUploadsPath() . $this->fileName;
+        }
+
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
@@ -46,10 +56,9 @@ class MakePdf extends AbstractMake
      * Build content and output something
      *
      * @param bool|null $toFile Do we want to write it to a file ?
-     * @param bool $timestamp Is it a timestamp pdf we are doing ? If yes save it in normal path, not tmp
      * @return void
      */
-    public function output($toFile = false, $timestamp = false): void
+    public function output($toFile = false): void
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -88,14 +97,6 @@ class MakePdf extends AbstractMake
 
         // output
         if ($toFile) {
-            $this->fileName = $this->getUniqueString() . '.pdf';
-
-            // output in tmp folder if it's not a timestamp pdf
-            if ($timestamp) {
-                $this->filePath = $this->getUploadsPath() . $this->fileName;
-            } else {
-                $this->filePath = $this->getTmpPath() . $this->fileName;
-            }
             $mpdf->Output($this->filePath, 'F');
         } else {
             $mpdf->Output($this->getCleanName(), 'I');

@@ -300,7 +300,7 @@
             <input class="clean-form col-3-form" type='text' value='{{ App.Config.configArr.smtp_username }}' name='smtp_username' id='smtp_username' />
             <label class="block" for='smtp_password'>{{ 'SMTP password'|trans }}</label>
             {% if App.Config.configArr.smtp_password|length == 0 %}
-                <input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' />
+                <input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' autocomplete='off' />
             {% else %}
             <p>
             {{ 'A password is already set.'|trans }}
@@ -310,7 +310,7 @@
             )|raw }}
             </p>
             <span class='button' id='editSmtpPassword'>{{ 'Edit'|trans }}</span>
-            <input class='clean-form col-3-form' type='password' name='smtp_password' style='display:none' id='hidden_smtp_password' />
+            <input class='clean-form col-3-form' type='password' name='smtp_password' style='display:none' autocomplete='off' id='hidden_smtp_password' />
             {% endif %}
             </p>
             </div>

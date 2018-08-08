@@ -144,7 +144,7 @@
 {% if Entity.type == 'experiments' %}
     <!-- STEPS -->
     {% if stepsArr %}
-        <ul class='list-group'>
+        <ul class='list-group mt-2'>
             {% for step in stepsArr %}
             <li class='list-group-item {{ step.finished ? 'finished' }}'>
                 <i class='fas fa-{{ step.finished ? 'check-square' : 'square' }} mr-1'></i>{{ step.body|raw }}

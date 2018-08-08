@@ -23,7 +23,7 @@
 Then you are at the right place !
 
 **eLabFTW** is an electronic lab notebook manager for research teams. It also features a database where you can store any kind of objects (think antibodies, plasmids, cell lines, boxes, _etc_…)
-It is accessed _via_ the browser by the users. Several research teams can be hosted on the same install, so **eLabFTW** can be installed at the institute level and host everyone at the same place (this is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers across the globe).
+It is accessed _via_ the browser by the users. Several research teams can be hosted on the same install, so **eLabFTW** can be installed at the institute level and host everyone at the same place (this is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe).
 
 Click the image below to see it in bigger size:
 [![Demo gif](https://i.imgur.com/pH6Qvwf.gif)](https://gfycat.com/WillingIncompleteAstarte)
@@ -36,7 +36,7 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 # Installation
 
-**eLabFTW** can easily be installed on any GNU/Linux server. It requires 512 Mo of RAM (1 Go recommended) and 300 Mo of disk space minimum. It is installed with Docker, so you will also need to have [Docker](https://www.docker.com/) installed. Because it runs in a Docker container, you don't need to care about versions or extensions, it comes with everything that it needs.
+**eLabFTW** can easily be installed on any GNU/Linux server. It requires 512 Mo of RAM (1 Go recommended) and 300 Mo of disk space minimum. It is installed with Docker, so you will also need to have [Docker](https://www.docker.com/) installed. Because it runs in a Docker container, you don't have to install php, a webserver or mysql on your server, you also don't need to worry about which version will work or which extension you need. Everything is provided by the container.
 
 The documentation explains everything:
 

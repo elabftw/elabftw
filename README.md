@@ -46,6 +46,12 @@ The documentation explains everything:
 
 **eLabFTW** is a collaborative project. See the [contributing page](https://doc.elabftw.net/contributing.html).
 
+If you've found a security issue, please report it by email to the address associated to my GPG key:
+
+~~~bash
+gpg --search-keys "Nicolas CARPi"
+~~~
+
 # Support
 
 Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.

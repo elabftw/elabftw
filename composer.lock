@@ -547,16 +547,16 @@
         },
         {
             "name": "mpdf/mpdf",
-            "version": "v7.1.1",
+            "version": "v7.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpdf/mpdf.git",
-                "reference": "800a7f9d93474988cc2ffb8c155497ca5910fb09"
+                "reference": "e651f6ed3fa1f9c32d73f3db0f427c1846e2e6bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/800a7f9d93474988cc2ffb8c155497ca5910fb09",
-                "reference": "800a7f9d93474988cc2ffb8c155497ca5910fb09",
+                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/e651f6ed3fa1f9c32d73f3db0f427c1846e2e6bc",
+                "reference": "e651f6ed3fa1f9c32d73f3db0f427c1846e2e6bc",
                 "shasum": ""
             },
             "require": {
@@ -611,7 +611,7 @@
                 "php",
                 "utf-8"
             ],
-            "time": "2018-07-02T14:26:48+00:00"
+            "time": "2018-08-07T08:35:44+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2349,17 +2349,6 @@
         {
             "name": "roave/security-advisories",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "eeb33d6648b70f809c408c9a905be1fc2d662784"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/eeb33d6648b70f809c408c9a905be1fc2d662784",
-                "reference": "eeb33d6648b70f809c408c9a905be1fc2d662784",
-                "shasum": ""
-            },
             "conflict": {
                 "3f/pygmentize": "<1.2",
                 "adodb/adodb-php": "<5.20.12",
@@ -2455,7 +2444,7 @@
                 "symfony/security-guard": ">=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11",
                 "symfony/security-http": ">=2.3,<2.3.41|>=2.4,<2.7.48|>=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11",
                 "symfony/serializer": ">=2,<2.0.11",
-                "symfony/symfony": ">=2,<2.7.48|>=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11",
+                "symfony/symfony": ">=2,<2.7.49|>=2.8,<2.8.44|>=3,<3.3.18|>=3.4,<3.4.14|>=4,<4.0.14|>=4.1,<4.1.3",
                 "symfony/translation": ">=2,<2.0.17",
                 "symfony/validator": ">=2,<2.0.24|>=2.1,<2.1.12|>=2.2,<2.2.5|>=2.3,<2.3.3",
                 "symfony/web-profiler-bundle": ">=2,<2.3.19|>=2.4,<2.4.9|>=2.5,<2.5.4",
@@ -2515,7 +2504,7 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2018-08-02T09:21:54+00:00"
+            "time": "2018-08-07T14:47:17+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

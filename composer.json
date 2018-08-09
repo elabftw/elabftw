@@ -12,22 +12,22 @@
         "ext-pdo": "*",
         "ext-zip": "*",
         "defuse/php-encryption": "2.2.*",
-        "mpdf/mpdf": "^7.1",
+        "mpdf/mpdf": "7.1.*",
         "swiftmailer/swiftmailer":"6.1.*",
-        "onelogin/php-saml": "^2.14",
-        "guzzlehttp/guzzle": "^6.3",
-        "michelf/php-markdown": "^1.7",
-        "symfony/http-foundation": "^4.1",
+        "onelogin/php-saml": "2.14.*",
+        "guzzlehttp/guzzle": "6.3.*",
+        "michelf/php-markdown": "1.8.*",
+        "symfony/http-foundation": "4.1.*",
         "twig/twig": "2.5.*",
-        "twig/extensions": "^1.5",
-        "monolog/monolog": "^1.23",
+        "twig/extensions": "1.5.*",
+        "monolog/monolog": "1.23.*",
         "maennchen/zipstream-php": "dev-master"
 
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
-        "codeception/codeception": "^2",
-        "pyrech/composer-changelogs": "^1.5"
+        "codeception/codeception": "2.4.*",
+        "pyrech/composer-changelogs": "1.6.*"
     },
     "autoload": {
         "psr-4": {

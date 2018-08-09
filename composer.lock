@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e22fada8df8f546543a9f1bef37f7aa8",
+    "content-hash": "e542cf3dccc59d9b046fd51188b2fae7",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -367,12 +367,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/maennchen/ZipStream-PHP.git",
-                "reference": "af77299f8fcfcec9c79237b2ff2477ffdc32b2fc"
+                "reference": "8d0194ca51d9f98465ef850f7b8ea32c95315393"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/af77299f8fcfcec9c79237b2ff2477ffdc32b2fc",
-                "reference": "af77299f8fcfcec9c79237b2ff2477ffdc32b2fc",
+                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/8d0194ca51d9f98465ef850f7b8ea32c95315393",
+                "reference": "8d0194ca51d9f98465ef850f7b8ea32c95315393",
                 "shasum": ""
             },
             "require": {
@@ -419,7 +419,7 @@
                 "stream",
                 "zip"
             ],
-            "time": "2018-07-31T20:12:13+00:00"
+            "time": "2018-08-08T15:23:32+00:00"
         },
         {
             "name": "michelf/php-markdown",

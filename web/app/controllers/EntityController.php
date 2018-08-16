@@ -24,7 +24,7 @@ $Response = new JsonResponse();
 
 try {
     // id of the item (experiment or database item)
-    $id = 0;
+    $id = 1;
 
     if ($Request->request->has('id')) {
         $id = $Request->request->get('id');

@@ -10,7 +10,7 @@
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "5.2.*",
     "@fortawesome/free-regular-svg-icons": "5.2.*",
-    "@fortawesome/free-solid-svg-icons": "5.2.*",
+    "@fortawesome/free-solid-svg-icons": "5.3.*",
     "bootstrap": "4.1.*",
     "bootstrap-markdown-fa5": "2.10.*",
     "dropzone": "5.5.*",

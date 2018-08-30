@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "@fancyapps/fancybox": "3.3.*",
+    "@fancyapps/fancybox": "3.4.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "5.2.*",
     "@fortawesome/free-regular-svg-icons": "5.2.*",

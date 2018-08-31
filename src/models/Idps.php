@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use PDO;
 
 /**
- * Store informations about different identity providers for auth with SAML
+ * Store information about different identity providers for auth with SAML
  */
 class Idps implements CrudInterface
 {

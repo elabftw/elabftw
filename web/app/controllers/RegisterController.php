@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Swift_TransportException;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -59,6 +60,12 @@ try {
 
     // log user creation
     $App->Log->info('New user created');
+
+} catch (Swift_TransportException $e) {
+    // for swift error, don't display error to user as it might contain sensitive information
+    // but log it and display general error. See #841
+    $App->Log->error('', array('exception' => $e));
+    $Session->getFlashBag()->add('ko', Tools::error());
 
 } catch (Exception $e) {
     $Session->getFlashBag()->add('ko', $e->getMessage());

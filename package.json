@@ -31,7 +31,7 @@
     "apidoc": "0.17.*",
     "expose-loader": "0.7.*",
     "grunt": "1.0.*",
-    "grunt-contrib-cssmin": "2.2.*",
+    "grunt-contrib-cssmin": "3.0.*",
     "grunt-contrib-uglify-es": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "1.1.*",
     "grunt-shell": "2.1.*",

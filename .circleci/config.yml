@@ -58,6 +58,7 @@ jobs:
         - ./vendor
     - run: sudo mysql -uroot -e "create database phpunit;"
     - run: sudo mysql -uroot -e "create user phpunit identified by 'phpunit';"
+    - run: sudo mysql -uroot -e "grant all privileges on phpunit.* to 'phpunit'@'%'"
     - run: sudo mysql -uroot phpunit < src/sql/structure.sql
     - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
     # Tests

@@ -66,19 +66,22 @@ try {
 
     // UPDATE USERS
     if ($Request->request->has('usersUpdate')) {
-        $tab = 3;
         if (!$Session->get('is_admin')) {
             throw new Exception('Non admin user tried to access admin panel.');
         }
         if ($Request->request->has('fromSysconfig')) {
-            $location = "../../sysconfig.php?tab=$tab";
+            $location = "../../sysconfig.php?tab=3";
         } else {
-            $location = "../../admin.php?tab=$tab";
+            $location = "../../admin.php?tab=2";
         }
 
-        if ($App->Users->update($Request->request->all())) {
+        try {
+            $App->Users->update($Request->request->all());
             $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+        } catch (Exception $e) {
+            $Session->getFlashBag()->add('ko', $e->getMessage());
         }
+
     }
 
     // ARCHIVE USER

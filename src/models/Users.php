@@ -374,6 +374,19 @@ class Users
         $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
+        // check email is not already in db
+        $usersEmails = $this->getAllEmails();
+        $emailsArr = array();
+        // get all emails in a nice array
+        foreach ($usersEmails as $user) {
+            $emailsArr[] = $user['email'];
+        }
+
+        // now make sure the new email is not already used by someone
+        if (\in_array($email, $emailsArr, true)) {
+            throw new Exception('Email is already used by non archived user!');
+        }
+
         if ($params['validated'] == 1) {
             $validated = 1;
         } else {

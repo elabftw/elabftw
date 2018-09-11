@@ -57,7 +57,7 @@ jobs:
         - ./node_modules
         - ./vendor
     # we restart mysql without grant tables otherwise it doesn't work for some weird reason (cannot connect with root)
-    - run: sudo mysql stop && sudo mysqld_safe --skip-grant-tables &
+    - run: sudo service mysql stop && sudo mysqld_safe --skip-grant-tables &
     - run: sleep 5
     - run: mysql -uroot -e "create database phpunit;"
     - run: mysql -uroot phpunit < src/sql/structure.sql

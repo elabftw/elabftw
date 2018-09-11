@@ -56,10 +56,12 @@ jobs:
         paths:
         - ./node_modules
         - ./vendor
-    # This is based on your 1.0 configuration file or project settings
-    - run: sudo mysql -uroot -e "create database phpunit;"
-    - run: sudo mysql -uroot phpunit < src/sql/structure.sql
-    - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
-    # Test
+    # we restart mysql without grant tables otherwise it doesn't work for some weird reason (cannot connect with root)
+    - run: sudo mysql stop && sudo mysqld_safe --skip-grant-tables &
+    - run: sleep 5
+    - run: mysql -uroot -e "create database phpunit;"
+    - run: mysql -uroot phpunit < src/sql/structure.sql
+    - run: mysql -uroot phpunit < tests/_data/phpunit.sql
+    # Tests
     - run: yarn run unit
     - run: yarn run vulns

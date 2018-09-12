@@ -3,7 +3,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 2.1.1\n"
 "Project-Id-Version: elabftw\n"
 "Language: sl\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
@@ -1524,7 +1524,7 @@ msgid "This section is out of your reach!"
 msgstr "Ta del vam ni dosegljiv!"
 
 #: src/classes/Tools.php:254
-msgid "An error occured!"
+msgid "An error occurred!"
 msgstr "Prišlo je do napake!"
 
 #: src/classes/MolViewer.php:79

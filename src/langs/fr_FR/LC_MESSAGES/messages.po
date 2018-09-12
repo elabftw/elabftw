@@ -1525,7 +1525,7 @@ msgid "This section is out of your reach!"
 msgstr "Cette section est hors de votre portée !"
 
 #: src/classes/Tools.php:254
-msgid "An error occured!"
+msgid "An error occurred!"
 msgstr "Une erreur est survenue!"
 
 #: src/classes/MolViewer.php:79

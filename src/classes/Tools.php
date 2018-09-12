@@ -251,7 +251,7 @@ class Tools
         if ($permission) {
             return _("This section is out of your reach!");
         }
-        return _("An error occured!");
+        return _("An error occurred!");
     }
 
     /**

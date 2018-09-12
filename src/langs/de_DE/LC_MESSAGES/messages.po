@@ -3,7 +3,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.9\n"
+"X-Generator: Poedit 2.1.1\n"
 "Project-Id-Version: elabftw\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1514,7 +1514,7 @@ msgid "This section is out of your reach!"
 msgstr "Dieser Bereich ist ausserhalb Ihrer Zuständigkeit!"
 
 #: src/classes/Tools.php:254
-msgid "An error occured!"
+msgid "An error occurred!"
 msgstr "Ein Fehler ist aufgetreten!"
 
 #: src/classes/MolViewer.php:79

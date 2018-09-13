@@ -53,7 +53,7 @@ try {
     // DUPLICATE/IMPORT TPL
     if ($Request->request->has('import_tpl')) {
         $Response = new JsonResponse();
-        $Templates = new Templates($App->Users, $Request->request->get('id'));
+        $Templates = new Templates($App->Users, (int) $Request->request->get('id'));
         if ($Templates->duplicate()) {
             $Response->setData(array(
                 'res' => true,

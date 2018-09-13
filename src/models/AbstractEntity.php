@@ -520,7 +520,7 @@ abstract class AbstractEntity
                 }
             }
         } elseif ($this instanceof Templates) {
-            if ($item['userid'] === $this->Users->userid) {
+            if ((int) $item['userid'] === $this->Users->userid) {
                 return array('read' => true, 'write' => true);
             }
         } elseif ($this instanceof Database) {

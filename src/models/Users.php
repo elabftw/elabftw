@@ -370,6 +370,8 @@ class Users
             throw new Exception(_('The id parameter is not valid!'));
         }
 
+        $Users = new Users($userid);
+
         $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
@@ -383,7 +385,8 @@ class Users
         }
 
         // now make sure the new email is not already used by someone
-        if (\in_array($email, $emailsArr, true)) {
+        // it's okay if it's the same email as before though
+        if (\in_array($email, $emailsArr, true) && $email !== $Users->userData['email']) {
             throw new Exception('Email is already used by non archived user!');
         }
 

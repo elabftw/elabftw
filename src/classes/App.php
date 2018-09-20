@@ -172,6 +172,21 @@ class App
     }
 
     /**
+     * Get the lang (in short form like 'en' or 'fr') for the HTML attribute in head.html template
+     *
+     * @return string
+     */
+    public function getLangForHtmlAttribute(): string
+    {
+        $lang = 'en';
+        if ($this->Users->userid) {
+            $lang = \substr($this->Users->userData['lang'], 0, 2);
+        }
+
+        return $lang;
+    }
+
+    /**
      * Generate HTML from a twig template. The App object is injected into every template.
      *
      * @param string $template template located in app/tpl/

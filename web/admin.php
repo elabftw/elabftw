@@ -33,11 +33,13 @@ try {
     $Status = new Status($App->Users);
     $Tags = new Tags(new Experiments($App->Users));
     $TeamGroups = new TeamGroups($App->Users);
+    $Teams = new Teams($App->Users);
     $Templates = new Templates($App->Users);
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
+    $teamsArr = $Teams->readAll();
     $commonTplBody = $Templates->readCommonBody();
     // only the unvalidated ones
     $unvalidatedUsersArr = $App->Users->readAllFromTeam(0);
@@ -55,6 +57,7 @@ try {
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,
+        'teamsArr' => $teamsArr,
         'commonTplBody' => $commonTplBody,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr

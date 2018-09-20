@@ -375,6 +375,10 @@ class Users
         $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
+        $team = Tools::checkId((int) $params['team']);
+        if ($this->hasExperiments($userid) && $team !== (int) $Users->userData['team']) {
+            throw new Exception('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
+        }
 
         // check email is not already in db
         $usersEmails = $this->getAllEmails();
@@ -413,6 +417,7 @@ class Users
             firstname = :firstname,
             lastname = :lastname,
             email = :email,
+            team = :team,
             usergroup = :usergroup,
             validated = :validated
             WHERE userid = :userid";
@@ -420,6 +425,7 @@ class Users
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':email', $email);
+        $req->bindParam(':team', $team);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $usergroup);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
@@ -733,6 +739,23 @@ class Users
         $Email->alertUserIsValidated($this->userData['email']);
 
         return $msg;
+    }
+
+    /**
+     * Check if a user owns experiments
+     * This is used to prevent changing the team of a user with experiments
+     *
+     * @param int userid the user to check
+     * @return bool
+     */
+    public function hasExperiments(int $userid): bool
+    {
+        $sql = "SELECT COUNT(id) FROM experiments WHERE userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->execute();
+
+        return (bool) $req->fetchColumn();
     }
 
     /**

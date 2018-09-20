@@ -33,6 +33,16 @@
                         <input autocomplete='off' class='clean-form' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
                     </li>
 
+                    <!-- TEAM -->
+                    <li class='list-inline-item'>
+                        <label class='block' for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team'|trans }}</label>
+                        <select class='clean-form' name='team' id='usersUpdateTeam_{{ user.userid }}'>
+                            {% for team in teamsArr %}
+                            <option value='{{ team.team_id }}' {{ user.team == team.team_id ? " selected='selected'" }}>{{ team.team_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </li>
+
                     <!-- PERMISSION GROUP -->
                     <li class='list-inline-item'>
                         <label class='block' for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>

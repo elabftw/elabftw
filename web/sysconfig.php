@@ -52,8 +52,11 @@ try {
         ini_get('date.timezone')
     );
 
+    $elabimgVersion = getenv('ELABIMG_VERSION') ? getenv('ELABIMG_VERSION') : 'Not in Docker';
+
     $template = 'sysconfig.html';
     $renderArr = array(
+        'elabimgVersion' => $elabimgVersion,
         'ReleaseCheck' => $ReleaseCheck,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,

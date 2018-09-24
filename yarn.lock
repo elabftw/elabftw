@@ -3,8 +3,8 @@
 
 
 "@fancyapps/fancybox@3.4.*":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.4.1.tgz#4af13627407f9585a6afef25976ca8b436a6dd33"
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.4.2.tgz#f2ae0db7c9b94f9beed18ce949e0d51c22bbef06"
 
 "@fortawesome/fontawesome-common-types@^0.2.4":
   version "0.2.4"

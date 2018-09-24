@@ -2498,9 +2498,17 @@ nconf@^0.10.0:
     secure-keys "^1.0.0"
     yargs "^3.19.0"
 
-needle@^2.0.1, needle@^2.2.1:
+needle@^2.2.1:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.3.tgz#c1b04da378cd634d8befe2de965dc2cfb0fd65ca"
+  dependencies:
+    debug "^2.1.2"
+    iconv-lite "^0.4.4"
+    sax "^1.2.4"
+
+needle@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.4.tgz#51931bff82533b1928b7d1d69e01f1b00ffd2a4e"
   dependencies:
     debug "^2.1.2"
     iconv-lite "^0.4.4"
@@ -3499,9 +3507,9 @@ snyk-try-require@1.3.1, snyk-try-require@^1.1.1:
     lru-cache "^4.0.0"
     then-fs "^2.0.0"
 
-snyk@1.96.*:
-  version "1.96.0"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.96.0.tgz#cab8725ed770e3cd82197380dfba56850d19806f"
+snyk@1.97.*:
+  version "1.97.1"
+  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.97.1.tgz#22ae4e70b2b4a0e374b5d41dbd1e34c83fba3395"
   dependencies:
     abbrev "^1.1.1"
     ansi-escapes "^3.1.0"
@@ -3511,7 +3519,7 @@ snyk@1.96.*:
     hasbin "^1.2.3"
     inquirer "^3.0.0"
     lodash "^4.17.5"
-    needle "^2.0.1"
+    needle "^2.2.4"
     opn "^5.2.0"
     os-name "^2.0.1"
     proxy-agent "^2.0.0"
@@ -3534,6 +3542,7 @@ snyk@1.96.*:
     snyk-sbt-plugin "1.3.2"
     snyk-tree "^1.0.0"
     snyk-try-require "1.3.1"
+    source-map-support "^0.5.9"
     tempfile "^2.0.0"
     then-fs "^2.0.0"
     undefsafe "^2.0.0"
@@ -3567,7 +3576,7 @@ source-map-resolve@^0.5.0:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
-source-map-support@^0.5.7:
+source-map-support@^0.5.7, source-map-support@^0.5.9:
   version "0.5.9"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.9.tgz#41bc953b2534267ea2d605bccfa7bfa3111ced5f"
   dependencies:

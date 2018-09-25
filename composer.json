@@ -26,7 +26,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
-        "codeception/codeception": "2.4.*",
+        "codeception/codeception": "2.5.*",
         "pyrech/composer-changelogs": "1.6.*"
     },
     "autoload": {

@@ -193,7 +193,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                     {% if searchPage %}
                         {{ item.fullname|raw }}
                     {% endif %}
-                    <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' style='width:15px;vertical-align:-3px;' />
+                    <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' style='width:15px;vertical-align:-3px;' />
                 {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>
                 {% endif %}

@@ -50,6 +50,8 @@
                 $('#bodyToggle_' + id).css('width', width);
                 // display div
                 $('#bodyToggle_' + id).toggle();
+                // ask mathjax to reparse the page
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
             });
         });
 

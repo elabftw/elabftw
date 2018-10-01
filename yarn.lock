@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@fancyapps/fancybox@3.4.*":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.4.1.tgz#4af13627407f9585a6afef25976ca8b436a6dd33"
+"@fancyapps/fancybox@3.5.*":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.5.1.tgz#769d832c4c2ee37105416f47a7e657407f0e4cc8"
 
 "@fortawesome/fontawesome-common-types@^0.2.4":
   version "0.2.4"

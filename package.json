@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "@fancyapps/fancybox": "3.4.*",
+    "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "5.3.*",
     "@fortawesome/free-regular-svg-icons": "5.3.*",
@@ -36,8 +36,8 @@
     "grunt-contrib-watch": "1.1.*",
     "grunt-shell": "2.1.*",
     "lodash": "~4.17.5",
-    "snyk": "1.96.*",
-    "webpack": "4.19.*",
+    "snyk": "1.*",
+    "webpack": "4.20.*",
     "webpack-cli": "3.1.*"
   },
   "scripts": {

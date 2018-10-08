@@ -971,13 +971,6 @@ footer div a:hover {
     }
 }
 
-/* prettier code */
-code {
-    border: 1px dotted #ccc;
-    padding:3px;
-    background-color:#eee;
-}
-
 /* 3Dmol.js */
 .viewer_3Dmoljs {
     height: 250px;

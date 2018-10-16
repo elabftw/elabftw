@@ -165,7 +165,7 @@ try {
         }
 
         // now get pref from the filter-order-sort menu
-        if ($Request->query->has('sort')) {
+        if ($Request->query->has('sort') && !empty($Request->query->get('sort'))) {
             $sort = $Request->query->get('sort');
         }
 

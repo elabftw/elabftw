@@ -3787,8 +3787,8 @@ tinymce-mention@4.0.2:
     jquery ">=1.8.3"
 
 tinymce@4.8.*:
-  version "4.8.3"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.3.tgz#fdfe92121a5431fc6e2f295346f781cd200db3b9"
+  version "4.8.4"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.4.tgz#2b1c0d1763dcfd071b340742ca6846125db3a6ad"
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

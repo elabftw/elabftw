@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 try {
     require_once 'app/init.inc.php';
 
+    $Response = new RedirectResponse("experiments.php");
+
     if ($Request->query->has('acs')) {
 
         $Saml = new Saml(new Config, new Idps);
@@ -52,6 +54,10 @@ try {
         $email = $Session->get('samlUserdata')[$emailAttribute];
         if (is_array($email)) {
             $email = $email[0];
+        }
+
+        if ($email === null) {
+            throw new Exception("Could not find email in response from IDP! Aborting.");
         }
 
         if (!$App->Users->Auth->loginFromSaml($email)) {
@@ -92,7 +98,6 @@ try {
         }
 
     }
-    $Response = new RedirectResponse("experiments.php");
 
 } catch (Exception $e) {
     $template = 'error.html';

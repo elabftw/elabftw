@@ -65,6 +65,7 @@ import {
     faSyncAlt,
     faTags,
     faTimes,
+    faTrashAlt,
     faUpload,
     faUser,
 } from '@fortawesome/free-solid-svg-icons'
@@ -119,6 +120,7 @@ library.add(
     faSyncAlt,
     faTags,
     faTimes,
+    faTrashAlt,
     faUpload,
     faUser
 )

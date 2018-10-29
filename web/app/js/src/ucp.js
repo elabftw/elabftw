@@ -40,7 +40,7 @@
             }
         };
 
-        $(document).on('click', '.save-to-file', function() {
+        $(document).on('click', '.saveToFile', function() {
             Templates.saveToFile($(this).data('id'), $(this).data('name'));
         });
         $(document).on('click', '.destroy-template', function() {

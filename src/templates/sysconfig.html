@@ -429,7 +429,7 @@
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                    <i class='fas fa-times fa-2x clickable align_right idpsDestroy' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+                    <i class='fas fa-trash-alt fa-2x clickable idpsDestroy' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
                     <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                     <form method='post' action='app/controllers/IdpsController.php'>
                     <input type='hidden' name='idpsUpdate' />

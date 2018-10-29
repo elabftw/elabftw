@@ -17,9 +17,9 @@
             <div class='col-md-4 col-sm-6'>
                 <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>
                     {% if mode == 'edit' %}
-                    <a class='align_right uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
+                    <a class='uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
                         data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}'>
-                        <i class='fas fa-times clickable'></i>
+                        <i class='fas fa-trash-alt fa-pull-right clickable'></i>
                     </a>
                     {% endif %}
 

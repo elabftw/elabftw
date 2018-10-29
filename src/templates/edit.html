@@ -12,7 +12,7 @@
 <script src='app/js/src/relative-moment.js?v={{ v }}'></script>
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
-    <i class='fas fa-times fa-2x clickable align_right entityDestroy' title='Delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+    <i class='fas fa-trash-alt fa-2x fa-pull-right clickable entityDestroy' title='Delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
 
     <!-- TAGS -->
     <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
@@ -143,8 +143,8 @@
                         {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
                     </span>
                     {% endif %}
-                    <a class='align_right stepDestroy' data-stepid='{{ step.id }}'>
-                        <i class='fas fa-lg fa-times clickable'></i>
+                    <a class='stepDestroy' data-stepid='{{ step.id }}'>
+                        <i class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
                     </a>
                     </div>
                 </div>
@@ -171,8 +171,8 @@
                     {% for link in linksArr %}
                     <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
                             {{ link.title|raw }}</a>
-                        <a class='align_right linkDestroy' data-linkid='{{ link.linkid }}'>
-                            <i class='fas fa-lg fa-times clickable'></i>
+                        <a class='linkDestroy' data-linkid='{{ link.linkid }}'>
+                            <i class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
                         </a>
                     </li>
                     {% endfor %}

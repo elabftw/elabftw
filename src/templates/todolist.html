@@ -8,7 +8,7 @@
     <ul id='todoItems-list'>
         {% for todoItem in App.todoItems %}
         <li id='todoItem_{{ todoItem['id'] }}' class='todoItem-li'>
-            <i class='fas fa-times clickable align_right destroyTodoItem' data-id='{{ todoItem.id }}'></i>
+            <i class='fas fa-trash-alt fa-pull-right clickable destroyTodoItem' data-id='{{ todoItem.id }}'></i>
             <span style='font-size:60%;display:block;'>{{ todoItem['creation_time'] }}</span>
             <span id='todoItem_{{ todoItem['id'] }}' class='todoitem editable'>{{ todoItem.body }}</span></li>
         {% endfor %}

@@ -199,7 +199,7 @@
                         <span class='text-muted'>{{ comment.fullname|raw }} {{ 'commented'|trans }}</span>
                         <span title='{{ comment.datetime }}' class='text-muted relative-moment'></span>
                         {% if comment.userid == Entity.Users.userid %}
-                        <i class='fas fa-times fa-lg clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
+                        <i class='fas fa-trash-alt fa-lg fa-pull-right clickable commentsDestroy' data-id='{{ comment.id }}' data-expid='{{ Entity.id }}' data-confirm='{{ 'Delete this?'|trans }}' ></i>
                         {% endif %}
                         </div>
                         <!-- .editable uses the id of the element to send to the controller -->

@@ -42,7 +42,7 @@
                     if (data.res) {
                         // add the todoitem
                         $('#todoItems-list').prepend("<li class='todoItem' id='todoItem_" +
-                            data.msg + "'><i class='fas fa-times clickable align_right destroyTodoItem' data-id='" +
+                            data.msg + "'><i class='fas fa-trash-alt destroyTodoItem' data-id='" +
                             data.msg + "'></i><span style='font-size:60%;display:block;'>" +
                             datetime + "</span><span id='todoItemBody_" + data.msg + "' class='editable'>" + body +
                             '</li>');

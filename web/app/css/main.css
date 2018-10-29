@@ -463,10 +463,10 @@ section.item {
 }
 
 .button-neutral {
-     background-color: #989898;
+    background-color: #989898;
 }
 .button-neutral:hover {
-     background-color: #727272;
+    background-color: #727272;
 }
 
 /* show-hide canvas / molecule editor */
@@ -1068,6 +1068,12 @@ input#todo {
     cursor: pointer;
 }
 
+/* trash icon is red on hover */
+svg.fa-trash-alt:hover {
+    transition: color 0.8s ease;
+    color: #dd1e00;
+}
+
 .bodyToggle {
     display: none;
 }
@@ -1081,6 +1087,7 @@ input#todo {
     margin-top:10px;
 }
 
+/* font awesome icons color */
 .svg-inline--fa {
     color: #797979;
 }

@@ -200,7 +200,7 @@
             {% for teamGroup in teamGroupsArr %}
                 <div class='box'>
                     <a href='#'>
-                        <i class='fas fa-times clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
+                        <i class='fas fa-trash-alt clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
                     </a>
                     <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
                     <ul class='group-list'>
@@ -409,7 +409,7 @@
         <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.' }}</p>
         <div id='tag_manager'>
         {% for tag in tagsArr %}
-        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-times clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
+        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
         {% endfor %}
         </div>
     </div>

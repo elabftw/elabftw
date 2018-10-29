@@ -33,12 +33,12 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.4"
 
-"@fortawesome/free-solid-svg-icons@5.3.*":
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.3.1.tgz#9660bece3c4850d58f1653e26c1693487ff74b08"
-  integrity sha512-NkiLBFoiHtJ89cPJdM+W6cLvTVKkLh3j9t3MxkXyip0ncdD3lhCunSuzvFcrTHWeETEyoClGd8ZIWrr3HFZ3BA==
+"@fortawesome/free-solid-svg-icons@5.4.*":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.4.2.tgz#185fdab8806d5726846719dd7f8a2756c7b4f7fe"
+  integrity sha512-emie9CsLZPLVPH1adR3MNGNlm0GSVvEuUbZkQr0uXSp+Q9SZL0/OF6ava3DCKkwDbjn3jDKPchOraj0Vkuat6Q==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.4"
+    "@fortawesome/fontawesome-common-types" "^0.2.7"
 
 "@webassemblyjs/ast@1.7.8":
   version "1.7.8"

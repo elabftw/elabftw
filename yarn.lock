@@ -4404,9 +4404,9 @@ tinymce-mention@4.0.2:
     jquery ">=1.8.3"
 
 tinymce@4.8.*:
-  version "4.8.4"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.4.tgz#2b1c0d1763dcfd071b340742ca6846125db3a6ad"
-  integrity sha512-hbq7Xw8rnSc5oozvhgjeGKxZ9nhelNWLyoFq+BDUbrqztq5vF+4Lw8IsxFOfnn5teE383NeWLXQT9tRwf/eeHg==
+  version "4.8.5"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.8.5.tgz#a80ea66c4f90078bd93625b0f0914a4f774e0af3"
+  integrity sha512-1V6+PxP5Kp8H/Kuf+EOe6vyrtj1Dlj98q33DgiKGoGPTmbcQaVZWiT+lhqj8ICXKVLV3YxAieOJyJXai4SLHQg==
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

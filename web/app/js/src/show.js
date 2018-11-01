@@ -158,7 +158,7 @@
             var checked = getCheckedBoxes();
             // loop on it and update the status/item type
             $.each(checked, function(index, value) {
-                ajaxs.push($.post('app/controllers/ExperimentsController.php', {
+                ajaxs.push($.post('app/controllers/EntityController.php', {
                     updateVisibility : true,
                     id : value,
                     visibility : $('#visChecked').val(),

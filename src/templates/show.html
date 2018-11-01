@@ -129,7 +129,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
 
     <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
     {% if not searchPage %}
-        <select id='catChecked'>
+        <select autocomplete='off' id='catChecked'>
             <option selected disabled>
             {% if Entity.type == 'experiments' %}
                 {{ 'Change status'|trans }}
@@ -144,7 +144,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
         </select>
 
         {% if Entity.type == 'experiments' %}
-        <select id='visChecked'>
+        <select autocomplete='off' id='visChecked'>
             <option selected disabled>{{ 'Change visibility'|trans }}</option>
             {% for key, value in visibilityArr %}
                 <option value='{{ key }}'>{{ value }}</option>

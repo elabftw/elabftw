@@ -200,7 +200,7 @@ class TeamGroups implements CrudInterface
     {
         $success = array();
 
-        $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id";
+        $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = ':id'";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $success[] = $req->execute();

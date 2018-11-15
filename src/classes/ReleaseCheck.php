@@ -43,7 +43,7 @@ class ReleaseCheck
      * UPDATE THIS AFTER RELEASING
      * ///////////////////////////
      */
-    public const INSTALLED_VERSION = '2.0.4';
+    public const INSTALLED_VERSION = '2.0.5';
 
     /**
      * Fetch the update info on object creation

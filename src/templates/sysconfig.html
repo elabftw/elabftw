@@ -36,7 +36,8 @@
     {% endif %}
 {% endif %}
 
-<p>Docker image version: {{ elabimgVersion }}</p>
+<p>Docker image version: {{ elabimgVersion }}<br />
+MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <menu>
     <ul>

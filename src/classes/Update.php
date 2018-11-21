@@ -34,7 +34,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 43;
+    private const REQUIRED_SCHEMA = 44;
 
     /**
      * Init Update with Config and Db
@@ -107,6 +107,11 @@ class Update
             // 20180727 v2.0.0
             $this->schema43();
             $this->updateSchema(43);
+        }
+        if ($current_schema < 44) {
+            // 20181121 v2.0.6
+            $this->schema44();
+            $this->updateSchema(44);
         }
         // place new schema functions above this comment
 
@@ -358,6 +363,20 @@ class Update
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('open_science', '0'), ('open_team', NULL);";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem adding open_science and open_team to config (schema 43)!');
+        }
+    }
+
+    /**
+     * Make sur all locked are 0 not null
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema44(): void
+    {
+        $sql = "UPDATE items SET `locked` = '0' WHERE `locked` IS NULL;";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem cleaning up locked values (schema 44)!');
         }
     }
 }

@@ -206,7 +206,7 @@ CREATE TABLE `items` (
   `body` mediumtext,
   `rating` tinyint(10) DEFAULT '0',
   `type` int(10) unsigned NOT NULL,
-  `locked` tinyint(3) unsigned DEFAULT NULL,
+  `locked` tinyint(3) unsigned DEFAULT '0',
   `userid` int(10) unsigned NOT NULL,
   `visibility` varchar(255) NOT NULL DEFAULT 'team',
   PRIMARY KEY (`id`)

@@ -218,13 +218,15 @@ li.dropdown-item:hover{ color:#29AEB9;}
 
                 {{ owner|raw }}
 
-                {% if item.tags is not null %}
+                {% set tagsArr = Entity.getTags(item.id) %}
+                {% if tagsArr|length > 0 %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>
-                    {% set tagsArr = item.tags|split('|') %}
                     {% for tag in tagsArr %}
-                    <a href='{{ Entity.page }}.php?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
+                    <a href='?mode=show&tag={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                     {% endfor %}
                 {% endif %}
+
+
                 </p>
                 <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
             </section>
@@ -233,15 +235,14 @@ li.dropdown-item:hover{ color:#29AEB9;}
     {% endfor %}
     </div>
 
-    {% if not showAll and not searchPage %}
+    {% if not searchPage %}
         <div class='text-center'>
             {% if offset != 0 %}
-                <button class='button button-neutral previous-page'>{{ 'Previous page'|trans }}</button>
+                <button class='button button-neutral previousPage'>{{ 'Previous page'|trans }}</button>
             {% endif %}
             {% if count >= Entity.Users.userData.limit_nb %}
-                <button class='button next-page'>{{ 'Next page'|trans }}</button>
+                <button class='button nextPage'>{{ 'Next page'|trans }}</button>
             {% endif %}
-            <button class='button button-neutral show-all'>{{ 'Show all'|trans }}</button>
         </div>
     {% endif %}
 

@@ -112,6 +112,7 @@ try {
         $searchType = '';
         $tag = '';
         $query = '';
+        $getTags = false;
 
         // CATEGORY FILTER
         if (Tools::checkId((int) $Request->query->get('cat')) !== false) {
@@ -123,6 +124,7 @@ try {
             $tag = filter_var($Request->query->get('tag'), FILTER_SANITIZE_STRING);
             $Entity->tagFilter = " AND tags.tag LIKE '" . $tag . "'";
             $searchType = 'tag';
+            $getTags = true;
         }
         // QUERY FILTER
         if ($Request->query->get('q') != '') {
@@ -184,12 +186,8 @@ try {
             $offset = $Request->query->get('offset');
         }
 
-        $showAll = true;
-        if ($Request->query->get('limit') !== 'over9000') {
-            $Entity->setOffset($offset);
-            $Entity->setLimit($limit);
-            $showAll = false;
-        }
+        $Entity->setOffset($offset);
+        $Entity->setLimit($limit);
         // END PAGINATION
 
         $TeamGroups = new TeamGroups($Entity->Users);
@@ -214,7 +212,7 @@ try {
                 $Entity->setUseridFilter();
             }
 
-            $itemsArr = $Entity->read();
+            $itemsArr = $Entity->read($getTags);
         }
 
         $template = 'show.html';
@@ -226,7 +224,6 @@ try {
             'offset' => $offset,
             'query' => $query,
             'searchType' => $searchType,
-            'showAll' => $showAll,
             'tag' => $tag,
             'templatesArr' => $templatesArr,
             'visibilityArr' => $visibilityArr

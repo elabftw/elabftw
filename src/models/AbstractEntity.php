@@ -161,9 +161,11 @@ abstract class AbstractEntity
      * Optionally with filters
      * Here be dragons!
      *
+     * @param bool $getTags if true, might take a very long time, false in show mode
+     *
      * @return array
      */
-    public function read(): array
+    public function read($getTags = true): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
@@ -209,13 +211,17 @@ abstract class AbstractEntity
                 ON (experiments_comments.item_id = experiments.id)";
             $where = "WHERE experiments.team = :team";
 
-            $sql = $select . ' ' .
-                $tagsSelect . ' ' .
-                $from . ' ' .
+            $sql = $select . ' ';
+                if ($getTags) {
+                    $sql .= $tagsSelect . ' ';
+                }
+                $sql .= $from . ' ' .
                 $usersJoin . ' ' .
-                $stepsJoin . ' ' .
-                $tagsJoin . ' ' .
-                $statusJoin . ' ' .
+                $stepsJoin . ' ';
+                if ($getTags) {
+                    $sql .= $tagsJoin . ' ';
+                }
+                $sql .= $statusJoin . ' ' .
                 $uploadsJoin . ' ' .
                 $commentsJoin . ' ' .
                 $where;
@@ -231,7 +237,15 @@ abstract class AbstractEntity
                 LEFT JOIN users ON (users.userid = items.userid)";
             $where = "WHERE items.team = :team";
 
-            $sql .= ' ' . $tagsSelect . ' ' . $from . ' ' . $uploadsJoin . ' ' . $tagsJoin . ' ' . $where;
+            $sql .= ' ';
+            if ($getTags) {
+                $sql .= $tagsSelect . ' ';
+            }
+            $sql .= $from . ' ' . $uploadsJoin . ' ';
+            if ($getTags) {
+                $sql .= $tagsJoin . ' ';
+            }
+            $sql .=  $where;
         } else {
             throw new Exception('Nope.');
         }
@@ -268,6 +282,24 @@ abstract class AbstractEntity
             return $item;
         }
         return $finalArr;
+    }
+
+    /**
+     * Read the tags of the entity
+     *
+     * @param int $id id of the entity
+     *
+     * @return array
+     */
+    public function getTags(int $id): array {
+        $sql = "SELECT tags2entity.tag_id, tags.tag FROM tags2entity
+            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            WHERE tags2entity.item_id = :id and tags2entity.item_type = :type";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->type, PDO::PARAM_STR);
+        $req->execute();
+        return $req->fetchAll();
     }
 
     /**

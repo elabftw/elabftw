@@ -57,16 +57,12 @@
 
         // PAGINATION
         // previous page
-        $(document).on('click', '.previous-page', function() {
+        $(document).on('click', '.previousPage', function() {
             insertParamAndReload('offset', $('#infos').data('offset') - $('#infos').data('limit'));
         });
         // next page
-        $(document).on('click', '.next-page', function() {
+        $(document).on('click', '.nextPage', function() {
             insertParamAndReload('offset', $('#infos').data('offset') + $('#infos').data('limit'));
-        });
-        // show all
-        $(document).on('click', '.show-all', function() {
-            insertParamAndReload('limit', 'over9000');
         });
         // END PAGINATION
 

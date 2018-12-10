@@ -172,7 +172,9 @@ class Email
         $message = (new Swift_Message())
         ->setSubject($subject)
         ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        ->setTo($to)
+        ->setTo(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
+        // Set recipients in BCC to protect email addresses
+        ->setBcc($to)
         ->setBody($body . $footer);
 
         return $this->send($message);

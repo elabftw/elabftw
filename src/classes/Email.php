@@ -173,7 +173,7 @@ class Email
         ->setSubject($subject)
         ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         ->setTo(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        //Set recipients in BCC to protect email addresses
+        // Set recipients in BCC to protect email addresses
         ->setBcc($to)
         ->setBody($body . $footer);
 

@@ -3,9 +3,9 @@
 
 
 "@fancyapps/fancybox@3.5.*":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.5.2.tgz#d6ff4bf3bc99dd69c53bcee9397d8cf698462fe3"
-  integrity sha512-8xZcTc8wNq53ihacnomPtw5uG/KccgYAa+KNl/3PLwlz1Aldl+LzYSTQA0GW39JMJkfE6aiTQrSxte36uxNJqQ==
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.5.3.tgz#314c7fe8fd03a336b23b7a67dc62d5936b5b4b47"
+  integrity sha512-rQQnpxPpNPGLlgrjkBG/JdTTf+j82Dg2urmv6qS9buOb4in0eLWPadkBXRfLCoCnLJ75Kii9tTG+PvvjSwr3fA==
 
 "@fortawesome/fontawesome-common-types@^0.2.7", "@fortawesome/fontawesome-common-types@^0.2.8":
   version "0.2.8"

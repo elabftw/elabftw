@@ -34,58 +34,58 @@ $teamGroupsArr = $TeamGroups->readAll();
 
 $usersArr = $App->Users->readAllFromTeam();
 
+// TITLE
 $title = '';
 $titleWithSpace = false;
-// TITLE
-if (isset($_GET['title']) && !empty($_GET['title'])) {
+if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
+    $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
     // check if there is a space in the query
-    if (strrpos(trim($_GET['title']), " ") !== false) {
-        $title_arr = explode(' ', trim($_GET['title']));
+    if (\strrpos($title, " ") !== false) {
+        $titleArr = \explode(' ', $title);
         $titleWithSpace = true;
     }
-    $title = filter_var(trim($_GET['title']), FILTER_SANITIZE_STRING);
 }
 
 // BODY
 $body = '';
 $bodyWithSpace = false;
-if (isset($_GET['body']) && !empty($_GET['body'])) {
-    if (strrpos(trim($_GET['body']), " ") !== false) {
-        $body_arr = explode(' ', trim($_GET['body']));
+if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
+    $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
+    // check if there is a space in the query
+    if (\strrpos($body, " ") !== false) {
+        $bodyArr = \explode(' ', $body);
         $bodyWithSpace = true;
     }
-    $body = filter_var(Tools::checkBody(trim($_GET['body'])), FILTER_SANITIZE_STRING);
 }
 
 // ANDOR
 $andor = ' AND ';
-if (isset($_GET['andor']) && ($_GET['andor'] === 'or')) {
+if ($Request->query->has('andor') && $Request->query->get('andor') === 'or') {
     $andor = ' OR ';
 }
 
 // TAGS
 $selectedTagsArr = array();
-if (isset($_GET['tags']) && !empty($_GET['tags'])) {
-    $selectedTagsArr = $_GET['tags'];
+if ($Request->query->has('tags') && !empty($Request->query->get('tags'))) {
+    $selectedTagsArr = $Request->query->get('tags');
 }
 
 // VISIBILITY
 $vis = '';
-if (isset($_GET['vis']) && !empty($_GET['vis']) && $Experiments->checkVisibility($_GET['vis'])) {
-    $vis = $_GET['vis'];
+if ($Request->query->has('vis') && !empty($Request->query->get('vis')) && $Experiments->checkVisibility($Request->query->get('vis'))) {
+    $vis = $Request->query->get('vis');
 }
 
 // FROM
-if (isset($_GET['from']) && !empty($_GET['from'])) {
-    $from = Tools::kdate($_GET['from']);
-} else {
-    $from = '';
+$from = '';
+if ($Request->query->has('from') && !empty($Request->query->get('from'))) {
+    $from = Tools::kdate($Request->query->get('from'));
 }
+
 // TO
-if (isset($_GET['to']) && !empty($_GET['to'])) {
-    $to = Tools::kdate($_GET['to']);
-} else {
-    $to = '';
+$to = '';
+if ($Request->query->has('to') && !empty($Request->query->get('to'))) {
+    $to = Tools::kdate($Request->query->get('to'));
 }
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
@@ -109,7 +109,7 @@ echo $App->render('search.html', $renderArr);
  * Here the search begins
  * If there is a search, there will be get parameters, so this is our main switch
  */
-if (isset($_GET)) {
+if ($Request->query->count() > 0) {
     // assign variables from get
 
     $table = 'items';
@@ -150,7 +150,7 @@ if (isset($_GET)) {
     // Title search
     if ($titleWithSpace) {
         $sqlTitle = " AND (";
-        foreach ($title_arr as $key => $value) {
+        foreach ($titleArr as $key => $value) {
             if ($key !== 0) {
                 $sqlTitle .= $andor;
             }
@@ -164,7 +164,7 @@ if (isset($_GET)) {
     // Body search
     if ($bodyWithSpace) {
         $sqlBody = " AND (";
-        foreach ($body_arr as $key => $value) {
+        foreach ($bodyArr as $key => $value) {
             if ($key != 0) {
                 $sqlBody .= $andor;
             }
@@ -178,7 +178,7 @@ if (isset($_GET)) {
     // Tag search
     if (!empty($selectedTagsArr)) {
         foreach ($selectedTagsArr as $tag) {
-            $tag = filter_var($tag, FILTER_SANITIZE_STRING);
+            $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
             $sqlTag .= " AND tags.tag LIKE '%" . $tag . "%' ";
         }
     }

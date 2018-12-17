@@ -16,7 +16,7 @@ use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * This is a super class holding various global objects
@@ -26,7 +26,7 @@ class App
     /** @var Request $Request the request */
     public $Request;
 
-    /** @var Session $Session the session */
+    /** @var SessionInterface $Session the session */
     public $Session;
 
     /** @var Config $Config the config stored in sql */
@@ -62,13 +62,13 @@ class App
     /**
      * Constructor
      *
-     * @param Session $session
+     * @param SessionInterface $session
      * @param Request $request
      * @param Config $config
      * @param Logger $log
      */
     public function __construct(
-        Session $session,
+        SessionInterface $session,
         Request $request,
         Config $config,
         Logger $log

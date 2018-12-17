@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Provide methods to login a user
@@ -41,8 +41,9 @@ class Auth
      * Constructor
      *
      * @param Request $request
+     * @param SessionInterface $session
      */
-    public function __construct(Request $request, Session $session)
+    public function __construct(Request $request, SessionInterface $session)
     {
         $this->Db = Db::getConnection();
         $this->Request = $request;

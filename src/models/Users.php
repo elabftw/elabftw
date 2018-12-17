@@ -809,19 +809,11 @@ class Users
 
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $result[] = $req->execute();
-
-        $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 
@@ -829,7 +821,6 @@ class Users
         $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
-            //'userid' => $userToDelete['userid'],
             'userid' => $this->userid,
             'type' => 'experiments'
         ));
@@ -841,7 +832,6 @@ class Users
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 

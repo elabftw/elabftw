@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Key;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Prevent CSRF attacks
@@ -26,9 +26,9 @@ class FormKey
     /**
      * We need the Session object
      *
-     * @param Session $session
+     * @param SessionInterface $session
      */
-    public function __construct(Session $session)
+    public function __construct(SessionInterface $session)
     {
         $this->Session = $session;
         if (!$this->Session->has('csrf')) {

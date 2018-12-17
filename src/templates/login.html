@@ -23,7 +23,7 @@
         <label class='block' for="password">{{ 'Password'|trans }}</label>
             <input class='login-area-input' id='password' name='password' type='password' required /><br>
             <!-- form key -->
-            {{ FormKey.getFormkey|raw }}
+            {{ FormKey.getHiddenInput|raw }}
         <input type='checkbox' checked name='rememberme' id='rememberme' />
         <label for='rememberme'>{{ 'Remember me'|trans }}</label>
         </p>

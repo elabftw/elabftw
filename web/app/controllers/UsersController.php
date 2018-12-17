@@ -29,8 +29,9 @@ $FormKey = new FormKey($Session);
 $Response = new RedirectResponse($location);
 
 try {
-    if (!$FormKey->validate($Request->request->get('fkvalue'), $Request->request->get('fkname'))) {
-        throw new IllegalActionException('CSRF token failure.');
+
+    if (!$FormKey->validate($Request->request->get('csrf'))) {
+        throw new IllegalActionException('CSRF token validation failure.');
     }
 
     // UPDATE USERS

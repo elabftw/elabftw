@@ -28,7 +28,7 @@ $Response->setData(array(
 ));
 
 try {
-    if (!$FormKey->validate($Request->request->get('fkvalue'), $Request->request->get('fkname'))) {
+    if (!$FormKey->validate($Request->request->get('csrf'))) {
         throw new IllegalActionException('CSRF token failure.');
     }
     // (RE)GENERATE AN API KEY (from profile)

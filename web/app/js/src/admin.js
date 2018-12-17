@@ -81,8 +81,7 @@
             $.post('app/controllers/UsersAjaxController.php', {
                 usersValidate: true,
                 userid: $(this).data('userid'),
-                fkname: $(this).data('fkname'),
-                fkvalue: $(this).data('fkvalue')
+                csrf: $(this).data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');

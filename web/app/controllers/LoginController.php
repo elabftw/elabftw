@@ -44,7 +44,7 @@ try {
     } else {
 
         // FORMKEY
-        if (!$FormKey->validate($Request->request->get('fkvalue'), $Request->request->get('fkname'))) {
+        if (!$FormKey->validate($Request->request->get('csrf'))) {
             throw new Exception(_("Your session expired. Please retry."));
         }
 

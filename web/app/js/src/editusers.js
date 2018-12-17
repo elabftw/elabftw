@@ -7,8 +7,7 @@ $(document).on('click', '.archiveUser', function(e) {
         $.post('app/controllers/UsersAjaxController.php', {
             usersArchive: true,
             userid: $(this).data('userid'),
-            fkname: $(this).data('fkname'),
-            fkvalue: $(this).data('fkvalue')
+            csrf: $(this).data('csrf')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');
@@ -31,8 +30,7 @@ $(document).on('click', '.destroyUser', function(e) {
         $.post('app/controllers/UsersAjaxController.php', {
             usersDestroy: true,
             userid: elem.data('userid'),
-            fkname: $(this).data('fkname'),
-            fkvalue: $(this).data('fkvalue')
+            csrf: $(this).data('csrf')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');

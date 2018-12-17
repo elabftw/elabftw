@@ -19,7 +19,7 @@
                         <p>Team: {{ user.teamname|raw }}</p>
                         <form method='post' action='app/controllers/UsersController.php'>
                             <input type='hidden' value='true' name='usersUpdate' />
-                            {{ FormKey.getFormkey()|raw }}
+                            {{ FormKey.getHiddenInput()|raw }}
                             {% if fromSysconfig %}
                                 <input type='hidden' value='1' name='fromSysconfig' />
                             {% endif %}
@@ -105,13 +105,13 @@
                             {% if user.archived %}
                                 <p>{{ 'User is archived'|trans }}</p>
                             {% else %}
-                                <button class='button button-delete archiveUser' {{ FormKey.getDataFormkey|raw }} data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                                <button class='button button-delete archiveUser' {{ FormKey.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
                             {% endif %}
                             </li>
 
                             <!-- DESTROY USER -->
                             <li class='list-inline-item'>
-                                <button class='button button-delete destroyUser' {{ FormKey.getDataFormkey|raw }} data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                                <button class='button button-delete destroyUser' {{ FormKey.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
                            </li>
                         </form>
 

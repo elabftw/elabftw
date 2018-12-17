@@ -16,7 +16,7 @@ use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
- * Generate and validate keys for input forms
+ * Prevent CSRF attacks
  */
 class FormKey
 {
@@ -31,21 +31,19 @@ class FormKey
     public function __construct(Session $session)
     {
         $this->Session = $session;
+        if (!$this->Session->has('csrf')) {
+            $this->Session->set('csrf', $this->generate());
+        }
     }
 
     /**
-     * Generate the key and store it in session
+     * Generate a CSRF token
      *
-     * @throws Exception
-     * @return array
+     * @return string
      */
-    private function create(): array
+    private function generate(): string
     {
-        $fkname = \bin2hex(\random_bytes(42));
-        $fkvalue = Key::createNewRandomKey()->saveToAsciiSafeString();
-        $this->Session->set($fkname, $fkvalue);
-
-        return array('value' => $fkvalue, 'name' => $fkname);
+        return Key::createNewRandomKey()->saveToAsciiSafeString();
     }
 
     /**
@@ -53,33 +51,29 @@ class FormKey
      *
      * @return string
      */
-    public function getFormkey(): string
+    public function getHiddenInput(): string
     {
-        $formkeyArr = $this->create();
-        return "<input type='hidden' name='fkname' value='" . $formkeyArr['name'] . "' />
-                <input type='hidden' name='fkvalue' value='" . $formkeyArr['value'] . "' />";
+        return "<input type='hidden' name='csrf' value='" . $this->Session->get('csrf') . "' />";
     }
 
     /**
-     * Generate data attributes for javascript actions
+     * Generate data attribute with csrf token
      *
      * @return string
      */
-    public function getDataFormkey(): string
+    public function getDataAttr(): string
     {
-        $formkeyArr = $this->create();
-        return "data-fkname='" . $formkeyArr['name'] . "' data-fkvalue='" . $formkeyArr['value'] . "'";
+        return "data-csrf='" . $this->Session->get('csrf') . "'";
     }
 
     /**
      * Validate the form key against the one previously set in Session
      *
      * @param string $value
-     * @param string $name
      * @return bool True if there is no CSRF going on (hopefully)
      */
-    public function validate(string $value, string $name): bool
+    public function validate(string $value): bool
     {
-        return $value === $this->Session->get($name);
+        return $value === $this->Session->get('csrf');
     }
 }

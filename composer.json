@@ -31,7 +31,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Elabftw\\Elabftw\\" : ["src/classes", "src/models", "src/views"]
+            "Elabftw\\Elabftw\\" : ["src/classes", "src/models", "src/views"],
+            "Elabftw\\Exceptions\\" : ["src/exceptions"]
         }
     },
     "license": "AGPL-3.0-or-later"

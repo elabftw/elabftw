@@ -23,11 +23,10 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
+    $FormKey = new FormKey($Session);
     if (!$Session->get('is_admin')) {
         throw new Exception(Tools::error(true));
     }
-
-    $FormKey = new FormKey($Session);
 
     $ItemsTypes = new ItemsTypes($App->Users);
     $Status = new Status($App->Users);
@@ -43,8 +42,14 @@ try {
     $commonTplBody = $Templates->readCommonBody();
     // only the unvalidated ones
     $unvalidatedUsersArr = $App->Users->readAllFromTeam(0);
-    // all users
-    $usersArr = $App->Users->readAllFromTeam();
+    // Users search
+    $isSearching = false;
+    $usersArr = array();
+    if ($Request->query->has('q')) {
+        $isSearching = true;
+        $usersArr = $App->Users->readTeamFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
+    }
+
 
     // all the tags for the team
     $tagsArr = $Tags->readAll();
@@ -54,6 +59,7 @@ try {
         'tagsArr' => $tagsArr,
         'FormKey' => $FormKey,
         'fromSysconfig' => false,
+        'isSearching' => $isSearching,
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,

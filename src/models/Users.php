@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -254,8 +255,12 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->execute();
+        $res = $req->fetch();
+        if ($res === false) {
+            return array();
+        }
 
-        return $req->fetch();
+        return $res;
     }
 
     /**
@@ -266,13 +271,59 @@ class Users
      */
     public function readFromEmail(string $email): array
     {
-        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users
-            WHERE email = :email AND archived = 0";
+        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team
+            FROM users
+            WHERE email = :email AND archived = 0 LIMIT 1";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
 
-        return $req->fetch();
+        return $req->fetchAll();
+    }
+
+    /**
+     * Search users based on query. It searches in email, firstname or lastname
+     *
+     * @param string $query
+     * @return array
+     */
+    public function readFromQuery(string $query): array
+    {
+        $sql = "SELECT users.userid,
+            users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
+            teams.team_name as teamname
+            FROM users
+            LEFT JOIN teams ON (users.team = teams.team_id)
+            WHERE users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':query', '%' . $query . '%');
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+    /**
+     * Search users based on query. It searches in email, firstname or lastname
+     * TODO factorize
+     *
+     * @param string $query
+     * @return array
+     */
+    public function readTeamFromQuery(string $query): array
+    {
+        $sql = "SELECT users.userid,
+            users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
+            teams.team_name as teamname
+            FROM users
+            LEFT JOIN teams ON (users.team = teams.team_id)
+            WHERE users.team = :team AND (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':query', '%' . $query . '%');
+        $req->bindParam(':team', $this->userData['team']);
+        $req->execute();
+
+        return $req->fetchAll();
     }
 
     /**
@@ -325,23 +376,6 @@ class Users
     }
 
     /**
-     * Get all users
-     *
-     * @return array
-     */
-    public function readAll(): array
-    {
-        $sql = "SELECT users.*, teams.team_name AS teamname
-            FROM users
-            LEFT JOIN teams ON (users.team = teams.team_id)
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
-        $req = $this->Db->prepare($sql);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
      * Get email for every single user
      *
      * @return array
@@ -356,7 +390,7 @@ class Users
     }
 
     /**
-     * Update user
+     * Update user from the editusers template
      *
      * @param array $params POST
      * @throws Exception
@@ -364,19 +398,11 @@ class Users
      */
     public function update(array $params): bool
     {
-        $userid = Tools::checkId((int) $params['userid']);
-
-        if ($userid === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-
-        $Users = new Users($userid);
-
         $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
         $team = Tools::checkId((int) $params['team']);
-        if ($this->hasExperiments($userid) && $team !== (int) $Users->userData['team']) {
+        if ($this->hasExperiments($this->userid) && $team !== (int) $this->userData['team']) {
             throw new Exception('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
         }
 
@@ -390,8 +416,8 @@ class Users
 
         // now make sure the new email is not already used by someone
         // it's okay if it's the same email as before though
-        if (\in_array($email, $emailsArr, true) && $email !== $Users->userData['email']) {
-            throw new Exception('Email is already used by non archived user!');
+        if (\in_array($email, $emailsArr, true) && $email !== $this->userData['email']) {
+            throw new IllegalActionException('Email is already used by non archived user!');
         }
 
         if ($params['validated'] == 1) {
@@ -410,7 +436,7 @@ class Users
         }
 
         if (\mb_strlen($params['password']) > 1) {
-            $this->updatePassword($params['password'], $userid);
+            $this->updatePassword($params['password'], $this->userid);
         }
 
         $sql = "UPDATE users SET
@@ -428,7 +454,7 @@ class Users
         $req->bindParam(':team', $team);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $usergroup);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -711,34 +737,24 @@ class Users
     }
 
     /**
-     * Validate a user
+     * Validate current user instance
      *
-     * @param int $userid
-     * @return string
+     * @return bool
      */
-    public function validate(int $userid): string
+    public function validate(): bool
     {
-        $this->setId($userid);
-
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
-        if ($req->execute()) {
-            $msg = sprintf(
-                _('User %s (%s) now has an active account.'),
-                $this->userData['fullname'],
-                $this->userData['email']
-            );
-        } else {
-            $msg = Tools::error();
+        $res = $req->execute();
+        if ($res) {
+            // send an email to the user
+            $Email = new Email($this->Config);
+            $Email->alertUserIsValidated($this->userData['email']);
         }
 
-        // send an email to the user
-        $Email = new Email($this->Config);
-        $Email->alertUserIsValidated($this->userData['email']);
-
-        return $msg;
+        return $res;
     }
 
     /**
@@ -784,46 +800,36 @@ class Users
     /**
      * Destroy user. Will completely remove everything from the user.
      *
-     * @param string $email The email of the user we want to delete
-     * @param string $password The confirmation password
      * @return bool
      */
-    public function destroy(string $email, string $password): bool
+    public function destroy(): bool
     {
-        // check that we got the good password
-        if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
-            throw new Exception(_("Wrong password!"));
-        }
-
-        // load data on the user to delete
-        $userToDelete = $this->readFromEmail($email);
-        // check we are in same team
-        if ($this->userData['team'] !== $userToDelete['team']) {
-            throw new Exception(_('No user with this email or user not in your team'));
-        }
-
         $result = array();
 
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         $sql = "DELETE FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         // get all filenames
         $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
-            'userid' => $userToDelete['userid'],
+            //'userid' => $userToDelete['userid'],
+            'userid' => $this->userid,
             'type' => 'experiments'
         ));
         while ($uploads = $req->fetch()) {
@@ -834,7 +840,8 @@ class Users
 
         $sql = "DELETE FROM uploads WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        //$req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $result[] = $req->execute();
 
         return !\in_array(false, $result, true);

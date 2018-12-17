@@ -1,0 +1,26 @@
+<?php
+/**
+ * \Elabftw\Exceptions\IllegalActionException
+ *
+ * @package   Elabftw\Elabftw
+ * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+ * @see       https://www.elabftw.net Official website
+ */
+declare(strict_types=1);
+
+namespace Elabftw\Exceptions;
+
+class IllegalActionException extends \Exception
+{
+    // Redefine the exception so message isn't optional
+    public function __construct($message, $code = 0, Exception $previous = null) {
+        parent::__construct($message, $code, $previous);
+    }
+
+    // custom string representation of object
+    public function __toString() {
+        return $this->message;
+    }
+}

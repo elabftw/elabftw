@@ -58,26 +58,6 @@
             }
         };
 
-        // ARCHIVE USER
-        $(document).on('click', '.archive-user', function(e) {
-            // don't trigger the form
-            e.preventDefault();
-            // show alert
-            if(confirm('Are you sure you want to archive this user?')) {
-                $.post('app/controllers/UsersController.php', {
-                    usersArchive: true,
-                    userid: $(this).data('userid')
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                        window.location.replace('admin.php?tab=2');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        });
-
         // TEAM GROUP
         $(document).on('click', '#teamGroupCreateBtn', function() {
             TeamGroups.create();
@@ -93,6 +73,24 @@
 
         $(document).on('click', '.teamGroupDelete', function() {
             TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
+        });
+
+        // VALIDATE USERS
+        $(document).on('click', '.usersValidate', function() {
+            $(this).attr('disabled', 'disabled').text('Please wait…');
+            $.post('app/controllers/UsersAjaxController.php', {
+                usersValidate: true,
+                userid: $(this).data('userid'),
+                fkname: $(this).data('fkname'),
+                fkvalue: $(this).data('fkvalue')
+            }).done(function(data) {
+                if (data.res) {
+                    notif(data.msg, 'ok');
+                    window.location.reload();
+                } else {
+                    notif(data.msg, 'ko');
+                }
+            });
         });
 
         // STATUS

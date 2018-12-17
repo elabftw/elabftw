@@ -16,8 +16,7 @@ use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
- * Generate and validate keys for input forms.
- * **Note** : for a page with several *form* elements this will work only for 1 *form*!
+ * Generate and validate keys for input forms
  */
 class FormKey
 {
@@ -35,28 +34,52 @@ class FormKey
     }
 
     /**
+     * Generate the key and store it in session
+     *
+     * @throws Exception
+     * @return array
+     */
+    private function create(): array
+    {
+        $fkname = \bin2hex(\random_bytes(42));
+        $fkvalue = Key::createNewRandomKey()->saveToAsciiSafeString();
+        $this->Session->set($fkname, $fkvalue);
+
+        return array('value' => $fkvalue, 'name' => $fkname);
+    }
+
+    /**
      * Return the form key for inclusion in HTML
      *
-     * @return string $hinput Hidden input html
+     * @return string
      */
     public function getFormkey(): string
     {
-        // generate the key
-        $formkey = Key::createNewRandomKey()->saveToAsciiSafeString();
-        // store the form key in the session
-        $this->Session->set('formkey', $formkey);
-        // output the form key
-        return "<input type='hidden' name='formkey' value='" . $formkey . "' />";
+        $formkeyArr = $this->create();
+        return "<input type='hidden' name='fkname' value='" . $formkeyArr['name'] . "' />
+                <input type='hidden' name='fkvalue' value='" . $formkeyArr['value'] . "' />";
+    }
+
+    /**
+     * Generate data attributes for javascript actions
+     *
+     * @return string
+     */
+    public function getDataFormkey(): string
+    {
+        $formkeyArr = $this->create();
+        return "data-fkname='" . $formkeyArr['name'] . "' data-fkvalue='" . $formkeyArr['value'] . "'";
     }
 
     /**
      * Validate the form key against the one previously set in Session
      *
-     * @param string $formkey
+     * @param string $value
+     * @param string $name
      * @return bool True if there is no CSRF going on (hopefully)
      */
-    public function validate(string $formkey): bool
+    public function validate(string $value, string $name): bool
     {
-        return $formkey === $this->Session->get('formkey');
+        return $value === $this->Session->get($name);
     }
 }

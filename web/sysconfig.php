@@ -23,6 +23,7 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('eLabFTW Configuration');
 $Response = new Response();
 $Response->prepare($Request);
+$FormKey = new FormKey($Session);
 
 try {
     if ($Session->get('is_sysadmin') != 1) {
@@ -33,7 +34,15 @@ try {
     $idpsArr = $Idps->readAll();
     $TeamsView = new TeamsView(new Teams($App->Users));
     $teamsArr = $TeamsView->Teams->readAll();
-    $usersArr = $App->Users->readAll();
+
+    // Users search
+    $isSearching = false;
+    $usersArr = array();
+    if ($Request->query->has('q')) {
+        $isSearching = true;
+        $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
+    }
+
     $ReleaseCheck = new ReleaseCheck($App->Config);
     try {
         $ReleaseCheck->getUpdatesIni();
@@ -57,11 +66,13 @@ try {
     $template = 'sysconfig.html';
     $renderArr = array(
         'elabimgVersion' => $elabimgVersion,
+        'FormKey' => $FormKey,
         'ReleaseCheck' => $ReleaseCheck,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
+        'isSearching' => $isSearching,
         'phpInfos' => $phpInfos,
         'teamsArr' => $teamsArr,
         'usersArr' => $usersArr

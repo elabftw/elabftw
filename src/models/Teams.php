@@ -129,7 +129,7 @@ class Teams implements CrudInterface
         $req->bindParam(':team_id', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();
 
-        return $req->fetch();
+        return $req->fetchAll();
     }
 
     /**

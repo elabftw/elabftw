@@ -2,35 +2,24 @@
 
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
-{% if unvalidatedUsersArr|length > 0 %}
-    <form method='post' action='app/controllers/UsersController.php'>
-        <input type='hidden' name='usersValidate' value='true' />
+{% if unvalidatedUsersArr %}
         {{ FormKey.getFormkey|raw }}
         <div class='box'>
-            {{ 'There are users waiting for validation of their account:'|trans|msg('ko', false) }}
+            {{ 'There are users waiting for validation of their account:'|trans|msg('warning', false) }}
             <ul>
             {% for user in unvalidatedUsersArr %}
-                <li>
-                    <label>
-                    <input type='checkbox' name='usersValidateIdArr[]'
-                    value='{{ user.userid }}'> {{ user.fullname|raw }} ({{ user.email }})
-                    </label>
-                </li>
+            <li>{{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' {{ FormKey.getDataFormkey|raw }} data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button></li>
             {% endfor %}
             </ul>
-            <div class='submitButtonDiv'>
-                <button class='button' type='submit'>{{ 'Validate'|trans }}</button>
-            </div>
         </div>
-    </form>
 {% endif %}
 
 <!-- ADMIN PANEL MAIN MENU -->
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Users'|trans }}</li>
-        <li class='tabhandle' id='tab3'>{{ 'Groups'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
         <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
         <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
@@ -117,32 +106,8 @@
     </div>
 </div>
 
-<!-- TAB 2 USERS -->
+<!-- TAB 2 TEAM GROUPS -->
 <div class='divhandle' id='tab2div'>
-    {{ include('editusers.html') }}
-
-    <!-- DELETE USER -->
-    <ul class='list-group'>
-        <li class='list-group-item alert-danger mt-3'>
-            <h3 class='font-weight-bold'>{{ 'Delete an account'|trans }}</h3>
-            <form action='app/controllers/UsersController.php' method='post'>
-                <!-- form key -->
-                {{ FormKey.getFormkey|raw }}
-                <input type='hidden' name='usersDestroy' value='true' />
-                <label class='block' for='usersDestroyEmail'>{{ 'Type EMAIL ADDRESS of a member to delete this user and all their experiments/files forever:'|trans }}</label>
-                <input class='clean-form col-3-form' autocomplete='off' type='email' placeholder='Email Address' name='usersDestroyEmail' id='usersDestroyEmail' required />
-                <label class='block' for='usersDestroyPassword'>{{ 'Type your password:'|trans }}</label>
-                <input class='clean-form col-3-form' autocomplete='off' type='password' placeholder='Your Password' name='usersDestroyPassword' id='usersDestroyPassword' required />
-                <div class='text-center'>
-                    <button type='submitButtonDiv' class='button button-delete'>{{ 'Delete this user!'|trans }}</button>
-                </div>
-            </form>
-        </li>
-    </ul>
-</div>
-
-<!-- TAB 3 TEAM GROUPS -->
-<div class='divhandle' id='tab3div'>
     <div class='box tooltip-box'>
         <h3>{{ 'Manage Groups of Users'|trans }}</h3>
         <hr>
@@ -214,6 +179,11 @@
     </div>
 </div>
 <!-- END TEAM GROUPS -->
+
+<!-- TAB 3 USERS -->
+<div class='divhandle' id='tab3div'>
+    {{ include('editusers.html') }}
+</div>
 
 <!-- TAB 4 STATUS -->
 <div class='divhandle' id='tab4div'>
@@ -416,7 +386,10 @@
 </div>
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
+<!--
 <script src='app/js/admin.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/admin.js?v={{ v }}'></script>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 <script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

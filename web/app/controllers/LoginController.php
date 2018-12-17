@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use OneLogin_Saml2_Auth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,12 +46,12 @@ try {
 
         // FORMKEY
         if (!$FormKey->validate($Request->request->get('csrf'))) {
-            throw new Exception(_("Your session expired. Please retry."));
+            throw new ImproperActionException(_("Your session expired. Please retry."));
         }
 
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
-            throw new Exception(_('A mandatory field is missing!'));
+            throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 
         if ($Request->request->has('rememberme')) {
@@ -85,8 +86,13 @@ try {
         }
     }
 
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
+    // display this kind of error to user
     $Session->getFlashBag()->add('ko', $e->getMessage());
+
+} catch (Exception $e) {
+    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('exception' => $e->__toString())));
+    $Session->getFlashBag()->add('ko', Tools::error());
 }
 
 $Response = new RedirectResponse($location);

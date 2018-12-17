@@ -28,7 +28,7 @@ try {
     $Entity = new Experiments($App->Users);
     $Entity->setUseridFilter();
     $FormKey = new FormKey($App->Session);
-    $itemsArr = $Entity->read();
+    $itemsArr = $Entity->read(false);
     $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status

@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Exceptions\IllegalActionException
+ * \Elabftw\Exceptions\ImproperActionException
  *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
@@ -15,9 +15,9 @@ namespace Elabftw\Exceptions;
 use Exception;
 
 /**
- * For errors that are suspicious (request has been edited for instance)
+ * For errors that make the execution halt but can happen and are not malicious
  */
-class IllegalActionException extends Exception
+class ImproperActionException extends Exception
 {
     /**
      * Redefine the exception so message isn't optional

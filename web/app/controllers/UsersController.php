@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -54,6 +55,10 @@ try {
 
     }
 
+} catch (ImproperActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('ImproperAction', $e->__toString())));
+    // show message to user
+    $Session->getFlashBag()->add('ko', $e->__toString());
 
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));

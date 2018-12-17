@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 
@@ -416,7 +418,7 @@ class Users
         // now make sure the new email is not already used by someone
         // it's okay if it's the same email as before though
         if (\in_array($email, $emailsArr, true) && $email !== $this->userData['email']) {
-            throw new IllegalActionException('Email is already used by non archived user!');
+            throw new ImproperActionException('Email is already used by non archived user!');
         }
 
         if ($params['validated'] == 1) {

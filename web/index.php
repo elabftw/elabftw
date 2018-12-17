@@ -12,7 +12,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +27,7 @@ try {
 
         // TODO this is the id of the idp to use to get the settings
         $settings = $Saml->getSettings(1);
-        $SamlAuth = new OneLogin_Saml2_Auth($settings);
+        $SamlAuth = new SamlAuth($settings);
 
         $requestID = null;
         if ($Session->has('AuthNRequestID')) {

@@ -12,7 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
@@ -28,7 +28,7 @@ try {
     if ($Request->request->has('idp_id')) { // login with SAML
         $idpId = (int) $Request->request->get('idp_id');
         $settings = $Saml->getSettings($idpId);
-        $SamlAuth = new OneLogin_Saml2_Auth($settings);
+        $SamlAuth = new SamlAuth($settings);
         $returnUrl = $settings['baseurl'] . "/index.php?acs&idp=" . $idpId;
         $SamlAuth->login($returnUrl);
 

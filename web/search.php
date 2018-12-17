@@ -110,31 +110,25 @@ echo $App->render('search.html', $renderArr);
  * If there is a search, there will be get parameters, so this is our main switch
  */
 if ($Request->query->count() > 0) {
-    // assign variables from get
-
-    $table = 'items';
-    $tagTable = 'items_tags';
-    $status = '';
-    $rating = '';
 
     // TABLE
-    if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
+    $table = 'items';
+    if ($Request->query->get('type') === 'experiments') {
         $table = 'experiments';
-        $tagTable = 'experiments_tags';
     }
 
     // STATUS
-    if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId((int) $_GET['status']) !== false) {
-        $status = $_GET['status'];
+    $status = '';
+    if (Tools::checkId((int) $Request->query->get('status')) !== false) {
+        $status = $Request->query->get('status');
     }
 
     // RATING
-    if (isset($_GET['rating']) && !empty($_GET['rating'])) {
-        if ($_GET['rating'] === 'no') {
-            $rating = 0;
-        } else {
-            $rating = (int) $_GET['rating'];
-        }
+    $rating = '';
+    if ($Request->query->get('rating') === 'no') {
+        $rating = 0;
+    } else {
+        $rating = (int) $Request->query->get('rating');
     }
 
     // PREPARE SQL query
@@ -208,20 +202,21 @@ if ($Request->query->count() > 0) {
     }
 
     /////////////////////////////////////////////////////////////////
-    if (isset($_GET['type'])) {
-        if ($_GET['type'] === 'experiments') {
+    if ($Request->query->has('type')) {
+        if ($Request->query->get('type') === 'experiments') {
             // EXPERIMENTS SEARCH
             $Entity = new Experiments($App->Users);
 
             // USERID FILTER
-            if (isset($_GET['owner'])) {
-                if (Tools::checkId((int) $_GET['owner']) !== false) {
-                    $owner = $_GET['owner'];
-                } elseif (empty($_GET['owner'])) {
+            if ($Request->query->has('owner')) {
+                if (Tools::checkId((int) $Request->query->get('owner')) !== false) {
+                    $owner = $Request->query->get('owner');
+                } elseif (empty($Request->query->get('owner'))) {
                     $owner = $App->Users->userid;
                 }
                 $sqlUserid = " AND experiments.userid = " . $owner;
-                if ($_GET['owner'] === '0') {
+                // all the team is 0 as userid
+                if ($Request->query->get('owner') === '0') {
                     $sqlUserid = '';
                 }
             }
@@ -237,9 +232,10 @@ if ($Request->query->count() > 0) {
 
             // RATING
             $Entity->ratingFilter = $sqlRating;
-            if (Tools::checkId((int) $_GET['type']) !== false) {
-                // filter on database items types
-                $Entity->categoryFilter = "AND items_types.id = " . $_GET['type'];
+
+            // FILTER ON DATABASE ITEMS TYPES
+            if (Tools::checkId((int) $Request->query->get('type')) !== false) {
+                $Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('type');
             }
         }
 

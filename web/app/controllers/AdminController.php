@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -22,73 +22,40 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new JsonResponse();
+$Response = new RedirectResponse("../../admin.php?tab=1");
 
 try {
 
     if (!$App->Session->get('is_admin')) {
-        throw new Exception('Non admin user tried to access admin panel.');
+        throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
-    // UPDATE ORDERING
-    if ($Request->request->has('updateOrdering')) {
-        if ($Request->request->get('table') === 'status') {
-            $Entity = new Status($App->Users);
-        } elseif ($Request->request->get('table') === 'items_types') {
-            $Entity = new ItemsTypes($App->Users);
-        }
-
-        if ($Entity->updateOrdering($Request->request->all())) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
+    $Teams = new Teams($App->Users);
 
     // UPDATE TEAM SETTINGS
     if ($Request->request->has('teamsUpdateFull')) {
-        $Teams = new Teams($App->Users);
-        $Response = new RedirectResponse("../../admin.php?tab=1");
-        if ($Teams->update($Request->request->all())) {
-            $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        } else {
-            $App->Session->getFlashBag()->add('ko', Tools::error());
-        }
+        $res = $Teams->update($Request->request->all());
     }
 
     // CLEAR STAMP PASS
     if ($Request->query->get('clearStamppass')) {
-        $Teams = new Teams($App->Users);
-        if (!$Teams->destroyStamppass()) {
-            throw new Exception('Error clearing the timestamp password');
-        }
-        $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        $Response = new RedirectResponse("../../admin.php?tab=1");
+        $res = $Teams->destroyStamppass();
     }
 
-    // UPDATE COMMON TEMPLATE
-    if ($Request->request->has('commonTplUpdate')) {
-        $Templates = new Templates($App->Users);
-        if ($Templates->updateCommon($Request->request->get('commonTplUpdate'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
+    // DISPLAY RESULT
+    if ($res) {
+        $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+    } else {
+        $App->Session->getFlashBag()->add('ko', Tools::error());
     }
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
+
+} finally {
+    $Response->send();
 }
-$Response->send();

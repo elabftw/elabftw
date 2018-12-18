@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/ExperimentsController.php
+ * app/controllers/DatabaseController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -8,45 +8,56 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Exception;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Experiments
+ * Database
  *
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-try {
+$Response = new JsonResponse();
+$Response->setData(array(
+    'res' => false,
+    'msg' => Tools::error()
+));
 
+try {
     if ($App->Session->has('anon')) {
-        throw new IllegalActionException('Anonymous user tried to access experiments controller.');
+        throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
 
-    $Entity = new Experiments($App->Users);
+    $Entity = new Database($App->Users);
     if ($Request->request->has('id')) {
         $Entity->setId((int) $Request->request->get('id'));
     }
 
-    // CREATE EXPERIMENT
-    if ($Request->query->has('create')) {
-        $id = $Entity->create((int) $Request->query->get('tpl'));
-        $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
+    // UPDATE RATING
+    if ($Request->request->has('rating')) {
+        $Entity->canOrExplode('write');
+
+        if ($Entity->updateRating($Request->request->get('rating'))) {
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        }
     }
 
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error(true)
+    ));
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
-    $Session->getFlashBag()->add('ko', Tools::error());
-    $Response = new RedirectResponse("../../experiments.php");
 } finally {
     $Response->send();
 }

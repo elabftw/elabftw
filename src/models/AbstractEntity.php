@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Exception;
 use PDO;
 
@@ -420,6 +421,8 @@ abstract class AbstractEntity
 
         // or we might have a TeamGroup, so an int
         return (bool) Tools::checkId((int) $visibility);
+
+        throw new IllegalActionException('The visibility parameter is wrong.');
     }
 
     /**
@@ -457,7 +460,7 @@ abstract class AbstractEntity
      * Check if we have the permission to read/write or throw an exception
      *
      * @param string $rw read or write
-     * @throws Exception
+     * @throws IllegalActionException
      * @return array
      */
     public function canOrExplode(string $rw): array
@@ -470,7 +473,7 @@ abstract class AbstractEntity
         }
 
         if (!$permissions[$rw]) {
-            throw new Exception(Tools::error(true));
+            throw new IllegalActionException('User tried to access entity without permission.');
         }
 
         return $permissions;

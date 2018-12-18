@@ -17,7 +17,7 @@ namespace Elabftw\Elabftw;
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Exception;
+use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
 use Psr\Http\Message\StreamInterface;
@@ -88,7 +88,7 @@ class TrustedTimestamps extends AbstractMake
     /**
      * Generate the pdf to timestamp.
      *
-     * @throws Exception if it cannot make the pdf
+     * @throws ImproperActionException if it cannot make the pdf
      * @return void
      */
     private function generatePdf(): void
@@ -99,7 +99,7 @@ class TrustedTimestamps extends AbstractMake
             $this->pdfPath = $MakePdf->filePath;
             $this->pdfLongName = $MakePdf->fileName;
         } catch (Exception $e) {
-            throw new Exception('Failed at making the pdf : ' . $e->getMessage());
+            throw new ImproperActionException('Failed at making the pdf : ' . $e->getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ class TrustedTimestamps extends AbstractMake
         } elseif ($this->Config->configArr['stampshare']) {
             $config = $this->Config->configArr;
         } else {
-            throw new Exception(_('Please configure Timestamping in the admin panel.'));
+            throw new ImproperActionException(_('Please configure Timestamping in the admin panel.'));
         }
 
         $login = $config['stamplogin'];
@@ -180,7 +180,7 @@ class TrustedTimestamps extends AbstractMake
     /**
      * Creates a Timestamp Requestfile from a filename
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return void
      */
     private function createRequestfile(): void
@@ -194,11 +194,11 @@ class TrustedTimestamps extends AbstractMake
         $retarray = $opensslResult['retarray'];
 
         if ($opensslResult['retcode'] !== 0) {
-            throw new Exception("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
+            throw new ImproperActionException("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
         }
 
         if ($retarray[0] && stripos($retarray[0], "openssl:Error") !== false) {
-            throw new Exception(
+            throw new ImproperActionException(
                 "There was an error with OpenSSL. Is version >= 0.99 installed?: " . implode(", ", $retarray)
             );
         }
@@ -207,13 +207,13 @@ class TrustedTimestamps extends AbstractMake
     /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
-     * @throws Exception if unhappy
+     * @throws ImproperActionException if unhappy
      * @return void
      */
     private function setResponseTime(): void
     {
         if (!is_readable($this->responsefilePath)) {
-            throw new Exception('Bad token');
+            throw new ImproperActionException('The token is not readable.');
         }
 
         $cmd = "ts -reply -in " . escapeshellarg($this->responsefilePath) . " -text";
@@ -221,11 +221,11 @@ class TrustedTimestamps extends AbstractMake
         $retarray = $opensslResult['retarray'];
 
         if ($opensslResult['retcode'] !== 0) {
-            throw new Exception("The reply failed: " . implode(", ", $retarray));
+            throw new ImproperActionException("The reply failed: " . implode(", ", $retarray));
         }
 
         if (!is_array($retarray)) {
-            throw new Exception('$retarray must be an array.');
+            throw new ImproperActionException('$retarray must be an array.');
         }
 
         /*
@@ -269,7 +269,7 @@ class TrustedTimestamps extends AbstractMake
                         // PHP will take care of correct timezone conversions (if configured correctly)
                         $this->responseTime = date("Y-m-d H:i:s", $date->getTimestamp());
                     } else {
-                        throw new Exception('Could not get response time!');
+                        throw new ImproperActionException('Could not get response time!');
                     }
                 }
                 break;
@@ -280,7 +280,7 @@ class TrustedTimestamps extends AbstractMake
     /**
      * Contact the TSA and receive a token after successful timestamp
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return \Psr\Http\Message\ResponseInterface
      */
     private function postData(): \Psr\Http\Message\ResponseInterface
@@ -313,7 +313,7 @@ class TrustedTimestamps extends AbstractMake
         try {
             return $client->request('POST', $this->stampParams['stampprovider'], $options);
         } catch (RequestException $e) {
-            throw new Exception($e->getMessage());
+            throw new ImproperActionException($e->getMessage());
         }
     }
 
@@ -321,13 +321,13 @@ class TrustedTimestamps extends AbstractMake
      * Get the hash of a file
      *
      * @param string $file Path to the file
-     * @throws Exception if file is not readable
+     * @throws ImproperActionException if file is not readable
      * @return string Hash of the file
      */
     private function getHash($file): string
     {
         if (!is_readable($file)) {
-            throw new Exception('Not a file!');
+            throw new ImproperActionException('The file is not readable.');
         }
         return hash_file($this->stampParams['hash'], $file);
     }
@@ -335,7 +335,7 @@ class TrustedTimestamps extends AbstractMake
     /**
      * Save the binaryToken to a .asn1 file
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @param StreamInterface $binaryToken asn1 response from TSA
      * @return void
      */
@@ -344,7 +344,7 @@ class TrustedTimestamps extends AbstractMake
         $longName = $this->getUniqueString() . ".asn1";
         $filePath = $this->getUploadsPath() . $longName;
         if (!file_put_contents($filePath, $binaryToken)) {
-            throw new Exception('Cannot save token to disk!');
+            throw new ImproperActionException('Cannot save token to disk!');
         }
         $this->responsefilePath = $filePath;
 
@@ -364,7 +364,7 @@ class TrustedTimestamps extends AbstractMake
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
         if (!$req->execute()) {
-            throw new Exception('Cannot insert into SQL!');
+            throw new ImproperActionException('Cannot insert into SQL!');
         }
     }
 
@@ -372,7 +372,7 @@ class TrustedTimestamps extends AbstractMake
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
      * in the timestamp itself.
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return bool
      */
     private function validate(): bool
@@ -392,7 +392,7 @@ class TrustedTimestamps extends AbstractMake
          * are being handled the same way -> retcode 1 + any retarray NOT containing "message imprint mismatch"
          */
         if (!is_array($retarray)) {
-            throw new Exception('$retarray must be an array.');
+            throw new ImproperActionException('$retarray must be an array.');
         }
 
         if ($opensslResult['retcode'] === 0 && (strtolower(trim($retarray[0])) === "verification: ok" ||
@@ -411,7 +411,7 @@ class TrustedTimestamps extends AbstractMake
             }
         }
 
-        throw new Exception("System command failed: " . implode(", ", $retarray));
+        throw new ImproperActionException("System command failed: " . implode(", ", $retarray));
     }
 
     /**
@@ -429,13 +429,13 @@ class TrustedTimestamps extends AbstractMake
      * Validate the timestamp with java and BouncyCastle lib
      * We need this because of the openssl bug
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return bool
      */
     private function validateWithJava(): bool
     {
         if (!$this->isJavaInstalled()) {
-            throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
+            throw new ImproperActionException("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
         }
 
         $elabRoot = \dirname(__DIR__, 2);
@@ -447,13 +447,13 @@ class TrustedTimestamps extends AbstractMake
         }
         $msg = 'Could not validate the timestamp with java failsafe method. Maybe your java version is too old? Please report this bug on GitHub. Error is: ';
         $msg .= $javaRes['retarray'][0];
-        throw new Exception($msg);
+        throw new ImproperActionException($msg);
     }
 
     /**
      * The realname is elabid-timestamped.pdf
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return string
      */
     public function getCleanName(): string
@@ -462,7 +462,7 @@ class TrustedTimestamps extends AbstractMake
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         if (!$req->execute()) {
-            throw new Exception('Cannot get elabid!');
+            throw new ImproperActionException('Cannot get elabid!');
         }
         return $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
     }
@@ -471,7 +471,7 @@ class TrustedTimestamps extends AbstractMake
      * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
      * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
      * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
-     * @throws Exception
+     * @throws ImproperActionException
      * @return void
      */
     private function sqlInsertPdf(): void
@@ -490,7 +490,7 @@ class TrustedTimestamps extends AbstractMake
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
 
         if (!$req->execute()) {
-            throw new Exception('Cannot insert into SQL!');
+            throw new ImproperActionException('Cannot insert into SQL!');
         }
     }
 
@@ -509,7 +509,7 @@ class TrustedTimestamps extends AbstractMake
         $retarray = $opensslResult['retarray'];
 
         if ($opensslResult['retcode'] !== 0) {
-            throw new Exception("Error decoding ASN1 file: " . implode(", ", $retarray));
+            throw new ImproperActionException("Error decoding ASN1 file: " . implode(", ", $retarray));
         }
 
         // now let's parse this
@@ -566,7 +566,7 @@ class TrustedTimestamps extends AbstractMake
      * The main function.
      * Request a timestamp and parse the response.
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return bool True upon timestamping success, throw Exceptions in your face if it fails
      */
     public function timeStamp(): bool
@@ -586,7 +586,7 @@ class TrustedTimestamps extends AbstractMake
 
         // SQL
         if ($this->Entity instanceof Experiments && !$this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath)) {
-            throw new Exception('Cannot update SQL!');
+            throw new ImproperActionException('Cannot update SQL!');
         }
         $this->sqlInsertPdf();
 

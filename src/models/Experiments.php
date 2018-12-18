@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 
@@ -55,7 +56,7 @@ class Experiments extends AbstractEntity
         $Templates = new Templates($this->Users);
 
         // do we want template ?
-        if ($tpl !== null) {
+        if ($tpl) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
@@ -295,7 +296,7 @@ class Experiments extends AbstractEntity
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
             $req->execute();
-            throw new Exception(
+            throw new ImproperActionException(
                 _('This experiment was locked by') .
                 ' ' . $req->fetchColumn() . '. ' .
                 _("You don't have the rights to unlock this.")
@@ -304,7 +305,7 @@ class Experiments extends AbstractEntity
 
         // check if the experiment is timestamped. Disallow unlock in this case.
         if ($locked === 1 && $this->entityData['timestamped']) {
-            throw new Exception(_('You cannot unlock or edit in any way a timestamped experiment.'));
+            throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
         }
 
         // toggle

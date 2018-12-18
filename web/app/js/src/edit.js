@@ -83,7 +83,7 @@
 
         // RECOVER YES
         $(document).on('click', '.recover-yes', function() {
-            $.post('app/controllers/EntityController.php', {
+            $.post('app/controllers/EntityAjaxController.php', {
                 quickSave: true,
                 type : type,
                 id : id,
@@ -112,7 +112,7 @@
             destroy() {
                 if (confirm(confirmText)) {
                     if (type === 'items') {
-                        controller = 'app/controllers/EntityController.php';
+                        controller = 'app/controllers/EntityAjaxController.php';
                     }
                     $.post(controller, {
                         destroy: true,
@@ -324,7 +324,7 @@
         // VISIBILITY SELECT
         $(document).on('change', '#visibility_select', function() {
             const visibility = $(this).val();
-            $.post("app/controllers/EntityController.php", {
+            $.post("app/controllers/EntityAjaxController.php", {
                 updateVisibility: true,
                 id: id,
                 type: type,
@@ -341,7 +341,7 @@
         // STATUS SELECT
         $(document).on('change', '#category_select', function() {
             const categoryId = $(this).val();
-            $.post("app/controllers/EntityController.php", {
+            $.post("app/controllers/EntityAjaxController.php", {
                 updateCategory: true,
                 id: id,
                 type: type,
@@ -466,7 +466,7 @@
                 delimiter: ['#', '$'],
                 // get the source from json with get request
                 source: function (query, process, delimiter) {
-                    let url = "app/controllers/EntityController.php?mention=1&term=" + query;
+                    let url = "app/controllers/EntityAjaxController.php?mention=1&term=" + query;
                     if (delimiter === '#') {
                         $.getJSON(url, function(data, status, xhr) {
                             process(data);

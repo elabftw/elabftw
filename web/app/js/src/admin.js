@@ -247,7 +247,7 @@
         // COMMON TEMPLATE
         $('#commonTplTemplate').closest('div').find('.button').click(function() {
             var template = tinymce.get('commonTplTemplate').getContent();
-            $.post('app/controllers/AdminController.php', {
+            $.post('app/controllers/AdminAjaxController.php', {
                 commonTplUpdate: template
             }).done(function(data) {
                 if (data.res) {
@@ -302,7 +302,7 @@
                 // send the orders as an array
                 var ordering = $(elements).sortable("toArray");
 
-                $.post("app/controllers/AdminController.php", {
+                $.post("app/controllers/AdminAjaxController.php", {
                     'updateOrdering': true,
                     'table': table,
                     'ordering': ordering

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -21,18 +21,19 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
-$redirect = true;
+
+$Response = new RedirectResponse('../../sysconfig.php?tab=7');
 
 try {
-    $Idps = new Idps();
-
     if (!$Session->get('is_sysadmin')) {
-        throw new Exception('Non sysadmin user tried to access sysadmin controller.');
+        throw new IllegalActionException('Non sysadmin user tried to access idps controller.');
     }
+
+    $Idps = new Idps();
 
     // CREATE IDP
     if ($Request->request->has('idpsCreate')) {
-        if ($Idps->create(
+        $res = $Idps->create(
             $Request->request->get('name'),
             $Request->request->get('entityid'),
             $Request->request->get('ssoUrl'),
@@ -40,16 +41,12 @@ try {
             $Request->request->get('sloUrl'),
             $Request->request->get('sloBinding'),
             $Request->request->get('x509')
-        )) {
-            $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        } else {
-            $Session->getFlashBag()->add('ko', Tools::error());
-        }
+        );
     }
 
     // UPDATE IDP
     if ($Request->request->has('idpsUpdate')) {
-        if ($Idps->update(
+        $res = $Idps->update(
             (int) $Request->request->get('id'),
             $Request->request->get('name'),
             $Request->request->get('entityid'),
@@ -58,36 +55,23 @@ try {
             $Request->request->get('sloUrl'),
             $Request->request->get('sloBinding'),
             $Request->request->get('x509')
-        )) {
-            $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        } else {
-            $Session->getFlashBag()->add('ko', Tools::error());
-        }
+        );
     }
 
-    // DESTROY IDP
-    if ($Request->request->has('idpsDestroy')) {
-        $Response = new JsonResponse();
-        $redirect = false;
-        if ($Idps->destroy((int) $Request->request->get('id'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Item deleted successfully')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
+    if ($res) {
+        $Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
+    } else {
+        $Session->getFlashBag()->add('ko', Tools::error());
     }
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
-    // we can show error message to sysadmin
-    $Session->getFlashBag()->add('ko', $e->getMessage());
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
+
+} finally {
+    $Response->send();
 }
-if ($redirect) {
-    $Response = new RedirectResponse('../../sysconfig.php?tab=7');
-}
-$Response->send();

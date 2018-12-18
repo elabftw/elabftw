@@ -57,15 +57,15 @@ try {
 } catch (ImproperActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('ImproperAction', $e->__toString())));
     // show message to user
-    $Session->getFlashBag()->add('ko', $e->__toString());
+    $App->Session->getFlashBag()->add('ko', $e->__toString());
 
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
-    $Session->getFlashBag()->add('ko', Tools::error(true));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
-    $Session->getFlashBag()->add('ko', Tools::error());
+    $App->Session->getFlashBag()->add('ko', Tools::error());
 
 } finally {
     $Response->send();

@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Database
@@ -21,11 +20,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new JsonResponse();
-
 try {
     if ($App->Session->has('anon')) {
-        throw new Exception(Tools::error(true));
+        throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
 
     $Entity = new Database($App->Users);
@@ -39,27 +36,14 @@ try {
         $Response = new RedirectResponse("../../database.php?mode=edit&id=" . $id);
     }
 
-    // UPDATE RATING
-    if ($Request->request->has('rating')) {
-        $Response = new JsonResponse();
-        $Entity->canOrExplode('write');
-
-        if ($Entity->updateRating($Request->request->get('rating'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
     $Session->getFlashBag()->add('ko', Tools::error());
     $Response = new RedirectResponse("../../database.php");
+} finally {
+    $Response->send();
 }
-$Response->send();

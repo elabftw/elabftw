@@ -32,7 +32,6 @@ $Response->setData(array(
 try {
     $Database = new Database($App->Users);
     $Scheduler = new Scheduler($Database);
-    $Response = new JsonResponse();
 
     // CREATE
     if ($Request->request->has('create')) {
@@ -48,9 +47,6 @@ try {
     if ($Request->request->has('read')) {
         $Database->setId((int) $Request->request->get('item'));
         $Response->setData($Scheduler->read());
-        // TODO ?? why exit here?
-        $Response->send();
-        exit;
     }
 
     // UPDATE START

@@ -21,7 +21,6 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $location = '../../login.php';
 
 try {
-    $FormKey = new FormKey($Session);
     $Saml = new Saml($App->Config, new Idps);
     $Teams = new Teams($App->Users);
 
@@ -45,7 +44,7 @@ try {
     } else {
 
         // FORMKEY
-        if (!$FormKey->validate($Request->request->get('csrf'))) {
+        if (!$App->Csrf->validate($Request->request->get('csrf'))) {
             throw new ImproperActionException(_("Your session expired. Please retry."));
         }
 

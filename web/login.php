@@ -32,7 +32,6 @@ try {
         exit;
     }
 
-    $FormKey = new FormKey($Session);
     $BannedUsers = new BannedUsers($App->Config);
 
     // if we are not in https, die saying we work only in https
@@ -75,7 +74,6 @@ try {
     $template = 'login.html';
     $renderArr = array(
         'BannedUsers' => $BannedUsers,
-        'FormKey' => $FormKey,
         'Session' => $Session,
         'idpsArr' => $idpsArr,
         'teamsArr' => $teamsArr,

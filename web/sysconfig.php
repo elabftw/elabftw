@@ -23,7 +23,6 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('eLabFTW Configuration');
 $Response = new Response();
 $Response->prepare($Request);
-$FormKey = new FormKey($Session);
 
 try {
     if ($Session->get('is_sysadmin') != 1) {
@@ -66,7 +65,6 @@ try {
     $template = 'sysconfig.html';
     $renderArr = array(
         'elabimgVersion' => $elabimgVersion,
-        'FormKey' => $FormKey,
         'ReleaseCheck' => $ReleaseCheck,
         'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,

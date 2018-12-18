@@ -3,12 +3,12 @@
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
 {% if unvalidatedUsersArr %}
-        {{ FormKey.getHiddenInput|raw }}
+        {{ App.Csrf.getHiddenInput|raw }}
         <div class='box'>
             {{ 'There are users waiting for validation of their account:'|trans|msg('warning', false) }}
             <ul>
             {% for user in unvalidatedUsersArr %}
-            <li>{{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' {{ FormKey.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button></li>
+            <li>{{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' {{ App.Csrf.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button></li>
             {% endfor %}
             </ul>
         </div>

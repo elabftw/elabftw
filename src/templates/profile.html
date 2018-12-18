@@ -15,7 +15,7 @@
             {% if App.Users.userData.api_key %}
             <input type='text' value='{{ App.Users.userData.api_key }}' readonly />
             {% endif %}
-            <button class='button generateApiKey' {{ FormKey.getDataFormkey|raw }}>{{ 'Generate an API Key'|trans }}</button>
+            <button class='button generateApiKey' {{ App.Csrf.getDataAttr|raw }}>{{ 'Generate an API Key'|trans }}</button>
         </div>
     </div>
 </section>

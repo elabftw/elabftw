@@ -27,7 +27,6 @@ try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
     $Entity->setUseridFilter();
-    $FormKey = new FormKey($App->Session);
     $itemsArr = $Entity->read(false);
     $count = count($itemsArr);
 
@@ -62,7 +61,6 @@ try {
     $template = 'profile.html';
     $renderArr = array(
         'UserStats' => $UserStats,
-        'FormKey' => $FormKey,
         'colorsJson' => $colorsJson,
         'statsJson' => $statsJson,
         'count' => $count

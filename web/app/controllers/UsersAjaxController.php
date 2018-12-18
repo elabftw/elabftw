@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$FormKey = new FormKey($Session);
 $Response = new JsonResponse();
 // default response is general error
 $Response->setData(array(
@@ -28,7 +27,7 @@ $Response->setData(array(
 ));
 
 try {
-    if (!$FormKey->validate($Request->request->get('csrf'))) {
+    if (!$App->Csrf->validate($Request->request->get('csrf'))) {
         throw new IllegalActionException('CSRF token failure.');
     }
     // (RE)GENERATE AN API KEY (from profile)

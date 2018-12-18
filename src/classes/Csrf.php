@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\FormKey
+ * \Elabftw\Elabftw\Csrf.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Prevent CSRF attacks
  */
-class FormKey
+class Csrf
 {
     /** @var Session $Session the session object */
     private $Session;

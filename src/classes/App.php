@@ -35,6 +35,9 @@ class App
     /** @var Logger $Log instance of Logger */
     public $Log;
 
+    /** @var Csrf $Csrf instance of Csrf */
+    public $Csrf;
+
     /** @var Users $Users instance of Users */
     public $Users;
 
@@ -71,7 +74,8 @@ class App
         SessionInterface $session,
         Request $request,
         Config $config,
-        Logger $log
+        Logger $log,
+        Csrf $csrf
     ) {
         $this->Request = $request;
         $this->Config = $config;
@@ -81,6 +85,7 @@ class App
 
         $this->Db = Db::getConnection();
         $this->Session = $session;
+        $this->Csrf = $csrf;
         $this->Twig = $this->getTwig();
 
         $this->ok = $this->Session->getFlashBag()->get('ok', array());

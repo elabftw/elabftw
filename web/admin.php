@@ -23,7 +23,6 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    $FormKey = new FormKey($Session);
     if (!$Session->get('is_admin')) {
         throw new Exception(Tools::error(true));
     }
@@ -57,7 +56,6 @@ try {
     $template = 'admin.html';
     $renderArr = array(
         'tagsArr' => $tagsArr,
-        'FormKey' => $FormKey,
         'fromSysconfig' => false,
         'isSearching' => $isSearching,
         'itemsTypesArr' => $itemsTypesArr,

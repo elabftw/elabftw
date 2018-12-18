@@ -26,12 +26,11 @@ if ($Request->request->has('fromSysconfig')) {
     $location = "../../admin.php?tab=3";
 }
 
-$FormKey = new FormKey($Session);
 $Response = new RedirectResponse($location);
 
 try {
 
-    if (!$FormKey->validate($Request->request->get('csrf'))) {
+    if (!$App->Csrf->validate($Request->request->get('csrf'))) {
         throw new IllegalActionException('CSRF token validation failure.');
     }
 

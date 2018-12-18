@@ -212,11 +212,8 @@ class Api
     {
         $this->Entity->canOrExplode('write');
 
-        if ($this->Entity->update($title, $date, $body)) {
-            return array('result' => 'success');
-        }
-
-        return array('error' => Tools::error());
+        $this->Entity->update($title, $date, $body);
+        return array('result' => 'success');
     }
 
     /**

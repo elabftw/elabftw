@@ -45,10 +45,15 @@ class ItemsTypes extends AbstractCategory
      * @param string $color hexadecimal color code
      * @param int $bookable
      * @param string $template html for new body
+     * @param int|null $team
      * @return void
      */
-    public function create(string $name, string $color, int $bookable, string $template): void
+    public function create(string $name, string $color, int $bookable, string $template, ?int $team = null): void
     {
+        if ($team === null) {
+            $team = $this->Users->userData['team'];
+        }
+
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (\mb_strlen($name) < 1) {
             $name = 'Unnamed';
@@ -63,7 +68,7 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');

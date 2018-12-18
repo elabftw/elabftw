@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 
 /**
@@ -65,16 +65,18 @@ class Database extends AbstractEntity
      * Update the rating of an item
      *
      * @param int $rating
-     * @return bool
+     * @return void
      */
-    public function updateRating(int $rating): bool
+    public function updateRating(int $rating): void
     {
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -122,58 +124,55 @@ class Database extends AbstractEntity
     /**
      * Destroy a DB item
      *
-     * @throws Exception
-     * @return bool
+     * @return void
      */
-    public function destroy(): bool
+    public function destroy(): void
     {
-        // to store the outcome of sql
-        $result = array();
-
         // delete the database item
         $sql = "DELETE FROM items WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $result[] = $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        $result[] = $this->Tags->destroyAll();
+        $this->Tags->destroyAll();
 
-        $result[] = $this->Uploads->destroyAll();
+        $this->Uploads->destroyAll();
 
         // delete links of this item in experiments with this item linked
         // get all experiments with that item linked
         $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $result[] = $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         while ($links = $req->fetch()) {
             $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
             $delete_req = $this->Db->prepare($delete_sql);
             $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
-            $result[] = $delete_req->execute();
+            if ($delete_req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
         }
-
-        if (\in_array(false, $result, true)) {
-            throw new Exception('Error deleting item.');
-        }
-
-        return true;
     }
 
     /**
      * Lock or unlock an item
      *
-     * @throws Exception
-     * @return bool
+     * @return void
      */
-    public function toggleLock(): bool
+    public function toggleLock(): void
     {
         // get what is the current state
         $sql = "SELECT locked FROM items WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $locked = (int) $req->fetchColumn();
         if ($locked === 1) {
             $locked = 0;
@@ -187,6 +186,8 @@ class Database extends AbstractEntity
         $req->bindValue(':locked', $locked);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

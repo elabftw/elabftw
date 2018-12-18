@@ -39,19 +39,27 @@ class Templates extends AbstractEntity
      *
      * @param string $name
      * @param string $body
+     * @param int|null $userid
+     * @param int|null $team
      * @return void
      */
-    public function create(string $name, string $body): void
+    public function create(string $name, string $body, ?int $userid = null, ?int $team = null): void
     {
+        if ($team === null) {
+            $team = $this->Users->userData['team'];
+        }
+        if ($userid === null) {
+            $userid = $this->Users->userData['userid'];
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $body = Tools::checkBody($body);
 
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
-        $req->bindParam('userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam('userid', $userid, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -62,9 +70,9 @@ class Templates extends AbstractEntity
      * Create a default template for a new team
      *
      * @param int $team the id of the new team
-     * @return bool
+     * @return void
      */
-    public function createDefault(int $team): bool
+    public function createDefault(int $team): void
     {
         $defaultBody = "<p><span style='font-size: 14pt;'><strong>Goal :</strong></span></p>
         <p>&nbsp;</p>
@@ -72,7 +80,7 @@ class Templates extends AbstractEntity
         <p>&nbsp;</p>
         <p><span style='font-size: 14pt;'><strong>Results :</strong></span></p><p>&nbsp;</p>";
 
-        return $this->create('default', $defaultBody, 0, $team);
+        $this->create('default', $defaultBody, 0, $team);
     }
 
     /**
@@ -111,7 +119,9 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetch();
     }
@@ -134,7 +144,9 @@ class Templates extends AbstractEntity
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -162,7 +174,9 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -182,7 +196,9 @@ class Templates extends AbstractEntity
         $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchColumn();
     }
@@ -191,9 +207,9 @@ class Templates extends AbstractEntity
      * Update the common team template from admin.php
      *
      * @param string $body Content of the template
-     * @return bool true if sql success
+     * @return void
      */
-    public function updateCommon(string $body): bool
+    public function updateCommon(string $body): void
     {
         $body = Tools::checkBody($body);
         $sql = "UPDATE experiments_templates SET
@@ -204,8 +220,9 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':body', $body);
-
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -214,9 +231,9 @@ class Templates extends AbstractEntity
      * @param int $id Id of the template
      * @param string $name Title of the template
      * @param string $body Content of the template
-     * @return bool
+     * @return void
      */
-    public function updateTpl(int $id, string $name, string $body): bool
+    public function updateTpl(int $id, string $name, string $body): void
     {
         $body = Tools::checkBody($body);
         $name = Tools::checkTitle($name);
@@ -232,25 +249,27 @@ class Templates extends AbstractEntity
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Delete template
      *
-     * @return bool
+     * @return void
      */
-    public function destroy(): bool
+    public function destroy(): void
     {
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $res1 = $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        $res2 = $this->Tags->destroyAll();
-
-        return $res1 && $res2;
+        $this->Tags->destroyAll();
     }
 
     /**

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 
 /**
@@ -121,7 +121,6 @@ class Revisions implements CrudInterface
     /**
      * Check if item is locked before restoring it
      *
-     * @throws Exception
      * @return bool
      */
     private function isLocked(): bool
@@ -141,14 +140,13 @@ class Revisions implements CrudInterface
      * Restore a revision
      *
      * @param int $revId The id of the revision we want to restore
-     * @throws Exception
      * @return void
      */
     public function restore(int $revId): void
     {
         // check for lock
         if ($this->isLocked()) {
-            throw new Exception(_('You cannot restore a revision of a locked item!'));
+            throw new ImproperActionException(_('You cannot restore a revision of a locked item!'));
         }
 
         $body = $this->readRev($revId);

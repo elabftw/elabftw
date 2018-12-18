@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Exception;
 use PDO;
 
 /**

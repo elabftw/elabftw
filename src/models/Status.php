@@ -177,7 +177,8 @@ class Status extends AbstractCategory
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
         $default = 0;
-        if ($isDefault && $this->setDefaultFalse()) {
+        if ($isDefault) {
+            $this->setDefaultFalse()
             $default = 1;
         }
 

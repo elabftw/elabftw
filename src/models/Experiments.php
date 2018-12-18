@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
@@ -111,7 +113,9 @@ class Experiments extends AbstractEntity
             WHERE link_id = :link_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $itemId, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         while ($data = $req->fetch()) {
             $this->setId((int) $data['item_id']);
             $this->canOrExplode('read');
@@ -125,16 +129,18 @@ class Experiments extends AbstractEntity
      * Update the status for an experiment
      *
      * @param int $status Id of the status
-     * @return bool
+     * @return void
      */
-    public function updateCategory(int $status): bool
+    public function updateCategory(int $status): void
     {
         $sql = "UPDATE experiments SET status = :status WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -148,7 +154,9 @@ class Experiments extends AbstractEntity
         $sql = "SELECT is_timestampable FROM status WHERE id = :status;";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $currentStatus, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         return (bool) $req->fetchColumn();
     }
 
@@ -157,9 +165,9 @@ class Experiments extends AbstractEntity
      *
      * @param string $responseTime the date of the timestamp
      * @param string $responsefilePath the file path to the timestamp token
-     * @return bool
+     * @return void
      */
-    public function updateTimestamp(string $responseTime, string $responsefilePath): bool
+    public function updateTimestamp(string $responseTime, string $responsefilePath): void
     {
         $sql = "UPDATE experiments SET
             locked = 1,
@@ -177,7 +185,9 @@ class Experiments extends AbstractEntity
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -194,7 +204,9 @@ class Experiments extends AbstractEntity
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $status = $req->fetchColumn();
 
         // if there is no is_default status
@@ -203,7 +215,9 @@ class Experiments extends AbstractEntity
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->execute();
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
             $status = $req->fetchColumn();
         }
         return (int) $status;
@@ -228,11 +242,6 @@ class Experiments extends AbstractEntity
      */
     public function duplicate(): int
     {
-        // anon cannot duplicate anything
-        if (isset($this->Users->userData['anon']) && $this->Users->userData['anon'] === true) {
-            throw new Exception(Tools::error(true));
-        }
-
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
@@ -261,31 +270,30 @@ class Experiments extends AbstractEntity
     /**
      * Destroy an experiment and all associated data
      *
-     * @return bool
+     * @return void
      */
-    public function destroy(): bool
+    public function destroy(): void
     {
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         $this->Comments->destroyAll();
         $this->Links->destroyAll();
         $this->Steps->destroyAll();
         $this->Tags->destroyAll();
         $this->Uploads->destroyAll();
-
-        return true;
     }
 
     /**
      * Lock/unlock
      *
-     * @throws ImproperActionException
-     * @return bool
+     * @return void
      */
-    public function toggleLock(): bool
+    public function toggleLock(): void
     {
         $permissions = $this->getPermissions();
         if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
@@ -299,7 +307,9 @@ class Experiments extends AbstractEntity
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
-            $req->execute();
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
             throw new ImproperActionException(
                 _('This experiment was locked by') .
                 ' ' . $req->fetchColumn() . '. ' .
@@ -325,6 +335,8 @@ class Experiments extends AbstractEntity
         $req->bindParam(':lockedby', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

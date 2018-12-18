@@ -118,9 +118,9 @@ abstract class AbstractEntity
      * Update status or item type
      *
      * @param int $category
-     * @return bool
+     * @return void
      */
-    abstract public function updateCategory(int $category): bool;
+    abstract public function updateCategory(int $category): void;
 
     /**
      * Duplicate an item
@@ -132,16 +132,16 @@ abstract class AbstractEntity
     /**
      * Destroy an item
      *
-     * @return bool
+     * @return void
      */
-    abstract public function destroy(): bool;
+    abstract public function destroy(): void;
 
     /**
      * Lock or unlock
      *
-     * @return bool
+     * @return void
      */
-    abstract public function toggleLock(): bool;
+    abstract public function toggleLock(): void;
 
     /**
      * Now that we have an id, load the data in entityData array

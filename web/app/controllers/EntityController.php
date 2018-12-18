@@ -25,6 +25,9 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 
 try {
+    if ($App->Session->has('anon')) {
+        throw new IllegalActionException('Anonymous user tried to access database controller.');
+    }
     // id of the item (experiment or database item)
     $id = 1;
 
@@ -54,6 +57,7 @@ try {
     if ($Request->query->has('duplicate')) {
         $Entity->canOrExplode('read');
         $id = $Entity->duplicate();
+        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
     }
 
     /**

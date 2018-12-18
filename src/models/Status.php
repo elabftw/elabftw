@@ -62,7 +62,7 @@ class Status extends AbstractCategory
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':is_timestampable', $isTimestampable, PDO::PARAM_INT);
-        $req->bindValue(':is_default', $default, PDO::PARAM_INT);
+        $req->bindParam(':is_default', $default, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -178,7 +178,7 @@ class Status extends AbstractCategory
 
         $default = 0;
         if ($isDefault) {
-            $this->setDefaultFalse()
+            $this->setDefaultFalse();
             $default = 1;
         }
 

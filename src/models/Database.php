@@ -83,16 +83,17 @@ class Database extends AbstractEntity
      * Update the item type
      *
      * @param int $category Id of the item type
-     * @return bool
+     * @return void
      */
-    public function updateCategory(int $category): bool
+    public function updateCategory(int $category): void
     {
         $sql = "UPDATE items SET type = :type WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $category, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
 

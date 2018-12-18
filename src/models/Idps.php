@@ -57,7 +57,9 @@ class Idps implements CrudInterface
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
 
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $this->Db->lastInsertId();
     }
@@ -73,7 +75,9 @@ class Idps implements CrudInterface
         $sql = "SELECT * FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $res = $req->fetch();
         if ($res === false) {
             return array();
@@ -90,7 +94,9 @@ class Idps implements CrudInterface
     {
         $sql = "SELECT * FROM idps";
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -106,9 +112,9 @@ class Idps implements CrudInterface
      * @param string $sloUrl Single Log Out URL
      * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
-     * @return bool
+     * @return void
      */
-    public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): bool
+    public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): void
     {
         $sql = "UPDATE idps SET
             name = :name,
@@ -129,30 +135,35 @@ class Idps implements CrudInterface
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Destroy an IDP
      *
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
         $sql = "DELETE FROM idps WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Not implemented
      *
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        return false;
+        return;
     }
 }

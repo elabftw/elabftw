@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -62,14 +63,17 @@ try {
     }
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
     ));
 
+} catch (DatabaseErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('DatabaseError', $e)));
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
 
 } finally {
     $Response->send();

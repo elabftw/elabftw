@@ -282,11 +282,15 @@ class Experiments extends AbstractEntity
     /**
      * Lock/unlock
      *
-     * @throws Exception
+     * @throws ImproperActionException
      * @return bool
      */
     public function toggleLock(): bool
     {
+        $permissions = $this->getPermissions();
+        if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
+            throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
+        }
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock

@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+
 try {
     // id of the item (experiment or database item)
     $id = 1;
@@ -39,6 +40,8 @@ try {
         $Entity = new Database($App->Users, $id);
     }
 
+    $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $Entity->id);
+
     /**
      * GET REQUESTS
      *
@@ -48,7 +51,6 @@ try {
     if ($Request->query->has('duplicate')) {
         $Entity->canOrExplode('read');
         $id = $Entity->duplicate();
-        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
     }
 
     /**
@@ -58,30 +60,18 @@ try {
 
     // UPDATE
     if ($Request->request->has('update')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->update(
+        $Entity->update(
             $Request->request->get('title'),
             $Request->request->get('date'),
             $Request->request->get('body')
-        )) {
-            $Response = new RedirectResponse(
-                "../../" . $Entity->page . ".php?mode=view&id=" . $Request->request->get('id')
-            );
-        } else {
-            throw new Exception('Error during save.');
-        }
+        );
+        // redirect to view mode (Save and go back button)
+        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=view&id=" . $Entity->id);
     }
 
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
-        $Entity->canOrExplode('write');
-        if ($Entity->Uploads->replace($Request)) {
-            $Session->getFlashBag()->add('ok', _('File replaced successfully'));
-        } else {
-            $Session->getFlashBag()->add('ko', Tools::error());
-        }
-        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
+        $Entity->Uploads->replace($Request);
     }
 
 } catch (IllegalActionException $e) {

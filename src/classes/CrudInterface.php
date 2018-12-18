@@ -31,12 +31,12 @@ interface CrudInterface
      *
      * @return bool
      */
-    public function destroy(int $id): bool;
+    public function destroy(int $id): void;
 
     /**
      * Detroy all the things
      *
      * @return bool
      */
-    public function destroyAll(): bool;
+    public function destroyAll(): void;
 }

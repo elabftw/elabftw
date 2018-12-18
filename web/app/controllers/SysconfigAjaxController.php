@@ -1,7 +1,5 @@
 <?php
 /**
- * app/controllers/StatusController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -15,13 +13,11 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use Elabftw\Exceptions\IllegalActionException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * CRUD for Status
- * Only Ajax request and json responses here
- *
+ * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -32,35 +28,46 @@ $Response->setData(array(
 ));
 
 try {
-    if (!$App->Session->get('is_admin')) {
-        throw new IllegalActionException('Non admin user tried to access admin panel.');
+
+    if (!$App->Session->get('is_sysadmin')) {
+        throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
 
-    $Status = new Status($App->Users);
+    $Teams = new Teams($App->Users);
 
-    // CREATE STATUS
-    if ($Request->request->has('statusCreate')) {
-        $Status->create(
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            $Request->request->get('isTimestampable')
+    // CREATE TEAM
+    if ($Request->request->has('teamsCreate')) {
+        $Teams->create($Request->request->get('teamsName'));
+    }
+
+    // UPDATE TEAM
+    if ($Request->request->has('teamsUpdate')) {
+        $orgid = "";
+        if ($Request->request->has('teamsUpdateOrgid')) {
+            $orgid = $Request->request->get('teamsUpdateOrgid');
+        }
+        $Teams->updateName(
+            $Request->request->get('teamsUpdateId'),
+            $Request->request->get('teamsUpdateName'),
+            $orgid
         );
     }
 
-    // UPDATE STATUS
-    if ($Request->request->has('statusUpdate')) {
-        $Status->update(
-            $Request->request->get('id'),
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            $Request->request->get('isTimestampable'),
-            (int) $Request->request->get('isDefault')
-        );
+    // DESTROY TEAM
+    if ($Request->request->has('teamsDestroy')) {
+        $Teams->destroy((int) $Request->request->get('teamsDestroyId'));
     }
 
-    // DESTROY STATUS
-    if ($Request->request->has('statusDestroy')) {
-        $Status->destroy($Request->request->get('id'));
+    // SEND TEST EMAIL
+    if ($Request->request->has('testemailSend')) {
+        $Email = new Email($App->Config);
+        $Email->testemailSend($Request->request->get('testemailEmail'));
+    }
+
+    // SEND MASS EMAIL
+    if ($Request->request->has('massEmail')) {
+        $Email = new Email($App->Config);
+        $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'));
     }
 
 } catch (ImproperActionException $e) {

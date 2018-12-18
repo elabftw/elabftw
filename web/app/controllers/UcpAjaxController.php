@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/StatusController.php
+ * app/controllers/UcpController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -8,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -15,13 +17,10 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use Elabftw\Exceptions\IllegalActionException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * CRUD for Status
- * Only Ajax request and json responses here
- *
+ * Deal with ajax requests sent from the user control panel
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -32,35 +31,23 @@ $Response->setData(array(
 ));
 
 try {
-    if (!$App->Session->get('is_admin')) {
-        throw new IllegalActionException('Non admin user tried to access admin panel.');
+    // TAB 3 : EXPERIMENTS TEMPLATES
+
+    // DUPLICATE/IMPORT TPL
+    if ($Request->request->has('import_tpl')) {
+        $Templates = new Templates($App->Users, (int) $Request->request->get('id'));
+        $Templates->duplicate();
     }
 
-    $Status = new Status($App->Users);
+    // UPDATE ORDERING
+    if ($Request->request->has('updateOrdering')) {
+        if ($Request->request->get('table') === 'experiments_templates') {
+            // remove the create new entry
+            unset($Request->request->get('ordering')[0]);
+            $Entity = new Templates($App->Users);
+        }
 
-    // CREATE STATUS
-    if ($Request->request->has('statusCreate')) {
-        $Status->create(
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            $Request->request->get('isTimestampable')
-        );
-    }
-
-    // UPDATE STATUS
-    if ($Request->request->has('statusUpdate')) {
-        $Status->update(
-            $Request->request->get('id'),
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            $Request->request->get('isTimestampable'),
-            (int) $Request->request->get('isDefault')
-        );
-    }
-
-    // DESTROY STATUS
-    if ($Request->request->has('statusDestroy')) {
-        $Status->destroy($Request->request->get('id'));
+        $Entity->updateOrdering($Request->request->all());
     }
 
 } catch (ImproperActionException $e) {
@@ -70,7 +57,7 @@ try {
     ));
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)

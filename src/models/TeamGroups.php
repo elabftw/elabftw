@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 
 /**
@@ -41,16 +42,22 @@ class TeamGroups implements CrudInterface
      * Create a team group
      *
      * @param string $name Name of the group
-     * @return bool true if sql is successful
+     * @return void
      */
-    public function create(string $name): bool
+    public function create(string $name): void
     {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        if (\mb_strlen($name) < 2) {
+            throw new ImproperActionException('Name is too short!');
+        }
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -65,7 +72,9 @@ class TeamGroups implements CrudInterface
         $sql = "SELECT id, name FROM team_groups WHERE team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         $groups = $req->fetchAll();
 
@@ -76,7 +85,9 @@ class TeamGroups implements CrudInterface
 
         foreach ($groups as $group) {
             $req->bindParam(':groupid', $group['id'], PDO::PARAM_INT);
-            $req->execute();
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
             $usersInGroup = $req->fetchAll();
             $fullGroups[] = array(
                 'id' => $group['id'],
@@ -133,7 +144,9 @@ class TeamGroups implements CrudInterface
         $sql = "SELECT name FROM team_groups WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         return $req->fetchColumn();
     }
 
@@ -156,12 +169,12 @@ class TeamGroups implements CrudInterface
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
 
-            if ($req->execute()) {
-                // the group name is returned so it gets back into jeditable input field
-                return $name;
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
             }
+            // the group name is returned so it gets back into jeditable input field
+            return $name;
         }
-        throw new Exception('Cannot update team group!');
     }
 
     /**
@@ -170,23 +183,25 @@ class TeamGroups implements CrudInterface
      * @param int $userId Id of the user
      * @param int $groupId Id of the group
      * @param string $action Can be 'add' or 'rm'
-     * @throws Exception if the action keyword is wrong
-     * @return bool true if success
+     * @throws IllegalActionException if the action keyword is wrong
+     * @return void
      */
-    public function updateMember(int $userId, int $groupId, string $action): bool
+    public function updateMember(int $userId, int $groupId, string $action): void
     {
         if ($action === 'add') {
             $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
         } elseif ($action === 'rm') {
             $sql = "DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid";
         } else {
-            throw new Exception('Bad action keyword');
+            throw new IllegalActionException('Bad action keyword');
         }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userId, PDO::PARAM_INT);
         $req->bindParam(':groupid', $groupId, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -194,32 +209,32 @@ class TeamGroups implements CrudInterface
      *
      * @param int $id Id of the group to destroy
      * @throws Exception if it fails to delete
-     * @return bool true on success
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
-        $success = array();
-
-        $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = ':id'";
+        $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id AND team = :team";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $success[] = $req->execute();
+        // note: setting PDO::PARAM_INT here will throw error because it can also be string value!
+        $req->bindParam(':id', $id);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         $sql = "DELETE FROM team_groups WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $success[] = $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         $sql = "DELETE FROM users2team_groups WHERE groupid = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $success[] = $req->execute();
-
-        if (\in_array(false, $success, true)) {
-            throw new Exception('Error removing group');
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
         }
-
-        return true;
     }
 
     /**
@@ -246,9 +261,10 @@ class TeamGroups implements CrudInterface
     /**
      * Not implemented
      *
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        return false;
+        return;
     }
 }

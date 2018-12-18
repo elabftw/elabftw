@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
@@ -113,24 +114,30 @@ class Email
      * Send an email
      *
      * @param Swift_Message $message
+     * @throws ImproperActionException
      * @return int number of email sent
      */
     public function send(Swift_Message $message): int
     {
         $mailer = $this->getMailer();
-        return $mailer->send($message);
+        $res = $mailer->send($message);
+        if ($res === 0) {
+            throw new ImproperActionException('Could not send email!');
+        }
+        return $res;
     }
 
     /**
      * Send a test email
      *
      * @param string $email
+     * @throws ImproperActionException
      * @return bool
      */
     public function testemailSend(string $email): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception('Bad email!');
+            throw new ImproperActionException('Bad email!');
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
@@ -202,15 +209,7 @@ class Email
         // Give it a body
         ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
         // SEND EMAIL
-        try {
-            $this->send($message);
-        } catch (Exception $e) {
-            // FIXME should be injected
-            $Log = new Logger('elabftw');
-            $Log->pushHandler(new ErrorLogHandler());
-            $Log->error('Error sending email', array('exception' => $e));
-            throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
-        }
+        $this->send($message);
     }
 
     /**
@@ -242,10 +241,6 @@ class Email
         // Give it a body
         ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ' . $url . $footer);
         // now we try to send the email
-        try {
-            $this->send($message);
-        } catch (Exception $e) {
-            throw new Exception(_('There was a problem sending the email! Error was logged.'));
-        }
+        $this->send($message);
     }
 }

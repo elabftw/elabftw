@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use InvalidArgumentException;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use PDO;
 
 /**
@@ -34,13 +35,13 @@ trait EntityTrait
      * Check and set id
      *
      * @param int $id
-     * @throws InvalidArgumentException
+     * @throws IllegalActionException
      * @return void
      */
     public function setId(int $id): void
     {
         if (Tools::checkId($id) === false) {
-            throw new InvalidArgumentException(_('The id parameter is not valid!'));
+            throw new IllegalActionException('The id parameter is not valid!');
         }
         $this->id = $id;
         // prevent reusing of old data from previous id
@@ -51,12 +52,10 @@ trait EntityTrait
      * Update ordering for status, experiment templates or items types
      *
      * @param array $post POST
-     * @return bool
+     * @return void
      */
-    public function updateOrdering(array $post): bool
+    public function updateOrdering(array $post): void
     {
-        $success = array();
-
         // whitelist the tables
         $whitelist = array(
             'status',
@@ -66,7 +65,7 @@ trait EntityTrait
         );
 
         if (!in_array($post['table'], $whitelist, true)) {
-            throw new InvalidArgumentException('Wrong table.');
+            throw new IllegalActionException('Wrong table supplied for update ordering.');
         }
 
         if ($post['table'] === 'todolist') {
@@ -86,9 +85,9 @@ trait EntityTrait
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':userOrTeam', $userOrTeamValue);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $success[] = $req->execute();
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
         }
-
-        return !in_array(false, $success, true);
     }
 }

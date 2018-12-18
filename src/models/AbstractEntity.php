@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 
@@ -309,16 +311,17 @@ abstract class AbstractEntity
      * @param string $title
      * @param string $date
      * @param string $body
-     * @return bool
+     * @throws ImproperActionException
+     * @throws DatabaseErrorException
+     * @return void
      */
-    public function update(string $title, string $date, string $body): bool
+    public function update(string $title, string $date, string $body): void
     {
-        if (empty($this->entityData)) {
-            $this->populate();
-        }
+        $this->canOrExplode('write');
+
         // don't update if locked
         if ($this->entityData['locked']) {
-            return false;
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
         }
 
         // add a revision
@@ -354,18 +357,22 @@ abstract class AbstractEntity
             $sql = "SELECT userid, visibility FROM items WHERE id = :id";
             $req2 = $this->Db->prepare($sql);
             $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
-            $req2->execute();
-            $res = $req2->fetch();
+            if ($req2->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
+            $item = $req2->fetch();
 
             $newUserid = $this->Users->userid;
-            if ($res['visibility'] === 'user') {
-                $newUserid = $res['userid'];
+            if ($item['visibility'] === 'user') {
+                $newUserid = $item['userid'];
             }
             $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
         }
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -404,9 +411,9 @@ abstract class AbstractEntity
      * Check if we have a correct value for visibility
      *
      * @param string $visibility
-     * @return bool
+     * @return void
      */
-    public function checkVisibility(string $visibility): bool
+    public function checkVisibility(string $visibility): void
     {
         $validArr = array(
             'public',
@@ -415,30 +422,33 @@ abstract class AbstractEntity
             'user'
         );
 
-        if (in_array($visibility, $validArr)) {
-            return true;
+        if (!\in_array($visibility, $validArr, true)) {
+            // if visibility is a TeamGroup, it is a positive int
+            if (Tools::checkId((int) $visibility) === false) {
+                throw new IllegalActionException('The visibility parameter is wrong.');
+            }
         }
-
-        // or we might have a TeamGroup, so an int
-        return (bool) Tools::checkId((int) $visibility);
-
-        throw new IllegalActionException('The visibility parameter is wrong.');
     }
 
     /**
      * Update the visibility for an entity
      *
      * @param string $visibility
-     * @return bool
+     * @return void
      */
-    public function updateVisibility(string $visibility): bool
+    public function updateVisibility(string $visibility): void
     {
-        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id AND locked = '0'";
+        $this->checkVisibility($visibility);
+        $this->canOrExplode('write');
+
+        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':visibility', $visibility);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException($sql);
+        }
     }
 
     /**

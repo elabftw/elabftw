@@ -1,7 +1,5 @@
 <?php
 /**
- * app/controllers/UsersController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,7 +8,10 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -20,25 +21,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
-// default response is general error
 $Response->setData(array(
-    'res' => false,
-    'msg' => Tools::error()
+    'res' => true,
+    'msg' => _('Saved')
 ));
 
 try {
+    // CSRF PROTECTION
     if (!$App->Csrf->validate($Request->request->get('csrf'))) {
         throw new IllegalActionException('CSRF token failure.');
     }
+
     // (RE)GENERATE AN API KEY (from profile)
     if ($Request->request->has('generateApiKey')) {
-
-        if ($App->Users->generateApiKey()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $App->Users->generateApiKey();
     }
 
     // VALIDATE USER
@@ -58,12 +54,7 @@ try {
         }
 
         // all good, validate user
-        if ($targetUser->validate()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $targetUser->validate();
     }
 
     // ARCHIVE USER
@@ -75,12 +66,7 @@ try {
         }
         $targetUser = new Users((int) $Request->request->get('userid'));
 
-        if ($targetUser->archive()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $targetUser->archive();
     }
 
 
@@ -103,24 +89,31 @@ try {
             throw new IllegalActionException('Admin user tried to delete user from other team.');
         }
 
-
-        if ($targetUser->destroy()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Everything was purged successfully.')
-            ));
-        }
+        $targetUser->destroy();
     }
 
+} catch (ImproperActionException $e) {
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
     ));
 
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
 
 } finally {
     $Response->send();

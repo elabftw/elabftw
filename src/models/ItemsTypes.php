@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 
@@ -43,21 +45,17 @@ class ItemsTypes extends AbstractCategory
      * @param string $color hexadecimal color code
      * @param int $bookable
      * @param string $template html for new body
-     * @param int|null $team
-     * @return bool true if sql success
+     * @return void
      */
-    public function create(string $name, string $color, int $bookable, string $template, ?int $team = null): bool
+    public function create(string $name, string $color, int $bookable, string $template): void
     {
-        if ($team === null) {
-            $team = $this->Users->userData['team'];
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (\mb_strlen($name) < 1) {
             $name = 'Unnamed';
         }
-
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
+
         $sql = "INSERT INTO items_types(name, color, bookable, template, team)
             VALUES(:name, :color, :bookable, :template, :team)";
         $req = $this->Db->prepare($sql);
@@ -65,9 +63,11 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -81,10 +81,12 @@ class ItemsTypes extends AbstractCategory
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         if ($req->rowCount() === 0) {
-            throw new Exception(_('Nothing to show with this id'));
+            throw new ImproperActionException(_('Nothing to show with this id'));
         }
 
         return $req->fetchColumn();
@@ -106,7 +108,9 @@ class ItemsTypes extends AbstractCategory
             from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -122,7 +126,9 @@ class ItemsTypes extends AbstractCategory
         $sql = "SELECT color FROM items_types WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchColumn();
     }
@@ -135,9 +141,9 @@ class ItemsTypes extends AbstractCategory
      * @param string $color hexadecimal color
      * @param int $bookable
      * @param string $template html for the body
-     * @return bool true if sql success
+     * @return void
      */
-    public function update(int $id, string $name, string $color, int $bookable, string $template): bool
+    public function update(int $id, string $name, string $color, int $bookable, string $template): void
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -157,7 +163,9 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -171,7 +179,9 @@ class ItemsTypes extends AbstractCategory
         $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         return (int) $req->fetchColumn();
     }
 
@@ -179,28 +189,31 @@ class ItemsTypes extends AbstractCategory
      * Destroy an item type
      *
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
         // don't allow deletion of an item type with items
         if ($this->countItems($id) > 0) {
-            throw new Exception(_("Remove all database items with this type before deleting this type."));
+            throw new ImproperActionException(_("Remove all database items with this type before deleting this type."));
         }
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Not implemented
      *
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        return false;
+        return;
     }
 }

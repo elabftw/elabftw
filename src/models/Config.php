@@ -14,6 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Exception;
 use PDO;
 
@@ -54,7 +56,9 @@ class Config
 
         $sql = "SELECT * FROM config";
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         foreach ($config as $name => $value) {
             $configArr[$name] = $value[0];
@@ -67,12 +71,10 @@ class Config
      *
      * @param array $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
-     * @return bool the return value of execute queries
+     * @return void
      */
-    public function update(array $post): bool
+    public function update(array $post): void
     {
-        $result = array();
-
         // do some data validation for some values
         /* TODO add upload button
         if (isset($post['stampcert'])) {
@@ -95,10 +97,10 @@ class Config
         }
 
         if (isset($post['login_tries']) && Tools::checkId((int) $post['login_tries']) === false) {
-            throw new Exception('Bad value for number of login attempts!');
+            throw new IllegalActionException('Bad value for number of login attempts!');
         }
         if (isset($post['ban_time']) && Tools::checkId((int) $post['ban_time']) === false) {
-            throw new Exception('Bad value for number of login attempts!');
+            throw new IllegalActionException('Bad value for number of login attempts!');
         }
 
         // encrypt password
@@ -112,30 +114,32 @@ class Config
             $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
-            $result[] = $req->execute();
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
         }
-
-        return !\in_array(false, $result, true);
     }
 
     /**
      * Reset the timestamp password
      *
-     * @return bool
+     * @return void
      */
-    public function destroyStamppass(): bool
+    public function destroyStamppass(): void
     {
         $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
         $req = $this->Db->prepare($sql);
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Insert the default values in config
      *
-     * @return bool
+     * @return void
      */
-    public function populate(): bool
+    public function populate(): void
     {
         $Update = new Update($this);
         $schema = $Update->getRequiredSchema();
@@ -187,6 +191,8 @@ class Config
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

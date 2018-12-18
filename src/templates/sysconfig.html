@@ -326,7 +326,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <!-- TEST EMAIL -->
     <div class='box'>
         <label class='block' for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
-        <input class='clean-form col-3-form' type='email' placeholder='you@email.com' id='testemailEmail' />
+        <input class='clean-form col-3-form' type='email' value='{{ App.Users.userData.email }}' id='testemailEmail' />
         <button id='testemailButton' class='button'>{{ 'Send'|trans }}</button>
     </div>
 

@@ -44,9 +44,9 @@ class Revisions implements CrudInterface
      * Add a revision if the changeset is big enough
      *
      * @param string $body
-     * @return bool
+     * @return void
      */
-    public function create(string $body): bool
+    public function create(string $body): void
     {
         // only save a revision if there is at least MIN_DELTA characters difference between the old version and the new one
         if (abs(\mb_strlen($this->Entity->entityData['body'] ?? "") - \mb_strlen($body)) > self::MIN_DELTA) {
@@ -58,9 +58,10 @@ class Revisions implements CrudInterface
             $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
 
-            return $req->execute();
+            if ($req->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
         }
-        return true;
     }
 
     /**
@@ -74,7 +75,9 @@ class Revisions implements CrudInterface
              WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return (int) $req->fetchColumn();
     }
@@ -90,7 +93,9 @@ class Revisions implements CrudInterface
             WHERE item_id = :item_id ORDER BY savedate DESC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -106,7 +111,9 @@ class Revisions implements CrudInterface
         $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchColumn();
     }
@@ -122,7 +129,9 @@ class Revisions implements CrudInterface
         $sql = "SELECT locked FROM " . $this->Entity->type . " WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $locked = $req->fetch();
 
         return $locked['locked'] == 1;
@@ -133,9 +142,9 @@ class Revisions implements CrudInterface
      *
      * @param int $revId The id of the revision we want to restore
      * @throws Exception
-     * @return bool
+     * @return void
      */
-    public function restore(int $revId): bool
+    public function restore(int $revId): void
     {
         // check for lock
         if ($this->isLocked()) {
@@ -149,26 +158,29 @@ class Revisions implements CrudInterface
         $req->bindParam(':body', $body);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Not implemented
      *
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
-        return false;
+        return;
     }
 
     /**
      * Not implemented
      *
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        return false;
+        return;
     }
 }

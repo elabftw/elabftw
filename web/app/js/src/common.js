@@ -176,7 +176,7 @@ function makeEditableComment(element) {
 // EDIT COMMENT ON UPLOAD
 function makeEditableFileComment() {
     $('.editable').editable(function(value, settings) {
-        $.post('app/controllers/EntityController.php', {
+        $.post('app/controllers/EntityAjaxController.php', {
             updateFileComment : true,
             type: $(this).data('type'),
             comment : value,

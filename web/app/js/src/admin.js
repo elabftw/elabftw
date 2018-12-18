@@ -163,7 +163,7 @@
 
         // ITEMSTYPES
         var ItemsTypes = {
-            controller: 'app/controllers/ItemsTypesController.php',
+            controller: 'app/controllers/ItemsTypesAjaxController.php',
             create: function() {
                 var name = $('#itemsTypesName').val();
                 var color = $('#itemsTypesColor').val();
@@ -282,6 +282,8 @@
             name : 'teamGroupUpdateName',
             submit : 'Save',
             cancel : 'Cancel',
+            cancelcssclass : 'button button-delete',
+            submitcssclass : 'button',
             style : 'display:inline'
 
         });

@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Exceptions\DatabaseErrorException;
+
 /**
  * All about the templates
  */
@@ -37,26 +39,23 @@ class Templates extends AbstractEntity
      *
      * @param string $name
      * @param string $body
-     * @param int $userid
-     * @param int|null $team
-     * @return bool
+     * @return void
      */
-    public function create(string $name, string $body, int $userid, ?int $team = null): bool
+    public function create(string $name, string $body): void
     {
-        if ($team === null) {
-            $team = $this->Users->userData['team'];
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $body = Tools::checkBody($body);
 
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
-        $req->bindParam('userid', $userid, PDO::PARAM_INT);
+        $req->bindParam('userid', $this->Users->userid, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**

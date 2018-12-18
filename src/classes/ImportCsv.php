@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
-use RuntimeException;
+use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -45,6 +44,7 @@ class ImportCsv extends AbstractImport
     /**
      * Do the work
      *
+     * @throws ImproperActionException
      * @return void
      */
     private function readCsv(): void
@@ -90,7 +90,7 @@ class ImportCsv extends AbstractImport
                 'type' => $this->target
             ));
             if (!$result) {
-                throw new Exception('Error in SQL query!');
+                throw new ImproperActionException('Error in SQL query!');
             }
             $this->inserted++;
         }
@@ -99,14 +99,14 @@ class ImportCsv extends AbstractImport
     /**
      * Open the file, as the name suggests
      *
-     * @throws RuntimeException
+     * @throws ImproperActionException
      * @return void
      */
     protected function openFile(): void
     {
         $this->handle = fopen($this->UploadedFile->getPathname(), 'rb');
         if ($this->handle === false) {
-            throw new RuntimeException('Cannot open file!');
+            throw new ImproperActionException('Cannot open file!');
         }
     }
 

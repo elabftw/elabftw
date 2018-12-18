@@ -68,57 +68,77 @@ try {
 
     // UPDATE VISIBILITY
     if ($Request->request->has('updateVisibility')) {
-        $Response = new JsonResponse();
-        $Entity->canOrExplode('write');
-        $Entity->checkVisibility($Request->request->get('visibility'));
-
-        if ($Entity->updateVisibility($Request->request->get('visibility'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->updateVisibility($Request->request->get('visibility'));
     }
 
 
-    // GET BODY
-    if ($Request->request->has('getBody')) {
-        $Entity->canOrExplode('read');
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $Entity->entityData['body']
-        ));
-    }
-
-    // LOCK
+    // TOGGLE LOCK
     if ($Request->request->has('lock')) {
-        $permissions = $Entity->getPermissions();
-        // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if (!$App->Users->userData['can_lock'] && !$permissions['write']) {
-            throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
-        }
-        if ($Entity->toggleLock()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->toggleLock();
     }
 
     // QUICKSAVE
     if ($Request->request->has('quickSave')) {
-        $Entity->canOrExplode('write');
         if ($Entity->update(
             $Request->request->get('title'),
             $Request->request->get('date'),
             $Request->request->get('body')
         )) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
         }
     }
+
+    // UPDATE FILE COMMENT
+    if ($Request->request->has('updateFileComment')) {
+        $Entity->canOrExplode('write');
+        $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
+
+        if (\mb_strlen($comment) === 0 || $comment === ' ') {
+            throw new ImproperActionException(_('Comment is too short'));
+        }
+
+        $id_arr = \explode('_', $Request->request->get('comment_id'));
+        $comment_id = (int) $id_arr[1];
+        if (Tools::checkId($comment_id) === false) {
+            throw new IllegalActionException('The id parameter is invalid');
+        }
+
+        $Entity->Uploads->updateComment($comment_id, $comment);
+    }
+
+    // CREATE UPLOAD
+    if ($Request->request->has('upload')) {
+        $Entity->canOrExplode('write');
+        $Entity->Uploads->create($Request);
+    }
+
+    // ADD MOL FILE OR PNG
+    if ($Request->request->has('addFromString')) {
+        $Entity->canOrExplode('write');
+        if ($Entity->Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
+        }
+    }
+
+    // DESTROY ENTITY
+    if ($Request->request->has('destroy')) {
+
+        // check write permissions
+        $Entity->canOrExplode('write');
+
+        // check for deletable xp
+        if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')) {
+            throw new Exception(Tools::error(true));
+        }
+
+        if ($Entity->destroy()) {
+        }
+    }
+
+    // DEFAULT HAPPY RESPONSE
+    // no exception occurred
+    $Response->setData(array(
+        'res' => true,
+        'msg' => _('Saved')
+    ));
 
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
@@ -139,55 +159,6 @@ try {
         }
     }
 
-    // UPDATE FILE COMMENT
-    if ($Request->request->has('updateFileComment')) {
-        $Entity->canOrExplode('write');
-        $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
-
-        if (\mb_strlen($comment) === 0 || $comment === ' ') {
-            throw new ImproperActionException(_('Comment is too short'));
-        }
-
-        $id_arr = \explode('_', $Request->request->get('comment_id'));
-        if (Tools::checkId((int) $id_arr[1]) === false) {
-            throw new IllegalActionException('The id parameter is invalid');
-        }
-        $comment_id = $id_arr[1];
-
-        if ($Entity->Uploads->updateComment((int) $comment_id, $comment)) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
-    }
-
-    // CREATE UPLOAD
-    if ($Request->request->has('upload')) {
-        $Entity->canOrExplode('write');
-        if ($Entity->Uploads->create($Request)) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
-    }
-
-    // ADD MOL FILE OR PNG
-    if ($Request->request->has('addFromString')) {
-        $Entity->canOrExplode('write');
-        if ($Entity->Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
 
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
@@ -209,32 +180,25 @@ try {
         }
     }
 
-    // DESTROY ENTITY
-    if ($Request->request->has('destroy')) {
-
-        // check write permissions
-        $Entity->canOrExplode('write');
-
-        // check for deletable xp
-        if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')) {
-            throw new Exception(Tools::error(true));
-        }
-
-        if ($Entity->destroy()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Item deleted successfully')
-            ));
-        }
+    // GET BODY
+    // this has a special msg, so we put it after the rest
+    if ($Request->request->has('getBody')) {
+        $Entity->canOrExplode('read');
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $Entity->entityData['body']
+        ));
     }
+
+
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->__toString()
+        'msg' => $e->getMessage()
     ));
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)

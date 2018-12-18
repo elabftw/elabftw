@@ -10,6 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,8 +27,8 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    if (!$Session->get('is_admin')) {
-        throw new Exception(Tools::error(true));
+    if (!$App->Session->get('is_admin')) {
+        throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
     $ItemsTypes = new ItemsTypes($App->Users);
@@ -49,12 +53,14 @@ try {
         $usersArr = $App->Users->readTeamFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
     }
 
+    $allTeamUsersArr = $App->Users->readAllFromTeam(1);
 
     // all the tags for the team
     $tagsArr = $Tags->readAll();
 
     $template = 'admin.html';
     $renderArr = array(
+        'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $tagsArr,
         'fromSysconfig' => false,
         'isSearching' => $isSearching,
@@ -67,11 +73,22 @@ try {
         'usersArr' => $usersArr
     );
 
-} catch (Exception $e) {
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error(true));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
 
-}
+} catch (Exception $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
 
-$Response->setContent($App->render($template, $renderArr));
-$Response->send();
+} finally {
+    $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
+}

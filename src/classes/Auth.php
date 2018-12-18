@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -166,13 +167,13 @@ class Auth
      * Check the number of character of a password
      *
      * @param string $password The password to check
-     * @throws Exception
+     * @throws ImproperActionException
      * @return bool
      */
     public function checkPasswordLength(string $password): bool
     {
         if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            throw new Exception(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
+            throw new ImproperActionException(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;
     }

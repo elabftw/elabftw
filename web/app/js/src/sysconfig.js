@@ -13,7 +13,7 @@
     $(document).ready(function() {
         // TEAMS
         var Teams = {
-            controller: 'app/controllers/SysconfigController.php',
+            controller: 'app/controllers/SysconfigAjaxController.php',
             create: function() {
                 document.getElementById('teamsCreateButton').disabled = true;
                 var name = $('#teamsName').val();
@@ -98,7 +98,7 @@
         $(document).on('click', '#massSend', function() {
             $('#massSend').prop('disabled', true);
             $('#massSend').text('Sending…');
-            $.post("app/controllers/SysconfigController.php", {
+            $.post("app/controllers/SysconfigAjaxController.php", {
                 massEmail: true,
                 subject: $('#massSubject').val(),
                 body: $('#massBody').val()
@@ -120,7 +120,7 @@
             var email = $('#testemailEmail').val();
             document.getElementById('testemailButton').disabled = true;
             $('#testemailButton').text('Sending…');
-            $.post('app/controllers/SysconfigController.php', {
+            $.post('app/controllers/SysconfigAjaxController.php', {
                 testemailSend: true,
                 testemailEmail: email
             }).done(function(data) {
@@ -152,7 +152,7 @@
         $(document).on('click', '.idpsDestroy', function() {
             const elem = $(this);
             if (confirm($(this).data('confirm'))) {
-                $.post('app/controllers/IdpsController.php', {
+                $.post('app/controllers/IdpsAjaxController.php', {
                     idpsDestroy: true,
                     id: $(this).data('id'),
                 }).done(function(data) {

@@ -125,7 +125,7 @@
                     <!-- ADD USER TO GROUP -->
                     <label class='block' for='teamGroupUserAdd'>{{ 'Add this user'|trans }}</label>
                     <select class='clean-form col-3-form' id='teamGroupUserAdd'>
-                        {% for user in usersArr %}
+                        {% for user in allTeamUsersArr %}
                             <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
                         {% endfor %}
                     </select>
@@ -144,7 +144,7 @@
                     <!-- RM USER FROM GROUP -->
                     <label class='block' for='teamGroupUserRm'>{{ 'Remove this user'|trans }}</label>
                     <select class="clean-form col-3-form" id='teamGroupUserRm'>
-                        {% for user in usersArr %}
+                        {% for user in allTeamUsersArr %}
                             <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
                         {% endfor %}
                     </select>
@@ -170,7 +170,7 @@
                     <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
                     <ul class='group-list'>
                         {% for user in teamGroup.users %}
-                        <li>{{ user.fullname|raw }}</li>
+                            <li>{{ user.fullname|raw }}</li>
                         {% endfor %}
                     </ul>
                 </div>

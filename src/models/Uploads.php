@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Gmagick;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,85 +55,6 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Main method for normal file upload
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return bool
-     */
-    public function create(Request $request): bool
-    {
-        $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
-        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
-        $fullPath = $this->uploadsPath . $longName;
-
-        // disallow upload of php files
-        if (Tools::getExt($realName) === 'php') {
-            throw new Exception('PHP files are forbidden!');
-        }
-
-        // Try to move the file to its final place
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-
-        // final sql
-        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-    }
-
-    /**
-     * Called from ImportZip class
-     *
-     * @param string $filePath absolute path to the file
-     * @param string $comment
-     * @return bool
-     */
-    public function createFromLocalFile(string $filePath, string $comment): bool
-    {
-        $realName = basename($filePath);
-        $ext = Tools::getExt($realName);
-
-        // disallow upload of php files
-        if ($ext === 'php') {
-            throw new Exception('PHP files are forbidden!');
-        }
-
-        $longName = $this->getCleanName() . "." . $ext;
-        $finalPath = $this->uploadsPath . $longName;
-
-        $this->moveFile($filePath, $finalPath);
-
-        return $this->dbInsert($realName, $longName, $this->getHash($finalPath), $comment);
-    }
-
-    /**
-     * Create an upload from a string, from Chemdoodle or Doodle
-     *
-     * @param string $fileType 'mol' or 'png'
-     * @param string $content content of the file
-     * @return bool
-     */
-    public function createFromString(string $fileType, string $content): bool
-    {
-        if ($fileType === 'png') {
-            $realName = 'Doodle.png';
-            // get the image in binary
-            $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
-            $content = base64_decode($content);
-        } elseif ($fileType === 'mol') {
-            $realName = 'Mol-file.mol';
-        } else {
-            throw new Exception('Bad type!');
-        }
-
-        $longName = $this->getCleanName() . "." . $fileType;
-        $fullPath = $this->uploadsPath . $longName;
-
-        if (!empty($content) && !file_put_contents($fullPath, $content)) {
-            throw new Exception("Could not write to file");
-        }
-
-        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-    }
-
-    /**
      * Create a clean filename
      * Remplace all non letters/numbers by '.' (this way we don't lose the file extension)
      *
@@ -147,21 +71,25 @@ class Uploads implements CrudInterface
      *
      * @param string $orig from
      * @param string $dest to
-     * @throws Exception if cannot move the file
-     * @return bool
+     * @throws FilesystemErrorException
+     * @return void
      */
-    private function moveFile(string $orig, string $dest): bool
+    private function moveFile(string $orig, string $dest): void
     {
         // fix for FreeBSD and rename across different filesystems
         // see http://php.net/manual/en/function.rename.php#117590
         if (PHP_OS === 'FreeBSD') {
-            return copy($orig, $dest) && unlink($orig);
+            if (\copy($orig, $dest) !== true) {
+                throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+            }
+            if (\unlink($orig) !== true) {
+                throw new FilesystemErrorException('Error deleting file!');
+            }
         }
 
-        if (!rename($orig, $dest)) {
-            throw new Exception('Error while moving the file. Check folder permissons!');
+        if (\rename($orig, $dest) !== true) {
+            throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
         }
-        return true;
     }
 
     /**
@@ -177,6 +105,19 @@ class Uploads implements CrudInterface
         }
 
         return '';
+    }
+
+    /**
+     * Check if extension is allowed for upload
+     *
+     * @param string $realName The name of the file
+     * @return void
+     */
+    private function checkExtension(string $realName): void
+    {
+        if (Tools::getExt($realName) === 'php') {
+            throw new ImproperActionException('PHP files are forbidden!');
+        }
     }
 
     /**
@@ -203,11 +144,11 @@ class Uploads implements CrudInterface
      * @param string $realName The clean name of the file
      * @param string $longName The sha512 name
      * @param string $hash The hash string of our file
-     * @param string|null $comment
-     * @throws Exception if request fail
-     * @return bool
+     * @param string|null $comment The file comment
+     * @throws DatabaseErrorException
+     * @return void
      */
-    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): bool
+    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): void
     {
         if ($comment === null) {
             $comment = 'Click to add a comment';
@@ -245,13 +186,87 @@ class Uploads implements CrudInterface
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
+     * Main method for normal file upload
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return void
+     */
+    public function create(Request $request): void
+    {
+        $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
+        $this->checkExtension($realName);
+
+        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
+        $fullPath = $this->uploadsPath . $longName;
+
+        // Try to move the file to its final place
+        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+
+        // final sql
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+    }
+
+    /**
+     * Called from ImportZip class
+     *
+     * @param string $filePath absolute path to the file
+     * @param string $comment
+     * @return void
+     */
+    public function createFromLocalFile(string $filePath, string $comment): void
+    {
+        $realName = basename($filePath);
+        $this->checkExtension($realName);
+
+        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
+        $fullPath = $this->uploadsPath . $longName;
+
+        $this->moveFile($filePath, $fullPath);
+
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
+    }
+
+    /**
+     * Create an upload from a string, from Chemdoodle or Doodle
+     *
+     * @param string $fileType 'mol' or 'png'
+     * @param string $content content of the file
+     * @return void
+     */
+    public function createFromString(string $fileType, string $content): void
+    {
+        if ($fileType === 'png') {
+            $realName = 'Doodle.png';
+            // get the image in binary
+            $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
+            $content = base64_decode($content);
+        } elseif ($fileType === 'mol') {
+            $realName = 'Mol-file.mol';
+        } else {
+            throw new IllegalActionException('Bad filetype!');
+        }
+
+        $longName = $this->getCleanName() . "." . $fileType;
+        $fullPath = $this->uploadsPath . $longName;
+
+        if (!empty($content) && !file_put_contents($fullPath, $content)) {
+            throw new FilesystemErrorException("Could not write to file!");
+        }
+
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
     }
 
     /**
      * Read infos from an upload ID
      *
      * @param int $id id of the uploaded item
+     * @throws DatabaseErrorException
      * @return array
      */
     public function readFromId(int $id): array
@@ -259,14 +274,17 @@ class Uploads implements CrudInterface
         $sql = "SELECT * FROM uploads WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
 
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         return $req->fetch();
     }
 
     /**
      * Read all uploads for an item
      *
+     * @throws DatabaseErrorException
      * @return array
      */
     public function readAll(): array
@@ -275,7 +293,9 @@ class Uploads implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -287,10 +307,12 @@ class Uploads implements CrudInterface
      *
      * @param int $id id of the file
      * @param string $comment
-     * @return bool
+     * @throws DatabaseErrorException
+     * @return void
      */
-    public function updateComment(int $id, string $comment): bool
+    public function updateComment(int $id, string $comment): void
     {
+        $this->Entity->canOrExplode('write');
         // SQL to update single file comment
         $sql = "UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id";
         $req = $this->Db->prepare($sql);
@@ -298,7 +320,9 @@ class Uploads implements CrudInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':comment', $comment);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -406,44 +430,48 @@ class Uploads implements CrudInterface
      * Replace an uploaded file by another
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return bool
+     * @return void
      */
-    public function replace(Request $request): bool
+    public function replace(Request $request): void
     {
+        $this->Entity->canOrExplode('write');
         $id = filter_var($request->request->get('upload_id'), FILTER_VALIDATE_INT);
         $upload = $this->readFromId($id);
         if (empty($upload)) {
-            throw new Exception('Bad id in upload replace');
+            throw new IllegalActionException('Bad id in upload replace');
         }
         $fullPath = $this->uploadsPath . $upload['long_name'];
         // check user is same as the previously uploaded file
         if ((int) $upload['userid'] !== $this->Entity->Users->userid) {
-            return false;
+            throw new IllegalActionException('User tried to replace an upload of another user.');
         }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $thumbPath = $fullPath . '_th.jpg';
         $this->makeThumb($fullPath, $thumbPath, 100);
-        return true;
     }
     /**
      * Destroy an upload
      *
      * @param int $id id of the upload
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
         $uploadArr = $this->readFromId($id);
 
         // remove thumbnail
         $thumbPath = $this->uploadsPath . $uploadArr['long_name'] . '_th.jpg';
         if (file_exists($thumbPath)) {
-            unlink($thumbPath);
+            if (unlink($thumbPath) !== true) {
+                throw new FilesystemErrorException('Could not delete file!');
+            }
         }
         // now delete file from filesystem
         $filePath = $this->uploadsPath . $uploadArr['long_name'];
-        if (file_exists($thumbPath)) {
-            unlink($filePath);
+        if (file_exists($filePath)) {
+            if (unlink($filePath) !== true) {
+                throw new FilesystemErrorException('Could not delete file!');
+            }
         }
 
         // Delete SQL entry (and verify the type)
@@ -453,27 +481,22 @@ class Uploads implements CrudInterface
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Delete all uploaded files for an entity
      *
-     * @return bool
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
         $uploadArr = $this->readAll();
-        $resultsArr = array();
 
         foreach ($uploadArr as $upload) {
-            $resultsArr[] = $this->destroy((int) $upload['id']);
+            $this->destroy((int) $upload['id']);
         }
-
-        if (\in_array(false, $resultsArr, true)) {
-            throw new Exception('Error deleting uploads.');
-        }
-
-        return true;
     }
 }

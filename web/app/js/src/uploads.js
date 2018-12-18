@@ -44,7 +44,7 @@
         $(document).on('click', '.uploadsDestroy', function() {
             var itemid = $(this).data('itemid');
             if (confirm($(this).data('msg'))) {
-                $.post('app/controllers/EntityController.php', {
+                $.post('app/controllers/EntityAjaxController.php', {
                     uploadsDestroy: true,
                     upload_id: $(this).data('id'),
                     id: itemid,

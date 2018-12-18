@@ -37,7 +37,7 @@ try {
 
     // UPDATE TEAM SETTINGS
     if ($Request->request->has('teamsUpdateFull')) {
-        $Teams->update($Request->request->all();
+        $Teams->update($Request->request->all());
     }
 
     // CLEAR STAMP PASS

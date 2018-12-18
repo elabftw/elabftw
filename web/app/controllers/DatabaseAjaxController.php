@@ -23,8 +23,8 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
-    'res' => false,
-    'msg' => Tools::error()
+    'res' => true,
+    'msg' => _('Saved')
 ));
 
 try {
@@ -39,14 +39,7 @@ try {
 
     // UPDATE RATING
     if ($Request->request->has('rating')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->updateRating($Request->request->get('rating'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->updateRating((int) $Request->request->get('rating'));
     }
 
 } catch (IllegalActionException $e) {

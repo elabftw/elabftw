@@ -25,8 +25,8 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
-    'res' => false,
-    'msg' => Tools::error()
+    'res' => true,
+    'msg' => _('Saved')
 ));
 
 try {
@@ -43,23 +43,13 @@ try {
             $Entity = new ItemsTypes($App->Users);
         }
 
-        if ($Entity->updateOrdering($Request->request->all())) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->updateOrdering($Request->request->all());
     }
 
     // UPDATE COMMON TEMPLATE
     if ($Request->request->has('commonTplUpdate')) {
         $Templates = new Templates($App->Users);
-        if ($Templates->updateCommon($Request->request->get('commonTplUpdate'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Templates->updateCommon($Request->request->get('commonTplUpdate'));
     }
 
 } catch (IllegalActionException $e) {

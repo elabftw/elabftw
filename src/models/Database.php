@@ -69,6 +69,8 @@ class Database extends AbstractEntity
      */
     public function updateRating(int $rating): void
     {
+        $this->canOrExplode('write');
+
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);

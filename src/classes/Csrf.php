@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Csrf
 {
-    /** @var Session $Session the session object */
+    /** @var SessionInterface $Session the session object */
     private $Session;
 
     /**

@@ -10,6 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -20,11 +24,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
+$Response->setData(array(
+    'res' => true,
+    'msg' => _('Saved')
+));
 
 try {
-
     if ($App->Session->has('anon')) {
-        throw new Exception(Tools::error(true));
+        throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
 
     if ($Request->request->get('type') === 'experiments') {
@@ -33,39 +40,49 @@ try {
         $Entity = new Database($App->Users);
     }
 
-    $res = false;
-    $msg = Tools::error();
-
     // CREATE
     if ($Request->request->has('create')) {
         $Entity->setId((int) $Request->request->get('id'));
         $commentId = $Entity->Comments->create($Request->request->get('comment'));
-        $res = true;
-        $msg = $commentId;
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $commentId;
+        ));
     }
 
     // UPDATE
     if ($Request->request->has('update')) {
-        if ($Entity->Comments->update($Request->request->get('update'), $Request->request->get('id'))) {
-            $res = true;
-            $msg = _('Saved');
-        }
+        $Entity->Comments->update($Request->request->get('update'), $Request->request->get('id'));
     }
 
     // DESTROY
     if ($Request->request->has('destroy')) {
-        if ($Entity->Comments->destroy($Request->request->get('id'))) {
-            $res = true;
-            $msg = _('Comment successfully deleted');
-        }
+        $Entity->Comments->destroy($Request->request->get('id'));
     }
 
+} catch (ImproperActionException $e) {
     $Response->setData(array(
-        'res' => $res,
-        'msg' => $msg
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error(true)
+    ));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
     ));
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+
+} finally {
+    $Response->send();
 }
-$Response->send();

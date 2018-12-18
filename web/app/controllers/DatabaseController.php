@@ -11,6 +11,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -20,15 +24,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new RedirectResponse("../../database.php");
+
 try {
     if ($App->Session->has('anon')) {
         throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
 
     $Entity = new Database($App->Users);
-    if ($Request->request->has('id')) {
-        $Entity->setId((int) $Request->request->get('id'));
-    }
 
     // CREATE
     if ($Request->query->has('create')) {
@@ -36,14 +39,22 @@ try {
         $Response = new RedirectResponse("../../database.php?mode=edit&id=" . $id);
     }
 
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
 
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
-    $Session->getFlashBag()->add('ko', Tools::error());
-    $Response = new RedirectResponse("../../database.php");
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
+
 } finally {
     $Response->send();
 }

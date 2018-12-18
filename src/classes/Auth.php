@@ -32,7 +32,7 @@ class Auth
     /** @var Request $Request current request */
     private $Request;
 
-    /** @var Session $Session the current session */
+    /** @var SessionInterface $Session the current session */
     private $Session;
 
     /** @var array $userData All the user data for a user */

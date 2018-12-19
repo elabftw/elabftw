@@ -93,14 +93,10 @@ class TrustedTimestamps extends AbstractMake
      */
     private function generatePdf(): void
     {
-        try {
-            $MakePdf = new MakePdf($this->Entity);
-            $MakePdf->outputToFile();
-            $this->pdfPath = $MakePdf->filePath;
-            $this->pdfLongName = $MakePdf->fileName;
-        } catch (Exception $e) {
-            throw new ImproperActionException('Failed at making the pdf : ' . $e->getMessage());
-        }
+        $MakePdf = new MakePdf($this->Entity);
+        $MakePdf->outputToFile();
+        $this->pdfPath = $MakePdf->filePath;
+        $this->pdfLongName = $MakePdf->fileName;
     }
 
     /**
@@ -590,9 +586,7 @@ class TrustedTimestamps extends AbstractMake
         $this->validate();
 
         // SQL
-        if ($this->Entity instanceof Experiments && !$this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath)) {
-            throw new ImproperActionException('Cannot update SQL!');
-        }
+        $this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath);
         $this->sqlInsertPdf();
 
         return true;

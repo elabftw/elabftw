@@ -22,6 +22,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new RedirectResponse('../../experiments.php');
+
 try {
 
     if ($App->Session->has('anon')) {
@@ -36,7 +38,7 @@ try {
     // CREATE EXPERIMENT
     if ($Request->query->has('create')) {
         $id = $Entity->create((int) $Request->query->get('tpl'));
-        $Response = new RedirectResponse("../../experiments.php?mode=edit&id=" . $id);
+        $Response = new RedirectResponse('../../experiments.php?mode=edit&id=' . $id);
     }
 
 } catch (IllegalActionException $e) {

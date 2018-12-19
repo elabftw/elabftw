@@ -47,7 +47,7 @@
 
         // DECODE ASN1
         $(document).on('click', '.decode-asn1', function() {
-            $.post('app/controllers/ExperimentsController.php', {
+            $.post('app/controllers/ExperimentsAjaxController.php', {
                 asn1: $(this).data('token'),
                 id: $(this).data('id')
             }).done(function(data) {
@@ -133,7 +133,7 @@
                 buttons: {
                     'Timestamp it': function() {
                         $('#confirmTimestampDiv').text($(this).data('wait'));
-                        $.post('app/controllers/ExperimentsController.php', {
+                        $.post('app/controllers/ExperimentsAjaxController.php', {
                             timestamp: true,
                             id: id
                         }).done(function (data) {

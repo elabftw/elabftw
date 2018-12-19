@@ -85,7 +85,7 @@ class Experiments extends AbstractEntity
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $visibility,
-            'userid' => $this->Users->userid
+            'userid' => $this->Users->userData['userid']
         ));
         $newId = $this->Db->lastInsertId();
 
@@ -184,7 +184,7 @@ class Experiments extends AbstractEntity
         $req->bindParam(':when', $responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $responsefilePath);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
@@ -259,7 +259,7 @@ class Experiments extends AbstractEntity
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $this->entityData['visibility'],
-            'userid' => $this->Users->userid));
+            'userid' => $this->Users->userData['userid']));
         $newId = $this->Db->lastInsertId();
 
         $this->Links->duplicate($this->id, $newId);
@@ -306,7 +306,7 @@ class Experiments extends AbstractEntity
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userid)) {
+        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->Db->prepare($sql);
@@ -336,7 +336,7 @@ class Experiments extends AbstractEntity
             SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':locked', $locked, PDO::PARAM_INT);
-        $req->bindParam(':lockedby', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {

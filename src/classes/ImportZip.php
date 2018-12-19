@@ -118,7 +118,7 @@ class ImportZip extends AbstractImport
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         if ($this->type === 'items') {
-            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':type', $this->target, PDO::PARAM_INT);
         } else {
             $req->bindValue(':visibility', 'team');

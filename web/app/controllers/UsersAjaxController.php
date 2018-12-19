@@ -6,6 +6,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -27,10 +29,8 @@ $Response->setData(array(
 ));
 
 try {
-    // CSRF PROTECTION
-    if (!$App->Csrf->validate($Request->request->get('csrf'))) {
-        throw new IllegalActionException('CSRF token failure.');
-    }
+    // CSRF
+    $App->Csrf->validate();
 
     // (RE)GENERATE AN API KEY (from profile)
     if ($Request->request->has('generateApiKey')) {
@@ -113,7 +113,11 @@ try {
     ));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error()
+    ));
 
 } finally {
     $Response->send();

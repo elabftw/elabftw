@@ -79,7 +79,7 @@ class UserStats
                 WHERE userid = :userid
                 AND status = :status";
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':status', $key, PDO::PARAM_INT);
             $req->execute();
             $this->countArr[$key] = $req->fetchColumn();

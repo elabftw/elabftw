@@ -184,7 +184,7 @@ class App
     public function getLangForHtmlAttribute(): string
     {
         $lang = 'en';
-        if ($this->Users->userid) {
+        if ($this->Users->userData['lang'] !== null) {
             $lang = \substr($this->Users->userData['lang'], 0, 2);
         }
 

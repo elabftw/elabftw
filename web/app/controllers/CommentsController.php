@@ -46,7 +46,7 @@ try {
         $commentId = $Entity->Comments->create($Request->request->get('comment'));
         $Response->setData(array(
             'res' => true,
-            'msg' => $commentId;
+            'msg' => $commentId
         ));
     }
 
@@ -81,7 +81,7 @@ try {
     ));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
 
 } finally {
     $Response->send();

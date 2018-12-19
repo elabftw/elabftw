@@ -35,12 +35,17 @@ try {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
+    // CSRF
+    $App->Csrf->validate();
+
     // UPDATE ORDERING
     if ($Request->request->has('updateOrdering')) {
         if ($Request->request->get('table') === 'status') {
             $Entity = new Status($App->Users);
         } elseif ($Request->request->get('table') === 'items_types') {
             $Entity = new ItemsTypes($App->Users);
+        } else {
+            throw new IllegalActionException('Bad table for updateOrdering.');
         }
 
         $Entity->updateOrdering($Request->request->all());
@@ -52,18 +57,32 @@ try {
         $Templates->updateCommon($Request->request->get('commonTplUpdate'));
     }
 
+} catch (ImproperActionException $e) {
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
     ));
 
-} catch (DatabaseErrorException $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('DatabaseError', $e)));
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error()
+    ));
 
 } finally {
     $Response->send();

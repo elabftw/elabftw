@@ -97,7 +97,7 @@ class Templates extends AbstractEntity
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':name', $template['name']);
         $req->bindParam(':body', $template['body']);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->execute();
         $newId = $this->Db->lastInsertId();
 
@@ -143,7 +143,7 @@ class Templates extends AbstractEntity
             WHERE experiments_templates.userid = :userid
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
@@ -246,7 +246,7 @@ class Templates extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
@@ -264,7 +264,7 @@ class Templates extends AbstractEntity
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

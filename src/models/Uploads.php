@@ -182,7 +182,7 @@ class Uploads implements CrudInterface
         // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
         $req->bindValue(':comment', $comment);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -447,7 +447,7 @@ class Uploads implements CrudInterface
         }
         $fullPath = $this->uploadsPath . $upload['long_name'];
         // check user is same as the previously uploaded file
-        if ((int) $upload['userid'] !== $this->Entity->Users->userid) {
+        if ((int) $upload['userid'] !== $this->Entity->Users->userData['userid']) {
             throw new IllegalActionException('User tried to replace an upload of another user.');
         }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);

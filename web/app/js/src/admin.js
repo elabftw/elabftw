@@ -81,7 +81,7 @@
             $.post('app/controllers/UsersAjaxController.php', {
                 usersValidate: true,
                 userid: $(this).data('userid'),
-                csrf: $(this).data('csrf')
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -248,7 +248,8 @@
         $('#commonTplTemplate').closest('div').find('.button').click(function() {
             var template = tinymce.get('commonTplTemplate').getContent();
             $.post('app/controllers/AdminAjaxController.php', {
-                commonTplUpdate: template
+                commonTplUpdate: template,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -307,7 +308,8 @@
                 $.post("app/controllers/AdminAjaxController.php", {
                     'updateOrdering': true,
                     'table': table,
-                    'ordering': ordering
+                    'ordering': ordering,
+                    'csrf': $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

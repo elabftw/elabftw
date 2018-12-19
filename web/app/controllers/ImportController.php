@@ -24,6 +24,14 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse('../../admin.php');
 
 try {
+
+    if (!$App->Session->get('is_admin')) {
+        throw new IllegalActionException('Non admin user tried to access import controller.');
+    }
+
+    // CSRF
+    $App->Csrf->validate();
+
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     \set_time_limit(0);
 
@@ -40,14 +48,19 @@ try {
     $App->Session->getFlashBag()->add('ok', $msg);
 
 } catch (ImproperActionException $e) {
-    $App->Session->getFlashBag()->add('ko', $e->__toString());
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
 
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
 
 } finally {

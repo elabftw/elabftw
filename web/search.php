@@ -212,7 +212,7 @@ if ($Request->query->count() > 0) {
                 if (Tools::checkId((int) $Request->query->get('owner')) !== false) {
                     $owner = $Request->query->get('owner');
                 } elseif (empty($Request->query->get('owner'))) {
-                    $owner = $App->Users->userid;
+                    $owner = $App->Users->userData['userid'];
                 }
                 $sqlUserid = " AND experiments.userid = " . $owner;
                 // all the team is 0 as userid

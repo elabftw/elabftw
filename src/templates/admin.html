@@ -3,7 +3,6 @@
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
 {% if unvalidatedUsersArr %}
-        {{ App.Csrf.getHiddenInput|raw }}
         <div class='box'>
             {{ 'There are users waiting for validation of their account:'|trans|msg('warning', false) }}
             <ul>
@@ -35,6 +34,7 @@
         <hr>
         <form method='post' action='app/controllers/AdminController.php' autocomplete='off'>
             <input type='hidden' value='true' name='teamsUpdateFull' />
+            {{ App.Csrf.getHiddenInput|raw }}
 
             <p>
                 <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
@@ -205,7 +205,7 @@
     <div class='box'>
         <h3>{{ 'Edit an Existing Status'|trans }}</h3>
         <hr>
-        <ul class='draggable sortable sortable-status list-group' data-type='status'>
+        <ul class='draggable sortable sortable-status list-group' data-type='status' {{ App.Csrf.getDataAttr|raw }}>
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
@@ -303,7 +303,7 @@
             {{ commonTplBody|raw }}
         </textarea>
         <div class='submitButtonDiv'>
-            <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+            <button type='submit' class='button' {{ App.Csrf.getDataAttr|raw }}>{{ 'Save'|trans }}</button>
         </div>
     </div>
 </div>
@@ -328,6 +328,7 @@
 
         <div class='importBlock'>
             <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+                {{ App.Csrf.getHiddenInput|raw }}
                 <label class='block' for='uploader'>{{ '2. Select a CSV file to import:'|trans }}</label>
                 <input id='uploader' name='file' type='file' accept='.csv' />
                 <input name='type' type='hidden' value='csv' />
@@ -384,6 +385,9 @@
         </div>
     </div>
 </div>
+
+<!-- CSRF token used by ajax post requests -->
+<div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
 <!--

@@ -50,7 +50,7 @@ try {
     // PDO will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $App = new App($Session, $Request, new Config(), new Logger('elabftw'), new Csrf($Session));
+        $App = new App($Session, $Request, new Config(), new Logger('elabftw'), new Csrf($Session, $Request));
     } catch (PDOException $e) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
         header('Location: ' . $url);

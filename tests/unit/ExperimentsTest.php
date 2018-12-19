@@ -54,7 +54,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->assertEquals($new, $this->Experiments->id);
-        $this->assertEquals(1, $this->Experiments->Users->userid);
+        $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
         $this->assertTrue($this->Experiments->update('Untitled', '20160729', '<p>Body</p>'));
     }
 

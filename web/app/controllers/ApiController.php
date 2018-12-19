@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,12 +26,13 @@ use Symfony\Component\HttpFoundation\Response;
 require_once \dirname(__DIR__, 3) . '/config.php';
 require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-$Response = new JsonResponse(array('error' => Tools::error()));
+$Response = new JsonResponse();
+$Response->setData(array('error' => Tools::error()));
 
 try {
     // create Request object
     $Request = Request::createFromGlobals();
-
+    $Log = new Logger('elabftw');
     // do we have an API key?
     if (!$Request->server->has('HTTP_AUTHORIZATION')) {
         throw new ImproperActionException('No API key received.');
@@ -38,6 +40,7 @@ try {
 
     // verify the key and load user infos
     $Users = new Users();
+
     $Users->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
 
     $availMethods = array('GET', 'POST');
@@ -67,7 +70,7 @@ try {
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
-        if ($uploadData['userid'] != $Users->userid) {
+        if ($uploadData['userid'] !== $Users->userData['userid']) {
             throw new IllegalActionException('User tried to download file without permission.');
         }
         $filePath = \dirname(__DIR__, 3) . '/uploads/' . $uploadData['long_name'];
@@ -122,6 +125,7 @@ try {
             }
         }
     }
+    $Response->setData($content);
 
 } catch (ImproperActionException $e) {
     $Response->setData(array(
@@ -129,19 +133,19 @@ try {
     ));
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'error' => Tools::error(true)
     ));
 
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $Response->setData(array(
         'error' => $e->getMessage()
     ));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
 
 } finally {
     $Response->send();

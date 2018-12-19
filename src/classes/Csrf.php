@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Defuse\Crypto\Key;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -27,13 +29,15 @@ class Csrf
      * We need the Session object
      *
      * @param SessionInterface $session
+     * @param Request $request
      */
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, Request $request)
     {
         $this->Session = $session;
         if (!$this->Session->has('csrf')) {
             $this->Session->set('csrf', $this->generate());
         }
+        $this->Request = $request;
     }
 
     /**
@@ -70,10 +74,12 @@ class Csrf
      * Validate the form key against the one previously set in Session
      *
      * @param string $value
-     * @return bool True if there is no CSRF going on (hopefully)
+     * @return void
      */
-    public function validate(string $value): bool
+    public function validate(): void
     {
-        return $value === $this->Session->get('csrf');
+        if ($this->Request->request->get('csrf') !== $this->Session->get('csrf')) {
+            throw new IllegalActionException('Csrf token validation failure.');
+        }
     }
 }

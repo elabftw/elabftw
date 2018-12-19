@@ -67,7 +67,7 @@ class Scheduler
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
         $req->bindParam(':title', $title);
-        $req->bindParam(':userid', $this->Database->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Database->Users->userData['userid'], PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -154,7 +154,7 @@ class Scheduler
         $sql = "DELETE FROM team_events WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Database->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Database->Users->userData['userid'], PDO::PARAM_INT);
 
         return $req->execute();
     }

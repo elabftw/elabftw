@@ -33,6 +33,9 @@ try {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
+    // CSRF
+    $App->Csrf->validate();
+
     $Teams = new Teams($App->Users);
 
     // UPDATE TEAM SETTINGS

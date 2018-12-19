@@ -152,7 +152,7 @@ abstract class AbstractEntity
     protected function populate(): void
     {
         if ($this->id === null) {
-            throw new Exception('No id was set.');
+            throw new ImproperActionException('No id was set.');
         }
 
         // load the entity in entityData array
@@ -362,7 +362,7 @@ abstract class AbstractEntity
             }
             $item = $req2->fetch();
 
-            $newUserid = $this->Users->userid;
+            $newUserid = $this->Users->userData['userid'];
             if ($item['visibility'] === 'user') {
                 $newUserid = $item['userid'];
             }
@@ -404,7 +404,7 @@ abstract class AbstractEntity
      */
     public function setUseridFilter(): void
     {
-        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userid;
+        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userData['userid'];
     }
 
     /**
@@ -494,7 +494,6 @@ abstract class AbstractEntity
      * Here be dragons! Cognitive load > 9000
      *
      * @param array|null $item one item array
-     * @throws Exception
      * @return array
      */
     public function getPermissions(?array $item = null): array
@@ -512,7 +511,7 @@ abstract class AbstractEntity
 
         if ($this instanceof Experiments) {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($item['userid'] == $this->Users->userid) {
+            if ($item['userid'] == $this->Users->userData['userid']) {
                 return array('read' => true, 'write' => true);
 
             // it's not our experiment
@@ -543,7 +542,7 @@ abstract class AbstractEntity
                     }
 
                     // if it's organization, we need to be logged in
-                    if (($item['visibility'] === 'organization') && $this->Users->userid !== null) {
+                    if (($item['visibility'] === 'organization') && $this->Users->userData['userid'] !== null) {
                         return array('read' => true, 'write' => false);
                     }
 
@@ -558,14 +557,14 @@ abstract class AbstractEntity
                     // if the vis. setting is a team group, check we are in the group
                     if (Tools::checkId((int) $item['visibility']) !== false) {
                         $TeamGroups = new TeamGroups($this->Users);
-                        if ($TeamGroups->isInTeamGroup((int) $this->Users->userid, (int) $item['visibility'])) {
+                        if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $item['visibility'])) {
                             return array('read' => true, 'write' => false);
                         }
                     }
                 }
             }
         } elseif ($this instanceof Templates) {
-            if ((int) $item['userid'] === $this->Users->userid) {
+            if ((int) $item['userid'] === $this->Users->userData['userid']) {
                 return array('read' => true, 'write' => true);
             }
         } elseif ($this instanceof Database) {
@@ -591,7 +590,7 @@ abstract class AbstractEntity
             }
 
             // if it's organization, we need to be logged in
-            if (($item['visibility'] === 'organization') && $this->Users->userid !== null) {
+            if (($item['visibility'] === 'organization') && $this->Users->userData['userid'] !== null) {
                 return array('read' => true, 'write' => false);
             }
 
@@ -607,7 +606,7 @@ abstract class AbstractEntity
             if (($item['visibility'] === 'user') &&
                 ($item['team'] == $this->Users->userData['team']) &&
                 !isset($this->Users->userData['anon']) &&
-                ($item['userid'] === $this->Users->userid)) {
+                ($item['userid'] === $this->Users->userData['userid'])) {
 
                 return array('read' => true, 'write' => true);
             }
@@ -615,7 +614,7 @@ abstract class AbstractEntity
             // if the vis. setting is a team group, check we are in the group
             if (Tools::checkId((int) $item['visibility']) !== false) {
                 $TeamGroups = new TeamGroups($this->Users);
-                if ($TeamGroups->isInTeamGroup((int) $this->Users->userid, (int) $item['visibility'])) {
+                if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $item['visibility'])) {
                     return array('read' => true, 'write' => true);
                 }
             }

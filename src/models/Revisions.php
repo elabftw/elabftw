@@ -57,7 +57,7 @@ class Revisions implements CrudInterface
             $req = $this->Db->prepare($sql);
             $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
             $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+            $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
             if ($req->execute() !== true) {
                 throw new DatabaseErrorException('Error while executing SQL query.');

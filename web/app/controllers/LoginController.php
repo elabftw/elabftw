@@ -43,10 +43,8 @@ try {
 
     } else {
 
-        // FORMKEY
-        if (!$App->Csrf->validate($Request->request->get('csrf'))) {
-            throw new ImproperActionException(_("Your session expired. Please retry."));
-        }
+        // CSRF
+        $App->Csrf->validate();
 
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {

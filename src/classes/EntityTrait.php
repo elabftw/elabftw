@@ -70,7 +70,7 @@ trait EntityTrait
 
         if ($post['table'] === 'todolist') {
             $userOrTeam = 'userid';
-            $userOrTeamValue = $this->Users->userid;
+            $userOrTeamValue = $this->Users->userData['userid'];
         } else {
             $userOrTeam = 'team';
             $userOrTeamValue = $this->Users->userData['team'];

@@ -40,9 +40,6 @@ class Users
     /** @var array $userData what you get when you read() */
     public $userData = array();
 
-    /** @var int|null $userid our userid */
-    public $userid;
-
     /**
      * Constructor
      *
@@ -69,10 +66,9 @@ class Users
     public function setId(int $userid): void
     {
         if (Tools::checkId($userid) === false) {
-            throw new Exception('Bad userid');
+            throw new ImproperActionException('Bad userid');
         }
-        $this->userid = $userid;
-        $this->userData = $this->read($this->userid);
+        $this->userData = $this->read($userid);
     }
 
     /**
@@ -361,7 +357,7 @@ class Users
         $userid = (int) $req->fetchColumn();
 
         if (empty($userid)) {
-            throw new Exception('Invalid API key.');
+            throw new ImproperActionException('Invalid API key.');
         }
 
         $this->userData = $this->read($userid);

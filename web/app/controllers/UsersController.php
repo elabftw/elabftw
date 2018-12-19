@@ -6,6 +6,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -30,9 +32,8 @@ $Response = new RedirectResponse($location);
 
 try {
 
-    if (!$App->Csrf->validate($Request->request->get('csrf'))) {
-        throw new IllegalActionException('CSRF token validation failure.');
-    }
+    // CSRF
+    $App->Csrf->validate();
 
     // UPDATE USERS
     if ($Request->request->has('usersUpdate')) {
@@ -46,13 +47,10 @@ try {
         if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
             throw new IllegalActionException('User tried to edit user from other team.');
         }
-        if ($targetUser->update($Request->request->all())) {
-             $Session->getFlashBag()->add('ok', _('Saved'));
-        } else {
-             $Session->getFlashBag()->add('ko', Tools::error());
-        }
-
+        $targetUser->update($Request->request->all());
     }
+
+    $Session->getFlashBag()->add('ok', _('Saved'));
 
 } catch (ImproperActionException $e) {
     // show message to user

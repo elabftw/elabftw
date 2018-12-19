@@ -54,7 +54,7 @@ class Database extends AbstractEntity
             'title' => _('Untitled'),
             'date' => Tools::kdate(),
             'body' => $itemsTypes->read(),
-            'userid' => $this->Users->userid,
+            'userid' => $this->Users->userData['userid'],
             'type' => $itemType
         ));
 
@@ -116,7 +116,7 @@ class Database extends AbstractEntity
             'title' => $this->entityData['title'],
             'date' => Tools::kdate(),
             'body' => $this->entityData['body'],
-            'userid' => $this->Users->userid,
+            'userid' => $this->Users->userData['userid'],
             'type' => $this->entityData['category_id']
         ));
         $newId = $this->Db->lastInsertId();

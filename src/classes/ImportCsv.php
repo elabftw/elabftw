@@ -86,7 +86,7 @@ class ImportCsv extends AbstractImport
                 'title' => $title,
                 'date' => Tools::kdate(),
                 'body' => $body,
-                'userid' => $this->Users->userid,
+                'userid' => $this->Users->userData['userid'],
                 'type' => $this->target
             ));
             if (!$result) {

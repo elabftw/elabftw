@@ -359,7 +359,7 @@ class TrustedTimestamps extends AbstractMake
         $req->bindParam(':long_name', $longName);
         $req->bindValue(':comment', "Timestamp token");
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
@@ -484,7 +484,7 @@ class TrustedTimestamps extends AbstractMake
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', 'exp-pdf-timestamp');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);

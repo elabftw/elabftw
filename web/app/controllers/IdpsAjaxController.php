@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -24,8 +27,8 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
-    'res' => false,
-    'msg' => Tools::error()
+    'res' => true,
+    'msg' => _('Saved')
 ));
 
 try {
@@ -37,23 +40,35 @@ try {
 
     // DESTROY IDP
     if ($Request->request->has('idpsDestroy')) {
-        if ($Idps->destroy((int) $Request->request->get('id'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Item deleted successfully')
-            ));
-        }
+        $Idps->destroy((int) $Request->request->get('id'));
     }
 
+} catch (ImproperActionException $e) {
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
     ));
 
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e->__toString())));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error()
+    ));
 
 } finally {
     $Response->send();

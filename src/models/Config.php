@@ -134,6 +134,21 @@ class Config
     }
 
     /**
+     * Restore default values
+     *
+     * @return void
+     */
+    public function restoreDefaults(): void
+    {
+        $sql = "DELETE FROM config";
+        $req = $this->Db->prepare($sql);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $this->populate();
+    }
+
+    /**
      * Insert the default values in config
      *
      * @return void

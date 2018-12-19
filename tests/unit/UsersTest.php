@@ -29,6 +29,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'lang' => 'en_GB',
             'default_vis' => 'organization'
         );
-        $this->assertTrue($this->Users->updatePreferences($prefsArr));
+        $this->Users->updatePreferences($prefsArr);
     }
 }

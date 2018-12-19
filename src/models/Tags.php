@@ -59,9 +59,9 @@ class Tags implements CrudInterface
      * Create a tag
      *
      * @param string $tag
-     * @return void
+     * @return int
      */
-    public function create(string $tag): void
+    public function create(string $tag): int
     {
         $this->Entity->canOrExplode('write');
         $tag = $this->checkTag($tag);
@@ -76,7 +76,7 @@ class Tags implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        $tagId = $req->fetchColumn();
+        $tagId = (int) $req->fetchColumn();
 
         // tag doesn't exist already
         if ($req->rowCount() === 0) {
@@ -97,6 +97,8 @@ class Tags implements CrudInterface
         if ($insertReq2->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+
+        return $tagId;
     }
 
     /**

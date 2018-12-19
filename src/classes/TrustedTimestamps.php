@@ -571,6 +571,11 @@ class TrustedTimestamps extends AbstractMake
      */
     public function timeStamp(): bool
     {
+        if (!$this->Entity->isTimestampable()) {
+            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
+        }
+        $this->Entity->canOrExplode('write');
+
         // first we create the request file
         $this->createRequestfile();
 

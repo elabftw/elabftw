@@ -200,6 +200,8 @@ class Uploads implements CrudInterface
      */
     public function create(Request $request): void
     {
+        $this->Entity->canOrExplode('write');
+
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $this->checkExtension($realName);
 
@@ -242,6 +244,8 @@ class Uploads implements CrudInterface
      */
     public function createFromString(string $fileType, string $content): void
     {
+        $this->Entity->canOrExplode('write');
+
         if ($fileType === 'png') {
             $realName = 'Doodle.png';
             // get the image in binary
@@ -458,6 +462,8 @@ class Uploads implements CrudInterface
      */
     public function destroy(int $id): void
     {
+        $this->Entity->canOrExplode('write');
+
         $uploadArr = $this->readFromId($id);
 
         // remove thumbnail

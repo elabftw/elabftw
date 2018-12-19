@@ -133,6 +133,8 @@ class Experiments extends AbstractEntity
      */
     public function updateCategory(int $status): void
     {
+        $this->canOrExplode('write');
+
         $sql = "UPDATE experiments SET status = :status WHERE id = :id AND locked = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
@@ -274,6 +276,8 @@ class Experiments extends AbstractEntity
      */
     public function destroy(): void
     {
+        $this->canOrExplode('write');
+
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

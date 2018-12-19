@@ -47,6 +47,7 @@ class Links implements CrudInterface
     {
         $Database = new Database($this->Entity->Users, $link);
         $Database->canOrExplode('read');
+        $this->Entity->canOrExplode('write');
 
         $sql = 'INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
@@ -65,6 +66,8 @@ class Links implements CrudInterface
      */
     public function readAll(): array
     {
+        $this->Entity->canOrExplode('read');
+
         $sql = "SELECT items.id AS itemid,
             experiments_links.id AS linkid,
             experiments_links.*,
@@ -118,6 +121,9 @@ class Links implements CrudInterface
      */
     public function destroy(int $id): void
     {
+        $this->Entity->setId($id);
+        $this->Entity->canOrExplode('write');
+
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
@@ -134,6 +140,8 @@ class Links implements CrudInterface
      */
     public function destroyAll(): void
     {
+        $this->Entity->canOrExplode('write');
+
         $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

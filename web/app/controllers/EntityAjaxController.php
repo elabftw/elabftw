@@ -23,8 +23,8 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
-    'res' => false,
-    'msg' => Tools::error()
+    'res' => true,
+    'msg' => _('Saved')
 ));
 
 try {
@@ -107,81 +107,59 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
-        $Entity->canOrExplode('write');
         $Entity->Uploads->create($Request);
     }
 
     // ADD MOL FILE OR PNG
     if ($Request->request->has('addFromString')) {
-        $Entity->canOrExplode('write');
-        if ($Entity->Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'))) {
-        }
+        $Entity->Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'));
     }
 
     // DESTROY ENTITY
     if ($Request->request->has('destroy')) {
 
-        // check write permissions
-        $Entity->canOrExplode('write');
-
         // check for deletable xp
         if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')) {
-            throw new Exception(Tools::error(true));
+            throw new ImproperActionException('You cannot delete experiments!');
         }
-
-        if ($Entity->destroy()) {
-        }
+        $Entity->destroy();
     }
-
-    // DEFAULT HAPPY RESPONSE
-    // no exception occurred
-    $Response->setData(array(
-        'res' => true,
-        'msg' => _('Saved')
-    ));
 
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
-        $Entity->canOrExplode('write');
 
-        if ($Entity->updateCategory($Request->request->get('categoryId'))) {
-            // get the color of the status/item type for updating the css
-            if ($Entity->type === 'experiments') {
-                $Category = new Status($App->Users);
-            } else {
-                $Category = new ItemsTypes($App->Users);
-            }
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-                'color' => $Category->readColor($Request->request->get('categoryId'))
-            ));
+        $Entity->updateCategory($Request->request->get('categoryId'));
+        // get the color of the status/item type for updating the css
+        if ($Entity->type === 'experiments') {
+            $Category = new Status($App->Users);
+        } else {
+            $Category = new ItemsTypes($App->Users);
         }
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('Saved'),
+            'color' => $Category->readColor($Request->request->get('categoryId'))
+        ));
     }
 
 
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
         $upload = $Entity->Uploads->readFromId((int) $Request->request->get('upload_id'));
-        // check write permissions
-        $Entity->canOrExplode('write');
-
-        if ($Entity->Uploads->destroy($Request->request->get('upload_id'))) {
-            // check that the filename is not in the body. see #432
-            $msg = "";
-            if (strpos($Entity->entityData['body'], $upload['long_name'])) {
-                $msg = ". ";
-                $msg .= _("Please make sure to remove any reference to this file in the body!");
-            }
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('File deleted successfully') . $msg
-            ));
+        $Entity->Uploads->destroy($Request->request->get('upload_id'));
+        // check that the filename is not in the body. see #432
+        $msg = "";
+        if (strpos($Entity->entityData['body'], $upload['long_name'])) {
+            $msg = ". ";
+            $msg .= _("Please make sure to remove any reference to this file in the body!");
         }
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('File deleted successfully') . $msg
+        ));
     }
 
     // GET BODY
-    // this has a special msg, so we put it after the rest
     if ($Request->request->has('getBody')) {
         $Entity->canOrExplode('read');
         $Response->setData(array(
@@ -198,18 +176,19 @@ try {
     ));
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
     ));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('Exception' => $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error()
     ));
+
 } finally {
     $Response->send();
 }

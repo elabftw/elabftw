@@ -45,6 +45,8 @@ class Steps implements CrudInterface
      */
     public function create(string $body): void
     {
+        $this->Experiments->canOrExplode('write');
+
         // remove any | as they are used in the group_concat
         $body = str_replace('|', ' ', $body);
         $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
@@ -65,6 +67,8 @@ class Steps implements CrudInterface
      */
     public function finish(int $stepid): void
     {
+        $this->Experiments->canOrExplode('write');
+
         $sql = "UPDATE experiments_steps SET finished = !finished,
             finished_time = NOW()
             WHERE id = :id";
@@ -127,6 +131,8 @@ class Steps implements CrudInterface
      */
     public function destroy(int $id): void
     {
+        $this->Experiments->canOrExplode('write');
+
         $sql = "DELETE FROM experiments_steps WHERE id= :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
@@ -143,6 +149,8 @@ class Steps implements CrudInterface
      */
     public function destroyAll(): void
     {
+        $this->Experiments->canOrExplode('write');
+
         $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);

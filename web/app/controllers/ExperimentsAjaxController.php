@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
@@ -25,8 +27,8 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
-    'res' => false,
-    'msg' => Tools::error()
+    'res' => true,
+    'msg' => _('Saved')
 ));
 
 try {
@@ -42,62 +44,27 @@ try {
 
     // CREATE STEP
     if ($Request->request->has('createStep')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->Steps->create($Request->request->get('body'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->Steps->create($Request->request->get('body'));
     }
 
     // FINISH STEP
     if ($Request->request->has('finishStep')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->Steps->finish((int) $Request->request->get('stepId'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->Steps->finish((int) $Request->request->get('stepId'));
     }
 
     // DESTROY STEP
     if ($Request->request->has('destroyStep')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->Steps->destroy((int) $Request->request->get('stepId'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Step deleted successfully')
-            ));
-        }
+        $Entity->Steps->destroy((int) $Request->request->get('stepId'));
     }
 
     // CREATE LINK
     if ($Request->request->has('createLink')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->Links->create((int) $Request->request->get('linkId'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        }
+        $Entity->Links->create((int) $Request->request->get('linkId'));
     }
 
     // DESTROY LINK
     if ($Request->request->has('destroyLink')) {
-        $Entity->canOrExplode('write');
-
-        if ($Entity->Links->destroy((int) $Request->request->get('linkId'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Link deleted successfully')
-            ));
-        }
+        $Entity->Links->destroy((int) $Request->request->get('linkId'));
     }
 
     // GET LINK LIST
@@ -107,39 +74,24 @@ try {
 
     // TIMESTAMP
     if ($Request->request->has('timestamp')) {
-        $Entity->canOrExplode('write');
-        if ($Entity->isTimestampable()) {
-            $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($App->Users), $Entity);
-            if ($TrustedTimestamps->timeStamp()) {
-                $Response->setData(array(
-                    'res' => true
-                ));
-            }
-        }
+        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($App->Users), $Entity);
+        $TrustedTimestamps->timeStamp();
     }
 
     // DESTROY
     if ($Request->request->has('destroy')) {
-        $Entity->canOrExplode('write');
-
         $Teams = new Teams($App->Users);
         $teamConfigArr = $Teams->read();
 
         if (($teamConfigArr['deletable_xp'] == '0') && !$Session->get('is_admin')) {
             throw new ImproperActionException(_("You don't have the rights to delete this experiment."));
         }
-        if ($Entity->destroy()) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Experiment successfully deleted')
-            ));
-        }
+        $Entity->destroy();
     }
 
     // DECODE ASN1 TOKEN
     if ($Request->request->has('asn1') && \is_readable(\dirname(__DIR__, 3) . "/uploads/" . $Request->request->get('asn1'))) {
         $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($App->Users), $Entity);
-
         $Response->setData(array(
             'res' => true,
             'msg' => $TrustedTimestamps->decodeAsn1($Request->request->get('asn1'))
@@ -149,14 +101,21 @@ try {
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->__toString()
+        'msg' => $e->getMessage()
     ));
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
+    ));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
     ));
 
 } catch (Exception $e) {

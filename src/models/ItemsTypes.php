@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
 use PDO;
 
 /**
@@ -27,7 +26,6 @@ class ItemsTypes extends AbstractCategory
      *
      * @param Users $users
      * @param int|null $id
-     * @throws Exception if user is not admin
      */
     public function __construct(Users $users, ?int $id = null)
     {

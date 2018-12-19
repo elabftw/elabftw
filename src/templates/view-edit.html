@@ -13,6 +13,6 @@
     <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Back to listing'|trans }}
 </a>
 
-{% if Entity.entityData.userid != Entity.Users.userid and Entity.type == 'experiments' %}
+{% if Entity.entityData.userid != Entity.Users.userData.userid and Entity.type == 'experiments' %}
     {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
 {% endif %}

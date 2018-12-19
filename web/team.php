@@ -32,7 +32,7 @@ try {
     $Database->bookableFilter = ' AND bookable = 1';
     $Scheduler = new Scheduler($Database);
 
-    $TagCloud = new TagCloud($App->Users->userData['team']);
+    $TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
     $itemsArr = $Database->read();
     $teamArr = $TeamsView->Teams->read();

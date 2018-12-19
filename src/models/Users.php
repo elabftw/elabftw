@@ -16,7 +16,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
 use PDO;
 use RuntimeException;
 
@@ -85,7 +84,7 @@ class Users
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
-            throw new Exception(_('Someone is already using that email address!'));
+            throw new ImproperActionException(_('Someone is already using that email address!'));
         }
 
         if ($password) {
@@ -413,7 +412,6 @@ class Users
      * Update user from the editusers template
      *
      * @param array $params POST
-     * @throws Exception
      * @return void
      */
     public function update(array $params): void
@@ -771,7 +769,7 @@ class Users
     {
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -809,17 +807,16 @@ class Users
     {
         $sql = "UPDATE users SET archived = 1, token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
         $sql = "UPDATE experiments
-            SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
+            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
-        $req->bindParam(':lockedby', $this->userid, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
@@ -872,7 +869,6 @@ class Users
     /**
      * Generate an API key and store it
      *
-     * @throws Exception
      * @return void
      */
     public function generateApiKey(): void

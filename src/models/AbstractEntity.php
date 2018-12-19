@@ -15,7 +15,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
 use PDO;
 
 /**
@@ -146,7 +145,6 @@ abstract class AbstractEntity
     /**
      * Now that we have an id, load the data in entityData array
      *
-     * @throws Exception
      * @return void
      */
     protected function populate(): void
@@ -250,7 +248,7 @@ abstract class AbstractEntity
             }
             $sql .=  $where;
         } else {
-            throw new Exception('Nope.');
+            throw new IllegalActionException('Nope.');
         }
 
         $sql .= $this->idFilter . ' ' .

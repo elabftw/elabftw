@@ -15,7 +15,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
 use PDO;
 
 /**
@@ -158,7 +157,6 @@ class TeamGroups implements CrudInterface
      *
      * @param string $name Name of the group
      * @param string $id teamgroup_1
-     * @throws Exception
      * @return string|null $name Name of the group if success
      */
     public function update(string $name, string $id): ?string
@@ -210,7 +208,6 @@ class TeamGroups implements CrudInterface
      * Delete a team group
      *
      * @param int $id Id of the group to destroy
-     * @throws Exception if it fails to delete
      * @return void
      */
     public function destroy(int $id): void

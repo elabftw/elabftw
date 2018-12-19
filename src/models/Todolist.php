@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
-use Exception;
 use PDO;
 
 /**

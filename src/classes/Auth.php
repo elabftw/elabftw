@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -62,10 +62,12 @@ class Auth
         $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $res = $req->fetchColumn();
         if ($res === false) {
-            throw new Exception(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
+            throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
         }
         return $res;
     }
@@ -89,7 +91,10 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
 
-        if ($req->execute() && $req->rowCount() === 1) {
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        if ($req->rowCount() === 1) {
             $this->userData = $req->fetch();
             return true;
         }
@@ -108,8 +113,10 @@ class Auth
         $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        //Check whether the query was successful or not
-        if ($req->execute() && $req->rowCount() === 1) {
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        if ($req->rowCount() === 1) {
             // populate the userData
             $this->userData = $req->fetch();
             return true;
@@ -120,23 +127,24 @@ class Auth
     /**
      * Store userid and permissions in session
      *
-     * @return bool
+     * @return void
      */
-    private function populateSession(): bool
+    private function populateSession(): void
     {
         $this->Session->set('auth', 1);
         $this->Session->set('userid', $this->userData['userid']);
 
         // load permissions
-        $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-        $perm_req = $this->Db->prepare($perm_sql);
-        $perm_req->bindParam(':group_id', $this->userData['usergroup'], PDO::PARAM_INT);
-        $perm_req->execute();
-        $group = $perm_req->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':group_id', $this->userData['usergroup'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $group = $req->fetch(PDO::FETCH_ASSOC);
 
         $this->Session->set('is_admin', $group['is_admin']);
         $this->Session->set('is_sysadmin', $group['is_sysadmin']);
-        return true;
     }
 
     /**
@@ -144,9 +152,9 @@ class Auth
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
      *
-     * @return bool
+     * @return void
      */
-    private function setToken(): bool
+    private function setToken(): void
     {
         $token = \hash('sha256', \bin2hex(\random_bytes(16)));
 
@@ -160,7 +168,9 @@ class Auth
         $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -195,7 +205,10 @@ class Auth
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
 
-        return $req->execute() && $req->rowCount() === 1;
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        return $req->rowCount() === 1;
     }
 
     /**

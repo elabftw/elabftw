@@ -16,7 +16,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
 use Gmagick;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,7 +123,6 @@ class Uploads implements CrudInterface
     /**
      * Create a unique long filename with a folder
      *
-     * @throws Exception
      * @return string the path for storing the file
      */
     protected function getCleanName(): string
@@ -134,7 +132,7 @@ class Uploads implements CrudInterface
         // create a subfolder if it doesn't exist
         $folderPath = $this->uploadsPath . $folder;
         if (!is_dir($folderPath) && !mkdir($folderPath, 0700, true) && !is_dir($folderPath)) {
-            throw new Exception('Cannot create folder! Check permissions of uploads folder.');
+            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
         }
         return $folder . '/' . $hash;
     }

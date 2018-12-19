@@ -25,8 +25,7 @@ try {
 
         $Saml = new Saml(new Config, new Idps);
 
-        // TODO this is the id of the idp to use to get the settings
-        $settings = $Saml->getSettings(1);
+        $settings = $Saml->getSettings();
         $SamlAuth = new SamlAuth($settings);
 
         $requestID = null;

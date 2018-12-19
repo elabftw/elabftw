@@ -420,6 +420,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <label class='block' for='x509'>x509 Certificate</label>
                 <textarea id='x509' name='x509' required /></textarea>
 
+                <label class='block' for='active'>Active</label>
+                <select id='active' autocomplete='off' name='active'>
+                    <option value='1' selected='selected'>{{ 'Yes'|trans }}</option>
+                    <option value='0'>{{ 'No'|trans }}</option>
+                </select>
+
                 <div class='submitButtonDiv'>
                     <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
                 </div>
@@ -430,7 +436,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                    <i class='fas fa-trash-alt fa-2x clickable idpsDestroy' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+                    <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
                     <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                     <form method='post' action='app/controllers/IdpsController.php'>
                     <input type='hidden' name='idpsUpdate' />
@@ -449,6 +455,11 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                     <input type='text' name='sloBinding' value='{{ idp.slo_binding }}' />
                     <p>x509cert:</p>
                     <textarea name='x509'>{{ idp.x509 }}</textarea>
+                    <p>Active</p>
+                    <select autocomplete='off' name='active'>
+                        <option value='1' {{ idp.active ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                        <option value='0' {{ not idp.active ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                    </select>
                     <div class='submitButtonDiv'>
                         <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
                     </div>

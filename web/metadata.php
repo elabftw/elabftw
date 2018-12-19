@@ -14,7 +14,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\ImproperActionException;
 use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,11 +23,10 @@ require_once 'app/init.inc.php';
 
 try {
 
-    $Saml = new Saml(new Config, new Idps);
-    // TODO this is the id of the idp to use to get the settings
-    $settingsArr = $Saml->getSettings(1);
+    $Saml = new Saml(new Config(), new Idps());
+    $settingsArr = $Saml->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
-        throw new Exception('No Service Provider configured. Aborting.');
+        throw new ImproperActionException('No Service Provider configured. Aborting.');
     }
 
     // Now we only validate SP settings

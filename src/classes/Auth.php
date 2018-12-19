@@ -225,7 +225,7 @@ class Auth
             $this->populateUserDataFromEmail($email);
             $this->populateSession();
             if ($setCookie === 'on') {
-                return $this->setToken();
+                $this->setToken();
             }
             return true;
         }

@@ -10,6 +10,9 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuth;
@@ -19,6 +22,7 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 
 // default location for redirect
 $location = '../../login.php';
+$Response = new RedirectResponse($location);
 
 try {
     $Saml = new Saml($App->Config, new Idps);
@@ -82,15 +86,24 @@ try {
             );
         }
     }
+    $Response = new RedirectResponse($location);
 
 } catch (ImproperActionException $e) {
-    // display this kind of error to user
-    $Session->getFlashBag()->add('ko', $e->getMessage());
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('IllegalAction' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Error' => $e)));
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('exception' => $e->__toString())));
-    $Session->getFlashBag()->add('ko', Tools::error());
-}
+    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Exception' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
 
-$Response = new RedirectResponse($location);
-$Response->send();
+} finally {
+    $Response->send();
+}

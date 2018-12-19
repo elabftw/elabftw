@@ -42,13 +42,14 @@ class Idps implements CrudInterface
      * @param string $sloUrl Single Log Out URL
      * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
+     * @param string $active 0 or 1
      *
      * @return int last insert id
      */
-    public function create(string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): int
+    public function create(string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509, string $active): int
     {
-        $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509)";
+        $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, active)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :active)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -57,6 +58,7 @@ class Idps implements CrudInterface
         $req->bindParam(':slo_url', $sloUrl);
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
+        $req->bindParam(':active', $active);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -113,9 +115,10 @@ class Idps implements CrudInterface
      * @param string $sloUrl Single Log Out URL
      * @param string $sloBinding
      * @param string $x509 Public x509 Certificate
+     * @param string $active 0 or 1
      * @return void
      */
-    public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509): void
+    public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509, string $active): void
     {
         $sql = "UPDATE idps SET
             name = :name,
@@ -124,7 +127,8 @@ class Idps implements CrudInterface
             sso_binding = :sso_binding,
             slo_url = :slo_url,
             slo_binding = :slo_binding,
-            x509 = :x509
+            x509 = :x509,
+            active = :active
             WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
@@ -135,10 +139,32 @@ class Idps implements CrudInterface
         $req->bindParam(':slo_url', $sloUrl);
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
+        $req->bindParam(':active', $active);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+    }
+
+    /**
+     * Get an active IDP
+     *
+     * @return array
+     */
+    public function getActive(): array
+    {
+        $sql = "SELECT * FROM idps WHERE active = 1 LIMIT 1";
+        $req = $this->Db->prepare($sql);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $res = $req->fetch();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

@@ -1,7 +1,5 @@
 <?php
 /**
- * metadata.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -21,6 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
+$Response = new Response();
+$Response->prepare($Request);
+
 try {
 
     $Saml = new Saml(new Config(), new Idps());
@@ -34,8 +35,6 @@ try {
     $metadata = $Settings->getSPMetadata();
     $errors = $Settings->validateMetadata($metadata);
     if (empty($errors)) {
-        $Response = new Response();
-        $Response->prepare($Request);
         $Response->setContent($metadata);
         $Response->headers->set('Content-Type', 'text/xml');
         $Response->send();
@@ -46,9 +45,8 @@ try {
         );
     }
 
-} catch (Exception $e) {
-    $Response = new Response();
-    $Response->prepare($Request);
+} catch (Error $e) {
     $Response->setContent($e->getMessage());
+} finally {
     $Response->send();
 }

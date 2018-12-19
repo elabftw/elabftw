@@ -45,7 +45,7 @@ try {
         );
     }
 
-} catch (Error $e) {
+} catch (ImproperActionException | Error $e) {
     $Response->setContent($e->getMessage());
 } finally {
     $Response->send();

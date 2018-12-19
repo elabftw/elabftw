@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
@@ -162,7 +163,7 @@ class Idps implements CrudInterface
 
         $res = $req->fetch();
         if ($res === false) {
-            return array();
+            throw new ImproperActionException('Could not find active IDP!');
         }
         return $res;
     }

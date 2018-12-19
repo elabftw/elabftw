@@ -37,12 +37,7 @@ try {
         }
 
         // Get data from user
-        $user = $App->Users->readFromEmail($email);
-
-        // Is email in database ?
-        if (empty($user)) {
-            throw new ImproperActionException(_('Email not found in database!'));
-        }
+        $App->Users->populateFromEmail($email);
 
         // Get IP
         if ($Request->server->has('HTTP_CLIENT_IP')) {
@@ -64,18 +59,18 @@ try {
         $resetLink = Tools::getUrl($Request) . '/change-pass.php';
         // not pretty but gets the job done
         $resetLink = str_replace('app/controllers/', '', $resetLink);
-        $resetLink .= '?key=' . $key . '&deadline=' . $deadline . '&userid=' . $user['userid'];
+        $resetLink .= '?key=' . $key . '&deadline=' . $deadline . '&userid=' . $App->Users->userData['userid'];
 
         // Send an email with the reset link
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = (new Swift_Message())
         // Give the message a subject
-        ->setSubject('[eLabFTW] Password reset for ' . $user['fullname'])
+        ->setSubject('[eLabFTW] Password reset')
         // Set the From address with an associative array
         ->setFrom(array($App->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
-        ->setTo(array($email => $user['fullname']))
+        ->setTo(array($email => $App->Users->userData['fullname']))
         // Give it a body
         ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $Request->server->get('HTTP_USER_AGENT'), $resetLink) . $footer);
         // now we try to send the email
@@ -103,7 +98,7 @@ try {
         }
 
         // Replace new password in database
-        $App->Users->updatePassword($Request->request->get('password'), $Request->request->get('userid'));
+        $App->Users->updatePassword($Request->request->get('password'));
         $App->Log->info('Password was changed for this user', array('userid' => $App->Session->get('userid')));
         $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }

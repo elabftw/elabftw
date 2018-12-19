@@ -25,6 +25,9 @@ class Csrf
     /** @var SessionInterface $Session the session object */
     private $Session;
 
+    /** @var Request $Request the request object */
+    private $Request;
+
     /**
      * We need the Session object
      *

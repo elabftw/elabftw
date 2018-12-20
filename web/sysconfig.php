@@ -31,8 +31,9 @@ try {
 
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
-    $TeamsView = new TeamsView(new Teams($App->Users));
-    $teamsArr = $TeamsView->Teams->readAll();
+    $Teams = new Teams($App->Users);
+    $teamsArr = $Teams->readAll();
+    $teamsStats = $Teams->getAllStats();
 
     // Users search
     $isSearching = false;
@@ -66,13 +67,13 @@ try {
     $renderArr = array(
         'elabimgVersion' => $elabimgVersion,
         'ReleaseCheck' => $ReleaseCheck,
-        'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
         'phpInfos' => $phpInfos,
         'teamsArr' => $teamsArr,
+        'teamsStats' => $teamsStats,
         'usersArr' => $usersArr
     );
 

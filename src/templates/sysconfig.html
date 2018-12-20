@@ -57,7 +57,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <div class='box'>
         <h3>{{ 'Usage Statistics'|trans }}</h3>
         <hr>
-        <p>{{ TeamsView.showStats|raw }}</p>
+        <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
     </div>
 
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
@@ -154,7 +154,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <hr>
 
             {% for team in teamsArr %}
-            {% set count = TeamsView.Teams.getStats(team.team_id) %}
+            {% set count = Teams.getStats(team.team_id) %}
             <label for='teamName_{{ team.team_id }}'>Team Name</label>
             <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.team_id }}' type='text' value='{{ team.team_name }}' />
             <label for='teamOrgid_{{ team.team_id }}'>Team Organisation ID</label>

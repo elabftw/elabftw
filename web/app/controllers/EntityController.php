@@ -23,18 +23,22 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new RedirectResponse("../../experiments.php");
 
 try {
     if ($App->Session->has('anon')) {
         throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
+    // CSRF
+    $App->Csrf->validate();
+
     // id of the item (experiment or database item)
     $id = 1;
 
     if ($Request->request->has('id')) {
-        $id = $Request->request->get('id');
+        $id = (int) $Request->request->get('id');
     } elseif ($Request->query->has('id')) {
-        $id = $Request->query->get('id');
+        $id = (int) $Request->query->get('id');
     }
 
     if ($Request->request->get('type') === 'experiments' ||

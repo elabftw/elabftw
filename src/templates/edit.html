@@ -241,6 +241,8 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
+<!-- CSRF token used by ajax post requests -->
+<div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
 <script src='app/js/edit.min.js?v={{ v }}'></script>
 <script src='app/js/tags.min.js'></script>
 {% endblock body %}

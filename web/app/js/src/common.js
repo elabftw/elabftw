@@ -153,10 +153,13 @@ function makeEditableTodoitem(element) {
 
 // EDIT COMMENT ON experiment/database
 function makeEditableComment(element) {
-    $(element).editable('app/controllers/CommentsController.php', {
+    $(element).editable('app/controllers/CommentsAjaxController.php', {
         name: 'update',
         type : 'textarea',
-        submitdata: {type: $(element).data('type')},
+        submitdata: {
+            type: $(element).data('type'),
+            csrf: $('csrf').data('csrf')
+        },
         width: '80%',
         height: '200',
         tooltip : 'Click to edit',

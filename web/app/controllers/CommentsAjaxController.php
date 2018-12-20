@@ -34,6 +34,9 @@ try {
         throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
 
+    // CSRF
+    $App->Csrf->validate();
+
     if ($Request->request->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
     } else {
@@ -57,7 +60,7 @@ try {
 
     // DESTROY
     if ($Request->request->has('destroy')) {
-        $Entity->Comments->destroy($Request->request->get('id'));
+        $Entity->Comments->destroy((int) $Request->request->get('id'));
     }
 
 } catch (ImproperActionException $e) {

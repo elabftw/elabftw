@@ -28,13 +28,16 @@ $Response->setData(array(
 ));
 
 try {
+    // CSRF
+    $App->Csrf->validate();
+
     // id of the item (experiment or database item)
     $id = 1;
 
     if ($Request->request->has('id')) {
-        $id = $Request->request->get('id');
+        $id = (int) $Request->request->get('id');
     } elseif ($Request->query->has('id')) {
-        $id = $Request->query->get('id');
+        $id = (int) $Request->query->get('id');
     }
 
     if ($Request->request->get('type') === 'experiments' ||
@@ -128,7 +131,7 @@ try {
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
 
-        $Entity->updateCategory($Request->request->get('categoryId'));
+        $Entity->updateCategory((int) $Request->request->get('categoryId'));
         // get the color of the status/item type for updating the css
         if ($Entity->type === 'experiments') {
             $Category = new Status($App->Users);
@@ -138,7 +141,7 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'color' => $Category->readColor($Request->request->get('categoryId'))
+            'color' => $Category->readColor((int) $Request->request->get('categoryId'))
         ));
     }
 
@@ -146,7 +149,7 @@ try {
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
         $upload = $Entity->Uploads->readFromId((int) $Request->request->get('upload_id'));
-        $Entity->Uploads->destroy($Request->request->get('upload_id'));
+        $Entity->Uploads->destroy((int) $Request->request->get('upload_id'));
         // check that the filename is not in the body. see #432
         $msg = "";
         if (strpos($Entity->entityData['body'], $upload['long_name'])) {

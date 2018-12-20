@@ -35,6 +35,9 @@ try {
         throw new IllegalActionException('Anonymous user tried to access experiments controller.');
     }
 
+    // CSRF
+    $App->Csrf->validate();
+
     $Entity = new Experiments($App->Users);
     if ($Request->request->has('id')) {
         $Entity->setId((int) $Request->request->get('id'));

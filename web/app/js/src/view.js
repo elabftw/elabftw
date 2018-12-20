@@ -28,7 +28,8 @@
             $.post("app/controllers/EntityController.php", {
                 lock: true,
                 type: type,
-                id: id
+                id: id,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -49,7 +50,8 @@
         $(document).on('click', '.decode-asn1', function() {
             $.post('app/controllers/ExperimentsAjaxController.php', {
                 asn1: $(this).data('token'),
-                id: $(this).data('id')
+                id: $(this).data('id'),
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 $('#decodedDiv').html(data.msg);
             });
@@ -57,7 +59,7 @@
 
         // COMMENTS
         var Comments = {
-            controller: 'app/controllers/CommentsController.php',
+            controller: 'app/controllers/CommentsAjaxController.php',
             create: function() {
                 document.getElementById('commentsCreateButton').disabled = true;
                 const comment = $('#commentsCreateArea').val();
@@ -72,6 +74,7 @@
                     create: true,
                     comment: comment,
                     type: $('#entityInfos').data('type'),
+                    csrf: $('#csrf').data('csrf'),
                     id: id
                 }).done(function(data) {
                     if (data.res) {
@@ -89,6 +92,7 @@
                     $.post(this.controller, {
                     destroy: true,
                     type: $('#entityInfos').data('type'),
+                    csrf: $('#csrf').data('csrf'),
                     id: comment
                 }).done(function(data) {
                     if (data.res) {
@@ -135,6 +139,7 @@
                         $('#confirmTimestampDiv').text($(this).data('wait'));
                         $.post('app/controllers/ExperimentsAjaxController.php', {
                             timestamp: true,
+                            csrf: $('#csrf').data('csrf'),
                             id: id
                         }).done(function (data) {
                             if (data.res) {

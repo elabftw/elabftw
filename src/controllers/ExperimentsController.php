@@ -253,7 +253,7 @@ class ExperimentsController extends AbstractEntityController
 
         if ($this->App->Request->getSession()->get('anon')) {
             $this->Entity->visibilityFilter = "AND experiments.visibility = 'public'";
-            $itemsArr = $this->Entity->read();
+            $itemsArr = $this->Entity->read($getTags);
 
         // related filter
         } elseif (Tools::checkId((int) $this->App->Request->query->get('related')) !== false) {
@@ -287,32 +287,5 @@ class ExperimentsController extends AbstractEntityController
         $Response->setContent($this->App->render($template, $renderArr));
 
         return $Response;
-    }
-
-    /**
-     * Get the Response object from the Request
-     *
-     * @return Response
-     */
-    public function getResponse(): Response
-    {
-        // VIEW
-        if ($this->App->Request->query->get('mode') === 'view') {
-            return $this->view();
-        }
-
-        // EDIT
-        if ($this->App->Request->query->get('mode') === 'edit') {
-            return $this->edit();
-        }
-
-        // CREATE
-        if ($this->App->Request->query->has('create')) {
-            $id = $this->Entity->create((int) $this->App->Request->query->get('tpl'));
-            return new RedirectResponse('../../experiments.php?mode=edit&id=' . $id);
-        }
-
-        // DEFAULT MODE IS SHOW
-        return $this->show();
     }
 }

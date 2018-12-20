@@ -171,24 +171,8 @@ class Database extends AbstractEntity
      */
     public function toggleLock(): void
     {
-        // get what is the current state
-        $sql = "SELECT locked FROM items WHERE id = :id";
+        $sql = "UPDATE items SET locked = IF(locked = 1, 0, 1) WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $locked = (int) $req->fetchColumn();
-        if ($locked === 1) {
-            $locked = 0;
-        } else {
-            $locked = 1;
-        }
-
-        // toggle
-        $sql = "UPDATE items SET locked = :locked WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':locked', $locked);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {

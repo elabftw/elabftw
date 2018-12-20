@@ -38,9 +38,6 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $this->Database->setId(1);
-        $this->Database->toggleLock();
-        // test update a locked item
-        $this->expectException(ImproperActionException::class);
         $this->Database->update('Database item 1', '20160729', 'body', 1);
     }
 
@@ -59,16 +56,17 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock()
     {
-        $this->Database->setId(1);
+        $new = $this->Database->create(1);
+        $this->Database->setId($new);
 
-        // unlock
-        $this->Database->toggleLock();
-        $item = $this->Database->read();
-        $this->assertFalse((bool) $item['locked']);
         // lock
         $this->Database->toggleLock();
         $item = $this->Database->read();
         $this->assertTrue((bool) $item['locked']);
+        // unlock
+        $this->Database->toggleLock();
+        $item = $this->Database->read();
+        $this->assertFalse((bool) $item['locked']);
 
     }
 }

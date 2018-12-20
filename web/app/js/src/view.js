@@ -25,7 +25,7 @@
 
         // TOGGLE LOCK
         $(document).on('click', '#lock', function() {
-            $.post("app/controllers/EntityController.php", {
+            $.post("app/controllers/EntityAjaxController.php", {
                 lock: true,
                 type: type,
                 id: id,

@@ -346,16 +346,8 @@ class Experiments extends AbstractEntity
             throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
         }
 
-        // toggle
-        if ($locked === 1) {
-            $locked = 0;
-        } else {
-            $locked = 1;
-        }
-        $sql = "UPDATE experiments
-            SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
+        $sql = "UPDATE experiments SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':locked', $locked, PDO::PARAM_INT);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 

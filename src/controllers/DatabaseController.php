@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Elabftw\Database;
+use Elabftw\Elabftw\AbstractEntity;
 use Elabftw\Elabftw\Revisions;
 use Elabftw\Elabftw\UploadsView;
 use Elabftw\Elabftw\ItemsTypes;
@@ -31,10 +32,10 @@ class DatabaseController extends EntityController
     /** @var string $page the corresponding page */
     private $page;
 
-    /** @var Entity $Entity instance of Entity */
+    /** @var AbstractEntity $Entity instance of Entity */
     protected $Entity;
 
-    /** @var categoryArr $categoryArr array of category (status or item type) */
+    /** @var array $categoryArr array of category (status or item type) */
     private $categoryArr;
 
     /**

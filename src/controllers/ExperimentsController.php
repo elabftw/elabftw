@@ -13,6 +13,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Elabftw\Experiments;
 use Elabftw\Elabftw\ExperimentsView;
+use Elabftw\Elabftw\AbstractEntity;
 use Elabftw\Elabftw\Status;
 use Elabftw\Elabftw\Revisions;
 use Elabftw\Elabftw\UploadsView;
@@ -30,13 +31,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ExperimentsController extends EntityController
 {
-    /** @var Entity $Entity instance of Entity */
+    /** @var AbstractEntity $Entity instance of AbstractEntity */
     private $Entity;
 
-    /** @var categoryArr $categoryArr array of category (status or item type) */
+    /** @var array $categoryArr array of category (status or item type) */
     private $categoryArr;
 
-    /** @var EntityView $EntityView instance of EntityView */
+    /** @var ExperimentsView $EntityView instance of ExperimentsView */
     private $EntityView;
 
     /** @var string $page the corresponding page */

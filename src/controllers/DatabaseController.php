@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * For database.php
  */
-class DatabaseController extends EntityController
+class DatabaseController extends AbstractEntityController
 {
     /** @var string $page the corresponding page */
     private $page;
@@ -63,8 +63,8 @@ class DatabaseController extends EntityController
     protected function view(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
-        // check permissions
         $this->Entity->canOrExplode('read');
+
         $UploadsView = new UploadsView($this->Entity->Uploads);
 
         // REVISIONS

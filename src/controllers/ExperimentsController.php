@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * For experiments.php
  */
-class ExperimentsController extends EntityController
+class ExperimentsController extends AbstractEntityController
 {
     /** @var AbstractEntity $Entity instance of AbstractEntity */
     private $Entity;
@@ -60,7 +60,7 @@ class ExperimentsController extends EntityController
      *
      * @return Response
      */
-    private function view(): Response
+    protected function view(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
@@ -107,7 +107,7 @@ class ExperimentsController extends EntityController
      *
      * @return Response
      */
-    private function edit(): Response
+    protected function edit(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         // check permissions
@@ -160,7 +160,7 @@ class ExperimentsController extends EntityController
      *
      * @return Response
      */
-    private function show(): Response
+    protected function show(): Response
     {
         $searchType = '';
         $tag = '';

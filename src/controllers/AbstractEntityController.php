@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * For experiments.php
  */
-class EntityController implements ControllerInterface
+abstract class AbstractEntityController implements ControllerInterface
 {
     /** @var App $App instance of App */
     protected $App;
@@ -34,6 +34,27 @@ class EntityController implements ControllerInterface
     {
         $this->App = $app;
     }
+
+    /**
+     * View mode
+     *
+     * @return Response
+     */
+    abstract protected function view(): Response;
+
+    /**
+     * Edit mode
+     *
+     * @return Response
+     */
+    abstract protected function edit(): Response;
+
+    /**
+     * Show mode
+     *
+     * @return Response
+     */
+    abstract protected function show(): Response;
 
     /**
      * Get the Response object from the Request

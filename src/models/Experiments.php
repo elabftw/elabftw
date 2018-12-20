@@ -291,6 +291,27 @@ class Experiments extends AbstractEntity
         $this->Uploads->destroyAll();
     }
 
+    public function getTimestampInfo(): array
+    {
+        if ($this->entityData['timestamped'] === '0') {
+            return array();
+        }
+        $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
+
+        $Uploads = new Uploads(new Experiments($this->Users, (int) $this->entityData['id']));
+        $Uploads->Entity->type = 'exp-pdf-timestamp';
+        $pdf = $Uploads->readAll();
+
+        $Uploads->Entity->type = 'timestamp-token';
+        $token = $Uploads->readAll();
+
+        return array(
+            'timestamper' => $timestamper,
+            'pdf' => $pdf,
+            'token' => $token
+        );
+    }
+
     /**
      * Lock/unlock
      *

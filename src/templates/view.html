@@ -14,14 +14,25 @@
 
 {% if Entity.type == 'experiments' %}
     {% if Entity.entityData.timestamped %}
-        {{ Ev.showTimestamp|raw }}
+    <div class='alert alert-success'><i class='fas fa-info-circle'></i>
+        {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestampInfo.timestamper.fullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}
+        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.pdf.0.long_name }}'>
+            <span>{{ 'Download timestamped pdf'|trans }}</span><i class='fas fa-file-pdf'></i>
+        </a>
+        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}'>
+            <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
+        </a>
+        <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decode-asn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>
+        </a>
+        <div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>
+    </div>
     {% endif %}
     <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
         <p class='align_right inline'>
             <i class='fas fa-clipboard-check' title='{{ 'Status'|trans }}'></i>
             {{ Entity.entityData.category }}
             <i class='fas fa-eye' title='{{ 'Visibility'|trans }}'></i>
-            {{ Ev.getVisibility }}
+            {{ Entity.getVisibility }}
         </p>
 {% else %}
     <section class='box'>
@@ -238,5 +249,8 @@
 <!-- CSRF token used by ajax post requests -->
 <div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
 
+<!--
 <script src='app/js/view.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/view.js?v={{ v }}'></script>
 {% endblock body %}

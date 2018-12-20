@@ -12,7 +12,6 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Elabftw\Experiments;
-use Elabftw\Elabftw\ExperimentsView;
 use Elabftw\Elabftw\AbstractEntity;
 use Elabftw\Elabftw\Status;
 use Elabftw\Elabftw\Revisions;
@@ -37,9 +36,6 @@ class ExperimentsController extends EntityController
     /** @var array $categoryArr array of category (status or item type) */
     private $categoryArr;
 
-    /** @var ExperimentsView $EntityView instance of ExperimentsView */
-    private $EntityView;
-
     /** @var string $page the corresponding page */
     private $page;
 
@@ -54,7 +50,6 @@ class ExperimentsController extends EntityController
 
         $this->page = 'experiments.php';
         $this->Entity = new Experiments($this->App->Users);
-        $this->EntityView = new ExperimentsView($this->Entity);
 
         $Category = new Status($this->App->Users);
         $this->categoryArr = $Category->readAll();
@@ -86,14 +81,16 @@ class ExperimentsController extends EntityController
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
 
+        $timestampInfo = $this->Entity->getTimestampInfo();
+
         $template = 'view.html';
         $renderArr = array(
-            'Ev' => $this->EntityView,
             'Entity' => $this->Entity,
             'Uv' => $UploadsView,
             'linksArr' => $linksArr,
             'revNum' => $revNum,
             'stepsArr' => $stepsArr,
+            'timestampInfo' => $timestampInfo,
             'commentsArr' => $commentsArr,
             'mode' => 'view'
         );

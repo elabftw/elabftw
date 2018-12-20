@@ -345,7 +345,8 @@
                 updateCategory: true,
                 id: id,
                 type: type,
-                categoryId : categoryId
+                categoryId : categoryId,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');

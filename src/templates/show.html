@@ -45,7 +45,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                     </a>
             {% else %}
                 {% for category in categoryArr %}
-                    <a href='app/controllers/DatabaseController.php?create={{ category.category_id }}'>
+                    <a href='?create=true&tpl={{ category.category_id }}'>
                         <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
                     </a>
                 {% endfor %}

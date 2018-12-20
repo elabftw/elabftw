@@ -55,7 +55,7 @@
         let controller = 'experiments.php';
         let location = 'experiments.php';
         if (type != 'experiments') {
-            controller = 'app/controllers/DatabaseController.php';
+            controller = 'database.php';
             location = 'database.php';
         }
 
@@ -175,7 +175,7 @@
         class Star {
 
             constructor() {
-                this.controller = 'app/controllers/DatabaseController.php';
+                this.controller = 'app/controllers/DatabaseAjaxController.php';
             }
 
             update(rating) {

@@ -1,7 +1,5 @@
 <?php
 /**
- * experiments.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -12,8 +10,11 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsController;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -22,6 +23,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = ngettext('Experiment', 'Experiments', 2);
+
+// default response is error page with general error message
 $Response = new Response();
 $Response->prepare($Request);
 $template = 'error.html';

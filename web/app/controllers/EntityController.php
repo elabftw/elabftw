@@ -29,8 +29,8 @@ try {
     if ($App->Session->has('anon')) {
         throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
-    // CSRF
-    $App->Csrf->validate();
+    // CSRF TODO
+    //$App->Csrf->validate();
 
     // id of the item (experiment or database item)
     $id = 1;

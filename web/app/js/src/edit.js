@@ -52,7 +52,7 @@
         let type = $('#entityInfos').data('type');
         let id = $('#entityInfos').data('id');
         let confirmText = $('#entityInfos').data('confirm');
-        let controller = 'app/controllers/ExperimentsController.php';
+        let controller = 'experiments.php';
         let location = 'experiments.php';
         if (type != 'experiments') {
             controller = 'app/controllers/DatabaseController.php';
@@ -306,7 +306,7 @@
                     response(cache[term]);
                     return;
                 }
-                $.getJSON("app/controllers/ExperimentsController.php", request, function(data, status, xhr) {
+                $.getJSON("app/controllers/ExperimentsAjaxController.php", request, function(data, status, xhr) {
                     cache[term] = data;
                     response(data);
                 });

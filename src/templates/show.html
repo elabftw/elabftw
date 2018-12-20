@@ -20,7 +20,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
             <button class='btn dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
             {% if Entity.type == 'experiments' %}
-                <a href='app/controllers/ExperimentsController.php?create=true'><li class='dropdown-item'>
+                <a href='?create=true'><li class='dropdown-item'>
                     {% trans %}
                     Experiment
                     {% plural 1 %}
@@ -31,7 +31,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if templatesArr|length > 0 %}
                 <h6 class="dropdown-header">{{ 'Templates'|trans }}</h6>
                     {% for tpl in templatesArr %}
-                        <a href='app/controllers/ExperimentsController.php?create=true&tpl={{ tpl.id }}'>
+                        <a href='?create=true&tpl={{ tpl.id }}'>
                         <li class='dropdown-item'>
                             {{ tpl.name|raw }}
                         </li></a>

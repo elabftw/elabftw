@@ -29,8 +29,8 @@ try {
     if ($App->Session->has('anon')) {
         throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
-    // CSRF TODO
-    //$App->Csrf->validate();
+    // CSRF
+    $App->Csrf->validate();
 
     // id of the item (experiment or database item)
     $id = 1;
@@ -51,23 +51,6 @@ try {
     }
 
     $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $Entity->id);
-
-    /**
-     * GET REQUESTS
-     *
-     */
-
-    // DUPLICATE
-    if ($Request->query->has('duplicate')) {
-        $Entity->canOrExplode('read');
-        $id = $Entity->duplicate();
-        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $id);
-    }
-
-    /**
-     * POST REQUESTS
-     *
-     */
 
     // UPDATE
     if ($Request->request->has('update')) {

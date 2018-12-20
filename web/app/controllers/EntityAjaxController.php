@@ -90,6 +90,16 @@ try {
         }
     }
 
+    // DUPLICATE
+    if ($Request->request->has('duplicate')) {
+        $Entity->canOrExplode('read');
+        $id = $Entity->duplicate();
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $id
+        ));
+    }
+
     // UPDATE FILE COMMENT
     if ($Request->request->has('updateFileComment')) {
         $Entity->canOrExplode('write');

@@ -39,6 +39,7 @@
     <!--  MAIN FORM -->
     <form id='main_form' method='post' action='app/controllers/EntityController.php' enctype='multipart/form-data'>
         <input name='update' type='hidden' value='true' />
+        {{ App.Csrf.getHiddenInput|raw }}
         <input name='id' type='hidden' value='{{ Entity.id }}' />
         <input name='type' type='hidden' value='{{ Entity.type }}' />
 

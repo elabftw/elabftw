@@ -47,7 +47,7 @@
         });
 
         // DECODE ASN1
-        $(document).on('click', '.decode-asn1', function() {
+        $(document).on('click', '.decodeAsn1', function() {
             $.post('app/controllers/ExperimentsAjaxController.php', {
                 asn1: $(this).data('token'),
                 id: $(this).data('id'),
@@ -56,6 +56,19 @@
                 $('#decodedDiv').html(data.msg);
             });
         });
+
+        // DUPLICATE
+        $(document).on('click', '.duplicateItem', function() {
+            $.post('app/controllers/EntityAjaxController.php', {
+                duplicate: true,
+                id: $(this).data('id'),
+                type: $('#entityInfos').data('type'),
+                csrf: $('#csrf').data('csrf')
+            }).done(function(data) {
+                window.location.replace('experiments.php?mode=edit&id=' + data.msg);
+            });
+        });
+
 
         // COMMENTS
         var Comments = {

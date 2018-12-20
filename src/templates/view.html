@@ -22,7 +22,7 @@
         <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}'>
             <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
         </a>
-        <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decode-asn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>
+        <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>
         </a>
         <div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>
     </div>
@@ -58,10 +58,10 @@
 {% endif %}
 
 {% if not App.Session.has('anon') %}
-    <a class='elab-tooltip' href='app/controllers/EntityController.php?duplicate=1&id={{ Entity.id }}&type={{ Entity.type }}'>
-        <span>{{ 'Duplicate'|trans }}</span>
-        <i class='far fa-copy'></i>
-    </a>
+<a class='elab-tooltip' href='#'>
+    <span>{{ 'Duplicate'|trans }}</span>
+    <i class='far fa-copy clickable duplicateItem' data-id='{{ Entity.id }}'></i>
+</a>
 {% endif %}
 
 <a class='elab-tooltip' href='make.php?what=pdf&id={{ Entity.id }}&type={{ Entity.type }}'>

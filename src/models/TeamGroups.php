@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
 /**

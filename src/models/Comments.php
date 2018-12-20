@@ -14,9 +14,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
+
 
 /**
  * All about the comments

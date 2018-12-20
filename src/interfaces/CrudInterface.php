@@ -8,7 +8,7 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Interfaces;
 
 /**
  * Interface for things like Steps, Links, Comments

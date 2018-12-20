@@ -299,42 +299,22 @@ class Users
      * @param string $query
      * @return array
      */
-    public function readFromQuery(string $query): array
+    public function readFromQuery(string $query, $teamFilter = false): array
     {
-        $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
-            teams.team_name as teamname
-            FROM users
-            LEFT JOIN teams ON (users.team = teams.team_id)
-            WHERE users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':query', '%' . $query . '%');
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
+        $whereTeam = '';
+        if ($teamFilter) {
+            $whereTeam = 'users.team = ' . $this->userData['team'] . ' AND ';
         }
 
-        return $req->fetchAll();
-    }
-    /**
-     * Search users based on query. It searches in email, firstname or lastname
-     * TODO factorize
-     *
-     * @param string $query
-     * @return array
-     */
-    public function readTeamFromQuery(string $query): array
-    {
         $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
             teams.team_name as teamname
             FROM users
             LEFT JOIN teams ON (users.team = teams.team_id)
-            WHERE users.team = :team AND (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
+            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
-        $req->bindParam(':team', $this->userData['team']);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

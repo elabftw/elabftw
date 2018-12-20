@@ -50,7 +50,7 @@ try {
     $usersArr = array();
     if ($Request->query->has('q')) {
         $isSearching = true;
-        $usersArr = $App->Users->readTeamFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
+        $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING), true);
     }
 
     $allTeamUsersArr = $App->Users->readAllFromTeam(1);

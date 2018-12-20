@@ -175,7 +175,7 @@
         class Star {
 
             constructor() {
-                this.controller = 'app/controllers/DatabaseAjaxController.php';
+                this.controller = 'database.php';
             }
 
             update(rating) {

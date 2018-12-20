@@ -32,7 +32,7 @@ class DatabaseController extends EntityController
     private $page;
 
     /** @var Entity $Entity instance of Entity */
-    private $Entity;
+    protected $Entity;
 
     /** @var categoryArr $categoryArr array of category (status or item type) */
     private $categoryArr;

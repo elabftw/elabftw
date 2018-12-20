@@ -11,7 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Database;
 use Elabftw\Interfaces\ControllerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,6 +56,18 @@ class EntityController implements ControllerInterface
         if ($this->App->Request->query->has('create')) {
             $id = $this->Entity->create((int) $this->App->Request->query->get('tpl'));
             return new RedirectResponse('../../' . $this->page . '?mode=edit&id=' . $id);
+        }
+
+        // UPDATE RATING
+        if ($this->App->Request->request->has('rating') && $this->Entity instanceof Database) {
+            $this->Entity->setId((int) $this->App->Request->request->get('id'));
+            $this->Entity->updateRating((int) $this->App->Request->request->get('rating'));
+            $Response = new JsonResponse();
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+            return $Response;
         }
 
         // DEFAULT MODE IS SHOW

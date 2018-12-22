@@ -114,6 +114,9 @@ class App
         $TwigEnvironment = new \Twig_Environment($loader, $options);
 
         // custom twig filters
+        //
+        // WARNING: MIRROR MODIFS TO SRC/TOOLS/GENERATE-CACHE.PHP!!
+        //
         $filterOptions = array('is_safe' => array('html'));
         $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
         $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);

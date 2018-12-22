@@ -246,7 +246,7 @@ abstract class AbstractEntity
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }
-            $sql .=  $where;
+            $sql .= $where;
         } else {
             throw new IllegalActionException('Nope.');
         }

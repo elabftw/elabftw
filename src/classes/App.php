@@ -121,6 +121,7 @@ class App
         $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new \Twig_SimpleFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
+        $filesizeFilter = new \Twig_SimpleFilter('filesize', '\filesize', $filterOptions);
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($dateFilter);
@@ -128,6 +129,7 @@ class App
         $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
+        $TwigEnvironment->addFilter($filesizeFilter);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());

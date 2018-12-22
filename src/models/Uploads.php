@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Uploads
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -27,6 +25,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Uploads implements CrudInterface
 {
+    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
+    private const BIG_FILE_THRESHOLD = 5000000;
+
     /** @var AbstractEntity $Entity an entity */
     public $Entity;
 
@@ -37,28 +38,7 @@ class Uploads implements CrudInterface
     private $hashAlgorithm = 'sha256';
 
     /** @var string $uploadsPath absolute path to uploads folder */
-    private $uploadsPath;
-
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
-    private const BIG_FILE_THRESHOLD = 5000000;
-
-    /** @var array MOL_EXTENSIONS list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html */
-    public const MOL_EXTENSIONS = array(
-        'cdjson',
-        'cif',
-        'cube',
-        'gro',
-        'json',
-        'mcif',
-        'mmtf',
-        'mol2',
-        'pdb',
-        'pqr',
-        'prmtop',
-        'sdf',
-        'vasp',
-        'xyz'
-    );
+    public $uploadsPath;
 
     /**
      * Constructor
@@ -231,7 +211,7 @@ class Uploads implements CrudInterface
 
         // final sql
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $this->makeThumb($fullPath);
+        new MakeThumbnail($fullPath);
     }
 
     /**
@@ -252,7 +232,7 @@ class Uploads implements CrudInterface
         $this->moveFile($filePath, $fullPath);
 
         $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
-        $this->makeThumb($fullPath);
+        new MakeThumbnail($fullPath);
     }
 
     /**
@@ -351,113 +331,6 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
-     *
-     * @param string $src Full path to the original file
-     * @return bool
-     */
-    public function makeThumb(string $src): bool
-    {
-        $dest = $src . '_th.jpg';
-        $desiredWidth = 100;
-
-        if (\is_readable($src) === false) {
-            throw new FilesystemErrorException("ERROR: file not found! (" . \substr($src, 0, 42) . "…)");
-        }
-
-        // we don't want to work on too big images
-        // and we don't want to do it again if it exists already
-        if (filesize($src) > self::BIG_FILE_THRESHOLD || \file_exists($dest)) {
-            return false;
-        }
-
-        // get mime type of the file
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $src);
-
-        if (\extension_loaded('gmagick')) {
-            // try first with gmagick lib
-
-            // do some sane white-listing. In theory, gmagick handles almost all image formats,
-            // but the processing of rarely used formats may be less tested/stable or may have security issues
-            // when adding new mime types take care of
-            // ambiguities: e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
-            // image/x-ms-bmp
-            $allowed_mime = array('image/png',
-                                'image/jpeg',
-                                'image/gif',
-                                'image/tiff',
-                                'image/x-eps',
-                                'image/svg+xml',
-                                'application/pdf',
-                                'application/postscript');
-
-            if (!\in_array($mime, $allowed_mime, true)) {
-                return false;
-            }
-
-            // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files
-            // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
-            // works in those cases
-            if ($mime === 'application/pdf' || $mime === 'application/postscript') {
-                $src .= '[0]';
-            }
-            // fail silently if thumbnail generation does not work to keep file upload field functional
-            // originally introduced due to issue #415.
-            try {
-                $image = new Gmagick($src);
-            } catch (Exception $e) {
-                return false;
-            }
-            // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
-            $image->thumbnailimage($desiredWidth, 0);
-            // create the physical thumbnail image to its destination (85% quality)
-            $image->setCompressionQuality(85);
-            $image->write($dest);
-            $image->clear();
-
-        // if we don't have gmagick, try with gd
-        } elseif (extension_loaded('gd')) {
-            // the used fonction is different depending on extension
-            if ($mime === 'image/jpeg') {
-                $sourceImage = imagecreatefromjpeg($src);
-            } elseif ($mime === 'image/png') {
-                $sourceImage = imagecreatefrompng($src);
-            } elseif ($mime === 'image/gif') {
-                $sourceImage = imagecreatefromgif($src);
-            } else {
-                return false;
-            }
-
-            if ($sourceImage === false) {
-                return false;
-            }
-
-            $width = imagesx($sourceImage);
-            $height = imagesy($sourceImage);
-
-            // find the "desired height" of this thumbnail, relative to the desired width
-            $desiredHeight = (int) floor($height * ($desiredWidth / $width));
-
-            // create a new, "virtual" image
-            $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
-            if ($virtualImage === false) {
-                return false;
-            }
-
-            // copy source image at a resized size
-            imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
-
-            // create the physical thumbnail image to its destination (85% quality)
-            imagejpeg($virtualImage, $dest, 85);
-
-            return true;
-        }
-        // and if we have no gmagick and no gd, well there's nothing I can do for you boy!
-        return false;
-    }
-
-    /**
      * Replace an uploaded file by another
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -477,7 +350,7 @@ class Uploads implements CrudInterface
             throw new IllegalActionException('User tried to replace an upload of another user.');
         }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        $this->makeThumb($fullPath);
+        new MakeThumbnail($fullPath);
     }
 
     /**
@@ -488,65 +361,26 @@ class Uploads implements CrudInterface
      */
     public function getIconFromExtension(string $ext): string
     {
-        switch ($ext) {
-            // ARCHIVE
-            case 'zip':
-            case 'rar':
-            case 'xz':
-            case 'gz':
-            case 'tgz':
-            case '7z':
-            case 'bz2':
-            case 'tar':
-                return 'fa-file-archive';
-
-            // CODE
-            case 'py':
-            case 'jupyter':
-            case 'js':
-            case 'm':
-            case 'r':
-            case 'R':
-                return 'fa-file-code';
-
-            // EXCEL
-            case 'xls':
-            case 'xlsx':
-            case 'ods':
-            case 'csv':
-                return 'fa-file-excel';
-
-            // POWERPOINT
-            case 'ppt':
-            case 'pptx':
-            case 'pps':
-            case 'ppsx':
-            case 'odp':
-                return 'fa-file-powerpoint';
-
-            // VIDEO
-            case 'mov':
-            case 'avi':
-            case 'mp4':
-            case 'wmv':
-            case 'mpeg':
-            case 'flv':
-                return 'fa-file-video';
-
-            // WORD
-            case 'doc':
-            case 'docx':
-            case 'odt':
-                return 'fa-file-word';
-
-            default:
-                return 'fa-file';
+        if (\in_array($ext, Extensions::ARCHIVE, true)) {
+            return 'fa-file-archive';
         }
-    }
+        if (\in_array($ext, Extensions::CODE, true)) {
+            return 'fa-file-code';
+        }
+        if (\in_array($ext, Extensions::SPREADSHEET, true)) {
+            return 'fa-file-excel';
+        }
+        if (\in_array($ext, Extensions::PRESENTATION, true)) {
+            return 'fa-file-powerpoint';
+        }
+        if (\in_array($ext, Extensions::VIDEO, true)) {
+            return 'fa-file-video';
+        }
+        if (\in_array($ext, Extensions::DOCUMENT, true)) {
+            return 'fa-file-word';
+        }
 
-    public function getFileSize(string $filePath): int
-    {
-        return (int) \filesize($this->uploadsPath . $filePath);
+        return 'fa-file';
     }
 
     /**

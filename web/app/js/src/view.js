@@ -14,13 +14,13 @@
         // add the title in the page name (see #324)
         document.title = $('.title_view').text() + ' - eLabFTW';
 
-        var type = $('#entityInfos').data('type');
-        var id = $('#entityInfos').data('id');
-        var confirmText = $('#entityInfos').data('confirm');
+        var type = $('#entityInfo').data('type');
+        var id = $('#entityInfo').data('id');
+        var confirmText = $('#entityInfo').data('confirm');
 
         // EDIT
         key($('#shortcuts').data('edit'), function() {
-            window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
+            window.location.href = '?mode=edit&id=' + $('#entityInfo').data('id');
         });
 
         // TOGGLE LOCK
@@ -62,7 +62,7 @@
             $.post('app/controllers/EntityAjaxController.php', {
                 duplicate: true,
                 id: $(this).data('id'),
-                type: $('#entityInfos').data('type'),
+                type: $('#entityInfo').data('type'),
                 csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 window.location.replace('experiments.php?mode=edit&id=' + data.msg);
@@ -86,7 +86,7 @@
                 $.post(this.controller, {
                     create: true,
                     comment: comment,
-                    type: $('#entityInfos').data('type'),
+                    type: $('#entityInfo').data('type'),
                     csrf: $('#csrf').data('csrf'),
                     id: id
                 }).done(function(data) {
@@ -104,7 +104,7 @@
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                     destroy: true,
-                    type: $('#entityInfos').data('type'),
+                    type: $('#entityInfo').data('type'),
                     csrf: $('#csrf').data('csrf'),
                     id: comment
                 }).done(function(data) {

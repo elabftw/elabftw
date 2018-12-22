@@ -14,15 +14,15 @@
     // config for dropzone, id is camelCased.
     Dropzone.options.elabftwDropzone = {
         // i18n message to user
-        dictDefaultMessage: $('#entityInfos').data('upmsg'),
-        maxFilesize: $('#entityInfos').data('maxsize'), // MB
+        dictDefaultMessage: $('#entityInfo').data('upmsg'),
+        maxFilesize: $('#entityInfo').data('maxsize'), // MB
         init: function() {
 
             // add additionnal parameters (id and type)
             this.on('sending', function(file, xhr, formData) {
                 formData.append('upload', true);
-                formData.append('id', $('#entityInfos').data('id'));
-                formData.append('type', $('#entityInfos').data('type'));
+                formData.append('id', $('#entityInfo').data('id'));
+                formData.append('type', $('#entityInfo').data('type'));
                 formData.append('csrf', $('#csrf').data('csrf'));
             });
 
@@ -37,7 +37,7 @@
                 }
                 // reload the #filesdiv once the file is uploaded
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                    $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
+                    $('#filesdiv').load('?mode=edit&id=' + $('#entityInfo').data('id') + ' #filesdiv', function() {
                         // make the comment zone editable (fix issue #54)
                         makeEditableFileComment();
                     });
@@ -50,9 +50,9 @@
         // add the title in the page name (see #324)
         document.title = $('#title_input').val() + ' - eLabFTW';
 
-        let type = $('#entityInfos').data('type');
-        let id = $('#entityInfos').data('id');
-        let confirmText = $('#entityInfos').data('confirm');
+        let type = $('#entityInfo').data('type');
+        let id = $('#entityInfo').data('id');
+        let confirmText = $('#entityInfo').data('confirm');
         let controller = 'experiments.php';
         let location = 'experiments.php';
         if (type != 'experiments') {
@@ -407,7 +407,7 @@
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
         // If the title is 'Untitled', clear it on focus
         $('#title_input').focus(function(){
-            if ($(this).val() === $('#entityInfos').data('untitled')) {
+            if ($(this).val() === $('#entityInfo').data('untitled')) {
                 $('#title_input').val('');
             }
         });
@@ -482,7 +482,7 @@
                     }
                 }
             },
-            language: $('#entityInfos').data('lang'),
+            language: $('#entityInfo').data('lang'),
             style_formats_merge: true,
             style_formats: [
                 {

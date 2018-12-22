@@ -9,6 +9,6 @@ function relativeMoment() {
 
 $(document).ready(function() {
     // i18n for moment.js
-    moment.locale($('#entityInfos').data('locale'));
+    moment.locale($('#entityInfo').data('locale'));
     relativeMoment();
 });

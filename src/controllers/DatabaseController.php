@@ -28,15 +28,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DatabaseController extends AbstractEntityController
 {
-    /** @var string $page the corresponding page */
-    private $page;
-
-    /** @var AbstractEntity $Entity instance of Entity */
-    protected $Entity;
-
-    /** @var array $categoryArr array of category (status or item type) */
-    private $categoryArr;
-
     /**
      * Constructor
      *

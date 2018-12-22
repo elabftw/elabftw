@@ -25,6 +25,16 @@ abstract class AbstractEntityController implements ControllerInterface
     /** @var App $App instance of App */
     protected $App;
 
+    /** @var AbstractEntity $Entity instance of AbstractEntity */
+    protected $Entity;
+
+    /** @var array $categoryArr array of category (status or item type) */
+    protected $categoryArr;
+
+    /** @var string $page the corresponding page */
+    protected $page;
+
+
     /**
      * Constructor
      *

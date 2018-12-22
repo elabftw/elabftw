@@ -29,15 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ExperimentsController extends AbstractEntityController
 {
-    /** @var AbstractEntity $Entity instance of AbstractEntity */
-    private $Entity;
-
-    /** @var array $categoryArr array of category (status or item type) */
-    private $categoryArr;
-
-    /** @var string $page the corresponding page */
-    private $page;
-
     /**
      * Constructor
      *

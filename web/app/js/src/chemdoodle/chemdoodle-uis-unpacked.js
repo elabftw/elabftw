@@ -21096,11 +21096,12 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
             if (page === 'database.php') {
                 type = 'items';
             }
-            $.post('app/controllers/EntityController.php', {
+            $.post('app/controllers/EntityAjaxController.php', {
                 addFromString: true,
                 fileType: 'mol',
                 type: type,
                 id: item,
+                csrf: $('#csrf').data('csrf'),
                 string: c.writeMOL(sketcher.molecules[0])
             }).done(function() {
                 $("#filesdiv").load("?mode=edit&id=" + item + " #filesdiv");

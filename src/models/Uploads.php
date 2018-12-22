@@ -42,6 +42,24 @@ class Uploads implements CrudInterface
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
     private const BIG_FILE_THRESHOLD = 5000000;
 
+    /** @var array MOL_EXTENSIONS list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html */
+    public const MOL_EXTENSIONS = array(
+        'cdjson',
+        'cif',
+        'cube',
+        'gro',
+        'json',
+        'mcif',
+        'mmtf',
+        'mol2',
+        'pdb',
+        'pqr',
+        'prmtop',
+        'sdf',
+        'vasp',
+        'xyz'
+    );
+
     /**
      * Constructor
      *
@@ -213,6 +231,7 @@ class Uploads implements CrudInterface
 
         // final sql
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $this->makeThumb($fullPath);
     }
 
     /**
@@ -233,6 +252,7 @@ class Uploads implements CrudInterface
         $this->moveFile($filePath, $fullPath);
 
         $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
+        $this->makeThumb($fullPath);
     }
 
     /**
@@ -333,15 +353,21 @@ class Uploads implements CrudInterface
     /**
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      *
-     * @param string $src Path to the original file
-     * @param string $dest Path to the place to save the thumbnail
-     * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
+     * @param string $src Full path to the original file
      * @return bool
      */
-    public function makeThumb(string $src, string $dest, int $desiredWidth): bool
+    public function makeThumb(string $src): bool
     {
+        $dest = $src . '_th.jpg';
+        $desiredWidth = 100;
+
+        if (\is_readable($src) === false) {
+            throw new FilesystemErrorException("ERROR: file not found! (" . \substr($src, 0, 42) . "…)");
+        }
+
         // we don't want to work on too big images
-        if (filesize($src) > self::BIG_FILE_THRESHOLD) {
+        // and we don't want to do it again if it exists already
+        if (filesize($src) > self::BIG_FILE_THRESHOLD || \file_exists($dest)) {
             return false;
         }
 
@@ -349,7 +375,7 @@ class Uploads implements CrudInterface
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $src);
 
-        if (extension_loaded('gmagick')) {
+        if (\extension_loaded('gmagick')) {
             // try first with gmagick lib
 
             // do some sane white-listing. In theory, gmagick handles almost all image formats,
@@ -366,21 +392,21 @@ class Uploads implements CrudInterface
                                 'application/pdf',
                                 'application/postscript');
 
-            if (\in_array($mime, $allowed_mime, true)) {
-                // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files
-                // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
-                // works in those cases
-                if ($mime === 'application/pdf' || $mime === 'application/postscript') {
-                    $src .= '[0]';
-                }
-                // fail silently if thumbnail generation does not work to keep file upload field functional
-                // originally introduced due to issue #415.
-                try {
-                    $image = new Gmagick($src);
-                } catch (Exception $e) {
-                    return false;
-                }
-            } else {
+            if (!\in_array($mime, $allowed_mime, true)) {
+                return false;
+            }
+
+            // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files
+            // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
+            // works in those cases
+            if ($mime === 'application/pdf' || $mime === 'application/postscript') {
+                $src .= '[0]';
+            }
+            // fail silently if thumbnail generation does not work to keep file upload field functional
+            // originally introduced due to issue #415.
+            try {
+                $image = new Gmagick($src);
+            } catch (Exception $e) {
                 return false;
             }
             // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
@@ -447,13 +473,82 @@ class Uploads implements CrudInterface
         }
         $fullPath = $this->uploadsPath . $upload['long_name'];
         // check user is same as the previously uploaded file
-        if ((int) $upload['userid'] !== $this->Entity->Users->userData['userid']) {
+        if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
             throw new IllegalActionException('User tried to replace an upload of another user.');
         }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        $thumbPath = $fullPath . '_th.jpg';
-        $this->makeThumb($fullPath, $thumbPath, 100);
+        $this->makeThumb($fullPath);
     }
+
+    /**
+     * Get the correct class for icon from the extension
+     *
+     * @param string $ext Extension of the file
+     * @return string Class of the fa icon
+     */
+    public function getIconFromExtension(string $ext): string
+    {
+        switch ($ext) {
+            // ARCHIVE
+            case 'zip':
+            case 'rar':
+            case 'xz':
+            case 'gz':
+            case 'tgz':
+            case '7z':
+            case 'bz2':
+            case 'tar':
+                return 'fa-file-archive';
+
+            // CODE
+            case 'py':
+            case 'jupyter':
+            case 'js':
+            case 'm':
+            case 'r':
+            case 'R':
+                return 'fa-file-code';
+
+            // EXCEL
+            case 'xls':
+            case 'xlsx':
+            case 'ods':
+            case 'csv':
+                return 'fa-file-excel';
+
+            // POWERPOINT
+            case 'ppt':
+            case 'pptx':
+            case 'pps':
+            case 'ppsx':
+            case 'odp':
+                return 'fa-file-powerpoint';
+
+            // VIDEO
+            case 'mov':
+            case 'avi':
+            case 'mp4':
+            case 'wmv':
+            case 'mpeg':
+            case 'flv':
+                return 'fa-file-video';
+
+            // WORD
+            case 'doc':
+            case 'docx':
+            case 'odt':
+                return 'fa-file-word';
+
+            default:
+                return 'fa-file';
+        }
+    }
+
+    public function getFileSize(string $filePath): int
+    {
+        return (int) \filesize($this->uploadsPath . $filePath);
+    }
+
     /**
      * Destroy an upload
      *

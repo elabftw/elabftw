@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Experiments;
 use Elabftw\Elabftw\AbstractEntity;
 use Elabftw\Elabftw\Status;
 use Elabftw\Elabftw\Revisions;
-use Elabftw\Elabftw\UploadsView;
 use Elabftw\Elabftw\TeamGroups;
 use Elabftw\Elabftw\Templates;
 use Elabftw\Elabftw\Tools;
@@ -74,9 +73,6 @@ class ExperimentsController extends AbstractEntityController
         // COMMENTS
         $commentsArr = $this->Entity->Comments->readAll();
 
-        // UPLOADS
-        $UploadsView = new UploadsView($this->Entity->Uploads);
-
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
@@ -86,7 +82,6 @@ class ExperimentsController extends AbstractEntityController
         $template = 'view.html';
         $renderArr = array(
             'Entity' => $this->Entity,
-            'Uv' => $UploadsView,
             'linksArr' => $linksArr,
             'revNum' => $revNum,
             'stepsArr' => $stepsArr,
@@ -121,9 +116,6 @@ class ExperimentsController extends AbstractEntityController
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
 
-        // UPLOADS
-        $UploadsView = new UploadsView($this->Entity->Uploads);
-
         // TEAM GROUPS
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $visibilityArr = $TeamGroups->getVisibilityList();
@@ -138,7 +130,6 @@ class ExperimentsController extends AbstractEntityController
 
         $renderArr = array(
             'Entity' => $this->Entity,
-            'Uv' => $UploadsView,
             'categoryArr' => $this->categoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang']),
             'linksArr' => $linksArr,

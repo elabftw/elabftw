@@ -14,7 +14,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Elabftw\Database;
 use Elabftw\Elabftw\AbstractEntity;
 use Elabftw\Elabftw\Revisions;
-use Elabftw\Elabftw\UploadsView;
 use Elabftw\Elabftw\ItemsTypes;
 use Elabftw\Elabftw\TeamGroups;
 use Elabftw\Elabftw\Tools;
@@ -65,8 +64,6 @@ class DatabaseController extends AbstractEntityController
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
 
-        $UploadsView = new UploadsView($this->Entity->Uploads);
-
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
@@ -78,7 +75,6 @@ class DatabaseController extends AbstractEntityController
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
-            'Uv' => $UploadsView,
             'commentsArr' => $commentsArr,
             'mode' => 'view',
             'revNum' => $revNum
@@ -109,7 +105,6 @@ class DatabaseController extends AbstractEntityController
         $ItemsTypes = new ItemsTypes($this->Entity->Users);
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
-        $UploadsView = new UploadsView($this->Entity->Uploads);
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $visibilityArr = $TeamGroups->getVisibilityList();
 
@@ -118,7 +113,6 @@ class DatabaseController extends AbstractEntityController
         $renderArr = array(
             'Entity' => $this->Entity,
             'Categories' => $ItemsTypes,
-            'Uv' => $UploadsView,
             'categoryArr' => $this->categoryArr,
             'mode' => 'edit',
             'maxUploadSize' => Tools::getMaxUploadSize(),

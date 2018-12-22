@@ -23,6 +23,7 @@
                 formData.append('upload', true);
                 formData.append('id', $('#entityInfos').data('id'));
                 formData.append('type', $('#entityInfos').data('type'));
+                formData.append('csrf', $('#csrf').data('csrf'));
             });
 
             // once it is done

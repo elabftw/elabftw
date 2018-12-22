@@ -184,7 +184,8 @@ function makeEditableFileComment() {
             type: $(this).data('type'),
             comment : value,
             comment_id : $(this).attr('id'),
-            id: $(this).data('itemid')
+            id: $(this).data('itemid'),
+            csrf: $('#csrf').data('csrf')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');

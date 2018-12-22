@@ -52,7 +52,7 @@
                         item_id: id,
                         type: type
                     }).done(function () {
-                        $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
+                        $('#tags_div').load('?mode=edit&id=' + id + ' #tags_div');
                         // clear input field
                         $('#createTagInput').val('');
                     });

@@ -38,7 +38,7 @@ try {
     $id = 1;
 
     if ($Request->request->has('item_id')) {
-        $id = $Request->request->get('item_id');
+        $id = (int) $Request->request->get('item_id');
     }
 
     if ($Request->request->get('type') === 'experiments' ||

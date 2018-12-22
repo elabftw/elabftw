@@ -11,15 +11,17 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-try {
-    require_once 'app/init.inc.php';
+require_once 'app/init.inc.php';
 
-    $Response = new RedirectResponse("experiments.php");
+$Response = new RedirectResponse("experiments.php");
+
+try {
 
     if ($Request->query->has('acs')) {
 
@@ -43,7 +45,7 @@ try {
         }
 
         if (!$SamlAuth->isAuthenticated()) {
-            throw new Exception('Not authenticated!');
+            throw new ImproperActionException('Not authenticated!');
         }
 
         $Session->set('samlUserdata', $SamlAuth->getAttributes());
@@ -56,7 +58,7 @@ try {
         }
 
         if ($email === null) {
-            throw new Exception("Could not find email in response from IDP! Aborting.");
+            throw new ImproperActionException("Could not find email in response from IDP! Aborting.");
         }
 
         if (!$App->Users->Auth->loginFromSaml($email)) {
@@ -68,7 +70,7 @@ try {
             $teamAttribute = $Saml->Config->configArr['saml_team'];
             // we didn't receive any team attribute for some reason
             if (empty($teamAttribute)) {
-                throw new Exception('Team attribute is empty!');
+                throw new ImproperActionException('Team attribute is empty!');
             }
             $team = $Session->get('samlUserdata')[$teamAttribute];
             if (is_array($team)) {
@@ -92,15 +94,23 @@ try {
             $App->Users->create($email, $teamId, $firstname, $lastname);
             // ok now the user is created, try logging in again
             if (!$App->Users->Auth->loginFromSaml($email)) {
-                throw new Exception("Not authenticated!");
+                throw new ImproperActionException("Not authenticated!");
             }
         }
 
     }
 
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
+    $Response = new Response();
+    $Response->prepare($Request);
+    $Response->setContent($App->render($template, $renderArr));
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array('Exception' => $e));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));

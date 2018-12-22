@@ -44,16 +44,14 @@ try {
         throw new ImproperActionException(_('A mandatory field is missing!'));
     }
 
-    // Check whether the query was successful or not
-    if (!$App->Users->create(
+    // Create user
+    $App->Users->create(
         $Request->request->get('email'),
-        $Request->request->get('team'),
+        (int) $Request->request->get('team'),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
         $Request->request->get('password')
-    )) {
-        throw new ImproperActionException('Failed inserting new account in SQL!');
-    }
+    );
 
     if ($App->Users->needValidation) {
         $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.'));
@@ -74,16 +72,18 @@ try {
 
 } catch (ImproperActionException $e) {
     // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->__toString());
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '../../register.php';
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->__toString())));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
     $location = '../../register.php';
 
 } catch (Exception $e) {
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+    // log error and show general error message
+    $App->Log->error('', array('Exception' => $e));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
     $location = '../../register.php';
 
 } finally {

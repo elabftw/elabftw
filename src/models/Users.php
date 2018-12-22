@@ -78,9 +78,9 @@ class Users
      * @param string $firstname
      * @param string $lastname
      * @param string $password
-     * @return bool
+     * @return void
      */
-    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): bool
+    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): void
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
@@ -153,8 +153,6 @@ class Users
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
-
-        return true;
     }
 
     /**

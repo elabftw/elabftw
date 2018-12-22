@@ -102,7 +102,7 @@ final class MakeThumbnail
         // if pdf or postscript, generate thumbnail using the first page (index 0) do the same for postscript files
         // sometimes eps images will be identified as application/postscript as well, but thumbnail generation still
         // works in those cases
-        if ($mime === 'application/pdf' || $mime === 'application/postscript') {
+        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript') {
             $this->filePath .= '[0]';
         }
         // fail silently if thumbnail generation does not work to keep file upload field functional

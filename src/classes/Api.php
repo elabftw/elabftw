@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Api
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -212,11 +210,8 @@ class Api
     {
         $this->Entity->canOrExplode('write');
 
-        if ($this->Entity->update($title, $date, $body)) {
-            return array('result' => 'success');
-        }
-
-        return array('error' => Tools::error());
+        $this->Entity->update($title, $date, $body);
+        return array('result' => 'success');
     }
 
     /**

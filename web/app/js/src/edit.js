@@ -1,6 +1,4 @@
 /**
- * edit.js - for the ?mode=edit
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -14,15 +12,16 @@
     // config for dropzone, id is camelCased.
     Dropzone.options.elabftwDropzone = {
         // i18n message to user
-        dictDefaultMessage: $('#entityInfos').data('upmsg'),
-        maxFilesize: $('#entityInfos').data('maxsize'), // MB
+        dictDefaultMessage: $('#entityInfo').data('upmsg'),
+        maxFilesize: $('#entityInfo').data('maxsize'), // MB
         init: function() {
 
             // add additionnal parameters (id and type)
             this.on('sending', function(file, xhr, formData) {
                 formData.append('upload', true);
-                formData.append('id', $('#entityInfos').data('id'));
-                formData.append('type', $('#entityInfos').data('type'));
+                formData.append('id', $('#entityInfo').data('id'));
+                formData.append('type', $('#entityInfo').data('type'));
+                formData.append('csrf', $('#csrf').data('csrf'));
             });
 
             // once it is done
@@ -36,7 +35,7 @@
                 }
                 // reload the #filesdiv once the file is uploaded
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                    $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
+                    $('#filesdiv').load('?mode=edit&id=' + $('#entityInfo').data('id') + ' #filesdiv', function() {
                         // make the comment zone editable (fix issue #54)
                         makeEditableFileComment();
                     });
@@ -49,13 +48,13 @@
         // add the title in the page name (see #324)
         document.title = $('#title_input').val() + ' - eLabFTW';
 
-        let type = $('#entityInfos').data('type');
-        let id = $('#entityInfos').data('id');
-        let confirmText = $('#entityInfos').data('confirm');
-        let controller = 'app/controllers/ExperimentsController.php';
+        let type = $('#entityInfo').data('type');
+        let id = $('#entityInfo').data('id');
+        let confirmText = $('#entityInfo').data('confirm');
+        let controller = 'experiments.php';
         let location = 'experiments.php';
         if (type != 'experiments') {
-            controller = 'app/controllers/DatabaseController.php';
+            controller = 'database.php';
             location = 'database.php';
         }
 
@@ -83,7 +82,7 @@
 
         // RECOVER YES
         $(document).on('click', '.recover-yes', function() {
-            $.post('app/controllers/EntityController.php', {
+            $.post('app/controllers/EntityAjaxController.php', {
                 quickSave: true,
                 type : type,
                 id : id,
@@ -112,7 +111,7 @@
             destroy() {
                 if (confirm(confirmText)) {
                     if (type === 'items') {
-                        controller = 'app/controllers/EntityController.php';
+                        controller = 'app/controllers/EntityAjaxController.php';
                     }
                     $.post(controller, {
                         destroy: true,
@@ -175,7 +174,7 @@
         class Star {
 
             constructor() {
-                this.controller = 'app/controllers/DatabaseController.php';
+                this.controller = 'database.php';
             }
 
             update(rating) {
@@ -306,7 +305,7 @@
                     response(cache[term]);
                     return;
                 }
-                $.getJSON("app/controllers/ExperimentsController.php", request, function(data, status, xhr) {
+                $.getJSON("app/controllers/ExperimentsAjaxController.php", request, function(data, status, xhr) {
                     cache[term] = data;
                     response(data);
                 });
@@ -324,7 +323,7 @@
         // VISIBILITY SELECT
         $(document).on('change', '#visibility_select', function() {
             const visibility = $(this).val();
-            $.post("app/controllers/EntityController.php", {
+            $.post("app/controllers/EntityAjaxController.php", {
                 updateVisibility: true,
                 id: id,
                 type: type,
@@ -341,11 +340,12 @@
         // STATUS SELECT
         $(document).on('change', '#category_select', function() {
             const categoryId = $(this).val();
-            $.post("app/controllers/EntityController.php", {
+            $.post("app/controllers/EntityAjaxController.php", {
                 updateCategory: true,
                 id: id,
                 type: type,
-                categoryId : categoryId
+                categoryId : categoryId,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -370,6 +370,16 @@
         function doneTyping () {
             quickSave(type, id);
         }
+
+        // SWITCH EDITOR
+        $(document).on('click', '.switchEditor', function() {
+            let currentEditor = $(this).data('editor');
+            if (currentEditor === 'md') {
+                insertParamAndReload('editor', 'tiny');
+            } else {
+                insertParamAndReload('editor', 'md');
+            }
+        });
 
         // DISPLAY MARKDOWN EDITOR
         if ($('#body_area').hasClass('markdown-textarea')) {
@@ -405,7 +415,7 @@
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
         // If the title is 'Untitled', clear it on focus
         $('#title_input').focus(function(){
-            if ($(this).val() === $('#entityInfos').data('untitled')) {
+            if ($(this).val() === $('#entityInfo').data('untitled')) {
                 $('#title_input').val('');
             }
         });
@@ -466,7 +476,7 @@
                 delimiter: ['#', '$'],
                 // get the source from json with get request
                 source: function (query, process, delimiter) {
-                    let url = "app/controllers/EntityController.php?mention=1&term=" + query;
+                    let url = "app/controllers/EntityAjaxController.php?mention=1&term=" + query;
                     if (delimiter === '#') {
                         $.getJSON(url, function(data, status, xhr) {
                             process(data);
@@ -480,7 +490,7 @@
                     }
                 }
             },
-            language: $('#entityInfos').data('lang'),
+            language: $('#entityInfo').data('lang'),
             style_formats_merge: true,
             style_formats: [
                 {

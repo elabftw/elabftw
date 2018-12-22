@@ -34,7 +34,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 44;
+    private const REQUIRED_SCHEMA = 45;
 
     /**
      * Init Update with Config and Db
@@ -113,6 +113,11 @@ class Update
             $this->schema44();
             $this->updateSchema(44);
         }
+        if ($current_schema < 45) {
+            // 20181219 v2.1.0
+            $this->schema45();
+            $this->updateSchema(45);
+        }
         // place new schema functions above this comment
 
         $this->cleanTmp();
@@ -150,9 +155,7 @@ class Update
     private function updateSchema(int $schema): void
     {
         $config_arr = array('schema' => $schema);
-        if (!$this->Config->update($config_arr)) {
-            throw new Exception('Failed at updating the schema number to: ' . $schema);
-        }
+        $this->Config->update($config_arr);
     }
 
     /**
@@ -377,6 +380,20 @@ class Update
         $sql = "UPDATE items SET `locked` = '0' WHERE `locked` IS NULL;";
         if (!$this->Db->q($sql)) {
             throw new Exception('Problem cleaning up locked values (schema 44)!');
+        }
+    }
+
+    /**
+     * Add active attribute to IDPs
+     *
+     * @throws Exception
+     * @return void
+     */
+    private function schema45(): void
+    {
+        $sql = "ALTER TABLE `idps` ADD `active` TINYINT(1) NOT NULL DEFAULT '0';";
+        if (!$this->Db->q($sql)) {
+            throw new Exception('Problem altering idps table (schema 45)!');
         }
     }
 }

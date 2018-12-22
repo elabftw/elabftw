@@ -2,35 +2,23 @@
 
 {% block body %}
 <!-- UNVALIDATED USERS BLOCK -->
-{% if unvalidatedUsersArr|length > 0 %}
-    <form method='post' action='app/controllers/UsersController.php'>
-        <input type='hidden' name='usersValidate' value='true' />
-        {{ FormKey.getFormkey|raw }}
+{% if unvalidatedUsersArr %}
         <div class='box'>
-            {{ 'There are users waiting for validation of their account:'|trans|msg('ko', false) }}
+            {{ 'There are users waiting for validation of their account:'|trans|msg('warning', false) }}
             <ul>
             {% for user in unvalidatedUsersArr %}
-                <li>
-                    <label>
-                    <input type='checkbox' name='usersValidateIdArr[]'
-                    value='{{ user.userid }}'> {{ user.fullname|raw }} ({{ user.email }})
-                    </label>
-                </li>
+            <li>{{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' {{ App.Csrf.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button></li>
             {% endfor %}
             </ul>
-            <div class='submitButtonDiv'>
-                <button class='button' type='submit'>{{ 'Validate'|trans }}</button>
-            </div>
         </div>
-    </form>
 {% endif %}
 
 <!-- ADMIN PANEL MAIN MENU -->
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Users'|trans }}</li>
-        <li class='tabhandle' id='tab3'>{{ 'Groups'|trans }}</li>
+        <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
+        <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
         <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
         <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
@@ -46,6 +34,7 @@
         <hr>
         <form method='post' action='app/controllers/AdminController.php' autocomplete='off'>
             <input type='hidden' value='true' name='teamsUpdateFull' />
+            {{ App.Csrf.getHiddenInput|raw }}
 
             <p>
                 <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
@@ -117,32 +106,8 @@
     </div>
 </div>
 
-<!-- TAB 2 USERS -->
+<!-- TAB 2 TEAM GROUPS -->
 <div class='divhandle' id='tab2div'>
-    {{ include('editusers.html') }}
-
-    <!-- DELETE USER -->
-    <ul class='list-group'>
-        <li class='list-group-item alert-danger mt-3'>
-            <h3 class='font-weight-bold'>{{ 'Delete an account'|trans }}</h3>
-            <form action='app/controllers/UsersController.php' method='post'>
-                <!-- form key -->
-                {{ FormKey.getFormkey|raw }}
-                <input type='hidden' name='usersDestroy' value='true' />
-                <label class='block' for='usersDestroyEmail'>{{ 'Type EMAIL ADDRESS of a member to delete this user and all their experiments/files forever:'|trans }}</label>
-                <input class='clean-form col-3-form' autocomplete='off' type='email' placeholder='Email Address' name='usersDestroyEmail' id='usersDestroyEmail' required />
-                <label class='block' for='usersDestroyPassword'>{{ 'Type your password:'|trans }}</label>
-                <input class='clean-form col-3-form' autocomplete='off' type='password' placeholder='Your Password' name='usersDestroyPassword' id='usersDestroyPassword' required />
-                <div class='text-center'>
-                    <button type='submitButtonDiv' class='button button-delete'>{{ 'Delete this user!'|trans }}</button>
-                </div>
-            </form>
-        </li>
-    </ul>
-</div>
-
-<!-- TAB 3 TEAM GROUPS -->
-<div class='divhandle' id='tab3div'>
     <div class='box tooltip-box'>
         <h3>{{ 'Manage Groups of Users'|trans }}</h3>
         <hr>
@@ -160,7 +125,7 @@
                     <!-- ADD USER TO GROUP -->
                     <label class='block' for='teamGroupUserAdd'>{{ 'Add this user'|trans }}</label>
                     <select class='clean-form col-3-form' id='teamGroupUserAdd'>
-                        {% for user in usersArr %}
+                        {% for user in allTeamUsersArr %}
                             <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
                         {% endfor %}
                     </select>
@@ -179,7 +144,7 @@
                     <!-- RM USER FROM GROUP -->
                     <label class='block' for='teamGroupUserRm'>{{ 'Remove this user'|trans }}</label>
                     <select class="clean-form col-3-form" id='teamGroupUserRm'>
-                        {% for user in usersArr %}
+                        {% for user in allTeamUsersArr %}
                             <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
                         {% endfor %}
                     </select>
@@ -205,7 +170,7 @@
                     <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
                     <ul class='group-list'>
                         {% for user in teamGroup.users %}
-                        <li>{{ user.fullname|raw }}</li>
+                            <li>{{ user.fullname|raw }}</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -214,6 +179,11 @@
     </div>
 </div>
 <!-- END TEAM GROUPS -->
+
+<!-- TAB 3 USERS -->
+<div class='divhandle' id='tab3div'>
+    {{ include('editusers.html') }}
+</div>
 
 <!-- TAB 4 STATUS -->
 <div class='divhandle' id='tab4div'>
@@ -235,7 +205,7 @@
     <div class='box'>
         <h3>{{ 'Edit an Existing Status'|trans }}</h3>
         <hr>
-        <ul class='draggable sortable sortable-status list-group' data-type='status'>
+        <ul class='draggable sortable sortable-status list-group' data-type='status' {{ App.Csrf.getDataAttr|raw }}>
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
@@ -333,7 +303,7 @@
             {{ commonTplBody|raw }}
         </textarea>
         <div class='submitButtonDiv'>
-            <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+            <button type='submit' class='button' {{ App.Csrf.getDataAttr|raw }}>{{ 'Save'|trans }}</button>
         </div>
     </div>
 </div>
@@ -358,6 +328,7 @@
 
         <div class='importBlock'>
             <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+                {{ App.Csrf.getHiddenInput|raw }}
                 <label class='block' for='uploader'>{{ '2. Select a CSV file to import:'|trans }}</label>
                 <input id='uploader' name='file' type='file' accept='.csv' />
                 <input name='type' type='hidden' value='csv' />
@@ -415,8 +386,14 @@
     </div>
 </div>
 
+<!-- CSRF token used by ajax post requests -->
+<div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
+
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
+<!--
 <script src='app/js/admin.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/admin.js?v={{ v }}'></script>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 <script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

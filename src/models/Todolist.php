@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
 /**
@@ -45,10 +46,10 @@ class Todolist implements CrudInterface
             VALUES(:body, :userid)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
 
-        if (!$req->execute()) {
-            throw new Exception('Error inserting todoitem!');
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
         return $this->Db->lastInsertId();
@@ -63,8 +64,10 @@ class Todolist implements CrudInterface
     {
         $sql = "SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->execute();
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -74,45 +77,51 @@ class Todolist implements CrudInterface
      *
      * @param int $id Id of the todoitem
      * @param string $body
-     * @return bool
+     * @return void
      */
-    public function update(int $id, string $body): bool
+    public function update(int $id, string $body): void
     {
         $sql = "UPDATE todolist SET body = :body WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Remove a todoitem
      *
      * @param int $id
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
         $sql = "DELETE FROM todolist WHERE id = :id AND userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Clear all todoitems from the todolist
      *
-     * @return bool
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
         $sql = "DELETE FROM todolist WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

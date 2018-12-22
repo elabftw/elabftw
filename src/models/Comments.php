@@ -12,9 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
+
 
 /**
  * All about the comments
@@ -59,11 +63,13 @@ class Comments implements CrudInterface
         $req->bindValue(':datetime', date('Y-m-d H:i:s'));
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->alertOwner();
 
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $this->Db->lastInsertId();
     }
@@ -86,8 +92,10 @@ class Comments implements CrudInterface
         // get the first and lastname of the commenter
         $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
-        $req->execute();
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $commenter = $req->fetch();
 
         // get email of the XP owner
@@ -99,7 +107,7 @@ class Comments implements CrudInterface
         $users = $req->fetch();
 
         // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $this->Entity->Users->userid) {
+        if ($users['userid'] === $this->Entity->Users->userData['userid']) {
             return 1;
         }
 
@@ -143,7 +151,9 @@ class Comments implements CrudInterface
             WHERE item_id = :id ORDER BY " . $this->Entity->type . "_comments.datetime ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         if ($req->rowCount() > 0) {
             return $req->fetchAll();
         }
@@ -156,14 +166,14 @@ class Comments implements CrudInterface
      *
      * @param string $comment New content for the comment
      * @param string $id id of the comment (comment_42)
-     * @return bool
+     * @return void
      */
-    public function update(string $comment, string $id): bool
+    public function update(string $comment, string $id): void
     {
         $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
         // check length
         if (\mb_strlen($comment) < 2) {
-            return false;
+            throw new ImproperActionException('Comment is too short!');
         }
 
         $exploded = \explode('_', $id);
@@ -175,38 +185,44 @@ class Comments implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':comment', $comment);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Destroy a comment
      *
      * @param int $id id of the comment
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Destroy all comments of an experiment
      *
-     * @return bool
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

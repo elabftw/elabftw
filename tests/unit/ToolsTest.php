@@ -83,15 +83,4 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($langsArr));
         $this->assertEquals('German', $langsArr['de_DE']);
     }
-
-    public function testGetIconFromExtension()
-    {
-        $this->assertEquals('fa-file-archive', Tools::getIconFromExtension('zip'));
-        $this->assertEquals('fa-file-code', Tools::getIconFromExtension('py'));
-        $this->assertEquals('fa-file-excel', Tools::getIconFromExtension('xls'));
-        $this->assertEquals('fa-file-video', Tools::getIconFromExtension('avi'));
-        $this->assertEquals('fa-file-powerpoint', Tools::getIconFromExtension('ppt'));
-        $this->assertEquals('fa-file-word', Tools::getIconFromExtension('docx'));
-        $this->assertEquals('fa-file', Tools::getIconFromExtension('elab'));
-    }
 }

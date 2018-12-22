@@ -26,16 +26,18 @@ try {
         throw new Exception(Tools::error(true));
     }
 
-    $TeamsView = new TeamsView(new Teams($App->Users));
+    $Teams = new Teams($App->Users);
+    $teamArr = $Teams->read();
+    $teamsStats = $Teams->getAllStats();
+
     $Database = new Database($App->Users);
     // we only want the bookable type of items
     $Database->bookableFilter = ' AND bookable = 1';
     $Scheduler = new Scheduler($Database);
 
-    $TagCloud = new TagCloud($App->Users->userData['team']);
+    $TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
     $itemsArr = $Database->read();
-    $teamArr = $TeamsView->Teams->read();
 
     $selectedItem = null;
     if ($Request->query->get('item')) {
@@ -54,11 +56,11 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'TagCloud' => $TagCloud,
-        'TeamsView' => $TeamsView,
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,
         'selectedItem' => $selectedItem,
         'teamArr' => $teamArr,
+        'teamsStats' => $teamsStats,
         'templatesArr' => $templatesArr,
         'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
     );

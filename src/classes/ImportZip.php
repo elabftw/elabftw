@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\ImproperActionException;
 use FilesystemIterator;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 
@@ -46,6 +45,7 @@ class ImportZip extends AbstractImport
      *
      * @param Users $users instance of Users
      * @param Request $request instance of Request
+     * @throws ImproperActionException
      * @return void
      */
     public function __construct(Users $users, Request $request)
@@ -55,7 +55,7 @@ class ImportZip extends AbstractImport
         // this is where we will extract the zip
         $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \bin2hex(\random_bytes(16));
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
-            throw new RuntimeException('Unable to create temporary folder! (' . $this->tmpPath . ')');
+            throw new ImproperActionException('Unable to create temporary folder! (' . $this->tmpPath . ')');
         }
 
         $this->openFile();
@@ -66,6 +66,7 @@ class ImportZip extends AbstractImport
     /**
      * We get all the info we need from the embedded .json file
      *
+     * @throws ImproperActionException
      * @return void
      */
     private function readJson(): void
@@ -73,7 +74,7 @@ class ImportZip extends AbstractImport
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         if ($content === false) {
-            throw new RuntimeException('Unable to read the json file!');
+            throw new ImproperActionException('Unable to read the json file!');
         }
         $this->json = json_decode($content, true);
         if (isset($this->json[0]['elabid'])) {
@@ -99,7 +100,7 @@ class ImportZip extends AbstractImport
      * The main SQL to create a new item with the title and body we have
      *
      * @param array $item the item to insert
-     * @throws Exception if SQL request failed
+     * @throws ImproperActionException
      * @return void
      */
     private function dbInsert($item): void
@@ -117,7 +118,7 @@ class ImportZip extends AbstractImport
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
         if ($this->type === 'items') {
-            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':type', $this->target, PDO::PARAM_INT);
         } else {
             $req->bindValue(':visibility', 'team');
@@ -128,7 +129,7 @@ class ImportZip extends AbstractImport
 
 
         if (!$req->execute()) {
-            throw new Exception('Cannot import in database!');
+            throw new ImproperActionException('Cannot import in database!');
         }
 
         $newItemId = $this->Db->lastInsertId();
@@ -198,7 +199,6 @@ class ImportZip extends AbstractImport
     /**
      * Extract the zip to the temporary folder
      *
-     * @throws Exception if it cannot open the zip
      * @return void
      */
     protected function openFile(): void

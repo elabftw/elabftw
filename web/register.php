@@ -10,6 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,10 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Register');
 
+$Response = new Response();
+$Response->prepare($Request);
+
 try {
     // Check if we're logged in
     if ($Session->has('auth') || $Session->has('anon')) {
-        throw new Exception(sprintf(
+        throw new ImproperActionException(sprintf(
             _('Please %slogout%s before you register another account.'),
             "<a style='alert-link' href='app/logout.php'>",
             "</a>"
@@ -32,7 +36,7 @@ try {
 
     // local register might be disabled
     if ($App->Config->configArr['local_register'] === '0') {
-        throw new Exception(_('No local account creation is allowed!'));
+        throw new ImproperActionException(_('No local account creation is allowed!'));
     }
 
     $Teams = new Teams($App->Users);
@@ -41,13 +45,19 @@ try {
     $template = 'register.html';
     $renderArr = array('teamsArr' => $teamsArr);
 
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
-} finally {
     $Response = new Response();
     $Response->prepare($Request);
+    $Response->setContent($App->render($template, $renderArr));
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array('Exception' => $e));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
+
+} finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();
 }

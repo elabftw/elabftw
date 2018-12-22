@@ -47,7 +47,7 @@
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
     "phpstan": "phpstan analyse -l 7 src",
     "psalm": "psalm -c=src/tools/psalm.xml",
-    "srcdoc": "phpDocumentor run -d src/classes -d src/models -d web/app/controllers -d src/views -t _srcdoc",
+    "srcdoc": "phpDocumentor run --cache-folder /tmp -i cache -i uploads -d src/classes -d src/exceptions -d src/interfaces -d src/models -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",
     "unit": "php vendor/bin/codecept run unit",
     "vulns": "snyk test"

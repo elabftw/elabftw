@@ -153,10 +153,13 @@ function makeEditableTodoitem(element) {
 
 // EDIT COMMENT ON experiment/database
 function makeEditableComment(element) {
-    $(element).editable('app/controllers/CommentsController.php', {
+    $(element).editable('app/controllers/CommentsAjaxController.php', {
         name: 'update',
         type : 'textarea',
-        submitdata: {type: $(element).data('type')},
+        submitdata: {
+            type: $(element).data('type'),
+            csrf: $('csrf').data('csrf')
+        },
         width: '80%',
         height: '200',
         tooltip : 'Click to edit',
@@ -176,12 +179,13 @@ function makeEditableComment(element) {
 // EDIT COMMENT ON UPLOAD
 function makeEditableFileComment() {
     $('.editable').editable(function(value, settings) {
-        $.post('app/controllers/EntityController.php', {
+        $.post('app/controllers/EntityAjaxController.php', {
             updateFileComment : true,
             type: $(this).data('type'),
             comment : value,
             comment_id : $(this).attr('id'),
-            id: $(this).data('itemid')
+            id: $(this).data('itemid'),
+            csrf: $('#csrf').data('csrf')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');

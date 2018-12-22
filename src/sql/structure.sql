@@ -400,6 +400,7 @@ CREATE TABLE IF NOT EXISTS `idps` (
   `slo_url` VARCHAR(255) NOT NULL,
   `slo_binding` VARCHAR(255) NOT NULL,
   `x509` text NOT NULL,
+  `active` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

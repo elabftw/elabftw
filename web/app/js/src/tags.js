@@ -10,12 +10,12 @@
 (function() {
     'use strict';
     $(document).ready(function() {
-        let id = $('#entityInfos').data('id');
-        let type = $('#entityInfos').data('type');
+        let id = $('#entityInfo').data('id');
+        let type = $('#entityInfo').data('type');
         if (type === undefined) {
             type = 'experiments_tpl';
         }
-        let confirmText = $('#entityInfos').data('confirm');
+        let confirmText = $('#entityInfo').data('confirm');
 
         class Tag {
 
@@ -52,7 +52,7 @@
                         item_id: id,
                         type: type
                     }).done(function () {
-                        $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
+                        $('#tags_div').load('?mode=edit&id=' + id + ' #tags_div');
                         // clear input field
                         $('#createTagInput').val('');
                     });

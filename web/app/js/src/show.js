@@ -14,7 +14,7 @@
 
         // CREATE EXPERIMENT
         key($('#shortcuts').data('create'), function() {
-            window.location.href = 'app/controllers/ExperimentsController.php?create=true';
+            window.location.href = 'experiments.php?create=true';
         });
 
         // the reset button

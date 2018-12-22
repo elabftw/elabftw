@@ -34,21 +34,22 @@
 
         // REPLACE UPLOAD
         // append a file form to the upload with type, upload id, and item id
-        $(document).on('click', '.replacer', function() {
-            $(this).append("<div><form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'><input type='hidden' name='replace' /><input type='hidden' name='upload_id' value='" + $(this).data('id') + "' /><input type='hidden' name='id' value='" + $(this).data('itemid') + "' /><input type='hidden' name='type' value='" + $(this).data('type') + "'><input type='file' style='display:inline' name='file' /><button type='submit' class='button'>OK</button></form></div>");
+        $(document).on('click', '.replaceUpload', function() {
+            $(this).append("<div><form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'><input type='hidden' name='replace' /><input type='hidden' name='upload_id' value='" + $(this).data('id') + "' /><input type='hidden' name='id' value='" + $(this).data('itemid') + "' /><input type='hidden' name='type' value='" + $(this).data('type') + "' /><input type='hidden' name='csrf' value='" + $('#csrf').data('csrf') + "' /><input type='file' style='display:inline' name='file' /><button type='submit' class='button'>OK</button></form></div>");
             // prevent multi click
-            $(this).removeClass('replacer');
+            $(this).removeClass('replaceUpload');
         });
 
         // DESTROY UPLOAD
         $(document).on('click', '.uploadsDestroy', function() {
             var itemid = $(this).data('itemid');
             if (confirm($(this).data('msg'))) {
-                $.post('app/controllers/EntityController.php', {
+                $.post('app/controllers/EntityAjaxController.php', {
                     uploadsDestroy: true,
                     upload_id: $(this).data('id'),
                     id: itemid,
-                    type: $(this).data('type')
+                    type: $(this).data('type'),
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

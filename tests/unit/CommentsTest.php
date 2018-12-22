@@ -1,6 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
@@ -36,18 +37,20 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Comments->Update('Updated', 'comment_1'), 1);
-        $this->assertFalse($this->Comments->Update('a', 'comment_1'), 1);
+        $this->Comments->Update('Updated', 'comment_1');
+        // too short comment
+        $this->expectException(ImproperActionException::class);
+        $this->Comments->Update('a', 'comment_1');
     }
 
     public function testDestroy()
     {
-        $this->assertTrue($this->Comments->destroy(1, 1));
+        $this->Comments->destroy(1);
     }
 
     public function testDestroyAll()
     {
-        $this->assertTrue($this->Comments->destroyAll());
+        $this->Comments->destroyAll();
         $this->assertTrue(empty($this->Comments->readAll()));
     }
 }

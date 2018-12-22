@@ -14,21 +14,22 @@
         // add the title in the page name (see #324)
         document.title = $('.title_view').text() + ' - eLabFTW';
 
-        var type = $('#entityInfos').data('type');
-        var id = $('#entityInfos').data('id');
-        var confirmText = $('#entityInfos').data('confirm');
+        var type = $('#entityInfo').data('type');
+        var id = $('#entityInfo').data('id');
+        var confirmText = $('#entityInfo').data('confirm');
 
         // EDIT
         key($('#shortcuts').data('edit'), function() {
-            window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
+            window.location.href = '?mode=edit&id=' + $('#entityInfo').data('id');
         });
 
         // TOGGLE LOCK
         $(document).on('click', '#lock', function() {
-            $.post("app/controllers/EntityController.php", {
+            $.post("app/controllers/EntityAjaxController.php", {
                 lock: true,
                 type: type,
-                id: id
+                id: id,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -46,18 +47,32 @@
         });
 
         // DECODE ASN1
-        $(document).on('click', '.decode-asn1', function() {
-            $.post('app/controllers/ExperimentsController.php', {
+        $(document).on('click', '.decodeAsn1', function() {
+            $.post('app/controllers/ExperimentsAjaxController.php', {
                 asn1: $(this).data('token'),
-                id: $(this).data('id')
+                id: $(this).data('id'),
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 $('#decodedDiv').html(data.msg);
             });
         });
 
+        // DUPLICATE
+        $(document).on('click', '.duplicateItem', function() {
+            $.post('app/controllers/EntityAjaxController.php', {
+                duplicate: true,
+                id: $(this).data('id'),
+                type: $('#entityInfo').data('type'),
+                csrf: $('#csrf').data('csrf')
+            }).done(function(data) {
+                window.location.replace('experiments.php?mode=edit&id=' + data.msg);
+            });
+        });
+
+
         // COMMENTS
         var Comments = {
-            controller: 'app/controllers/CommentsController.php',
+            controller: 'app/controllers/CommentsAjaxController.php',
             create: function() {
                 document.getElementById('commentsCreateButton').disabled = true;
                 const comment = $('#commentsCreateArea').val();
@@ -71,7 +86,8 @@
                 $.post(this.controller, {
                     create: true,
                     comment: comment,
-                    type: $('#entityInfos').data('type'),
+                    type: $('#entityInfo').data('type'),
+                    csrf: $('#csrf').data('csrf'),
                     id: id
                 }).done(function(data) {
                     if (data.res) {
@@ -88,7 +104,8 @@
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                     destroy: true,
-                    type: $('#entityInfos').data('type'),
+                    type: $('#entityInfo').data('type'),
+                    csrf: $('#csrf').data('csrf'),
                     id: comment
                 }).done(function(data) {
                     if (data.res) {
@@ -133,8 +150,9 @@
                 buttons: {
                     'Timestamp it': function() {
                         $('#confirmTimestampDiv').text($(this).data('wait'));
-                        $.post('app/controllers/ExperimentsController.php', {
+                        $.post('app/controllers/ExperimentsAjaxController.php', {
                             timestamp: true,
+                            csrf: $('#csrf').data('csrf'),
                             id: id
                         }).done(function (data) {
                             if (data.res) {

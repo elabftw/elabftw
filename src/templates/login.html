@@ -23,7 +23,7 @@
         <label class='block' for="password">{{ 'Password'|trans }}</label>
             <input class='login-area-input' id='password' name='password' type='password' required /><br>
             <!-- form key -->
-            {{ FormKey.getFormkey|raw }}
+            {{ App.Csrf.getHiddenInput|raw }}
         <input type='checkbox' checked name='rememberme' id='rememberme' />
         <label for='rememberme'>{{ 'Remember me'|trans }}</label>
         </p>
@@ -48,7 +48,7 @@
 
     {% endif %}
 
-    {% if idpsArr|length > 0 %}
+    {% if idpsArr %}
 
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
@@ -56,7 +56,9 @@
             <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
             <select name='idp_id' id='idp_login_select'>
                 {% for idp in idpsArr %}
+                {% if idp.active %}
                     <option value='{{ idp.id }}'>{{ idp.name }}</option>
+                {% endif %}
                 {% endfor %}
             </select>
             <button class='button' type='submit' name='submit'>Go</button>

@@ -58,26 +58,6 @@
             }
         };
 
-        // ARCHIVE USER
-        $(document).on('click', '.archive-user', function(e) {
-            // don't trigger the form
-            e.preventDefault();
-            // show alert
-            if(confirm('Are you sure you want to archive this user?')) {
-                $.post('app/controllers/UsersController.php', {
-                    usersArchive: true,
-                    userid: $(this).data('userid')
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                        window.location.replace('admin.php?tab=2');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        });
-
         // TEAM GROUP
         $(document).on('click', '#teamGroupCreateBtn', function() {
             TeamGroups.create();
@@ -93,6 +73,23 @@
 
         $(document).on('click', '.teamGroupDelete', function() {
             TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
+        });
+
+        // VALIDATE USERS
+        $(document).on('click', '.usersValidate', function() {
+            $(this).attr('disabled', 'disabled').text('Please wait…');
+            $.post('app/controllers/UsersAjaxController.php', {
+                usersValidate: true,
+                userid: $(this).data('userid'),
+                csrf: $('#csrf').data('csrf')
+            }).done(function(data) {
+                if (data.res) {
+                    notif(data.msg, 'ok');
+                    window.location.reload();
+                } else {
+                    notif(data.msg, 'ko');
+                }
+            });
         });
 
         // STATUS
@@ -166,7 +163,7 @@
 
         // ITEMSTYPES
         var ItemsTypes = {
-            controller: 'app/controllers/ItemsTypesController.php',
+            controller: 'app/controllers/ItemsTypesAjaxController.php',
             create: function() {
                 var name = $('#itemsTypesName').val();
                 var color = $('#itemsTypesColor').val();
@@ -250,8 +247,9 @@
         // COMMON TEMPLATE
         $('#commonTplTemplate').closest('div').find('.button').click(function() {
             var template = tinymce.get('commonTplTemplate').getContent();
-            $.post('app/controllers/AdminController.php', {
-                commonTplUpdate: template
+            $.post('app/controllers/AdminAjaxController.php', {
+                commonTplUpdate: template,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -285,6 +283,8 @@
             name : 'teamGroupUpdateName',
             submit : 'Save',
             cancel : 'Cancel',
+            cancelcssclass : 'button button-delete',
+            submitcssclass : 'button',
             style : 'display:inline'
 
         });
@@ -305,10 +305,11 @@
                 // send the orders as an array
                 var ordering = $(elements).sortable("toArray");
 
-                $.post("app/controllers/AdminController.php", {
+                $.post("app/controllers/AdminAjaxController.php", {
                     'updateOrdering': true,
                     'table': table,
-                    'ordering': ordering
+                    'ordering': ordering,
+                    'csrf': $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

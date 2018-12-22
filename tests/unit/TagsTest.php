@@ -34,7 +34,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Experiments->Tags->update('my tag', 'new tag'));
+        $this->Experiments->Tags->update('my tag', 'new tag');
     }
     public function testDeduplicate()
     {
@@ -43,7 +43,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     }
     public function testUnreference()
     {
-        $this->assertTrue($this->Experiments->Tags->unreference(1));
+        $this->Experiments->Tags->unreference(1);
     }
 
     public function testGetList()
@@ -55,6 +55,6 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy()
     {
         $id = $this->Experiments->Tags->create('destroy me');
-        $this->assertTrue($this->Experiments->Tags->destroy($id));
+        $this->Experiments->Tags->destroy($id);
     }
 }

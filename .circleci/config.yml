@@ -38,9 +38,9 @@ jobs:
         - v1-dep-
     # This is based on your 1.0 configuration file or project settings
     - run: sudo apt-get update
-    - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev libmcrypt-dev
+    - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev
     - run: sudo service mysql start
-    - run: sudo docker-php-ext-install gd gettext mcrypt zip pdo_mysql
+    - run: sudo docker-php-ext-install gd gettext zip pdo_mysql
     - run: yes|sudo pecl install gmagick-2.0.4RC1
     - run: sudo docker-php-ext-enable gmagick
     # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.

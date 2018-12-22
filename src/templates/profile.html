@@ -12,10 +12,10 @@
         {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
         <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
         <div id='api_div'><h4>{{ 'API key'|trans }}</h4>
-            {% if App.Users.userData.api_key|length > 0 %}
-            <input value='{{ App.Users.userData.api_key }}' />
+            {% if App.Users.userData.api_key %}
+            <input type='text' value='{{ App.Users.userData.api_key }}' readonly />
             {% endif %}
-            <button class='button generateApiKey'>{% trans %}Generate an API Key{% endtrans %}</button></p>
+            <button class='button generateApiKey' {{ App.Csrf.getDataAttr|raw }}>{{ 'Generate an API Key'|trans }}</button>
         </div>
     </div>
 </section>
@@ -44,5 +44,8 @@
 </section>
 
 <!--script src='https://www.google.com/jsapi'></script-->
+<!--
 <script src='app/js/profile.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/profile.js?v={{ v }}'></script>
 {% endblock body %}

@@ -15,7 +15,6 @@ run.config:
             - gd
             - gettext
             - mbstring
-            - mcrypt
             - pdo
             - pdo_mysql
             - session

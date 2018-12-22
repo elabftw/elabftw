@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Interfaces\CrudInterface;
+
 /**
  * A category is a status for experiments and item type for db item
  */

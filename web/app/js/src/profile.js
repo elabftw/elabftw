@@ -30,8 +30,10 @@
     $(document).ready(function() {
         // GENERATE API KEY
         $(document).on('click', '.generateApiKey', function() {
-            $.post('app/controllers/UsersController.php', {
-                generateApiKey: true
+            $.post('app/controllers/UsersAjaxController.php', {
+                generateApiKey: true,
+                fkname: $(this).data('fkname'),
+                fkvalue: $(this).data('fkvalue')
             }).done(function(data) {
                 $("#api_div").load("profile.php #api_div");
                 if (data.res) {

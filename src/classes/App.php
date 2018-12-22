@@ -16,7 +16,7 @@ use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * This is a super class holding various global objects
@@ -26,7 +26,7 @@ class App
     /** @var Request $Request the request */
     public $Request;
 
-    /** @var Session $Session the session */
+    /** @var SessionInterface $Session the session */
     public $Session;
 
     /** @var Config $Config the config stored in sql */
@@ -34,6 +34,9 @@ class App
 
     /** @var Logger $Log instance of Logger */
     public $Log;
+
+    /** @var Csrf $Csrf instance of Csrf */
+    public $Csrf;
 
     /** @var Users $Users instance of Users */
     public $Users;
@@ -62,16 +65,17 @@ class App
     /**
      * Constructor
      *
-     * @param Session $session
+     * @param SessionInterface $session
      * @param Request $request
      * @param Config $config
      * @param Logger $log
      */
     public function __construct(
-        Session $session,
+        SessionInterface $session,
         Request $request,
         Config $config,
-        Logger $log
+        Logger $log,
+        Csrf $csrf
     ) {
         $this->Request = $request;
         $this->Config = $config;
@@ -81,6 +85,7 @@ class App
 
         $this->Db = Db::getConnection();
         $this->Session = $session;
+        $this->Csrf = $csrf;
         $this->Twig = $this->getTwig();
 
         $this->ok = $this->Session->getFlashBag()->get('ok', array());
@@ -109,18 +114,25 @@ class App
         $TwigEnvironment = new \Twig_Environment($loader, $options);
 
         // custom twig filters
+        //
+        // WARNING: MIRROR MODIFS TO SRC/TOOLS/GENERATE-CACHE.PHP!!
+        //
         $filterOptions = array('is_safe' => array('html'));
         $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
         $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
         $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
         $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
+        $extFilter = new \Twig_SimpleFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
+        $filesizeFilter = new \Twig_SimpleFilter('filesize', '\filesize', $filterOptions);
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($dateFilter);
         $TwigEnvironment->addFilter($mdFilter);
         $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
+        $TwigEnvironment->addFilter($extFilter);
+        $TwigEnvironment->addFilter($filesizeFilter);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
@@ -179,7 +191,7 @@ class App
     public function getLangForHtmlAttribute(): string
     {
         $lang = 'en';
-        if ($this->Users->userid) {
+        if (isset($this->Users->userData['lang'])) {
             $lang = \substr($this->Users->userData['lang'], 0, 2);
         }
 

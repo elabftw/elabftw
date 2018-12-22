@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\CrudInterface
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,7 +8,7 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Interfaces;
 
 /**
  * Interface for things like Steps, Links, Comments
@@ -31,12 +29,12 @@ interface CrudInterface
      *
      * @return bool
      */
-    public function destroy(int $id): bool;
+    public function destroy(int $id): void;
 
     /**
      * Detroy all the things
      *
      * @return bool
      */
-    public function destroyAll(): bool;
+    public function destroyAll(): void;
 }

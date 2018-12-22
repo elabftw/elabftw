@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
+use RuntimeException;
 
 /**
  * Users
@@ -34,9 +38,6 @@ class Users
 
     /** @var array $userData what you get when you read() */
     public $userData = array();
-
-    /** @var int|null $userid our userid */
-    public $userid;
 
     /**
      * Constructor
@@ -64,10 +65,9 @@ class Users
     public function setId(int $userid): void
     {
         if (Tools::checkId($userid) === false) {
-            throw new Exception('Bad userid');
+            throw new ImproperActionException('Bad userid');
         }
-        $this->userid = $userid;
-        $this->userData = $this->read($this->userid);
+        $this->userData = $this->read($userid);
     }
 
     /**
@@ -78,13 +78,13 @@ class Users
      * @param string $firstname
      * @param string $lastname
      * @param string $password
-     * @return bool
+     * @return void
      */
-    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): bool
+    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): void
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
-            throw new Exception(_('Someone is already using that email address!'));
+            throw new ImproperActionException(_('Someone is already using that email address!'));
         }
 
         if ($password) {
@@ -143,8 +143,8 @@ class Users
         $req->bindParam(':usergroup', $group);
         $req->bindValue(':lang', $this->Config->configArr['lang']);
 
-        if (!$req->execute()) {
-            throw new Exception('Error inserting user in SQL!');
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
         if ($validated == '0') {
@@ -153,8 +153,6 @@ class Users
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
-
-        return true;
     }
 
     /**
@@ -202,7 +200,9 @@ class Users
         $sql = "SELECT email FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return (bool) $req->rowCount();
     }
@@ -216,7 +216,9 @@ class Users
     {
         $sql = "SELECT COUNT(*) AS usernb FROM users";
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $test = $req->fetch();
 
         return $test['usernb'] === '0';
@@ -233,7 +235,9 @@ class Users
         $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $test = $req->fetch();
 
         return $test['usernb'] === '0';
@@ -253,26 +257,67 @@ class Users
             WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new IllegalActionException('User not found.');
+        }
 
-        return $req->fetch();
+        return $res;
     }
 
     /**
      * Select by email
      *
      * @param string $email
-     * @return array
+     * @return void
      */
-    public function readFromEmail(string $email): array
+    public function populateFromEmail(string $email): void
     {
-        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname, team FROM users
-            WHERE email = :email AND archived = 0";
+        $sql = "SELECT userid
+            FROM users
+            WHERE email = :email AND archived = 0 LIMIT 1";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            throw new ImproperActionException(_('Email not found in database!'));
+        }
+        $this->setId((int) $res);
+    }
 
-        return $req->fetch();
+    /**
+     * Search users based on query. It searches in email, firstname or lastname
+     *
+     * @param string $query
+     * @return array
+     */
+    public function readFromQuery(string $query, $teamFilter = false): array
+    {
+        $whereTeam = '';
+        if ($teamFilter) {
+            $whereTeam = 'users.team = ' . $this->userData['team'] . ' AND ';
+        }
+
+        $sql = "SELECT users.userid,
+            users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
+            teams.team_name as teamname
+            FROM users
+            LEFT JOIN teams ON (users.team = teams.team_id)
+            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':query', '%' . $query . '%');
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        return $req->fetchAll();
     }
 
     /**
@@ -285,16 +330,17 @@ class Users
         $sql = "SELECT userid FROM users WHERE api_key = :key AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':key', $apiKey);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         $userid = (int) $req->fetchColumn();
 
         if (empty($userid)) {
-            throw new Exception('Invalid API key.');
+            throw new ImproperActionException('Invalid API key.');
         }
 
         $this->userData = $this->read($userid);
-        $this->userid = $this->userData['userid'];
     }
 
     /**
@@ -319,24 +365,9 @@ class Users
             $req->bindValue(':validated', $validated);
         }
         $req->bindValue(':team', $this->userData['team']);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
-     * Get all users
-     *
-     * @return array
-     */
-    public function readAll(): array
-    {
-        $sql = "SELECT users.*, teams.team_name AS teamname
-            FROM users
-            LEFT JOIN teams ON (users.team = teams.team_id)
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
-        $req = $this->Db->prepare($sql);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
@@ -350,34 +381,27 @@ class Users
     {
         $sql = "SELECT email FROM users WHERE validated = 1 AND archived = 0";
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetchAll();
     }
 
     /**
-     * Update user
+     * Update user from the editusers template
      *
      * @param array $params POST
-     * @throws Exception
-     * @return bool
+     * @return void
      */
-    public function update(array $params): bool
+    public function update(array $params): void
     {
-        $userid = Tools::checkId((int) $params['userid']);
-
-        if ($userid === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-
-        $Users = new Users($userid);
-
         $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
         $team = Tools::checkId((int) $params['team']);
-        if ($this->hasExperiments($userid) && $team !== (int) $Users->userData['team']) {
-            throw new Exception('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
+        if ($this->hasExperiments((int) $this->userData['userid']) && $team !== (int) $this->userData['team']) {
+            throw new ImproperActionException('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
         }
 
         // check email is not already in db
@@ -390,8 +414,8 @@ class Users
 
         // now make sure the new email is not already used by someone
         // it's okay if it's the same email as before though
-        if (\in_array($email, $emailsArr, true) && $email !== $Users->userData['email']) {
-            throw new Exception('Email is already used by non archived user!');
+        if (\in_array($email, $emailsArr, true) && $email !== $this->userData['email']) {
+            throw new ImproperActionException('Email is already used by non archived user!');
         }
 
         if ($params['validated'] == 1) {
@@ -401,16 +425,16 @@ class Users
         }
         $usergroup = Tools::checkId((int) $params['usergroup']);
         if ($usergroup === false) {
-            throw new Exception(_('The id parameter is not valid!'));
+            throw new IllegalActionException('The id parameter is not valid!');
         }
 
         // a non sysadmin cannot put someone sysadmin
         if ($usergroup == 1 && $this->userData['is_sysadmin'] != 1) {
-            throw new Exception(_('Only a sysadmin can put someone sysadmin.'));
+            throw new ImproperActionException(_('Only a sysadmin can put someone sysadmin.'));
         }
 
         if (\mb_strlen($params['password']) > 1) {
-            $this->updatePassword($params['password'], $userid);
+            $this->updatePassword($params['password']);
         }
 
         $sql = "UPDATE users SET
@@ -428,18 +452,20 @@ class Users
         $req->bindParam(':team', $team);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $usergroup);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Update preferences from user control panel
      *
      * @param array $params
-     * @return bool
+     * @return void
      */
-    public function updatePreferences(array $params): bool
+    public function updatePreferences(array $params): void
     {
         // LIMIT
         $filter_options = array(
@@ -552,7 +578,8 @@ class Users
         // DEFAULT VIS
         $new_default_vis = null;
         $Experiments = new Experiments($this);
-        if (isset($params['default_vis']) && $Experiments->checkVisibility($params['default_vis'])) {
+        if (isset($params['default_vis'])) {
+            $Experiments->checkVisibility($params['default_vis']);
             $new_default_vis = $params['default_vis'];
         }
 
@@ -613,32 +640,32 @@ class Users
         $req->bindParam(':new_use_markdown', $new_use_markdown);
         $req->bindParam(':new_allow_edit', $new_allow_edit);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Update things from UCP
      *
      * @param array $params
-     * @return bool
+     * @return void
      */
-    public function updateAccount(array $params): bool
+    public function updateAccount(array $params): void
     {
         // check that we got the good password
         if (!$this->Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
-            throw new Exception(_("Please input your current password!"));
+            throw new ImproperActionException(_("Please input your current password!"));
         }
         // PASSWORD CHANGE
         if (!empty($params['newpass'])) {
             if ($params['newpass'] != $params['cnewpass']) {
-                throw new Exception(_('The passwords do not match!'));
+                throw new ImproperActionException(_('The passwords do not match!'));
             }
 
-            if (!$this->updatePassword($params['newpass'])) {
-                throw new Exception('Error updating password.');
-            }
+            $this->updatePassword($params['newpass']);
         }
 
         $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
@@ -646,7 +673,7 @@ class Users
         $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($this->isDuplicateEmail($params['email']) && ($params['email'] != $this->userData['email'])) {
-            throw new Exception(_('Someone is already using that email address!'));
+            throw new ImproperActionException(_('Someone is already using that email address!'));
         }
 
         // Check phone
@@ -677,25 +704,21 @@ class Users
         $req->bindParam(':cellphone', $params['cellphone']);
         $req->bindParam(':skype', $params['skype']);
         $req->bindParam(':website', $params['website']);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
-     * Update the password for a user, or for ourself if none provided
+     * Update the password for the user
      *
      * @param string $password The new password
-     * @param int|null $userid The user we want to update
-     * @throws Exception if invalid character length
-     * @return bool True if password is updated
+     * @return void
      */
-    public function updatePassword(string $password, ?int $userid = null): bool
+    public function updatePassword(string $password): void
     {
-        if ($userid === null) {
-            $userid = $this->userid;
-        }
-
         $this->Auth->checkPasswordLength($password);
 
         $salt = \hash("sha512", \bin2hex(\random_bytes(16)));
@@ -705,40 +728,30 @@ class Users
         $req = $this->Db->prepare($sql);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
-     * Validate a user
+     * Validate current user instance
      *
-     * @param int $userid
-     * @return string
+     * @return void
      */
-    public function validate(int $userid): string
+    public function validate(): void
     {
-        $this->setId($userid);
-
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        if ($req->execute()) {
-            $msg = sprintf(
-                _('User %s (%s) now has an active account.'),
-                $this->userData['fullname'],
-                $this->userData['email']
-            );
-        } else {
-            $msg = Tools::error();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
         }
-
         // send an email to the user
         $Email = new Email($this->Config);
         $Email->alertUserIsValidated($this->userData['email']);
-
-        return $msg;
     }
 
     /**
@@ -753,7 +766,9 @@ class Users
         $sql = "SELECT COUNT(id) FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return (bool) $req->fetchColumn();
     }
@@ -761,100 +776,70 @@ class Users
     /**
      * Archive a user
      *
-     * @return bool
+     * @return void
      */
-    public function archive(): bool
+    public function archive(): void
     {
         $sql = "UPDATE users SET archived = 1, token = null WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $res1 = $req->execute();
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         $sql = "UPDATE experiments
-            SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
+            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
-        $req->bindParam(':lockedby', $this->userid, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $res2 = $req->execute();
-
-        return $res1 && $res2;
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Destroy user. Will completely remove everything from the user.
      *
-     * @param string $email The email of the user we want to delete
-     * @param string $password The confirmation password
-     * @return bool
+     * @return void
      */
-    public function destroy(string $email, string $password): bool
+    public function destroy(): void
     {
-        // check that we got the good password
-        if (!$this->Auth->checkCredentials($this->userData['email'], $password)) {
-            throw new Exception(_("Wrong password!"));
-        }
-
-        // load data on the user to delete
-        $userToDelete = $this->readFromEmail($email);
-        // check we are in same team
-        if ($this->userData['team'] !== $userToDelete['team']) {
-            throw new Exception(_('No user with this email or user not in your team'));
-        }
-
-        $result = array();
-
         $sql = "DELETE FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
-        $result[] = $req->execute();
-
-        $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
-        $result[] = $req->execute();
-
-        $sql = "DELETE FROM experiments WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
-        $result[] = $req->execute();
-
-        // get all filenames
-        $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
-        $req = $this->Db->prepare($sql);
-        $req->execute(array(
-            'userid' => $userToDelete['userid'],
-            'type' => 'experiments'
-        ));
-        while ($uploads = $req->fetch()) {
-            // Delete file
-            $filepath = dirname(__DIR__, 2) . '/uploads/' . $uploads['long_name'];
-            $result[] = unlink($filepath);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        $sql = "DELETE FROM uploads WHERE userid = :userid";
+        // remove all experiments from this user
+        $sql = "SELECT id FROM experiments WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userToDelete['userid'], PDO::PARAM_INT);
-        $result[] = $req->execute();
-
-        return !\in_array(false, $result, true);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        while ($exp = $req->fetch()) {
+            $Experiments = new Experiments($this, (int) $exp['id']);
+            $Experiments->destroy();
+        }
     }
 
     /**
      * Generate an API key and store it
      *
-     * @throws Exception
-     * @return bool
+     * @return void
      */
-    public function generateApiKey(): bool
+    public function generateApiKey(): void
     {
         $apiKey = \bin2hex(\random_bytes(42));
 
         $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':api_key', $apiKey);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

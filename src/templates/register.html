@@ -14,6 +14,7 @@
     <form id='regform' method="post" class='loginform' autocomplete="off" action="app/controllers/RegisterController.php">
 
         <input style='display:none' type='text' name='bot' value=''>
+        {{ App.Csrf.getHiddenInput|raw }}
 
         <div class='row'>
             <div class='col-md-4'>

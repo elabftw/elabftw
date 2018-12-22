@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
@@ -115,9 +117,9 @@ abstract class AbstractEntity
      * Update status or item type
      *
      * @param int $category
-     * @return bool
+     * @return void
      */
-    abstract public function updateCategory(int $category): bool;
+    abstract public function updateCategory(int $category): void;
 
     /**
      * Duplicate an item
@@ -129,27 +131,26 @@ abstract class AbstractEntity
     /**
      * Destroy an item
      *
-     * @return bool
+     * @return void
      */
-    abstract public function destroy(): bool;
+    abstract public function destroy(): void;
 
     /**
      * Lock or unlock
      *
-     * @return bool
+     * @return void
      */
-    abstract public function toggleLock(): bool;
+    abstract public function toggleLock(): void;
 
     /**
      * Now that we have an id, load the data in entityData array
      *
-     * @throws Exception
      * @return void
      */
     protected function populate(): void
     {
         if ($this->id === null) {
-            throw new Exception('No id was set.');
+            throw new ImproperActionException('No id was set.');
         }
 
         // load the entity in entityData array
@@ -245,9 +246,9 @@ abstract class AbstractEntity
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }
-            $sql .=  $where;
+            $sql .= $where;
         } else {
-            throw new Exception('Nope.');
+            throw new IllegalActionException('Nope.');
         }
 
         $sql .= $this->idFilter . ' ' .
@@ -308,16 +309,17 @@ abstract class AbstractEntity
      * @param string $title
      * @param string $date
      * @param string $body
-     * @return bool
+     * @throws ImproperActionException
+     * @throws DatabaseErrorException
+     * @return void
      */
-    public function update(string $title, string $date, string $body): bool
+    public function update(string $title, string $date, string $body): void
     {
-        if (empty($this->entityData)) {
-            $this->populate();
-        }
+        $this->canOrExplode('write');
+
         // don't update if locked
         if ($this->entityData['locked']) {
-            return false;
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
         }
 
         // add a revision
@@ -353,18 +355,22 @@ abstract class AbstractEntity
             $sql = "SELECT userid, visibility FROM items WHERE id = :id";
             $req2 = $this->Db->prepare($sql);
             $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
-            $req2->execute();
-            $res = $req2->fetch();
+            if ($req2->execute() !== true) {
+                throw new DatabaseErrorException('Error while executing SQL query.');
+            }
+            $item = $req2->fetch();
 
-            $newUserid = $this->Users->userid;
-            if ($res['visibility'] === 'user') {
-                $newUserid = $res['userid'];
+            $newUserid = $this->Users->userData['userid'];
+            if ($item['visibility'] === 'user') {
+                $newUserid = $item['userid'];
             }
             $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
         }
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -396,16 +402,16 @@ abstract class AbstractEntity
      */
     public function setUseridFilter(): void
     {
-        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userid;
+        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userData['userid'];
     }
 
     /**
      * Check if we have a correct value for visibility
      *
      * @param string $visibility
-     * @return bool
+     * @return void
      */
-    public function checkVisibility(string $visibility): bool
+    public function checkVisibility(string $visibility): void
     {
         $validArr = array(
             'public',
@@ -414,28 +420,33 @@ abstract class AbstractEntity
             'user'
         );
 
-        if (in_array($visibility, $validArr)) {
-            return true;
+        if (!\in_array($visibility, $validArr, true)) {
+            // if visibility is a TeamGroup, it is a positive int
+            if (Tools::checkId((int) $visibility) === false) {
+                throw new IllegalActionException('The visibility parameter is wrong.');
+            }
         }
-
-        // or we might have a TeamGroup, so an int
-        return (bool) Tools::checkId((int) $visibility);
     }
 
     /**
      * Update the visibility for an entity
      *
      * @param string $visibility
-     * @return bool
+     * @return void
      */
-    public function updateVisibility(string $visibility): bool
+    public function updateVisibility(string $visibility): void
     {
-        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id AND locked = '0'";
+        $this->checkVisibility($visibility);
+        $this->canOrExplode('write');
+
+        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':visibility', $visibility);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException($sql);
+        }
     }
 
     /**
@@ -457,7 +468,7 @@ abstract class AbstractEntity
      * Check if we have the permission to read/write or throw an exception
      *
      * @param string $rw read or write
-     * @throws Exception
+     * @throws IllegalActionException
      * @return array
      */
     public function canOrExplode(string $rw): array
@@ -470,7 +481,7 @@ abstract class AbstractEntity
         }
 
         if (!$permissions[$rw]) {
-            throw new Exception(Tools::error(true));
+            throw new IllegalActionException('User tried to access entity without permission.');
         }
 
         return $permissions;
@@ -481,7 +492,6 @@ abstract class AbstractEntity
      * Here be dragons! Cognitive load > 9000
      *
      * @param array|null $item one item array
-     * @throws Exception
      * @return array
      */
     public function getPermissions(?array $item = null): array
@@ -499,7 +509,7 @@ abstract class AbstractEntity
 
         if ($this instanceof Experiments) {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($item['userid'] == $this->Users->userid) {
+            if ($item['userid'] == $this->Users->userData['userid']) {
                 return array('read' => true, 'write' => true);
 
             // it's not our experiment
@@ -530,7 +540,7 @@ abstract class AbstractEntity
                     }
 
                     // if it's organization, we need to be logged in
-                    if (($item['visibility'] === 'organization') && $this->Users->userid !== null) {
+                    if (($item['visibility'] === 'organization') && $this->Users->userData['userid'] !== null) {
                         return array('read' => true, 'write' => false);
                     }
 
@@ -545,14 +555,14 @@ abstract class AbstractEntity
                     // if the vis. setting is a team group, check we are in the group
                     if (Tools::checkId((int) $item['visibility']) !== false) {
                         $TeamGroups = new TeamGroups($this->Users);
-                        if ($TeamGroups->isInTeamGroup((int) $this->Users->userid, (int) $item['visibility'])) {
+                        if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $item['visibility'])) {
                             return array('read' => true, 'write' => false);
                         }
                     }
                 }
             }
         } elseif ($this instanceof Templates) {
-            if ((int) $item['userid'] === $this->Users->userid) {
+            if ((int) $item['userid'] === $this->Users->userData['userid']) {
                 return array('read' => true, 'write' => true);
             }
         } elseif ($this instanceof Database) {
@@ -578,7 +588,7 @@ abstract class AbstractEntity
             }
 
             // if it's organization, we need to be logged in
-            if (($item['visibility'] === 'organization') && $this->Users->userid !== null) {
+            if (($item['visibility'] === 'organization') && $this->Users->userData['userid'] !== null) {
                 return array('read' => true, 'write' => false);
             }
 
@@ -594,7 +604,7 @@ abstract class AbstractEntity
             if (($item['visibility'] === 'user') &&
                 ($item['team'] == $this->Users->userData['team']) &&
                 !isset($this->Users->userData['anon']) &&
-                ($item['userid'] === $this->Users->userid)) {
+                ($item['userid'] === $this->Users->userData['userid'])) {
 
                 return array('read' => true, 'write' => true);
             }
@@ -602,7 +612,7 @@ abstract class AbstractEntity
             // if the vis. setting is a team group, check we are in the group
             if (Tools::checkId((int) $item['visibility']) !== false) {
                 $TeamGroups = new TeamGroups($this->Users);
-                if ($TeamGroups->isInTeamGroup((int) $this->Users->userid, (int) $item['visibility'])) {
+                if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $item['visibility'])) {
                     return array('read' => true, 'write' => true);
                 }
             }

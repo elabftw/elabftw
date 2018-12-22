@@ -373,6 +373,16 @@
             quickSave(type, id);
         }
 
+        // SWITCH EDITOR
+        $(document).on('click', '.switchEditor', function() {
+            let currentEditor = $(this).data('editor');
+            if (currentEditor === 'md') {
+                insertParamAndReload('editor', 'tiny');
+            } else {
+                insertParamAndReload('editor', 'md');
+            }
+        });
+
         // DISPLAY MARKDOWN EDITOR
         if ($('#body_area').hasClass('markdown-textarea')) {
             $('.markdown-textarea').markdown();

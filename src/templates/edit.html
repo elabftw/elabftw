@@ -97,14 +97,25 @@
             <input id='title_input' type='text' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
 
             <!-- BODY -->
+            {# tinymce or markdown? #}
+            {% set editor = 'tiny' %}
+            {% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
+            {% set editor = 'md' %}
+            {% endif %}
+            {% if App.Request.query.get('editor') == 'tiny' %}
+            {% set editor = 'tiny' %}
+            {% endif %}
+
+            <p class='align_right inline switchEditor' data-editor='{{ editor }}'><a href='#'>{{ 'Switch editor' }}</p>
             {% if Entity.type == 'experiments' %}
             <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
             {% else %}
                 <h4>{{ 'Information'|trans }}</h4>
             {% endif %}
 
-            {% if Entity.Users.userData.use_markdown %}
-                <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
+
+            {% if editor == 'md' %}
+                    <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
             {% else %}
                 <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
             {% endif %}

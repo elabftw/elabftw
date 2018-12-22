@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Elabftw\\Elabftw\\" : ["src/classes", "src/models", "src/views"],
+            "Elabftw\\Elabftw\\" : ["src/classes", "src/models"],
             "Elabftw\\Exceptions\\" : ["src/exceptions"],
             "Elabftw\\Controllers\\" : ["src/controllers"],
             "Elabftw\\Interfaces\\" : ["src/interfaces"]

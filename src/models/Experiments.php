@@ -57,7 +57,7 @@ class Experiments extends AbstractEntity
         $Templates = new Templates($this->Users);
 
         // do we want template ?
-        if ($tpl === null || $tpl === 0) {
+        if ($tpl !== null || $tpl !== 0) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
@@ -89,7 +89,7 @@ class Experiments extends AbstractEntity
         $newId = $this->Db->lastInsertId();
 
         // insert the tags from the template
-        if ($tpl !== null) {
+        if ($tpl !== null || $tpl !== 0) {
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
         }

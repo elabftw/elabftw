@@ -81,6 +81,10 @@ class Csrf
      */
     public function validate(): void
     {
+        // get request are not checked
+        if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
+            return;
+        }
         if ($this->Request->request->get('csrf') !== $this->Session->get('csrf')) {
             throw new IllegalActionException('Csrf token validation failure.');
         }

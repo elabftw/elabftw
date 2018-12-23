@@ -169,24 +169,25 @@ class TeamGroups implements CrudInterface
      *
      * @param string $name Name of the group
      * @param string $id teamgroup_1
-     * @return string|null $name Name of the group if success
+     * @return string $name Name of the group if success
      */
-    public function update(string $name, string $id): ?string
+    public function update(string $name, string $id): string
     {
         $idArr = explode('_', $id);
-        if ($idArr[0] === 'teamgroup' && Tools::checkId((int) $idArr[1]) !== false) {
-            $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':name', $name);
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
-
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            // the group name is returned so it gets back into jeditable input field
-            return $name;
+        if (Tools::checkId((int) $idArr[1]) !== false) {
+            throw new IllegalActionException('Bad id');
         }
+        $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        // the group name is returned so it gets back into jeditable input field
+        return $name;
     }
 
     /**

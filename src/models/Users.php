@@ -52,8 +52,12 @@ class Users
             $this->setId($userid);
         }
 
-        $this->Auth = $auth;
-        $this->Config = $config;
+        if ($auth instanceof Auth) {
+            $this->Auth = $auth;
+        }
+        if ($config instanceof Config) {
+            $this->Config = $config;
+        }
     }
 
     /**
@@ -293,10 +297,11 @@ class Users
     /**
      * Search users based on query. It searches in email, firstname or lastname
      *
-     * @param string $query
+     * @param string $query the searched term
+     * @param bool $teamFilter toggle between sysadmin/admin view
      * @return array
      */
-    public function readFromQuery(string $query, $teamFilter = false): array
+    public function readFromQuery(string $query, bool $teamFilter = false): array
     {
         $whereTeam = '';
         if ($teamFilter) {

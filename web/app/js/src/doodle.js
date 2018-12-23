@@ -14,7 +14,7 @@ $(document).ready(function() {
         var image = ($('#doodleCanvas')[0]).toDataURL();
         var type = $(this).data('type');
         var id = $(this).data('id');
-        $.post('app/controllers/EntityController.php', {
+        $.post('app/controllers/EntityAjaxController.php', {
             addFromString: true,
             type: type,
             id: id,

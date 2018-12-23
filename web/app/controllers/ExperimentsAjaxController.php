@@ -35,8 +35,10 @@ try {
         throw new IllegalActionException('Anonymous user tried to access experiments controller.');
     }
 
-    // CSRF
-    $App->Csrf->validate();
+    // CSRF validate only the POST requests
+    if ($Request->server->get('REQUEST_METHOD') === 'POST') {
+        $App->Csrf->validate();
+    }
 
     $Entity = new Experiments($App->Users);
     if ($Request->request->has('id')) {

@@ -140,7 +140,7 @@
                     // parseint will get the id, and not the rest (in case there is number in title)
                     link = parseInt(link, 10);
                     if (!isNaN(link)) {
-                        $.post(controller, {
+                        $.post('app/controllers/ExperimentsAjaxController.php', {
                             createLink: true,
                             id: id,
                             linkId: link,
@@ -158,7 +158,7 @@
 
             destroy(linkId) {
                 if (confirm(confirmText)) {
-                    $.post(controller, {
+                    $.post('app/controllers/ExperimentsAjaxController.php', {
                         destroyLink: true,
                         id: id,
                         linkId: linkId,
@@ -204,7 +204,7 @@
                 let body = $('#stepinput').val();
                 // fix for user pressing enter with no input
                 if (body.length > 0) {
-                    $.post(controller, {
+                    $.post('app/controllers/ExperimentsAjaxController.php', {
                         createStep: true,
                         id: id,
                         body: body,
@@ -222,7 +222,7 @@
             }
 
             finish(stepId) {
-                $.post(controller, {
+                $.post('app/controllers/ExperimentsAjaxController.php', {
                     finishStep: true,
                     id: id,
                     stepId: stepId,
@@ -240,7 +240,7 @@
 
             destroy(stepId) {
                 if (confirm(confirmText)) {
-                    $.post(controller, {
+                    $.post('app/controllers/ExperimentsAjaxController.php', {
                         destroyStep: true,
                         id: id,
                         stepId: stepId,

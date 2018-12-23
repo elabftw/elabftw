@@ -11,6 +11,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Exception;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,8 +26,8 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    if ($Session->get('is_sysadmin') != 1) {
-        throw new Exception(Tools::error(true));
+    if (!$App->Session->get('is_sysadmin')) {
+        throw new IllegalActionException('Non sysadmin user tried to access sysconfig panel.');
     }
 
     $Idps = new Idps();
@@ -77,11 +78,16 @@ try {
         'usersArr' => $usersArr
     );
 
+} catch (IllegalActionException $e) {
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error(true));
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-}
 
-$Response->setContent($App->render($template, $renderArr));
-$Response->send();
+} finally {
+    $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
+}

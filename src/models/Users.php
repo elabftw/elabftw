@@ -17,7 +17,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
-use RuntimeException;
 
 /**
  * Users

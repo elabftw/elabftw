@@ -15,9 +15,6 @@ namespace Elabftw\Elabftw;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
 use PDO;
 use Swift_Mailer;
 use Swift_Message;
@@ -191,7 +188,6 @@ class Email
      * Send an email to the admin of a team
      *
      * @param int $team
-     * @throws Exception
      * @return void
      */
     public function alertAdmin($team): void

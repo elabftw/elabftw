@@ -20,8 +20,6 @@ use Elabftw\Elabftw\Templates;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\App;
 use Elabftw\Interfaces\ControllerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

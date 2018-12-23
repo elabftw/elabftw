@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +40,7 @@ try {
         if (!is_readable($configFilePath)) {
             $message = 'No readable config file found. Make sure the server has permissions to read it. Try :<br />
                 chmod 644 config.php<br />';
-            throw new Exception($message);
+            throw new ImproperActionException($message);
         }
 
         // check if there are users registered
@@ -81,7 +83,7 @@ try {
             $Teams = new Teams(new Users());
             $Teams->create('Default team');
             header('Location: ../register.php');
-            throw new Exception('Redirecting to register page');
+            throw new ImproperActionException('Redirecting to register page');
         }
 
         $sql = 'SELECT * FROM users';
@@ -90,10 +92,10 @@ try {
         // redirect to register page if no users are in the database
         if ($req->rowCount() === 0) {
             header('Location: ../register.php');
-            throw new Exception('Redirecting to register page');
+            throw new ImproperActionException('Redirecting to register page');
         }
         $message = 'It looks like eLabFTW is already installed. Delete the config.php file if you wish to reinstall it.';
-        throw new Exception($message);
+        throw new ImproperActionException($message);
     }
     ?>
     <!DOCTYPE HTML>
@@ -130,13 +132,13 @@ try {
         $url = str_replace(':80', ':443', $url);
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
             $url . "'>$url</a>";
-        throw new Exception($message);
+        throw new ImproperActionException($message);
     }
 
     // Check for hash function
     if (!function_exists('hash')) {
         $message = "You don't have the hash function. On Freebsd it's in /usr/ports/security/php5-hash.";
-        throw new Exception($message);
+        throw new ImproperActionException($message);
     }
 
     // same doc url for cache and uploads folder
@@ -152,7 +154,7 @@ try {
             '</a>'
         );
         $errflag = true;
-        throw new RuntimeException($message);
+        throw new FilesystemErrorException($message);
     } else {
         $message = "The 'cache' folder was created successfully.";
         echo Tools::displayMessage($message, 'ok', false);
@@ -169,7 +171,7 @@ try {
             '</a>'
         );
         $errflag = true;
-        throw new RuntimeException($message);
+        throw new FilesystemErrorException($message);
     } else {
         $message = "The 'uploads' folder was created successfully.";
         echo Tools::displayMessage($message, 'ok', false);
@@ -186,7 +188,7 @@ try {
     }
 
     if ($errflag) {
-        throw new Exception($message);
+        throw new ImproperActionException($message);
     }
 
     $message = 'Everything is good on your server. You can install eLabFTW :)';
@@ -262,7 +264,7 @@ try {
 
     <script src='../app/js/install.min.js'></script>
     <?php
-} catch (Exception $e) {
+} catch (ImproperAction | FilesystemError | Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko', false);
     echo "</section></section>";
 } finally {

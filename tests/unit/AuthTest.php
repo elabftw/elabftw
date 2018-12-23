@@ -1,7 +1,7 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
+use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -26,7 +26,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     public function testCheckPasswordLength()
     {
         $this->assertTrue($this->Auth->checkPasswordLength('longpassword'));
-        $this->expectException(\Exception::class);
+        $this->expectException(ImproperActionException::class);
         $this->Auth->checkPasswordLength('short');
     }
 

@@ -1,8 +1,6 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()

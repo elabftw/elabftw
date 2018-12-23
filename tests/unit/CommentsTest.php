@@ -2,7 +2,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use PDO;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {

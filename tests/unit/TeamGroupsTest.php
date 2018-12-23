@@ -2,7 +2,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
-use PDO;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {

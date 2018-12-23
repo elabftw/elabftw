@@ -13,7 +13,7 @@
     // READY ? GO !!
     $(document).ready(function() {
         var Templates = {
-            controller: 'app/controllers/EntityController.php',
+            controller: 'app/controllers/EntityAjaxController.php',
             saveToFile: function(id, name) {
             // we have the name of the template used for filename
             // and we have the id of the editor to get the content from
@@ -32,7 +32,7 @@
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
-                            window.location.replace('?tab=3');
+                            window.location.replace('ucp.php?tab=3');
                         } else {
                             notif(data.msg, 'ko');
                         }

@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 use ZipArchive;
@@ -62,7 +64,7 @@ class MakeZip extends AbstractMake
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
-            throw new Exception('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
+            throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
         $this->idList = $idList;
@@ -77,7 +79,6 @@ class MakeZip extends AbstractMake
     /**
      * Initiate the zip object and the archive
      *
-     * @throws Exception
      * @return void
      */
     private function createZipArchive(): void
@@ -85,7 +86,7 @@ class MakeZip extends AbstractMake
         $this->Zip = new ZipArchive();
 
         if (!$this->Zip->open($this->filePath, ZipArchive::CREATE)) {
-            throw new Exception('Could not open zip file!');
+            throw new FilesystemErrorException('Could not open zip file!');
         }
     }
 
@@ -226,7 +227,6 @@ class MakeZip extends AbstractMake
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
      *
-     * @throws Exception If the zip failed
      * @return void
      */
     private function loopIdArr(): void
@@ -242,7 +242,7 @@ class MakeZip extends AbstractMake
         $this->Zip->close();
         // check if it failed for some reason
         if (!is_file($this->filePath)) {
-            throw new Exception('Error making the zip archive!');
+            throw new FilesystemErrorException('Error making the zip archive!');
         }
     }
 

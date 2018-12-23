@@ -20,7 +20,7 @@ use PDO;
 try {
     // Check if there is already a config file
     if (file_exists(\dirname(__DIR__, 2) . '/config.php')) {
-        throw new Exception('Remove config file.');
+        throw new ImproperActionException('Remove config file.');
     }
 
     // MYSQL

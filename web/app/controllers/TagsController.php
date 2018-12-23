@@ -78,7 +78,7 @@ try {
     // UNREFERENCE TAG
     if ($Request->request->has('unreferenceTag')) {
         if (Tools::checkId($Request->request->get('tag_id')) === false) {
-            throw new Exception('Bad id value');
+            throw new IllegalActionException('Bad id value');
         }
         $Tags->unreference((int) $Request->request->get('tag_id'));
     }

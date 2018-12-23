@@ -9,6 +9,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Monolog\Logger;
 use PDOException;
@@ -40,7 +41,7 @@ try {
         // not pretty but gets the job done
         $url = str_replace('app/', '', $url);
         header('Location: ' . $url);
-        throw new Exception('Redirecting to install folder');
+        throw new ImproperActionException('Redirecting to install folder');
     }
     require_once $configFilePath;
     // END LOAD CONFIG.PHP
@@ -54,7 +55,7 @@ try {
     } catch (PDOException $e) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
         header('Location: ' . $url);
-        throw new Exception('Redirecting to install folder');
+        throw new ImproperActionException('Redirecting to install folder');
     }
 
     // UPDATE SQL SCHEMA
@@ -144,7 +145,7 @@ try {
     textdomain($domain);
     // END i18n
 
-} catch (Exception $e) {
+} catch (ImproperAction | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());
 }

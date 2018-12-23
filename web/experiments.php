@@ -45,7 +45,7 @@ try {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
+    $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
 
 } catch (DatabaseErrorException | FilesystemErrorException $e) {

@@ -41,7 +41,7 @@ try {
     $Revisions = new Revisions($Entity);
 
     if ($Request->query->get('action') === 'restore') {
-        $revId = Tools::checkId($Request->query->get('rev_id'));
+        $revId = Tools::checkId((int) $Request->query->get('rev_id'));
         if ($revId === false) {
             throw new IllegalActionException('The id parameter is not valid!');
         }

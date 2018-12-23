@@ -10,6 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,6 +23,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Revisions');
+// default response is error page with general error message
+$Response = new Response();
+$Response->prepare($Request);
+$template = 'error.html';
+$renderArr = array('error' => Tools::error());
 
 try {
     if ($Request->query->get('type') === 'experiments') {
@@ -29,7 +38,7 @@ try {
         $Entity = new Database($App->Users);
 
     } else {
-        throw new Exception('Bad type!');
+        throw new IllegalActionException('Bad type!');
     }
 
     $Entity->setId((int) $Request->query->get('item_id'));
@@ -44,13 +53,35 @@ try {
         'revisionsArr' => $revisionsArr
     );
 
-} catch (Exception $e) {
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (ImproperActionException $e) {
+    // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (IllegalActionException $e) {
+    // log notice and show message
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error(true));
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    // log error and show message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
+    $Response->setContent($App->render($template, $renderArr));
 
 } finally {
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
     $Response->send();
 }

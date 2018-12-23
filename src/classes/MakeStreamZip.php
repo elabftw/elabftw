@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 use ZipStream\ZipStream;
 
@@ -47,7 +47,6 @@ class MakeStreamZip extends AbstractMake
      *
      * @param AbstractEntity $entity
      * @param string $idList 1+3+5+8
-     * @throws Exception if we don't have ZipArchive extension
      * @return void
      */
     public function __construct(AbstractEntity $entity, $idList)
@@ -56,7 +55,7 @@ class MakeStreamZip extends AbstractMake
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
-            throw new Exception('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
+            throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
         $this->Zip = new ZipStream('elabftw-export.zip');
@@ -211,7 +210,6 @@ class MakeStreamZip extends AbstractMake
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
      *
-     * @throws Exception If the zip failed
      * @return void
      */
     private function loopIdArr(): void

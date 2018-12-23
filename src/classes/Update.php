@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use FilesystemIterator;
 use PDO;
 
@@ -61,7 +62,6 @@ class Update
      * Update the database schema if needed.
      * Returns true if there is no need to update
      *
-     * @throws Exception
      * @return bool|string[] $msg_arr
      */
     public function runUpdateScript()
@@ -73,7 +73,7 @@ class Update
         }
 
         if ($current_schema < 37) {
-            throw new Exception('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
+            throw new ImproperActionException('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
 
         $msg_arr = array();
@@ -148,7 +148,6 @@ class Update
     /**
      * Update the schema value in config to latest because we did the update functions before
      *
-     * @throws Exception
      * @param int $schema the version we want to update
      * @return void
      */
@@ -161,14 +160,13 @@ class Update
     /**
      * Add items_comments and rename exp_id to item_id in experiments_comments
      *
-     * @throws Exception
      * @return void
      */
     private function schema38(): void
     {
         $sql = "ALTER TABLE experiments_comments CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem updating to schema 38!');
+            throw new DatabaseErrorException('Problem updating to schema 38!');
         }
         $sql = "CREATE TABLE IF NOT EXISTS `items_comments` (
           `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -179,42 +177,39 @@ class Update
           PRIMARY KEY (`id`)
         );";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem updating to schema 38 (second part)!');
+            throw new DatabaseErrorException('Problem updating to schema 38 (second part)!');
         }
     }
 
     /**
      * Remove can_lock from users table
      *
-     * @throws Exception
      * @return void
      */
     private function schema39(): void
     {
         $sql = "ALTER TABLE `users` DROP `can_lock`";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem updating to schema 39!');
+            throw new DatabaseErrorException('Problem updating to schema 39!');
         }
     }
 
     /**
      * Add allow_edit to Users
      *
-     * @throws Exception
      * @return void
      */
     private function schema40(): void
     {
         $sql = "ALTER TABLE `users` ADD `allow_edit` TINYINT(1) NOT NULL DEFAULT '0'";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem updating to schema 40!');
+            throw new DatabaseErrorException('Problem updating to schema 40!');
         }
     }
 
     /**
      * Merge the experiments_tags, items_tags and experiments_tpl_tags tables into tags and tags2entity tables.
      *
-     * @throws Exception
      * @return void
      */
     private function schema41(): void
@@ -222,13 +217,13 @@ class Update
         // first create the tags table
         $sql = "CREATE TABLE IF NOT EXISTS `tags` ( `id` INT NOT NULL AUTO_INCREMENT , `team` INT NOT NULL , `tag` VARCHAR(255) NOT NULL , PRIMARY KEY (`id`))";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem creating table tags!');
+            throw new DatabaseErrorException('Problem creating table tags!');
         }
 
         // now create the mapping table
         $sql = "CREATE TABLE IF NOT EXISTS `tags2entity` ( `item_id` INT NOT NULL , `tag_id` INT NOT NULL , `item_type` VARCHAR(255) NOT NULL)";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem creating table tags2entity!');
+            throw new DatabaseErrorException('Problem creating table tags2entity!');
         }
 
         // fetch existing tags
@@ -344,56 +339,52 @@ class Update
     /**
      * Add visibility to Db items
      *
-     * @throws Exception
      * @return void
      */
     private function schema42(): void
     {
         $sql = "ALTER TABLE `items` ADD `visibility` VARCHAR(255) NOT NULL DEFAULT 'team'";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem adding visibility to database items (schema 42)!');
+            throw new DatabaseErrorException('Problem adding visibility to database items (schema 42)!');
         }
     }
 
     /**
      * Add open_science to config
      *
-     * @throws Exception
      * @return void
      */
     private function schema43(): void
     {
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('open_science', '0'), ('open_team', NULL);";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem adding open_science and open_team to config (schema 43)!');
+            throw new DatabaseErrorException('Problem adding open_science and open_team to config (schema 43)!');
         }
     }
 
     /**
      * Make sur all locked are 0 not null
      *
-     * @throws Exception
      * @return void
      */
     private function schema44(): void
     {
         $sql = "UPDATE items SET `locked` = '0' WHERE `locked` IS NULL;";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem cleaning up locked values (schema 44)!');
+            throw new DatabaseErrorException('Problem cleaning up locked values (schema 44)!');
         }
     }
 
     /**
      * Add active attribute to IDPs
      *
-     * @throws Exception
      * @return void
      */
     private function schema45(): void
     {
         $sql = "ALTER TABLE `idps` ADD `active` TINYINT(1) NOT NULL DEFAULT '0';";
         if (!$this->Db->q($sql)) {
-            throw new Exception('Problem altering idps table (schema 45)!');
+            throw new DatabaseErrorException('Problem altering idps table (schema 45)!');
         }
     }
 }

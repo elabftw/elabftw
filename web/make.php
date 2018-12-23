@@ -10,6 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -22,6 +26,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Export');
+// default response is error page with general error message
+$Response = new Response();
+$Response->prepare($Request);
+$template = 'error.html';
+$renderArr = array('error' => Tools::error());
 
 try {
     if ($Request->query->get('type') === 'experiments') {
@@ -63,7 +72,7 @@ try {
             break;
 
         default:
-            throw new Exception(Tools::error());
+            throw new IllegalActionException('Bad make what value');
     }
 
     // the pdf is shown directly, but for csv or zip we want a download page
@@ -82,12 +91,35 @@ try {
         $Response->setContent($App->render($template, $renderArr));
         $Response->send();
     }
+    $Response->setContent($App->render($template, $renderArr));
 
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-    $Response = new Response();
-    $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));
+
+} catch (IllegalActionException $e) {
+    // log notice and show message
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error(true));
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    // log error and show message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
+    $Response->setContent($App->render($template, $renderArr));
+
+} finally {
     $Response->send();
 }

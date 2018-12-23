@@ -46,11 +46,8 @@ try {
             throw new IllegalActionException('The id parameter is not valid!');
         }
 
-        if ($Revisions->restore($revId)) {
-            $Session->getFlashBag()->add('ok', _('Revision restored successfully.'));
-        }
-
-
+        $Revisions->restore($revId);
+        $Session->getFlashBag()->add('ok', _('Revision restored successfully.'));
     }
 
     $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=view&id=" . $Entity->id);

@@ -82,12 +82,11 @@ try {
 
     // QUICKSAVE
     if ($Request->request->has('quickSave')) {
-        if ($Entity->update(
+        $Entity->update(
             $Request->request->get('title'),
             $Request->request->get('date'),
             $Request->request->get('body')
-        )) {
-        }
+        );
     }
 
     // DUPLICATE

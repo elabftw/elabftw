@@ -125,7 +125,9 @@ try {
             }
         }
     }
-    $Response->setData($content);
+    if ($Response instanceof JsonResponse) {
+        $Response->setData($content);
+    }
 
 } catch (ImproperActionException $e) {
     $Response->setData(array(

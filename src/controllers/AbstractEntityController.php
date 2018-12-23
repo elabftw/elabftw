@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\AbstractEntity;
 use Elabftw\Elabftw\Database;
 use Elabftw\Interfaces\ControllerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

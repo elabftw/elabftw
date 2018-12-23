@@ -57,7 +57,7 @@ class Experiments extends AbstractEntity
         $Templates = new Templates($this->Users);
 
         // do we want template ?
-        if ($tpl) {
+        if ($tpl === null || $tpl === 0) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];

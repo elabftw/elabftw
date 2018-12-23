@@ -72,7 +72,8 @@ if ($Request->query->has('tags') && !empty($Request->query->get('tags'))) {
 
 // VISIBILITY
 $vis = '';
-if ($Request->query->has('vis') && !empty($Request->query->get('vis')) && $Experiments->checkVisibility($Request->query->get('vis'))) {
+if ($Request->query->has('vis') && !empty($Request->query->get('vis')) {
+    $Experiments->checkVisibility($Request->query->get('vis'));
     $vis = $Request->query->get('vis');
 }
 

@@ -266,11 +266,7 @@ class Api
     public function uploadFile(Request $request): array
     {
         $this->Entity->canOrExplode('write');
-
-        if ($this->Entity->Uploads->create($request)) {
-            return array('result' => 'success');
-        }
-
-        return array('error' => Tools::error());
+        $this->Entity->Uploads->create($request);
+        return array('result' => 'success');
     }
 }

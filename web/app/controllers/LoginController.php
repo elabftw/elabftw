@@ -28,11 +28,11 @@ try {
     $Saml = new Saml($App->Config, new Idps);
     $Teams = new Teams($App->Users);
 
-    if ($Request->request->has('idp_id')) { // login with SAML
-        $idpId = (int) $Request->request->get('idp_id');
-        $settings = $Saml->getSettings($idpId);
+    // LOGIN WITH SAML
+    if ($Request->request->has('saml_login')) {
+        $settings = $Saml->getSettings();
         $SamlAuth = new SamlAuth($settings);
-        $returnUrl = $settings['baseurl'] . "/index.php?acs&idp=" . $idpId;
+        $returnUrl = $settings['baseurl'] . "/index.php?acs";
         $SamlAuth->login($returnUrl);
 
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous

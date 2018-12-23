@@ -145,7 +145,7 @@ try {
     textdomain($domain);
     // END i18n
 
-} catch (ImproperAction | Exception $e) {
+} catch (ImproperActionException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());
 }

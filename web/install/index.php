@@ -264,7 +264,7 @@ try {
 
     <script src='../app/js/install.min.js'></script>
     <?php
-} catch (ImproperAction | FilesystemError | Exception $e) {
+} catch (ImproperActionException | FilesystemErrorException | Exception $e) {
     echo Tools::displayMessage($e->getMessage(), 'ko', false);
     echo "</section></section>";
 } finally {

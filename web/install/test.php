@@ -14,6 +14,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 
@@ -36,6 +37,6 @@ try {
         echo 1;
     }
 
-} catch (Exception $e) {
+} catch (ImproperActionException | Exception $e) {
     echo $e->getMessage();
 }

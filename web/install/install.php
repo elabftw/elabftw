@@ -109,6 +109,6 @@ try {
     }
 
 // just show everything here
-} catch (IllegalAction | ImproperAction | Exception $e) {
+} catch (IllegalActionException | ImproperActionException | Exception $e) {
     echo Tools::displayMessage('Error: ' . $e->getMessage(), 'ko', false);
 }

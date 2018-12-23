@@ -65,6 +65,10 @@ class BannedUsers
         $req->bindParam(':ban_time', $banTime);
         $req->execute();
 
-        return $req->fetchAll(PDO::FETCH_COLUMN);
+        $res = $req->fetchAll(PDO::FETCH_COLUMN);
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 }

@@ -79,6 +79,9 @@ class TeamGroups implements CrudInterface
         }
 
         $groups = $req->fetchAll();
+        if ($groups === false) {
+            return $fullGroups;
+        }
 
         $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users CROSS JOIN users2team_groups
@@ -111,6 +114,12 @@ class TeamGroups implements CrudInterface
         $idArr = array();
         $nameArr = array();
 
+        $visibilityArr = array(
+            'public' => _('Public'),
+            'organization' => _('Everyone with an account'),
+            'team' => _('Only the team'),
+            'user' => _('Only me')
+        );
         $groups = $this->readAll();
 
         foreach ($groups as $group) {
@@ -122,14 +131,12 @@ class TeamGroups implements CrudInterface
                 }
             }
         }
-        $tgArr = array_combine($idArr, $nameArr);
 
-        $visibilityArr = array(
-            'public' => 'Public',
-            'organization' => 'Everyone with an account',
-            'team' => 'Only the team',
-            'user' => 'Only me'
-        );
+        $tgArr = array_combine($idArr, $nameArr);
+        if ($tgArr === false) {
+            return $visibilityArr;
+        }
+
 
         /** @noinspection AdditionOperationOnArraysInspection */
         return $visibilityArr + $tgArr;
@@ -149,7 +156,11 @@ class TeamGroups implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return '';
+        }
+        return $res;
     }
 
     /**

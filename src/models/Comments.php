@@ -154,11 +154,11 @@ class Comments implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        if ($req->rowCount() > 0) {
-            return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
         }
-
-        return array();
+        return $res;
     }
 
     /**

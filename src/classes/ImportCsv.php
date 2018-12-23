@@ -104,10 +104,11 @@ class ImportCsv extends AbstractImport
      */
     protected function openFile(): void
     {
-        $this->handle = fopen($this->UploadedFile->getPathname(), 'rb');
-        if ($this->handle === false) {
+        $handle = fopen($this->UploadedFile->getPathname(), 'rb');
+        if ($handle === false) {
             throw new ImproperActionException('Cannot open file!');
         }
+        $this->handle = $handle;
     }
 
     /**

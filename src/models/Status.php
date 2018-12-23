@@ -104,7 +104,11 @@ class Status extends AbstractCategory
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -122,7 +126,11 @@ class Status extends AbstractCategory
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return '00FF00';
+        }
+        return $res;
     }
 
     /**

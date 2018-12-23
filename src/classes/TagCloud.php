@@ -52,7 +52,11 @@ class TagCloud
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->execute();
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

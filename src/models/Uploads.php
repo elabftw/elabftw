@@ -61,7 +61,7 @@ class Uploads implements CrudInterface
      */
     private function getSanitizedName(string $rawName): string
     {
-        return preg_replace('/[^A-Za-z0-9]/', '.', $rawName);
+        return preg_replace('/[^A-Za-z0-9]/', '.', $rawName) ?? 'file.data';
     }
 
     /**
@@ -301,7 +301,11 @@ class Uploads implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

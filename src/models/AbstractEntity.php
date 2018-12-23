@@ -300,7 +300,11 @@ abstract class AbstractEntity
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->type, PDO::PARAM_STR);
         $req->execute();
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

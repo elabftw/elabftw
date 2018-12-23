@@ -316,7 +316,11 @@ class Users
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -368,7 +372,11 @@ class Users
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -384,7 +392,11 @@ class Users
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -757,7 +769,7 @@ class Users
      * Check if a user owns experiments
      * This is used to prevent changing the team of a user with experiments
      *
-     * @param int userid the user to check
+     * @param int $userid the user to check
      * @return bool
      */
     public function hasExperiments(int $userid): bool

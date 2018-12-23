@@ -62,9 +62,9 @@ class Teams implements CrudInterface
      * Check if the team exists already and create one if not
      *
      * @param string $name Name of the team (case sensitive)
-     * @return int|false The team ID
+     * @return int The team ID
      */
-    public function initializeIfNeeded(string $name)
+    public function initializeIfNeeded(string $name): int
     {
         $sql = 'SELECT team_id, team_name, team_orgid FROM teams';
         $req = $this->Db->prepare($sql);
@@ -72,9 +72,13 @@ class Teams implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         $teamsArr = $req->fetchAll();
+        if ($teamsArr === false) {
+            return $this->create($name);
+        }
+
         foreach ($teamsArr as $team) {
             if (($team['team_name'] === $name) || ($team['team_orgid'] === $name)) {
-                return $team['team_id'];
+                return (int) $team['team_id'];
             }
         }
         return $this->create($name);
@@ -158,7 +162,11 @@ class Teams implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

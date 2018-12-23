@@ -84,7 +84,11 @@ class Links implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**

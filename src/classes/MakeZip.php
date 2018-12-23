@@ -101,7 +101,7 @@ class MakeZip extends AbstractMake
             '/[^A-Za-z0-9]/',
             '_',
             htmlspecialchars_decode($this->Entity->entityData['title'], ENT_QUOTES)
-        );
+        ) ?? 'export';
     }
 
     /**

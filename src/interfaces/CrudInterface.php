@@ -27,14 +27,14 @@ interface CrudInterface
      *
      * @param int $id Id of item to destroy
      *
-     * @return bool
+     * @return void
      */
     public function destroy(int $id): void;
 
     /**
      * Detroy all the things
      *
-     * @return bool
+     * @return void
      */
     public function destroyAll(): void;
 }

@@ -99,7 +99,11 @@ class Revisions implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -117,7 +121,11 @@ class Revisions implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return '';
+        }
+        return $res;
     }
 
     /**

@@ -165,7 +165,7 @@ class Update
     private function schema38(): void
     {
         $sql = "ALTER TABLE experiments_comments CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
-        if (!$this->Db->q($sql)) {
+        if ($this->Db->q($sql) === false) {
             throw new DatabaseErrorException('Problem updating to schema 38!');
         }
         $sql = "CREATE TABLE IF NOT EXISTS `items_comments` (

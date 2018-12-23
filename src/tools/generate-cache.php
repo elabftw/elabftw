@@ -32,8 +32,8 @@ $Twig->addFilter($dateFilter);
 $Twig->addFilter($mdFilter);
 $Twig->addFilter($starsFilter);
 $Twig->addFilter($bytesFilter);
-$TwigEnvironment->addFilter($extFilter);
-$TwigEnvironment->addFilter($filesizeFilter);
+$Twig->addFilter($extFilter);
+$Twig->addFilter($filesizeFilter);
 $Twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // iterate over all the templates

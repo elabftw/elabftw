@@ -92,7 +92,11 @@ class ItemsTypes extends AbstractCategory
             throw new ImproperActionException(_('Nothing to show with this id'));
         }
 
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return '';
+        }
+        return $res;
     }
 
     /**
@@ -115,7 +119,11 @@ class ItemsTypes extends AbstractCategory
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -133,7 +141,11 @@ class ItemsTypes extends AbstractCategory
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return '';
+        }
+        return $res;
     }
 
     /**

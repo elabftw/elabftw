@@ -76,7 +76,6 @@ class Csrf
     /**
      * Validate the form key against the one previously set in Session
      *
-     * @param string $value
      * @return void
      */
     public function validate(): void

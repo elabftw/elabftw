@@ -27,7 +27,8 @@
                     $.post(this.controller, {
                         destroy: true,
                         id: id,
-                        type: 'experiments_tpl'
+                        type: 'experiments_tpl',
+                        csrf: $('#csrf').data('csrf')
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -85,9 +86,10 @@
                 var ordering = $(".nav-pills").sortable("toArray");
 
                 $.post("app/controllers/UcpController.php", {
-                    'updateOrdering': true,
-                    'table': 'experiments_templates',
-                    'ordering': ordering
+                    updateOrdering: true,
+                    table: 'experiments_templates',
+                    ordering: ordering,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

@@ -31,7 +31,8 @@
                     createTag: true,
                     tag: tag,
                     item_id: tplId,
-                    type: 'experiments_tpl'
+                    type: 'experiments_tpl',
+                    csrf: $('#csrf').data('csrf')
                 }).done(function () {
                     $('#tags_div_' + tplId).load(' #tags_div_' + tplId);
                     // clear input field
@@ -50,7 +51,8 @@
                         createTag: true,
                         tag: tag,
                         item_id: id,
-                        type: type
+                        type: type,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function () {
                         $('#tags_div').load('?mode=edit&id=' + id + ' #tags_div');
                         // clear input field
@@ -63,7 +65,8 @@
             deduplicate(tag) {
                 $.post(this.controller, {
                     deduplicate: true,
-                    tag: tag
+                    tag: tag,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function (data) {
                     notif(data.msg, 'ok');
                     $('#tag_manager').load(location + '?tab=9 #tag_manager');
@@ -77,7 +80,8 @@
                         unreferenceTag: true,
                         type: type,
                         item_id: id,
-                        tag_id: tagId
+                        tag_id: tagId,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function() {
                         $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
                     });
@@ -91,7 +95,8 @@
                         unreferenceTag: true,
                         type: type,
                         item_id: tplId,
-                        tag_id: tagId
+                        tag_id: tagId,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function() {
                         $('#tags_div_' + tplId).load(' #tags_div_' + tplId);
                     });
@@ -102,7 +107,8 @@
                 if (confirm('Delete this?')) {
                     $.post(this.controller, {
                         destroyTag: true,
-                        tag_id: tagId
+                        tag_id: tagId,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function() {
                         $('#tag_manager').load(location + '?tab=9 #tag_manager');
                     });

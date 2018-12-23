@@ -89,7 +89,8 @@
                 // we need this to get the updated content
                 title : document.getElementById('title_input').value,
                 date : document.getElementById('datepicker').value,
-                body : localStorage.getItem('body')
+                body : localStorage.getItem('body'),
+                csrf: $('#csrf').data('csrf')
             }).done(function() {
                 localStorage.clear();
                 document.location.reload(true);
@@ -115,7 +116,8 @@
                     }
                     $.post(controller, {
                         destroy: true,
-                        id: id
+                        id: id,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -141,7 +143,8 @@
                         $.post(controller, {
                             createLink: true,
                             id: id,
-                            linkId: link
+                            linkId: link,
+                            csrf: $('#csrf').data('csrf')
                         })
                         // reload the link list
                         .done(function () {
@@ -158,7 +161,8 @@
                     $.post(controller, {
                         destroyLink: true,
                         id: id,
-                        linkId: linkId
+                        linkId: linkId,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function (data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -180,7 +184,8 @@
             update(rating) {
                 $.post(this.controller, {
                     rating: rating,
-                    id: id
+                    id: id,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -202,7 +207,8 @@
                     $.post(controller, {
                         createStep: true,
                         id: id,
-                        body: body
+                        body: body,
+                        csrf: $('#csrf').data('csrf')
                     })
                     // reload the step list
                     .done(function() {
@@ -219,7 +225,8 @@
                 $.post(controller, {
                     finishStep: true,
                     id: id,
-                    stepId: stepId
+                    stepId: stepId,
+                    csrf: $('#csrf').data('csrf')
                 })
                 // reload the step list
                 .done(function() {
@@ -236,7 +243,8 @@
                     $.post(controller, {
                         destroyStep: true,
                         id: id,
-                        stepId: stepId
+                        stepId: stepId,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -327,7 +335,8 @@
                 updateVisibility: true,
                 id: id,
                 type: type,
-                visibility: visibility
+                visibility: visibility,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');

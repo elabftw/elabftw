@@ -18,7 +18,8 @@
                 var name = $('#teamGroupCreate').val();
                 if (name.length > 0) {
                     $.post(this.controller, {
-                        teamGroupCreate: name
+                        teamGroupCreate: name,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function() {
                         $('#team_groups_div').load('admin.php #team_groups_div');
                         $('#teamGroupCreate').val('');
@@ -40,7 +41,8 @@
                     teamGroupUpdate: true,
                     action: action,
                     teamGroupUser: user,
-                    teamGroupGroup: group
+                    teamGroupGroup: group,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function() {
                     $('#team_groups_div').load('admin.php #team_groups_div');
                 });
@@ -49,7 +51,8 @@
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                         teamGroupDestroy: true,
-                        teamGroupGroup: id
+                        teamGroupGroup: id,
+                        csrf: $('#csrf').data('csrf')
                     }).done(function() {
                         $("#team_groups_div").load("admin.php #team_groups_div");
                     });
@@ -104,7 +107,8 @@
                     statusCreate: true,
                     name: name,
                     color: color,
-                    isTimestampable: isTimestampable
+                    isTimestampable: isTimestampable,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -126,7 +130,8 @@
                     name: name,
                     color: color,
                     isTimestampable: isTimestampable,
-                    isDefault: isDefault
+                    isDefault: isDefault,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -138,7 +143,8 @@
             destroy: function(id) {
                 $.post(this.controller, {
                     statusDestroy: true,
-                    id: id
+                    id: id,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -178,7 +184,8 @@
                     name: name,
                     color: color,
                     bookable: bookable,
-                    template: template
+                    template: template,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -207,7 +214,8 @@
                     name: name,
                     color: color,
                     bookable: bookable,
-                    template: template
+                    template: template,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -219,7 +227,8 @@
             destroy: function(id) {
                 $.post(this.controller, {
                     itemsTypesDestroy: true,
-                    id: id
+                    id: id,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -306,10 +315,10 @@
                 var ordering = $(elements).sortable("toArray");
 
                 $.post("app/controllers/AdminAjaxController.php", {
-                    'updateOrdering': true,
-                    'table': table,
-                    'ordering': ordering,
-                    'csrf': $('#csrf').data('csrf')
+                    updateOrdering: true,
+                    table: table,
+                    ordering: ordering,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -337,7 +346,8 @@
             $.post('app/controllers/TagsController.php', {
                 update: true,
                 newtag: value,
-                tag: $(this).data('tag')
+                tag: $(this).data('tag'),
+                csrf: $('#csrf').data('csrf')
             });
 
             return(value);

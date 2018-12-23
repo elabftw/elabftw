@@ -19,7 +19,8 @@ $(document).ready(function() {
             type: type,
             id: id,
             fileType: 'png',
-            string: image
+            string: image,
+            csrf: $('#csrf').data('csrf')
         }).done(function() {
             if (type === 'items') {
                 type = 'database';

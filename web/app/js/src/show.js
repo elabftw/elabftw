@@ -38,9 +38,10 @@
             id = idArr[1];
             // get html of body
             $.post('app/controllers/EntityController.php', {
-                'getBody' : true,
-                'id' : id,
-                'type' : $(this).data('type')
+                getBody : true,
+                id : id,
+                type : $(this).data('type'),
+                csrf: $('#csrf').data('csrf')
             // and put it in the div and show the div
             }).done(function(data) {
                 $('#bodyToggle_' + id).html(data.msg);
@@ -136,7 +137,8 @@
                     updateCategory : true,
                     id : value,
                     categoryId : $('#catChecked').val(),
-                    type : $('#type').data('type')
+                    type : $('#type').data('type'),
+                    csrf: $('#csrf').data('csrf')
                 }));
             });
             // reload the page once it's done
@@ -158,7 +160,8 @@
                     updateVisibility : true,
                     id : value,
                     visibility : $('#visChecked').val(),
-                    type : $('#type').data('type')
+                    type : $('#type').data('type'),
+                    csrf: $('#csrf').data('csrf')
                 }));
             });
             // reload the page once it's done
@@ -194,7 +197,8 @@
                 $.post('app/controllers/EntityController.php', {
                     destroy: true,
                     id: value,
-                    type: $('#type').data('type')
+                    type: $('#type').data('type'),
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         // hide the div

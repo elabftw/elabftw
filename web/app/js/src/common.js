@@ -112,7 +112,8 @@ function quickSave(type, id) {
         // we need this to get the updated content
         title : document.getElementById('title_input').value,
         date : document.getElementById('datepicker').value,
-        body : tinymce.activeEditor.getContent()
+        body : tinymce.activeEditor.getContent(),
+        csrf: $('#csrf').data('csrf')
     }).done(function(data, textStatus, xhr) {
         // detect if the session timedout
         if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
@@ -139,7 +140,8 @@ function makeEditableTodoitem(element) {
         $.post('app/controllers/TodolistController.php', {
             update: true,
             body: value,
-            id: $(this).attr('id')
+            id: $(this).attr('id'),
+            csrf: $('#csrf').data('csrf')
         });
 
         return(value);

@@ -19,7 +19,8 @@
                 var name = $('#teamsName').val();
                 $.post(this.controller, {
                     teamsCreate: true,
-                    teamsName: name
+                    teamsName: name,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     Teams.destructor(data);
                 });
@@ -32,7 +33,8 @@
                     teamsUpdate: true,
                     teamsUpdateId : id,
                     teamsUpdateName : name,
-                    teamsUpdateOrgid : orgid
+                    teamsUpdateOrgid : orgid,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     Teams.destructor(data);
                 });
@@ -41,7 +43,8 @@
                 document.getElementById('teamsDestroyButton_' + id).disabled = true;
                 $.post(this.controller, {
                     teamsDestroy: true,
-                    teamsDestroyId: id
+                    teamsDestroyId: id,
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     Teams.destructor(data);
                 });
@@ -101,7 +104,8 @@
             $.post("app/controllers/SysconfigAjaxController.php", {
                 massEmail: true,
                 subject: $('#massSubject').val(),
-                body: $('#massBody').val()
+                body: $('#massBody').val(),
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -122,7 +126,8 @@
             $('#testemailButton').text('Sending…');
             $.post('app/controllers/SysconfigAjaxController.php', {
                 testemailSend: true,
-                testemailEmail: email
+                testemailEmail: email,
+                csrf: $('#csrf').data('csrf')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -155,6 +160,7 @@
                 $.post('app/controllers/IdpsAjaxController.php', {
                     idpsDestroy: true,
                     id: $(this).data('id'),
+                    csrf: $('#csrf').data('csrf')
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

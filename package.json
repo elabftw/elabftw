@@ -34,7 +34,7 @@
     "grunt-contrib-cssmin": "3.0.*",
     "grunt-contrib-uglify-es": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "1.1.*",
-    "grunt-shell": "2.1.*",
+    "grunt-shell": "3.0.*",
     "lodash": "~4.17.5",
     "snyk": "1.*",
     "webpack": "4.28.*",

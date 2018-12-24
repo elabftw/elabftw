@@ -174,7 +174,7 @@ class TeamGroups implements CrudInterface
     public function update(string $name, string $id): string
     {
         $idArr = explode('_', $id);
-        if (Tools::checkId((int) $idArr[1]) !== false) {
+        if (Tools::checkId((int) $idArr[1]) === false) {
             throw new IllegalActionException('Bad id');
         }
         $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";

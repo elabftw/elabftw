@@ -442,7 +442,7 @@ class Uploads implements CrudInterface
         }
         // now delete file from filesystem
         $filePath = $this->uploadsPath . $uploadArr['long_name'];
-        if (file_exists($thumbPath)) {
+        if (file_exists($filePath)) {
             unlink($filePath);
         }
 

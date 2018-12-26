@@ -292,7 +292,7 @@ abstract class AbstractEntity
      * @return array
      */
     public function getTags(int $id): array {
-        $sql = "SELECT tags2entity.tag_id, tags.tag FROM tags2entity
+        $sql = "SELECT DISTINCT tags2entity.tag_id, tags.tag FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             WHERE tags2entity.item_id = :id and tags2entity.item_type = :type";
         $req = $this->Db->prepare($sql);

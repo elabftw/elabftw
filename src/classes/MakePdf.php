@@ -22,8 +22,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MakePdf extends AbstractMake
 {
-    /** @var string $fileName a sha512 sum.pdf */
-    public $fileName;
+    /** @var string $longName a sha512 sum.pdf */
+    public $longName;
 
     /** @var string $filePath the full path of the file */
     public $filePath;
@@ -38,12 +38,12 @@ class MakePdf extends AbstractMake
     {
         parent::__construct($entity);
 
-        $this->fileName = $this->getUniqueString() . '.pdf';
+        $this->longName = $this->getLongName() . '.pdf';
 
         if ($temporary) {
-            $this->filePath = $this->getTmpPath() . $this->fileName;
+            $this->filePath = $this->getTmpPath() . $this->getUniqueString();
         } else {
-            $this->filePath = $this->getUploadsPath() . $this->fileName;
+            $this->filePath = $this->getUploadsPath() . $this->longName;
         }
 
         // suppress the "A non-numeric value encountered" error from mpdf
@@ -69,7 +69,7 @@ class MakePdf extends AbstractMake
      */
     public function outputToBrowser(): void
     {
-        $this->generate()->Output($this->getCleanName(), 'I');
+        $this->generate()->Output($this->getFileName(), 'I');
     }
 
     /**
@@ -439,7 +439,7 @@ Witness' signature:<br><br>
      *
      * @return string The file name of the pdf
      */
-    public function getCleanName(): string
+    public function getFileName(): string
     {
         return $this->Entity->entityData['date'] . "-" .
             preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';

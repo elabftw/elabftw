@@ -133,7 +133,7 @@ class MakeCsv extends AbstractMake
      *
      * @return string
      */
-    public function getCleanName(): string
+    public function getFileName(): string
     {
         return 'export.elabftw.csv';
     }

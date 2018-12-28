@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\EntityTrait
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website

@@ -19,7 +19,7 @@
         <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.pdf.0.long_name }}'>
             <span>{{ 'Download timestamped pdf'|trans }}</span><i class='fas fa-file-pdf'></i>
         </a>
-        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}'>
+        <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}&name=token.asn1&forceDownload=true'>
             <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
         </a>
         <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>

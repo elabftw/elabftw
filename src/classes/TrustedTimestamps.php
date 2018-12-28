@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\TrustedTimestamps
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @author Alexander Minges <alexander.minges@gmail.com>
  * @author David Müller
@@ -18,6 +16,7 @@ use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
 use Psr\Http\Message\StreamInterface;
@@ -72,6 +71,7 @@ class TrustedTimestamps extends AbstractMake
     public function __construct(Config $config, Teams $teams, Experiments $entity)
     {
         parent::__construct($entity);
+        $this->Entity->canOrExplode('write');
 
         $this->Config = $config;
         $this->teamConfigArr = $teams->read();
@@ -80,15 +80,14 @@ class TrustedTimestamps extends AbstractMake
         $this->stampParams = $this->getTimestampParameters();
 
         /** set the name of the pdf (elabid + -timestamped.pdf) */
-        $this->pdfRealName = $this->getCleanName();
+        $this->pdfRealName = $this->getFileName();
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         $this->generatePdf();
     }
 
     /**
-     * Generate the pdf to timestamp.
+     * Generate the pdf to timestamp
      *
-     * @throws ImproperActionException if it cannot make the pdf
      * @return void
      */
     private function generatePdf(): void
@@ -96,7 +95,7 @@ class TrustedTimestamps extends AbstractMake
         $MakePdf = new MakePdf($this->Entity);
         $MakePdf->outputToFile();
         $this->pdfPath = $MakePdf->filePath;
-        $this->pdfLongName = $MakePdf->fileName;
+        $this->pdfLongName = $MakePdf->longName;
     }
 
     /**
@@ -322,10 +321,10 @@ class TrustedTimestamps extends AbstractMake
      */
     private function getHash($file): string
     {
-        if (!is_readable($file)) {
+        if (!\is_readable($file)) {
             throw new ImproperActionException('The file is not readable.');
         }
-        return hash_file($this->stampParams['hash'], $file);
+        return \hash_file($this->stampParams['hash'], $file);
     }
 
     /**
@@ -337,10 +336,10 @@ class TrustedTimestamps extends AbstractMake
      */
     private function saveToken(StreamInterface $binaryToken): void
     {
-        $longName = $this->getUniqueString() . ".asn1";
+        $longName = $this->getLongName() . ".asn1";
         $filePath = $this->getUploadsPath() . $longName;
         if (!file_put_contents($filePath, $binaryToken)) {
-            throw new ImproperActionException('Cannot save token to disk!');
+            throw new FilesystemErrorException('Cannot save token to disk!');
         }
         $this->responsefilePath = $filePath;
 
@@ -452,7 +451,7 @@ class TrustedTimestamps extends AbstractMake
      * @throws ImproperActionException
      * @return string
      */
-    public function getCleanName(): string
+    public function getFileName(): string
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
@@ -498,8 +497,7 @@ class TrustedTimestamps extends AbstractMake
      */
     public function decodeAsn1($token): string
     {
-        $elabRoot = \dirname(__DIR__, 2);
-        $cmd = "asn1parse -inform DER -in " . escapeshellarg($elabRoot . '/uploads/' . $token);
+        $cmd = "asn1parse -inform DER -in " . escapeshellarg($this->getUploadsPath() . $token);
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];

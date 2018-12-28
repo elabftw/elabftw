@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use RuntimeException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class AbstractMake
 {
+    use UploadTrait;
+
     /** @var AbstractEntity $Entity instance of Experiments or Database */
     protected $Entity;
 
@@ -44,26 +46,19 @@ abstract class AbstractMake
      *
      * @return string
      */
-    abstract public function getCleanName(): string;
+    abstract public function getFileName(): string;
 
     /**
-     * Generate a long and unique string
+     * Create a unique long filename with a folder
      *
-     * @return string a random sha512 hash
+     * @return string the path for storing the file
      */
-    protected function getUniqueString(): string
+    protected function getLongName(): string
     {
-        return \hash("sha512", \bin2hex(\random_bytes(16)));
-    }
+        $hash = \hash("sha512", \bin2hex(\random_bytes(16)));
+        $folder = substr($hash, 0, 2);
 
-    /**
-     * Get the uploads folder absolute path
-     *
-     * @return string absolute path
-     */
-    protected function getUploadsPath(): string
-    {
-        return \dirname(__DIR__, 2) . '/uploads/';
+        return $folder . '/' . $hash;
     }
 
     /**
@@ -76,7 +71,7 @@ abstract class AbstractMake
     {
         $tmpPath = \dirname(__DIR__, 2) . '/cache/elab/';
         if (!is_dir($tmpPath) && !mkdir($tmpPath, 0700, true) && !is_dir($tmpPath)) {
-            throw new RuntimeException("Unable to create the cache directory ($tmpPath)");
+            throw new FilesystemErrorException("Unable to create the cache directory ($tmpPath)");
         }
 
         return $tmpPath;

@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Uploads implements CrudInterface
 {
+    use UploadTrait;
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
     private const BIG_FILE_THRESHOLD = 5000000;
 
@@ -35,9 +37,6 @@ class Uploads implements CrudInterface
     /** @var string $hashAlgorithm what algo for hashing */
     private $hashAlgorithm = 'sha256';
 
-    /** @var string $uploadsPath absolute path to uploads folder */
-    public $uploadsPath;
-
     /**
      * Constructor
      *
@@ -49,7 +48,6 @@ class Uploads implements CrudInterface
             $this->Entity = $entity;
         }
         $this->Db = Db::getConnection();
-        $this->uploadsPath = \dirname(__DIR__, 2) . '/uploads/';
     }
 
     /**
@@ -119,23 +117,6 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Create a unique long filename with a folder
-     *
-     * @return string the path for storing the file
-     */
-    protected function getCleanName(): string
-    {
-        $hash = \hash("sha512", \bin2hex(\random_bytes(16)));
-        $folder = substr($hash, 0, 2);
-        // create a subfolder if it doesn't exist
-        $folderPath = $this->uploadsPath . $folder;
-        if (!is_dir($folderPath) && !mkdir($folderPath, 0700, true) && !is_dir($folderPath)) {
-            throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
-        }
-        return $folder . '/' . $hash;
-    }
-
-    /**
      * Make the final SQL request to store the file
      *
      * @param string $realName The clean name of the file
@@ -201,8 +182,8 @@ class Uploads implements CrudInterface
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $this->checkExtension($realName);
 
-        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
-        $fullPath = $this->uploadsPath . $longName;
+        $longName = $this->getLongName() . "." . Tools::getExt($realName);
+        $fullPath = $this->getUploadsPath() . $longName;
 
         // Try to move the file to its final place
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
@@ -224,8 +205,8 @@ class Uploads implements CrudInterface
         $realName = basename($filePath);
         $this->checkExtension($realName);
 
-        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
-        $fullPath = $this->uploadsPath . $longName;
+        $longName = $this->getLongName() . "." . Tools::getExt($realName);
+        $fullPath = $this->getUploadsPath() . $longName;
 
         $this->moveFile($filePath, $fullPath);
 
@@ -255,8 +236,8 @@ class Uploads implements CrudInterface
             throw new IllegalActionException('Bad filetype!');
         }
 
-        $longName = $this->getCleanName() . "." . $fileType;
-        $fullPath = $this->uploadsPath . $longName;
+        $longName = $this->getLongName() . "." . $fileType;
+        $fullPath = $this->getUploadsPath() . $longName;
 
         if (!empty($content) && !file_put_contents($fullPath, $content)) {
             throw new FilesystemErrorException("Could not write to file!");
@@ -347,7 +328,7 @@ class Uploads implements CrudInterface
         if (empty($upload)) {
             throw new IllegalActionException('Bad id in upload replace');
         }
-        $fullPath = $this->uploadsPath . $upload['long_name'];
+        $fullPath = $this->getUploadsPath() . $upload['long_name'];
         // check user is same as the previously uploaded file
         if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
             throw new IllegalActionException('User tried to replace an upload of another user.');
@@ -399,14 +380,14 @@ class Uploads implements CrudInterface
         $uploadArr = $this->readFromId($id);
 
         // remove thumbnail
-        $thumbPath = $this->uploadsPath . $uploadArr['long_name'] . '_th.jpg';
+        $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
         if (file_exists($thumbPath)) {
             if (unlink($thumbPath) !== true) {
                 throw new FilesystemErrorException('Could not delete file!');
             }
         }
         // now delete file from filesystem
-        $filePath = $this->uploadsPath . $uploadArr['long_name'];
+        $filePath = $this->getUploadsPath() . $uploadArr['long_name'];
         if (file_exists($filePath)) {
             if (unlink($filePath) !== true) {
                 throw new FilesystemErrorException('Could not delete file!');

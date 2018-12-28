@@ -98,7 +98,7 @@ class MakeZip extends AbstractMake
     private function setCleanTitle(): void
     {
         $this->cleanTitle = preg_replace(
-            '/[^A-Za-z0-9]/',
+            '/[^A-Za-z0-9] /',
             '_',
             htmlspecialchars_decode($this->Entity->entityData['title'], ENT_QUOTES)
         ) ?? 'export';
@@ -178,7 +178,7 @@ class MakeZip extends AbstractMake
     {
         $MakePdf = new MakePdf($this->Entity, true);
         $MakePdf->outputToFile();
-        $this->Zip->addFile($MakePdf->filePath, $this->folder . '/' . $MakePdf->getCleanName());
+        $this->Zip->addFile($MakePdf->filePath, $this->folder . '/' . $MakePdf->getFileName());
         $this->trash[] = $MakePdf->filePath;
     }
 
@@ -251,7 +251,7 @@ class MakeZip extends AbstractMake
      *
      * @return string
      */
-    public function getCleanName(): string
+    public function getFileName(): string
     {
         $ext = '.elabftw.zip';
 

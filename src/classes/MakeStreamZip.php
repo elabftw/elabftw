@@ -156,7 +156,7 @@ class MakeStreamZip extends AbstractMake
     {
         $MakePdf = new MakePdf($this->Entity, true);
         $MakePdf->outputToFile();
-        $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getCleanName(), $MakePdf->filePath);
+        $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->filePath);
         $this->trash[] = $MakePdf->filePath;
     }
 
@@ -201,7 +201,7 @@ class MakeStreamZip extends AbstractMake
         }
     }
 
-    public function getCleanName(): string
+    public function getFileName(): string
     {
         return 'elabftw-export.zip';
     }

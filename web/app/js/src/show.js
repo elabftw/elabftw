@@ -133,7 +133,7 @@
             var checked = getCheckedBoxes();
             // loop on it and update the status/item type
             $.each(checked, function(index, value) {
-                ajaxs.push($.post('app/controllers/EntityController.php', {
+                ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
                     updateCategory : true,
                     id : value,
                     categoryId : $('#catChecked').val(),
@@ -156,7 +156,7 @@
             var checked = getCheckedBoxes();
             // loop on it and update the status/item type
             $.each(checked, function(index, value) {
-                ajaxs.push($.post('app/controllers/EntityController.php', {
+                ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
                     updateVisibility : true,
                     id : value,
                     visibility : $('#visChecked').val(),

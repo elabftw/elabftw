@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Templates
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,9 +8,10 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 use PDO;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 
 /**
@@ -20,8 +19,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
  */
 class Templates extends AbstractEntity
 {
-    use EntityTrait;
-
     /**
      * Constructor
      *

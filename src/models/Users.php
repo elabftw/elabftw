@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Users
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,11 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Auth;
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;

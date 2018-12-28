@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {

@@ -8,7 +8,7 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Traits;
 
 use Elabftw\Exceptions\FilesystemErrorException;
 

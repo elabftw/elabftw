@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Elabftw\Database;
-use Elabftw\Elabftw\AbstractEntity;
-use Elabftw\Elabftw\Revisions;
-use Elabftw\Elabftw\ItemsTypes;
-use Elabftw\Elabftw\TeamGroups;
+use Elabftw\Models\Database;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Revisions;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\App;
 use Elabftw\Interfaces\ControllerInterface;

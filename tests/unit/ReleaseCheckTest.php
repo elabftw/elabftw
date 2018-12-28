@@ -1,6 +1,8 @@
 <?php
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Config;
+
 class ReleaseCheckTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()

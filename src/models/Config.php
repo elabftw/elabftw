@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Config
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,10 +8,13 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use PDO;

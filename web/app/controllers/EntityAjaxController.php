@@ -12,6 +12,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Templates;
+use Elabftw\Models\Status;
+use Elabftw\Models\ItemsTypes;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -142,7 +147,7 @@ try {
 
         $Entity->updateCategory((int) $Request->request->get('categoryId'));
         // get the color of the status/item type for updating the css
-        if ($Entity->type === 'experiments') {
+        if ($Entity instanceof Experiments) {
             $Category = new Status($App->Users);
         } else {
             $Category = new ItemsTypes($App->Users);

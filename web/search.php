@@ -1,14 +1,21 @@
 <?php
 /**
- * search.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
+
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Tags;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Status;
+use Elabftw\Models\TeamGroups;
 
 /**
  * The search page

@@ -43,6 +43,9 @@
     {% endif %}
 </section>
 
+<!-- CSRF token used by ajax post requests -->
+<div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
+
 <!--script src='https://www.google.com/jsapi'></script-->
 <!--
 <script src='app/js/profile.min.js?v={{ v }}'></script>

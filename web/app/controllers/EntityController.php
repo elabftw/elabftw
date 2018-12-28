@@ -14,6 +14,9 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 

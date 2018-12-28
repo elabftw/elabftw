@@ -14,6 +14,9 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Teams;
+use Elabftw\Services\MakeTimestamp;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -75,8 +78,8 @@ try {
 
     // TIMESTAMP
     if ($Request->request->has('timestamp')) {
-        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($App->Users), $Entity);
-        $TrustedTimestamps->timeStamp();
+        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
+        $MakeTimestamp->timeStamp();
     }
 
     // DESTROY
@@ -92,10 +95,10 @@ try {
 
     // DECODE ASN1 TOKEN
     if ($Request->request->has('asn1') && \is_readable(\dirname(__DIR__, 3) . "/uploads/" . $Request->request->get('asn1'))) {
-        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($App->Users), $Entity);
+        $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
         $Response->setData(array(
             'res' => true,
-            'msg' => $TrustedTimestamps->decodeAsn1($Request->request->get('asn1'))
+            'msg' => $MakeTimestamp->decodeAsn1($Request->request->get('asn1'))
         ));
     }
 

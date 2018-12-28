@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Email
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,11 +8,14 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
+use Elabftw\Models\Users;
 use PDO;
 use Swift_Mailer;
 use Swift_Message;

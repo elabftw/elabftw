@@ -8,8 +8,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Scheduler;
+use Elabftw\Models\Templates;
+use Elabftw\Models\Database;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;

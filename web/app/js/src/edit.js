@@ -111,12 +111,11 @@
 
             destroy() {
                 if (confirm(confirmText)) {
-                    if (type === 'items') {
-                        controller = 'app/controllers/EntityAjaxController.php';
-                    }
+                    const controller = 'app/controllers/EntityAjaxController.php';
                     $.post(controller, {
                         destroy: true,
                         id: id,
+                        type: type,
                         csrf: $('#csrf').data('csrf')
                     }).done(function(data) {
                         if (data.res) {

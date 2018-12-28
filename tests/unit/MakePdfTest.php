@@ -1,5 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
+
+use Elabftw\Services\MakePdf;
 
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {

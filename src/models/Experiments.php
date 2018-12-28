@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Experiments
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,9 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -22,8 +21,6 @@ use PDO;
  */
 class Experiments extends AbstractEntity
 {
-    use EntityTrait;
-
     /** @var Links $Links instance of Links */
     public $Links;
 
@@ -291,6 +288,11 @@ class Experiments extends AbstractEntity
         $this->Uploads->destroyAll();
     }
 
+    /**
+     * Get token and pdf info for displaying in view mode
+     *
+     * @return array
+     */
     public function getTimestampInfo(): array
     {
         if ($this->entityData['timestamped'] === '0') {

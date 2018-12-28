@@ -10,13 +10,16 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Elabftw\Config;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Teams;
 use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
 use Psr\Http\Message\StreamInterface;

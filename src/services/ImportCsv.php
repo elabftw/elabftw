@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\ImportCsv
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,10 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Tools;
+use Elabftw\Models\Users;
 use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 

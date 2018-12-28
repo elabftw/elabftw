@@ -1,12 +1,12 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
         $this->Users = new Users(1);
-        $this->Experiments = new Experiments($this->Users, '1');
+        $this->Experiments = new Experiments($this->Users, 1);
     }
 
     public function testCreateReadDestroy()
@@ -20,7 +20,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroyAll()
     {
-        $this->Experiments->Links->create('1');
+        $this->Experiments->Links->create(1);
         $this->Experiments->Links->destroyAll();
     }
 }

@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Comments
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,11 +8,14 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Services\Email;
 use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;

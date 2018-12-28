@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use FilesystemIterator;
 use PDO;
 

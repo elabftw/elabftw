@@ -14,6 +14,8 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\ImportCsv;
+use Elabftw\Services\ImportZip;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 

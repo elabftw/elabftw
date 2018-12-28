@@ -6,9 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;

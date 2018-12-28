@@ -8,7 +8,7 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
 use Elabftw\Exceptions\FilesystemErrorException;
 use Gmagick;

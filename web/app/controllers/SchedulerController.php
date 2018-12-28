@@ -15,6 +15,8 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
+use Elabftw\Models\Database;
+use Elabftw\Models\Scheduler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**

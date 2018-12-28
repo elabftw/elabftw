@@ -1,5 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Tools;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {

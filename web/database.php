@@ -6,9 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -30,9 +32,8 @@ $Response->prepare($Request);
 $template = 'error.html';
 $renderArr = array('error' => Tools::error());
 
-$Controller = new DatabaseController($App);
-
 try {
+    $Controller = new DatabaseController($App);
     // show nothing to anon if admin didn't set the DB as public
     if ($App->Session->has('anon') && ($App->teamConfigArr['public_db'] === '0')) {
         throw new ImproperActionException(Tools::error(true));

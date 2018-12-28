@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 use Elabftw\Exceptions\IllegalActionException;
 

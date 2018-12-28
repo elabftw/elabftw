@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\AbstractImport
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,7 +8,7 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

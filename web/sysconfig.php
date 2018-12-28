@@ -11,6 +11,9 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
 use Elabftw\Exceptions\IllegalActionException;
 use Exception;
 use RuntimeException;

@@ -47,7 +47,7 @@
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
     "phpstan": "phpstan analyse --memory-limit 2G -l 7 src",
     "psalm": "psalm -c=src/tools/psalm.xml",
-    "srcdoc": "phpDocumentor run --cache-folder /tmp -i cache -i uploads -d src/classes -d src/exceptions -d src/interfaces -d src/models -d web/app/controllers -t _srcdoc",
+    "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/exceptions -d src/interfaces -d src/models -d src/traits -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",
     "unit": "php vendor/bin/codecept run unit",
     "vulns": "snyk test"

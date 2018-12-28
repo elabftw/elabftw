@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\AbstractMake
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,9 +8,13 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Traits\UploadTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

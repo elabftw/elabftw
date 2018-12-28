@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
 {

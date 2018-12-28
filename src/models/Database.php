@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Database
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,9 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 
@@ -20,8 +19,6 @@ use PDO;
  */
 class Database extends AbstractEntity
 {
-    use EntityTrait;
-
     /**
      * Constructor
      *

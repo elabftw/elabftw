@@ -1,19 +1,26 @@
 <?php
 /**
- * make.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Services\MakeCsv;
+use Elabftw\Services\MakePdf;
+use Elabftw\Services\MakeStreamZip;
+use Elabftw\Services\MakeZip;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;

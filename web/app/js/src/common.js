@@ -105,7 +105,7 @@ function isInt(n) {
 
 // called when you click the save button of tinymce
 function quickSave(type, id) {
-    $.post('app/controllers/EntityController.php', {
+    $.post('app/controllers/EntityAjaxController.php', {
         quickSave: true,
         type : type,
         id : id,

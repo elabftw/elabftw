@@ -1,15 +1,16 @@
 <?php
 /**
- * profile.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Experiments;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 

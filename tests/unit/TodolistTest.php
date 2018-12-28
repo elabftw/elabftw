@@ -1,5 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Tools;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {

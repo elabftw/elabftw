@@ -6,17 +6,20 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
-/**
- *  This page displays an XML file with all the infos of the Service Provider
- */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Config;
+use Elabftw\Models\Idps;
 use Elabftw\Exceptions\ImproperActionException;
 use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ *  This page displays an XML file with all the infos of the Service Provider
+ */
 require_once 'app/init.inc.php';
 
 $Response = new Response();

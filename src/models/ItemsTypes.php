@@ -1,15 +1,17 @@
 <?php
 /**
- * \Elabftw\Elabftw\ItemsTypes
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Elabftw;
+declare(strict_types=1);
 
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
@@ -19,8 +21,6 @@ use PDO;
  */
 class ItemsTypes extends AbstractCategory
 {
-    use EntityTrait;
-
     /**
      * Constructor
      *

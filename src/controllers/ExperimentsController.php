@@ -11,12 +11,12 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Elabftw\Experiments;
-use Elabftw\Elabftw\AbstractEntity;
-use Elabftw\Elabftw\Status;
-use Elabftw\Elabftw\Revisions;
-use Elabftw\Elabftw\TeamGroups;
-use Elabftw\Elabftw\Templates;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Status;
+use Elabftw\Models\Revisions;
+use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Templates;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\App;
 use Elabftw\Interfaces\ControllerInterface;

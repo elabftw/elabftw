@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {

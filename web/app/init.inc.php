@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
+use Elabftw\Models\Users;
 use Exception;
 use Monolog\Logger;
 use PDOException;

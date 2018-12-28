@@ -8,10 +8,11 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Traits;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Elabftw\Tools;
 use PDO;
 
 /**

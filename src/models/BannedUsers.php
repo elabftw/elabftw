@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\BannedUsers
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,9 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use PDO;
 
 /**

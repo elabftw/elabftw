@@ -14,6 +14,10 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Templates;
+use Elabftw\Models\Tags;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -74,10 +78,9 @@ try {
         $Response->setData(array('res' => true, 'msg' => "Removed $deduplicated duplicates"));
     }
 
-
     // UNREFERENCE TAG
     if ($Request->request->has('unreferenceTag')) {
-        if (Tools::checkId($Request->request->get('tag_id')) === false) {
+        if (Tools::checkId((int) $Request->request->get('tag_id')) === false) {
             throw new IllegalActionException('Bad id value');
         }
         $Tags->unreference((int) $Request->request->get('tag_id'));

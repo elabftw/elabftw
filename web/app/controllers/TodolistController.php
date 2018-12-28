@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Todolist;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -65,7 +66,7 @@ try {
 
     // DESTROY
     if ($Request->request->has('destroy')) {
-        $Todolist->destroy($Request->request->get('id'));
+        $Todolist->destroy((int) $Request->request->get('id'));
         $Response->setData(array(
             'res' => true,
             'msg' => _('Item deleted successfully')

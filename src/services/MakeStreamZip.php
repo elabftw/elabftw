@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\MakeZip
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,20 +8,19 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Exception;
+use Elabftw\Models\AbstractEntity;
 use PDO;
-use ZipArchive;
+use ZipStream\ZipStream;
 
 /**
  * Make a zip archive from experiment or db item
  */
-class MakeZip extends AbstractMake
+class MakeStreamZip extends AbstractMake
 {
-    /** @var ZipArchive $Zip the Zip object */
+    /** @var ZipStream $Zip the ZipStream object */
     private $Zip;
 
     /** @var string $idList the input ids */
@@ -38,12 +35,6 @@ class MakeZip extends AbstractMake
     /** @var string $cleanTitle a formatted title */
     private $cleanTitle;
 
-    /** @var string $fileName a sha512 sum */
-    public $fileName;
-
-    /** @var string $filePath full path of file */
-    public $filePath;
-
     /** @var string $folder name of folder */
     private $folder;
 
@@ -55,7 +46,6 @@ class MakeZip extends AbstractMake
      *
      * @param AbstractEntity $entity
      * @param string $idList 1+3+5+8
-     * @throws Exception if we don't have ZipArchive extension
      * @return void
      */
     public function __construct(AbstractEntity $entity, $idList)
@@ -67,27 +57,14 @@ class MakeZip extends AbstractMake
             throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
+        $this->Zip = new ZipStream('elabftw-export.zip');
+
         $this->idList = $idList;
-
-        $this->fileName = $this->getUniqueString();
-        $this->filePath = $this->getTmpPath() . $this->fileName;
-
-        $this->createZipArchive();
-        $this->loopIdArr();
     }
 
-    /**
-     * Initiate the zip object and the archive
-     *
-     * @return void
-     */
-    private function createZipArchive(): void
+    public function output()
     {
-        $this->Zip = new ZipArchive();
-
-        if (!$this->Zip->open($this->filePath, ZipArchive::CREATE)) {
-            throw new FilesystemErrorException('Could not open zip file!');
-        }
+        $this->loopIdArr();
     }
 
     /**
@@ -98,7 +75,7 @@ class MakeZip extends AbstractMake
     private function setCleanTitle(): void
     {
         $this->cleanTitle = preg_replace(
-            '/[^A-Za-z0-9] /',
+            '/[^A-Za-z0-9 ]/',
             '_',
             htmlspecialchars_decode($this->Entity->entityData['title'], ENT_QUOTES)
         ) ?? 'export';
@@ -123,9 +100,9 @@ class MakeZip extends AbstractMake
             $uploads = $req->fetchAll();
             foreach ($uploads as $upload) {
                 // add it to the .zip
-                $this->Zip->addFile(
-                    $this->getUploadsPath() . $upload['long_name'],
-                    $this->folder . '/' . $upload['real_name']
+                $this->Zip->addFileFromPath(
+                    $this->folder . '/' . $upload['real_name'],
+                    $this->getUploadsPath() . $upload['long_name']
                 );
             }
         }
@@ -165,7 +142,7 @@ class MakeZip extends AbstractMake
             $real_names_so_far[] = $realName;
 
             // add files to archive
-            $this->Zip->addFile($this->getUploadsPath() . $file['long_name'], $this->folder . '/' . $realName);
+            $this->Zip->addFileFromPath($this->folder . '/' . $realName, $this->getUploadsPath() . $file['long_name']);
         }
     }
 
@@ -178,7 +155,7 @@ class MakeZip extends AbstractMake
     {
         $MakePdf = new MakePdf($this->Entity, true);
         $MakePdf->outputToFile();
-        $this->Zip->addFile($MakePdf->filePath, $this->folder . '/' . $MakePdf->getFileName());
+        $this->Zip->addFileFromPath($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->filePath);
         $this->trash[] = $MakePdf->filePath;
     }
 
@@ -191,7 +168,7 @@ class MakeZip extends AbstractMake
     private function addCsv(int $id): void
     {
         $MakeCsv = new MakeCsv($this->Entity, (string) $id);
-        $this->Zip->addFile($MakeCsv->filePath, $this->folder . '/' . $this->cleanTitle . '.csv');
+        $this->Zip->addFileFromPath($this->folder . '/' . $this->cleanTitle . '.csv', $MakeCsv->filePath);
         $this->trash[] = $MakeCsv->filePath;
     }
 
@@ -223,6 +200,11 @@ class MakeZip extends AbstractMake
         }
     }
 
+    public function getFileName(): string
+    {
+        return 'elabftw-export.zip';
+    }
+
     /**
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
@@ -237,28 +219,9 @@ class MakeZip extends AbstractMake
         }
 
         // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFromString(".elabftw.json", (string) json_encode($this->jsonArr));
+        $this->Zip->addFile(".elabftw.json", (string) json_encode($this->jsonArr));
 
-        $this->Zip->close();
-        // check if it failed for some reason
-        if (!is_file($this->filePath)) {
-            throw new FilesystemErrorException('Error making the zip archive!');
-        }
-    }
-
-    /**
-     * This is the name of the file that will get downloaded
-     *
-     * @return string
-     */
-    public function getFileName(): string
-    {
-        $ext = '.elabftw.zip';
-
-        if (count($this->idArr) === 1) {
-            return $this->Entity->entityData['date'] . "-" . $this->cleanTitle . $ext;
-        }
-        return Tools::kdate() . $ext;
+        $this->Zip->finish();
     }
 
     /**

@@ -8,13 +8,18 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Elabftw\Extensions;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Services\MakeThumbnail;
+use Elabftw\Traits\UploadTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -1,6 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 
 class DatabaseTest extends \PHPUnit\Framework\TestCase

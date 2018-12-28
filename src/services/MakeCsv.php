@@ -10,9 +10,10 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Services;
 
 use RuntimeException;
+use Elabftw\Models\AbstractEntity;
 
 /**
  * Make a CSV file from a list of id and a type

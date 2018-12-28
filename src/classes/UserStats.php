@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Elabftw\Models\Status;
+use Elabftw\Models\Users;
 
 /**
  * Generate and display experiments statistics for a user

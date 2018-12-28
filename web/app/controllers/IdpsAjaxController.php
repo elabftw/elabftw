@@ -1,7 +1,5 @@
 <?php
 /**
- * app/controllers/IdpsController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -17,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
+use Elabftw\Models\Idps;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**

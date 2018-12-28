@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Status;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -42,24 +43,24 @@ try {
         $Status->create(
             $Request->request->get('name'),
             $Request->request->get('color'),
-            $Request->request->get('isTimestampable')
+            (int) $Request->request->get('isTimestampable')
         );
     }
 
     // UPDATE STATUS
     if ($Request->request->has('statusUpdate')) {
         $Status->update(
-            $Request->request->get('id'),
+            (int) $Request->request->get('id'),
             $Request->request->get('name'),
             $Request->request->get('color'),
-            $Request->request->get('isTimestampable'),
+            (int) $Request->request->get('isTimestampable'),
             (int) $Request->request->get('isDefault')
         );
     }
 
     // DESTROY STATUS
     if ($Request->request->has('statusDestroy')) {
-        $Status->destroy($Request->request->get('id'));
+        $Status->destroy((int) $Request->request->get('id'));
     }
 
 } catch (ImproperActionException $e) {

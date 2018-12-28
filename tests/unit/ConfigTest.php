@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {

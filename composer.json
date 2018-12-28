@@ -31,10 +31,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Elabftw\\Elabftw\\" : ["src/classes", "src/models"],
-            "Elabftw\\Exceptions\\" : ["src/exceptions"],
             "Elabftw\\Controllers\\" : ["src/controllers"],
-            "Elabftw\\Interfaces\\" : ["src/interfaces"]
+            "Elabftw\\Elabftw\\" : ["src/classes"],
+            "Elabftw\\Exceptions\\" : ["src/exceptions"],
+            "Elabftw\\Interfaces\\" : ["src/interfaces"],
+            "Elabftw\\Models\\" : ["src/models"],
+            "Elabftw\\Services\\" : ["src/services"],
+            "Elabftw\\Traits\\" : ["src/traits"]
         }
     },
     "license": "AGPL-3.0-or-later"

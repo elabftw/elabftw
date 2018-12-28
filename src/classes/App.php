@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Config;
+use Elabftw\Models\Users;
+use Elabftw\Models\Todolist;
+use Elabftw\Models\Teams;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use RuntimeException;

@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {

@@ -14,6 +14,13 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Status;
+use Elabftw\Models\Tags;
+use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -1,6 +1,10 @@
 <?php
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
+use Elabftw\Models\Users;
+use Elabftw\Models\Experiments;
+
 class ApiTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()

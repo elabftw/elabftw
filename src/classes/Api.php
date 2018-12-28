@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Database;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

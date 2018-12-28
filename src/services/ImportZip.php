@@ -11,6 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use FilesystemIterator;
 use PDO;

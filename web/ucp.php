@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 

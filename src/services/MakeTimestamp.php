@@ -29,7 +29,7 @@ use Psr\Http\Message\StreamInterface;
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
-class TrustedTimestamps extends AbstractMake
+class MakeTimestamp extends AbstractMake
 {
     /** default hash algo for file */
     private const HASH_ALGORITHM = 'sha256';
@@ -594,7 +594,7 @@ class TrustedTimestamps extends AbstractMake
     }
 
     /**
-     * Delete all temporary files created by TrustedTimestamps
+     * Delete all temporary files
      *
      */
     public function __destruct()

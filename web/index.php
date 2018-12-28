@@ -11,6 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;

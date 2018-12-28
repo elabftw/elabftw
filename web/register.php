@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Models\Users;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Elabftw\Tools;

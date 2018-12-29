@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use RuntimeException;
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 
@@ -49,7 +49,7 @@ class MakeCsv extends AbstractMake
         $this->idList = $idList;
 
         // set the column names
-        $this->list[] = $this->populateFirstLine();
+        $this->list[] = $this->getColumns();
 
         // main loop
         $this->loopIdArr();
@@ -60,9 +60,9 @@ class MakeCsv extends AbstractMake
      *
      * @return array
      */
-    private function populateFirstLine(): array
+    private function getColumns(): array
     {
-        if ($this->Entity->type === 'experiments') {
+        if ($this->Entity instanceof Experiments) {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
         return  array('id', 'date', 'title', 'description', 'category', 'rating', 'url');
@@ -83,7 +83,7 @@ class MakeCsv extends AbstractMake
                 $this->addLine();
             }
         }
-        $this->writeCsv();
+        $this->writeCsv($this->list);
     }
 
     /**
@@ -108,26 +108,6 @@ class MakeCsv extends AbstractMake
             $elabidOrRating,
             $this->getUrl()
         );
-    }
-
-    /**
-     * Write our file
-     *
-     * @return void
-     */
-    private function writeCsv(): void
-    {
-        $fp = fopen($this->filePath, 'w+b');
-        if ($fp === false) {
-            throw new RuntimeException('Error: could not create csv file!');
-        }
-
-        // utf8 headers
-        fwrite($fp, "\xEF\xBB\xBF");
-        foreach ($this->list as $fields) {
-            fputcsv($fp, $fields);
-        }
-        fclose($fp);
     }
 
     /**

@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Uploads;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;

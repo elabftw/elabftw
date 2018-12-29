@@ -1,0 +1,124 @@
+<?php
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+declare(strict_types=1);
+
+namespace Elabftw\Services;
+
+use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Users;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Uploads;
+
+/**
+ * Create a report of usage for all users
+ */
+class MakeReport extends AbstractMake
+{
+    /** @var Teams $Teams instance of Teams */
+    private $Teams;
+
+    /** @var Uploads $Uploads instance of Uploads */
+    private $Uploads;
+
+    /** @var string $fileName a sha512 sum */
+    public $fileName;
+
+    /** @var string $filePath the full path of the file */
+    public $filePath;
+
+    /**
+     * Constructor
+     *
+     * @param Teams $teams
+     * @param Uploads $uploads
+     */
+    public function __construct(Teams $teams, Uploads $uploads)
+    {
+        $this->Teams = $teams;
+        $this->Uploads = $uploads;
+        $this->fileName = $this->getUniqueString();
+        $this->filePath = $this->getTmpPath() . $this->fileName;
+        $this->makeReport();
+    }
+
+    /**
+     * The human friendly name
+     *
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        return Tools::kdate() . '-report.elabftw.csv';
+    }
+
+    /**
+     * Columns of the CSV
+     *
+     * @return array
+     */
+    private function getColumns(): array
+    {
+        return array(
+            'userid',
+            'firstname',
+            'lastname',
+            'team',
+            'email',
+            'validated',
+            'usergroup',
+            'archived',
+            'teamname',
+            'diskusage_in_bytes',
+            'diskusage_formatted',
+            'exp_total'
+        );
+    }
+
+    /**
+     * Get the rows for each users
+     *
+     * @return array
+     */
+    private function getData(): array
+    {
+        $allUsers = $this->Teams->Users->readFromQuery('');
+        foreach($allUsers as $key => $user) {
+            // get disk usage for all uploaded files
+            $diskUsage = $this->Uploads->getDiskUsage((int) $user['userid']);
+            // get total number of experiments
+            $Entity = new Experiments(new Users((int) $user['userid']));
+            $Entity->setUseridFilter();
+            $itemsArr = $Entity->read(false);
+            $count = \count($itemsArr);
+
+            $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
+            $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
+            $allUsers[$key]['exp_total'] = $count;
+        }
+        return $allUsers;
+    }
+
+    /**
+     * Generate the CSV and write the file
+     *
+     * @return void
+     */
+    private function makeReport(): void
+    {
+        $rows = array();
+        $rows[] = $this->getColumns();
+        $allUsers = $this->getData();
+        foreach ($allUsers as $user) {
+            $rows[] = $user;
+        }
+        $this->writeCsv($rows);
+    }
+}

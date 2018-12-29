@@ -58,6 +58,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <h3>{{ 'Usage Statistics'|trans }}</h3>
         <hr>
         <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
+        <hr>
+        <a href='make.php?what=report'><button class='button'>{{ 'Generate report'|trans }}</button></a>
     </div>
 
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
@@ -471,6 +473,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </div>
 </div>
 
+<!--
 <script src='app/js/sysconfig.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/sysconfig.js?v={{ v }}'></script>
+
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 {% endblock body %}

@@ -80,6 +80,28 @@ abstract class AbstractMake
     }
 
     /**
+     * Write a CSV file
+     *
+     * @param array $rows the rows to write
+     * @return void
+     */
+    protected function writeCsv($rows): void
+    {
+        $fp = \fopen($this->filePath, 'w+b');
+        if ($fp === false) {
+            throw new FilesystemErrorException('Error: could not create csv file!');
+        }
+
+        // utf8 headers
+        \fwrite($fp, "\xEF\xBB\xBF");
+        foreach ($rows as $row) {
+            \fputcsv($fp, $row);
+        }
+        \fclose($fp);
+    }
+
+
+    /**
      * Return the url of the item or experiment
      *
      * @return string url to the item/experiment

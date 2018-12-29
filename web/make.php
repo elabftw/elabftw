@@ -17,8 +17,12 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Uploads;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakePdf;
+use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
 use Elabftw\Services\MakeZip;
 use Exception;
@@ -78,12 +82,19 @@ try {
             $Make->outputToBrowser();
             break;
 
+        case 'report':
+            if (!$App->Session->get('is_sysadmin')) {
+                throw new IllegalActionException('Non sysadmin user tried to generate report.');
+            }
+            $Make = new MakeReport(new Teams($App->Users), new Uploads());
+            break;
+
         default:
             throw new IllegalActionException('Bad make what value');
     }
 
     // the pdf is shown directly, but for csv or zip we want a download page
-    if (\in_array($Request->query->get('what'), array('csv', 'zip'), true) && !$Request->cookies->has('stream_zip')) {
+    if (\in_array($Request->query->get('what'), array('csv', 'zip', 'report'), true) && !$Request->cookies->has('stream_zip')) {
 
         $template = 'make.html';
         $renderArr = array(

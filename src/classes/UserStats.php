@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\UserStats
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -12,12 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Elabftw\Models\Status;
 use Elabftw\Models\Users;
+use PDO;
 
 /**
- * Generate and display experiments statistics for a user
+ * Generate experiments statistics for a user (shown on profile page)
  */
 class UserStats
 {
@@ -48,7 +46,7 @@ class UserStats
      * @param Users $users
      * @param int $count total count of experiments
      */
-    public function __construct(Users $users, $count)
+    public function __construct(Users $users, int $count)
     {
         $this->Users = $users;
         $this->count = $count;
@@ -71,12 +69,12 @@ class UserStats
         // populate arrays
         foreach ($statusAll as $status) {
             $this->statusArr[$status['category_id']] = $status['category'];
-            $this->colorsArr[] = $status['color'];
+            $this->colorsArr[] = '#' . $status['color'];
         }
 
         // count experiments for each status
         foreach (array_keys($this->statusArr) as $key) {
-            $sql = "SELECT COUNT(*)
+            $sql = "SELECT COUNT(id)
                 FROM experiments
                 WHERE userid = :userid
                 AND status = :status";

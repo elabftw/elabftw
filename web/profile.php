@@ -29,7 +29,7 @@ try {
     $Entity = new Experiments($App->Users);
     $Entity->setUseridFilter();
     $itemsArr = $Entity->read(false);
-    $count = count($itemsArr);
+    $count = \count($itemsArr);
 
     // generate stats for the pie chart with experiments status
     // see https://developers.google.com/chart/interactive/docs/reference?csw=1#datatable-class
@@ -45,19 +45,12 @@ try {
         'label' => 'Experiments number')
     );
     // rows
-    foreach ($UserStats->percentArr as $status => $name) {
-        $stats['rows'][] = array('c' => array(array('v' => $status), array('v' => $name)));
+    foreach ($UserStats->percentArr as $name => $percent) {
+        $stats['rows'][] = array('c' => array(array('v' => $name), array('v' => $percent)));
     }
     // now convert to json for JS usage
     $statsJson = json_encode($stats);
-
-    // colors of the status
-    $colors = array();
-    // we just need to add the '#' at the beginning
-    foreach ($UserStats->colorsArr as $color) {
-        $colors[] = '#' . $color;
-    }
-    $colorsJson = json_encode($colors);
+    $colorsJson = json_encode($UserStats->colorsArr);
 
     $template = 'profile.html';
     $renderArr = array(

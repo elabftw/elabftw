@@ -46,16 +46,11 @@ try {
     // UPDATE
     if ($Request->request->has('update')) {
         $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
-
-        if (\mb_strlen($body) === 0 || $body === ' ') {
-            throw new ImproperActionException('Body is too short');
-        }
-
         $id_arr = explode('_', $Request->request->get('id'));
-        if (Tools::checkId((int) $id_arr[1]) === false) {
+        $id = (int) $id_arr[1];
+        if (Tools::checkId($id) === false) {
             throw new IllegalActionException('The id parameter is invalid');
         }
-        $id = (int) $id_arr[1];
         $Todolist->update($id, $body);
     }
 

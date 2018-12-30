@@ -57,7 +57,7 @@ class Comments implements CrudInterface
      */
     public function create(string $comment): int
     {
-        $comment = nl2br(filter_var($comment, FILTER_SANITIZE_STRING));
+        $comment = $this->prepare($comment);
 
         $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(datetime, item_id, comment, userid)
             VALUES(:datetime, :item_id, :comment, :userid)';
@@ -74,6 +74,22 @@ class Comments implements CrudInterface
         }
 
         return $this->Db->lastInsertId();
+    }
+
+    /**
+     * Sanitize comment and check for size
+     *
+     * @param string $comment
+     * @return string
+     */
+    private function prepare(string $comment): string
+    {
+        $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
+        // check length
+        if (\mb_strlen($comment) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        }
+        return $comment;
     }
 
     /**
@@ -168,15 +184,11 @@ class Comments implements CrudInterface
      *
      * @param string $comment New content for the comment
      * @param string $id id of the comment (comment_42)
-     * @return void
+     * @return string
      */
-    public function update(string $comment, string $id): void
+    public function update(string $comment, string $id): string
     {
-        $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
-        // check length
-        if (\mb_strlen($comment) < 2) {
-            throw new ImproperActionException('Comment is too short!');
-        }
+        $comment = $this->prepare($comment);
 
         $exploded = \explode('_', $id);
         $id = (int) $exploded[1];
@@ -192,6 +204,7 @@ class Comments implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+        return $comment;
     }
 
     /**

@@ -85,6 +85,9 @@ class Todolist implements CrudInterface
      */
     public function update(int $id, string $body): void
     {
+        if (\mb_strlen($body) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (%d characters minimum)'), 2));
+        }
         $sql = "UPDATE todolist SET body = :body WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);

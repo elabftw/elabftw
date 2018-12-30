@@ -160,7 +160,7 @@ function makeEditableComment(element) {
         type : 'textarea',
         submitdata: {
             type: $(element).data('type'),
-            csrf: $('csrf').data('csrf')
+            csrf: $('#csrf').data('csrf')
         },
         width: '80%',
         height: '200',
@@ -171,9 +171,18 @@ function makeEditableComment(element) {
         style : 'display:inline',
         submitcssclass : 'button mt-2',
         cancelcssclass : 'button button-delete mt-2',
-        callback : function(result, settings, submitdata) {
+        callback : function(data) {
+            data = JSON.parse(data);
             // show result in comment box
-            $('#' + submitdata.id).html(submitdata.update.replace(/\n/g,"<br>"));
+            if (data.res) {
+                notif(data.msg, 'ok');
+                $(element).html(data.update);
+            } else {
+                notif(data.msg, 'ko');
+            }
+            $('.comment.editable').each(function() {
+                makeEditableComment($(this));
+            });
         }
     });
 }

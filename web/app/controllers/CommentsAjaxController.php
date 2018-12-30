@@ -57,7 +57,12 @@ try {
 
     // UPDATE
     if ($Request->request->has('update')) {
-        $Entity->Comments->update($Request->request->get('update'), $Request->request->get('id'));
+        $res = $Entity->Comments->update($Request->request->get('update'), $Request->request->get('id'));
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('Saved'),
+            'update' => $res
+        ));
     }
 
     // DESTROY

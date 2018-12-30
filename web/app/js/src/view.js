@@ -76,12 +76,6 @@
             create: function() {
                 document.getElementById('commentsCreateButton').disabled = true;
                 const comment = $('#commentsCreateArea').val();
-                // check length
-                if (comment.length < 2) {
-                    notif('Comment too short!');
-                    document.getElementById('commentsCreateButton').disabled = false;
-                    return false;
-                }
 
                 $.post(this.controller, {
                     create: true,
@@ -97,6 +91,7 @@
                         });
                     } else {
                         notif(data.msg, 'ko');
+                        document.getElementById('commentsCreateButton').disabled = false;
                     }
                 });
             },

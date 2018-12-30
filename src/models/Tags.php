@@ -50,7 +50,7 @@ class Tags implements CrudInterface
         $tag = str_replace(array('\\', '|'), array('', ' '), filter_var($tag, FILTER_SANITIZE_STRING));
         // empty tags are disallowed
         if ($tag === '') {
-            throw new ImproperActionException(_('Tag is too short!'));
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
         }
         return $tag;
 

@@ -332,6 +332,10 @@ class Uploads implements CrudInterface
      */
     public function updateComment(int $id, string $comment): void
     {
+        // check length
+        if (\mb_strlen($comment) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        }
         $this->Entity->canOrExplode('write');
         // SQL to update single file comment
         $sql = "UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id";

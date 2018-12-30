@@ -108,11 +108,6 @@ try {
     if ($Request->request->has('updateFileComment')) {
         $Entity->canOrExplode('write');
         $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
-
-        if (\mb_strlen($comment) === 0 || $comment === ' ') {
-            throw new ImproperActionException(_('Comment is too short'));
-        }
-
         $id_arr = \explode('_', $Request->request->get('comment_id'));
         $comment_id = (int) $id_arr[1];
         if (Tools::checkId($comment_id) === false) {

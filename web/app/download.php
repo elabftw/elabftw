@@ -56,7 +56,7 @@ try {
 
     // SET FILE PATH
     // the zip archives will be in the tmp folder
-    if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv') || $_GET['type'] === 'report') {
+    if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv' || $_GET['type'] === 'report')) {
         $file_path = $elabRoot . '/cache/elab/' . $long_filename;
     } else {
         $file_path = $elabRoot . '/uploads/' . $final_filename;

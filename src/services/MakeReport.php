@@ -90,7 +90,7 @@ class MakeReport extends AbstractMake
     private function getData(): array
     {
         $allUsers = $this->Teams->Users->readFromQuery('');
-        foreach($allUsers as $key => $user) {
+        foreach ($allUsers as $key => $user) {
             // get disk usage for all uploaded files
             $diskUsage = $this->Uploads->getDiskUsage((int) $user['userid']);
             // get total number of experiments

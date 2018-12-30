@@ -268,4 +268,7 @@ if ($Request->query->count() > 0) {
             'searchPage' => true
         ));
     }
+} else {
+    // no search
+    echo $App->render('footer.html', array());
 }

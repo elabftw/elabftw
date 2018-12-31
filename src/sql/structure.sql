@@ -67,7 +67,7 @@ CREATE TABLE `experiments_steps` (
             `item_id` INT UNSIGNED NOT NULL ,
             `body` TEXT NOT NULL ,
             `ordering` INT UNSIGNED NULL DEFAULT NULL ,
-            `finished` TINYINT(1) NOT NULL DEFAULT '0',
+            `finished` tinyint(1) NOT NULL DEFAULT '0',
             `finished_time` DATETIME NULL DEFAULT NULL,
             PRIMARY KEY (`id`)
         )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -82,7 +82,7 @@ CREATE TABLE `experiments` (
   `title` varchar(255) NOT NULL,
   `date` int(10) unsigned NOT NULL,
   `body` mediumtext,
-  `status` varchar(255) NOT NULL,
+  `category` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -204,9 +204,9 @@ CREATE TABLE `items` (
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) unsigned NOT NULL,
   `body` mediumtext,
-  `rating` tinyint(10) DEFAULT '0',
-  `type` int(10) unsigned NOT NULL,
-  `locked` tinyint(3) unsigned DEFAULT '0',
+  `rating` tinyint(1) DEFAULT 0,
+  `category` int(10) unsigned NOT NULL,
+  `locked` tinyint(1) unsigned DEFAULT 0,
   `userid` int(10) unsigned NOT NULL,
   `visibility` varchar(255) NOT NULL DEFAULT 'team',
   PRIMARY KEY (`id`)
@@ -225,7 +225,7 @@ CREATE TABLE `items_types` (
   `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) unsigned DEFAULT NULL,
-  `bookable` tinyint(1) DEFAULT '0',
+  `bookable` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -306,7 +306,7 @@ CREATE TABLE `users` (
   `website` varchar(255) DEFAULT NULL,
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
-  `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
+  `limit_nb` tinyint(1) NOT NULL DEFAULT '15',
   `orderby` varchar(255) NULL DEFAULT NULL,
   `sort` varchar(255) NULL DEFAULT NULL,
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',

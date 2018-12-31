@@ -48,10 +48,6 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     {
         $this->Templates->destroy();
     }
-    public function testUpdateCategory()
-    {
-        $this->Templates->updateCategory(1);
-    }
     public function testToggleLock()
     {
         $this->Templates->toggleLock();

@@ -35,16 +35,16 @@ class Database extends AbstractEntity
     /**
      * Create an item
      *
-     * @param int $itemType What kind of item we want to create.
+     * @param int $category What kind of item we want to create.
      * @return int the new id of the item
      */
-    public function create(int $itemType): int
+    public function create(int $category): int
     {
-        $itemsTypes = new ItemsTypes($this->Users, $itemType);
+        $itemsTypes = new ItemsTypes($this->Users, $category);
 
         // SQL for create DB item
-        $sql = "INSERT INTO items(team, title, date, body, userid, type)
-            VALUES(:team, :title, :date, :body, :userid, :type)";
+        $sql = "INSERT INTO items(team, title, date, body, userid, category)
+            VALUES(:team, :title, :date, :body, :userid, :category)";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -52,7 +52,7 @@ class Database extends AbstractEntity
             'date' => Tools::kdate(),
             'body' => $itemsTypes->read(),
             'userid' => $this->Users->userData['userid'],
-            'type' => $itemType
+            'category' => $category
         ));
 
         return $this->Db->lastInsertId();
@@ -79,34 +79,14 @@ class Database extends AbstractEntity
     }
 
     /**
-     * Update the item type
-     *
-     * @param int $category Id of the item type
-     * @return void
-     */
-    public function updateCategory(int $category): void
-    {
-        $this->canOrExplode('write');
-
-        $sql = "UPDATE items SET type = :type WHERE id = :id AND locked = 0";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $category, PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-
-    /**
      * Duplicate an item
      *
      * @return int The id of the newly created item
      */
     public function duplicate(): int
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, type)
-            VALUES(:team, :title, :date, :body, :userid, :type)";
+        $sql = "INSERT INTO items(team, title, date, body, userid, category)
+            VALUES(:team, :title, :date, :body, :userid, :category)";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -114,7 +94,7 @@ class Database extends AbstractEntity
             'date' => Tools::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
-            'type' => $this->entityData['category_id']
+            'category' => $this->entityData['category_id']
         ));
         $newId = $this->Db->lastInsertId();
 

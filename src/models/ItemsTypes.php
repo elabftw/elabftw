@@ -191,9 +191,9 @@ class ItemsTypes extends AbstractCategory
      */
     protected function countItems(int $id): int
     {
-        $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
+        $sql = "SELECT COUNT(*) FROM items WHERE category = :category";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $id, PDO::PARAM_INT);
+        $req->bindParam(':category', $id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

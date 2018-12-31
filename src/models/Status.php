@@ -217,9 +217,9 @@ class Status extends AbstractCategory
      */
     protected function countItems(int $id): int
     {
-        $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
+        $sql = "SELECT COUNT(*) FROM experiments WHERE category = :category";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':status', $id, PDO::PARAM_INT);
+        $req->bindParam(':category', $id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

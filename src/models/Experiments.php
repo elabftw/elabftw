@@ -70,15 +70,15 @@ class Experiments extends AbstractEntity
         }
 
         // SQL for create experiments
-        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
+        $sql = "INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Tools::kdate(),
             'body' => $body,
-            'status' => $this->getStatus(),
+            'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $visibility,
             'userid' => $this->Users->userData['userid']
@@ -122,36 +122,16 @@ class Experiments extends AbstractEntity
     }
 
     /**
-     * Update the status for an experiment
-     *
-     * @param int $status Id of the status
-     * @return void
-     */
-    public function updateCategory(int $status): void
-    {
-        $this->canOrExplode('write');
-
-        $sql = "UPDATE experiments SET status = :status WHERE id = :id AND locked = 0";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':status', $status, PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
      * Can this experiment be timestamped?
      *
      * @return bool
      */
     public function isTimestampable(): bool
     {
-        $currentStatus = (int) $this->entityData['category_id'];
-        $sql = "SELECT is_timestampable FROM status WHERE id = :status;";
+        $currentCategory = (int) $this->entityData['category_id'];
+        $sql = "SELECT is_timestampable FROM status WHERE id = :category;";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':status', $currentStatus, PDO::PARAM_INT);
+        $req->bindParam(':category', $currentCategory, PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
@@ -244,15 +224,15 @@ class Experiments extends AbstractEntity
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
+        $sql = "INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)";
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Tools::kdate(),
             'body' => $this->entityData['body'],
-            'status' => $this->getStatus(),
+            'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $this->entityData['visibility'],
             'userid' => $this->Users->userData['userid']));

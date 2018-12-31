@@ -36,7 +36,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 45;
+    private const REQUIRED_SCHEMA = 46;
 
     /**
      * Init Update with Config and Db
@@ -118,6 +118,11 @@ class Update
             // 20181219 v2.1.0
             $this->schema45();
             $this->updateSchema(45);
+        }
+        if ($current_schema < 46) {
+            // 20181231 v2.1.0
+            $this->schema46();
+            $this->updateSchema(46);
         }
         // place new schema functions above this comment
 
@@ -386,6 +391,23 @@ class Update
         $sql = "ALTER TABLE `idps` ADD `active` TINYINT(1) NOT NULL DEFAULT '0';";
         if (!$this->Db->q($sql)) {
             throw new DatabaseErrorException('Problem altering idps table (schema 45)!');
+        }
+    }
+
+    /**
+     * Change status (exp) and type (items) in category so it's the same everywhere
+     *
+     * @return void
+     */
+    private function schema46(): void
+    {
+        $sql = "ALTER TABLE `experiments` CHANGE `status` `category` INT(255) UNSIGNED NOT NULL";
+        if (!$this->Db->q($sql)) {
+            throw new DatabaseErrorException('Problem altering experiments table (schema 46)!');
+        }
+        $sql = "ALTER TABLE `items` CHANGE `type` `category` INT(255) UNSIGNED NOT NULL";
+        if (!$this->Db->q($sql)) {
+            throw new DatabaseErrorException('Problem altering items table (schema 46)!');
         }
     }
 }

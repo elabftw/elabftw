@@ -75,7 +75,7 @@ class Links implements CrudInterface
             items_types.*
             FROM experiments_links
             LEFT JOIN items ON (experiments_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.type = items_types.id)
+            LEFT JOIN items_types ON (items.category = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

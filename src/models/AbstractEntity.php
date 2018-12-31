@@ -116,14 +116,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Update status or item type
-     *
-     * @param int $category
-     * @return void
-     */
-    abstract public function updateCategory(int $category): void;
-
-    /**
      * Duplicate an item
      *
      * @return int the new item id
@@ -206,7 +198,7 @@ abstract class AbstractEntity
                 experiments.id = steps_item_id
                 AND stepst.finished = 0)";
 
-            $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
+            $statusJoin = "LEFT JOIN status ON (status.id = experiments.category)";
             $commentsJoin = "LEFT JOIN (
                 SELECT MAX(experiments_comments.datetime) AS recent_comment,
                     experiments_comments.item_id FROM experiments_comments GROUP BY experiments_comments.item_id
@@ -236,7 +228,7 @@ abstract class AbstractEntity
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
             $from = "FROM items
-                LEFT JOIN items_types ON (items.type = items_types.id)
+                LEFT JOIN items_types ON (items.category = items_types.id)
                 LEFT JOIN users ON (users.userid = items.userid)";
             $where = "WHERE items.team = :team";
 
@@ -336,7 +328,7 @@ abstract class AbstractEntity
         $date = Tools::kdate($date);
         $body = Tools::checkBody($body);
 
-        if ($this->type === 'experiments') {
+        if ($this instanceof Experiments) {
             $sql = "UPDATE experiments SET
                 title = :title,
                 date = :date,
@@ -706,4 +698,25 @@ abstract class AbstractEntity
 
         return $mentionArr;
     }
+
+    /**
+     * Update the category for an entity
+     *
+     * @param int $category id of the category (status or items types)
+     * @return void
+     */
+    public function updateCategory(int $category): void
+    {
+        $this->canOrExplode('write');
+
+        $sql = "UPDATE " . $this->type . " SET category = :category WHERE id = :id";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
 }

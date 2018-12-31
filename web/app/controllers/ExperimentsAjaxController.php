@@ -79,7 +79,7 @@ try {
     // TIMESTAMP
     if ($Request->request->has('timestamp')) {
         $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
-        $MakeTimestamp->timeStamp();
+        $MakeTimestamp->timestamp();
     }
 
     // DESTROY

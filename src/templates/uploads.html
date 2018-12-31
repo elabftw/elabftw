@@ -104,6 +104,18 @@
                     <div class='clickable replaceUpload' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
                         <i class='fas fa-sync-alt mr-1'></i><p class='d-inline'>{{ 'Upload a new version of this file'|trans }}</p>
                     </div>
+                    <!-- replace upload form -->
+                    <div class='replaceUploadForm' style='display:none'>
+                        <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
+                            <input type='hidden' name='replace' />
+                            <input type='hidden' name='upload_id' value='{{ upload.id }}' />
+                            <input type='hidden' name='id' value='{{ upload.item_id }}' />
+                            <input type='hidden' name='type' value='{{ upload.type }}' />
+                            {{ App.Csrf.getHiddenInput|raw }}
+                            <input type='file' style='display:inline' name='file' />
+                            <button type='submit' class='button'>OK</button>
+                        </form>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -112,4 +124,7 @@
     </div>
 {% endif %}
 </div>
+<!--
 <script src='app/js/uploads.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/uploads.js?v={{ v }}'></script>

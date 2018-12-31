@@ -18,8 +18,7 @@
                 var name = $('#teamGroupCreate').val();
                 if (name.length > 0) {
                     $.post(this.controller, {
-                        teamGroupCreate: name,
-                        csrf: $('#csrf').data('csrf')
+                        teamGroupCreate: name
                     }).done(function() {
                         $('#team_groups_div').load('admin.php #team_groups_div');
                         $('#teamGroupCreate').val('');
@@ -41,8 +40,7 @@
                     teamGroupUpdate: true,
                     action: action,
                     teamGroupUser: user,
-                    teamGroupGroup: group,
-                    csrf: $('#csrf').data('csrf')
+                    teamGroupGroup: group
                 }).done(function() {
                     $('#team_groups_div').load('admin.php #team_groups_div');
                 });
@@ -51,8 +49,7 @@
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                         teamGroupDestroy: true,
-                        teamGroupGroup: id,
-                        csrf: $('#csrf').data('csrf')
+                        teamGroupGroup: id
                     }).done(function() {
                         $("#team_groups_div").load("admin.php #team_groups_div");
                     });
@@ -83,8 +80,7 @@
             $(this).attr('disabled', 'disabled').text('Please wait…');
             $.post('app/controllers/UsersAjaxController.php', {
                 usersValidate: true,
-                userid: $(this).data('userid'),
-                csrf: $('#csrf').data('csrf')
+                userid: $(this).data('userid')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -107,8 +103,7 @@
                     statusCreate: true,
                     name: name,
                     color: color,
-                    isTimestampable: isTimestampable,
-                    csrf: $('#csrf').data('csrf')
+                    isTimestampable: isTimestampable
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -130,8 +125,7 @@
                     name: name,
                     color: color,
                     isTimestampable: isTimestampable,
-                    isDefault: isDefault,
-                    csrf: $('#csrf').data('csrf')
+                    isDefault: isDefault
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -143,8 +137,7 @@
             destroy: function(id) {
                 $.post(this.controller, {
                     statusDestroy: true,
-                    id: id,
-                    csrf: $('#csrf').data('csrf')
+                    id: id
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -184,8 +177,7 @@
                     name: name,
                     color: color,
                     bookable: bookable,
-                    template: template,
-                    csrf: $('#csrf').data('csrf')
+                    template: template
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -214,8 +206,7 @@
                     name: name,
                     color: color,
                     bookable: bookable,
-                    template: template,
-                    csrf: $('#csrf').data('csrf')
+                    template: template
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -227,8 +218,7 @@
             destroy: function(id) {
                 $.post(this.controller, {
                     itemsTypesDestroy: true,
-                    id: id,
-                    csrf: $('#csrf').data('csrf')
+                    id: id
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -257,8 +247,7 @@
         $('#commonTplTemplate').closest('div').find('.button').click(function() {
             var template = tinymce.get('commonTplTemplate').getContent();
             $.post('app/controllers/AdminAjaxController.php', {
-                commonTplUpdate: template,
-                csrf: $('#csrf').data('csrf')
+                commonTplUpdate: template
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -317,8 +306,7 @@
                 $.post("app/controllers/AdminAjaxController.php", {
                     updateOrdering: true,
                     table: table,
-                    ordering: ordering,
-                    csrf: $('#csrf').data('csrf')
+                    ordering: ordering
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -346,8 +334,7 @@
             $.post('app/controllers/TagsController.php', {
                 update: true,
                 newtag: value,
-                tag: $(this).data('tag'),
-                csrf: $('#csrf').data('csrf')
+                tag: $(this).data('tag')
             });
 
             return(value);

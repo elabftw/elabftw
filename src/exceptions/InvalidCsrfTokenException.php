@@ -13,18 +13,19 @@ namespace Elabftw\Exceptions;
 use Exception;
 
 /**
- * For errors that are suspicious (request has been edited for instance)
+ * When the CSRF token doesn't validate
  */
-class IllegalActionException extends Exception
+class InvalidCsrfTokenException extends Exception
 {
     /**
-     * Redefine the exception so message isn't optional
+     * The message will always be the same here
      *
      * @param string $message
      * @param int $code
      * @param Exception|null $previous
      */
-    public function __construct($message, $code = 0, Exception $previous = null) {
+    public function __construct($message = null, $code = 0, Exception $previous = null) {
+        $message = _('Your session expired. Please retry.');
         parent::__construct($message, $code, $previous);
     }
 }

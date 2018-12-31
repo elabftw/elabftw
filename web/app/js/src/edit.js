@@ -14,6 +14,9 @@
         // i18n message to user
         dictDefaultMessage: $('#entityInfo').data('upmsg'),
         maxFilesize: $('#entityInfo').data('maxsize'), // MB
+        headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        },
         init: function() {
 
             // add additionnal parameters (id and type)
@@ -21,7 +24,6 @@
                 formData.append('upload', true);
                 formData.append('id', $('#entityInfo').data('id'));
                 formData.append('type', $('#entityInfo').data('type'));
-                formData.append('csrf', $('#csrf').data('csrf'));
             });
 
             // once it is done
@@ -89,8 +91,7 @@
                 // we need this to get the updated content
                 title : document.getElementById('title_input').value,
                 date : document.getElementById('datepicker').value,
-                body : localStorage.getItem('body'),
-                csrf: $('#csrf').data('csrf')
+                body : localStorage.getItem('body')
             }).done(function() {
                 localStorage.clear();
                 document.location.reload(true);
@@ -115,8 +116,7 @@
                     $.post(controller, {
                         destroy: true,
                         id: id,
-                        type: type,
-                        csrf: $('#csrf').data('csrf')
+                        type: type
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -142,8 +142,7 @@
                         $.post('app/controllers/ExperimentsAjaxController.php', {
                             createLink: true,
                             id: id,
-                            linkId: link,
-                            csrf: $('#csrf').data('csrf')
+                            linkId: link
                         })
                         // reload the link list
                         .done(function () {
@@ -160,8 +159,7 @@
                     $.post('app/controllers/ExperimentsAjaxController.php', {
                         destroyLink: true,
                         id: id,
-                        linkId: linkId,
-                        csrf: $('#csrf').data('csrf')
+                        linkId: linkId
                     }).done(function (data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -183,8 +181,7 @@
             update(rating) {
                 $.post(this.controller, {
                     rating: rating,
-                    id: id,
-                    csrf: $('#csrf').data('csrf')
+                    id: id
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -206,8 +203,7 @@
                     $.post('app/controllers/ExperimentsAjaxController.php', {
                         createStep: true,
                         id: id,
-                        body: body,
-                        csrf: $('#csrf').data('csrf')
+                        body: body
                     })
                     // reload the step list
                     .done(function() {
@@ -224,8 +220,7 @@
                 $.post('app/controllers/ExperimentsAjaxController.php', {
                     finishStep: true,
                     id: id,
-                    stepId: stepId,
-                    csrf: $('#csrf').data('csrf')
+                    stepId: stepId
                 })
                 // reload the step list
                 .done(function() {
@@ -242,8 +237,7 @@
                     $.post('app/controllers/ExperimentsAjaxController.php', {
                         destroyStep: true,
                         id: id,
-                        stepId: stepId,
-                        csrf: $('#csrf').data('csrf')
+                        stepId: stepId
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -334,8 +328,7 @@
                 updateVisibility: true,
                 id: id,
                 type: type,
-                visibility: visibility,
-                csrf: $('#csrf').data('csrf')
+                visibility: visibility
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -352,8 +345,7 @@
                 updateCategory: true,
                 id: id,
                 type: type,
-                categoryId : categoryId,
-                csrf: $('#csrf').data('csrf')
+                categoryId : categoryId
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');

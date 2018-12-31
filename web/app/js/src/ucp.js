@@ -27,8 +27,7 @@
                     $.post(this.controller, {
                         destroy: true,
                         id: id,
-                        type: 'experiments_tpl',
-                        csrf: $('#csrf').data('csrf')
+                        type: 'experiments_tpl'
                     }).done(function(data) {
                         if (data.res) {
                             notif(data.msg, 'ok');
@@ -88,8 +87,7 @@
                 $.post("app/controllers/UcpController.php", {
                     updateOrdering: true,
                     table: 'experiments_templates',
-                    ordering: ordering,
-                    csrf: $('#csrf').data('csrf')
+                    ordering: ordering
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');

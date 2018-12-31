@@ -49,8 +49,7 @@ $(document).ready(function() {
                 if (confirm('Delete this event?')) {
                     $.post('app/controllers/SchedulerController.php', {
                         destroy: true,
-                        id: calEvent.id,
-                        csrf: $('#csrf').data('csrf')
+                        id: calEvent.id
                     }).done(function(data) {
                         if (data.res) {
                             $('#scheduler').fullCalendar('removeEvents', calEvent.id);
@@ -67,8 +66,7 @@ $(document).ready(function() {
                     updateStart: true,
                     start: calEvent.start.format(),
                     end: calEvent.end.format(),
-                    id: calEvent.id,
-                    csrf: $('#csrf').data('csrf')
+                    id: calEvent.id
                 }).done(function(data) {
                     if (data.res) {
                         notif(data.msg, 'ok');
@@ -80,8 +78,7 @@ $(document).ready(function() {
                 $.post('app/controllers/SchedulerController.php', {
                     updateEnd: true,
                     end: calEvent.end.format(),
-                    id: calEvent.id,
-                    csrf: $('#csrf').data('csrf')
+                    id: calEvent.id
                 }).done(function() {
                     notif('Saved', 'ok');
                 });
@@ -102,8 +99,7 @@ $(document).on('click', '#change-item', function() {
 $(document).on('click', '.import-tpl', function() {
     $.post('app/controllers/UcpController.php', {
         import_tpl: true,
-        id: $(this).data('id'),
-        csrf: $('#csrf').data('csrf')
+        id: $(this).data('id')
     }).done(function() {
         notif('Saved', 'ok');
     });
@@ -136,8 +132,7 @@ function schedulerCreate(start, end) {
             start: start,
             end: end,
             title: title,
-            item: $('#infos').data('item'),
-            csrf: $('#csrf').data('csrf')
+            item: $('#infos').data('item')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');

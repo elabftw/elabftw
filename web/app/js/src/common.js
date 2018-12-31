@@ -3,6 +3,13 @@
  * https://www.elabftw.net
  */
 
+// add a csrf header to all ajax requests based on the meta tag
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 $(document).ready(function() {
     // TOGGLABLE
     $(document).on('click', '.togglable-next', function() {
@@ -112,8 +119,7 @@ function quickSave(type, id) {
         // we need this to get the updated content
         title : document.getElementById('title_input').value,
         date : document.getElementById('datepicker').value,
-        body : tinymce.activeEditor.getContent(),
-        csrf: $('#csrf').data('csrf')
+        body : tinymce.activeEditor.getContent()
     }).done(function(data, textStatus, xhr) {
         // detect if the session timedout
         if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
@@ -140,8 +146,7 @@ function makeEditableTodoitem(element) {
         $.post('app/controllers/TodolistController.php', {
             update: true,
             body: value,
-            id: $(this).attr('id'),
-            csrf: $('#csrf').data('csrf')
+            id: $(this).attr('id')
         });
 
         return(value);
@@ -159,8 +164,7 @@ function makeEditableComment(element) {
         name: 'update',
         type : 'textarea',
         submitdata: {
-            type: $(element).data('type'),
-            csrf: $('#csrf').data('csrf')
+            type: $(element).data('type')
         },
         width: '80%',
         height: '200',
@@ -195,8 +199,7 @@ function makeEditableFileComment() {
             type: $(this).data('type'),
             comment : value,
             comment_id : $(this).attr('id'),
-            id: $(this).data('itemid'),
-            csrf: $('#csrf').data('csrf')
+            id: $(this).data('itemid')
         }).done(function(data) {
             if (data.res) {
                 notif(data.msg, 'ok');

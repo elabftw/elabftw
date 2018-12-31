@@ -105,13 +105,13 @@
                             {% if user.archived %}
                                 <p>{{ 'User is archived'|trans }}</p>
                             {% else %}
-                                <button class='button button-delete archiveUser' {{ App.Csrf.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                                <button class='button button-delete archiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
                             {% endif %}
                             </li>
 
                             <!-- DESTROY USER -->
                             <li class='list-inline-item'>
-                                <button class='button button-delete destroyUser' {{ App.Csrf.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                                <button class='button button-delete destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
                            </li>
                         </form>
 

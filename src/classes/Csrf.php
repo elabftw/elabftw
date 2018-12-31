@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -60,17 +60,37 @@ class Csrf
      */
     public function getHiddenInput(): string
     {
-        return "<input type='hidden' name='csrf' value='" . $this->Session->get('csrf') . "' />";
+        return "<input type='hidden' name='csrf' value='" . $this->getToken() . "' />";
     }
 
     /**
-     * Generate data attribute with csrf token
+     * Read token from session
      *
      * @return string
      */
-    public function getDataAttr(): string
+    public function getToken(): string
     {
-        return "data-csrf='" . $this->Session->get('csrf') . "'";
+        return $this->Session->get('csrf');
+    }
+
+    /**
+     * AJAX requests find the token in header
+     *
+     * @return bool
+     */
+    private function validateAjax(): bool
+    {
+        return $this->Request->headers->get('X-CSRF-Token') === $this->getToken();
+    }
+
+    /**
+     * Normal forms send the token with hidden field
+     *
+     * @return bool
+     */
+    private function validateForm(): bool
+    {
+        return $this->Request->request->get('csrf') === $this->getToken();
     }
 
     /**
@@ -80,12 +100,18 @@ class Csrf
      */
     public function validate(): void
     {
-        // get request are not checked
+        // get requests are not checked
         if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
             return;
         }
-        if ($this->Request->request->get('csrf') !== $this->Session->get('csrf')) {
-            throw new IllegalActionException('Csrf token validation failure.');
+        // detect ajax request
+        if ($this->Request->headers->get('X-Requested-With') === 'XMLHttpRequest') {
+            $res = $this->validateAjax();
+        } else {
+            $res = $this->validateForm();
+        }
+        if ($res === false) {
+            throw new InvalidCsrfTokenException();
         }
     }
 }

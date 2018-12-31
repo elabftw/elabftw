@@ -31,8 +31,7 @@
         // GENERATE API KEY
         $(document).on('click', '.generateApiKey', function() {
             $.post('app/controllers/UsersAjaxController.php', {
-                generateApiKey: true,
-                csrf: $('#csrf').data('csrf')
+                generateApiKey: true
             }).done(function(data) {
                 $("#api_div").load("profile.php #api_div");
                 if (data.res) {

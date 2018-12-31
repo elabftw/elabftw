@@ -16,8 +16,7 @@
         if (confirm('Are you sure you want to archive this user?')) {
             $.post('app/controllers/UsersAjaxController.php', {
                 usersArchive: true,
-                userid: $(this).data('userid'),
-                csrf: $(this).data('csrf')
+                userid: $(this).data('userid')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -39,8 +38,7 @@
             const elem = $(this);
             $.post('app/controllers/UsersAjaxController.php', {
                 usersDestroy: true,
-                userid: elem.data('userid'),
-                csrf: $(this).data('csrf')
+                userid: elem.data('userid')
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');

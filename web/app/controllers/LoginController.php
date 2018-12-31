@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Exception;
@@ -90,7 +91,7 @@ try {
     }
     $Response = new RedirectResponse($location);
 
-} catch (ImproperActionException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 

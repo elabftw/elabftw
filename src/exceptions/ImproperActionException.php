@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Exceptions\ImproperActionException
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -28,12 +26,5 @@ class ImproperActionException extends Exception
      */
     public function __construct($message, $code = 0, Exception $previous = null) {
         parent::__construct($message, $code, $previous);
-    }
-
-    /**
-     * Custom string representation of object
-     */
-    public function __toString() {
-        return $this->message;
     }
 }

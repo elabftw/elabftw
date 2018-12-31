@@ -15,7 +15,8 @@ namespace Elabftw\Services;
 use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Config;
+use Elabftw\Elabftw\ReleaseCheck;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -34,11 +35,8 @@ class MakeTimestamp extends AbstractMake
     /** default hash algo for file */
     private const HASH_ALGORITHM = 'sha256';
 
-    /** @var Config $Config instance of Config*/
+    /** @var Config $Config instance of Config */
     private $Config;
-
-    /** @var array $teamConfigArr array with config of the team */
-    private $teamConfigArr;
 
     /** @var string $pdfPath full path to pdf */
     private $pdfPath;
@@ -77,10 +75,9 @@ class MakeTimestamp extends AbstractMake
         $this->Entity->canOrExplode('write');
 
         $this->Config = $config;
-        $this->teamConfigArr = $teams->read();
 
         // initialize with info from config
-        $this->stampParams = $this->getTimestampParameters();
+        $this->stampParams = $this->getTimestampParameters($teams);
 
         /** set the name of the pdf (elabid + -timestamped.pdf) */
         $this->pdfRealName = $this->getFileName();
@@ -104,14 +101,16 @@ class MakeTimestamp extends AbstractMake
     /**
      * Return the needed parameters to request/verify a timestamp
      *
+     * @param Teams $teams
      * @return array<string,string>
      */
-    private function getTimestampParameters(): array
+    private function getTimestampParameters(Teams $teams): array
     {
+        $teamConfigArr = $teams->read();
         // if there is a config in the team, use that
         // otherwise use the general config if we can
-        if (\mb_strlen($this->teamConfigArr['stampprovider'] ?? "") > 2) {
-            $config = $this->teamConfigArr;
+        if (\mb_strlen($teamConfigArr['stampprovider'] ?? "") > 2) {
+            $config = $teamConfigArr;
         } elseif ($this->Config->configArr['stampshare']) {
             $config = $this->Config->configArr;
         } else {
@@ -298,7 +297,7 @@ class MakeTimestamp extends AbstractMake
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
             'timeout' => 5,
-            'body' => file_get_contents($this->requestfilePath)
+            'body' => \file_get_contents($this->requestfilePath)
         );
 
         if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
@@ -564,9 +563,9 @@ class MakeTimestamp extends AbstractMake
      * Request a timestamp and parse the response.
      *
      * @throws ImproperActionException
-     * @return bool True upon timestamping success, throw Exceptions in your face if it fails
+     * @return void
      */
-    public function timeStamp(): bool
+    public function timestamp(): void
     {
         if (!$this->Entity->isTimestampable()) {
             throw new ImproperActionException('Timestamping is not allowed for this experiment.');
@@ -589,8 +588,6 @@ class MakeTimestamp extends AbstractMake
         // SQL
         $this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath);
         $this->sqlInsertPdf();
-
-        return true;
     }
 
     /**

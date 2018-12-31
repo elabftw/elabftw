@@ -21100,8 +21100,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
                 addFromString: true,
                 fileType: 'mol',
                 type: type,
-                id: item,
-                csrf: $('#csrf').data('csrf'),
+                id: item
                 string: c.writeMOL(sketcher.molecules[0])
             }).done(function() {
                 $("#filesdiv").load("?mode=edit&id=" + item + " #filesdiv");

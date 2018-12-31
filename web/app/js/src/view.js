@@ -1,6 +1,4 @@
 /**
- * view.js - for the ?mode=view
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -28,8 +26,7 @@
             $.post("app/controllers/EntityAjaxController.php", {
                 lock: true,
                 type: type,
-                id: id,
-                csrf: $('#csrf').data('csrf')
+                id: id
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');
@@ -50,8 +47,7 @@
         $(document).on('click', '.decodeAsn1', function() {
             $.post('app/controllers/ExperimentsAjaxController.php', {
                 asn1: $(this).data('token'),
-                id: $(this).data('id'),
-                csrf: $('#csrf').data('csrf')
+                id: $(this).data('id')
             }).done(function(data) {
                 $('#decodedDiv').html(data.msg);
             });
@@ -62,8 +58,7 @@
             $.post('app/controllers/EntityAjaxController.php', {
                 duplicate: true,
                 id: $(this).data('id'),
-                type: $('#entityInfo').data('type'),
-                csrf: $('#csrf').data('csrf')
+                type: $('#entityInfo').data('type')
             }).done(function(data) {
                 window.location.replace('experiments.php?mode=edit&id=' + data.msg);
             });
@@ -81,7 +76,6 @@
                     create: true,
                     comment: comment,
                     type: $('#entityInfo').data('type'),
-                    csrf: $('#csrf').data('csrf'),
                     id: id
                 }).done(function(data) {
                     if (data.res) {
@@ -100,7 +94,6 @@
                     $.post(this.controller, {
                     destroy: true,
                     type: $('#entityInfo').data('type'),
-                    csrf: $('#csrf').data('csrf'),
                     id: comment
                 }).done(function(data) {
                     if (data.res) {
@@ -147,7 +140,6 @@
                         $('#confirmTimestampDiv').text($(this).data('wait'));
                         $.post('app/controllers/ExperimentsAjaxController.php', {
                             timestamp: true,
-                            csrf: $('#csrf').data('csrf'),
                             id: id
                         }).done(function (data) {
                             if (data.res) {

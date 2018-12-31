@@ -74,7 +74,6 @@
         // clear all the items
         destroyAll: function() {
             $.post(this.controller, {
-                csrf: $('#csrf').data('csrf'),
                 destroyAll: true
             }).done(function(data) {
                 if (data.res) {
@@ -111,8 +110,7 @@
             $.post("app/controllers/TodolistController.php", {
                 updateOrdering: true,
                 ordering: ordering,
-                table : 'todolist',
-                csrf: $('#csrf').data('csrf')
+                table : 'todolist'
             }).done(function(data) {
                 if (data.res) {
                     notif(data.msg, 'ok');

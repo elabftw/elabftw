@@ -7,7 +7,7 @@
             {{ 'There are users waiting for validation of their account:'|trans|msg('warning', false) }}
             <ul>
             {% for user in unvalidatedUsersArr %}
-            <li>{{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' {{ App.Csrf.getDataAttr|raw }} data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button></li>
+            <li>{{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button></li>
             {% endfor %}
             </ul>
         </div>
@@ -205,7 +205,7 @@
     <div class='box'>
         <h3>{{ 'Edit an Existing Status'|trans }}</h3>
         <hr>
-        <ul class='draggable sortable sortable-status list-group' data-type='status' {{ App.Csrf.getDataAttr|raw }}>
+        <ul class='draggable sortable sortable-status list-group' data-type='status'>
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
@@ -303,7 +303,7 @@
             {{ commonTplBody|raw }}
         </textarea>
         <div class='submitButtonDiv'>
-            <button type='submit' class='button' {{ App.Csrf.getDataAttr|raw }}>{{ 'Save'|trans }}</button>
+            <button type='submit' class='button'>{{ 'Save'|trans }}</button>
         </div>
     </div>
 </div>
@@ -385,9 +385,6 @@
         </div>
     </div>
 </div>
-
-<!-- CSRF token used by ajax post requests -->
-<div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
 <!--

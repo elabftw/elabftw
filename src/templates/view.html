@@ -24,7 +24,7 @@
         </a>
         <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>
         </a>
-        <div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>
+        <div style='color:black;overflow:auto' id='decodedDiv'></div>
     </div>
     {% endif %}
     <section class='item' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
@@ -244,9 +244,6 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
-<!-- CSRF token used by ajax post requests -->
-<div id='csrf' {{ App.Csrf.getDataAttr|raw }}></div>
-
 <!--
 <script src='app/js/view.min.js?v={{ v }}'></script>
 -->

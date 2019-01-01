@@ -227,17 +227,11 @@ class Comments implements CrudInterface
 
     /**
      * Destroy all comments of an experiment
+     * Now handled by cascade
      *
      * @return void
      */
     public function destroyAll(): void
     {
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE item_id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
     }
 }

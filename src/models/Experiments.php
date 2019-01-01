@@ -254,6 +254,11 @@ class Experiments extends AbstractEntity
     {
         $this->canOrExplode('write');
 
+        // TODO experiments_revisions in fk
+        // everything in fk, only files deleted first in uploads
+        $this->Tags->destroyAll();
+        $this->Uploads->destroyAll();
+
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -261,11 +266,6 @@ class Experiments extends AbstractEntity
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        $this->Comments->destroyAll();
-        $this->Links->destroyAll();
-        $this->Steps->destroyAll();
-        $this->Tags->destroyAll();
-        $this->Uploads->destroyAll();
     }
 
     /**

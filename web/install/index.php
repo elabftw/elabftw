@@ -59,29 +59,10 @@ try {
         $res = $req->fetch();
         if ($res['tablesCount'] < 2) {
             // bootstrap MySQL database
-            $sqlFile = \dirname(__DIR__, 2) . '/src/sql/structure.sql';
-            // temporary variable, used to store current query
-            $queryline = '';
-            // read in entire file
-            $lines = file($sqlFile);
-            // loop through each line
-            foreach ($lines as $line) {
-                // Skip it if it's a comment
-                if ($line === '' || strpos($line, '--') === 0) {
-                    continue;
-                }
+            $Sql = new Sql();
+            $Sql->execFile('structure.sql');
 
-                // Add this line to the current segment
-                $queryline .= $line;
-                // If it has a semicolon at the end, it's the end of the query
-                if (trim($line)[\mb_strlen(trim($line)) - 1] === ';') {
-                    // Perform the query
-                    $Db->q($queryline);
-                    // Reset temp variable to empty
-                    $queryline = '';
-                }
-            }
-            $Config = new Config();
+            // now create the default team
             $Teams = new Teams(new Users());
             $Teams->create('Default team');
             header('Location: ../register.php');

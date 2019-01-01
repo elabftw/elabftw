@@ -74,7 +74,7 @@
             <label for='anon_login_select'>{{ 'Select a team'|trans }}</label>
             <select name='team_id' id='anon_login_select'>
                 {% for team in teamsArr %}
-                    <option value='{{ team.team_id }}'>{{ team.team_name }}</option>
+                    <option value='{{ team.id }}'>{{ team.name }}</option>
                 {% endfor %}
             </select>
             <button class='button' type='submit' name='submit'>Go</button>

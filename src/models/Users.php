@@ -258,7 +258,7 @@ class Users
     {
         $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
-            LEFT JOIN groups ON groups.group_id = users.usergroup
+            LEFT JOIN groups ON groups.id = users.usergroup
             WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
@@ -312,9 +312,9 @@ class Users
 
         $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
-            teams.team_name as teamname
+            teams.name as teamname
             FROM users
-            LEFT JOIN teams ON (users.team = teams.team_id)
+            LEFT JOIN teams ON (users.team = teams.id)
             WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
         $req = $this->Db->prepare($sql);
@@ -366,9 +366,9 @@ class Users
             $valSql = " users.validated = :validated AND ";
         }
         $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
-            teams.team_name AS teamname
+            teams.name AS teamname
             FROM users
-            LEFT JOIN teams ON (users.team = teams.team_id)
+            LEFT JOIN teams ON (users.team = teams.id)
             WHERE " . $valSql . " users.team = :team";
         $req = $this->Db->prepare($sql);
         if (is_int($validated)) {

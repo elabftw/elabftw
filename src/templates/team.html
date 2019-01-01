@@ -46,7 +46,7 @@
 <!-- TAB 2 INFOS -->
 <div class='divhandle' id='tab2div'>
     <div class='alert alert-success'><i class='fas fa-info-circle'></i>
-    {{ 'You belong to the %s team.'|trans|format(teamArr.team_name) }}
+    {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
     {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
     </div>
 

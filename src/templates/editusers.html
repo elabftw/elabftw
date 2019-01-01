@@ -54,7 +54,7 @@
                                 <label class='block' for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team'|trans }}</label>
                                 <select class='clean-form' name='team' id='usersUpdateTeam_{{ user.userid }}'>
                                     {% for team in teamsArr %}
-                                    <option value='{{ team.team_id }}' {{ user.team == team.team_id ? " selected='selected'" }}>{{ team.team_name }}</option>
+                                    <option value='{{ team.id }}' {{ user.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
                                     {% endfor %}
                                 </select>
                             </li>

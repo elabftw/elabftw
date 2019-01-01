@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Auth
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -135,9 +133,9 @@ class Auth
         $this->Session->set('userid', $this->userData['userid']);
 
         // load permissions
-        $sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
+        $sql = "SELECT * FROM groups WHERE id = :id LIMIT 1";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':group_id', $this->userData['usergroup'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

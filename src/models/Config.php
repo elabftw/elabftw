@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -156,7 +157,7 @@ class Config
      */
     public function populate(): void
     {
-        $Update = new Update($this);
+        $Update = new Update($this, new Sql());
         $schema = $Update->getRequiredSchema();
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES

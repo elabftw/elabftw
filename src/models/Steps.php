@@ -148,19 +148,11 @@ class Steps implements CrudInterface
 
     /**
      * Delete all the steps for an experiment
+     * Now handled by cascade
      *
      * @return void
      */
     public function destroyAll(): void
     {
-        $this->Experiments->canOrExplode('write');
-
-        $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
     }
 }

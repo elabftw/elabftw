@@ -100,7 +100,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='open_team' class='block'>{{ 'Select which team will be open to the world in open science mode:'|trans }}</label>
         <select id='open_team' name="open_team" class="clean-form col-3-form">
             {% for team in teamsArr %}
-            <option {{ App.Config.configArr.open_team == team.team_id ? ' selected' }} value='{{ team.team_id }}'>{{ team.team_name }}</option>
+            <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
             {% endfor %}
         </select>
         <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
@@ -156,20 +156,21 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <hr>
 
             {% for team in teamsArr %}
-            {% set count = Teams.getStats(team.team_id) %}
-            <label for='teamName_{{ team.team_id }}'>Team Name</label>
-            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.team_id }}' type='text' value='{{ team.team_name }}' />
-            <label for='teamOrgid_{{ team.team_id }}'>Team Organisation ID</label>
-            <input data-id='{{ team.team_id }}' class='clean-form col-3-form teamNameInput' id='teamOrgid_{{ team.team_id }}' type='text' value='{{ team.team_orgid }}' />
-            <button data-id='{{ team.team_id }}' disabled id='teamsUpdateButton_{{ team.team_id }}' class='button teamsUpdateButton'>
+            {% set count = Teams.getStats(team.id) %}
+            {{ count.totusers }}
+            <label for='teamName_{{ team.id }}'>Team Name</label>
+            <input data-id='{{ team.id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
+            <label for='teamOrgid_{{ team.id }}'>Team Organisation ID</label>
+            <input data-id='{{ team.id }}' class='clean-form col-3-form teamNameInput' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
+            <button data-id='{{ team.id }}' disabled id='teamsUpdateButton_{{ team.id }}' class='button teamsUpdateButton'>
                 {{ 'Save'|trans }}
             </button>
             {% if count.totusers == 0 %}
-            <button data-id='{{ team.team_id }}' id='teamsDestroyButton_{{ team.team_id }}' class='button button-delete teamsDestroyButton'>
+            <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' class='button button-delete teamsDestroyButton'>
                 {{ 'Delete'|trans }}
             </button>
             {% else %}
-            <button data-id='{{ team.team_id }}' id='teamsArchiveButton_{{ team.team_id }}' class='button button-neutral teamsArchiveButton'>
+            <button data-id='{{ team.id }}' id='teamsArchiveButton_{{ team.id }}' class='button button-neutral teamsArchiveButton'>
                 {{ 'Archive'|trans }}
             </button>
             {% endif %}

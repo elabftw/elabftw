@@ -29,6 +29,9 @@ class Update
     /** @var Config $Config instance of Config */
     public $Config;
 
+    /** @var Sql $Sql instance of Sql */
+    private $Sql;
+
     /**
      * /////////////////////////////////////////////////////
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
@@ -36,17 +39,19 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 46;
+    private const REQUIRED_SCHEMA = 45;
 
     /**
-     * Init Update with Config and Db
+     * Constructor
      *
      * @param Config $config
+     * @param Sql $sql
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, Sql $sql)
     {
         $this->Config = $config;
         $this->Db = Db::getConnection();
+        $this->Sql = $sql;
     }
 
     /**
@@ -60,77 +65,51 @@ class Update
     }
 
     /**
-     * Update the database schema if needed.
-     * Returns true if there is no need to update
+     * Update the database schema if needed
      *
-     * @return bool|string[] $msg_arr
+     * @return void
      */
-    public function runUpdateScript()
+    public function runUpdateScript(): void
     {
-        $current_schema = (int) $this->Config->configArr['schema'];
+        $currentSchema = (int) $this->Config->configArr['schema'];
 
-        if ($current_schema === self::REQUIRED_SCHEMA) {
-            return true;
+        if ($currentSchema === self::REQUIRED_SCHEMA) {
+            return;
         }
 
-        if ($current_schema < 37) {
+        if ($currentSchema < 37) {
             throw new ImproperActionException('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
 
-        $msg_arr = array();
-
-        if ($current_schema < 38) {
+        if ($currentSchema < 38) {
             // 20180402 v2.0.0
             $this->schema38();
             $this->updateSchema(38);
         }
-        if ($current_schema < 39) {
+        if ($currentSchema < 39) {
             // 20180406 v2.0.0
             $this->schema39();
             $this->updateSchema(39);
         }
-        if ($current_schema < 40) {
+        if ($currentSchema < 40) {
             // 20180513 v2.0.0
             $this->schema40();
             $this->updateSchema(40);
         }
-        if ($current_schema < 41) {
+        if ($currentSchema < 41) {
             // 20180602 v2.0.0
             $this->schema41();
             $this->updateSchema(41);
         }
-        if ($current_schema < 42) {
-            // 20180716 v2.0.0
-            $this->schema42();
-            $this->updateSchema(42);
-        }
-        if ($current_schema < 43) {
-            // 20180727 v2.0.0
-            $this->schema43();
-            $this->updateSchema(43);
-        }
-        if ($current_schema < 44) {
-            // 20181121 v2.0.6
-            $this->schema44();
-            $this->updateSchema(44);
-        }
-        if ($current_schema < 45) {
-            // 20181219 v2.1.0
-            $this->schema45();
-            $this->updateSchema(45);
-        }
-        if ($current_schema < 46) {
-            // 20181231 v2.1.0
-            $this->schema46();
-            $this->updateSchema(46);
-        }
-        // place new schema functions above this comment
 
+        // new style with SQL files instead of functions
+        while ($currentSchema < self::REQUIRED_SCHEMA) {
+            $currentSchema += 1;
+            $this->Sql->execFile('schema' . $currentSchema . '.sql');
+        }
+
+        // remove cached twig templates (for non docker users)
         $this->cleanTmp();
-
-        $msg_arr[] = '[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)';
-
-        return $msg_arr;
     }
 
     /**
@@ -339,75 +318,6 @@ class Update
                 $insertReq2->bindParam(':tag_id', $res, PDO::PARAM_INT);
                 $insertReq2->execute();
             }
-        }
-    }
-
-    /**
-     * Add visibility to Db items
-     *
-     * @return void
-     */
-    private function schema42(): void
-    {
-        $sql = "ALTER TABLE `items` ADD `visibility` VARCHAR(255) NOT NULL DEFAULT 'team'";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem adding visibility to database items (schema 42)!');
-        }
-    }
-
-    /**
-     * Add open_science to config
-     *
-     * @return void
-     */
-    private function schema43(): void
-    {
-        $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('open_science', '0'), ('open_team', NULL);";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem adding open_science and open_team to config (schema 43)!');
-        }
-    }
-
-    /**
-     * Make sur all locked are 0 not null
-     *
-     * @return void
-     */
-    private function schema44(): void
-    {
-        $sql = "UPDATE items SET `locked` = '0' WHERE `locked` IS NULL;";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem cleaning up locked values (schema 44)!');
-        }
-    }
-
-    /**
-     * Add active attribute to IDPs
-     *
-     * @return void
-     */
-    private function schema45(): void
-    {
-        $sql = "ALTER TABLE `idps` ADD `active` TINYINT(1) NOT NULL DEFAULT '0';";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem altering idps table (schema 45)!');
-        }
-    }
-
-    /**
-     * Change status (exp) and type (items) in category so it's the same everywhere
-     *
-     * @return void
-     */
-    private function schema46(): void
-    {
-        $sql = "ALTER TABLE `experiments` CHANGE `status` `category` INT(255) UNSIGNED NOT NULL";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem altering experiments table (schema 46)!');
-        }
-        $sql = "ALTER TABLE `items` CHANGE `type` `category` INT(255) UNSIGNED NOT NULL";
-        if (!$this->Db->q($sql)) {
-            throw new DatabaseErrorException('Problem altering items table (schema 46)!');
         }
     }
 }

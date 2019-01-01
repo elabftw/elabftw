@@ -139,19 +139,11 @@ class Links implements CrudInterface
 
     /**
      * Delete all the links for an experiment
+     * Now handled by cascade
      *
      * @return void
      */
     public function destroyAll(): void
     {
-        $this->Entity->canOrExplode('write');
-
-        $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
     }
 }

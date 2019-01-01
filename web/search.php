@@ -187,7 +187,7 @@ if ($Request->query->count() > 0) {
 
     // Status search
     if (!empty($status)) {
-        $sqlStatus = " AND $table.status = '$status'";
+        $sqlStatus = " AND $table.category = '$status'";
     }
 
     // Rating search

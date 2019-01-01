@@ -60,18 +60,9 @@ try {
         throw new ImproperActionException('Redirecting to install folder');
     }
 
-    // UPDATE SQL SCHEMA
-    $Update = new Update($App->Config);
-    try {
-        $messages = $Update->runUpdateScript();
-        if (is_array($messages)) {
-            foreach ($messages as $msg) {
-                $App->Session->getFlashBag()->add('ok', $msg);
-            }
-        }
-    } catch (Exception $e) {
-        $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage() . " (" . $e->getLine() . ")");
-    }
+    // UPDATE SQL SCHEMA if necessary
+    $Update = new Update($App->Config, new Sql());
+    $Update->runUpdateScript();
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //

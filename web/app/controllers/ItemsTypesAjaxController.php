@@ -42,7 +42,7 @@ try {
         $ItemsTypes->create(
             $Request->request->get('name'),
             $Request->request->get('color'),
-            $Request->request->get('bookable'),
+            (int) $Request->request->get('bookable'),
             $Request->request->get('template')
         );
     }
@@ -53,14 +53,14 @@ try {
             $Request->request->get('id'),
             $Request->request->get('name'),
             $Request->request->get('color'),
-            $Request->request->get('bookable'),
+            (int) $Request->request->get('bookable'),
             $Request->request->get('template')
         );
     }
 
     // DESTROY ITEM TYPE
     if ($Request->request->has('itemsTypesDestroy')) {
-        $ItemsTypes->destroy($Request->request->get('id'));
+        $ItemsTypes->destroy((int) $Request->request->get('id'));
     }
 
 } catch (ImproperActionException $e) {

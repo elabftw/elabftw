@@ -1,12 +1,11 @@
 <p align='center'>
-![elabftw logo](https://i.imgur.com/hq6SAZf.png)
+    <img src='https://i.imgur.com/hq6SAZf.png' alt='elabftw logo' />
 </p>
 
 <p align='center'>
 A free, modern, flexible electronic lab notebook for researchers
 </p>
 
-<p align='center'>
 [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)
 
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
@@ -19,7 +18,6 @@ A free, modern, flexible electronic lab notebook for researchers
 [![Release](https://img.shields.io/github/release/elabftw/elabftw.svg)](https://github.com/elabftw/elabftw/releases/latest)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/elabftw/elabftw)
 [![Joss](http://joss.theoj.org/papers/10.21105/joss.00146/status.svg)](http://joss.theoj.org/papers/10.21105/joss.00146)
-</p>
 
 # Description
 

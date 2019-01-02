@@ -382,8 +382,8 @@ CREATE TABLE `tags` (
 --
 
 CREATE TABLE `tags2entity` (
-  `item_id` int(11) NOT NULL,
-  `tag_id` int(11) NOT NULL,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `tag_id` int(10) UNSIGNED NOT NULL,
   `item_type` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

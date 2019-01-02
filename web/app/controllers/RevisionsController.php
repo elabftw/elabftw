@@ -50,7 +50,7 @@ try {
         }
 
         $Revisions->restore($revId);
-        $Session->getFlashBag()->add('ok', _('Revision restored successfully.'));
+        $Session->getFlashBag()->add('ok', _('Saved'));
     }
 
     $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=view&id=" . $Entity->id);

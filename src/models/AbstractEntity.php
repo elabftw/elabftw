@@ -225,6 +225,7 @@ abstract class AbstractEntity
             $sql = "SELECT DISTINCT items.*, items_types.name AS category,
                 items_types.color,
                 items_types.id AS category_id,
+                items_types.bookable,
                 uploads.up_item_id, uploads.has_attachment,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 

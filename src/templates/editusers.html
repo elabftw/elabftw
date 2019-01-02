@@ -1,6 +1,6 @@
 <form class='box' method='get'>
     <label for='search-users'>{{ 'Search users'|trans }}</label>
-    <input type='text' autocomplete='off' class='clean-form' id='search-users' value='' name='q' />
+    <input type='text' autocomplete='off' class='clean-form' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
     <!-- stay on correct tab -->
     <input type='hidden' value='3' name='tab' />
     <input type='submit' class='button' value='{{ 'Search'|trans }}' />

@@ -297,7 +297,7 @@ class Users
     }
 
     /**
-     * Search users based on query. It searches in email, firstname or lastname
+     * Search users based on query. It searches in email, firstname, lastname or team name
      *
      * @param string $query the searched term
      * @param bool $teamFilter toggle between sysadmin/admin view
@@ -315,7 +315,7 @@ class Users
             teams.name as teamname
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
-            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
+            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
             ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

@@ -54,6 +54,7 @@ START TRANSACTION;
     ALTER TABLE `team_events` ADD CONSTRAINT `fk_team_events_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `team_groups` ADD CONSTRAINT `fk_team_groups_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `todolist` ADD CONSTRAINT `fk_todolist_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
+    ALTER TABLE `users` ADD CONSTRAINT `fk_users_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `users2team_groups` ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `users2team_groups` ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups`(`id`) ON DELETE cascade ON UPDATE cascade;
     UPDATE config SET conf_value = 45 WHERE conf_name = 'schema';

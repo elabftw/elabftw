@@ -1,5 +1,4 @@
 -- Schema 45
-
 START TRANSACTION;
     -- Add active column to idps
     ALTER TABLE `idps` ADD `active` TINYINT(1) NOT NULL DEFAULT 0;

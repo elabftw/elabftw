@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 31, 2018 at 04:41 PM
+-- Generation Time: Jan 02, 2019 at 04:20 PM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.3.0
 
@@ -19,7 +19,28 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `elabwithfk`
+-- Database: `elabftw`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `api_keys`
+--
+
+CREATE TABLE `api_keys` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `hash` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `can_write` tinyint(1) NOT NULL DEFAULT 0,
+  `userid` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- RELATIONSHIPS FOR TABLE `api_keys`:
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -160,7 +181,7 @@ CREATE TABLE `experiments_steps` (
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `finished_time` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_steps`:
@@ -192,23 +213,6 @@ CREATE TABLE `experiments_templates` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `experiments_tpl_tags`
---
-
-CREATE TABLE `experiments_tpl_tags` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `tag` varchar(255) NOT NULL,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- RELATIONSHIPS FOR TABLE `experiments_tpl_tags`:
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `groups`
 --
 
@@ -223,6 +227,16 @@ CREATE TABLE `groups` (
 --
 -- RELATIONSHIPS FOR TABLE `groups`:
 --
+
+--
+-- Dumping data for table `groups`
+--
+
+INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
+(1, 'Sysadmins', 1, '1', '0'),
+(2, 'Admins', 0, '1', '0'),
+(3, 'Chiefs', 0, '1', '1'),
+(4, 'Users', 0, '0', '0');
 
 -- --------------------------------------------------------
 
@@ -262,7 +276,8 @@ CREATE TABLE `items` (
   `category` int(255) UNSIGNED NOT NULL,
   `locked` tinyint(3) UNSIGNED DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `visibility` varchar(255) NOT NULL DEFAULT 'team'
+  `visibility` varchar(255) NOT NULL DEFAULT 'team',
+  `available` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -283,7 +298,7 @@ CREATE TABLE `items_comments` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `items_comments`:
@@ -331,8 +346,6 @@ CREATE TABLE `items_types` (
 -- RELATIONSHIPS FOR TABLE `items_types`:
 --   `team`
 --       `teams` -> `id`
---   `team`
---       `teams` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -367,7 +380,7 @@ CREATE TABLE `tags` (
   `id` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
   `tag` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `tags`:
@@ -385,10 +398,12 @@ CREATE TABLE `tags2entity` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `tag_id` int(10) UNSIGNED NOT NULL,
   `item_type` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `tags2entity`:
+--   `tag_id`
+--       `tags` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -549,6 +564,8 @@ CREATE TABLE `users` (
 
 --
 -- RELATIONSHIPS FOR TABLE `users`:
+--   `team`
+--       `teams` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -573,6 +590,13 @@ CREATE TABLE `users2team_groups` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `api_keys`
+--
+ALTER TABLE `api_keys`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_api_keys_users_id` (`userid`);
 
 --
 -- Indexes for table `banned_users`
@@ -631,12 +655,6 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`);
 
 --
--- Indexes for table `experiments_tpl_tags`
---
-ALTER TABLE `experiments_tpl_tags`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `groups`
 --
 ALTER TABLE `groups`
@@ -691,6 +709,12 @@ ALTER TABLE `tags`
   ADD KEY `fk_tags_teams_id` (`team`);
 
 --
+-- Indexes for table `tags2entity`
+--
+ALTER TABLE `tags2entity`
+  ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
+
+--
 -- Indexes for table `teams`
 --
 ALTER TABLE `teams`
@@ -728,7 +752,8 @@ ALTER TABLE `uploads`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`userid`);
+  ADD PRIMARY KEY (`userid`),
+  ADD KEY `fk_users_teams_id` (`team`);
 
 --
 -- Indexes for table `users2team_groups`
@@ -740,6 +765,12 @@ ALTER TABLE `users2team_groups`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `api_keys`
+--
+ALTER TABLE `api_keys`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `banned_users`
@@ -784,16 +815,10 @@ ALTER TABLE `experiments_templates`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `experiments_tpl_tags`
---
-ALTER TABLE `experiments_tpl_tags`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `idps`
@@ -878,6 +903,12 @@ ALTER TABLE `users`
 --
 
 --
+-- Constraints for table `api_keys`
+--
+ALTER TABLE `api_keys`
+  ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments`
 --
 ALTER TABLE `experiments`
@@ -927,20 +958,25 @@ ALTER TABLE `items_comments`
 -- Constraints for table `items_types`
 --
 ALTER TABLE `items_types`
-  ADD CONSTRAINT `fk_items_types_teams_team_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_items_types_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_items_types_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `status`
 --
 ALTER TABLE `status`
-  ADD CONSTRAINT `fk_status_teams_team_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tags`
 --
 ALTER TABLE `tags`
   ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tags2entity`
+--
+ALTER TABLE `tags2entity`
+  ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `team_events`
@@ -962,6 +998,12 @@ ALTER TABLE `todolist`
   ADD CONSTRAINT `fk_todolist_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `users2team_groups`
 --
 ALTER TABLE `users2team_groups`
@@ -972,10 +1014,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-/* the groups */
-INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
-(1, 'Sysadmins', 1, 1, 0),
-(2, 'Admins', 0, 1, 0),
-(3, 'Chiefs', 0, 1, 1),
-(4, 'Users', 0, 0, 0);

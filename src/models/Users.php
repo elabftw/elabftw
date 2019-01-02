@@ -331,29 +331,6 @@ class Users
     }
 
     /**
-     * Get a user from their API key
-     *
-     * @param string $apiKey
-     */
-    public function readFromApiKey(string $apiKey): void
-    {
-        $sql = "SELECT userid FROM users WHERE api_key = :key AND archived = 0";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':key', $apiKey);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-
-        $userid = (int) $req->fetchColumn();
-
-        if (empty($userid)) {
-            throw new ImproperActionException('Invalid API key.');
-        }
-
-        $this->userData = $this->read($userid);
-    }
-
-    /**
      * Read all users from the team
      *
      * @param int|null $validated
@@ -839,25 +816,6 @@ class Users
         while ($exp = $req->fetch()) {
             $Experiments = new Experiments($this, (int) $exp['id']);
             $Experiments->destroy();
-        }
-    }
-
-    /**
-     * Generate an API key and store it
-     *
-     * @return void
-     */
-    public function generateApiKey(): void
-    {
-        $apiKey = \bin2hex(\random_bytes(42));
-
-        $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':api_key', $apiKey);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
 }

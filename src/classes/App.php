@@ -60,6 +60,9 @@ class App
     /** @var array $ko the ko messages from flashBag */
     public $ko;
 
+    /** @var array $warning the warning messages from flashBag */
+    public $warning;
+
     /** @var array $todoItems items on the todolist, populated if logged in */
     public $todoItems = array();
 
@@ -94,6 +97,7 @@ class App
 
         $this->ok = $this->Session->getFlashBag()->get('ok', array());
         $this->ko = $this->Session->getFlashBag()->get('ko', array());
+        $this->warning = $this->Session->getFlashBag()->get('warning', array());
     }
 
     /**

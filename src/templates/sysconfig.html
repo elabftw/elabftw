@@ -157,7 +157,6 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
             {% for team in teamsArr %}
             {% set count = Teams.getStats(team.id) %}
-            {{ count.totusers }}
             <label for='teamName_{{ team.id }}'>Team Name</label>
             <input data-id='{{ team.id }}' class='clean-form col-3-form teamNameInput' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
             <label for='teamOrgid_{{ team.id }}'>Team Organisation ID</label>

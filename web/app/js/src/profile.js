@@ -28,10 +28,10 @@
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
-        // GENERATE API KEY
-        $(document).on('click', '.generateApiKey', function() {
-            $.post('app/controllers/UsersAjaxController.php', {
-                generateApiKey: true
+        $(document).on('click', '.keyDestroy', function() {
+            $.post("app/controllers/ProfileAjaxController.php", {
+                destroyApiKey: true,
+                id: $(this).data('id')
             }).done(function(data) {
                 $("#api_div").load("profile.php #api_div");
                 if (data.res) {
@@ -41,5 +41,6 @@
                 }
             });
         });
+
     });
 }());

@@ -69,6 +69,7 @@ try {
 
     $template = 'sysconfig.html';
     $renderArr = array(
+        'Teams' => $Teams,
         'elabimgVersion' => $elabimgVersion,
         'ReleaseCheck' => $ReleaseCheck,
         'langsArr' => $langsArr,

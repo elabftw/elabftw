@@ -77,10 +77,10 @@ class UserStats
             $sql = "SELECT COUNT(id)
                 FROM experiments
                 WHERE userid = :userid
-                AND status = :status";
+                AND category = :category";
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindParam(':status', $key, PDO::PARAM_INT);
+            $req->bindParam(':category', $key, PDO::PARAM_INT);
             $req->execute();
             $this->countArr[$key] = $req->fetchColumn();
         }

@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,11 +33,6 @@ $Response->setData(array(
 try {
     // CSRF
     $App->Csrf->validate();
-
-    // (RE)GENERATE AN API KEY (from profile)
-    if ($Request->request->has('generateApiKey')) {
-        $App->Users->generateApiKey();
-    }
 
     // VALIDATE USER
     if ($Request->request->has('usersValidate')) {

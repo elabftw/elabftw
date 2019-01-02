@@ -39,7 +39,7 @@ class Update
      * AND src/sql/structure.sql
      * /////////////////////////////////////////////////////
      */
-    private const REQUIRED_SCHEMA = 45;
+    private const REQUIRED_SCHEMA = 46;
 
     /**
      * Constructor

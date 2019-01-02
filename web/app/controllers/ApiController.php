@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
@@ -44,8 +45,10 @@ try {
 
     // verify the key and load user infos
     $Users = new Users();
-
-    $Users->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
+    $ApiKeys = new ApiKeys($Users);
+    $keyArr = $ApiKeys->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
+    $Users->setId((int) $keyArr['userid']);
+    $canWrite = (bool) $keyArr['canWrite'];
 
     $availMethods = array('GET', 'POST');
     if (!\in_array($Request->server->get('REQUEST_METHOD'), $availMethods, true)) {
@@ -98,6 +101,9 @@ try {
         // POST request
         } else {
 
+            if (!$canWrite) {
+                throw new ImproperActionException('Cannot use readonly key with POST method!');
+            }
             // FILE UPLOAD
             if ($Request->files->count() > 0) {
                 $content = $Api->uploadFile($Request);

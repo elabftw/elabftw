@@ -2,6 +2,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Elabftw\Tools;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
 use Elabftw\Models\Experiments;
 
@@ -10,7 +11,9 @@ class ApiTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->Users = new Users(1);
-        $this->Users->generateApiKey();
+        $this->ApiKeys = new ApiKeys($this->Users);
+        $this->ApiKeys->create('ro', 0);
+        $this->ApiKeys->create('rw', 1);
     }
 
     public function testCreateExperiment()

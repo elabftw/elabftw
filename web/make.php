@@ -56,7 +56,6 @@ try {
             break;
 
         case 'zip':
-            ini_set('max_execution_time', 300);
             // use experimental stream zip feature
             if ($Request->cookies->has('stream_zip')) {
                 $Make = new MakeStreamZip($Entity, $Request->query->get('id'));

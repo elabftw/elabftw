@@ -42,7 +42,7 @@ class Cleaner
         return $orphans;
     }
 
-    private function lookupInDb($filePath): bool
+    private function lookupInDb(string $filePath): bool
     {
         $longName = \basename($filePath);
         $folder = substr($longName, 0, 2);

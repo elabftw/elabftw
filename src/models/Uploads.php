@@ -298,7 +298,7 @@ class Uploads implements CrudInterface
      * Get the total size on disk of uploaded files for a user
      *
      * @param int $userid
-     * @return array
+     * @return int
      */
     public function getDiskUsage(int $userid): int
     {

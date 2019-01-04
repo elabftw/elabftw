@@ -346,6 +346,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <!-- TAB 7 SAML -->
 <div class='divhandle' id='tab7div'>
+    {{ 'Note: an XML file with the configuration is available %shere%s.'|format("<a href='metadata.php'>", "</a>")|msg('ok', false) }}
     <div class='box'>
         <form method='post' action='app/controllers/SysconfigController.php'>
             <h3>Service provider (this instance of eLabFTW)</h3>

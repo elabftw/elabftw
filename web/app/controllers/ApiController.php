@@ -11,19 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ApiController;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Database;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Uploads;
-use Elabftw\Models\Users;
 use Exception;
 use Monolog\Logger;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Monolog\Handler\ErrorLogHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,35 +27,25 @@ use Symfony\Component\HttpFoundation\Response;
 require_once \dirname(__DIR__, 3) . '/config.php';
 require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-$Response = new JsonResponse(array('error' => Tools::error()));
-
 try {
     // create Request object
     $Request = Request::createFromGlobals();
     $Log = new Logger('elabftw');
+    $Log->pushHandler(new ErrorLogHandler());
 
     $ApiController = new ApiController($Request);
     $Response = $ApiController->getResponse();
 
 } catch (ImproperActionException $e) {
-    $Response->setData(array(
-        'error' => $e->getMessage()
-    ));
+    $Response = new Response($e->getMessage, 400);
 
 } catch (IllegalActionException $e) {
-    $Log->notice('', array('IllegalAction', $e));
-    $Response->setData(array(
-        'error' => Tools::error(true)
-    ));
+    $Log->notice('', array('IllegalAction' => $e));
+    $Response = new Response(Tools::error(true), 403);
 
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
-    $Log->error('', array('Error', $e));
-    $Response->setData(array(
-        'error' => $e->getMessage()
-    ));
-
-} catch (Exception $e) {
+} catch (Exception | DatabaseErrorException | FilesystemErrorException $e) {
     $Log->error('', array('Exception' => $e));
+    $Response = new Response(Tools::error(), 500);
 
 } finally {
     $Response->send();

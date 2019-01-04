@@ -19,8 +19,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +38,12 @@ class ApiController implements ControllerInterface
     /** @var array $allowedMethods allowed HTTP methods */
     private $allowedMethods = array('GET', 'POST');
 
+    /** @var int $id the id at the end of the url */
+    private $id;
+
+    /** @var string $endpoint experiments, items or uploads */
+    private $endpoint;
+
     /**
      * Constructor
      *
@@ -48,9 +52,15 @@ class ApiController implements ControllerInterface
     public function __construct(Request $request)
     {
         $this->Request = $request;
+        $this->parseReq();
     }
 
-    private function parseReq(): array
+    /**
+     * Set the id and endpoints fields
+     *
+     * @return void
+     */
+    private function parseReq(): void
     {
         $args = explode('/', rtrim($this->Request->query->get('req'), '/'));
 
@@ -59,15 +69,13 @@ class ApiController implements ControllerInterface
         if (Tools::checkId((int) end($args)) !== false) {
             $id = (int) end($args);
         }
+        $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads)
-        $endpoint = array_shift($args);
-
-        return array('id' => $id, 'endpoint' => $endpoint);
+        $this->endpoint = array_shift($args);
     }
 
     /**
-     * Get experiment or item, one or several
      * @apiDefine GetEntity
      * @apiParam {Number} id Entity id
      */
@@ -130,6 +138,12 @@ class ApiController implements ControllerInterface
      * @apiSuccess {Number} userid User id of the owner
      * @apiSuccess {String} visibility Visibility of the experiment
      *
+     */
+
+    /**
+     * Get experiment or item, one or several
+     *
+     * @param int|null $id id of the entity
      * @return Response
      */
     private function getEntity(?int $id): Response
@@ -145,7 +159,6 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * Get the file corresponding to the ID
      * @api {post} /experiments Create experiment
      * @apiName CreateExperiment
      * @apiGroup Entity
@@ -155,15 +168,21 @@ class ApiController implements ControllerInterface
      *     {
      *       "id": "42"
      *     }
+     */
+
+    /**
+     * Get the file corresponding to the ID
+     *
+     * @param int $userid
      * @return Response
      */
-    private function getUpload(?int $id, int $userid): Response
+    private function getUpload(int $userid): Response
     {
-        if ($id === null) {
+        if ($this->id === null) {
             return new Response('You need to specify an ID!', 400);
         }
         $Uploads = new Uploads();
-        $uploadData = $Uploads->readFromId($id);
+        $uploadData = $Uploads->readFromId($this->id);
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
@@ -175,7 +194,6 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * Create an experiment
      * @api {post} /experiments Create experiment
      * @apiName CreateExperiment
      * @apiGroup Entity
@@ -185,6 +203,11 @@ class ApiController implements ControllerInterface
      *     {
      *       "id": "42"
      *     }
+     */
+
+    /**
+     * Create an experiment
+     *
      * @return Response
      */
     private function createExperiment(): Response
@@ -197,7 +220,6 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * Create link from experiment to item
      * @api {post} /experiments/:id Add a link
      * @apiName AddLink
      * @apiGroup Entity
@@ -209,6 +231,11 @@ class ApiController implements ControllerInterface
      *     {
      *       "result": "success"
      *     }
+     */
+
+    /**
+     * Create link from experiment to item
+     *
      * @return Response
      */
     private function createLink(): Response
@@ -221,7 +248,6 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * Create tag
      * @api {post} /:endpoint/:id Add a tag
      * @apiName AddTag
      * @apiGroup Entity
@@ -234,6 +260,11 @@ class ApiController implements ControllerInterface
      *     {
      *       "tag": "my tag"
      *     }
+     */
+
+    /**
+     * Create tag
+     *
      * @return Response
      */
     private function createTag(): Response
@@ -243,7 +274,6 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * Update experiment or item (title, date and body)
      * @api {post} /:endpoint/:id Update entity
      * @apiName UpdateEntity
      * @apiGroup Entity
@@ -260,6 +290,11 @@ class ApiController implements ControllerInterface
      *       "date": "20180308",
      *       "title": "New title"
      *     }
+     */
+
+    /**
+     * Update experiment or item (title, date and body)
+     *
      * @return Response
      */
     private function updateEntity(): Response
@@ -281,6 +316,12 @@ class ApiController implements ControllerInterface
      * @apiParam {File} file File to upload
      * @apiSuccess {String} result Success
      * @apiError {String} error Error mesage
+     */
+
+    /**
+     * Upload a file to an entity
+     *
+     * @return Response
      */
     private function uploadFile(): Response
     {
@@ -318,24 +359,22 @@ class ApiController implements ControllerInterface
         $Users->setId((int) $keyArr['userid']);
         $canWrite = (bool) $keyArr['canWrite'];
 
-        $req = $this->parseReq();
-
         // GET UPLOAD
-        if ($req['endpoint'] === 'uploads') {
-            return $this->getUpload($req['id'], (int) $Users->userData['userid']);
+        if ($this->endpoint === 'uploads') {
+            return $this->getUpload((int) $Users->userData['userid']);
 
         // load Entity
-        } elseif ($req['endpoint'] === 'experiments') {
-            $this->Entity = new Experiments($Users, $req['id']);
-        } elseif ($req['endpoint'] === 'items') {
-            $this->Entity = new Database($Users, $req['id']);
+        } elseif ($this->endpoint === 'experiments') {
+            $this->Entity = new Experiments($Users, $this->id);
+        } elseif ($this->endpoint === 'items') {
+            $this->Entity = new Database($Users, $this->id);
         } else {
-            return new Response('Bad endpoint!', 400);
+            throw new ImproperActionException('Bad endpoint!');
         }
 
         // GET ENTITY
         if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
-            return $this->getEntity($req['id']);
+            return $this->getEntity($this->id);
         }
 
         // POST request

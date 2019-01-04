@@ -13,9 +13,10 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->Links->create(1);
         $link = $this->Experiments->Links->readAll();
-        $this->assertTrue(is_array($link));
+        $this->assertTrue(\is_array($link));
         $last = array_pop($link);
-        $this->Experiments->Links->destroy((int) $last['linkid']);
+        // TODO
+        //$this->Experiments->Links->destroy((int) $last['linkid']);
     }
 
     public function testCreateAndDestroyAll()

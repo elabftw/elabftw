@@ -26,6 +26,7 @@ START TRANSACTION;
     ALTER TABLE `items_comments` CHANGE `userid` `userid` INT(10) UNSIGNED NOT NULL;
     ALTER TABLE `tags` CHANGE `team` `team` INT(10) UNSIGNED NOT NULL;
     ALTER TABLE `tags` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+    ALTER TABLE `team_groups` CHANGE `id` `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT;
     ALTER TABLE `tags2entity` CHANGE `item_id` `item_id` INT(10) UNSIGNED NOT NULL;
     ALTER TABLE `tags2entity` CHANGE `tag_id` `tag_id` INT(10) UNSIGNED NOT NULL;
 COMMIT;

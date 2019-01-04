@@ -46,10 +46,4 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Comments->destroy(1);
     }
-
-    public function testDestroyAll()
-    {
-        $this->Comments->destroyAll();
-        $this->assertTrue(empty($this->Comments->readAll()));
-    }
 }

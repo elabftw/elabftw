@@ -23,7 +23,7 @@
     "markdown": "0.5.*",
     "mathjax": "2.7.5",
     "popper.js": "1.14.*",
-    "tinymce": "4.8.*",
+    "tinymce": "4.9.*",
     "tinymce-mention": "4.0.2",
     "vanderlee-colorpicker": "1.2.*"
   },
@@ -38,7 +38,7 @@
     "lodash": "~4.17.5",
     "snyk": "1.*",
     "webpack": "4.28.*",
-    "webpack-cli": "3.1.*"
+    "webpack-cli": "3.2.*"
   },
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/classes",

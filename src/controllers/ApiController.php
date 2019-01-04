@@ -32,7 +32,7 @@ class ApiController implements ControllerInterface
     /** @var Request $Request instance of Request */
     private $Request;
 
-    /** @var AbstractEntity|null $Entity instance of Entity */
+    /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
     /** @var array $allowedMethods allowed HTTP methods */

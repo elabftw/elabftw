@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Controllers\ApiController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -31,17 +32,13 @@ use Symfony\Component\HttpFoundation\Response;
 require_once \dirname(__DIR__, 3) . '/config.php';
 require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-$Response = new JsonResponse();
-$Response->setData(array('error' => Tools::error()));
-
 try {
     // create Request object
     $Request = Request::createFromGlobals();
     $Log = new Logger('elabftw');
-    // do we have an API key?
-    if (!$Request->server->has('HTTP_AUTHORIZATION')) {
-        throw new ImproperActionException('No API key received.');
-    }
+
+    $ApiController = new ApiController($Request);
+    $Response = $ApiController->getResponse();
 
     // verify the key and load user infos
     $Users = new Users();
@@ -49,11 +46,6 @@ try {
     $keyArr = $ApiKeys->readFromApiKey($Request->server->get('HTTP_AUTHORIZATION'));
     $Users->setId((int) $keyArr['userid']);
     $canWrite = (bool) $keyArr['canWrite'];
-
-    $availMethods = array('GET', 'POST');
-    if (!\in_array($Request->server->get('REQUEST_METHOD'), $availMethods, true)) {
-        throw new ImproperActionException('Incorrect HTTP verb! Available verbs are: ' . implode(', ', $availMethods));
-    }
 
     // parse args
     $args = explode('/', rtrim($Request->query->get('req'), '/'));

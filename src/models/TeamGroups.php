@@ -193,13 +193,13 @@ class TeamGroups implements CrudInterface
     /**
      * Add or remove a member from a team group
      *
-     * @param int $userId Id of the user
-     * @param int $groupId Id of the group
+     * @param int $userid Id of the user
+     * @param int $groupid Id of the group
      * @param string $action Can be 'add' or 'rm'
      * @throws IllegalActionException if the action keyword is wrong
      * @return void
      */
-    public function updateMember(int $userId, int $groupId, string $action): void
+    public function updateMember(int $userid, int $groupid, string $action): void
     {
         if ($action === 'add') {
             $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
@@ -209,8 +209,8 @@ class TeamGroups implements CrudInterface
             throw new IllegalActionException('Bad action keyword');
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userId, PDO::PARAM_INT);
-        $req->bindParam(':groupid', $groupId, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');

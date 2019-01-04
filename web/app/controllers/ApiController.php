@@ -37,7 +37,7 @@ try {
     $Response = $ApiController->getResponse();
 
 } catch (ImproperActionException $e) {
-    $Response = new Response($e->getMessage, 400);
+    $Response = new Response($e->getMessage(), 400);
 
 } catch (IllegalActionException $e) {
     $Log->notice('', array('IllegalAction' => $e));

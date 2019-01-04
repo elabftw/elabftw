@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\Api;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
@@ -32,13 +32,13 @@ class ApiController implements ControllerInterface
     /** @var Request $Request instance of Request */
     private $Request;
 
-    /** @var AbstactEntity $Entity instance of Entity */
+    /** @var AbstractEntity|null $Entity instance of Entity */
     private $Entity;
 
     /** @var array $allowedMethods allowed HTTP methods */
     private $allowedMethods = array('GET', 'POST');
 
-    /** @var int $id the id at the end of the url */
+    /** @var int|null $id the id at the end of the url */
     private $id;
 
     /** @var string $endpoint experiments, items or uploads */

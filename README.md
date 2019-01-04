@@ -3,7 +3,7 @@
 </p>
 
 <p align='center'>
-#### A free, modern, flexible electronic lab notebook for researchers
+<strong>A free, modern, flexible electronic lab notebook for researchers</strong>
 </p>
 
 [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)

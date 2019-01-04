@@ -311,7 +311,8 @@ class Users
         }
 
         $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.team, users.email, users.validated, users.usergroup, users.archived,
+            users.firstname, users.lastname, users.team, users.email,
+            users.validated, users.usergroup, users.archived, users.last_login,
             teams.name as teamname
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)

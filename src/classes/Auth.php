@@ -101,6 +101,22 @@ class Auth
     }
 
     /**
+     * Update last login time of user
+     *
+     * @return void
+     */
+    private function updateLastLogin(): void
+    {
+        $sql = "UPDATE users SET last_login = :last_login WHERE userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':last_login', \date('Y-m-d H:i:s'));
+        $req->bindParam(':userid', $this->userData['userid']);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
      * Populate userData from email
      *
      * @param string $email
@@ -117,6 +133,7 @@ class Auth
         if ($req->rowCount() === 1) {
             // populate the userData
             $this->userData = $req->fetch();
+            $this->updateLastLogin();
             return true;
         }
         return false;

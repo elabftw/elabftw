@@ -75,6 +75,7 @@ class MakeReport extends AbstractMake
             'validated',
             'usergroup',
             'archived',
+            'last_login',
             'teamname',
             'diskusage_in_bytes',
             'diskusage_formatted',

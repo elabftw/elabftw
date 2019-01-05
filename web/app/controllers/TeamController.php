@@ -31,6 +31,9 @@ try {
 
     // EMAIL TEAM
     if ($Request->request->has('emailTeam')) {
+        if ($App->Session->get('auth') !== 1) {
+            throw new IllegalActionException('Anonymous user tried to send email to team');
+        }
         $Email = new Email($App->Config, $App->Users);
         $sent = $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'), true);
         $Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));

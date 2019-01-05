@@ -153,9 +153,9 @@
         <input type='hidden' name='emailTeam' />
         <div class="form-group">
             <label for="emailSubject">{{ 'Subject'|trans }}</label>
-            <input type='text' id='emailSubject' name='subject' class='form-control' />
+            <input type='text' id='emailSubject' name='subject' class='form-control' required />
             <label for="emailBody">{{ 'Content'|trans }}</label>
-            <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' /></textarea>
+            <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' required /></textarea>
         </div>
         <div class='submitButtonDiv'>
             <button type='submit' class='button'>{{ 'Send'|trans }}</button>

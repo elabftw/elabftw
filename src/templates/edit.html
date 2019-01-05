@@ -12,7 +12,7 @@
 <script src='app/js/src/relative-moment.js?v={{ v }}'></script>
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
-    <i class='fas fa-trash-alt fa-2x fa-pull-right clickable entityDestroy' title='Delete' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+    <i class='fas fa-trash-alt fa-2x fa-pull-right clickable entityDestroy' title='Delete' /></i>
 
     <!-- TAGS -->
     <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
@@ -25,7 +25,7 @@
                 {% set inc = 0 %}
                 {% for tag in tagsValueArr %}
                     <span class='tag clickable'>
-                        <a class='tagUnreference' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-tagid='{{ tagsIdArr[inc] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                        <a class='tagUnreference' data-tagid='{{ tagsIdArr[inc] }}'>
                             {{ tag|raw }}
                         </a>
                     </span>
@@ -245,7 +245,7 @@
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
     data-locale='{{ App.Users.userData.lang }}'
-    data-confirm="{{ 'Delete this?'|trans }}"
+    data-confirm="{{ 'The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'|trans }}"
     data-untitled="{{ 'Untitled'|trans }}"
     data-lang="{{ Entity.Users.userData.lang }}">
 </div>

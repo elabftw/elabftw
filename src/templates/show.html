@@ -249,7 +249,11 @@ li.dropdown-item:hover{ color:#29AEB9;}
 {% endif %}
 
 <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
-<div id='infos' data-limit='{{ Entity.Users.userData.limit_nb }}' data-offset='{{ offset }}'></div>
+<div id='infos'
+    data-limit='{{ Entity.Users.userData.limit_nb }}'
+    data-offset='{{ offset }}'
+    data-confirm="{{ 'The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'|trans }}">
+</div>
 <div id='type' data-type='{{ Entity.type }}'></div>
 <!--
 <script src='app/js/show.min.js?v={{ v }}'></script>

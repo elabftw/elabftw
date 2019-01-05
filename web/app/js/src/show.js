@@ -184,14 +184,14 @@
 
         // THE DELETE BUTTON FOR CHECKED BOXES
         $('#deleteChecked').on('click', function() {
-            if (!confirm('Delete this?')) {
+            if (!confirm($('#infos').data('confirm'))) {
                 return false;
             }
             // get the item id of all checked boxes
             var checked = getCheckedBoxes();
             // loop on it and delete stuff
             $.each(checked, function(index, value) {
-                $.post('app/controllers/EntityController.php', {
+                $.post('app/controllers/EntityAjaxController.php', {
                     destroy: true,
                     id: value,
                     type: $('#type').data('type')

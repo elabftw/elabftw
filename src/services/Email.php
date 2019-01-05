@@ -32,14 +32,19 @@ class Email
     /** @var Config $Config instance of Config */
     private $Config;
 
+    /** @var Users $Users instance of Users */
+    private $Users;
+
     /**
      * Constructor
      *
      * @param Config $config
+     * @param Users $users
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, Users $users)
     {
         $this->Config = $config;
+        $this->Users = $users;
     }
 
     /**
@@ -158,29 +163,37 @@ class Email
      *
      * @param string $subject
      * @param string $body
+     * @param bool $teamFilter
      * @return int number of emails sent
      */
-    public function massEmail($subject, $body): int
+    public function massEmail(string $subject, string $body, bool $teamFilter = false): int
     {
         if (empty($subject)) {
             $subject = 'No subject';
         }
 
+        // set from
+        if ($teamFilter) {
+            $from = array($this->Users->userData['email'] => $this->Users->userData['fullname']);
+        } else {
+            $from = array($this->Config->configArr['mail_from'] => 'eLabFTW');
+        }
+
         // get all email adresses
-        $Users = new Users();
-        $UsersArr = $Users->getAllEmails();
-        $to = array();
-        foreach ($UsersArr as $user) {
-            $to[] = $user['email'];
+        $usersArr = $this->Users->getAllEmails($teamFilter);
+        $bcc = array();
+        foreach ($usersArr as $user) {
+            $bcc[] = $user['email'];
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+
         $message = (new Swift_Message())
         ->setSubject($subject)
-        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
-        ->setTo(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom($from)
+        ->setTo($from)
         // Set recipients in BCC to protect email addresses
-        ->setBcc($to)
+        ->setBcc($bcc)
         ->setBody($body . $footer);
 
         return $this->send($message);

@@ -153,7 +153,7 @@ class Users
         }
 
         if ($validated == '0') {
-            $Email = new Email($this->Config);
+            $Email = new Email($this->Config, $this);
             $Email->alertAdmin($team);
             // set a flag to show correct message to user
             $this->needValidation = true;
@@ -367,12 +367,19 @@ class Users
     /**
      * Get email for every single user
      *
+     * @param bool $fromTeam
      * @return array
      */
-    public function getAllEmails(): array
+    public function getAllEmails(bool $fromTeam = false): array
     {
         $sql = "SELECT email FROM users WHERE validated = 1 AND archived = 0";
+        if ($fromTeam) {
+            $sql .= ' AND team = :team';
+        }
         $req = $this->Db->prepare($sql);
+        if ($fromTeam) {
+            $req->bindParam(':team', $this->userData['team'], PDO::PARAM_INT);
+        }
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
@@ -746,7 +753,7 @@ class Users
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         // send an email to the user
-        $Email = new Email($this->Config);
+        $Email = new Email($this->Config, $this);
         $Email->alertUserIsValidated($this->userData['email']);
     }
 

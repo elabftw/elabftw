@@ -26,7 +26,7 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse("../../login.php");
 
 try {
-    $Email = new Email($App->Config);
+    $Email = new Email($App->Config, new Users());
 
     if ($Request->request->has('email')) {
 

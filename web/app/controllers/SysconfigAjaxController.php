@@ -64,13 +64,13 @@ try {
 
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
-        $Email = new Email($App->Config);
+        $Email = new Email($App->Config, $App->Users);
         $Email->testemailSend($Request->request->get('testemailEmail'));
     }
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email = new Email($App->Config);
+        $Email = new Email($App->Config, $App->Users);
         $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'));
     }
 

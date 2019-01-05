@@ -31,6 +31,7 @@ import {
     faComments,
     faDna,
     faDownload,
+    faEnvelope,
     faExclamationTriangle,
     faEye,
     faFile,
@@ -69,6 +70,7 @@ import {
     faTrashAlt,
     faUpload,
     faUser,
+    faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -87,6 +89,7 @@ library.add(
     faComments,
     faDna,
     faDownload,
+    faEnvelope,
     faExclamationTriangle,
     faEye,
     faFile,
@@ -124,7 +127,8 @@ library.add(
     faTimes,
     faTrashAlt,
     faUpload,
-    faUser
+    faUser,
+    faUsers
 )
 
 // REGULAR

@@ -90,7 +90,10 @@ class Revisions implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT * FROM " . $this->Entity->type . "_revisions
+        $sql = "SELECT " . $this->Entity->type . "_revisions.*,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM " . $this->Entity->type . "_revisions
+            LEFT JOIN users ON (users.userid = " . $this->Entity->type . "_revisions.userid)
             WHERE item_id = :item_id ORDER BY savedate DESC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

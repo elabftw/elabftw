@@ -238,7 +238,7 @@ class ExperimentsController extends AbstractEntityController
         // related filter
         } elseif (Tools::checkId((int) $this->App->Request->query->get('related')) !== false) {
             $searchType = 'related';
-            $itemsArr = $this->Entity->readRelated($this->App->Request->query->get('related'));
+            $itemsArr = $this->Entity->readRelated((int) $this->App->Request->query->get('related'));
 
         } else {
             // filter by user only if we are not making a search

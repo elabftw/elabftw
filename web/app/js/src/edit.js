@@ -437,6 +437,7 @@
             toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
             removed_menuitems: 'newdocument',
             image_caption: true,
+            content_style: ".mce-content-body {font-size:10pt;}",
             codesample_languages: [
                 {text: 'Bash', value: 'bash'},
                 {text: 'C', value: 'c'},

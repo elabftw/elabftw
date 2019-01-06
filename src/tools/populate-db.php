@@ -8,7 +8,6 @@
  */
 namespace Elabftw\Services;
 
-use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Models\Users;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Database;
@@ -23,7 +22,7 @@ class Populate
 {
     private const ITERATIONS = 100;
 
-    public function generate(CreateInterface $Entity): void
+    public function generate($Entity): void
     {
         for ($i = 0; $i <= self::ITERATIONS; $i++) {
             $id = $Entity->create(1);

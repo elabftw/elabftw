@@ -63,7 +63,7 @@ class MakeStreamZip extends AbstractMake
         $this->idList = $idList;
     }
 
-    public function output()
+    public function output(): void
     {
         $this->loopIdArr();
     }

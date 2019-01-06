@@ -38,6 +38,9 @@ class MakeTimestamp extends AbstractMake
     /** @var Config $Config instance of Config */
     private $Config;
 
+    /** @var Experiments $Experiments instance of Experiments */
+    private $Experiments;
+
     /** @var string $pdfPath full path to pdf */
     private $pdfPath;
 
@@ -72,7 +75,7 @@ class MakeTimestamp extends AbstractMake
     public function __construct(Config $config, Teams $teams, Experiments $entity)
     {
         parent::__construct($entity);
-        $this->Entity->canOrExplode('write');
+        $this->Experiments->canOrExplode('write');
 
         $this->Config = $config;
 
@@ -92,7 +95,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function generatePdf(): void
     {
-        $MakePdf = new MakePdf($this->Entity);
+        $MakePdf = new MakePdf($this->Experiments);
         $MakePdf->outputToFile();
         $this->pdfPath = $MakePdf->filePath;
         $this->pdfLongName = $MakePdf->longName;
@@ -149,7 +152,7 @@ class MakeTimestamp extends AbstractMake
     private function runOpenSSL($cmd): array
     {
         $retarray = array();
-        exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
+        \exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
 
         return array(
             "retarray" => $retarray,
@@ -355,8 +358,8 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':real_name', $realName);
         $req->bindParam(':long_name', $longName);
         $req->bindValue(':comment', "Timestamp token");
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Experiments->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
@@ -457,7 +460,7 @@ class MakeTimestamp extends AbstractMake
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
         if (!$req->execute()) {
             throw new ImproperActionException('Cannot get elabid!');
         }
@@ -480,8 +483,8 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Experiments->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', 'exp-pdf-timestamp');
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
@@ -567,10 +570,10 @@ class MakeTimestamp extends AbstractMake
      */
     public function timestamp(): void
     {
-        if (!$this->Entity->isTimestampable()) {
+        if (!$this->Experiments->isTimestampable()) {
             throw new ImproperActionException('Timestamping is not allowed for this experiment.');
         }
-        $this->Entity->canOrExplode('write');
+        $this->Experiments->canOrExplode('write');
 
         // first we create the request file
         $this->createRequestfile();
@@ -586,7 +589,7 @@ class MakeTimestamp extends AbstractMake
         $this->validate();
 
         // SQL
-        $this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath);
+        $this->Experiments->updateTimestamp($this->responseTime, $this->responsefilePath);
         $this->sqlInsertPdf();
     }
 

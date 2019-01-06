@@ -268,7 +268,11 @@ class Uploads implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-        return $req->fetch();
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new ImproperActionException('Nothing to show with this id');
+        }
+        return $res;
     }
 
     /**
@@ -358,11 +362,7 @@ class Uploads implements CrudInterface
     public function replace(Request $request): void
     {
         $this->Entity->canOrExplode('write');
-        $id = filter_var($request->request->get('upload_id'), FILTER_VALIDATE_INT);
-        $upload = $this->readFromId($id);
-        if (empty($upload)) {
-            throw new IllegalActionException('Bad id in upload replace');
-        }
+        $upload = $this->readFromId((int) $request->request->get('upload_id'));
         $fullPath = $this->getUploadsPath() . $upload['long_name'];
         // check user is same as the previously uploaded file
         if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {

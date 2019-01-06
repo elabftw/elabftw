@@ -10,12 +10,12 @@
 (function() {
     'use strict';
     $(document).ready(function() {
-        let id = $('#entityInfo').data('id');
-        let type = $('#entityInfo').data('type');
+        let id = $('#info').data('id');
+        let type = $('#info').data('type');
         if (type === undefined) {
             type = 'experiments_tpl';
         }
-        let confirmText = $('#entityInfo').data('confirm');
+        let confirmText = $('#info').data('confirm');
 
         class Tag {
 

@@ -18,7 +18,7 @@ use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- *  This page displays an XML file with all the infos of the Service Provider
+ *  This page displays an XML file with all the settings of the Service Provider
  */
 require_once 'app/init.inc.php';
 

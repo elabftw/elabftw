@@ -20,7 +20,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Users infos from admin or sysadmin page with ajax request and json response
+ * Users info from admin or sysadmin page with ajax request and json response
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 

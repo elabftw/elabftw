@@ -71,8 +71,11 @@
 </section>
 
 <script src='https://www.gstatic.com/charts/loader.js'></script>
-<!--
-<script src='app/js/profile.min.js?v={{ v }}'></script>
--->
-<script src='app/js/src/profile.js?v={{ v }}'></script>
+
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/profile.js?v={{ v }}'></script>
+{% else %}
+    <script src='app/js/profile.min.js?v={{ v }}'></script>
+{% endif %}
+
 {% endblock body %}

@@ -19,7 +19,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Users infos from admin or sysadmin page
+ * Users info from admin or sysadmin page
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 

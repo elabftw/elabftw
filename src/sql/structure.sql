@@ -51,7 +51,7 @@ CREATE TABLE `api_keys` (
 
 CREATE TABLE `banned_users` (
   `id` int(10) UNSIGNED NOT NULL,
-  `user_infos` text NOT NULL,
+  `fingerprint` char(32) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

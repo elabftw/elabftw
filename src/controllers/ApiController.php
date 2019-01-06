@@ -352,7 +352,7 @@ class ApiController implements ControllerInterface
             return new Response('No access token provided!', 401, array('WWW-Authenticate' => 'Bearer'));
         }
 
-        // verify the key and load user infos
+        // verify the key and load user info
         $Users = new Users();
         $ApiKeys = new ApiKeys($Users);
         $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));

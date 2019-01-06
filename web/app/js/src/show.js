@@ -58,11 +58,11 @@
         // PAGINATION
         // previous page
         $(document).on('click', '.previousPage', function() {
-            insertParamAndReload('offset', $('#infos').data('offset') - $('#infos').data('limit'));
+            insertParamAndReload('offset', $('#info').data('offset') - $('#info').data('limit'));
         });
         // next page
         $(document).on('click', '.nextPage', function() {
-            insertParamAndReload('offset', $('#infos').data('offset') + $('#infos').data('limit'));
+            insertParamAndReload('offset', $('#info').data('offset') + $('#info').data('limit'));
         });
         // END PAGINATION
 
@@ -184,7 +184,7 @@
 
         // THE DELETE BUTTON FOR CHECKED BOXES
         $('#deleteChecked').on('click', function() {
-            if (!confirm($('#infos').data('confirm'))) {
+            if (!confirm($('#info').data('confirm'))) {
                 return false;
             }
             // get the item id of all checked boxes

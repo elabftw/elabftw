@@ -387,10 +387,11 @@
 </div>
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
-<!--
-<script src='app/js/admin.min.js?v={{ v }}'></script>
--->
-<script src='app/js/src/admin.js?v={{ v }}'></script>
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/admin.js?v={{ v }}'></script>
+{% else %}
+    <script src='app/js/admin.min.js?v={{ v }}'></script>
+{% endif %}
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 <script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

@@ -10,7 +10,7 @@
  */
 
 /**
- * This file reads infos from POST and creates the config.php file (unless it exists)
+ * This file reads info from POST and creates the config.php file (unless it exists)
  *
  */
 namespace Elabftw\Elabftw;

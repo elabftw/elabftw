@@ -240,7 +240,7 @@
     </span>
 {% endif %}
 
-<div id='entityInfo'
+<div id='info'
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
     data-locale='{{ App.Users.userData.lang }}'
@@ -250,8 +250,11 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
-<!--
-<script src='app/js/view.min.js?v={{ v }}'></script>
--->
-<script src='app/js/src/view.js?v={{ v }}'></script>
+
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/view.js?v={{ v }}'></script>
+{% else %}
+    <script src='app/js/view.min.js?v={{ v }}'></script>
+{% endif %}
+
 {% endblock body %}

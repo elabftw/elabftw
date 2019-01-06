@@ -60,7 +60,7 @@ try {
         $selectedItem = $Request->query->get('item');
 
         $Scheduler->populate();
-        if ($Scheduler->itemData['category'] === '') {
+        if (empty($Scheduler->itemData)) {
             throw new ImproperActionException(_('Nothing to show with this id'));
         }
     }

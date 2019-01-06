@@ -1,6 +1,4 @@
 /**
- * ucp.js - for the user control panel
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -72,25 +70,6 @@
 
             reader.readAsText(this.files[0]);
         });
-
-        // SUB TABS
-        var tab = 1;
-        var initdiv = '#subtab_' + tab + 'div';
-        var inittab = '#subtab_' + tab;
-        // init
-        $(".subdivhandle").hide();
-        $(initdiv).show();
-        $(inittab).addClass('selected');
-
-        $(".subtabhandle" ).click(function(event) {
-            var tabhandle = '#' + event.target.id;
-            var divhandle = '#' + event.target.id + 'div';
-            $(".subdivhandle").hide();
-            $(divhandle).show();
-            $(".subtabhandle").removeClass('badgetabactive');
-            $(tabhandle).addClass('badgetabactive');
-        });
-        // END SUB TABS
 
         // TinyMCE
         tinymce.init({

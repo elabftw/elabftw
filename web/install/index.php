@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The default path in Docker is to automatically install the database schema
- * because the config file is already here. Otherwise, ask infos for creating it.
+ * because the config file is already here. Otherwise, ask info for creating it.
  *
  */
 session_start();

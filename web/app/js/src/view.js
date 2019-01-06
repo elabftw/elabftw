@@ -12,13 +12,13 @@
         // add the title in the page name (see #324)
         document.title = $('.title_view').text() + ' - eLabFTW';
 
-        var type = $('#entityInfo').data('type');
-        var id = $('#entityInfo').data('id');
-        var confirmText = $('#entityInfo').data('confirm');
+        var type = $('#info').data('type');
+        var id = $('#info').data('id');
+        var confirmText = $('#info').data('confirm');
 
         // EDIT
         key($('#shortcuts').data('edit'), function() {
-            window.location.href = '?mode=edit&id=' + $('#entityInfo').data('id');
+            window.location.href = '?mode=edit&id=' + id;
         });
 
         // TOGGLE LOCK
@@ -58,7 +58,7 @@
             $.post('app/controllers/EntityAjaxController.php', {
                 duplicate: true,
                 id: $(this).data('id'),
-                type: $('#entityInfo').data('type')
+                type: type
             }).done(function(data) {
                 window.location.replace('experiments.php?mode=edit&id=' + data.msg);
             });
@@ -75,7 +75,7 @@
                 $.post(this.controller, {
                     create: true,
                     comment: comment,
-                    type: $('#entityInfo').data('type'),
+                    type: type,
                     id: id
                 }).done(function(data) {
                     if (data.res) {
@@ -93,7 +93,7 @@
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                     destroy: true,
-                    type: $('#entityInfo').data('type'),
+                    type: $('#info').data('type'),
                     id: comment
                 }).done(function(data) {
                     if (data.res) {

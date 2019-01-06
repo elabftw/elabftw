@@ -239,7 +239,7 @@
 {% if Entity.Users.userData.close_warning %}
     <script src='app/js/close-warning.min.js?v={{ v }}'></script>
 {% endif %}
-<div id='entityInfo'
+<div id='info'
     data-upmsg='{{ 'Drop files here to upload'|trans }}'
     data-maxsize='{{ maxUploadSize }}'
     data-type='{{ Entity.type }}'
@@ -253,12 +253,13 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
-<!--
-<script src='app/js/edit.min.js?v={{ v }}'></script>
--->
-<script src='app/js/src/edit.js?v={{ v }}'></script>
-<!--
-<script src='app/js/tags.min.js'></script>
--->
-<script src='app/js/src/tags.js'></script>
+
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/edit.js?v={{ v }}'></script>
+    <script src='app/js/src/tags.js'></script>
+{% else %}
+    <script src='app/js/edit.min.js?v={{ v }}'></script>
+    <script src='app/js/tags.min.js'></script>
+{% endif %}
+
 {% endblock body %}

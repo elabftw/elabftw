@@ -11,6 +11,8 @@
     'use strict';
 
     $(document).ready(function() {
+        let confirmText = $('#info').data('confirm');
+
         // TEAMGROUPS
         var TeamGroups = {
             controller: 'app/controllers/TeamGroupsController.php',
@@ -45,7 +47,7 @@
                     $('#team_groups_div').load('admin.php #team_groups_div');
                 });
             },
-            destroy: function(id, confirmText) {
+            destroy: function(id) {
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                         teamGroupDestroy: true,
@@ -72,7 +74,7 @@
         });
 
         $(document).on('click', '.teamGroupDelete', function() {
-            TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
+            TeamGroups.destroy($(this).data('id'));
         });
 
         // VALIDATE USERS

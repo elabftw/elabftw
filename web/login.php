@@ -52,7 +52,7 @@ try {
 
     // disable login if too much failed_attempts
     if ($Session->has('failed_attempt') && $Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
-        // get user infos
+        // get user info
         $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list
         $BannedUsers->create($fingerprint);

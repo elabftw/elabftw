@@ -253,7 +253,7 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Read infos from an upload ID
+     * Read info from an upload ID
      *
      * @param int $id id of the uploaded item
      * @throws DatabaseErrorException

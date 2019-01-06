@@ -12,5 +12,6 @@ START TRANSACTION;
     ALTER TABLE `api_keys` ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `users` DROP `api_key`;
     ALTER TABLE `users` ADD `last_login` DATETIME NULL DEFAULT NULL;
+    ALTER TABLE `banned_users` CHANGE `user_infos` `fingerprint` CHAR(32) NOT NULL;
     UPDATE config SET conf_value = 46 WHERE conf_name = 'schema';
 COMMIT;

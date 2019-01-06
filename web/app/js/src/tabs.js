@@ -29,3 +29,22 @@ $(".tabhandle" ).click(function(event) {
     $(".tabhandle").removeClass('selected');
     $(tabhandle).addClass('selected');
 });
+
+/**
+ * SUB TABS for templates
+ */
+var initdiv = '#subtab_1div';
+var inittab = '#subtab_1';
+// init
+$(".subdivhandle").hide();
+$(initdiv).show();
+$(inittab).addClass('selected');
+
+$(".subtabhandle" ).click(function(event) {
+    var tabhandle = '#' + event.target.id;
+    var divhandle = '#' + event.target.id + 'div';
+    $(".subdivhandle").hide();
+    $(divhandle).show();
+    $(".subtabhandle").removeClass('badgetabactive');
+    $(tabhandle).addClass('badgetabactive');
+});

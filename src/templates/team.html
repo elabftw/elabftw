@@ -111,7 +111,7 @@
     {% if templatesArr|length > 0 %}
         <ul class='nav nav-pills' role='tablist'>
             {% for template in templatesArr %}
-                <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
+                <li class='sortable subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
             {% endfor %}
         </ul>
         {% for template in templatesArr %}
@@ -165,7 +165,7 @@
 </section>
 </div>
 
-<div id='infos'
+<div id='info'
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"></div>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>

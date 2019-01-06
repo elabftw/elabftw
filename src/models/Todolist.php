@@ -24,6 +24,9 @@ class Todolist implements CrudInterface
 {
     use SortableTrait;
 
+    /** @var Users $Users our user */
+    public $Users;
+
     /**
      * Gimme a userid
      *

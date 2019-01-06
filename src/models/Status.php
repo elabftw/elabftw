@@ -20,6 +20,12 @@ use PDO;
  */
 class Status extends AbstractCategory
 {
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
+    /** @var Users $Users our user */
+    public $Users;
+
     /**
      * Constructor
      *

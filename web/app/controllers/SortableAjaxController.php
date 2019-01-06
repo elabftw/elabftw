@@ -34,26 +34,26 @@ $Response->setData(array(
 
 try {
     switch ($Request->request->get('table')) {
-    case 'items_types':
-        if (!$App->Session->get('is_admin')) {
-            throw new IllegalActionException('Non admin user tried to access admin controller.');
-        }
-        $Entity = new ItemsTypes($App->Users);
-        break;
-    case 'status':
-        if (!$App->Session->get('is_admin')) {
-            throw new IllegalActionException('Non admin user tried to access admin controller.');
-        }
-        $Entity = new Status($App->Users);
-        break;
-    case 'todolist':
-        $Entity = new Todolist($App->Users);
-        break;
-    case 'experiments_templates':
-        $Entity = new Templates($App->Users);
-        break;
-    default:
-        throw new IllegalActionException('Bad table for updateOrdering.');
+        case 'items_types':
+            if (!$App->Session->get('is_admin')) {
+                throw new IllegalActionException('Non admin user tried to access admin controller.');
+            }
+            $Entity = new ItemsTypes($App->Users);
+            break;
+        case 'status':
+            if (!$App->Session->get('is_admin')) {
+                throw new IllegalActionException('Non admin user tried to access admin controller.');
+            }
+            $Entity = new Status($App->Users);
+            break;
+        case 'todolist':
+            $Entity = new Todolist($App->Users);
+            break;
+        case 'experiments_templates':
+            $Entity = new Templates($App->Users);
+            break;
+        default:
+            throw new IllegalActionException('Bad table for updateOrdering.');
     }
     $Entity->updateOrdering($App->Users, $Request->request->all());
 

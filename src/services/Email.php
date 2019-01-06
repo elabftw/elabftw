@@ -153,7 +153,7 @@ class Email
         // Set the To addresses with an associative array
         ->setTo(array($email => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody(_('Congratulations, you correctly configured eLabFTW to send emails :)') . $footer);
+        ->setBody('Congratulations, you correctly configured eLabFTW to send emails! :)' . $footer);
 
         return (bool) $this->send($message);
     }

@@ -22,7 +22,7 @@ function ascii()
     echo "*****************************************"
 }
 
-# kill chromedriver on exit
+# swap the config files back
 function cleanup {
     sudo cp config.php.docker config.php
     sudo chown 100:101 config.php

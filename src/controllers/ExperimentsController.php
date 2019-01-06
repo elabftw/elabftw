@@ -32,12 +32,11 @@ class ExperimentsController extends AbstractEntityController
      *
      * @param App $app
      */
-    public function __construct(App $app)
+    public function __construct(App $app, AbstractEntity $entity)
     {
-        parent::__construct($app);
+        parent::__construct($app, $entity);
 
         $this->page = 'experiments.php';
-        $this->Entity = new Experiments($this->App->Users);
 
         $Category = new Status($this->App->Users);
         $this->categoryArr = $Category->readAll();

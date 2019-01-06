@@ -16,6 +16,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,7 +34,7 @@ $template = 'error.html';
 $renderArr = array('error' => Tools::error());
 
 try {
-    $Controller = new DatabaseController($App);
+    $Controller = new DatabaseController($App, new Database($App->Users));
     // show nothing to anon if admin didn't set the DB as public
     if ($App->Session->has('anon') && ($App->teamConfigArr['public_db'] === '0')) {
         throw new ImproperActionException(Tools::error(true));

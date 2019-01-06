@@ -37,10 +37,10 @@ abstract class AbstractEntity
     public $Uploads;
 
     /** @var string $type experiments or items */
-    public $type;
+    public $type = '';
 
     /** @var string $page will be defined in children classes */
-    public $page;
+    public $page = '';
 
     /** @var string $idFilter inserted in sql */
     public $idFilter = '';

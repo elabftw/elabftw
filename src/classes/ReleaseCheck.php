@@ -25,10 +25,10 @@ class ReleaseCheck
     private $Config;
 
     /** @var string $version the latest version from ini file (1.1.4) */
-    private $version;
+    private $version = '';
 
     /** @var string $releaseDate release date of the version */
-    private $releaseDate;
+    private $releaseDate = '';
 
     /** @var bool $success this is used to check if we managed to get a version or not */
     public $success = false;

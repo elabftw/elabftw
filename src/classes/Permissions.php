@@ -32,7 +32,7 @@ class Permissions
      * @param Users $users
      * @param array $itemArr
      */
-    public function __construct(Users $users, $item)
+    public function __construct(Users $users, array $item)
     {
         $this->Users = $users;
         $this->item = $item;

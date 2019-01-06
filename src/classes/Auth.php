@@ -34,7 +34,7 @@ class Auth
     private $Session;
 
     /** @var array $userData All the user data for a user */
-    private $userData;
+    private $userData = array();
 
     /**
      * Constructor

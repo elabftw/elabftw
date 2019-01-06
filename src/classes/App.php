@@ -20,7 +20,7 @@ use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * This is a super class holding various global objects
@@ -30,7 +30,7 @@ class App
     /** @var Request $Request the request */
     public $Request;
 
-    /** @var SessionInterface $Session the session */
+    /** @var Session $Session the session */
     public $Session;
 
     /** @var Config $Config the config stored in sql */
@@ -55,13 +55,13 @@ class App
     public $pageTitle = 'Lab manager';
 
     /** @var array $ok the ok messages from flashBag */
-    public $ok;
+    public $ok = array();
 
     /** @var array $ko the ko messages from flashBag */
-    public $ko;
+    public $ko = array();
 
     /** @var array $warning the warning messages from flashBag */
-    public $warning;
+    public $warning = array();
 
     /** @var array $todoItems items on the todolist, populated if logged in */
     public $todoItems = array();
@@ -72,13 +72,13 @@ class App
     /**
      * Constructor
      *
-     * @param SessionInterface $session
+     * @param Session $session
      * @param Request $request
      * @param Config $config
      * @param Logger $log
      */
     public function __construct(
-        SessionInterface $session,
+        Session $session,
         Request $request,
         Config $config,
         Logger $log,

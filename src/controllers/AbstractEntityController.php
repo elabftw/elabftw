@@ -30,20 +30,22 @@ abstract class AbstractEntityController implements ControllerInterface
     protected $Entity;
 
     /** @var array $categoryArr array of category (status or item type) */
-    protected $categoryArr;
+    protected $categoryArr = array();
 
     /** @var string $page the corresponding page */
-    protected $page;
+    protected $page = '';
 
 
     /**
      * Constructor
      *
      * @param App $app
+     * @param AbstractEntity $entity
      */
-    public function __construct(App $app)
+    public function __construct(App $app, AbstractEntity $entity)
     {
         $this->App = $app;
+        $this->Entity = $entity;
     }
 
     /**

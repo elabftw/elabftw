@@ -42,13 +42,13 @@ class MakeTimestamp extends AbstractMake
     private $Experiments;
 
     /** @var string $pdfPath full path to pdf */
-    private $pdfPath;
+    private $pdfPath = '';
 
     /** @var string $pdfRealName name of the pdf (elabid-timestamped.pdf) */
     private $pdfRealName;
 
     /** @var string $pdfLongName a hash */
-    private $pdfLongName;
+    private $pdfLongName = '';
 
     /** @var array $stampParams config (url, login, password, cert) */
     private $stampParams;
@@ -60,7 +60,7 @@ class MakeTimestamp extends AbstractMake
     private $requestfilePath;
 
     /** @var string $responsefilePath where we store the asn1 token */
-    private $responsefilePath;
+    private $responsefilePath = '';
 
     /** @var string $responseTime the time of the timestamp */
     private $responseTime;

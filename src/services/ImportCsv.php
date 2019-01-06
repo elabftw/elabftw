@@ -24,7 +24,7 @@ class ImportCsv extends AbstractImport
     public $inserted = 0;
 
     /** @var resource|false $handle our file handle */
-    private $handle;
+    private $handle = false;
 
     /**
      * Constructor

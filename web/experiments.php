@@ -16,6 +16,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Experiments;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,7 +33,7 @@ $Response->prepare($Request);
 $template = 'error.html';
 $renderArr = array('error' => Tools::error());
 
-$Controller = new ExperimentsController($App);
+$Controller = new ExperimentsController($App, new Experiments($App->Users));
 
 try {
     $Response = $Controller->getResponse();

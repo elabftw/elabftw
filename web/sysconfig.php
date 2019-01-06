@@ -15,8 +15,8 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ReleaseCheckException;
 use Exception;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -50,7 +50,7 @@ try {
     $ReleaseCheck = new ReleaseCheck($App->Config);
     try {
         $ReleaseCheck->getUpdatesIni();
-    } catch (RuntimeException $e) {
+    } catch (ReleaseCheckException $e) {
         $App->Log->warning('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     }
 

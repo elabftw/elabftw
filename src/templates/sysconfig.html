@@ -3,7 +3,7 @@
 {% block body %}
 <!-- Get the updates.ini file to check for updates -->
 {% if not ReleaseCheck.success %}
-    {{ 'Error getting latest version information from server! Check the proxy setting.'|trans|msg('ko') }}
+    {{ 'Error getting latest version information from server! Check the proxy setting.'|msg('ko') }}
 {% endif %}
 
 <!-- display current and latest version -->

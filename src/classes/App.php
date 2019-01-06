@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Teams;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -111,7 +111,7 @@ class App
         $loader = new \Twig_Loader_Filesystem("$elabRoot/src/templates");
         $cache = "$elabRoot/cache/twig";
         if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new RuntimeException("Unable to create the cache directory ($cache)");
+            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
         }
         $options = array();
 

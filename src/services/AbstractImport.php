@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -51,7 +51,7 @@ abstract class AbstractImport
         $this->target = $this->getTarget();
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
-            throw new RuntimeException($this->UploadedFile->getErrorMessage());
+            throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }
 
         $this->checkMimeType();
@@ -68,7 +68,6 @@ abstract class AbstractImport
      * Get where we want to import the file.
      * It can be a user id for experiments or item type id for items
      *
-     * @throws RuntimeException
      * @return int The type of item
      */
     private function getTarget(): int
@@ -76,14 +75,13 @@ abstract class AbstractImport
         if ($this->Cookies->get('importTarget') !== false) {
             return (int) $this->Cookies->get('importTarget');
         }
-        throw new RuntimeException('No cookies found. Import aborted.');
+        throw new ImproperActionException('No cookies found. Import aborted.');
     }
 
     /**
      * Look at mime type. not a trusted source, but it can prevent dumb errors
      * There is null in the mimes array because it can happen that elabftw files are like that.
      *
-     * @throws RuntimeException if the mime type is not whitelisted
      * @return bool
      */
     protected function checkMimeType(): bool
@@ -95,6 +93,6 @@ abstract class AbstractImport
         if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
             return true;
         }
-        throw new RuntimeException("This doesn't look like the right kind of file. Import aborted.");
+        throw new ImproperActionException("This doesn't look like the right kind of file. Import aborted.");
     }
 }

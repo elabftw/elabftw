@@ -15,7 +15,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Exception;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

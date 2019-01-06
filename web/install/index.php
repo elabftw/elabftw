@@ -14,6 +14,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use PDO;
 use ZipStream\ZipStream;

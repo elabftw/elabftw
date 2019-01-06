@@ -109,7 +109,7 @@ class Auth
     {
         $sql = "UPDATE users SET last_login = :last_login WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':last_login', \date('Y-m-d H:i:s'));
+        $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
         $req->bindParam(':userid', $this->userData['userid']);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');

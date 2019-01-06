@@ -14,7 +14,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Experiments->create();
+        $new = $this->Experiments->create(0);
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
@@ -53,7 +53,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $new = $this->Experiments->create();
+        $new = $this->Experiments->create(0);
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->assertEquals($new, $this->Experiments->id);

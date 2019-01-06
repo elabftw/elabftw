@@ -14,12 +14,13 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreateInterface;
 use PDO;
 
 /**
  * All about the experiments
  */
-class Experiments extends AbstractEntity
+class Experiments extends AbstractEntity implements CreateInterface
 {
     /** @var Links $Links instance of Links */
     public $Links;
@@ -46,15 +47,15 @@ class Experiments extends AbstractEntity
     /**
      * Create an experiment
      *
-     * @param int|null $tpl the template on which to base the experiment
+     * @param int $tpl the template on which to base the experiment
      * @return int the new id of the experiment
      */
-    public function create(?int $tpl = null): int
+    public function create(int $tpl): int
     {
         $Templates = new Templates($this->Users);
 
         // do we want template ?
-        if ($tpl) {
+        if ($tpl > 0) {
             $Templates->setId($tpl);
             $templatesArr = $Templates->read();
             $title = $templatesArr['name'];

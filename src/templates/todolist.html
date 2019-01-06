@@ -5,9 +5,9 @@
         <input id="todo" type="text" />
         <input type="submit" class='button button-add-todolist' value="{{ 'Add'|trans }}">
     </form>
-    <ul id='todoItems-list'>
+    <ul id='todoItems-list' class='sortable' data-axis='y' data-table='todolist'>
         {% for todoItem in App.todoItems %}
-        <li id='todoItem_{{ todoItem['id'] }}' class='todoItem-li'>
+        <li id='todoItem_{{ todoItem.id }}' class='todoItem-li'>
             <i class='fas fa-trash-alt fa-pull-right clickable destroyTodoItem' data-id='{{ todoItem.id }}'></i>
             <span style='font-size:60%;display:block;'>{{ todoItem['creation_time'] }}</span>
             <span id='todoItem_{{ todoItem['id'] }}' class='todoitem editable'>{{ todoItem.body }}</span></li>

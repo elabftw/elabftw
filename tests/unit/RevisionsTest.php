@@ -30,7 +30,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore()
     {
         $this->Experiment = new Experiments($this->Users, '1');
-        $new = $this->Experiment->create();
+        $new = $this->Experiment->create(0);
         $this->Experiment->setId($new);
         $this->Revisions = new Revisions($this->Experiment);
         $this->Revisions->create('Ohai');

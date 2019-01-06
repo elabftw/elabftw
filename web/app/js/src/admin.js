@@ -286,36 +286,6 @@
             style : 'display:inline'
 
         });
-        // SORTABLE for ITEMS TYPES or STATUS
-        $('.sortable').sortable({
-            // limit to horizontal dragging
-            axis : 'y',
-            helper : 'clone',
-            // do ajax request to update db with new order
-            update: function(event, ui) {
-                // switch between status or items_types
-                let table = 'status';
-                let elements = '.sortable-status';
-                if ($(this).data('type') === 'items') {
-                    table = 'items_types';
-                    elements = '.sortable-itemstypes';
-                }
-                // send the orders as an array
-                var ordering = $(elements).sortable("toArray");
-
-                $.post("app/controllers/AdminAjaxController.php", {
-                    updateOrdering: true,
-                    table: table,
-                    ordering: ordering
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        });
 
         // COLORPICKER
         $('.colorpicker').colorpicker({

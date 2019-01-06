@@ -215,7 +215,7 @@ class ApiController implements ControllerInterface
         if ($this->Entity instanceof Database) {
             return new Response('Creating database items is not supported.', 400);
         }
-        $id = $this->Entity->create();
+        $id = $this->Entity->create(0);
         return new JsonResponse(array('id' => $id));
     }
 

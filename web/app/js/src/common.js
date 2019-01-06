@@ -39,6 +39,32 @@ $(document).ready(function() {
     $('.todoitem.editable').each(function() {
         makeEditableTodoitem($(this));
     });
+
+    // SORTABLE ELEMENTS
+    // need an axis and a table via data attribute
+    $('.sortable').sortable({
+        // limit to horizontal dragging
+        axis : $(this).data('axis'),
+        helper : 'clone',
+        // we don't want the Create new pill to be sortable
+        cancel: "nonSortable",
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(this).sortable("toArray");
+
+            $.post("app/controllers/SortableAjaxController.php", {
+                table: $(this).data('table'),
+                ordering: ordering
+            }).done(function(data) {
+                if (data.res) {
+                    notif(data.msg, 'ok');
+                } else {
+                    notif(data.msg, 'ko');
+                }
+            });
+        }
+    });
 });
 
 // for editXP/DB, ctrl-shift-D will add the date

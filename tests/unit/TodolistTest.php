@@ -7,8 +7,8 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
-        $Users = new Users(1);
-        $this->Todolist = new Todolist($Users);
+        $this->Users = new Users(1);
+        $this->Todolist = new Todolist($this->Users);
     }
 
     public function testCreate()
@@ -36,7 +36,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
             'ordering' => array('todoItem_3', 'todoItem_2', 'todoItem_4'),
             'table' => 'todolist'
         );
-        $this->Todolist->updateOrdering($post);
+        $this->Todolist->updateOrdering($this->Users, $post);
     }
 
     public function testDestroy()

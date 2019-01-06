@@ -38,17 +38,6 @@ try {
         $Templates->duplicate();
     }
 
-    // UPDATE ORDERING
-    if ($Request->request->has('updateOrdering')) {
-        if ($Request->request->get('table') === 'experiments_templates') {
-            // remove the create new entry
-            unset($Request->request->get('ordering')[0]);
-            $Entity = new Templates($App->Users);
-        }
-
-        $Entity->updateOrdering($Request->request->all());
-    }
-
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,

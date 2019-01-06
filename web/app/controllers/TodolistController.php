@@ -54,11 +54,6 @@ try {
         $Todolist->update($id, $body);
     }
 
-    // UPDATE ORDERING
-    if ($Request->request->has('updateOrdering')) {
-        $Todolist->updateOrdering($Request->request->all());
-    }
-
     // DESTROY
     if ($Request->request->has('destroy')) {
         $Todolist->destroy((int) $Request->request->get('id'));

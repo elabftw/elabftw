@@ -17,12 +17,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
+use Elabftw\Models\Todolist;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Deal with requests sent from the admin page
- *
+ * Update ordering of various things
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -33,19 +33,29 @@ $Response->setData(array(
 ));
 
 try {
-
-    if (!$App->Session->get('is_admin')) {
-        throw new IllegalActionException('Non admin user tried to access admin controller.');
+    switch ($Request->request->get('table')) {
+    case 'items_types':
+        if (!$App->Session->get('is_admin')) {
+            throw new IllegalActionException('Non admin user tried to access admin controller.');
+        }
+        $Entity = new ItemsTypes($App->Users);
+        break;
+    case 'status':
+        if (!$App->Session->get('is_admin')) {
+            throw new IllegalActionException('Non admin user tried to access admin controller.');
+        }
+        $Entity = new Status($App->Users);
+        break;
+    case 'todolist':
+        $Entity = new Todolist($App->Users);
+        break;
+    case 'experiments_templates':
+        $Entity = new Templates($App->Users);
+        break;
+    default:
+        throw new IllegalActionException('Bad table for updateOrdering.');
     }
-
-    // CSRF
-    $App->Csrf->validate();
-
-    // UPDATE COMMON TEMPLATE
-    if ($Request->request->has('commonTplUpdate')) {
-        $Templates = new Templates($App->Users);
-        $Templates->updateCommon($Request->request->get('commonTplUpdate'));
-    }
+    $Entity->updateOrdering($App->Users, $Request->request->all());
 
 } catch (ImproperActionException $e) {
     $Response->setData(array(
@@ -54,7 +64,7 @@ try {
     ));
 
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true)
@@ -68,7 +78,7 @@ try {
     ));
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error()
@@ -77,3 +87,4 @@ try {
 } finally {
     $Response->send();
 }
+

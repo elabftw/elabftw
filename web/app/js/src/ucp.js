@@ -73,31 +73,6 @@
             reader.readAsText(this.files[0]);
         });
 
-        $('.nav-pills').sortable({
-            // limit to horizontal dragging
-            axis : 'x',
-            helper : 'clone',
-            // we don't want the Create new pill to be sortable
-            cancel: "#subtab_1",
-            // do ajax request to update db with new order
-            update: function(event, ui) {
-                // send the orders as an array
-                var ordering = $(".nav-pills").sortable("toArray");
-
-                $.post("app/controllers/UcpController.php", {
-                    updateOrdering: true,
-                    table: 'experiments_templates',
-                    ordering: ordering
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        });
-
         // SUB TABS
         var tab = 1;
         var initdiv = '#subtab_' + tab + 'div';

@@ -13,12 +13,15 @@ namespace Elabftw\Models;
 use PDO;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Traits\SortableTrait;
 
 /**
  * All about the templates
  */
 class Templates extends AbstractEntity
 {
+    use SortableTrait;
+
     /**
      * Constructor
      *

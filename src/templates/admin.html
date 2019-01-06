@@ -205,7 +205,7 @@
     <div class='box'>
         <h3>{{ 'Edit an Existing Status'|trans }}</h3>
         <hr>
-        <ul class='draggable sortable sortable-status list-group' data-type='status'>
+        <ul class='draggable sortable sortable-status list-group' data-axis='y' data-table='status'>
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
@@ -284,7 +284,7 @@
         <h3>{{ 'Modify ordering'|trans }}</h3>
         <hr>
 
-        <ul class='draggable list-group sortable sortable-itemstypes' data-type='items'>
+        <ul class='draggable list-group sortable sortable-itemstypes' data-axis='y' data-table='items_types'>
             {% for itemType in itemsTypesArr %}
             <li class='list-group-item' id='itemstypesOrder_{{ itemType.category_id }}'><i class='fas fa-sort'></i>
                 <span style='color:#{{ itemType.color }}'>{{ itemType.category }}</span>

@@ -90,9 +90,6 @@ abstract class AbstractEntity
     /** @var string $offset offset for sql */
     public $offset = '';
 
-    /** @var array $entityData what you get after you ->read() */
-    public $entityData;
-
     /** @var bool isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
 

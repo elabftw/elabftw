@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\EntityTrait;
 use PDO;
 
 /**
@@ -21,6 +22,8 @@ use PDO;
  */
 class ItemsTypes extends AbstractCategory
 {
+    use EntityTrait;
+
     /**
      * Constructor
      *

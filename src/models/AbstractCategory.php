@@ -11,14 +11,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Traits\EntityTrait;
+use Elabftw\Traits\SortableTrait;
 
 /**
  * A category is a status for experiments and item type for db item
  */
 abstract class AbstractCategory implements CrudInterface
 {
-    use EntityTrait;
+    use SortableTrait;
 
     /**
      * Get the color of an item type

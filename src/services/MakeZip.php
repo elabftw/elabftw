@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Exception;
 use PDO;
@@ -46,7 +47,7 @@ class MakeZip extends AbstractMake
     public $filePath;
 
     /** @var string $folder name of folder */
-    private $folder;
+    private $folder = "undefined";
 
     /** @var array $jsonArr array that will be converted to json */
     private $jsonArr = array();

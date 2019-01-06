@@ -14,7 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Traits\EntityTrait;
+use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
@@ -22,7 +22,7 @@ use PDO;
  */
 class Todolist implements CrudInterface
 {
-    use EntityTrait;
+    use SortableTrait;
 
     /**
      * Gimme a userid

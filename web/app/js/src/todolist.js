@@ -96,29 +96,4 @@
     $(document).on('click', '.destroyTodoItem', function() {
         Todolist.destroy($(this).data('id'));
     });
-
-    // SORTABLE for TODOLIST items
-    $('#todoItems-list').sortable({
-        // limit to vertical dragging
-        axis : 'y',
-        helper : 'clone',
-        // do ajax request to update db with new order
-        update: function(event, ui) {
-            // send the orders as an array
-            var ordering = $("#todoItems-list").sortable("toArray");
-
-            $.post("app/controllers/TodolistController.php", {
-                updateOrdering: true,
-                ordering: ordering,
-                table : 'todolist'
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
-            });
-        }
-    });
-
 }());

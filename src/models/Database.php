@@ -12,12 +12,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Interfaces\CreateInterface;
 use PDO;
 
 /**
  * All about the database items
  */
-class Database extends AbstractEntity
+class Database extends AbstractEntity implements CreateInterface
 {
     /**
      * Constructor

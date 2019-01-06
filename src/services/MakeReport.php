@@ -46,7 +46,7 @@ class MakeReport extends AbstractMake
         $this->Uploads = $uploads;
         $this->fileName = $this->getUniqueString();
         $this->filePath = $this->getTmpPath() . $this->fileName;
-        $this->makeReport();
+        $this->run();
     }
 
     /**
@@ -112,7 +112,7 @@ class MakeReport extends AbstractMake
      *
      * @return void
      */
-    private function makeReport(): void
+    private function run(): void
     {
         $rows = array();
         $rows[] = $this->getColumns();

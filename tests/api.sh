@@ -1,4 +1,5 @@
 #!/bin/bash
+# test api, only for local use
 set -eu
 
 # read/write access token for the phpunit user
@@ -19,6 +20,24 @@ function ascii()
     echo "*****************************************"
     echo "Starting elabftw REST API automated tests"
     echo "*****************************************"
+}
+
+# kill chromedriver on exit
+function cleanup {
+    sudo cp config.php.docker config.php
+    sudo chown 100:101 config.php
+}
+
+function init_db()
+{
+    # swap config file for docker with the one for localhost
+    # sudo is needed because config file for docker is owned by 100:101
+    sudo cp config.php config.php.docker
+    sudo cp tests/config-home.php config.php
+    sudo chmod +r config.php
+    mysql -uroot -e 'DROP DATABASE IF EXISTS phpunit; CREATE DATABASE phpunit;'
+    mysql -uroot phpunit < src/sql/structure.sql
+    mysql -uroot phpunit < tests/_data/phpunit.sql
 }
 
 # do HTTP request with curl, add token
@@ -42,7 +61,9 @@ function assert_return_code()
     fi
 }
 
+trap cleanup EXIT
 ascii
+init_db
 
 # test no token sent (error 401)
 res=$(curl $curloptions -X GET ${endpoint}experiments/${expid})
@@ -99,4 +120,5 @@ res=$(req POST "experiments")
 # TODO
 #assert_return_code $res "200" "Test create experiment"
 
+echo -e "${GREEN}All tests passed :)${NC}"
 exit 0

@@ -247,6 +247,7 @@ class Experiments extends AbstractEntity
 
     /**
      * Destroy an experiment and all associated data
+     * The foreign key constraints will take care of associated tables
      *
      * @return void
      */
@@ -254,8 +255,6 @@ class Experiments extends AbstractEntity
     {
         $this->canOrExplode('write');
 
-        // TODO experiments_revisions in fk
-        // everything in fk, only files deleted first in uploads
         $this->Tags->destroyAll();
         $this->Uploads->destroyAll();
 

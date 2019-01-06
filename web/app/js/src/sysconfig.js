@@ -152,7 +152,7 @@
         $(document).on('click', '.idpsDestroy', function() {
             const elem = $(this);
             if (confirm($(this).data('confirm'))) {
-                $.post('app/controllers/IdpsAjaxController.php', {
+                $.post('app/controllers/SysconfigAjaxController.php', {
                     idpsDestroy: true,
                     id: $(this).data('id')
                 }).done(function(data) {

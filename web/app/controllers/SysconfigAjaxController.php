@@ -74,6 +74,13 @@ try {
         $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'));
     }
 
+    // DESTROY IDP
+    if ($Request->request->has('idpsDestroy')) {
+        $Idps = new Idps();
+        $Idps->destroy((int) $Request->request->get('id'));
+    }
+
+
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,

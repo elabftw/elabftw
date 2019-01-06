@@ -29,7 +29,7 @@
         google.charts.setOnLoadCallback(drawChart);
 
         $(document).on('click', '.keyDestroy', function() {
-            $.post("app/controllers/ProfileAjaxController.php", {
+            $.post("app/controllers/AjaxController.php", {
                 destroyApiKey: true,
                 id: $(this).data('id')
             }).done(function(data) {

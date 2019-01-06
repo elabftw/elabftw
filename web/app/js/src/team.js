@@ -104,8 +104,8 @@ $(document).on('click', '#change-item', function() {
 });
 
 $(document).on('click', '.import-tpl', function() {
-    $.post('app/controllers/UcpController.php', {
-        import_tpl: true,
+    $.post('app/controllers/AjaxController.php', {
+        importTpl: true,
         id: $(this).data('id')
     }).done(function() {
         notif('Saved', 'ok');

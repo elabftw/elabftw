@@ -248,7 +248,7 @@
         // COMMON TEMPLATE
         $('#commonTplTemplate').closest('div').find('.button').click(function() {
             var template = tinymce.get('commonTplTemplate').getContent();
-            $.post('app/controllers/AdminAjaxController.php', {
+            $.post('app/controllers/AjaxController.php', {
                 commonTplUpdate: template
             }).done(function(data) {
                 if (data.res) {

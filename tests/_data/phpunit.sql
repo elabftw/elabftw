@@ -17,7 +17,7 @@ INSERT INTO `users` (`userid`, `salt`, `password`, `team`, `usergroup`, `firstna
 -- Dumping data for table `experiments`
 --
 INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `category`, `userid`, `elabid`, `locked`, `lockedby`, `lockedwhen`, `timestamped`, `timestampedby`, `timestamptoken`, `timestampedwhen`, `visibility`, `datetime`) VALUES
-(1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', 1, 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
+(1, 1, 'Experiment 1', 20160729, 'Content of experiment 1', 1, 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
 
 --
 -- Dumping data for table `idps`
@@ -45,7 +45,7 @@ INSERT INTO `experiments_templates` (`id`, `team`, `body`, `name`, `userid`, `or
 --
 
 INSERT INTO `items` (`id`, `team`, `title`, `date`, `body`, `rating`, `category`, `locked`, `userid`) VALUES
-(1, 1, 'Database item 1', 20160729, '<p>Go to the admin panel to edit/add more items types!</p>', 0, 1, NULL, 1);
+(1, 1, 'Database item 1', 20160729, 'Body of item 1', 0, 1, NULL, 1);
 
 --
 -- Dumping data for table `items_revisions`
@@ -97,4 +97,5 @@ INSERT INTO users(
     '1',
     'en-GB');
 
-
+-- add api_key for user 1
+INSERT INTO api_keys (name, hash, can_write, userid) VALUES ('curltest', "$2y$10$Mf8GY0wXxJLNLwTcOMy51O9RsS3FPm9cQeJp6v2ZAsSrdmdj0Yupi", 1, 1);

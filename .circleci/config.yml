@@ -64,3 +64,4 @@ jobs:
     # Tests
     - run: yarn run unit
     - run: yarn run vulns
+    - run: yarn run apitest

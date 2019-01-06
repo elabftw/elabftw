@@ -50,6 +50,7 @@
     "psalm": "psalm -c=src/tools/psalm.xml",
     "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/exceptions -d src/interfaces -d src/models -d src/traits -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",
+    "apitest": "tests/api.sh",
     "unit": "php vendor/bin/codecept run unit",
     "vulns": "snyk test"
   },

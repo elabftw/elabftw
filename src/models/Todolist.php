@@ -24,6 +24,9 @@ class Todolist implements CrudInterface
 {
     use SortableTrait;
 
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
     /** @var Users $Users our user */
     public $Users;
 

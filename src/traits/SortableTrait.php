@@ -10,11 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Models\Users;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Elabftw\Tools;
 use PDO;
 
 /**
@@ -46,7 +42,7 @@ trait SortableTrait
 
         foreach ($post['ordering'] as $ordering => $id) {
             $id = explode('_', $id);
-            $id = $id[1];
+            $id = (int) $id[1];
             // the table param is whitelisted here
             $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND " . $userOrTeam . " = :userOrTeam";
             $req = $this->Db->prepare($sql);

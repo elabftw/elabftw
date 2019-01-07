@@ -28,7 +28,8 @@ module.exports = {
             './web/app/js/src/fontawesome.es.js'
         ],
         tinymce: [
-            'tinymce'
+            'tinymce',
+            'tinymce/themes/modern/theme'
         ],
         moment: [
             'moment'

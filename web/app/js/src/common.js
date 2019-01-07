@@ -91,18 +91,18 @@ function addDateOnCursor() {
 function notif(text, cssClass) {
     const htmlText = '<p>' + text + '</p>';
     var overlay = document.createElement('div');
-       overlay.setAttribute('id','overlay');
-       overlay.setAttribute('class', 'overlay ' + 'overlay-' + cssClass);
-       // show the overlay
-       document.body.appendChild(overlay);
-       // add text inside
-       document.getElementById('overlay').innerHTML = htmlText;
-       // wait a bit and make it disappear
-       window.setTimeout(function() {
-            $('#overlay').fadeOut(763, function() {
-                $(this).remove();
-            });
-       }, 2733);
+    overlay.setAttribute('id','overlay');
+    overlay.setAttribute('class', 'overlay ' + 'overlay-' + cssClass);
+    // show the overlay
+    document.body.appendChild(overlay);
+    // add text inside
+    document.getElementById('overlay').innerHTML = htmlText;
+    // wait a bit and make it disappear
+    window.setTimeout(function() {
+        $('#overlay').fadeOut(763, function() {
+            $(this).remove();
+        });
+    }, 2733);
 }
 
 /* for menus on team, admin, sysconfig and ucp */

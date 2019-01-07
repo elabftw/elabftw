@@ -29,7 +29,7 @@ module.exports = {
         ],
         tinymce: [
             'tinymce',
-            'tinymce/themes/modern/theme'
+            'tinymce/themes/modern/theme',
         ],
         moment: [
             'moment'

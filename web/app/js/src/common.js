@@ -103,15 +103,12 @@ function notif(text, cssClass) {
        // add text inside
        document.getElementById('overlay').innerHTML = htmlText;
        // wait a bit and make it disappear
-       window.setTimeout(removeNotif, 2733);
+       window.setTimeout(function() {
+            $('#overlay').fadeOut(763, function() {
+                $(this).remove();
+            });
+       }, 2733);
 }
-
-function removeNotif() {
-    $('#overlay').fadeOut(763, function() {
-        $(this).remove();
-    });
-}
-
 
 /* for menus on team, admin, sysconfig and ucp */
 

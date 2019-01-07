@@ -86,18 +86,13 @@ function addDateOnCursor() {
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, year + "-" + month + "-" + day + " ");
 }
 
-// notifications
+// notifications (saved messages and such)
+// cssClass must be 'ok' or 'ko'
 function notif(text, cssClass) {
     const htmlText = '<p>' + text + '</p>';
-    let overlayClass;
-    if (cssClass === 'ok') {
-        overlayClass = 'overlay-ok';
-    } else {
-        overlayClass = 'overlay-ko';
-    }
     var overlay = document.createElement('div');
        overlay.setAttribute('id','overlay');
-       overlay.setAttribute('class', 'overlay ' + overlayClass);
+       overlay.setAttribute('class', 'overlay ' + 'overlay-' + cssClass);
        // show the overlay
        document.body.appendChild(overlay);
        // add text inside

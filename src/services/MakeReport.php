@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Models\Teams;

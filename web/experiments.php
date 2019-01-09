@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -30,8 +29,6 @@ $App->pageTitle = ngettext('Experiment', 'Experiments', 2);
 // default response is error page with general error message
 $Response = new Response();
 $Response->prepare($Request);
-$template = 'error.html';
-$renderArr = array('error' => Tools::error());
 
 $Controller = new ExperimentsController($App, new Experiments($App->Users));
 

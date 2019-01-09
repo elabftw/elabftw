@@ -132,7 +132,6 @@ if ($Request->query->count() > 0) {
     }
 
     // RATING
-    $rating = '';
     if ($Request->query->get('rating') === 'no') {
         $rating = 0;
     } else {

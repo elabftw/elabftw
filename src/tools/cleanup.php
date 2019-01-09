@@ -11,10 +11,6 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Models\Users;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Database;
-use Elabftw\Models\Uploads;
 
 /**
  * This is used to find out if there are untracked files that should have been deleted

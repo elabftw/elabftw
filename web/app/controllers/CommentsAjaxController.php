@@ -57,7 +57,10 @@ try {
 
     // UPDATE
     if ($Request->request->has('update')) {
-        $res = $Entity->Comments->update($Request->request->get('update'), $Request->request->get('id'));
+        // get the id from the sent value (comment_42)
+        $exploded = \explode('_', $Request->request->get('id'));
+        $id = (int) $exploded[1];
+        $res = $Entity->Comments->update($Request->request->get('update'), $id);
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),

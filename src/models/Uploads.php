@@ -416,10 +416,8 @@ class Uploads implements CrudInterface
 
         // remove thumbnail
         $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
-        if (file_exists($thumbPath)) {
-            if (unlink($thumbPath) !== true) {
-                throw new FilesystemErrorException('Could not delete file!');
-            }
+        if (file_exists($thumbPath) && unlink($thumbPath) !== true) {
+            throw new FilesystemErrorException('Could not delete file!');
         }
         // now delete file from filesystem
         $filePath = $this->getUploadsPath() . $uploadArr['long_name'];

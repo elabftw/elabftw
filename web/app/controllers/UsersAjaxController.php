@@ -14,7 +14,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;

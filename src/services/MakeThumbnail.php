@@ -82,10 +82,7 @@ final class MakeThumbnail
             throw new FilesystemErrorException("File not found! (" . \substr($this->filePath, 0, 42) . "…)");
         }
 
-        if (filesize($this->filePath) > self::BIG_FILE_THRESHOLD || \file_exists($this->thumbPath)) {
-            return false;
-        }
-        return true;
+        return !(filesize($this->filePath) > self::BIG_FILE_THRESHOLD || \file_exists($this->thumbPath));
     }
 
     /**

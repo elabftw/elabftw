@@ -123,7 +123,7 @@ class MakeTimestamp extends AbstractMake
         $login = $config['stamplogin'];
 
 
-        if (\mb_strlen($config['stamppass'] ?? "") > 0) {
+        if ($config['stamppass'] ?? "" !== '') {
             $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } else {
             $password = '';

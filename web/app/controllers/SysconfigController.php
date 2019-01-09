@@ -23,18 +23,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse('../../sysconfig.php');
-
 try {
-
+    $tab = '1';
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
-
-    $tab = '1';
-
-    $Teams = new Teams($App->Users);
-
 
     // CLEAR SMTP PASS
     if ($Request->query->get('clearSmtppass')) {

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUnusedLocalVariableInspection */
+/** @noinspection PhpUnusedLocalVariableInspection */
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -30,8 +30,6 @@ $App->pageTitle = _('Database');
 // default response is error page with general error message
 $Response = new Response();
 $Response->prepare($Request);
-$template = 'error.html';
-$renderArr = array('error' => Tools::error());
 
 try {
     $Controller = new DatabaseController($App, new Database($App->Users));

@@ -60,7 +60,6 @@ try {
     // EDIT TEMPLATES
     if ($Request->request->has('tpl_form')) {
         $tab = '3';
-        $redirect = true;
 
         $Templates = new Templates($App->Users);
         $Templates->updateTpl(

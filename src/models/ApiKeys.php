@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Models\Users;
 use PDO;
 
 /**

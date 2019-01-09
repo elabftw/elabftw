@@ -56,7 +56,7 @@ class ItemsTypes extends AbstractCategory
         }
 
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        if (\mb_strlen($name) < 1) {
+        if ($name === '') {
             $name = 'Unnamed';
         }
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);

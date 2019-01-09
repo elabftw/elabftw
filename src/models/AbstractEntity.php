@@ -291,7 +291,7 @@ abstract class AbstractEntity
             WHERE tags2entity.item_id = :id and tags2entity.item_type = :type";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type, PDO::PARAM_STR);
+        $req->bindParam(':type', $this->type);
         $req->execute();
         $res = $req->fetchAll();
         if ($res === false) {
@@ -417,11 +417,8 @@ abstract class AbstractEntity
             'user'
         );
 
-        if (!\in_array($visibility, $validArr, true)) {
-            // if visibility is a TeamGroup, it is a positive int
-            if (Tools::checkId((int) $visibility) === false) {
-                throw new IllegalActionException('The visibility parameter is wrong.');
-            }
+        if (!\in_array($visibility, $validArr, true) && Tools::checkId((int)$visibility) === false) {
+            throw new IllegalActionException('The visibility parameter is wrong.');
         }
     }
 
@@ -506,11 +503,16 @@ abstract class AbstractEntity
 
         if ($this instanceof Experiments) {
             return $Permissions->forExperiments();
-        } elseif ($this instanceof Templates) {
+        }
+
+        if ($this instanceof Templates) {
             return $Permissions->forTemplates();
-        } elseif ($this instanceof Database) {
+        }
+
+        if ($this instanceof Database) {
             return $Permissions->forDatabase();
         }
+        return array('read' => false, 'write' => false);
     }
 
     /**

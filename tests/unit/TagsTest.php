@@ -13,7 +13,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $id = $this->Experiments->Tags->create('my tag');
+        $this->Experiments->Tags->create('my tag');
         $id = $this->Experiments->Tags->create('new tag');
         $this->assertTrue((bool) Tools::checkId($id));
 

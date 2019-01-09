@@ -21,8 +21,9 @@
         "twig/twig": "2.6.*",
         "twig/extensions": "1.5.*",
         "monolog/monolog": "1.24.*",
-        "maennchen/zipstream-php": "v1.0.0-alpha.2"
-
+        "maennchen/zipstream-php": "v1.0.0-alpha.2",
+      "ext-fileinfo": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",

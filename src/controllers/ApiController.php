@@ -364,7 +364,9 @@ class ApiController implements ControllerInterface
             return $this->getUpload((int) $Users->userData['userid']);
 
         // load Entity
-        } elseif ($this->endpoint === 'experiments') {
+        }
+
+        if ($this->endpoint === 'experiments') {
             $this->Entity = new Experiments($Users, $this->id);
         } elseif ($this->endpoint === 'items') {
             $this->Entity = new Database($Users, $this->id);

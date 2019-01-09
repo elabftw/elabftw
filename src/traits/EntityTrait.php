@@ -12,7 +12,6 @@ namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Models\Users;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Elabftw\Tools;
 use PDO;
@@ -27,7 +26,7 @@ trait EntityTrait
     protected $Db;
 
     /** @var Users $Users our user */
-    public $Users = null;
+    public $Users;
 
     /** @var int|null $id Id of the entity */
     public $id;

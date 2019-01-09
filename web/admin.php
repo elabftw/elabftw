@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
@@ -85,7 +84,7 @@ try {
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
 
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (DatabaseErrorException | FilesystemErrorException | ImproperActionException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());

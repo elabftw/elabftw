@@ -29,8 +29,6 @@ $App->pageTitle = _('Revisions');
 // default response is error page with general error message
 $Response = new Response();
 $Response->prepare($Request);
-$template = 'error.html';
-$renderArr = array('error' => Tools::error());
 
 try {
     if ($Request->query->get('type') === 'experiments') {

@@ -180,7 +180,9 @@ class Tools
         // nice display of filesize
         if ($bytes < 1024) {
             return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
+        }
+
+        if ($bytes < 1048576) {
             return round($bytes / 1024, 2) . ' KiB';
         } elseif ($bytes < 1073741824) {
             return round($bytes / 1048576, 2) . ' MiB';

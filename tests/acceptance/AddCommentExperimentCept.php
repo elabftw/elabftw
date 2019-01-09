@@ -5,5 +5,5 @@ testLogin($I);
 $I->amOnPage('experiments.php?mode=view&id=1');
 $I->fillField('#commentsCreateArea', 'A nice comment');
 $I->click('#commentsCreateButton');
-$I->waitForJs('return jQuery.active == 0', 10);
+$I->waitForJS('return jQuery.active == 0', 10);
 $I->see('commented');

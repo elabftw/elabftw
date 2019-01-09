@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Templates;
@@ -33,8 +32,6 @@ $App->pageTitle = _('Team');
 // default response is error page with general error message
 $Response = new Response();
 $Response->prepare($Request);
-$template = 'error.html';
-$renderArr = array('error' => Tools::error());
 
 try {
     if ($App->Session->has('anon')) {

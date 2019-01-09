@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Auth;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Email;
@@ -188,7 +187,9 @@ class Users
     {
         if ($this->isFirstUser()) {
             return 1;
-        } elseif ($this->isFirstUserInTeam($team)) {
+        }
+
+        if ($this->isFirstUserInTeam($team)) {
             return 2;
         }
         return 4;

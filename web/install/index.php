@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Exception;
@@ -111,8 +110,7 @@ try {
         // get the url to display a link to click (without the port)
         $url = Tools::getUrlFromRequest($Request);
         // not pretty but gets the job done
-        $url = str_replace('install/', '', $url);
-        $url = str_replace(':80', ':443', $url);
+        $url = str_replace(array('install/', ':80'), array('', ':443'), $url);
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);
@@ -136,12 +134,11 @@ try {
             '<a href=' . $docUrl . '>',
             '</a>'
         );
-        $errflag = true;
         throw new FilesystemErrorException($message);
-    } else {
-        $message = "The 'cache' folder was created successfully.";
-        echo Tools::displayMessage($message, 'ok', false);
     }
+
+    $message = "The 'cache' folder was created successfully.";
+    echo Tools::displayMessage($message, 'ok', false);
 
     // UPLOADS FOLDER
     $uploadsDir = dirname(__DIR__, 2) . '/uploads';
@@ -153,12 +150,11 @@ try {
             '<a href=' . $docUrl . '>',
             '</a>'
         );
-        $errflag = true;
         throw new FilesystemErrorException($message);
-    } else {
-        $message = "The 'uploads' folder was created successfully.";
-        echo Tools::displayMessage($message, 'ok', false);
     }
+
+    $message = "The 'uploads' folder was created successfully.";
+    echo Tools::displayMessage($message, 'ok', false);
 
     // Check for required php extensions
     $extensionArr = array('curl', 'gettext', 'gd', 'openssl', 'mbstring');

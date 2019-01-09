@@ -11,7 +11,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Exceptions\IllegalActionException;
@@ -65,7 +64,7 @@ try {
         ini_get('date.timezone')
     );
 
-    $elabimgVersion = getenv('ELABIMG_VERSION') ? getenv('ELABIMG_VERSION') : 'Not in Docker';
+    $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
 
     $template = 'sysconfig.html';
     $renderArr = array(

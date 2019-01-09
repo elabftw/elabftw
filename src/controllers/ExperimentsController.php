@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Status;
 use Elabftw\Models\Revisions;

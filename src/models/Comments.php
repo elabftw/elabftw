@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Services\Email;
 use PDO;
 use Swift_Message;
@@ -183,15 +182,12 @@ class Comments implements CrudInterface
      * Update a comment
      *
      * @param string $comment New content for the comment
-     * @param string $id id of the comment (comment_42)
+     * @param int $id id of the comment
      * @return string
      */
-    public function update(string $comment, string $id): string
+    public function update(string $comment, int $id): string
     {
         $comment = $this->prepare($comment);
-
-        $exploded = \explode('_', $id);
-        $id = (int) $exploded[1];
 
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
             comment = :comment

@@ -95,9 +95,9 @@ class App
         $this->Csrf = $csrf;
         $this->Twig = $this->getTwig();
 
-        $this->ok = $this->Session->getFlashBag()->get('ok', array());
-        $this->ko = $this->Session->getFlashBag()->get('ko', array());
-        $this->warning = $this->Session->getFlashBag()->get('warning', array());
+        $this->ok = $this->Session->getFlashBag()->get('ok');
+        $this->ko = $this->Session->getFlashBag()->get('ko');
+        $this->warning = $this->Session->getFlashBag()->get('warning');
     }
 
     /**

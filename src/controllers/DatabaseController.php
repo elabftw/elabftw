@@ -17,7 +17,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\App;
-use Elabftw\Interfaces\ControllerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

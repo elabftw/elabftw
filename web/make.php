@@ -18,7 +18,6 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeReport;

@@ -18,7 +18,6 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\App;
-use Elabftw\Interfaces\ControllerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

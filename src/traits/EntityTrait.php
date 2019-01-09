@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Models\Users;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Elabftw\Tools;
-use PDO;
 
 /**
  * For things that are used by experiments, database, status, item types, templates, …

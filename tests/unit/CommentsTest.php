@@ -36,10 +36,10 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Comments->Update('Updated', 'comment_1');
+        $this->Comments->Update('Updated', 1);
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update('a', 'comment_1');
+        $this->Comments->Update('a', 1);
     }
 
     public function testDestroy()

@@ -1054,9 +1054,11 @@ input#todo {
 }
 
 /* doodle canvas */
-.togglable-next {
+/*
+.togglableNext {
     display: inline;
 }
+*/
 .doodle {
     border: 1px solid #dcdddc;
     border-radius: 5px;

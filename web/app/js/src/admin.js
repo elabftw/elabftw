@@ -1,6 +1,4 @@
 /**
- * admin.js - for the admin panel
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,27 @@
 (function() {
     'use strict';
 
+    function tinyMceInitLight() {
+        tinymce.init({
+            mode: 'specific_textareas',
+            editor_selector: 'mceditable',
+            browser_spellcheck: true,
+            content_css: 'app/css/tinymce.css',
+            plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak codesample',
+            pagebreak_separator: '<pagebreak>',
+            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+            removed_menuitems: 'newdocument',
+            image_caption: true,
+            content_style: ".mce-content-body {font-size:10pt;}",
+            language : $('#info').data('lang')
+        });
+    }
+
     $(document).ready(function() {
         let confirmText = $('#info').data('confirm');
+
+        // activate editors in new item type and common template
+        tinyMceInitLight();
 
         // TEAMGROUPS
         var TeamGroups = {
@@ -190,6 +207,8 @@
                 });
             },
             showEditor: function(id) {
+                $('#itemsTypesTemplate_' + id).addClass('mceditable');
+                tinyMceInitLight();
                 $('#itemsTypesEditor_' + id).toggle();
             },
             update: function(id) {
@@ -318,14 +337,5 @@
         });
 
         // EDITOR
-        tinymce.init({
-            mode : "specific_textareas",
-            editor_selector : "mceditable",
-            content_css : "app/css/tinymce.css",
-            plugins : "table textcolor searchreplace lists advlist code fullscreen insertdatetime paste charmap save image link",
-            toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
-            removed_menuitems : "newdocument",
-            language : $('#commonTplTemplate').data('lang')
-        });
     });
 }());

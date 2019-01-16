@@ -67,7 +67,7 @@ try {
 
     // DESTROY TEAM GROUP
     if ($Request->request->has('teamGroupDestroy')) {
-        $TeamGroups->destroy($Request->request->get('teamGroupGroup'));
+        $TeamGroups->destroy((int) $Request->request->get('teamGroupGroup'));
     }
 
 } catch (ImproperActionException $e) {

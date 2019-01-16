@@ -64,8 +64,8 @@
             </p>
 
             <br>
-            <span class='button button-neutral togglable-next'>{{ 'Override general timestamping config'|trans }}</span>
-            <div class='togglable-hidden'>
+            <span class='button button-neutral togglableNext'>{{ 'Override general timestamping config'|trans }}</span>
+            <div class='togglableHidden'>
                 <p>
                     <br>
                     <label class='block' for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
@@ -273,7 +273,7 @@
                 </li>
 
                 <li class='list-inline-item itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
-                    <textarea class='mceditable' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
+                    <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
                 </li>
             </ul>
             {% endfor %}
@@ -299,7 +299,7 @@
     <div class='box'>
         <h3>{{ 'Common Experiment Template'|trans }}</h3><hr>
         <p>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
-        <textarea style='height:400px' data-lang='{{ App.Users.userData.lang }}' class='mceditable' id='commonTplTemplate' />
+        <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
             {{ commonTplBody|raw }}
         </textarea>
         <div class='submitButtonDiv'>
@@ -385,6 +385,10 @@
         </div>
     </div>
 </div>
+
+<div id='info'
+    data-lang='{{ App.Users.userData.lang }}'
+    data-confirm='{{ 'Delete this?'| trans }}'>
 
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
 {% if App.Config.configArr.debug %}

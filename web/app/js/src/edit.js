@@ -65,11 +65,6 @@
             document.forms.main_form.submit();
         });
 
-
-        $('#hideUploads').on('click', function() {
-            $('#uploadsDiv').toggle();
-        });
-
         ////////////////
         // DATA RECOVERY
 

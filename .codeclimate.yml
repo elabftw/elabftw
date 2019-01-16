@@ -28,7 +28,6 @@ exclude_patterns:
 - web/app/js/mathjax
 - web/app/js/plugins
 - web/app/js/skins
-- web/app/js/src/prism.js
 - web/app/js/src/3Dmol-nojquery.js
 - web/app/js/themes
 - vendor/*

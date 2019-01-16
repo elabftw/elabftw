@@ -33,7 +33,7 @@ $(document).ready(function() {
                     item: $('#info').data('item')
                 },
                 error: function() {
-                    notif({'msg': 'There was an error while fetching events!', 'res': false);
+                    notif({'msg': 'There was an error while fetching events!', 'res': false});
                 }
             }
         ],

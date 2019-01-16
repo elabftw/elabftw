@@ -23,7 +23,6 @@ module.exports = function(grunt) {
               'web/app/js/src/jquery.rating.js',
               'web/app/js/src/3Dmol-nojquery.js',
               'web/app/js/src/3Dmol-helpers.js',
-              'web/app/js/src/prism.js',
               'web/app/js/src/common.js'],
 
           'web/app/js/chemdoodle/chemdoodle.min.js': [
@@ -83,7 +82,7 @@ module.exports = function(grunt) {
           'web/app/css/elabftw.min.css': [
               'web/app/css/tagcloud.css',
               'web/app/css/jquery.rating.css',
-              'web/app/css/prism.css',
+              'node_modules/prismjs/themes/prism.css',
               'node_modules/dropzone/dist/dropzone.css',
               'node_modules/fullcalendar/dist/fullcalendar.css',
               'node_modules/bootstrap/dist/css/bootstrap.css',

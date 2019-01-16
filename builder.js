@@ -25,7 +25,26 @@ module.exports = {
             'bootstrap/js/src/button.js',
             'bootstrap/js/src/collapse.js',
             'bootstrap/js/src/dropdown.js',
-            './web/app/js/src/fontawesome.es.js'
+            './web/app/js/src/fontawesome.es.js',
+            'prismjs',
+            // see list in edit.js tinymce codesample plugin settings
+            'prismjs/components/prism-bash.js',
+            'prismjs/components/prism-c.js',
+            'prismjs/components/prism-cpp.js',
+            'prismjs/components/prism-css.js',
+            'prismjs/components/prism-fortran.js',
+            'prismjs/components/prism-go.js',
+            'prismjs/components/prism-markup.js',
+            'prismjs/components/prism-java.js',
+            'prismjs/components/prism-javascript.js',
+            'prismjs/components/prism-julia.js',
+            'prismjs/components/prism-latex.js',
+            'prismjs/components/prism-makefile.js',
+            'prismjs/components/prism-matlab.js',
+            'prismjs/components/prism-perl.js',
+            'prismjs/components/prism-python.js',
+            'prismjs/components/prism-r.js',
+            'prismjs/components/prism-ruby.js'
         ],
         tinymce: [
             'tinymce',
@@ -37,7 +56,7 @@ module.exports = {
     },
     plugins: [
         // only load the moment locales that we are interested in
-        new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|pl|pt|pt-br|ru|sk|sl|zh-cn)$/)
+        new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|pl|pt|pt-br|ru|sk|sl|zh-cn)$/)
     ],
     resolve: {
         alias: {

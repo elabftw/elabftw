@@ -56,12 +56,8 @@ $(document).ready(function() {
             $.post("app/controllers/SortableAjaxController.php", {
                 table: $(this).data('table'),
                 ordering: ordering
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
+            }).done(function(json) {
+                notif(json);
             });
         }
     });
@@ -87,12 +83,16 @@ function addDateOnCursor() {
 }
 
 // notifications (saved messages and such)
-// cssClass must be 'ok' or 'ko'
-function notif(text, cssClass) {
-    const htmlText = '<p>' + text + '</p>';
+// json is an object with at least 'msg' to show to user and bool res for result of operation
+function notif(json) {
+    const htmlText = '<p>' + json.msg + '</p>';
+    let result = 'ko';
+    if (json.res) {
+        result = 'ok';
+    }
     var overlay = document.createElement('div');
     overlay.setAttribute('id','overlay');
-    overlay.setAttribute('class', 'overlay ' + 'overlay-' + cssClass);
+    overlay.setAttribute('class', 'overlay ' + 'overlay-' + result);
     // show the overlay
     document.body.appendChild(overlay);
     // add text inside
@@ -138,7 +138,7 @@ function quickSave(type, id) {
         title : document.getElementById('title_input').value,
         date : document.getElementById('datepicker').value,
         body : tinymce.activeEditor.getContent()
-    }).done(function(data, textStatus, xhr) {
+    }).done(function(json, textStatus, xhr) {
         // detect if the session timedout
         if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
             // store the modifications in local storage to prevent any data loss
@@ -150,11 +150,7 @@ function quickSave(type, id) {
             location.reload();
             return;
         }
-        if (data.res) {
-            notif(data.msg, 'ok');
-        } else {
-            notif(data.msg, 'ko');
-        }
+        notif(json);
     });
 }
 
@@ -194,13 +190,11 @@ function makeEditableComment(element) {
         submitcssclass : 'button mt-2',
         cancelcssclass : 'button button-delete mt-2',
         callback : function(data) {
-            data = JSON.parse(data);
+            json = JSON.parse(data);
+            notif(json);
             // show result in comment box
-            if (data.res) {
-                notif(data.msg, 'ok');
-                $(element).html(data.update);
-            } else {
-                notif(data.msg, 'ko');
+            if (json.res) {
+                $(element).html(json.update);
             }
             $('.comment.editable').each(function() {
                 makeEditableComment($(this));
@@ -218,12 +212,8 @@ function makeEditableFileComment() {
             comment : value,
             comment_id : $(this).attr('id'),
             id: $(this).data('itemid')
-        }).done(function(data) {
-            if (data.res) {
-                notif(data.msg, 'ok');
-            } else {
-                notif(data.msg, 'ko');
-            }
+        }).done(function(json) {
+            notif(json);
         });
 
         return(value);

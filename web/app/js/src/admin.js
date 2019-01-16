@@ -38,10 +38,12 @@
                 if (name.length > 0) {
                     $.post(this.controller, {
                         teamGroupCreate: name
-                    }).done(function() {
-                        $('#team_groups_div').load('admin.php #team_groups_div');
-                        $('#teamGroupCreate').val('');
-                        notif('Saved', 'ok');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
+                            $('#team_groups_div').load('admin.php #team_groups_div');
+                            $('#teamGroupCreate').val('');
+                        }
                     });
                 }
             },
@@ -100,12 +102,10 @@
             $.post('app/controllers/UsersAjaxController.php', {
                 usersValidate: true,
                 userid: $(this).data('userid')
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     window.location.reload();
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         });
@@ -123,12 +123,10 @@
                     name: name,
                     color: color,
                     isTimestampable: isTimestampable
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         window.location.replace('admin.php?tab=4');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             },
@@ -145,24 +143,18 @@
                     color: color,
                     isTimestampable: isTimestampable,
                     isDefault: isDefault
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
+                }).done(function(json) {
+                    notif(json);
                 });
             },
             destroy: function(id) {
                 $.post(this.controller, {
                     statusDestroy: true,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#status_' + id).hide();
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -197,12 +189,10 @@
                     color: color,
                     bookable: bookable,
                     template: template
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         window.location.replace('admin.php?tab=5');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             },
@@ -228,24 +218,18 @@
                     color: color,
                     bookable: bookable,
                     template: template
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
+                }).done(function(json) {
+                    notif(json);
                 });
             },
             destroy: function(id) {
                 $.post(this.controller, {
                     itemsTypesDestroy: true,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#itemstypes_' + id).hide();
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -269,12 +253,8 @@
             var template = tinymce.get('commonTplTemplate').getContent();
             $.post('app/controllers/AjaxController.php', {
                 commonTplUpdate: template
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
+            }).done(function(json) {
+                notif(json);
             });
         });
 

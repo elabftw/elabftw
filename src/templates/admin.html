@@ -205,11 +205,10 @@
     <div class='box'>
         <h3>{{ 'Edit an Existing Status'|trans }}</h3>
         <hr>
-        <ul class='draggable sortable sortable-status list-group' data-axis='y' data-table='status'>
+        <ul class='draggable list-group'>
             {% for status in statusArr %}
             <li id='status_{{ status.category_id }}' class='list-group-item'>
                 <ul class='list-inline'>
-                    <li class='list-inline-item'><i class='fas fa-sort'></i></li>
                     <li class='list-inline-item'>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
                     <li class='list-inline-item' style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
                     </li>
@@ -223,6 +222,19 @@
                     <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
 
                 </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class='box'>
+        <h3>{{ 'Modify ordering'|trans }}</h3>
+        <hr>
+
+        <ul class='draggable list-group sortable sortable-status' data-axis='y' data-table='status'>
+            {% for status in statusArr %}
+            <li class='list-group-item' id='statusOrder_{{ status.category_id }}'><i class='fas fa-sort'></i>
+                <span style='color:#{{ status.color }}'>{{ status.category }}</span>
             </li>
             {% endfor %}
         </ul>

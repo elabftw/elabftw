@@ -30,11 +30,7 @@
             this.on('complete', function(answer) {
                 // check the answer we get back from app/controllers/EntityController.php
                 const json = JSON.parse(answer.xhr.responseText);
-                if (json.res) {
-                    notif(json.msg, 'ok');
-                } else {
-                    notif(json.msg, 'ko');
-                }
+                notif(json);
                 // reload the #filesdiv once the file is uploaded
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                     $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
@@ -112,12 +108,10 @@
                         destroy: true,
                         id: id,
                         type: type
-                    }).done(function(data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
                             window.location.replace(location);
-                        } else {
-                            notif(data.msg, 'ko');
                         }
                     });
                 }
@@ -155,12 +149,10 @@
                         destroyLink: true,
                         id: id,
                         linkId: linkId
-                    }).done(function (data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
                             $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
-                        } else {
-                            notif(data.msg, 'ko');
                         }
                     });
                 }
@@ -177,12 +169,8 @@
                 $.post(this.controller, {
                     rating: rating,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
+                }).done(function(json) {
+                    notif(json);
                 });
             }
         }
@@ -233,14 +221,12 @@
                         destroyStep: true,
                         id: id,
                         stepId: stepId
-                    }).done(function(data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
                             $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
                                 relativeMoment();
                             });
-                        } else {
-                            notif(data.msg, 'ko');
                         }
                     });
                 }
@@ -324,12 +310,8 @@
                 id: id,
                 type: type,
                 visibility: visibility
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
+            }).done(function(json) {
+                notif(json);
             });
         });
 
@@ -341,9 +323,9 @@
                 id: id,
                 type: type,
                 categoryId : categoryId
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     // change the color of the item border
                     // we first remove any status class
                     $("#main_section").css('border', null);
@@ -351,8 +333,6 @@
                     // first : get what is the color of the new status
                     const css = '6px solid #' + data.color;
                     $("#main_section").css('border-left', css);
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         });

@@ -38,7 +38,8 @@ try {
         if ($id) {
             $Response->setData(array(
                 'res' => true,
-                'msg' => $id
+                'msg' => _('Saved'),
+                'id' => $id
             ));
         }
     }

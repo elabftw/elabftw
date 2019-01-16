@@ -33,7 +33,7 @@ $(document).ready(function() {
                     item: $('#info').data('item')
                 },
                 error: function() {
-                    notif('There was an error while fetching events!', 'ko');
+                    notif({'msg': 'There was an error while fetching events!', 'res': false);
                 }
             }
         ],
@@ -57,12 +57,10 @@ $(document).ready(function() {
                 $.post('app/controllers/SchedulerController.php', {
                     destroy: true,
                     id: calEvent.id
-                }).done(function(data) {
-                    if (data.res) {
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#scheduler').fullCalendar('removeEvents', calEvent.id);
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -74,10 +72,8 @@ $(document).ready(function() {
                 start: calEvent.start.format(),
                 end: calEvent.end.format(),
                 id: calEvent.id
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                }
+            }).done(function(json) {
+                notif(json);
             });
         },
         // a resize means we change end date
@@ -86,8 +82,8 @@ $(document).ready(function() {
                 updateEnd: true,
                 end: calEvent.end.format(),
                 id: calEvent.id
-            }).done(function() {
-                notif('Saved', 'ok');
+            }).done(function(json) {
+                notif(json);
             });
         },
         eventRender: function(event, element) {
@@ -107,8 +103,8 @@ $(document).on('click', '.import-tpl', function() {
     $.post('app/controllers/AjaxController.php', {
         importTpl: true,
         id: $(this).data('id')
-    }).done(function() {
-        notif('Saved', 'ok');
+    }).done(function(json) {
+        notif(json);
     });
 });
 function schedulerCreate(start, end) {
@@ -121,12 +117,10 @@ function schedulerCreate(start, end) {
             end: end,
             title: title,
             item: $('#info').data('item')
-        }).done(function(data) {
-            if (data.res) {
-                notif(data.msg, 'ok');
+        }).done(function(json) {
+            notif(json);
+            if (json.res) {
                 window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
-            } else {
-                notif(data.msg, 'ko');
             }
         });
     }

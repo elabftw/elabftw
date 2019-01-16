@@ -62,8 +62,8 @@
                 $.post(this.controller, {
                     deduplicate: true,
                     tag: tag
-                }).done(function (data) {
-                    notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
                     $('#tag_manager').load(location + '?tab=9 #tag_manager');
                 });
             }

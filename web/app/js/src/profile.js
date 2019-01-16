@@ -32,13 +32,9 @@
             $.post("app/controllers/AjaxController.php", {
                 destroyApiKey: true,
                 id: $(this).data('id')
-            }).done(function(data) {
+            }).done(function(json) {
+                notif(json);
                 $("#api_div").load("profile.php #api_div");
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
             });
         });
 

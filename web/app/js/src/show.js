@@ -167,7 +167,7 @@
             $.when.apply(null, ajaxs).then(function (){
                 window.location.reload();
             });
-            notif('Saved', 'ok');
+            notif({'msg': 'Saved', 'res': true});
         });
 
         // MAKE ZIP/CSV
@@ -195,13 +195,10 @@
                     destroy: true,
                     id: value,
                     type: $('#type').data('type')
-                }).done(function(data) {
-                    if (data.res) {
-                        // hide the div
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#parent_' + value).hide(200);
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             });

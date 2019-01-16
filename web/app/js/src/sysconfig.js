@@ -46,12 +46,10 @@
                     Teams.destructor(data);
                 });
             },
-            destructor: function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            destructor: function(json) {
+                notif(json);
+                if (json.res) {
                     $('#teamsDiv').load('sysconfig.php #teamsDiv');
-                } else {
-                    notif(data.msg, 'ko');
                 }
             }
         };
@@ -70,7 +68,7 @@
             Teams.destroy($(this).data('id'));
         });
         $(document).on('click', '.teamsArchiveButton', function() {
-            notif('Feature not yet implemented :)', 'ok');
+            notif({'msg': 'Feature not yet implemented :)', 'res': true});
         });
 
         // MAIL METHOD in a function because is also called in document ready
@@ -102,12 +100,11 @@
                 massEmail: true,
                 subject: $('#massSubject').val(),
                 body: $('#massBody').val()
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     $('#massSend').text('Sent!');
                 } else {
-                    notif(data.msg, 'ko');
                     $('#massSend').prop('disabled', false);
                     $('#massSend').css('background-color', '#e6614c');
                     $('#massSend').text('Error');
@@ -123,13 +120,12 @@
             $.post('app/controllers/SysconfigAjaxController.php', {
                 testemailSend: true,
                 testemailEmail: email
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     $('#massSend').text('Sent!');
                     document.getElementById('testemailButton').disabled = false;
                 } else {
-                    notif(data.msg, 'ko');
                     $('#testemailButton').text('Error');
                     $('#testemailButton').css('background-color', '#e6614c');
                 }
@@ -155,14 +151,12 @@
                 $.post('app/controllers/SysconfigAjaxController.php', {
                     idpsDestroy: true,
                     id: $(this).data('id')
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         console.log(elem);
                         console.log(elem.closest('div'));
                         elem.closest('div').hide(600);
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }

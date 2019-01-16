@@ -46,12 +46,10 @@
                     upload_id: $(this).data('id'),
                     id: itemid,
                     type: $(this).data('type')
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $("#filesdiv").load("?mode=edit&id=" + itemid + " #filesdiv");
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }

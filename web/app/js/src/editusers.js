@@ -17,12 +17,10 @@
             $.post('app/controllers/UsersAjaxController.php', {
                 usersArchive: true,
                 userid: $(this).data('userid')
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     window.location.replace('admin.php?tab=3');
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         }
@@ -39,12 +37,10 @@
             $.post('app/controllers/UsersAjaxController.php', {
                 usersDestroy: true,
                 userid: elem.data('userid')
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     elem.closest('ul', 'list-group').hide();
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         }

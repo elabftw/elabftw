@@ -26,12 +26,10 @@
                         destroy: true,
                         id: id,
                         type: 'experiments_tpl'
-                    }).done(function(data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
                             window.location.replace('ucp.php?tab=3');
-                        } else {
-                            notif(data.msg, 'ko');
                         }
                     });
                 }

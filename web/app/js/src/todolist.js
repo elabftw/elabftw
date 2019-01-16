@@ -38,20 +38,20 @@
                 $.post(this.controller, {
                     create: true,
                     body: body
-                }).done(function(data) {
-                    if (data.res) {
+                }).done(function(json) {
+                    if (json.res) {
                         // add the todoitem
                         $('#todoItems-list').prepend("<li class='todoItem' id='todoItem_" +
-                            data.msg + "'><i class='fas fa-trash-alt destroyTodoItem' data-id='" +
-                            data.msg + "'></i><span style='font-size:60%;display:block;'>" +
-                            datetime + "</span><span id='todoItemBody_" + data.msg + "' class='editable'>" + body +
+                            json.id + "'><i class='fas fa-trash-alt destroyTodoItem' data-id='" +
+                            json.id+ "'></i><span style='font-size:60%;display:block;'>" +
+                            datetime + "</span><span id='todoItemBody_" + json.id + "' class='editable'>" + body +
                             '</li>');
                         // make it editable right away
-                        makeEditableTodoitem($('#todoItemBody_' + data.msg));
+                        makeEditableTodoitem($('#todoItemBody_' + json.id));
                         // and clear the input
                         $('#todo').val("");
                     } else {
-                        notif(data.msg, 'ko');
+                        notif(json);
                     }
                 });
             }
@@ -61,13 +61,12 @@
             $.post(this.controller, {
                 destroy: true,
                 id: id
-            }).done(function(data) {
-                if (data.res) {
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     // hide item
                     $('#todoItem_' + id).css('background', '#29AEB9');
                     $('#todoItem_' + id).toggle('blind');
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         },
@@ -75,12 +74,11 @@
         destroyAll: function() {
             $.post(this.controller, {
                 destroyAll: true
-            }).done(function(data) {
-                if (data.res) {
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     // hide all items
                     $('#todoItems-list').children().toggle('blind');
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         },

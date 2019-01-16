@@ -51,7 +51,8 @@ try {
         $commentId = $Entity->Comments->create($Request->request->get('comment'));
         $Response->setData(array(
             'res' => true,
-            'msg' => $commentId
+            'msg' => _('Saved'),
+            'id' => $commentId
         ));
     }
 

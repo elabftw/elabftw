@@ -43,9 +43,6 @@ class MakeZip extends AbstractMake
     /** @var string $fileName a sha512 sum */
     public $fileName;
 
-    /** @var string $filePath full path of file */
-    public $filePath;
-
     /** @var string $folder name of folder */
     private $folder = "undefined";
 

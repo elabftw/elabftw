@@ -26,9 +26,6 @@ class MakePdf extends AbstractMake
     /** @var string $longName a sha512 sum.pdf */
     public $longName;
 
-    /** @var string $filePath the full path of the file */
-    public $filePath;
-
     /**
      * Constructor
      *

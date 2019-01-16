@@ -31,6 +31,9 @@ abstract class AbstractMake
     /** @var Db $Db SQL Database */
     protected $Db;
 
+    /** @var string $filePath the full path of the file */
+    public $filePath;
+
     /**
      * Constructor
      *

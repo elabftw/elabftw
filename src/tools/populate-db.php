@@ -8,38 +8,22 @@
  */
 namespace Elabftw\Services;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Users;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Database;
-use Elabftw\Models\Tags;
-
-/**
- * This is used to generate data for dev purposes
- * Call it with: "docker exec -it elabftw php /elabftw/src/tools/populate-db.php
- * Change ITERATIONS as needed
- */
-class Populate
-{
-    private const ITERATIONS = 100;
-
-    public function generate($Entity): void
-    {
-        for ($i = 0; $i <= self::ITERATIONS; $i++) {
-            $id = $Entity->create(1);
-            $Entity->setId($id);
-            $Tags = new Tags($Entity);
-            $Tags->create('generated tag ' . $i);
-            $Tags->create('generated tag');
-        }
-        printf("Generated %d %s \n", self::ITERATIONS, $Entity->type);
-    }
-}
 
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once \dirname(__DIR__, 2) . '/config.php';
-$Users = new Users(1);
-$Experiments = new Experiments($Users);
-$Database = new Database($Users);
-$Populate = new Populate();
-$Populate->generate($Experiments);
-$Populate->generate($Database);
+
+try {
+    $Users = new Users(1);
+    $Experiments = new Experiments($Users);
+    $Database = new Database($Users);
+    $Populate = new Populate();
+    $Populate->generate($Experiments);
+    $Populate->generate($Database);
+
+} catch (DatabaseErrorException $e) {
+    echo $e->getMessage();
+}

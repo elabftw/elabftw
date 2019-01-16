@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\MakeCsv
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -22,9 +20,6 @@ class MakeCsv extends AbstractMake
 {
     /** @var string $fileName a sha512 sum */
     public $fileName;
-
-    /** @var string $filePath the full path of the file */
-    public $filePath;
 
     /** @var array $list the lines in the csv file */
     private $list = array();

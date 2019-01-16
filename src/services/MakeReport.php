@@ -30,9 +30,6 @@ class MakeReport extends AbstractMake
     /** @var string $fileName a sha512 sum */
     public $fileName;
 
-    /** @var string $filePath the full path of the file */
-    public $filePath;
-
     /**
      * Constructor
      *

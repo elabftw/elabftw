@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
 
@@ -19,6 +20,9 @@ use Elabftw\Traits\SortableTrait;
 abstract class AbstractCategory implements CrudInterface
 {
     use SortableTrait;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Get the color of an item type

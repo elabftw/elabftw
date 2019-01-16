@@ -1,6 +1,4 @@
 /**
- * tags.js - for the tags
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,12 +8,12 @@
 (function() {
     'use strict';
     $(document).ready(function() {
-        let id = $('#info').data('id');
+        const id = $('#info').data('id');
         let type = $('#info').data('type');
         if (type === undefined) {
             type = 'experiments_tpl';
         }
-        let confirmText = $('#info').data('confirm');
+        const confirmText = $('#info').data('confirmtag');
 
         class Tag {
 

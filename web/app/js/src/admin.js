@@ -25,7 +25,7 @@
     }
 
     $(document).ready(function() {
-        let confirmText = $('#info').data('confirm');
+        const confirmText = $('#info').data('confirm');
 
         // activate editors in new item type and common template
         tinyMceInitLight();
@@ -335,7 +335,5 @@
          onblur: 'submit',
          style : 'display:inline'
         });
-
-        // EDITOR
     });
 }());

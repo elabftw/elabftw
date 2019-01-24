@@ -78,8 +78,8 @@ class ImportCsv extends AbstractImport
             $body = str_replace('<p><strong> :</strong> </p>', '', $body);
 
             // SQL for importing
-            $sql = "INSERT INTO items(team, title, date, body, userid, type)
-                VALUES(:team, :title, :date, :body, :userid, :type)";
+            $sql = "INSERT INTO items(team, title, date, body, userid, category)
+                VALUES(:team, :title, :date, :body, :userid, :category)";
             $req = $this->Db->prepare($sql);
             $result = $req->execute(array(
                 'team' => $this->Users->userData['team'],
@@ -87,7 +87,7 @@ class ImportCsv extends AbstractImport
                 'date' => Tools::kdate(),
                 'body' => $body,
                 'userid' => $this->Users->userData['userid'],
-                'type' => $this->target
+                'category' => $this->target
             ));
             if (!$result) {
                 throw new ImproperActionException('Error in SQL query!');

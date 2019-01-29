@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f5bdcedead914a65c619c094fd31ccd",
+    "content-hash": "eb64fdd5e55e966098fb07fbe6ecfcd5",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -709,16 +709,16 @@
         },
         {
             "name": "onelogin/php-saml",
-            "version": "v3.0.0",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "920c2240e48c9a74aad4129720f48fbf3d5fee47"
+                "reference": "15016f9d633614c62fe6bb1d4ec86079b3e13a63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/920c2240e48c9a74aad4129720f48fbf3d5fee47",
-                "reference": "920c2240e48c9a74aad4129720f48fbf3d5fee47",
+                "url": "https://api.github.com/repos/onelogin/php-saml/zipball/15016f9d633614c62fe6bb1d4ec86079b3e13a63",
+                "reference": "15016f9d633614c62fe6bb1d4ec86079b3e13a63",
                 "shasum": ""
             },
             "require": {
@@ -755,7 +755,7 @@
                 "onelogin",
                 "saml"
             ],
-            "time": "2018-10-02T16:02:37+00:00"
+            "time": "2019-01-28T13:04:13+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -1184,7 +1184,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -2432,12 +2432,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7989c51d910c456aa07e8e149a98afac5de69e7a"
+                "reference": "db876706aacd4ffbd1c253358d19a651e50e65c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7989c51d910c456aa07e8e149a98afac5de69e7a",
-                "reference": "7989c51d910c456aa07e8e149a98afac5de69e7a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/db876706aacd4ffbd1c253358d19a651e50e65c2",
+                "reference": "db876706aacd4ffbd1c253358d19a651e50e65c2",
                 "shasum": ""
             },
             "conflict": {
@@ -2446,6 +2446,7 @@
                 "alterphp/easyadmin-extension-bundle": ">=1.2,<1.2.11|>=1.3,<1.3.1",
                 "amphp/artax": "<1.0.6|>=2,<2.0.6",
                 "amphp/http": "<1.0.1",
+                "api-platform/core": ">=2.2,<2.2.10|>=2.3,<2.3.6",
                 "asymmetricrypt/asymmetricrypt": ">=0,<9.9.99",
                 "aws/aws-sdk-php": ">=3,<3.2.1",
                 "brightlocal/phpwhois": "<=4.2.5",
@@ -2474,7 +2475,6 @@
                 "drupal/core": ">=7,<7.60|>=8,<8.5.8|>=8.6,<8.6.2",
                 "drupal/drupal": ">=7,<7.60|>=8,<8.5.8|>=8.6,<8.6.2",
                 "erusev/parsedown": "<1.7",
-                "ezsystems/ezplatform": "<1.7.8.1|>=1.8,<1.13.4.1|>=2,<2.2.3.1|>=2.3,<2.3.2.1",
                 "ezsystems/ezpublish-kernel": ">=5.3,<5.3.12.1|>=5.4,<5.4.13.1|>=6,<6.7.9.1|>=6.8,<6.13.5.1|>=7,<7.2.4.1|>=7.3,<7.3.2.1",
                 "ezsystems/ezpublish-legacy": ">=5.3,<5.3.12.6|>=5.4,<5.4.12.3|>=2011,<2017.12.4.3|>=2018.6,<2018.6.1.4|>=2018.9,<2018.9.1.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1",
@@ -2515,6 +2515,7 @@
                 "pagarme/pagarme-php": ">=0,<3",
                 "paragonie/random_compat": "<2",
                 "paypal/merchant-sdk-php": "<3.12",
+                "pear/archive_tar": "<1.4.4",
                 "phpmailer/phpmailer": ">=5,<5.2.27|>=6,<6.0.6",
                 "phpoffice/phpexcel": "<=1.8.1",
                 "phpoffice/phpspreadsheet": "<=1.5",
@@ -2569,13 +2570,13 @@
                 "symfony/yaml": ">=2,<2.0.22|>=2.1,<2.1.7",
                 "tecnickcom/tcpdf": "<6.2.22",
                 "thelia/backoffice-default-template": ">=2.1,<2.1.2",
-                "thelia/thelia": ">=2.1,<2.1.2|>=2.1.0-beta1,<2.1.3",
+                "thelia/thelia": ">=2.1.0-beta1,<2.1.3|>=2.1,<2.1.2",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "titon/framework": ">=0,<9.9.99",
                 "truckersmp/phpwhois": "<=4.3.1",
                 "twig/twig": "<1.20",
-                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.21|>=9,<9.5.2",
-                "typo3/cms-core": ">=8,<8.7.21|>=9,<9.5.2",
+                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.23|>=9,<9.5.4",
+                "typo3/cms-core": ">=8,<8.7.23|>=9,<9.5.4",
                 "typo3/flow": ">=1,<1.0.4|>=1.1,<1.1.1|>=2,<2.0.1|>=2.3,<2.3.16|>=3,<3.0.10|>=3.1,<3.1.7|>=3.2,<3.2.7|>=3.3,<3.3.5",
                 "typo3/neos": ">=1.1,<1.1.3|>=1.2,<1.2.13|>=2,<2.0.4",
                 "ua-parser/uap-php": "<3.8",
@@ -2627,7 +2628,7 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2019-01-08T04:52:50+00:00"
+            "time": "2019-01-22T18:37:22+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

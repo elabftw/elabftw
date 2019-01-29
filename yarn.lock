@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.5.6.tgz#d5e513def9aa18acb5767ce6155dc8a2e430a24a"
   integrity sha512-Hp83AAWb0uNR7ekGQExGv0fMJEa/0t97Ab1aPk2hopWnKKpFI6acnIssJ2SD2YCBqv5Rb4W+lHDJTtJPRbcqhA==
 
-"@fortawesome/fontawesome-common-types@^0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.12.tgz#42baa71f97ca06faeb0b6718fa5ed20c5eefdf07"
-  integrity sha512-ISLNpEx6fhJTYYkvBeo/4DHeL5EIA+VybJoOOnH67m6uXt6V6VFizdEN4qchHagNIeZfzI0LnA22gk0wbVPv/g==
+"@fortawesome/fontawesome-common-types@^0.2.12", "@fortawesome/fontawesome-common-types@^0.2.13":
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.13.tgz#17f3d30c53732f07a765199c3cf93b4834e8cfde"
+  integrity sha512-Qy1eMKylnbsCRXod8C4CfwqlNtLU7OkJiLsFJZlHY4rY9ky2VYUKNnRj0b+3lnGwA1dWNY+pI0XWbP/mrLCohw==
 
 "@fortawesome/fontawesome-svg-core@1.2.*":
   version "1.2.12"
@@ -26,12 +26,12 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.12"
 
-"@fortawesome/free-regular-svg-icons@5.6.*":
-  version "5.6.3"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.6.3.tgz#b0a44d665c347b56d064a37962e81e8d8a8f2624"
-  integrity sha512-G6pFCyDaR+R67m1dFHATdeUk5acMglyK7Ney7lZ1QQOusRldhLTPGTnY3LZZ3+WBa3VUz6FwcHRRLNevkIYnIA==
+"@fortawesome/free-regular-svg-icons@5.7.*":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.7.0.tgz#b0127111924a2506cb6313dfcb140f0cbc9e35b1"
+  integrity sha512-q6u0JTCr8T8RDRYytVcPg/RvPXv67fVcxSa/pdF59OAF5scM03QakX+W+x0vuaWvrpUwU0VK2AXJzSYnBUNpJA==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.12"
+    "@fortawesome/fontawesome-common-types" "^0.2.13"
 
 "@fortawesome/free-solid-svg-icons@5.6.*":
   version "5.6.3"

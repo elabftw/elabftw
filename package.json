@@ -9,7 +9,7 @@
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "5.6.*",
-    "@fortawesome/free-regular-svg-icons": "5.6.*",
+    "@fortawesome/free-regular-svg-icons": "5.7.*",
     "@fortawesome/free-solid-svg-icons": "5.6.*",
     "bootstrap": "~4.2.*",
     "bootstrap-markdown-fa5": "2.10.*",

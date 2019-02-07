@@ -13,7 +13,7 @@
 797979 => gray main text color
 f2f2f2 => very light gray
 dcdddc = > borders gray
-29AEB9 => elab blue
+29aeb9 => elab blue
 1F8591 => dark blue
 C4F9FF => light blue
 dd1e00 => dark red
@@ -26,10 +26,11 @@ ffc1b7 => light red
     font-family: 'Lato';
     src: url('fonts/lato-medium-webfont.ttf');
     src: url('fonts/lato-medium-webfont.eot');
-    src: url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
-    url('fonts/lato-medium-webfont.woff') format('woff'),
-    url('fonts/lato-medium-webfont.ttf') format('truetype'),
-    url('fonts/lato-medium-webfont.svg#webfont') format('svg');
+    src:
+        url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
+        url('fonts/lato-medium-webfont.woff') format('woff'),
+        url('fonts/lato-medium-webfont.ttf') format('truetype'),
+        url('fonts/lato-medium-webfont.svg#webfont') format('svg');
 }
 
 body {
@@ -37,7 +38,7 @@ body {
 }
 
 /* little shadow on top of the screen for no reasons */
-body:before {
+body::before {
     content: "";
     position: fixed;
     top: -10px;
@@ -45,13 +46,13 @@ body:before {
     width: 100%;
     height: 10px;
     z-index: 100;
-    box-shadow: 0 0 10px rgba(0,0,0,.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 }
 
 /* this is the big white thing that holds everything */
 #container {
     background: #fff;
-    padding:0;
+    padding: 0;
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 500;
 }
@@ -62,18 +63,18 @@ body:before {
 
 /* LINKS */
 a {
-    color: #29AEB9;
-    text-decoration:none;
+    color: #29aeb9;
+    text-decoration: none;
 }
 
 a:hover {
-    color:#29AEB9;
-    text-decoration:none;
+    color: #29aeb9;
+    text-decoration: none;
 }
 
 /* LISTS */
 .list-group-item {
-    margin-bottom:3px;
+    margin-bottom: 3px;
 }
 
 ul, li {
@@ -118,7 +119,7 @@ select{
 }
 
 .form-control:focus, #dropdownMenu1:focus {
-    border-color:#29AEB9;
+    border-color:#29aeb9;
     box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(41,174,185,.6);
 }
 #dropdownMenu1 {
@@ -131,7 +132,7 @@ li.dropdown-item > a {
     color:black;
 }
 li.dropdown-item:hover a {
-    color:#29AEB9;
+    color:#29aeb9;
 }
 
 /* GENERAL */
@@ -198,7 +199,7 @@ label {
 .tip:before {
     content: "☺ ";
     font-size:120%;
-    color: #29AEB9;
+    color: #29aeb9;
 }
 .tip::before a, .tip::before a:hover {
     color: #343434;
@@ -236,7 +237,7 @@ label {
 }
 /* blue on hover */
 .nav-link:hover {
-    color:#29AEB9 !important;
+    color:#29aeb9 !important;
     transition-duration: 500ms;
 }
 /* we want the border bottom to be same width as the text */
@@ -248,7 +249,7 @@ label {
 }
 /* selected nav entry */
 .nav-link.active {
-    border-bottom:6px #29AEB9 solid;
+    border-bottom:6px #29aeb9 solid;
 }
 
 /* search bar in head.php ; nav */
@@ -280,7 +281,7 @@ menu ul li {
     cursor: pointer;
 }
 menu ul li.selected {
-    border-bottom:5px #29AEB9 solid;
+    border-bottom:5px #29aeb9 solid;
     padding-bottom:0;
 }
 
@@ -435,7 +436,7 @@ section.item {
     color: #FFFFFF;
     font-size: 11px;
     text-transform: uppercase;
-    background-color: #29AEB9;
+    background-color: #29aeb9;
     margin: 0 5px;
     letter-spacing: 1px;
     cursor: pointer;
@@ -515,7 +516,7 @@ section.item {
     display:inline-block;
     transform: rotate(35deg);
     line-height: 80%;
-    background: #29AEB9;
+    background: #29aeb9;
     color: #fff;
     font-size: 10px;
     padding: 4px;
@@ -546,7 +547,7 @@ github issue #52 */
 summary:before {
     content: "► ";
     font-size:120%;
-    color: #29AEB9;
+    color: #29aeb9;
 }
 
 /* fix the list in the body */
@@ -635,7 +636,7 @@ tr:nth-child(odd) {
 }
 
 .overlay-ok {
-    background-color: #29AEB9;
+    background-color: #29aeb9;
 }
 
 .overlay-ko, .overlay-ko p {
@@ -655,7 +656,7 @@ tr:nth-child(odd) {
 }
 
 .item a p:hover {
-    color:#29AEB9;
+    color:#29aeb9;
 }
 
 .box {
@@ -750,7 +751,7 @@ input[type='checkbox']{
 /* Bootstrap fixes */
 .btn-elab{
     color:#fff;
-    background-color:#29AEB9;
+    background-color:#29aeb9;
     border-color:#01929e;
     margin-right: 10px;
 }
@@ -836,7 +837,7 @@ input[type='checkbox']{
 }
 
 .title a:hover {
-    color:#29AEB9 !important;
+    color:#29aeb9 !important;
     transition-duration: 500ms;
 }
 
@@ -859,7 +860,7 @@ input[type='checkbox']{
 }
 .tags a {
     text-decoration: none;
-    color:#29AEB9;
+    color:#29aeb9;
 }
 .tags a:hover {
     color: #343434;
@@ -888,7 +889,7 @@ input[type='checkbox']{
 /* ucp.php */
 #currpass {
     background-color: #c4f9ff;
-    border: 1px solid #29AEB9;
+    border: 1px solid #29aeb9;
 }
 
 .txt {
@@ -927,7 +928,7 @@ footer div, footer div a, footer p, footer p a {
     font-size: 11px;
 }
 footer div a:hover {
-    color: #29AEB9;
+    color: #29aeb9;
 }
 
 .footer-left {
@@ -1049,7 +1050,7 @@ input#todo {
     border-radius: 5px;
 }
 .dropzone:hover {
-    border: 1px solid #29AEB9;
+    border: 1px solid #29aeb9;
     border-radius: 5px;
 }
 
@@ -1100,7 +1101,7 @@ svg.fa-trash-alt:hover {
 }
 
 .pseudo-link:hover {
-    color: #29AEB9;
+    color: #29aeb9;
 }
 
 /* caption for tinymce */

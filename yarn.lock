@@ -4868,10 +4868,10 @@ tinymce-mention@4.0.2:
   dependencies:
     jquery ">=1.8.3"
 
-tinymce@4.9.*:
-  version "4.9.3"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.9.3.tgz#c866681484282fe9ce4694124990d94eb457c344"
-  integrity sha512-3IjnswgmzJJSgaJR9+tOPK7UYlHoxv8YzUi8ChqetIt1uljRycyqSu8aq1DOyPc+WJCZi9fWo9fEHCEAIYGaLg==
+tinymce@5.0.*:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.0.tgz#03e819e8f3a2ce116fc445541fa493d6b7f5d827"
+  integrity sha512-aWBXuV1S+JaZUoteLgOoDv9Ra7wcohpRFoHhldoRWUg9fdA36zC9XPjWfxNgzaANqKdOICxZ3tguLmi3RLtiLA==
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

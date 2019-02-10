@@ -43,7 +43,7 @@
   },
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/controllers",
-    "build": "sed -ie \"s/'full'/true/\" node_modules/ajv-errors/index.js && webpack-cli --config builder.js",
+    "build": "webpack-cli --config builder.js",
     "buildall": "grunt && yarn build",
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",

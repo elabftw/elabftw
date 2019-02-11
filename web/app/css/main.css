@@ -61,6 +61,11 @@ body::before {
     padding: 0 5%;
 }
 
+/* paragraphs */
+p {
+    color: #797979;
+}
+
 /* LINKS */
 a {
     color: #29aeb9;
@@ -77,7 +82,8 @@ a:hover {
     margin-bottom: 3px;
 }
 
-ul, li {
+ul,
+li {
     list-style: none;
 }
 
@@ -95,44 +101,51 @@ li.inline {
 }
 
 /* input and select */
-input, select, textarea {
-    padding:7px;
-    background-color:#F2F2F2;
-    color:#797979;
+input,
+select,
+textarea {
+    padding: 7px;
+    background-color: #f2f2f2;
+    color: #797979;
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
 }
-.disabled-input{
-    color:#989898;
 
+.disabled-input {
+    color: #989898;
 }
-select{
-    -moz-appearance:none;
-    -webkit-appearance:none;
+
+select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
     background: #f2f2f2 url("images/ico-arrow.png") no-repeat 93% 56%;
     padding-right: 31px;
 }
-.form-control{
-    -moz-appearance:none;
-    -webkit-appearance:none;
+
+.form-control {
+    -moz-appearance: none;
+    -webkit-appearance: none;
     padding-right: 31px;
 }
 
-.form-control:focus, #dropdownMenu1:focus {
-    border-color:#29aeb9;
-    box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(41,174,185,.6);
-}
 #dropdownMenu1 {
     background-color: white;
     color: #495057;
-    border: 1px solid #ced4da
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+#dropdownMenu1:focus {
+    border-color: #29aeb9;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
 }
 
 li.dropdown-item > a {
-    color:black;
+    color: black;
 }
+
 li.dropdown-item:hover a {
-    color:#29aeb9;
+    color: #29aeb9;
 }
 
 /* GENERAL */
@@ -141,7 +154,7 @@ img {
     margin-right: 3px;
 }
 
-.align_right{
+.align_right {
     float: right;
 }
 
@@ -152,7 +165,7 @@ hr {
 
 /* TITLES */
 h2 {
-    font-weight:normal;
+    font-weight: normal;
     color: #797979;
     font-size: 30px;
     margin-top: 0;
@@ -166,11 +179,8 @@ h3 {
 
 h4 {
     font-size: 150%;
-    font-weight:normal;
+    font-weight: normal;
     color: #797979;
-    /*
-    margin: 0 auto 10px auto;
-    */
 }
 
 h5 {
@@ -178,37 +188,32 @@ h5 {
     font-size: 130%;
 }
 
-/* paragraphs */
-p {
-    color:#797979;
-}
-
-p a {
-    text-decoration: none;
-}
-
 label {
-    color:#797979;
-    font-size:120%;
-    font-weight:normal;
+    color: #797979;
+    font-size: 120%;
+    font-weight: normal;
 }
 
 /* HEAD */
 
 /* BEGIN HELP CONTAINER */
-.tip:before {
+.tip::before {
     content: "☺ ";
-    font-size:120%;
+    font-size: 120%;
     color: #29aeb9;
 }
-.tip::before a, .tip::before a:hover {
+
+.tip::before a,
+.tip::before a:hover {
     color: #343434;
 }
+
 .help-container {
-    display:none;
+    display: none;
     padding: 5px;
     margin: 15px 0;
 }
+
 #help {
     cursor: pointer;
     color: #797979;
@@ -218,71 +223,76 @@ label {
 
 /* BEGIN NAV */
 .navbar {
-    background-color:#343434;
+    background-color: #343434;
     padding: 0 5%;
     border-radius: 0;
     border: 0;
     margin-bottom: 10px;
 }
+
 .navbar-brand {
     padding: 5px 5px 5px 0;
 }
+
 .nav-link {
-    font-size:90%;
-    text-transform:uppercase;
+    font-size: 90%;
+    text-transform: uppercase;
     color: #888;
     text-decoration: none;
     /* fix navbar height getting smaller on profile/ucp/admin/… pages */
     min-height: 43px;
-}
-/* blue on hover */
-.nav-link:hover {
-    color:#29aeb9 !important;
-    transition-duration: 500ms;
-}
-/* we want the border bottom to be same width as the text */
-.nav-link {
+    /* we want the border bottom to be same width as the text */
     padding-left: 0 !important;
     padding-right: 0 !important;
     margin-left: 15px;
     margin-right: 15px;
 }
+
+/* blue on hover */
+.nav-link:hover {
+    color: #29aeb9 !important;
+    transition-duration: 500ms;
+}
+
 /* selected nav entry */
 .nav-link.active {
-    border-bottom:6px #29aeb9 solid;
+    border-bottom: 6px #29aeb9 solid;
 }
 
 /* search bar in head.php ; nav */
 #big_search input {
-    background:#555 url(images/search.png) no-repeat scroll right 10px center;
+    background: #555 url(images/search.png) no-repeat scroll right 10px center;
     border: none;
     border-radius: 20px;
     margin-right: 0 !important;
-    height:2em;
+    height: 2em;
     color: white;
 }
 /* END NAV */
 
 /*  MENU is below main nav */
 menu {
-    line-height:200%;
+    line-height: 200%;
     margin: 30px 0 20px;
     padding: 0;
 }
+
 menu ul {
-    padding:0;
+    padding: 0;
     border-bottom: 1px solid #dcdddc;
 }
+
 menu ul li {
-    display:inline;
+    display: inline;
     margin-right: 2%;
     text-transform: uppercase;
     color: #797979;
     cursor: pointer;
 }
+
 menu ul li.selected {
-    border-bottom:5px #29aeb9 solid;
-    padding-bottom:0;
+    border-bottom: 5px #29aeb9 solid;
+    padding-bottom: 0;
 }
 
 /* USER MENU (settings, help, logout) */
@@ -292,14 +302,16 @@ menu ul li.selected {
 
 /* ALERT */
 .alert {
-    margin-top:20px;
+    margin-top: 20px;
 }
-.alert a, .alert a:hover {
+
+.alert a,
+.alert a:hover {
     color: #343434;
 }
 
 .alert-success {
-    background-color: #C4F9FF;
+    background-color: #c4f9ff;
     color: #36b1c0;
     border-color: #36b1c0;
 }
@@ -309,9 +321,11 @@ menu ul li.selected {
     background-color: #ffc1b7;
     border-color: #e6614c;
 }
+
 .alert-danger a.close{
     color: #e6614c;
 }
+
 .alert-sucess a.close{
     color: #36b1c0;
 }
@@ -319,37 +333,41 @@ menu ul li.selected {
 /* TOOLTIP */
 
 a.elab-tooltip {
-    outline:none;
+    outline: none;
     position: relative;
 }
+
 a.elab-tooltip:hover {
-    text-decoration:none;
+    text-decoration: none;
 }
+
 a.elab-tooltip span {
-    z-index:10;
-    display:none;
-    padding:5px 10px 8px;
-    margin:25px auto 0;
-    width:auto;
-    line-height:16px;
+    z-index: 10;
+    display: none;
+    padding: 5px 10px 8px;
+    margin: 25px auto 0;
+    width: auto;
+    line-height: 16px;
     font-weight: normal;
-    border-radius:2px;
+    border-radius: 2px;
     box-shadow: 1px 1px 2px #666;
     position: relative;
     text-align: center;
     white-space: nowrap;
 }
+
 a.elab-tooltip:hover span{
-    display:inline;
-    position:absolute;
-    color:#ffffff;
-    background:#343434;
+    display: inline;
+    position: absolute;
+    color: #ffffff;
+    background: #343434;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     white-space: nowrap;
 }
+
 a.elab-tooltip span:after {
     bottom: 100%;
     left: 50%;
@@ -362,39 +380,44 @@ a.elab-tooltip span:after {
     border-bottom-color: #343434;
     margin-left: -4px;
 }
+
 a.elab-tooltip-top {
     outline:none;
     position: relative;
 }
+
 a.elab-tooltip-top:hover {
-    text-decoration:none;
+    text-decoration: none;
 }
+
 a.elab-tooltip-top span {
     text-transform: none;
-    z-index:10;
-    display:none;
-    padding:5px 10px 8px;
-    margin:0 auto 25px;
-    width:auto;
-    line-height:16px;
+    z-index: 10;
+    display: none;
+    padding: 5px 10px 8px;
+    margin: 0 auto 25px;
+    width: auto;
+    line-height: 16px;
     font-weight: normal;
-    border-radius:2px;
+    border-radius: 2px;
     box-shadow: 1px 1px 2px #666;
     position: relative;
     text-align: center;
     white-space: nowrap;
 }
+
 a.elab-tooltip-top:hover span{
-    display:inline;
-    position:absolute;
-    color:#ffffff;
-    background:#343434;
+    display: inline;
+    position: absolute;
+    color: #ffffff;
+    background: #343434;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     white-space: nowrap;
 }
+
 a.elab-tooltip-top span:after {
     top: 100%;
     left: 50%;
@@ -408,6 +431,7 @@ a.elab-tooltip-top span:after {
     border-width: 4px;
     margin-left: -4px;
 }
+
 /* fix tooltip larger than parent div */
 section.item {
     overflow:visible;
@@ -418,13 +442,15 @@ section.item {
     padding: 5px;
     margin: 0 20px 10px 0;
 }
+
 .badgetab:hover {
-    background-color:#f2f2f2;
-    color:black;
+    background-color: #f2f2f2;
+    color: black;
 }
+
 .badgetabactive {
-    background-color:#f2f2f2;
-    color:black;
+    background-color: #f2f2f2;
+    color: black;
 }
 
 /* BUTTONS */
@@ -433,7 +459,7 @@ section.item {
     border-radius: 25px;
     padding: 10px 20px;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 11px;
     text-transform: uppercase;
     background-color: #29aeb9;
@@ -443,7 +469,7 @@ section.item {
 }
 
 .button:hover {
-    background-color: #1F8591;
+    background-color: #1f8591;
 }
 
 .button:disabled {
@@ -452,7 +478,7 @@ section.item {
 
 .submitButtonDiv {
     margin-top: 30px;
-    text-align:center;
+    text-align: center;
 }
 
 .button-delete {
@@ -477,7 +503,7 @@ section.item {
 
 /* LOGIN.PHP */
 .block {
-    display:block;
+    display: block;
     margin: 5px 0 0;
 }
 .clean-form {
@@ -492,7 +518,7 @@ section.item {
 
 #loginButtonDiv {
     border-top: 1px solid #e3e3e3;
-    padding-top:30px;
+    padding-top: 30px;
     margin: 30px 0 20px 0;
 }
 .login-area {
@@ -513,7 +539,7 @@ section.item {
     position: relative;
     top: -12px;
     left: -33PX;
-    display:inline-block;
+    display: inline-block;
     transform: rotate(35deg);
     line-height: 80%;
     background: #29aeb9;
@@ -537,6 +563,7 @@ section.item {
 #body_view {
     background-color: #f2f2f2;
 }
+
 /* body in view mode is black for more lisibility
 github issue #52 */
 #body_view p {
@@ -546,7 +573,7 @@ github issue #52 */
 /* add some css for details/summary html5 */
 summary:before {
     content: "► ";
-    font-size:120%;
+    font-size: 120%;
     color: #29aeb9;
 }
 
@@ -584,12 +611,12 @@ table td input{
 }
 
 table th {
-    background-color:#dcdddc;
+    background-color: #dcdddc;
     color: #797979;
     text-transform: uppercase;
     font-size: 90%;
     padding: 5px 15px;
-    text-align:left;
+    text-align: left;
 }
 
 /* color one row every other row */
@@ -862,12 +889,6 @@ input[type='checkbox']{
     text-decoration: none;
     color:#29aeb9;
 }
-.tags a:hover {
-    color: #343434;
-}
-.tag:hover {
-    color: #990000;
-}
 
 .tag {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
@@ -878,6 +899,15 @@ input[type='checkbox']{
     margin: auto 5px;
     padding: 0 5px;
 }
+
+.tag:hover {
+    color: #900;
+}
+
+.tags a:hover {
+    color: #343434;
+}
+
 /* END TAGS */
 
 .smallgray{
@@ -893,46 +923,47 @@ input[type='checkbox']{
 }
 
 .txt {
-    background-color:white;
-    border:1px solid #CCC;
+    background-color: white;
+    border: 1px solid #CCC;
     border-radius: 5px;
     margin-top: 10px;
-    color:black;
+    color: black;
     font-size: 16px;
     padding: 5px;
 }
 
 /* title on editXP */
 #title_input {
-    width:100%;
+    width: 100%;
     margin: 0 0 15px;
-
 }
 
 /* elabid */
 .elabid {
-    text-align:right;
+    text-align: right;
     color: #797979;
     font-size: 11px;
 }
 
 /* FOOTER */
 footer {
-    border-top:solid 1px #dcdddc;
+    border-top: solid 1px #dcdddc;
     font-size: 11px;
     margin: 60px 0 5px 0;
     padding: 10px 0 0 0;
 }
+
 footer div, footer div a, footer p, footer p a {
     color: #797979;
     font-size: 11px;
 }
+
 footer div a:hover {
     color: #29aeb9;
 }
 
 .footer-left {
-    text-transform:uppercase;
+    text-transform: uppercase;
     text-align: left;
     float: left;
 }
@@ -987,18 +1018,18 @@ footer div a:hover {
 
 /* TODOLIST */
 #todoList{
-    text-align:center;
-    overflow:hidden;
-    background:#343434;
-    display:none;
-    position:fixed;
+    text-align: center;
+    overflow: hidden;
+    background: #343434;
+    display: none;
+    position: fixed;
     top: 0;
     left: 0;
-    width:20%;
-    min-width:300px;
-    padding:20px;
+    width: 20%;
+    min-width: 300px;
+    padding: 20px;
     border-radius: 4px;
-    margin:10px;
+    margin: 10px;
     border: 1px solid #fff;
     z-index: 9001;
 }
@@ -1042,6 +1073,7 @@ input#todo {
 .destroyTodoItem:hover {
     color: #e6614c;
 }
+
 /* END TODOLIST */
 
 /* fix dropzone css */
@@ -1055,11 +1087,6 @@ input#todo {
 }
 
 /* doodle canvas */
-/*
-.togglableNext {
-    display: inline;
-}
-*/
 .doodle {
     border: 1px solid #dcdddc;
     border-radius: 5px;

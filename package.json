@@ -11,7 +11,7 @@
     "@fortawesome/free-brands-svg-icons": "5.7.*",
     "@fortawesome/free-regular-svg-icons": "5.7.*",
     "@fortawesome/free-solid-svg-icons": "5.7.*",
-    "bootstrap": "~4.2.*",
+    "bootstrap": "~4.3.*",
     "bootstrap-markdown-fa5": "2.10.*",
     "dropzone": "5.5.*",
     "file-saver": "2.0.*",

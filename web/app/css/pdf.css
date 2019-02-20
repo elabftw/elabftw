@@ -1,42 +1,9 @@
-/* CSS Document */
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http: //www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software:  you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
-/* CSS for the PDF generation
-/* This file is minified and used in the makepdf class.
- *
- * 343434 => very dark gray (main nav bg)
- * 797979 => lightgray
- * #29AEB9 => blue
- * 1F8591 => dark blue
- * C4F9FF => light blue
- * dd1e00 => dark red
- * ffc1b7 => light red
- *
- *
- *
- *
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
  */
 
 @page {
@@ -51,20 +18,22 @@ body {
 }
 
 a {
-    color: #29AEB9;
+    color: #29aeb9;
     text-decoration: none;
 }
 
 code {
     border: 1px dotted #ccc;
-    background-color:#eee;
+    background-color: #eee;
 }
 
 table {
     border-collapse: collapse;
 }
 
-table, th, td {
+table,
+th,
+td {
     border: 1px solid #797979;
 }
 
@@ -73,22 +42,22 @@ table td {
 }
 
 table th {
-    background-color:#dcdddc;
+    background-color: #dcdddc;
     color: #797979;
     text-transform: uppercase;
     font-size: 90%;
     padding: 5px;
-    text-align:left;
+    text-align: left;
     width: 150px;
 }
 
 /* color one row every other row */
 tr:nth-child(even) {
-        background-color: #fff;
+    background-color: #fff;
 }
 
 tr:nth-child(odd) {
-        background-color: #f2f2f2;
+    background-color: #f2f2f2;
 }
 
 .no-break {
@@ -112,15 +81,14 @@ tr:nth-child(odd) {
     padding: 1.5mm;
     margin: 0;
     vertical-align: middle;
-    color: #000000;
+    color: black;
 }
 
 .attached-image {
     max-width: 100%;
     max-height: 5cm;
     border: 1px solid #dcdddc;
-    margin-top: .5em;
-
+    margin-top: 0.5em;
 }
 
 .noborder {
@@ -134,10 +102,6 @@ tr:nth-child(odd) {
     padding-right: 15px;
     width: 100%;
     margin-top: 1em;
-}
-
-#header, .footer, h1, h2, h3, h4, table {
-    font-family: "Lato", sans-serif;
 }
 
 #header {

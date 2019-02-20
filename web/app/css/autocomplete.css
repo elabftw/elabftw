@@ -1,4 +1,12 @@
-.rte-autocomplete{
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+.rte-autocomplete {
     position: absolute;
     top: 0;
     left: 0;
@@ -10,15 +18,15 @@
     margin: 2px 0 0;
     list-style: none;
     background-color: #fff;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     background-clip: padding-box;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
 }
 
-.rte-autocomplete:before {
+.rte-autocomplete::before {
     content: '';
     display: inline-block;
     border-right: 7px solid transparent;
@@ -29,7 +37,7 @@
     left: 9px;
 }
 
-.rte-autocomplete:after {
+.rte-autocomplete::after {
     content: '';
     display: inline-block;
     border-left: 6px solid transparent;
@@ -41,8 +49,8 @@
 }
 
 .rte-autocomplete > .loading {
-	background: url(images/ajax-loader.gif) center no-repeat;
-	height: 16px;
+    background: url(images/ajax-loader.gif) center no-repeat;
+    height: 16px;
 }
 
 .rte-autocomplete > li > a {
@@ -56,19 +64,24 @@
     text-decoration: none;
 }
 
-.rte-autocomplete >li > a:hover, .rte-autocomplete > li > a:focus, .rte-autocomplete:hover > a, .rte-autocomplete:focus > a {
-    color: #fff;
+.rte-autocomplete > li > a:hover,
+.rte-autocomplete > li > a:focus,
+.rte-autocomplete:hover > a,
+.rte-autocomplete:focus > a {
+    color: white;
     text-decoration: none;
     background-color: #0081c2;
-    background-image: linear-gradient(to bottom,#08c,#0077b3);
+    background-image: linear-gradient(to bottom, #08c, #0077b3);
     background-repeat: repeat-x;
 }
 
-.rte-autocomplete >.active > a, .rte-autocomplete > .active > a:hover, .rte-autocomplete > .active > a:focus {
+.rte-autocomplete > .active > a,
+.rte-autocomplete > .active > a:hover,
+.rte-autocomplete > .active > a:focus {
     color: #fff;
     text-decoration: none;
     background-color: #0081c2;
-    background-image: linear-gradient(to bottom,#08c,#0077b3);
+    background-image: linear-gradient(to bottom, #08c, #0077b3);
     background-repeat: repeat-x;
     outline: 0;
 }

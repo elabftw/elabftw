@@ -1,6 +1,4 @@
 /**
- * css/main.css
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -8,18 +6,18 @@
  * @package elabftw
  */
 
-/*
-343434 => very dark gray (main nav bg)
-797979 => gray main text color
-f2f2f2 => very light gray
-dcdddc = > borders gray
-29aeb9 => elab blue
-1F8591 => dark blue
-C4F9FF => light blue
-dd1e00 => dark red
-ffc1b7 => light red
-54aa08 => green
-*/
+/**
+ * 343434 => very dark gray (main nav bg)
+ * 797979 => gray main text color
+ * f2f2f2 => very light gray
+ * dcdddc = > borders gray
+ * 29aeb9 => elab blue
+ * 1F8591 => dark blue
+ * C4F9FF => light blue
+ * dd1e00 => dark red
+ * ffc1b7 => light red
+ * 54aa08 => green
+ */
 
 /* Font is Lato */
 @font-face {
@@ -239,8 +237,10 @@ label {
     text-transform: uppercase;
     color: #888;
     text-decoration: none;
+
     /* fix navbar height getting smaller on profile/ucp/admin/… pages */
     min-height: 43px;
+
     /* we want the border bottom to be same width as the text */
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -268,7 +268,6 @@ label {
     height: 2em;
     color: white;
 }
-/* END NAV */
 
 /*  MENU is below main nav */
 menu {
@@ -322,11 +321,11 @@ menu ul li.selected {
     border-color: #e6614c;
 }
 
-.alert-danger a.close{
+.alert-danger a.close {
     color: #e6614c;
 }
 
-.alert-sucess a.close{
+.alert-sucess a.close {
     color: #36b1c0;
 }
 
@@ -356,10 +355,10 @@ a.elab-tooltip span {
     white-space: nowrap;
 }
 
-a.elab-tooltip:hover span{
+a.elab-tooltip:hover span {
     display: inline;
     position: absolute;
-    color: #ffffff;
+    color: white;
     background: #343434;
     top: 0;
     left: 50%;
@@ -368,7 +367,7 @@ a.elab-tooltip:hover span{
     white-space: nowrap;
 }
 
-a.elab-tooltip span:after {
+a.elab-tooltip span::after {
     bottom: 100%;
     left: 50%;
     content: " ";
@@ -382,7 +381,7 @@ a.elab-tooltip span:after {
 }
 
 a.elab-tooltip-top {
-    outline:none;
+    outline: none;
     position: relative;
 }
 
@@ -406,10 +405,10 @@ a.elab-tooltip-top span {
     white-space: nowrap;
 }
 
-a.elab-tooltip-top:hover span{
+a.elab-tooltip-top:hover span {
     display: inline;
     position: absolute;
-    color: #ffffff;
+    color: white;
     background: #343434;
     bottom: 0;
     left: 50%;
@@ -418,7 +417,7 @@ a.elab-tooltip-top:hover span{
     white-space: nowrap;
 }
 
-a.elab-tooltip-top span:after {
+a.elab-tooltip-top span::after {
     top: 100%;
     left: 50%;
     border: solid transparent;
@@ -434,7 +433,7 @@ a.elab-tooltip-top span:after {
 
 /* fix tooltip larger than parent div */
 section.item {
-    overflow:visible;
+    overflow: visible;
 }
 
 /* BADGE */
@@ -459,7 +458,7 @@ section.item {
     border-radius: 25px;
     padding: 10px 20px;
     text-align: center;
-    color: #ffffff;
+    color: white;
     font-size: 11px;
     text-transform: uppercase;
     background-color: #29aeb9;
@@ -492,6 +491,7 @@ section.item {
 .button-neutral {
     background-color: #989898;
 }
+
 .button-neutral:hover {
     background-color: #727272;
 }
@@ -506,12 +506,15 @@ section.item {
     display: block;
     margin: 5px 0 0;
 }
+
 .clean-form {
     margin: 0 0 15px;
 }
+
 .col-3-form {
     width: 30%;
 }
+
 .col-textarea-form {
     width: 60%;
 }
@@ -521,24 +524,27 @@ section.item {
     padding-top: 30px;
     margin: 30px 0 20px 0;
 }
+
 .login-area {
     width: 33%;
     margin: 0 auto;
     text-align: left;
 }
+
 .login-area-input {
     width: 100%;
     margin: 0 0 15px;
 }
+
 .login-area label {
     margin: 0;
 }
 
-/* beta ribbon*/
+/* beta ribbon */
 .beta {
     position: relative;
     top: -12px;
-    left: -33PX;
+    left: -33px;
     display: inline-block;
     transform: rotate(35deg);
     line-height: 80%;
@@ -554,6 +560,7 @@ section.item {
 }
 
 /* REGISTER */
+
 /* the team name can be long and destroy the view */
 #regform select {
     max-width: 240px;
@@ -567,11 +574,11 @@ section.item {
 /* body in view mode is black for more lisibility
 github issue #52 */
 #body_view p {
-    color:black;
+    color: black;
 }
 
 /* add some css for details/summary html5 */
-summary:before {
+summary::before {
     content: "► ";
     font-size: 120%;
     color: #29aeb9;
@@ -580,33 +587,35 @@ summary:before {
 /* fix the list in the body */
 div.txt ol li {
     /* !important because there is a list-style-type:none in jquery-ui */
-    list-style-type:decimal !important;
+    list-style-type: decimal !important;
 }
 
 div.txt li {
     /* !important because there is a list-style-type:none in jquery-ui */
-    list-style-type:square !important;
+    list-style-type: square !important;
 }
 
 /* fix for big images uploaded in the text */
 section.item div.txt {
-    overflow:auto;
+    overflow: auto;
 }
 
 /* size of the editable box in edit mode */
 .mceditable {
-    height:500px;
+    height: 500px;
 }
 
 /* prettier tables in mceditable area */
-div.txt table, div.txt table td {
+div.txt table,
+div.txt table td {
     border: 1px solid #797979;
 }
 
 table td {
     padding: 5px 15px;
 }
-table td input{
+
+table td input {
     width: 100%;
 }
 
@@ -621,18 +630,20 @@ table th {
 
 /* color one row every other row */
 tr:nth-child(even) {
-        background-color: #fff;
+    background-color: #fff;
 }
 
 tr:nth-child(odd) {
-        background-color: #f2f2f2;
+    background-color: #f2f2f2;
 }
 
 /* SEARCH.PHP */
 .searchform {
     margin-bottom: 20px;
 }
-.searchform #title, .searchform #body {
+
+.searchform #title,
+.searchform #body {
     width: 100%;
 }
 
@@ -666,24 +677,24 @@ tr:nth-child(odd) {
     background-color: #29aeb9;
 }
 
-.overlay-ko, .overlay-ko p {
+.overlay-ko,
+.overlay-ko p {
     background-color: #ffc1b7;
     color: #000;
 }
-/* END OVERLAY */
 
 /* ITEMS */
 .item {
     min-width: 100%;
-    border:  1px solid #dcdddc;
+    border: 1px solid #dcdddc;
     border-radius: 5px;
     margin: 5px auto;
     padding: 5px 10px 0 5px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .item a p:hover {
-    color:#29aeb9;
+    color: #29aeb9;
 }
 
 .box {
@@ -693,18 +704,20 @@ tr:nth-child(odd) {
     padding: 20px;
     overflow: auto;
 }
+
 .tooltip-box {
     overflow: visible;
 }
 
 .box section {
-    margin-bottom:15px;
+    margin-bottom: 15px;
 }
 
-.box label{
+.box label {
     margin: 0 10px 0 0;
 }
-input[type='checkbox']{
+
+input[type='checkbox'] {
     position: relative;
 }
 
@@ -713,19 +726,12 @@ input[type='checkbox']{
     color: #54aa08;
 }
 
-/* END EXPERIMENT STEPS */
-
-/*
-.col-md-6 input{
-    width: 95%;
-    margin: 0 0 15px;
-}
-*/
-.col-md-6 label{
+.col-md-6 label {
     margin: 0;
 }
+
 /* NEW Template Settings */
-.new-tpl-box input{
+.new-tpl-box input {
     width: 100%;
     margin: 0 0 15px;
 }
@@ -734,67 +740,79 @@ input[type='checkbox']{
     cursor: move;
 }
 
-.config_form input, .config_form select {
-    float:right;
+.config_form input,
+.config_form select {
+    float: right;
 }
 
 .config_form label {
-    float:left;
+    float: left;
 }
 
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
-.select-order, .select-filter-status, .select-filter-cat, .select-sort {
-    float:left;
+.select-order,
+.select-filter-status,
+.select-filter-cat,
+.select-sort {
+    float: left;
     border-right: 0;
     margin: 0;
-    border-top-right-radius:0;
-    border-bottom-right-radius:0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .select-create {
-    float:left;
+    float: left;
     margin-left: 0;
 }
 
 .select-sort {
-    float:left;
+    float: left;
     margin-left: 0;
     border-right: 0;
     margin-right: 0;
-    border-radius:0;
+    border-radius: 0;
 }
 
-.submit-order, .submit-filter {
-    float:left;
+.submit-order,
+.submit-filter {
+    float: left;
     border-right: 0;
-    border-top-left-radius:0;
-    border-bottom-left-radius:0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .submit-reset {
-    float:left;
+    float: left;
 }
 
-/* Bootstrap fixes */
-.btn-elab{
-    color:#fff;
-    background-color:#29aeb9;
-    border-color:#01929e;
+/* elabftw colors for buttons */
+.btn-elab {
+    color: #fff;
+    background-color: #29aeb9;
+    border-color: #01929e;
     margin-right: 10px;
 }
 
-.btn-elab.active, .btn-elab.focus, .btn-elab:active, .btn-elab:focus, .btn-elab:hover{
-    color:#fff;
-    background-color:#01929e;
-    border-color:#017079;
+.btn-elab.active,
+.btn-elab.focus,
+.btn-elab:active,
+.btn-elab:focus,
+.btn-elab:hover {
+    color: #fff;
+    background-color: #01929e;
+    border-color: #017079;
 }
 
-/* fix the white space when columned items don't have the same height */
-/* see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643 */
+/*
+ * fix the white space when columned items don't have the same height
+ * see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643
+ */
 .row.display-flex {
     display: flex;
     flex-wrap: wrap;
 }
+
 .row.display-flex > [class*='col-'] {
     display: flex;
     flex-direction: column;
@@ -802,41 +820,42 @@ input[type='checkbox']{
 
 /* fix for bootstrap's thumbnail class */
 .thumbnail {
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .thumb {
-    min-height:50px;
-    min-width:50px;
+    min-height: 50px;
+    min-width: 50px;
     width: 100px;
     height: 100px;
 }
 
 /* EDITABLE */
 .editable:hover {
-     cursor: pointer;
+    cursor: pointer;
 }
+
 .editable button {
     border: none;
     border-radius: 25px;
     padding: 10px 20px;
     text-align: center;
-    color: #FFFFFF;
+    color: white;
     font-size: 11px;
     text-transform: uppercase;
     margin: 0 5px;
     letter-spacing: 1px;
 }
 
-.editable input{
+.editable input {
     margin: 0 0 15px;
 }
 
 .comment-header {
     background-color: #f7f7f7;
     padding: 5px;
-
 }
+
 #commentsCreateArea {
     border: 1px solid #ccc;
     width: 100%;
@@ -849,9 +868,10 @@ input[type='checkbox']{
 
 /* TITLE */
 .title {
-    font-size:  160%;
+    font-size: 160%;
     margin: 0 20px 0 0;
     padding-left: 20px;
+
     /* add several rules, see https://stackoverflow.com/a/36555643 */
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -864,55 +884,24 @@ input[type='checkbox']{
 }
 
 .title a:hover {
-    color:#29aeb9 !important;
+    color: #29aeb9 !important;
     transition-duration: 500ms;
 }
 
 .title_view {
-    font-size:  160%;
+    font-size: 160%;
     overflow-wrap: break-word;
 }
 
 .date {
     color: #5d5d5d;
-    margin:15px auto;
+    margin: 15px auto;
     padding: 0 5px;
 }
 
-/* TAGS */
-.tags {
-    line-height: 150%;
-    margin-bottom: 10px;
-    width: 90%;
-}
-.tags a {
-    text-decoration: none;
-    color:#29aeb9;
-}
-
-.tag {
-    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
-    line-height: 300%;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    color: #5d5d5d;
-    margin: auto 5px;
-    padding: 0 5px;
-}
-
-.tag:hover {
-    color: #900;
-}
-
-.tags a:hover {
-    color: #343434;
-}
-
-/* END TAGS */
-
-.smallgray{
-    display:block;
-    color:#a2a2a2;
+.smallgray {
+    display: block;
+    color: #a2a2a2;
     font-size: 80%;
 }
 
@@ -924,7 +913,7 @@ input[type='checkbox']{
 
 .txt {
     background-color: white;
-    border: 1px solid #CCC;
+    border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: 10px;
     color: black;
@@ -945,6 +934,41 @@ input[type='checkbox']{
     font-size: 11px;
 }
 
+/* give more space between view action buttons */
+.view-action-buttons a {
+    margin-right: 5px;
+}
+
+/* TAGS */
+.tags {
+    line-height: 150%;
+    margin-bottom: 10px;
+    width: 90%;
+}
+
+.tags a {
+    text-decoration: none;
+    color: #29aeb9;
+}
+
+.tag {
+    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+    line-height: 300%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: #5d5d5d;
+    margin: auto 5px;
+    padding: 0 5px;
+}
+
+.tag:hover {
+    color: #900;
+}
+
+.tags a:hover {
+    color: #343434;
+}
+
 /* FOOTER */
 footer {
     border-top: solid 1px #dcdddc;
@@ -953,13 +977,12 @@ footer {
     padding: 10px 0 0 0;
 }
 
-footer div, footer div a, footer p, footer p a {
+footer div,
+footer div a,
+footer p,
+footer p a {
     color: #797979;
     font-size: 11px;
-}
-
-footer div a:hover {
-    color: #29aeb9;
 }
 
 .footer-left {
@@ -967,9 +990,10 @@ footer div a:hover {
     text-align: left;
     float: left;
 }
+
 .footer-left a {
     border-right: 1px #ccc solid;
-    padding:0 5px;
+    padding: 0 5px;
 }
 
 .footer-right {
@@ -978,12 +1002,16 @@ footer div a:hover {
     margin: 0 0 20px 0;
 }
 
+footer div a:hover {
+    color: #29aeb9;
+}
 
 /* print only the main div */
 @media print {
     nav {
-        visibility:hidden;
+        visibility: hidden;
     }
+
     section.item {
         background-color: white;
         width: 900px;
@@ -995,11 +1023,13 @@ footer div a:hover {
         font-size: 14px;
         line-height: 18px;
     }
+
     h2 {
-        visibility:hidden;
+        visibility: hidden;
     }
+
     footer {
-        visibility:hidden;
+        visibility: hidden;
     }
 }
 
@@ -1017,7 +1047,7 @@ footer div a:hover {
 }
 
 /* TODOLIST */
-#todoList{
+#todoList {
     text-align: center;
     overflow: hidden;
     background: #343434;
@@ -1044,9 +1074,6 @@ footer div a:hover {
     text-align: left;
 }
 
-#todoList ul li:hover a:link {
-    display: inline;
-}
 #todoList ul li a,
 #todoList ul li a:link {
     float: right;
@@ -1055,16 +1082,23 @@ footer div a:hover {
     text-decoration: none;
 }
 
+#todoList ul li:hover a:link {
+    display: inline;
+}
+
 input#todo {
     margin-bottom: 10px;
 }
+
 .button-add-todolist {
     line-height: 150%;
 }
+
 /* fix the padding for sortable list */
 #todoItems-list.ui-sortable {
     padding-left: 0;
 }
+
 /* fix add button too close to first item on small screen */
 #todoItems-list li:first-child {
     margin-top: 5px;
@@ -1081,6 +1115,7 @@ input#todo {
     border: 1px solid #fff;
     border-radius: 5px;
 }
+
 .dropzone:hover {
     border: 1px solid #29aeb9;
     border-radius: 5px;
@@ -1114,17 +1149,12 @@ svg.fa-trash-alt:hover {
 }
 
 .itemsTypesEditor {
-    margin-top:10px;
+    margin-top: 10px;
 }
 
 /* font awesome icons color */
 .svg-inline--fa {
     color: #797979;
-}
-
-/* give more space between view action buttons */
-.view-action-buttons a {
-    margin-right: 5px;
 }
 
 .pseudo-link:hover {

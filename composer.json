@@ -28,7 +28,8 @@
     "require-dev": {
         "roave/security-advisories": "dev-master",
         "codeception/codeception": "2.5.*",
-        "pyrech/composer-changelogs": "1.6.*"
+        "pyrech/composer-changelogs": "1.6.*",
+        "fzaninotto/faker": "^1.8"
     },
     "autoload": {
         "psr-4": {

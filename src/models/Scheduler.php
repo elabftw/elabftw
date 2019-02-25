@@ -166,10 +166,9 @@ class Scheduler
      */
     public function destroy(): void
     {
-        $sql = "DELETE FROM team_events WHERE id = :id AND userid = :userid";
+        $sql = "DELETE FROM team_events WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Database->Users->userData['userid'], PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');

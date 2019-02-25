@@ -331,7 +331,7 @@
                     $("#main_section").css('border', null);
                     // and we add our new border color
                     // first : get what is the color of the new status
-                    const css = '6px solid #' + data.color;
+                    const css = '6px solid #' + json.color;
                     $("#main_section").css('border-left', css);
                 }
             });

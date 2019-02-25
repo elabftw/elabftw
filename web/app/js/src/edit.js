@@ -363,8 +363,23 @@
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {
-            const imgLink = "<img src='app/download.php?f=" + $(this).data('link') + "' />";
-            tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
+            // link to the image
+            const url = "app/download.php?f=" + $(this).data('link');
+            // switch for markdown or tinymce editor
+            const editor = $('#iHazEditor').data('editor');
+            if (editor === 'md') {
+                const cursorPosition = $('#body_area').prop("selectionStart");
+                const content = $('#body_area').val();
+                const before = content.substring(0, cursorPosition);
+                const after = content.substring(cursorPosition);
+                const imgMdLink = "\n![image](" + url + ")\n";
+                $('#body_area').val(before + imgMdLink + after);
+            } else if (editor === 'tiny') {
+                const imgHtmlLink = "<img src='" + url + "' />";
+                tinyMCE.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
+            } else {
+                console.warn('Could not find current editor!');
+            }
         });
 
         // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR

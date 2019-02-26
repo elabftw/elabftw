@@ -210,6 +210,10 @@ class Email
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return;
         }
+        // now let's get the URL so we can have a nice link in the email
+        $Request = Request::createFromGlobals();
+        $url = \rtrim(Tools::getUrl($Request), '/') . '/admin.php';
+
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = (new Swift_Message())
@@ -220,7 +224,7 @@ class Email
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
         // SEND EMAIL
         $this->send($message);
     }
@@ -239,7 +243,7 @@ class Email
 
         // now let's get the URL so we can have a nice link in the email
         $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/login.php';
+        $url = \rtrim(Tools::getUrl($Request), '/') . '/login.php';
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         // Create the message
@@ -252,7 +256,7 @@ class Email
         // Set the To addresses with an associative array
         ->setTo(array($email => 'eLabFTW'))
         // Give it a body
-        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ' . $url . $footer);
+        ->setBody(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $footer);
         // now we try to send the email
         $this->send($message);
     }

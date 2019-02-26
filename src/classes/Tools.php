@@ -368,6 +368,7 @@ class Tools
      */
     public static function getUrlFromRequest(Request $Request): string
     {
-        return $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
+        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
+        return \str_replace('app/controllers', '', $url);
     }
 }

@@ -69,6 +69,15 @@ try {
         $Response->setData($Entity->getMentionList($term, $userFilter));
     }
 
+    // GET BODY
+    if ($Request->query->has('getBody')) {
+        $Entity->canOrExplode('read');
+        $Response->setData(array(
+            'res' => true,
+            'msg' => Tools::md2html($Entity->entityData['body'])
+        ));
+    }
+
     /**
      * POST REQUESTS
      *
@@ -168,15 +177,6 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('File deleted successfully') . $msg
-        ));
-    }
-
-    // GET BODY
-    if ($Request->request->has('getBody')) {
-        $Entity->canOrExplode('read');
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $Entity->entityData['body']
         ));
     }
 

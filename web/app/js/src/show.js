@@ -37,7 +37,7 @@
             const idArr = id.split("_");
             id = idArr[1];
             // get html of body
-            $.post('app/controllers/EntityController.php', {
+            $.get('app/controllers/EntityAjaxController.php', {
                 getBody : true,
                 id : id,
                 type : $(this).data('type')

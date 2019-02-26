@@ -211,6 +211,9 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if item.has_attachment %}
                     <i class='fas fa-paperclip'></i>
                 {% endif %}
+                {% if item.has_comment %}
+                    <i class='fas fa-comments'></i>
+                {% endif %}
 
                 {% if Entity.type == 'items' and item.rating > 0 %}
                     {{ item.rating|stars|raw }}

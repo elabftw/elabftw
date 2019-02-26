@@ -181,6 +181,7 @@ abstract class AbstractEntity
                 status.color, status.name AS category, status.id AS category_id,
                 uploads.up_item_id, uploads.has_attachment,
                 experiments_comments.recent_comment,
+                (experiments_comments.recent_comment IS NOT NULL) AS has_comment,
                 SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 

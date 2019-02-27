@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Database;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
@@ -28,12 +28,12 @@ class DatabaseController extends AbstractEntityController
      * Constructor
      *
      * @param App $app
+     * @param Database $entity
      */
-    public function __construct(App $app, AbstractEntity $entity)
+    public function __construct(App $app, Database $entity)
     {
         parent::__construct($app, $entity);
 
-        $this->page = 'database.php';
         $Category = new ItemsTypes($this->App->Users);
         $this->categoryArr = $Category->readAll();
     }

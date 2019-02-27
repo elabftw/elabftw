@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
@@ -29,12 +29,11 @@ class ExperimentsController extends AbstractEntityController
      * Constructor
      *
      * @param App $app
+     * @param Experiments $entity
      */
-    public function __construct(App $app, AbstractEntity $entity)
+    public function __construct(App $app, Experiments $entity)
     {
         parent::__construct($app, $entity);
-
-        $this->page = 'experiments.php';
 
         $Category = new Status($this->App->Users);
         $this->categoryArr = $Category->readAll();

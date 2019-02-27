@@ -20,6 +20,14 @@ use PDO;
 
 /**
  * Use this to check for latest version or update the database schema
+ *
+ * How to modify the structure:
+ * 1. add a file in src/sql/ named 'schemaXX.sql' where XX is the current schema version + 1
+ * 2. this file should use transactions (see other files for examples)
+ * 3. increment the REQUIRED_SCHEMA number
+ * 4. reload the page, the sql file should be read and modify the structure
+ * 5. reflect the changes in src/sql/structure.sql
+ * 6. reflect the changes in tests/_data/phpunit.sql if needed
  */
 class Update
 {
@@ -32,13 +40,7 @@ class Update
     /** @var Sql $Sql instance of Sql */
     private $Sql;
 
-    /**
-     * /////////////////////////////////////////////////////
-     * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
-     * AND REFLECT THE CHANGE IN tests/_data/phpunit.sql
-     * AND src/sql/structure.sql
-     * /////////////////////////////////////////////////////
-     */
+    /** @var int REQUIRED_SCHEMA the current version of the database structure */
     private const REQUIRED_SCHEMA = 46;
 
     /**
@@ -73,10 +75,12 @@ class Update
     {
         $currentSchema = (int) $this->Config->configArr['schema'];
 
+        // do nothing if we're up to date
         if ($currentSchema === self::REQUIRED_SCHEMA) {
             return;
         }
 
+        // this is the old deprecated way of doing things
         if ($currentSchema < 37) {
             throw new ImproperActionException('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
@@ -101,6 +105,7 @@ class Update
             $this->schema41();
             $this->updateSchema(41);
         }
+        // end old style update
 
         // new style with SQL files instead of functions
         while ($currentSchema < self::REQUIRED_SCHEMA) {

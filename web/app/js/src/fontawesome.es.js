@@ -136,8 +136,8 @@ import { faCalendarAlt, faCalendarCheck, faCopy} from '@fortawesome/free-regular
 library.add(faCalendarAlt, faCalendarCheck, faCopy)
 
 // BRANDS
-import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
-library.add(faTwitter, faGithub)
+import { faGithub, faGitter, faTwitter } from '@fortawesome/free-brands-svg-icons';
+library.add(faGithub, faGitter, faTwitter)
 
 // Kicks off the process of finding <i> tags and replacing with <svg>
 dom.watch()

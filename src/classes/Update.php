@@ -109,7 +109,7 @@ class Update
 
         // new style with SQL files instead of functions
         while ($currentSchema < self::REQUIRED_SCHEMA) {
-            $this->Sql->execFile('schema' . ++$currentSchema . '.sql');
+            $this->Sql->execFile('schema' . (++$currentSchema) . '.sql');
         }
 
         // remove cached twig templates (for non docker users)
@@ -240,7 +240,7 @@ class Update
         $insertSql2 = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
         $insertReq2 = $this->Db->prepare($insertSql2);
 
-        foreach($experimentsTags as $tag) {
+        foreach ($experimentsTags as $tag) {
             // check if the tag doesn't exist already for the team
             $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
             $req = $this->Db->prepare($sql);
@@ -269,7 +269,7 @@ class Update
             }
         }
 
-        foreach($itemsTags as $tag) {
+        foreach ($itemsTags as $tag) {
             // check if the tag doesn't exist already for the team
             $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
             $req = $this->Db->prepare($sql);
@@ -297,7 +297,7 @@ class Update
             }
         }
 
-        foreach($tplTags as $tag) {
+        foreach ($tplTags as $tag) {
             // check if the tag doesn't exist already for the team
             $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
             $req = $this->Db->prepare($sql);

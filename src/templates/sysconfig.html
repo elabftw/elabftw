@@ -376,7 +376,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <input type='text' id='saml-slo-binding' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_slo_binding }}' />
             <label class='block' for='saml-nameidformat'>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</label>
             <input type='text' id='saml-nameidformat' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ App.Config.configArr.saml_nameidformat }}' />
-            <label class='block' for='x509'>x509 Certificate public key</label>
+            <label class='block' for='x509'>x509 Certificate in PEM format</label>
             <textarea id='x509' name='saml_x509' />{{ App.Config.configArr.saml_x509 }}</textarea>
             <label class='block' for='x509'>x509 Certificate private key</label>
             <textarea id='x509' name='saml_privatekey' />{{ App.Config.configArr.saml_privatekey }}</textarea>

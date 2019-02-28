@@ -346,6 +346,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <!-- TAB 7 SAML -->
 <div class='divhandle' id='tab7div'>
+    {{ 'Note: the documentation about SAML is available %shere%s.'|format("<a href='https://doc.elabftw.net/saml.html'>", "</a>")|msg('ok', false) }}
     {{ 'Note: an XML file with the configuration is available %shere%s.'|format("<a href='metadata.php'>", "</a>")|msg('ok', false) }}
     <div class='box'>
         <form method='post' action='app/controllers/SysconfigController.php'>

@@ -32,10 +32,6 @@ abstract class AbstractEntityController implements ControllerInterface
     /** @var array $categoryArr array of category (status or item type) */
     protected $categoryArr = array();
 
-    /** @var string $page the corresponding page */
-    protected $page = '';
-
-
     /**
      * Constructor
      *
@@ -89,7 +85,7 @@ abstract class AbstractEntityController implements ControllerInterface
         // CREATE
         if ($this->App->Request->query->has('create')) {
             $id = $this->Entity->create((int) $this->App->Request->query->get('tpl'));
-            return new RedirectResponse('../../' . $this->page . '?mode=edit&id=' . $id);
+            return new RedirectResponse('?mode=edit&id=' . $id);
         }
 
         // UPDATE RATING

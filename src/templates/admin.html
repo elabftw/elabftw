@@ -326,29 +326,36 @@
         <h3>{{ 'Import a CSV File'|trans }}</h3>
         <hr>
         <p style='text-align:justify'>
-            {{ "Import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file. The third column should be the title."|trans|raw }}
+            {{ "Import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. The third column must be the title. You should make a tiny import of 3 lines to see if everything works before you import a big file."|trans|raw }}
             <span class='font-weight-bold'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
         </p>
 
-        <label class='block' for='item_selector_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
-        <select class='clean-form col-3-form itemSelector' id='item_selector_csv'>
-            <option selected disabled>--------</option>
-            {% for itemsType in itemsTypesArr %}
-                <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
-            {% endfor %}
-        </select>
+        <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+            <label class='block' for='target_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
+            <select class='clean-form col-3-form' id='target_csv' autocomplete='off' name='target'>
+                <option selected disabled>--------</option>
+                {% for itemsType in itemsTypesArr %}
+                    <option value='{{ itemsType.category_id }}' name='category'>{{ itemsType.category }}</option>
+                {% endfor %}
+            </select>
 
-        <div class='importBlock'>
-            <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
-                {{ App.Csrf.getHiddenInput|raw }}
-                <label class='block' for='uploader'>{{ '2. Select a CSV file to import:'|trans }}</label>
-                <input id='uploader' name='file' type='file' accept='.csv' />
-                <input name='type' type='hidden' value='csv' />
-                <div class='submitButtonDiv'>
-                    <button type='submit' class='button'>{{ 'Import CSV'|trans }}</button>
-                </div>
-            </form>
-        </div>
+            <label class='block' for='visibility_csv'>{{ '2. Select a visibility:'|trans }}</label>
+            <select class='clean-form col-3-form' id='visibility_csv' autocomplete='off' name='visibility'>
+                {% for key, value in visibilityArr %}
+                    <option value='{{ key }}'
+                    {{ 'team' == key ? ' selected' }}
+                    >{{ value|trans }}</option>
+                {% endfor %}
+            </select>
+
+            {{ App.Csrf.getHiddenInput|raw }}
+            <label class='block' for='uploader'>{{ '3. Select a CSV file to import:'|trans }}</label>
+            <input id='uploader' name='file' type='file' accept='.csv' />
+            <input name='type' type='hidden' value='csv' />
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button'>{{ 'Import CSV'|trans }}</button>
+            </div>
+        </form>
     </div>
 
     <div class='box'>
@@ -358,30 +365,40 @@
             {{ "Import a .elabftw.zip archive."|trans }}
             <br><span class='font-weight-bold'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
         </p>
+        <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
 
-        <label class='block' for='item_selector_zip'>{{ '1. Select where to import:'|trans }}</label>
-        <select class='clean-form col-3-form itemSelector' id='item_selector_zip'>
-            <option selected disabled>-------</option>
-            <option class='disabled-input' disabled>Import items</option>
-            {% for itemsType in itemsTypesArr %}
-                <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
-            {% endfor %}
-            <option class='disabled-input' disabled>Import experiments</option>
+            <label class='block' for='target_zip'>{{ '1. Select where to import:'|trans }}</label>
+            <select class='clean-form col-3-form' id='target_zip' autocomplete='off' name='target'>
+                <option selected disabled>-------</option>
+                <option class='disabled-input' disabled>Import in database</option>
+                {% for itemsType in itemsTypesArr %}
+                    <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
+                {% endfor %}
+                <option class='disabled-input' disabled>Import in experiments</option>
 
-            {% for user in usersArr %}
-                <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>
-            {% endfor %}
-        </select>
-        <div class='importBlock'>
-            <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
-                <label class='block' for='uploader'>{{ '2. Select a ZIP file to import:'|trans }}</label>
-                <input id='uploader' name='file' type='file' accept='.elabftw.zip' />
-                <input name='type' type='hidden' value='zip' />
-                <div class='submitButtonDiv'>
-                    <button type='submit' class='button'>{{ 'Import ZIP'|trans }}</button>
-                </div>
-            </form>
-        </div>
+                {% for user in allTeamUsersArr %}
+                    <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>
+                {% endfor %}
+            </select>
+
+            <label class='block' for='visibility_zip'>{{ '2. Select a visibility:'|trans }}</label>
+            <select class='clean-form col-3-form' id='visibility_zip' autocomplete='off' name='visibility'>
+                {% for key, value in visibilityArr %}
+                    <option value='{{ key }}'
+                    {{ 'team' == key ? ' selected' }}
+                    >{{ value|trans }}</option>
+                {% endfor %}
+            </select>
+
+            {{ App.Csrf.getHiddenInput|raw }}
+            <label class='block' for='uploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
+            <input id='uploader' name='file' type='file' accept='.elabftw.zip' />
+            <input name='type' type='hidden' value='zip' />
+
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button'>{{ 'Import ZIP'|trans }}</button>
+            </div>
+        </form>
     </div>
 </div>
 

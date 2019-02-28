@@ -48,6 +48,7 @@ try {
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
+    $visibilityArr = $TeamGroups->getVisibilityList();
     $teamsArr = $Teams->readAll();
     $commonTplBody = $Templates->readCommonBody();
     // only the unvalidated ones
@@ -74,6 +75,7 @@ try {
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,
+        'visibilityArr' => $visibilityArr,
         'teamsArr' => $teamsArr,
         'commonTplBody' => $commonTplBody,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,

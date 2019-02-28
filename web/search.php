@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Tags;
@@ -80,8 +81,7 @@ if ($Request->query->has('tags') && !empty($Request->query->get('tags'))) {
 // VISIBILITY
 $vis = '';
 if ($Request->query->has('vis') && !empty($Request->query->get('vis'))) {
-    $Experiments->checkVisibility($Request->query->get('vis'));
-    $vis = $Request->query->get('vis');
+    $vis = Tools::checkVisibility($Request->query->get('vis'));
 }
 
 // FROM

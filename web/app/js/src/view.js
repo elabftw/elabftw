@@ -58,7 +58,7 @@
                 id: $(this).data('id'),
                 type: type
             }).done(function(data) {
-                window.location.replace('experiments.php?mode=edit&id=' + data.msg);
+                window.location.replace('?mode=edit&id=' + data.msg);
             });
         });
 

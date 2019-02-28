@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -21,9 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class AbstractImport
 {
-    /** @var \Symfony\Component\HttpFoundation\ParameterBag $Cookies cookies */
-    protected $Cookies;
-
     /** @var Db $Db SQL Database */
     protected $Db;
 
@@ -36,6 +34,9 @@ abstract class AbstractImport
     /** @var int $target the item type category or userid where we do the import */
     protected $target;
 
+    /** @var string $visibility visibility for the imported items */
+    protected $visibility;
+
     /**
      * Constructor
      *
@@ -47,8 +48,8 @@ abstract class AbstractImport
     {
         $this->Db = Db::getConnection();
         $this->Users = $users;
-        $this->Cookies = $request->cookies;
-        $this->target = $this->getTarget();
+        $this->target = (int) $request->request->get('target');
+        $this->visibility = Tools::checkVisibility($request->request->get('visibility'));
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
@@ -63,20 +64,6 @@ abstract class AbstractImport
      * @return void
      */
     abstract protected function openFile(): void;
-
-    /**
-     * Get where we want to import the file.
-     * It can be a user id for experiments or item type id for items
-     *
-     * @return int The type of item
-     */
-    private function getTarget(): int
-    {
-        if ($this->Cookies->get('importTarget') !== false) {
-            return (int) $this->Cookies->get('importTarget');
-        }
-        throw new ImproperActionException('No cookies found. Import aborted.');
-    }
 
     /**
      * Look at mime type. not a trusted source, but it can prevent dumb errors

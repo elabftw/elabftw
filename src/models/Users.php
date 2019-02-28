@@ -581,10 +581,8 @@ class Users
 
         // DEFAULT VIS
         $new_default_vis = null;
-        $Experiments = new Experiments($this);
         if (isset($params['default_vis'])) {
-            $Experiments->checkVisibility($params['default_vis']);
-            $new_default_vis = $params['default_vis'];
+            $new_default_vis = Tools::checkVisibility($params['default_vis']);
         }
 
         // STREAM ZIP

@@ -107,28 +107,27 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, type)
-            VALUES(:team, :title, :date, :body, :userid, :type)";
+        $sql = "INSERT INTO items(team, title, date, body, userid, category, visibility)
+            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
 
         if ($this->type === 'experiments') {
-            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid)
-                VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
+            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, category, elabid)
+                VALUES(:team, :title, :date, :body, :userid, :visibility, :category, :elabid)";
         }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
+        $req->bindValue(':visibility', $this->visibility);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindParam(':type', $this->target, PDO::PARAM_INT);
+            $req->bindParam(':category', $this->target, PDO::PARAM_INT);
         } else {
-            $req->bindValue(':visibility', 'team');
-            $req->bindValue(':status', $this->getDefaultStatus());
+            $req->bindValue(':category', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, PDO::PARAM_INT);
             $req->bindParam(':elabid', $item['elabid']);
         }
-
 
         if (!$req->execute()) {
             throw new ImproperActionException('Cannot import in database!');

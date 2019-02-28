@@ -404,26 +404,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Check if we have a correct value for visibility
-     *
-     * @param string $visibility
-     * @return void
-     */
-    public function checkVisibility(string $visibility): void
-    {
-        $validArr = array(
-            'public',
-            'organization',
-            'team',
-            'user'
-        );
-
-        if (!\in_array($visibility, $validArr, true) && Tools::checkId((int)$visibility) === false) {
-            throw new IllegalActionException('The visibility parameter is wrong.');
-        }
-    }
-
-    /**
      * Update the visibility for an entity
      *
      * @param string $visibility
@@ -431,7 +411,7 @@ abstract class AbstractEntity
      */
     public function updateVisibility(string $visibility): void
     {
-        $this->checkVisibility($visibility);
+        Tools::checkVisibility($visibility);
         $this->canOrExplode('write');
 
         $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id";

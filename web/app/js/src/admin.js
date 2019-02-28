@@ -258,14 +258,6 @@
             });
         });
 
-
-        // IMPORT
-        $('.importBlock').hide();
-        $('.itemSelector').on('change', function() {
-            document.cookie = 'importTarget=' + this.value;
-            $(this).next('.importBlock').show();
-        });
-
         // validate on enter
         $('#create_teamgroup').keypress(function (e) {
             var keynum;

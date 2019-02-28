@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
@@ -112,6 +113,28 @@ class Tools
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
             <details><summary><figure><figcaption>";
         return strip_tags($input, $whitelist);
+    }
+
+    /**
+     * Check if we have a correct value for visibility
+     *
+     * @param string $visibility
+     * @return string
+     */
+    public static function checkVisibility(string $visibility): string
+    {
+        $validArr = array(
+            'public',
+            'organization',
+            'team',
+            'user'
+        );
+
+        if (!\in_array($visibility, $validArr, true) && Tools::checkId((int) $visibility) === false) {
+            throw new IllegalActionException('The visibility parameter is wrong.');
+        }
+
+        return $visibility;
     }
 
     /**

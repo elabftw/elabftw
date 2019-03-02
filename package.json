@@ -20,10 +20,11 @@
     "jquery-jeditable": "2.0.*",
     "jquery-ui-dist": "1.12.*",
     "jquery.complexify": "0.5.*",
-    "marked": "^0.6.1",
+    "marked": "0.6.*",
     "mathjax": "2.7.5",
+    "moment": "2.24.*",
     "popper.js": "1.14.*",
-    "prismjs": "^1.15.0",
+    "prismjs": "1.15.*",
     "tinymce": "4.9.*",
     "tinymce-mention": "4.0.2",
     "vanderlee-colorpicker": "1.2.*"

@@ -1,4 +1,5 @@
 ![elabftw logo](https://i.imgur.com/hq6SAZf.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Felabftw%2Felabftw.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Felabftw%2Felabftw?ref=badge_shield)
 
 [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)
 
@@ -64,3 +65,7 @@ Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if y
 This project is sponsored by [Institut Curie](https://science.curie.fr/).
 
 Thank you for using **eLabFTW**, I hope it will bring happiness in your lab ;)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Felabftw%2Felabftw.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Felabftw%2Felabftw?ref=badge_large)

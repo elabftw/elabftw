@@ -3332,11 +3332,6 @@ jquery-ui@>=1.7:
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
   integrity sha1-vLQEXI3QU5wTS8FIjN0+dop6nlE=
 
-jquery.complexify@0.5.*:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/jquery.complexify/-/jquery.complexify-0.5.2.tgz#8c8834ca08cee9476f1d975128d49526adcc4ae9"
-  integrity sha1-jIg0ygjO6UdvHZdRKNSVJq3MSuk=
-
 "jquery@2 - 3", jquery@3.3.*, jquery@>=1.5, jquery@>=1.8.3, jquery@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"

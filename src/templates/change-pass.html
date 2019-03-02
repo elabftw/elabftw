@@ -19,8 +19,7 @@
 
             <label class='block' for='cpassword'>{{ 'Type it again'|trans }}</label>
             <input id='cpassword' type='password' pattern='{{ pattern }}' value='' name='cpassword' required />
-            <label class='block' for='complexity'>{{ 'Complexity'|trans }}</label>
-            <input id='complexity' disabled />
+
             <div id="checkPasswordMatchDiv">
                 <p>{{ 'The passwords do not match!'|trans }}</p>
             </div>
@@ -28,12 +27,6 @@
     </form>
 </section>
 
-<div id='complexityDiv'
-    data-weak='{{ 'Weak password'|trans }}'
-    data-average='{{ 'Average password'|trans }}'
-    data-good='{{ 'Good password'|trans }}'
-    data-strong='{{ 'Strong password'|trans }}'
-    data-wtf='{{ 'No way that is your real password!'|trans }}'></div>
 <div id='passwordMatch'
     data-not='{{ 'The passwords do not match!'|trans }}'
     data-save='{{ 'Save new password'|trans }}'></div>

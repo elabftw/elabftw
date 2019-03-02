@@ -19,7 +19,6 @@
     "jquery": "3.3.*",
     "jquery-jeditable": "2.0.*",
     "jquery-ui-dist": "1.12.*",
-    "jquery.complexify": "0.5.*",
     "marked": "0.6.*",
     "mathjax": "2.7.5",
     "moment": "2.24.*",

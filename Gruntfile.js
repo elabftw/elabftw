@@ -52,10 +52,6 @@ module.exports = function(grunt) {
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
           'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
           'web/app/js/login.min.js': 'web/app/js/src/login.js',
-          'web/app/js/register.min.js': [
-              'node_modules/jquery.complexify/jquery.complexify.js',
-              'node_modules/jquery.complexify/jquery.complexify.banlist.js',
-              'web/app/js/src/register.js' ],
           'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/edit.min.js': 'web/app/js/src/edit.js',

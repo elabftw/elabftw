@@ -17,7 +17,7 @@
         {{ App.Csrf.getHiddenInput|raw }}
 
         <div class='row'>
-            <div class='col-md-4'>
+            <div class='col-md-12'>
                 <label class='block' for='team'>{{ 'Team'|trans }}</label>
                 <select name='team' id='team' required>
                     <option selected disabled>{{ '------ Select a team ------'|trans }}</option>
@@ -26,31 +26,38 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class='col-md-4'>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-3'>
+            </div>
+            <div class='col-md-3'>
                 <label class='block' for="email">{{ 'Email'|trans }}</label>
                 <input name="email" type="email" id="email" required />
             </div>
-            <div class='col-md-4'>
+            <div class='col-md-3'>
                 <label class='block' for="password">{{ 'Password'|trans }}</label>
                 <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
+            </div>
+            <div class='col-md-3'>
             </div>
         </div>
 
         <div class='row'>
-            <div class='col-md-4'>
+            <div class='col-md-3'>
+            </div>
+            <div class='col-md-3'>
                 <label class='block' for="firstname">{{ 'Firstname'|trans }}</label>
                 <input name='firstname' type='text' id='firstname' required />
             </div>
 
-            <div class='col-md-4'>
+            <div class='col-md-3'>
                 <label class='block' for="lastname">{{ 'Lastname'|trans }}</label>
                 <input name='lastname' type='text' id='lastname' required />
             </div>
-
-            <div class='col-md-4'>
-                <label class='block' for='complexity'>{{ 'Password complexity'|trans }}</label>
-                <input id="complexity" disabled />
+            <div class='col-md-3'>
             </div>
+
         </div>
 
         <div class='submitButtonDiv'>
@@ -59,13 +66,6 @@
     </form>
 <!-- end register form -->
 </section>
-
-<div id='complexityDiv'
-    data-weak='{{ 'Weak password'|trans }}'
-    data-average='{{ 'Average password'|trans }}'
-    data-good='{{ 'Good password'|trans }}'
-    data-strong='{{ 'Strong password'|trans }}'
-    data-wtf='{{ 'No way that is your real password!'|trans }}'></div>
 
 <script src='app/js/register.min.js?v={{ v }}'></script>
 {% endblock body %}

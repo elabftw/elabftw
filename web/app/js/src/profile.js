@@ -29,12 +29,12 @@
         google.charts.setOnLoadCallback(drawChart);
 
         $(document).on('click', '.keyDestroy', function() {
-            $.post("app/controllers/AjaxController.php", {
+            $.post('app/controllers/AjaxController.php', {
                 destroyApiKey: true,
                 id: $(this).data('id')
             }).done(function(json) {
                 notif(json);
-                $("#api_div").load("profile.php #api_div");
+                $('#api_div').load('profile.php #api_div');
             });
         });
 

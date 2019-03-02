@@ -34,7 +34,7 @@
 
             // get the id to show the toggleBody
             let id = $(this).parent().attr('id');
-            const idArr = id.split("_");
+            const idArr = id.split('_');
             id = idArr[1];
             // get html of body
             $.get('app/controllers/EntityAjaxController.php', {
@@ -51,7 +51,7 @@
                 // display div
                 $('#bodyToggle_' + id).toggle();
                 // ask mathjax to reparse the page
-                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+                MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
             });
         });
 
@@ -69,8 +69,8 @@
         // THE CHECKBOXES
         function getCheckedBoxes() {
             var checkedBoxes = [];
-            $("input[type=checkbox]:checked").each(function() {
-                    checkedBoxes.push($(this).data('id'));
+            $('input[type=checkbox]:checked').each(function() {
+                checkedBoxes.push($(this).data('id'));
             });
             return checkedBoxes;
         }

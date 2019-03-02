@@ -74,18 +74,18 @@
         // MAIL METHOD in a function because is also called in document ready
         function toggleMailMethod(method) {
             switch (method) {
-                case 'sendmail':
-                    $('#smtp_config').hide();
-                    $('#sendmail_config').show();
-                    break;
-                case 'smtp':
-                    $('#smtp_config').show();
-                    $('#sendmail_config').hide();
-                    break;
-                default:
-                    $('#smtp_config').hide();
-                    $('#sendmail_config').hide();
-                    $('#general_mail_config').hide();
+            case 'sendmail':
+                $('#smtp_config').hide();
+                $('#sendmail_config').show();
+                break;
+            case 'smtp':
+                $('#smtp_config').show();
+                $('#sendmail_config').hide();
+                break;
+            default:
+                $('#smtp_config').hide();
+                $('#sendmail_config').hide();
+                $('#general_mail_config').hide();
             }
         }
         $(document).on('change', '#selectMailMethod', function() {
@@ -96,7 +96,7 @@
         $(document).on('click', '#massSend', function() {
             $('#massSend').prop('disabled', true);
             $('#massSend').text('Sending…');
-            $.post("app/controllers/SysconfigAjaxController.php", {
+            $.post('app/controllers/SysconfigAjaxController.php', {
                 massEmail: true,
                 subject: $('#massSubject').val(),
                 body: $('#massBody').val()
@@ -154,8 +154,6 @@
                 }).done(function(json) {
                     notif(json);
                     if (json.res) {
-                        console.log(elem);
-                        console.log(elem.closest('div'));
                         elem.closest('div').hide(600);
                     }
                 });

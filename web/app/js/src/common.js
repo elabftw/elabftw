@@ -1,6 +1,12 @@
 /*
  * Common functions used by eLabFTW
- * https://www.elabftw.net
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Alexander Minges <alexander.minges@gmail.com>
+ * @copyright 2015 Nicolas CARPi, Alexander Minges
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
  */
 
 // add a csrf header to all ajax requests based on the meta tag
@@ -47,13 +53,13 @@ $(document).ready(function() {
         axis : $(this).data('axis'),
         helper : 'clone',
         // we don't want the Create new pill to be sortable
-        cancel: "nonSortable",
+        cancel: 'nonSortable',
         // do ajax request to update db with new order
-        update: function(event, ui) {
+        update: function() {
             // send the orders as an array
-            var ordering = $(this).sortable("toArray");
+            var ordering = $(this).sortable('toArray');
 
-            $.post("app/controllers/SortableAjaxController.php", {
+            $.post('app/controllers/SortableAjaxController.php', {
                 table: $(this).data('table'),
                 ordering: ordering
             }).done(function(json) {
@@ -64,22 +70,22 @@ $(document).ready(function() {
 });
 
 // for editXP/DB, ctrl-shift-D will add the date
-function addDateOnCursor() {
+function addDateOnCursor() { // eslint-disable-line no-unused-vars
     var todayDate = new Date();
     var year = todayDate.getFullYear();
     // we use +1 on the month because january is 0
     var month = todayDate.getMonth() + 1;
     // we want to have two digits on the month
     if (month < 10) {
-        month = "0" + month;
+        month = '0' + month;
     }
     var day = todayDate.getDate();
     // we want to have two digits on the day
     if (day < 10) {
-        day = "0" + day;
+        day = '0' + day;
     }
 
-    tinyMCE.activeEditor.execCommand('mceInsertContent', false, year + "-" + month + "-" + day + " ");
+    tinymce.activeEditor.execCommand('mceInsertContent', false, year + '-' + month + '-' + day + ' ');
 }
 
 // notifications (saved messages and such)
@@ -108,28 +114,24 @@ function notif(json) {
 /* for menus on team, admin, sysconfig and ucp */
 
 /* parse the $_GET from the url */
-function getGetParameters() {
+function getGetParameters() { // eslint-disable-line no-unused-vars
     var prmstr = window.location.search.substr(1);
-    return prmstr !== null && prmstr !== "" ? transformToAssocArray(prmstr) : {};
+    return prmstr !== null && prmstr !== '' ? transformToAssocArray(prmstr) : {};
 }
 
 /* put the $_GET in array */
 function transformToAssocArray( prmstr ) {
     var params = {};
-    var prmarr = prmstr.split("&");
-    for ( var i = 0; i < prmarr.length; i++) {
-        var tmparr = prmarr[i].split("=");
-                params[tmparr[0]] = tmparr[1];
-            }
+    var prmarr = prmstr.split('&');
+    for (var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split('=');
+        params[tmparr[0]] = tmparr[1];
+    }
     return params;
-}
-/* to check if the param is good */
-function isInt(n) {
-    return n % 1 === 0;
 }
 
 // called when you click the save button of tinymce
-function quickSave(type, id) {
+function quickSave(type, id) { // eslint-disable-line no-unused-vars
     $.post('app/controllers/EntityAjaxController.php', {
         quickSave: true,
         type : type,
@@ -156,7 +158,7 @@ function quickSave(type, id) {
 
 // EDIT todoitem
 function makeEditableTodoitem(element) {
-    $(element).editable(function(value, settings) {
+    $(element).editable(function(value) {
         $.post('app/controllers/TodolistController.php', {
             update: true,
             body: value,
@@ -164,11 +166,11 @@ function makeEditableTodoitem(element) {
         });
 
         return(value);
-        }, {
-     tooltip : 'Click to edit',
-     indicator : 'Saving...',
-     onblur: 'submit',
-     style : 'display:inline'
+    }, {
+        tooltip : 'Click to edit',
+        indicator : 'Saving...',
+        onblur: 'submit',
+        style : 'display:inline'
     });
 }
 
@@ -186,11 +188,11 @@ function makeEditableComment(element) {
         indicator : $(element).data('indicator'),
         submit : $(element).data('submit'),
         cancel : $(element).data('cancel'),
-        style : 'display:inline',
+        style : 'display:inline',
         submitcssclass : 'button mt-2',
         cancelcssclass : 'button button-delete mt-2',
         callback : function(data) {
-            json = JSON.parse(data);
+            let json = JSON.parse(data);
             notif(json);
             // show result in comment box
             if (json.res) {
@@ -205,7 +207,7 @@ function makeEditableComment(element) {
 
 // EDIT COMMENT ON UPLOAD
 function makeEditableFileComment() {
-    $('.editable').editable(function(value, settings) {
+    $('.editable').editable(function(value) {
         $.post('app/controllers/EntityAjaxController.php', {
             updateFileComment : true,
             type: $(this).data('type'),
@@ -217,7 +219,7 @@ function makeEditableFileComment() {
         });
 
         return(value);
-        }, {
+    }, {
         tooltip : 'File comment',
         placeholder: 'File comment',
         indicator : 'Saving...',
@@ -232,12 +234,12 @@ function makeEditableFileComment() {
         cancel : 'Cancel',
         submitcssclass : 'button',
         cancelcssclass : 'button button-delete',
-        style : 'display:inline'
+        style : 'display:inline'
     });
 }
 
 // insert a get param in the url and reload the page
-function insertParamAndReload(key, value) {
+function insertParamAndReload(key, value) { // eslint-disable-line no-unused-vars
     key = escape(key); value = escape(value);
 
     var kvp = document.location.search.substr(1).split('&');

@@ -12,12 +12,14 @@
 
     $(document).ready(function(){
         // DATEPICKER
-        $( ".datepicker" ).datepicker({dateFormat: 'yymmdd'});
+        $('.datepicker').datepicker({
+            dateFormat: 'yymmdd'
+        });
 
         // scroll to anchor if there is a search
         var getParams = getGetParameters();
         if (getParams.type) {
-            window.location.hash = "#anchor";
+            window.location.hash = '#anchor';
         }
     });
 }());

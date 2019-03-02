@@ -49,10 +49,8 @@
         let type = $('#info').data('type');
         let id = $('#info').data('id');
         let confirmText = $('#info').data('confirm');
-        let controller = 'experiments.php';
         let location = 'experiments.php';
         if (type != 'experiments') {
-            controller = 'database.php';
             location = 'database.php';
         }
 
@@ -132,12 +130,11 @@
                             createLink: true,
                             id: id,
                             linkId: link
-                        })
+                        }).done(function () {
                         // reload the link list
-                        .done(function () {
-                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
+                            $('#links_div').load('experiments.php?mode=edit&id=' + id + ' #links_div');
                             // clear input field
-                            $("#linkinput").val("");
+                            $('#linkinput').val('');
                         });
                     } // end if input is bad
                 } // end if input < 0
@@ -152,7 +149,7 @@
                     }).done(function(json) {
                         notif(json);
                         if (json.res) {
-                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
+                            $('#links_div').load('experiments.php?mode=edit&id=' + id + ' #links_div');
                         }
                     });
                 }
@@ -187,14 +184,13 @@
                         createStep: true,
                         id: id,
                         body: body
-                    })
+                    }).done(function() {
                     // reload the step list
-                    .done(function() {
-                        $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
-                        relativeMoment();
-                    });
+                        $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
+                            relativeMoment();
+                        });
                         // clear input field
-                        $("#stepinput").val("");
+                        $('#stepinput').val('');
                     });
                 } // end if input < 0
             }
@@ -204,14 +200,13 @@
                     finishStep: true,
                     id: id,
                     stepId: stepId
-                })
+                }).done(function() {
                 // reload the step list
-                .done(function() {
-                    $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                    $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
                         relativeMoment();
                     });
                     // clear input field
-                    $("#stepinput").val("");
+                    $('#stepinput').val('');
                 });
             }
 
@@ -224,7 +219,7 @@
                     }).done(function(json) {
                         notif(json);
                         if (json.res) {
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                            $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
                                 relativeMoment();
                             });
                         }
@@ -287,7 +282,7 @@
                     response(cache[term]);
                     return;
                 }
-                $.getJSON("app/controllers/ExperimentsAjaxController.php", request, function(data, status, xhr) {
+                $.getJSON('app/controllers/ExperimentsAjaxController.php', request, function(data) {
                     cache[term] = data;
                     response(data);
                 });
@@ -305,7 +300,7 @@
         // VISIBILITY SELECT
         $(document).on('change', '#visibility_select', function() {
             const visibility = $(this).val();
-            $.post("app/controllers/EntityAjaxController.php", {
+            $.post('app/controllers/EntityAjaxController.php', {
                 updateVisibility: true,
                 id: id,
                 type: type,
@@ -318,7 +313,7 @@
         // STATUS SELECT
         $(document).on('change', '#category_select', function() {
             const categoryId = $(this).val();
-            $.post("app/controllers/EntityAjaxController.php", {
+            $.post('app/controllers/EntityAjaxController.php', {
                 updateCategory: true,
                 id: id,
                 type: type,
@@ -328,11 +323,11 @@
                 if (json.res) {
                     // change the color of the item border
                     // we first remove any status class
-                    $("#main_section").css('border', null);
+                    $('#main_section').css('border', null);
                     // and we add our new border color
                     // first : get what is the color of the new status
                     const css = '6px solid #' + json.color;
-                    $("#main_section").css('border-left', css);
+                    $('#main_section').css('border-left', css);
                 }
             });
         });
@@ -364,21 +359,21 @@
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {
             // link to the image
-            const url = "app/download.php?f=" + $(this).data('link');
+            const url = 'app/download.php?f=' + $(this).data('link');
             // switch for markdown or tinymce editor
             const editor = $('#iHazEditor').data('editor');
             if (editor === 'md') {
-                const cursorPosition = $('#body_area').prop("selectionStart");
+                const cursorPosition = $('#body_area').prop('selectionStart');
                 const content = $('#body_area').val();
                 const before = content.substring(0, cursorPosition);
                 const after = content.substring(cursorPosition);
-                const imgMdLink = "\n![image](" + url + ")\n";
+                const imgMdLink = '\n![image](' + url + ')\n';
                 $('#body_area').val(before + imgMdLink + after);
             } else if (editor === 'tiny') {
-                const imgHtmlLink = "<img src='" + url + "' />";
-                tinyMCE.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
+                const imgHtmlLink = '<img src="' + url + '" />';
+                tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
             } else {
-                console.warn('Could not find current editor!');
+                alert('Error: could not find current editor!');
             }
         });
 
@@ -427,7 +422,7 @@
             toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
             removed_menuitems: 'newdocument',
             image_caption: true,
-            content_style: ".mce-content-body {font-size:10pt;}",
+            content_style: '.mce-content-body {font-size:10pt;}',
             codesample_languages: [
                 {text: 'Bash', value: 'bash'},
                 {text: 'C', value: 'c'},
@@ -446,7 +441,7 @@
                 {text: 'Python', value: 'python'},
                 {text: 'R', value: 'r'},
                 {text: 'Ruby', value: 'ruby'}
-                ],
+            ],
             // save button :
             save_onsavecallback: function() {
                 quickSave(type, id);
@@ -454,10 +449,10 @@
             // keyboard shortcut to insert today's date at cursor in editor
             setup: function(editor) {
                 editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
-                editor.on('keydown', function(event) {
+                editor.on('keydown', function() {
                     clearTimeout(typingTimer);
                 });
-                editor.on('keyup', function(event) {
+                editor.on('keyup', function() {
                     clearTimeout(typingTimer);
                     typingTimer = setTimeout(doneTyping, doneTypingInterval);
                 });
@@ -467,15 +462,15 @@
                 delimiter: ['#', '$'],
                 // get the source from json with get request
                 source: function (query, process, delimiter) {
-                    let url = "app/controllers/EntityAjaxController.php?mention=1&term=" + query;
+                    let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
                     if (delimiter === '#') {
-                        $.getJSON(url, function(data, status, xhr) {
+                        $.getJSON(url, function(data) {
                             process(data);
                         });
                     }
                     if (delimiter === '$') {
-                        url += "&userFilter=1";
-                        $.getJSON(url, function(data, status, xhr) {
+                        url += '&userFilter=1';
+                        $.getJSON(url, function(data) {
                             process(data);
                         });
                     }
@@ -491,15 +486,14 @@
                         'float': 'left',
                         'margin': '0 10px 0 10px'
                     }
-                 },
-                 {
-                     title: 'Image Right',
-                     selector: 'img',
-                     styles: {
-                         'float': 'right',
-                         'margin': '0 0 10px 10px'
-                     }
-                 }
+                }, {
+                    title: 'Image Right',
+                    selector: 'img',
+                    styles: {
+                        'float': 'right',
+                        'margin': '0 0 10px 10px'
+                    }
+                }
             ]
         });
     });

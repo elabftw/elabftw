@@ -13,12 +13,12 @@
         var Templates = {
             controller: 'app/controllers/EntityAjaxController.php',
             saveToFile: function(id, name) {
-            // we have the name of the template used for filename
-            // and we have the id of the editor to get the content from
-            // we don't use activeEditor because it requires a click inside the editing area
-            var content = tinyMCE.get(id).getContent();
-            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-            saveAs(blob, name + ".elabftw.tpl");
+                // we have the name of the template used for filename
+                // and we have the id of the editor to get the content from
+                // we don't use activeEditor because it requires a click inside the editing area
+                var content = tinymce.get(id).getContent();
+                var blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+                saveAs(blob, name + '.elabftw.tpl');
             },
             destroy: function(id) {
                 if (confirm('Delete this ?')) {
@@ -48,8 +48,8 @@
         });
 
         // input to upload an elabftw.tpl file
-        $('#import_tpl').hide().on('change', function(e) {
-            var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "").replace("C:\\fakepath\\", "");
+        $('#import_tpl').hide().on('change', function() {
+            var title = document.getElementById('import_tpl').value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
             if (!window.FileReader) {
                 alert('Please use a modern web browser. Import aborted.');
                 return false;
@@ -58,7 +58,7 @@
             reader.onload = function(e) {
                 // switch for markdown mode
                 if ($('#new_tpl_txt').hasClass('mceditable')) {
-                    tinyMCE.get('new_tpl_txt').setContent(e.target.result);
+                    tinymce.get('new_tpl_txt').setContent(e.target.result);
                 } else {
                     $('#new_tpl_txt').text(e.target.result);
                 }
@@ -71,12 +71,12 @@
 
         // TinyMCE
         tinymce.init({
-            mode : "specific_textareas",
-            editor_selector : "mceditable",
-            content_css : "app/css/tinymce.css",
-            plugins : "table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link",
-            toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
-            removed_menuitems : "newdocument",
+            mode : 'specific_textareas',
+            editor_selector : 'mceditable',
+            content_css : 'app/css/tinymce.css',
+            plugins : 'table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link',
+            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link',
+            removed_menuitems : 'newdocument',
             language : $('#language').data('lang')
         });
     });

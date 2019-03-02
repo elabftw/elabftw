@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 $(document).ready(function() {
     // SCHEDULER
     $('#scheduler').fullCalendar({
@@ -42,9 +43,9 @@ $(document).ready(function() {
         // remove possibility to book whole day, might add it later
         allDaySlot: false,
         // day start at 6 am
-        minTime: "06:00:00",
-        eventBackgroundColor: "rgb(41,174,185)",
-        dayClick: function(start) {
+        minTime: '06:00:00',
+        eventBackgroundColor: 'rgb(41,174,185)',
+        dayClick: function(start, end) {
             schedulerCreate(start.format(), end.format());
         },
         // selection

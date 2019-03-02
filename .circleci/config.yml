@@ -62,5 +62,6 @@ jobs:
     - run: sudo mysql -uroot phpunit < src/sql/structure.sql
     - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
     # Tests
+    - run: yarn run lint
     - run: yarn run unit
     - run: yarn run vulns

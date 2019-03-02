@@ -12,7 +12,7 @@
  */
 
 // CORE
-import { library, dom } from '@fortawesome/fontawesome-svg-core'
+import { library, dom } from '@fortawesome/fontawesome-svg-core';
 
 // SOLID
 import {
@@ -71,7 +71,7 @@ import {
     faUpload,
     faUser,
     faUsers,
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 
 library.add(
     faBold,
@@ -129,15 +129,15 @@ library.add(
     faUpload,
     faUser,
     faUsers
-)
+);
 
 // REGULAR
 import { faCalendarAlt, faCalendarCheck, faCopy} from '@fortawesome/free-regular-svg-icons';
-library.add(faCalendarAlt, faCalendarCheck, faCopy)
+library.add(faCalendarAlt, faCalendarCheck, faCopy);
 
 // BRANDS
 import { faGithub, faGitter, faTwitter } from '@fortawesome/free-brands-svg-icons';
-library.add(faGithub, faGitter, faTwitter)
+library.add(faGithub, faGitter, faTwitter);
 
 // Kicks off the process of finding <i> tags and replacing with <svg>
-dom.watch()
+dom.watch();

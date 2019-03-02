@@ -12,7 +12,7 @@
 
     $(document).ready(function() {
         // PASSWORD COMPLEXITY
-        $("#password").complexify({}, function (valid, complexity){
+        $('#password').complexify({}, function (valid, complexity){
             if (complexity < 20) {
                 $('#complexity').css({'background-color':'red'});
                 $('#complexity').css({'color':'white'});

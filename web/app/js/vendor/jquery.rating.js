@@ -352,4 +352,4 @@
     $(function(){
         $('input[type=radio].star').rating();
     });
-})(jQuery);
+})($);

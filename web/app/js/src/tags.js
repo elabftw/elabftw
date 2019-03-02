@@ -139,7 +139,7 @@
                     response(cache[term]);
                     return;
                 }
-                $.getJSON("app/controllers/TagsController.php", request, function(data, status, xhr) {
+                $.getJSON('app/controllers/TagsController.php', request, function(data) {
                     cache[term] = data;
                     response(data);
                 });

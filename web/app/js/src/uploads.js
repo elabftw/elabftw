@@ -49,7 +49,7 @@
                 }).done(function(json) {
                     notif(json);
                     if (json.res) {
-                        $("#filesdiv").load("?mode=edit&id=" + itemid + " #filesdiv");
+                        $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv');
                     }
                 });
             }

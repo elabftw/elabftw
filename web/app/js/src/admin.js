@@ -19,7 +19,7 @@
             toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
             removed_menuitems: 'newdocument',
             image_caption: true,
-            content_style: ".mce-content-body {font-size:10pt;}",
+            content_style: '.mce-content-body {font-size:10pt;}',
             language : $('#info').data('lang')
         });
     }
@@ -72,7 +72,7 @@
                         teamGroupDestroy: true,
                         teamGroupGroup: id
                     }).done(function() {
-                        $("#team_groups_div").load("admin.php #team_groups_div");
+                        $('#team_groups_div').load('admin.php #team_groups_div');
                     });
                 }
                 return false;
@@ -177,7 +177,7 @@
             create: function() {
                 var name = $('#itemsTypesName').val();
                 var color = $('#itemsTypesColor').val();
-                var checkbox = $('#itemsTypesBookable').is(":checked");
+                var checkbox = $('#itemsTypesBookable').is(':checked');
                 var bookable = 0;
                 if (checkbox) {
                     bookable = 1;
@@ -204,7 +204,7 @@
             update: function(id) {
                 var name = $('#itemsTypesName_' + id).val();
                 var color = $('#itemsTypesColor_' + id).val();
-                var checkbox = $('#itemsTypesBookable_' + id).is(":checked");
+                var checkbox = $('#itemsTypesBookable_' + id).is(':checked');
                 var bookable = 0;
                 if (checkbox) {
                     bookable = 1;
@@ -259,13 +259,13 @@
         });
 
         // validate on enter
-        $('#create_teamgroup').keypress(function (e) {
-            var keynum;
+        $('#teamGroupCreate').keypress(function (e) {
+            let keynum;
             if (e.which) {
                 keynum = e.which;
             }
             if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-                teamGroupCreate();
+                TeamGroups.create();
             }
         });
         // edit the team group name
@@ -293,7 +293,7 @@
         $('#itemsTypesColor').val(colorInput);
         $('#statusColor').val(colorInput);
 
-        $('.tag-editable').editable(function(value, settings) {
+        $('.tag-editable').editable(function(value) {
             $.post('app/controllers/TagsController.php', {
                 update: true,
                 newtag: value,
@@ -301,11 +301,11 @@
             });
 
             return(value);
-            }, {
-         tooltip : 'Click to edit',
-         indicator : 'Saving...',
-         onblur: 'submit',
-         style : 'display:inline'
+        }, {
+            tooltip : 'Click to edit',
+            indicator : 'Saving...',
+            onblur: 'submit',
+            style : 'display:inline'
         });
     });
 }());

@@ -23,7 +23,7 @@
 
         // TOGGLE LOCK
         $(document).on('click', '#lock', function() {
-            $.post("app/controllers/EntityAjaxController.php", {
+            $.post('app/controllers/EntityAjaxController.php', {
                 lock: true,
                 type: type,
                 id: id
@@ -78,7 +78,7 @@
                 }).done(function(json) {
                     notif(json);
                     if (json.res) {
-                        $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
+                        $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
                             makeEditableComment($('#comment_' + json.id));
                             relativeMoment();
                         });
@@ -90,17 +90,17 @@
             destroy: function(comment) {
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
-                    destroy: true,
-                    type: $('#info').data('type'),
-                    id: comment
-                }).done(function(json) {
-                    notif(json);
-                    if (json.res) {
-                        $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
-                            relativeMoment();
-                        });
-                    }
-                });
+                        destroy: true,
+                        type: $('#info').data('type'),
+                        id: comment
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
+                            $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
+                                relativeMoment();
+                            });
+                        }
+                    });
                 } else {
                     return false;
                 }
@@ -140,7 +140,7 @@
                         }).done(function(json) {
                             notif(json);
                             if (json.res) {
-                                window.location.replace("experiments.php?mode=view&id=" + id);
+                                window.location.replace('experiments.php?mode=view&id=' + id);
                             }
                         });
                     },

@@ -58,9 +58,7 @@ class Sql
             // If it has a semicolon at the end, it's the end of the query
             if (trim($line)[\mb_strlen(trim($line)) - 1] === ';') {
                 // Perform the query
-                if ($this->Db->q($queryline) === false) {
-                    throw new DatabaseErrorException('Error with sql query!');
-                }
+                $this->Db->q($queryline);
                 // Reset temp variable to empty
                 $queryline = '';
             }

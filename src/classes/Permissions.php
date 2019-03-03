@@ -29,7 +29,7 @@ class Permissions
      * Constructor
      *
      * @param Users $users
-     * @param array $itemArr
+     * @param array $item
      */
     public function __construct(Users $users, array $item)
     {

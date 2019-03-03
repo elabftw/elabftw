@@ -337,7 +337,7 @@
         const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
         // user finished typing, save work
-        function doneTyping () {
+        function doneTyping() {
             quickSave(type, id);
         }
 

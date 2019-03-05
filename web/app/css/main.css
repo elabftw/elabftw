@@ -561,11 +561,6 @@ section.item {
 
 /* REGISTER */
 
-/* the team name can be long and destroy the view */
-#regform select {
-    max-width: 240px;
-}
-
 /* body on view mode */
 #body_view {
     background-color: #f2f2f2;

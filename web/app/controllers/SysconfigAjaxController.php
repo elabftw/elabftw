@@ -51,7 +51,7 @@ try {
             $orgid = $Request->request->get('teamsUpdateOrgid');
         }
         $Teams->updateName(
-            $Request->request->get('teamsUpdateId'),
+            (int) $Request->request->get('teamsUpdateId'),
             $Request->request->get('teamsUpdateName'),
             $orgid
         );

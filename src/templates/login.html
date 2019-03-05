@@ -14,14 +14,14 @@
 <section class='text-center'>
     {% if showLocal %}
     <!-- Login form , the id is for an acceptance test -->
-    <form method="post" id='login' action="app/controllers/LoginController.php" autocomplete="off">
+    <form method="post" id='login' class='form-group' action="app/controllers/LoginController.php" autocomplete="off">
         <h2>{{ 'Sign in to your account'|trans }}</h2>
         <br>
         <p class="login-area">
         <label class='block' for="email">{{ 'Email'|trans }}</label>
-        <input class='login-area-input' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required /><br>
+        <input class='login-area-input form-control' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required /><br>
         <label class='block' for="password">{{ 'Password'|trans }}</label>
-            <input class='login-area-input' id='password' name='password' type='password' required /><br>
+            <input class='login-area-input form-control' id='password' name='password' type='password' required /><br>
             <!-- form key -->
             {{ App.Csrf.getHiddenInput|raw }}
         <input type='checkbox' checked name='rememberme' id='rememberme' />
@@ -52,32 +52,48 @@
 
         <h2>{{ 'Login through your institution'|trans }}</h2>
         <br>
-        <form method='post' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <div class='row'>
+            <div class='col-md-4'>
+            </div>
+            <div class='form-group col-md-4'>
+                <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
+                <select name='saml_login' class='form-control' id='idp_login_select'>
+                    {% for idp in idpsArr %}
+                    {% if idp.active %}
+                        <option value='{{ idp.id }}'>{{ idp.name }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <button class='button mt-2' type='submit' name='submit'>Go</button>
+            </div>
+            <div class='col-md-4'>
+            </div>
+        </div>
             {{ App.Csrf.getHiddenInput|raw }}
-            <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
-            <select name='saml_login' id='idp_login_select'>
-                {% for idp in idpsArr %}
-                {% if idp.active %}
-                    <option value='{{ idp.id }}'>{{ idp.name }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-            <button class='button' type='submit' name='submit'>Go</button>
         </form>
     {% endif %}
 
     {% if App.Config.configArr.anon_users %}
         <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
         <br>
-        <form method='post' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
-            {{ App.Csrf.getHiddenInput|raw }}
-            <label for='anon_login_select'>{{ 'Select a team'|trans }}</label>
-            <select name='team_id' id='anon_login_select'>
-                {% for team in teamsArr %}
-                    <option value='{{ team.id }}'>{{ team.name }}</option>
-                {% endfor %}
-            </select>
-            <button class='button' type='submit' name='submit'>Go</button>
+        <form method='post' class='form-group' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <div class='row'>
+            <div class='col-md-4'>
+            </div>
+            <div class='form-group col-md-4'>
+                {{ App.Csrf.getHiddenInput|raw }}
+                <label for='anon_login_select'>{{ 'Select a team'|trans }}</label>
+                <select name='team_id' class='form-control' id='anon_login_select'>
+                    {% for team in teamsArr %}
+                        <option value='{{ team.id }}'>{{ team.name }}</option>
+                    {% endfor %}
+                </select>
+                <button class='button mt-2' type='submit' name='submit'>Go</button>
+            </div>
+            <div class='col-md-4'>
+            </div>
+        </div>
         </form>
     {% endif %}
 </section>

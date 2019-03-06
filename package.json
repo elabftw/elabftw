@@ -24,7 +24,7 @@
     "moment": "2.24.*",
     "popper.js": "1.14.*",
     "prismjs": "1.15.*",
-    "tinymce": "4.9.*",
+    "tinymce": "5.0.*",
     "tinymce-mention": "4.0.2",
     "vanderlee-colorpicker": "1.2.*"
   },

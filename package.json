@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "apidoc": "0.17.*",
-    "eslint": "^5.15.0",
+    "eslint": "^5.15.1",
     "expose-loader": "0.7.*",
     "grunt": "1.0.*",
     "grunt-contrib-cssmin": "3.0.*",

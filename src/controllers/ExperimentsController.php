@@ -149,9 +149,13 @@ class ExperimentsController extends AbstractEntityController
             $searchType = 'filter';
         }
         // TAG FILTER
-        if ($this->App->Request->query->get('tag') != '') {
-            $tag = filter_var($this->App->Request->query->get('tag'), FILTER_SANITIZE_STRING);
-            $this->Entity->tagFilter = " AND tags.tag LIKE '" . $tag . "'";
+        if (!empty($this->App->Request->query->get('tags'))) {
+            $having = "HAVING ";
+            foreach ($this->App->Request->query->get('tags') as $tag) {
+                $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
+                $having .= "tags LIKE '%$tag%' AND ";
+            }
+            $this->Entity->tagFilter = rtrim($having, ' AND');
             $searchType = 'tag';
             $getTags = true;
         }

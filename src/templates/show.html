@@ -225,7 +225,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if tagsArr|length > 0 %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>
                     {% for tag in tagsArr %}
-                    <a href='?mode=show&tag={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                    <a href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                     {% endfor %}
                 {% endif %}
 

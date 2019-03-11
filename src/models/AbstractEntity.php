@@ -252,10 +252,11 @@ abstract class AbstractEntity
             $this->bodyFilter . ' ' .
             $this->bookableFilter . ' ' .
             $this->categoryFilter . ' ' .
-            $this->tagFilter . ' ' .
             $this->queryFilter . ' ' .
             $this->visibilityFilter . ' ' .
-            " GROUP BY id ORDER BY " . $this->order . " " . $this->sort . ", " . $this->type . ".id " . $this->sort . " " . $this->limit . " " . $this->offset;
+            " GROUP BY id " . ' ' .
+            $this->tagFilter . ' ' .
+            "ORDER BY " . $this->order . " " . $this->sort . ", " . $this->type . ".id " . $this->sort . " " . $this->limit . " " . $this->offset;
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

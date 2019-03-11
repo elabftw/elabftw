@@ -178,10 +178,12 @@ if ($Request->query->count() > 0) {
 
     // Tag search
     if (!empty($selectedTagsArr)) {
+        $having = "HAVING ";
         foreach ($selectedTagsArr as $tag) {
             $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
-            $sqlTag .= " AND tags.tag LIKE '%" . $tag . "%' ";
+            $having .= "tags LIKE '%$tag%' AND ";
         }
+        $sqlTag .= rtrim($having, ' AND');
     }
 
     // Status search

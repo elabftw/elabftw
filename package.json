@@ -54,7 +54,7 @@
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
     "phpstan": "phpstan analyse --memory-limit 2G -l 7 src",
     "psalm": "psalm -c=src/tools/psalm.xml",
-    "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/exceptions -d src/interfaces -d src/models -d src/traits -d web/app/controllers -t _srcdoc",
+    "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/traits -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",
     "apitest": "tests/api.sh",
     "unit": "php vendor/bin/codecept run unit",

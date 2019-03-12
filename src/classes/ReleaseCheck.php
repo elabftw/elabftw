@@ -33,17 +33,13 @@ class ReleaseCheck
     /** @var bool $success this is used to check if we managed to get a version or not */
     public $success = false;
 
-    /** where to get info from */
+    /** @var string $URL this file contains the latest version information */
     private const URL = 'https://get.elabftw.net/updates.ini';
 
-    /** if we can't connect in https for some reason, use http */
+    /** @var string URL_HTTP if we can't connect in https for some reason, use http */
     private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
 
-    /**
-     * ////////////////////////////
-     * UPDATE THIS AFTER RELEASING
-     * ///////////////////////////
-     */
+    /** @var string INSTALLED_VERSION the current version of elabftw */
     public const INSTALLED_VERSION = '2.1.0';
 
     /**

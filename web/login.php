@@ -10,6 +10,13 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\BannedUsers;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,7 +39,6 @@ try {
         exit;
     }
 
-    $FormKey = new FormKey($Session);
     $BannedUsers = new BannedUsers($App->Config);
 
     // if we are not in https, die saying we work only in https
@@ -41,12 +47,12 @@ try {
         $url = Tools::getUrl($Request);
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
             $url . "'>$url</a>";
-        throw new Exception($message);
+        throw new ImproperActionException($message);
     }
 
     // disable login if too much failed_attempts
     if ($Session->has('failed_attempt') && $Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
-        // get user infos
+        // get user info
         $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list
         $BannedUsers->create($fingerprint);
@@ -56,7 +62,7 @@ try {
 
     // Check if we are banned after too much failed login attempts
     if (\in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
-        throw new Exception(_('You cannot login now because of too many failed login attempts.'));
+        throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
     }
 
     // don't show the local login form if it's disabled
@@ -75,18 +81,41 @@ try {
     $template = 'login.html';
     $renderArr = array(
         'BannedUsers' => $BannedUsers,
-        'FormKey' => $FormKey,
         'Session' => $Session,
         'idpsArr' => $idpsArr,
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal
     );
+    $Response->setContent($App->render($template, $renderArr));
 
 
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-}
+    $Response->setContent($App->render($template, $renderArr));
 
-$Response->setContent($App->render($template, $renderArr));
-$Response->send();
+} catch (IllegalActionException $e) {
+    // log notice and show message
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error(true));
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    // log error and show message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
+    $Response->setContent($App->render($template, $renderArr));
+
+} finally {
+    $Response->send();
+}

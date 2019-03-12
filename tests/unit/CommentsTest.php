@@ -1,7 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
-use PDO;
+use Elabftw\Exceptions\ImproperActionException;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -11,7 +11,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->Entity = new Experiments($this->Users, 1);
 
         // create mock object for Email because we don't want to actually send emails
-        $this->mockEmail = $this->getMockBuilder(\Elabftw\Elabftw\Email::class)
+        $this->mockEmail = $this->getMockBuilder(\Elabftw\Services\Email::class)
              ->disableOriginalConstructor()
              ->setMethods(array('send'))
              ->getMock();
@@ -36,18 +36,14 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Comments->Update('Updated', 'comment_1'), 1);
-        $this->assertFalse($this->Comments->Update('a', 'comment_1'), 1);
+        $this->Comments->Update('Updated', 1);
+        // too short comment
+        $this->expectException(ImproperActionException::class);
+        $this->Comments->Update('a', 1);
     }
 
     public function testDestroy()
     {
-        $this->assertTrue($this->Comments->destroy(1, 1));
-    }
-
-    public function testDestroyAll()
-    {
-        $this->assertTrue($this->Comments->destroyAll());
-        $this->assertTrue(empty($this->Comments->readAll()));
+        $this->Comments->destroy(1);
     }
 }

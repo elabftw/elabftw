@@ -14,7 +14,7 @@
 
         // CREATE EXPERIMENT
         key($('#shortcuts').data('create'), function() {
-            window.location.href = 'app/controllers/ExperimentsController.php?create=true';
+            window.location.href = 'experiments.php?create=true';
         });
 
         // the reset button
@@ -34,13 +34,13 @@
 
             // get the id to show the toggleBody
             let id = $(this).parent().attr('id');
-            const idArr = id.split("_");
+            const idArr = id.split('_');
             id = idArr[1];
             // get html of body
-            $.post('app/controllers/EntityController.php', {
-                'getBody' : true,
-                'id' : id,
-                'type' : $(this).data('type')
+            $.get('app/controllers/EntityAjaxController.php', {
+                getBody : true,
+                id : id,
+                type : $(this).data('type')
             // and put it in the div and show the div
             }).done(function(data) {
                 $('#bodyToggle_' + id).html(data.msg);
@@ -51,26 +51,26 @@
                 // display div
                 $('#bodyToggle_' + id).toggle();
                 // ask mathjax to reparse the page
-                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+                MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
             });
         });
 
         // PAGINATION
         // previous page
         $(document).on('click', '.previousPage', function() {
-            insertParamAndReload('offset', $('#infos').data('offset') - $('#infos').data('limit'));
+            insertParamAndReload('offset', $('#info').data('offset') - $('#info').data('limit'));
         });
         // next page
         $(document).on('click', '.nextPage', function() {
-            insertParamAndReload('offset', $('#infos').data('offset') + $('#infos').data('limit'));
+            insertParamAndReload('offset', $('#info').data('offset') + $('#info').data('limit'));
         });
         // END PAGINATION
 
         // THE CHECKBOXES
         function getCheckedBoxes() {
             var checkedBoxes = [];
-            $("input[type=checkbox]:checked").each(function() {
-                    checkedBoxes.push($(this).data('id'));
+            $('input[type=checkbox]:checked').each(function() {
+                checkedBoxes.push($(this).data('id'));
             });
             return checkedBoxes;
         }
@@ -132,7 +132,7 @@
             var checked = getCheckedBoxes();
             // loop on it and update the status/item type
             $.each(checked, function(index, value) {
-                ajaxs.push($.post('app/controllers/EntityController.php', {
+                ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
                     updateCategory : true,
                     id : value,
                     categoryId : $('#catChecked').val(),
@@ -154,7 +154,7 @@
             var checked = getCheckedBoxes();
             // loop on it and update the status/item type
             $.each(checked, function(index, value) {
-                ajaxs.push($.post('app/controllers/EntityController.php', {
+                ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
                     updateVisibility : true,
                     id : value,
                     visibility : $('#visChecked').val(),
@@ -167,7 +167,7 @@
             $.when.apply(null, ajaxs).then(function (){
                 window.location.reload();
             });
-            notif('Saved', 'ok');
+            notif({'msg': 'Saved', 'res': true});
         });
 
         // MAKE ZIP/CSV
@@ -184,24 +184,21 @@
 
         // THE DELETE BUTTON FOR CHECKED BOXES
         $('#deleteChecked').on('click', function() {
-            if (!confirm('Delete this?')) {
+            if (!confirm($('#info').data('confirm'))) {
                 return false;
             }
             // get the item id of all checked boxes
             var checked = getCheckedBoxes();
             // loop on it and delete stuff
             $.each(checked, function(index, value) {
-                $.post('app/controllers/EntityController.php', {
+                $.post('app/controllers/EntityAjaxController.php', {
                     destroy: true,
                     id: value,
                     type: $('#type').data('type')
-                }).done(function(data) {
-                    if (data.res) {
-                        // hide the div
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#parent_' + value).hide(200);
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             });

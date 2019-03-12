@@ -1,2 +1,17 @@
-/* custom css for tinymce */
-body, td, pre {color:#000; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:8px;}
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/* Content of this file is loaded by 'content_css' option in tinymce */
+body,
+td,
+pre {
+    color: #000;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 8px;
+}

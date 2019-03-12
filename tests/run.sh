@@ -26,3 +26,5 @@ mysql -uroot -e 'DROP DATABASE IF EXISTS phpunit; CREATE DATABASE phpunit;'
 mysql -uroot phpunit < src/sql/structure.sql
 # run tests
 php vendor/bin/codecept run --skip functionnal
+# test API
+bash tests/api.sh

@@ -1,7 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
-use PDO;
+use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +13,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertTrue($this->TeamGroups->create('Group Name'));
+        $this->TeamGroups->create('Group Name');
     }
     public function testReadAll()
     {
@@ -21,7 +21,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     }
     public function testReadName()
     {
-        $this->assertTrue($this->TeamGroups->create('Group Name'));
+        $this->TeamGroups->create('Group Name');
         $all = $this->TeamGroups->readAll();
         $last = array_pop($all);
         $id = $last['id'];
@@ -30,20 +30,18 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $this->assertEquals('New Name', $this->TeamGroups->update('New Name', 'teamgroup_1'));
-        $this->expectException(\Exception::class);
-        $this->TeamGroups->update('yep', 1);
     }
     public function testUpdateMember()
     {
-        $this->assertTrue($this->TeamGroups->updateMember(1, 1, 'add'));
+        $this->TeamGroups->updateMember(1, 1, 'add');
         $this->assertTrue($this->TeamGroups->isInTeamGroup(1, 1));
-        $this->assertTrue($this->TeamGroups->updateMember(1, 1, 'rm'));
+        $this->TeamGroups->updateMember(1, 1, 'rm');
         $this->assertFalse($this->TeamGroups->isInTeamGroup(1, 1));
-        $this->expectException(\Exception::class);
+        $this->expectException(IllegalActionException::class);
         $this->TeamGroups->updateMember(1, 1, 'yep');
     }
     public function testDestroy()
     {
-        $this->assertTrue($this->TeamGroups->destroy(1));
+        $this->TeamGroups->destroy(1);
     }
 }

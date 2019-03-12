@@ -1,7 +1,5 @@
 <?php
 /**
- * app/controllers/AdminController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -12,8 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Teams;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -22,73 +24,48 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new JsonResponse();
+$Response = new RedirectResponse("../../admin.php?tab=1");
 
 try {
 
     if (!$App->Session->get('is_admin')) {
-        throw new Exception('Non admin user tried to access admin panel.');
+        throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
-    // UPDATE ORDERING
-    if ($Request->request->has('updateOrdering')) {
-        if ($Request->request->get('table') === 'status') {
-            $Entity = new Status($App->Users);
-        } elseif ($Request->request->get('table') === 'items_types') {
-            $Entity = new ItemsTypes($App->Users);
-        }
+    // CSRF
+    $App->Csrf->validate();
 
-        if ($Entity->updateOrdering($Request->request->all())) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
+    $Teams = new Teams($App->Users);
 
     // UPDATE TEAM SETTINGS
     if ($Request->request->has('teamsUpdateFull')) {
-        $Teams = new Teams($App->Users);
-        $Response = new RedirectResponse("../../admin.php?tab=1");
-        if ($Teams->update($Request->request->all())) {
-            $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        } else {
-            $App->Session->getFlashBag()->add('ko', Tools::error());
-        }
+        $Teams->update($Request->request->all());
     }
 
     // CLEAR STAMP PASS
     if ($Request->query->get('clearStamppass')) {
-        $Teams = new Teams($App->Users);
-        if (!$Teams->destroyStamppass()) {
-            throw new Exception('Error clearing the timestamp password');
-        }
-        $App->Session->getFlashBag()->add('ok', _('Configuration updated successfully.'));
-        $Response = new RedirectResponse("../../admin.php?tab=1");
+        $Teams->destroyStamppass();
     }
 
-    // UPDATE COMMON TEMPLATE
-    if ($Request->request->has('commonTplUpdate')) {
-        $Templates = new Templates($App->Users);
-        if ($Templates->updateCommon($Request->request->get('commonTplUpdate'))) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => Tools::error()
-            ));
-        }
-    }
+    // DISPLAY RESULT
+    $App->Session->getFlashBag()->add('ok', _('Saved'));
+
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
+
+} finally {
+    $Response->send();
 }
-$Response->send();

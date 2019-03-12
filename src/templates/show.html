@@ -20,7 +20,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
             <button class='btn dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
             {% if Entity.type == 'experiments' %}
-                <a href='app/controllers/ExperimentsController.php?create=true'><li class='dropdown-item'>
+                <a href='?create=true'><li class='dropdown-item'>
                     {% trans %}
                     Experiment
                     {% plural 1 %}
@@ -31,7 +31,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if templatesArr|length > 0 %}
                 <h6 class="dropdown-header">{{ 'Templates'|trans }}</h6>
                     {% for tpl in templatesArr %}
-                        <a href='app/controllers/ExperimentsController.php?create=true&tpl={{ tpl.id }}'>
+                        <a href='?create=true&tpl={{ tpl.id }}'>
                         <li class='dropdown-item'>
                             {{ tpl.name|raw }}
                         </li></a>
@@ -45,7 +45,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                     </a>
             {% else %}
                 {% for category in categoryArr %}
-                    <a href='app/controllers/DatabaseController.php?create={{ category.category_id }}'>
+                    <a href='?create=true&tpl={{ category.category_id }}'>
                         <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
                     </a>
                 {% endfor %}
@@ -164,7 +164,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
             {# dim the experiment a bit if it's not yours #}
             {% set opacity = '1' %}
             {% set owner = '' %}
-            {% if (Entity.Users.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
+            {% if (Entity.Users.userData.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
                 {% set opacity = '0.7' %}
                 {% set owner = item.fullname %}
             {% endif %}
@@ -198,7 +198,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                         {{ item.fullname|raw }}
                     {% endif %}
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' style='width:15px;vertical-align:-3px;' />
-                {% if not item.locked and (item.userid == App.Users.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+                {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>
                 {% endif %}
                 <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
@@ -211,6 +211,9 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if item.has_attachment %}
                     <i class='fas fa-paperclip'></i>
                 {% endif %}
+                {% if item.has_comment %}
+                    <i class='fas fa-comments'></i>
+                {% endif %}
 
                 {% if Entity.type == 'items' and item.rating > 0 %}
                     {{ item.rating|stars|raw }}
@@ -222,7 +225,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if tagsArr|length > 0 %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>
                     {% for tag in tagsArr %}
-                    <a href='?mode=show&tag={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                    <a href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                     {% endfor %}
                 {% endif %}
 
@@ -249,7 +252,17 @@ li.dropdown-item:hover{ color:#29AEB9;}
 {% endif %}
 
 <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
-<div id='infos' data-limit='{{ Entity.Users.userData.limit_nb }}' data-offset='{{ offset }}'></div>
+<div id='info'
+    data-limit='{{ Entity.Users.userData.limit_nb }}'
+    data-offset='{{ offset }}'
+    data-confirm="{{ 'The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'|trans }}">
+</div>
 <div id='type' data-type='{{ Entity.type }}'></div>
-<script src='app/js/show.min.js?v={{ v }}'></script>
+
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/show.js?v={{ v }}'></script>
+{% else %}
+    <script src='app/js/show.min.js?v={{ v }}'></script>
+{% endif %}
+
 {% endblock body %}

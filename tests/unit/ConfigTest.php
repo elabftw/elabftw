@@ -1,7 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
-
-use PDO;
+namespace Elabftw\Models;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +27,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'ban_time' => 42
         );
 
-        $this->assertTrue($this->Config->update($post));
+        $this->Config->update($post);
         // now try bad path to cert
         /* TODO
         $post = array('stampcert' => 'invalid/path');
@@ -52,13 +50,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyStamppass()
     {
-        $this->assertTrue($this->Config->destroyStamppass());
+        $this->Config->destroyStamppass();
     }
 
-    /* TODO
-    public function testPopulate()
+    public function testRestoreDefaults()
     {
-        $this->assertTrue($this->Config->populate());
+        $this->Config->restoreDefaults();
     }
-     */
 }

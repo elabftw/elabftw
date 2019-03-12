@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\BannedUsers
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,9 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use PDO;
 
 /**
@@ -44,9 +43,9 @@ class BannedUsers
      */
     public function create(string $fingerprint): bool
     {
-        $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
+        $sql = "INSERT INTO banned_users (fingerprint) VALUES (:fingerprint)";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':user_infos', $fingerprint);
+        $req->bindParam(':fingerprint', $fingerprint);
 
         return $req->execute();
     }
@@ -60,11 +59,15 @@ class BannedUsers
     {
         $banTime = date("Y-m-d H:i:s", (int) strtotime('-' . $this->Config->configArr['ban_time'] . ' minutes'));
 
-        $sql = "SELECT user_infos FROM banned_users WHERE time > :ban_time";
+        $sql = "SELECT fingerprint FROM banned_users WHERE time > :ban_time";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':ban_time', $banTime);
         $req->execute();
 
-        return $req->fetchAll(PDO::FETCH_COLUMN);
+        $res = $req->fetchAll(PDO::FETCH_COLUMN);
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 }

@@ -1,28 +1,27 @@
 <?php
-namespace Elabftw\Elabftw;
-
-use PDO;
+namespace Elabftw\Models;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
         $this->Users = new Users(1);
-        $this->Experiments = new Experiments($this->Users, '1');
+        $this->Experiments = new Experiments($this->Users, 1);
     }
 
     public function testCreateReadDestroy()
     {
-        $this->assertTrue($this->Experiments->Links->create('1'));
+        $this->Experiments->Links->create(1);
         $link = $this->Experiments->Links->readAll();
-        $this->assertTrue(is_array($link));
+        $this->assertTrue(\is_array($link));
         $last = array_pop($link);
-        $this->assertTrue($this->Experiments->Links->destroy($last['linkid']));
+        // TODO
+        //$this->Experiments->Links->destroy((int) $last['linkid']);
     }
 
     public function testCreateAndDestroyAll()
     {
-        $this->assertTrue($this->Experiments->Links->create('1'));
-        $this->assertTrue($this->Experiments->Links->destroyAll());
+        $this->Experiments->Links->create(1);
+        $this->Experiments->Links->destroyAll();
     }
 }

@@ -10,36 +10,33 @@
 (function() {
     'use strict';
 
-    // GENERATE STATUS PIE CHART
-    /* commented out because https://github.com/google/google-visualization-issues/issues/1356
-    var json = $('#stats').data('stats');
     function drawChart() {
+        var json = $('#stats').data('stats');
         var data = new google.visualization.DataTable(json);
         var options = {
             title: $('#stats').data('title'),
             backgroundColor: '#fff',
             colors: $('#stats').data('colors')
         };
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.PieChart(document.getElementById('pieChart'));
         chart.draw(data, options);
     }
-    google.load('visualization', '1', {packages:['corechart']});
-    google.setOnLoadCallback(drawChart);
-    */
 
     $(document).ready(function() {
-        // GENERATE API KEY
-        $(document).on('click', '.generateApiKey', function() {
-            $.post('app/controllers/UsersController.php', {
-                generateApiKey: true
-            }).done(function(data) {
-                $("#api_div").load("profile.php #api_div");
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
+
+        // GENERATE STATUS PIE CHART
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        $(document).on('click', '.keyDestroy', function() {
+            $.post('app/controllers/AjaxController.php', {
+                destroyApiKey: true,
+                id: $(this).data('id')
+            }).done(function(json) {
+                notif(json);
+                $('#api_div').load('profile.php #api_div');
             });
         });
+
     });
 }());

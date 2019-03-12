@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Config;
+use Elabftw\Models\Idps;
+
 /**
  * Saml settings
  */
@@ -43,11 +46,10 @@ class Saml
      * If the $id is null, the idp part of the settings will be empty
      * but it's ok because we don't always need it
      *
-     * @param int $id Id of the IDP
      */
-    private function setSettings(int $id): void
+    private function setSettings(): void
     {
-        $idpsArr = $this->Idps->read($id);
+        $idpsArr = $this->Idps->getActive();
 
         $this->settings = array(
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
@@ -158,12 +160,11 @@ class Saml
     /**
      * Get the settings array
      *
-     * @param int|null $id Return the settings array with infos from Idp with id $id
      * @return array
      */
-    public function getSettings(?int $id = null): array
+    public function getSettings(): array
     {
-        $this->setSettings((int) $id);
+        $this->setSettings();
         return $this->settings;
     }
 }

@@ -1,7 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
-use PDO;
+use Elabftw\Exceptions\ImproperActionException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,7 +33,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             'stamplogin' => '',
             'stamppass' => 'something'
         );
-        $this->assertTrue($this->Teams->update($post));
+        $this->Teams->update($post);
 
         // test without stamppass
         $post = array(
@@ -46,7 +46,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             'stamplogin' => '',
             'stamppass' => ''
         );
-        $this->assertTrue($this->Teams->update($post));
+        $this->Teams->update($post);
 
         // trigger Exception with bad file path
         /* TODO
@@ -67,15 +67,16 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateName()
     {
-        $this->assertTrue($this->Teams->updateName(1, 'New name'));
+        $this->Teams->updateName(1, 'New name');
     }
 
     public function testDestroy()
     {
         $id = $this->Teams->create('Destroy me');
-        $this->assertTrue($this->Teams->destroy($id));
+        $this->Teams->destroy($id);
         // try to destroy a team with data
-        $this->assertFalse($this->Teams->destroy(1));
+        $this->expectException(ImproperActionException::class);
+        $this->Teams->destroy(1);
     }
 
     public function testGetAllStats()

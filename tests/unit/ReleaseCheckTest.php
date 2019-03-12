@@ -1,6 +1,8 @@
 <?php
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Config;
+
 class ReleaseCheckTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
@@ -10,7 +12,7 @@ class ReleaseCheckTest extends \PHPUnit\Framework\TestCase
 
     public function testgetUpdatesIni()
     {
-        $this->assertTrue($this->ReleaseCheck->getUpdatesIni());
+        $this->ReleaseCheck->getUpdatesIni();
     }
 
     public function testUpdateIsAvailable()

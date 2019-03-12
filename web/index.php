@@ -1,33 +1,36 @@
 <?php
 /**
- * index.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
 use Exception;
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-try {
-    require_once 'app/init.inc.php';
+require_once 'app/init.inc.php';
 
-    $Response = new RedirectResponse("experiments.php");
+$Response = new RedirectResponse("experiments.php");
+
+try {
 
     if ($Request->query->has('acs')) {
 
         $Saml = new Saml(new Config, new Idps);
 
-        // TODO this is the id of the idp to use to get the settings
-        $settings = $Saml->getSettings(1);
-        $SamlAuth = new OneLogin_Saml2_Auth($settings);
+        $settings = $Saml->getSettings();
+        $SamlAuth = new SamlAuth($settings);
 
         $requestID = null;
         if ($Session->has('AuthNRequestID')) {
@@ -44,7 +47,7 @@ try {
         }
 
         if (!$SamlAuth->isAuthenticated()) {
-            throw new Exception('Not authenticated!');
+            throw new ImproperActionException('Not authenticated!');
         }
 
         $Session->set('samlUserdata', $SamlAuth->getAttributes());
@@ -57,7 +60,7 @@ try {
         }
 
         if ($email === null) {
-            throw new Exception("Could not find email in response from IDP! Aborting.");
+            throw new ImproperActionException("Could not find email in response from IDP! Aborting.");
         }
 
         if (!$App->Users->Auth->loginFromSaml($email)) {
@@ -69,7 +72,7 @@ try {
             $teamAttribute = $Saml->Config->configArr['saml_team'];
             // we didn't receive any team attribute for some reason
             if (empty($teamAttribute)) {
-                throw new Exception('Team attribute is empty!');
+                throw new ImproperActionException('Team attribute is empty!');
             }
             $team = $Session->get('samlUserdata')[$teamAttribute];
             if (is_array($team)) {
@@ -93,15 +96,23 @@ try {
             $App->Users->create($email, $teamId, $firstname, $lastname);
             // ok now the user is created, try logging in again
             if (!$App->Users->Auth->loginFromSaml($email)) {
-                throw new Exception("Not authenticated!");
+                throw new ImproperActionException("Not authenticated!");
             }
         }
 
     }
 
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
+    $Response = new Response();
+    $Response->prepare($Request);
+    $Response->setContent($App->render($template, $renderArr));
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array('Exception' => $e));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));

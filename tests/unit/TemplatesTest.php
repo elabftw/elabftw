@@ -1,7 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
-
-use PDO;
+namespace Elabftw\Models;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,7 +10,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertTrue($this->Templates->create('Test tpl', 'pwet', 1));
+        $this->Templates->create('Test tpl', 'pwet', 1);
     }
 
     public function testRead()
@@ -40,22 +38,18 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     }
     public function testUpdateCommon()
     {
-        $this->assertTrue($this->Templates->updateCommon('Plop'));
+        $this->Templates->updateCommon('Plop');
     }
     public function testUpdateTpl()
     {
-        $this->assertTrue($this->Templates->updateTpl(1, 'my tpl', 'Plop'));
+        $this->Templates->updateTpl(1, 'my tpl', 'Plop');
     }
     public function testDestroy()
     {
-        $this->assertTrue($this->Templates->destroy(1, 1));
-    }
-    public function testUpdateCategory()
-    {
-        $this->assertFalse($this->Templates->updateCategory(1));
+        $this->Templates->destroy();
     }
     public function testToggleLock()
     {
-        $this->assertFalse($this->Templates->toggleLock());
+        $this->Templates->toggleLock();
     }
 }

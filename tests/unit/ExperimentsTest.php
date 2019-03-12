@@ -1,5 +1,8 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\IllegalActionException;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -11,24 +14,24 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Experiments->create();
+        $new = $this->Experiments->create(0);
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->Experiments->toggleLock();
-        $this->assertTrue($this->Experiments->destroy());
+        $this->Experiments->destroy();
         $this->Templates = new Templates($this->Users);
         $this->Templates->create('my template', 'is so cool', '1');
         $new = $this->Experiments->create('1');
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Experiments = new Experiments($this->Users, $new);
-        $this->assertTrue($this->Experiments->destroy());
+        $this->Experiments->destroy();
     }
 
     public function testSetId()
     {
-        $this->expectException(\TypeError::class);
-        $this->Experiments->setId('alpha');
+        $this->expectException(IllegalActionException::class);
+        $this->Experiments->setId(0);
     }
 
     public function testRead()
@@ -37,7 +40,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read();
         $this->assertTrue(is_array($experiment));
-        $this->assertEquals('Untitled', $experiment['title']);
+        $this->assertEquals('Experiment 1', $experiment['title']);
         $this->assertEquals('20160729', $experiment['date']);
     }
 
@@ -50,30 +53,30 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $new = $this->Experiments->create();
+        $new = $this->Experiments->create(0);
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->assertEquals($new, $this->Experiments->id);
-        $this->assertEquals(1, $this->Experiments->Users->userid);
-        $this->assertTrue($this->Experiments->update('Untitled', '20160729', '<p>Body</p>'));
+        $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
+        $this->Experiments->update('Untitled', '20160729', '<p>Body</p>');
     }
 
     public function testUpdateVisibility()
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('write');
-        $this->assertTrue($this->Experiments->updateVisibility('public'));
-        $this->assertTrue($this->Experiments->updateVisibility('organization'));
-        $this->assertTrue($this->Experiments->updateVisibility('team'));
-        $this->assertTrue($this->Experiments->updateVisibility('user'));
-        $this->assertTrue($this->Experiments->updateVisibility(1));
+        $this->Experiments->updateVisibility('public');
+        $this->Experiments->updateVisibility('organization');
+        $this->Experiments->updateVisibility('team');
+        $this->Experiments->updateVisibility('user');
+        $this->Experiments->updateVisibility(1);
     }
 
     public function testUpdateCategory()
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('write');
-        $this->assertTrue($this->Experiments->updateCategory(3));
+        $this->Experiments->updateCategory(3);
     }
 
     public function testDuplicate()

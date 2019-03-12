@@ -1,6 +1,4 @@
 /**
- * edit.js - for the ?mode=edit
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -14,29 +12,28 @@
     // config for dropzone, id is camelCased.
     Dropzone.options.elabftwDropzone = {
         // i18n message to user
-        dictDefaultMessage: $('#entityInfos').data('upmsg'),
-        maxFilesize: $('#entityInfos').data('maxsize'), // MB
+        dictDefaultMessage: $('#info').data('upmsg'),
+        maxFilesize: $('#info').data('maxsize'), // MB
+        headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        },
         init: function() {
 
             // add additionnal parameters (id and type)
             this.on('sending', function(file, xhr, formData) {
                 formData.append('upload', true);
-                formData.append('id', $('#entityInfos').data('id'));
-                formData.append('type', $('#entityInfos').data('type'));
+                formData.append('id', $('#info').data('id'));
+                formData.append('type', $('#info').data('type'));
             });
 
             // once it is done
             this.on('complete', function(answer) {
                 // check the answer we get back from app/controllers/EntityController.php
                 const json = JSON.parse(answer.xhr.responseText);
-                if (json.res) {
-                    notif(json.msg, 'ok');
-                } else {
-                    notif(json.msg, 'ko');
-                }
+                notif(json);
                 // reload the #filesdiv once the file is uploaded
                 if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                    $('#filesdiv').load('?mode=edit&id=' + $('#entityInfos').data('id') + ' #filesdiv', function() {
+                    $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
                         // make the comment zone editable (fix issue #54)
                         makeEditableFileComment();
                     });
@@ -49,24 +46,17 @@
         // add the title in the page name (see #324)
         document.title = $('#title_input').val() + ' - eLabFTW';
 
-        let type = $('#entityInfos').data('type');
-        let id = $('#entityInfos').data('id');
-        let confirmText = $('#entityInfos').data('confirm');
-        let controller = 'app/controllers/ExperimentsController.php';
+        let type = $('#info').data('type');
+        let id = $('#info').data('id');
+        let confirmText = $('#info').data('confirm');
         let location = 'experiments.php';
         if (type != 'experiments') {
-            controller = 'app/controllers/DatabaseController.php';
             location = 'database.php';
         }
 
         // KEYBOARD SHORTCUT
         key($('#shortcuts').data('submit'), function() {
             document.forms.main_form.submit();
-        });
-
-
-        $('#hideUploads').on('click', function() {
-            $('#uploadsDiv').toggle();
         });
 
         ////////////////
@@ -83,7 +73,7 @@
 
         // RECOVER YES
         $(document).on('click', '.recover-yes', function() {
-            $.post('app/controllers/EntityController.php', {
+            $.post('app/controllers/EntityAjaxController.php', {
                 quickSave: true,
                 type : type,
                 id : id,
@@ -111,18 +101,15 @@
 
             destroy() {
                 if (confirm(confirmText)) {
-                    if (type === 'items') {
-                        controller = 'app/controllers/EntityController.php';
-                    }
+                    const controller = 'app/controllers/EntityAjaxController.php';
                     $.post(controller, {
                         destroy: true,
-                        id: id
-                    }).done(function(data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
+                        id: id,
+                        type: type
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
                             window.location.replace(location);
-                        } else {
-                            notif(data.msg, 'ko');
                         }
                     });
                 }
@@ -139,16 +126,15 @@
                     // parseint will get the id, and not the rest (in case there is number in title)
                     link = parseInt(link, 10);
                     if (!isNaN(link)) {
-                        $.post(controller, {
+                        $.post('app/controllers/ExperimentsAjaxController.php', {
                             createLink: true,
                             id: id,
                             linkId: link
-                        })
+                        }).done(function () {
                         // reload the link list
-                        .done(function () {
-                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
+                            $('#links_div').load('experiments.php?mode=edit&id=' + id + ' #links_div');
                             // clear input field
-                            $("#linkinput").val("");
+                            $('#linkinput').val('');
                         });
                     } // end if input is bad
                 } // end if input < 0
@@ -156,16 +142,14 @@
 
             destroy(linkId) {
                 if (confirm(confirmText)) {
-                    $.post(controller, {
+                    $.post('app/controllers/ExperimentsAjaxController.php', {
                         destroyLink: true,
                         id: id,
                         linkId: linkId
-                    }).done(function (data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
-                            $("#links_div").load("experiments.php?mode=edit&id=" + id + " #links_div");
-                        } else {
-                            notif(data.msg, 'ko');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
+                            $('#links_div').load('experiments.php?mode=edit&id=' + id + ' #links_div');
                         }
                     });
                 }
@@ -175,19 +159,15 @@
         class Star {
 
             constructor() {
-                this.controller = 'app/controllers/DatabaseController.php';
+                this.controller = 'database.php';
             }
 
             update(rating) {
                 $.post(this.controller, {
                     rating: rating,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
+                }).done(function(json) {
+                    notif(json);
                 });
             }
         }
@@ -200,52 +180,48 @@
                 let body = $('#stepinput').val();
                 // fix for user pressing enter with no input
                 if (body.length > 0) {
-                    $.post(controller, {
+                    $.post('app/controllers/ExperimentsAjaxController.php', {
                         createStep: true,
                         id: id,
                         body: body
-                    })
+                    }).done(function() {
                     // reload the step list
-                    .done(function() {
-                        $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
-                        relativeMoment();
-                    });
+                        $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
+                            relativeMoment();
+                        });
                         // clear input field
-                        $("#stepinput").val("");
+                        $('#stepinput').val('');
                     });
                 } // end if input < 0
             }
 
             finish(stepId) {
-                $.post(controller, {
+                $.post('app/controllers/ExperimentsAjaxController.php', {
                     finishStep: true,
                     id: id,
                     stepId: stepId
-                })
+                }).done(function() {
                 // reload the step list
-                .done(function() {
-                    $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                    $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
                         relativeMoment();
                     });
                     // clear input field
-                    $("#stepinput").val("");
+                    $('#stepinput').val('');
                 });
             }
 
             destroy(stepId) {
                 if (confirm(confirmText)) {
-                    $.post(controller, {
+                    $.post('app/controllers/ExperimentsAjaxController.php', {
                         destroyStep: true,
                         id: id,
                         stepId: stepId
-                    }).done(function(data) {
-                        if (data.res) {
-                            notif(data.msg, 'ok');
-                            $("#steps_div").load("experiments.php?mode=edit&id=" + id + " #steps_div", function() {
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
+                            $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
                                 relativeMoment();
                             });
-                        } else {
-                            notif(data.msg, 'ko');
                         }
                     });
                 }
@@ -306,7 +282,7 @@
                     response(cache[term]);
                     return;
                 }
-                $.getJSON("app/controllers/ExperimentsController.php", request, function(data, status, xhr) {
+                $.getJSON('app/controllers/ExperimentsAjaxController.php', request, function(data) {
                     cache[term] = data;
                     response(data);
                 });
@@ -324,40 +300,34 @@
         // VISIBILITY SELECT
         $(document).on('change', '#visibility_select', function() {
             const visibility = $(this).val();
-            $.post("app/controllers/EntityController.php", {
+            $.post('app/controllers/EntityAjaxController.php', {
                 updateVisibility: true,
                 id: id,
                 type: type,
                 visibility: visibility
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
+            }).done(function(json) {
+                notif(json);
             });
         });
 
         // STATUS SELECT
         $(document).on('change', '#category_select', function() {
             const categoryId = $(this).val();
-            $.post("app/controllers/EntityController.php", {
+            $.post('app/controllers/EntityAjaxController.php', {
                 updateCategory: true,
                 id: id,
                 type: type,
                 categoryId : categoryId
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     // change the color of the item border
                     // we first remove any status class
-                    $("#main_section").css('border', null);
+                    $('#main_section').css('border', null);
                     // and we add our new border color
                     // first : get what is the color of the new status
-                    const css = '6px solid #' + data.color;
-                    $("#main_section").css('border-left', css);
-                } else {
-                    notif(data.msg, 'ko');
+                    const css = '6px solid #' + json.color;
+                    $('#main_section').css('border-left', css);
                 }
             });
         });
@@ -367,9 +337,19 @@
         const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
         // user finished typing, save work
-        function doneTyping () {
+        function doneTyping() {
             quickSave(type, id);
         }
+
+        // SWITCH EDITOR
+        $(document).on('click', '.switchEditor', function() {
+            let currentEditor = $(this).data('editor');
+            if (currentEditor === 'md') {
+                insertParamAndReload('editor', 'tiny');
+            } else {
+                insertParamAndReload('editor', 'md');
+            }
+        });
 
         // DISPLAY MARKDOWN EDITOR
         if ($('#body_area').hasClass('markdown-textarea')) {
@@ -378,8 +358,23 @@
 
         // INSERT IMAGE AT CURSOR POSITION IN TEXT
         $(document).on('click', '.inserter',  function() {
-            const imgLink = "<img src='app/download.php?f=" + $(this).data('link') + "' />";
-            tinymce.activeEditor.execCommand('mceInsertContent', false, imgLink);
+            // link to the image
+            const url = 'app/download.php?f=' + $(this).data('link');
+            // switch for markdown or tinymce editor
+            const editor = $('#iHazEditor').data('editor');
+            if (editor === 'md') {
+                const cursorPosition = $('#body_area').prop('selectionStart');
+                const content = $('#body_area').val();
+                const before = content.substring(0, cursorPosition);
+                const after = content.substring(cursorPosition);
+                const imgMdLink = '\n![image](' + url + ')\n';
+                $('#body_area').val(before + imgMdLink + after);
+            } else if (editor === 'tiny') {
+                const imgHtmlLink = '<img src="' + url + '" />';
+                tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
+            } else {
+                alert('Error: could not find current editor!');
+            }
         });
 
         // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
@@ -405,7 +400,7 @@
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
         // If the title is 'Untitled', clear it on focus
         $('#title_input').focus(function(){
-            if ($(this).val() === $('#entityInfos').data('untitled')) {
+            if ($(this).val() === $('#info').data('untitled')) {
                 $('#title_input').val('');
             }
         });
@@ -422,11 +417,12 @@
             editor_selector: 'mceditable',
             browser_spellcheck: true,
             content_css: 'app/css/tinymce.css',
-            plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample',
+            plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr',
             pagebreak_separator: '<pagebreak>',
             toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
             removed_menuitems: 'newdocument',
             image_caption: true,
+            content_style: '.mce-content-body {font-size:10pt;}',
             codesample_languages: [
                 {text: 'Bash', value: 'bash'},
                 {text: 'C', value: 'c'},
@@ -445,7 +441,7 @@
                 {text: 'Python', value: 'python'},
                 {text: 'R', value: 'r'},
                 {text: 'Ruby', value: 'ruby'}
-                ],
+            ],
             // save button :
             save_onsavecallback: function() {
                 quickSave(type, id);
@@ -453,10 +449,10 @@
             // keyboard shortcut to insert today's date at cursor in editor
             setup: function(editor) {
                 editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
-                editor.on('keydown', function(event) {
+                editor.on('keydown', function() {
                     clearTimeout(typingTimer);
                 });
-                editor.on('keyup', function(event) {
+                editor.on('keyup', function() {
                     clearTimeout(typingTimer);
                     typingTimer = setTimeout(doneTyping, doneTypingInterval);
                 });
@@ -466,21 +462,21 @@
                 delimiter: ['#', '$'],
                 // get the source from json with get request
                 source: function (query, process, delimiter) {
-                    let url = "app/controllers/EntityController.php?mention=1&term=" + query;
+                    let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
                     if (delimiter === '#') {
-                        $.getJSON(url, function(data, status, xhr) {
+                        $.getJSON(url, function(data) {
                             process(data);
                         });
                     }
                     if (delimiter === '$') {
-                        url += "&userFilter=1";
-                        $.getJSON(url, function(data, status, xhr) {
+                        url += '&userFilter=1';
+                        $.getJSON(url, function(data) {
                             process(data);
                         });
                     }
                 }
             },
-            language: $('#entityInfos').data('lang'),
+            language: $('#info').data('lang'),
             style_formats_merge: true,
             style_formats: [
                 {
@@ -490,15 +486,14 @@
                         'float': 'left',
                         'margin': '0 10px 0 10px'
                     }
-                 },
-                 {
-                     title: 'Image Right',
-                     selector: 'img',
-                     styles: {
-                         'float': 'right',
-                         'margin': '0 0 10px 10px'
-                     }
-                 }
+                }, {
+                    title: 'Image Right',
+                    selector: 'img',
+                    styles: {
+                        'float': 'right',
+                        'margin': '0 0 10px 10px'
+                    }
+                }
             ]
         });
     });

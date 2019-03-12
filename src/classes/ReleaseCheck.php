@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ReleaseCheckException;
+use Elabftw\Models\Config;
 use GuzzleHttp\Exception\RequestException;
-use RuntimeException;
 
 /**
  * Use this to check for latest version
@@ -24,10 +25,10 @@ class ReleaseCheck
     private $Config;
 
     /** @var string $version the latest version from ini file (1.1.4) */
-    private $version;
+    private $version = '';
 
     /** @var string $releaseDate release date of the version */
-    private $releaseDate;
+    private $releaseDate = '';
 
     /** @var bool $success this is used to check if we managed to get a version or not */
     public $success = false;
@@ -43,7 +44,7 @@ class ReleaseCheck
      * UPDATE THIS AFTER RELEASING
      * ///////////////////////////
      */
-    public const INSTALLED_VERSION = '2.0.7';
+    public const INSTALLED_VERSION = '2.1.0';
 
     /**
      * Fetch the update info on object creation
@@ -83,24 +84,23 @@ class ReleaseCheck
     /**
      * Check if the version string actually looks like a version
      *
-     * @return int 1 if version match
+     * @return void
      */
-    private function validateVersion(): int
+    private function validateVersion(): void
     {
         $res = preg_match('/^[0-99]+\.[0-99]+\.[0-99]+.*$/', $this->version);
         if ($res === false) {
-            throw new RuntimeException('Could not parse version!');
+            throw new ReleaseCheckException('Could not parse version!');
         }
-        return $res;
     }
 
     /**
      * Try to get the latest version number of elabftw
      * Will fetch updates.ini file from get.elabftw.net
      *
-     * @return bool
+     * @return void
      */
-    public function getUpdatesIni(): bool
+    public function getUpdatesIni(): void
     {
         try {
             $response = $this->get(self::URL);
@@ -109,24 +109,22 @@ class ReleaseCheck
             try {
                 $response = $this->get(self::URL_HTTP);
             } catch (RequestException $e) {
-                return false;
+                throw new ReleaseCheckException('Could not make request to server!');
             }
         }
 
         // read the response
         $versions = parse_ini_string((string) $response->getBody(), true);
         if ($versions === false) {
-            return false;
+            throw new ReleaseCheckException('Could not parse version!');
         }
         // get the latest version
         $this->version = array_keys($versions)[0];
         $this->releaseDate = $versions[$this->version]['date'];
 
-        if (!$this->validateVersion()) {
-            return false;
-        }
+        $this->validateVersion();
+        // set this so we know the request was successful
         $this->success = true;
-        return $this->success;
     }
 
     /**

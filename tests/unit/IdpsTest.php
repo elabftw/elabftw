@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,9 +17,10 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'sso:binding',
             'https://test.example.org/slo',
             'slo:binding',
-            'x509'
+            'x509',
+            '1'
         );
-        $this->assertTrue($this->Idps->update(
+        $this->Idps->update(
             $id,
             'Updated',
             'https://test.example.org',
@@ -27,12 +28,13 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'sso:binding',
             'https://test.example.org/slo',
             'slo:binding',
-            'x509'
-        ));
+            'x509',
+            '1'
+        );
         $idp = $this->Idps->read($id);
         $this->assertEquals('Updated', $idp['name']);
         $this->assertEquals('x509', $idp['x509']);
-        $this->assertTrue($this->Idps->destroy($id));
+        $this->Idps->destroy($id);
     }
 
     public function testReadAll()

@@ -1,5 +1,7 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Tools;
 
 class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +16,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $new = $this->Database->create(1);
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Database->setId($new);
-        $this->assertTrue($this->Database->destroy());
+        $this->Database->destroy();
     }
 
     public function testSetId()
@@ -36,13 +38,13 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
     public function testUpdate()
     {
         $this->Database->setId(1);
-        $this->assertTrue($this->Database->update('Database item 1', '20160729', 'body', 1));
+        $this->Database->update('Database item 1', '20160729', 'body', 1);
     }
 
     public function testUpdateRating()
     {
         $this->Database->setId(1);
-        $this->assertTrue($this->Database->updateRating(1));
+        $this->Database->updateRating(1);
     }
 
     public function testDuplicate()
@@ -54,16 +56,17 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock()
     {
-        $this->Database->setId(1);
+        $new = $this->Database->create(1);
+        $this->Database->setId($new);
 
         // lock
-        $this->assertTrue($this->Database->toggleLock());
+        $this->Database->toggleLock();
         $item = $this->Database->read();
         $this->assertTrue((bool) $item['locked']);
-
         // unlock
-        $this->assertTrue($this->Database->toggleLock());
+        $this->Database->toggleLock();
         $item = $this->Database->read();
         $this->assertFalse((bool) $item['locked']);
+
     }
 }

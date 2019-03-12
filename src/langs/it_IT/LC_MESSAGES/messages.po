@@ -3,7 +3,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2.1\n"
 "Project-Id-Version: elabftw\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -638,8 +638,8 @@ msgstr "Crea il tuo account"
 #: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:64
 #: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:174
 #: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:64
-msgid "------ Select a team ------"
-msgstr "------ Seleziona un team ------"
+msgid "Select a team"
+msgstr "Seleziona un gruppo"
 
 #: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:121
 #: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:121
@@ -1185,11 +1185,11 @@ msgstr "Non puoi sbloccare o modificare in nessun modo un esperimento timestampe
 
 #: web/app/controllers/LoginController.php:45
 msgid "Your session expired. Please retry."
-msgstr "la tua sessione è scaduta. Riprova per favore."
+msgstr "La tua sessione è scaduta. Riprova per favore."
 
 #: web/app/controllers/RegisterController.php:53
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
-msgstr "registrazione avvenuta con successo :)<br> Il tuo account deve ora essere approvato da un amministratore.<br> Riceverai una e-mail non appena sarà fatto."
+msgstr "Registrazione avvenuta con successo :)<br> Il tuo account deve ora essere approvato da un amministratore.<br> Riceverai una e-mail non appena sarà fatto."
 
 #: /tmp/elabftw-twig-cache/42/42448f30413290fa050d998a836a85612d6f376cf9ee10cfc5d5d59026ca5529.php:34
 #: /tmp/elabftw-twig-cache/4f/4f0506ed3f90b5caab20107eb5a49949e9f734dbaeb54f601b95bc8c0de7d6a5.php:34
@@ -1241,7 +1241,7 @@ msgstr ""
 #: web/app/controllers/ImportController.php:35
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
-msgstr[0] "Oggetto importato con successo."
+msgstr[0] "oggetto importato con successo."
 msgstr[1] "Oggetti importati con successo."
 
 #: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:57
@@ -2291,7 +2291,7 @@ msgstr ""
 #: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:309
 msgid "result shown"
 msgid_plural "results shown"
-msgstr[0] "Risultato mostrato"
+msgstr[0] "risultato mostrato"
 msgstr[1] "Risultati mostrati"
 
 #: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:379

@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,7 +12,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertTrue($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
+        $this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
     }
 
     public function testReadAll()
@@ -30,22 +30,22 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore()
     {
         $this->Experiment = new Experiments($this->Users, '1');
-        $new = $this->Experiment->create();
+        $new = $this->Experiment->create(0);
         $this->Experiment->setId($new);
         $this->Revisions = new Revisions($this->Experiment);
-        $this->assertTrue($this->Revisions->create('Ohai'));
-        $this->assertTrue($this->Revisions->restore($new));
+        $this->Revisions->create('Ohai');
+        $this->Revisions->restore($new);
         //$this->Experiments->toggleLock();
         //$this->expectException(\Exception::class);
         //$this->Revisions->restore(2);
     }
     public function testDestroy()
     {
-        $this->assertFalse($this->Revisions->destroy(1));
+        $this->Revisions->destroy(1);
     }
 
     public function testDestroyAll()
     {
-        $this->assertFalse($this->Revisions->destroyAll());
+        $this->Revisions->destroyAll();
     }
 }

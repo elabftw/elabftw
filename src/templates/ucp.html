@@ -204,7 +204,7 @@
         <div class='row'>
             <div class='col-md-6'>
                 <h4>{{ 'Modify your personal informations'|trans }}</h4>
-                <label class='block' for='currpass'>{{ 'Enter your password to edit infos.'|trans }}</label>
+                <label class='block' for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
                 <input id='currpass' name='currpass' type='password' pattern='.{8,}' required />
                 <label class='block' for='email'>{{ 'Email'|trans }}</label>
                 <input name='email' id='email' type='email' value='{{ App.Users.userData.email }}' cols='20' rows='1' />
@@ -269,8 +269,8 @@
 
 <div class='box new-tpl-box'>
     <h3>{{ 'Experiment Templates'|trans }}</h3>
-    <ul class='nav nav-pills' role='tablist'>
-        <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive' id='subtab_1'>{{ 'Create new'|trans }}</li>
+    <ul class='nav nav-pills sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
+        <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
             <li class='sortable subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
         {% endfor %}
@@ -310,7 +310,7 @@
                 {% for key, tag in tagsValueArr %}
                     {# the key allows to get the id stored in tagsIdArr #}
                     <span class='tag'>
-                        <a class='tagUnreferenceForTemplate clickable' data-type='experiments_tpl' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}' data-confirm="{{ 'Delete this?'|trans }}">
+                        <a class='tagUnreferenceForTemplate clickable' data-type='experiments_tpl' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
                             {{ tag|raw }}
                         </a>
                     </span>
@@ -344,11 +344,12 @@
 </div>
 <!-- END PAGE -->
 
+<div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
+<div id='info' data-confirm="{{ 'Delete this?'|trans }}"></div>
+
 <!-- to export templates -->
 <script src='app/js/file-saver.min.js?v={{ v }}'></script>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
-<div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
-<div id='entityInfos' data-confirm="{{ 'Delete this?'|trans }}"></div>
 <script src='app/js/ucp.min.js?v={{ v }}'></script>
 <script src='app/js/tags.min.js?v={{ v }}'></script>
 {% endblock body %}

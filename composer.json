@@ -13,25 +13,33 @@
         "ext-zip": "*",
         "defuse/php-encryption": "2.2.*",
         "mpdf/mpdf": "7.1.*",
-        "swiftmailer/swiftmailer":"6.1.*",
-        "onelogin/php-saml": "2.14.*",
+        "swiftmailer/swiftmailer":"6.2.*",
+        "onelogin/php-saml": "3.1.*",
         "guzzlehttp/guzzle": "6.3.*",
         "michelf/php-markdown": "1.8.*",
-        "symfony/http-foundation": "4.1.*",
-        "twig/twig": "2.5.*",
+        "symfony/http-foundation": "4.2.*",
+        "twig/twig": "2.6.*",
         "twig/extensions": "1.5.*",
-        "monolog/monolog": "1.23.*",
-        "maennchen/zipstream-php": "dev-master"
-
+        "monolog/monolog": "1.24.*",
+        "maennchen/zipstream-php": "v1.0.0-alpha.2",
+      "ext-fileinfo": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
         "codeception/codeception": "2.5.*",
-        "pyrech/composer-changelogs": "1.6.*"
+        "pyrech/composer-changelogs": "1.6.*",
+        "fzaninotto/faker": "^1.8"
     },
     "autoload": {
         "psr-4": {
-            "Elabftw\\Elabftw\\" : ["src/classes", "src/models", "src/views"]
+            "Elabftw\\Controllers\\" : ["src/controllers"],
+            "Elabftw\\Elabftw\\" : ["src/classes"],
+            "Elabftw\\Exceptions\\" : ["src/exceptions"],
+            "Elabftw\\Interfaces\\" : ["src/interfaces"],
+            "Elabftw\\Models\\" : ["src/models"],
+            "Elabftw\\Services\\" : ["src/services"],
+            "Elabftw\\Traits\\" : ["src/traits"]
         }
     },
     "license": "AGPL-3.0-or-later"

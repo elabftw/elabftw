@@ -10,8 +10,8 @@
     <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
 {% for revision in revisionsArr %}
-<div class='item'><span class='relative-moment' title='{{ revision.savedate }}'></span> {% if not Entity.entityData.locked %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
-    {{ revision.body|raw }}</div>
+<div class='item'><span class='relative-moment' title='{{ revision.savedate }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }} {% if not Entity.entityData.locked %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
+    {{ revision.body|md2html|raw }}</div>
 {% endfor %}
 
 {% endblock body %}

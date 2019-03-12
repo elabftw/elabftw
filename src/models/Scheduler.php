@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Scheduler
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,11 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Traits\EntityTrait;
 use PDO;
 
 /**
@@ -53,9 +54,9 @@ class Scheduler
      * @param string $start 2016-07-22T13:37:00
      * @param string $end 2016-07-22T19:42:00
      * @param string $title the comment entered by user
-     * @return bool
+     * @return void
      */
-    public function create(string $start, string $end, string $title): bool
+    public function create(string $start, string $end, string $title): void
     {
         $title = filter_var($title, FILTER_SANITIZE_STRING);
 
@@ -67,9 +68,11 @@ class Scheduler
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
         $req->bindParam(':title', $title);
-        $req->bindParam(':userid', $this->Database->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Database->Users->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -88,9 +91,15 @@ class Scheduler
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':item', $this->Database->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -103,7 +112,9 @@ class Scheduler
         $sql = "SELECT * from team_events WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $req->fetch();
     }
@@ -113,9 +124,9 @@ class Scheduler
      *
      * @param string $start 2016-07-22T13:37:00
      * @param string $end 2016-07-22T13:37:00
-     * @return bool
+     * @return void
      */
-    public function updateStart(string $start, string $end): bool
+    public function updateStart(string $start, string $end): void
     {
         $sql = "UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);
@@ -124,16 +135,18 @@ class Scheduler
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Update the end of an event (when you resize it)
      *
      * @param string $end 2016-07-22T13:37:00
-     * @return bool
+     * @return void
      */
-    public function updateEnd(string $end): bool
+    public function updateEnd(string $end): void
     {
         $sql = "UPDATE team_events SET end = :end WHERE team = :team AND id = :id";
         $req = $this->Db->prepare($sql);
@@ -141,21 +154,24 @@ class Scheduler
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Remove an event
      *
-     * @return bool
+     * @return void
      */
-    public function destroy(): bool
+    public function destroy(): void
     {
-        $sql = "DELETE FROM team_events WHERE id = :id AND userid = :userid";
+        $sql = "DELETE FROM team_events WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Database->Users->userid, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

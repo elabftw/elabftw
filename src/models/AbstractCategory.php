@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\AbstractCategory
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,13 +8,22 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Db;
+use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Traits\SortableTrait;
 
 /**
  * A category is a status for experiments and item type for db item
  */
 abstract class AbstractCategory implements CrudInterface
 {
+    use SortableTrait;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
     /**
      * Get the color of an item type
      *

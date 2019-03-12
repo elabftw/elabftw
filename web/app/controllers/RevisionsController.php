@@ -1,32 +1,42 @@
 <?php
 /**
- * app/controllers/RevisionsController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Revisions;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Revisions controller
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new RedirectResponse('../../experiments.php');
+
 try {
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
 
-    } elseif ($_GET['type'] === 'items') {
+    } elseif ($Request->query->get('type') === 'items') {
 
         $Entity = new Database($App->Users);
 
     } else {
-        throw new Exception('Bad type!');
+        throw new IllegalActionException('Bad type!');
     }
 
     $Entity->setId((int) $Request->query->get('item_id'));
@@ -34,19 +44,33 @@ try {
     $Revisions = new Revisions($Entity);
 
     if ($Request->query->get('action') === 'restore') {
-        $revId = Tools::checkId($Request->query->get('rev_id'));
+        $revId = Tools::checkId((int) $Request->query->get('rev_id'));
         if ($revId === false) {
-            throw new Exception(_('The id parameter is not valid!'));
+            throw new IllegalActionException('The id parameter is not valid!');
         }
 
-        if ($Revisions->restore($revId)) {
-            $Session->getFlashBag()->add('ok', _('Revision restored successfully.'));
-        }
-
-        header("Location: ../../" . $Entity->page . ".php?mode=view&id=" . $Request->query->get('item_id'));
+        $Revisions->restore($revId);
+        $Session->getFlashBag()->add('ok', _('Saved'));
     }
+
+    $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=view&id=" . $Entity->id);
+
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
-    $Session->getFlashBag()->add('ko', $e->getMessage());
-    header("Location: ../../" . $Entity->page . ".php?mode=view&id=" . $Request->query->get('item_id'));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
+
+} finally {
+    $Response->send();
 }

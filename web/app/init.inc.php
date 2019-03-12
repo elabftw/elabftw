@@ -9,6 +9,9 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
+use Elabftw\Models\Users;
 use Exception;
 use Monolog\Logger;
 use PDOException;
@@ -40,7 +43,7 @@ try {
         // not pretty but gets the job done
         $url = str_replace('app/', '', $url);
         header('Location: ' . $url);
-        throw new Exception('Redirecting to install folder');
+        throw new ImproperActionException('Redirecting to install folder');
     }
     require_once $configFilePath;
     // END LOAD CONFIG.PHP
@@ -50,25 +53,16 @@ try {
     // PDO will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $App = new App($Session, $Request, new Config(), new Logger('elabftw'));
+        $App = new App($Session, $Request, new Config(), new Logger('elabftw'), new Csrf($Session, $Request));
     } catch (PDOException $e) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
         header('Location: ' . $url);
-        throw new Exception('Redirecting to install folder');
+        throw new ImproperActionException('Redirecting to install folder');
     }
 
-    // UPDATE SQL SCHEMA
-    $Update = new Update($App->Config);
-    try {
-        $messages = $Update->runUpdateScript();
-        if (is_array($messages)) {
-            foreach ($messages as $msg) {
-                $App->Session->getFlashBag()->add('ok', $msg);
-            }
-        }
-    } catch (Exception $e) {
-        $App->Session->getFlashBag()->add('ko', 'Error updating: ' . $e->getMessage() . " (" . $e->getLine() . ")");
-    }
+    // UPDATE SQL SCHEMA if necessary
+    $Update = new Update($App->Config, new Sql());
+    $Update->runUpdateScript();
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
@@ -144,7 +138,7 @@ try {
     textdomain($domain);
     // END i18n
 
-} catch (Exception $e) {
+} catch (ImproperActionException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());
 }

@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Exception;
 
 $elabRoot = \dirname(__DIR__, 2);
@@ -21,11 +23,11 @@ try {
 
     // Check for LONG_NAME
     if (!isset($_GET['f']) || empty($_GET['f'])) {
-        throw new Exception('Missing parameter for download');
+        throw new IllegalActionException('Missing parameter for download');
     }
     // Nullbyte hack fix
     if (strpos($_GET['f'], "\0") === true) {
-        throw new Exception('Null byte detected');
+        throw new IllegalActionException('Null byte detected');
     }
 
     // Remove any path info to avoid hacking by adding relative path, etc.
@@ -54,14 +56,14 @@ try {
 
     // SET FILE PATH
     // the zip archives will be in the tmp folder
-    if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv')) {
+    if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv' || $_GET['type'] === 'report')) {
         $file_path = $elabRoot . '/cache/elab/' . $long_filename;
     } else {
         $file_path = $elabRoot . '/uploads/' . $final_filename;
     }
 
     if (!is_readable($file_path)) {
-        throw new Exception('File not found!');
+        throw new FilesystemErrorException('File not found!');
     }
 
     // MIME
@@ -86,16 +88,20 @@ try {
     header('Expires: 0');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
     header('Cache-Control: public');
-    header('Content-Description: File Transfer');
     header('Content-Type: ' . $mtype);
-    header('Content-Disposition: attachment; filename=' . $filename);
+    // force download for file extensions not supported by browser
+    //if (!preg_match('/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg)$/i', Tools::getExt($_GET['name']))) {
+    if (isset($_GET['forceDownload'])) {
+        header('Content-Description: File Transfer');
+        header('Content-Disposition: attachment; filename=' . $filename);
+    }
     header('Content-Transfer-Encoding: binary');
     header('Content-Length: ' . $fsize);
 
     // DOWNLOAD
     $file = fopen($file_path, 'rb');
     if ($file === false) {
-        throw new Exception('Error opening the file!');
+        throw new FilesystemErrorException('Error opening the file!');
     }
     while (!feof($file)) {
         echo fread($file, 1024 * 8);

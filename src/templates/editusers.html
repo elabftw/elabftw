@@ -1,100 +1,130 @@
-<div class='box'>
-    <h3>{{ 'Edit Users'|trans }}</h3>
-    <hr>
-    <ul class='list-group'>
+<form class='box' method='get'>
+    <label for='search-users'>{{ 'Search users'|trans }}</label>
+    <input type='text' autocomplete='off' class='clean-form' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
+    <!-- stay on correct tab -->
+    <input type='hidden' value='3' name='tab' />
+    <input type='submit' class='button' value='{{ 'Search'|trans }}' />
+</form>
 
-        {% for user in usersArr %}
-        <li><p>Team: {{ user.teamname|raw }}</p></li>
-        <li>
-            <form method='post' action='app/controllers/UsersController.php'>
-                <input type='hidden' value='true' name='usersUpdate' />
-                {% if fromSysconfig %}
-                    <input type='hidden' value='1' name='fromSysconfig' />
-                {% endif %}
-                <input type='hidden' value='{{ user.userid }}' name='userid' />
-                <ul class='list-inline'>
-
-                    <!-- FIRSTNAME -->
-                    <li class='list-inline-item'>
-                        {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
-                        <label class='block' for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
-                        <input autocomplete='off' class='clean-form' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
-                    </li>
-
-                    <!-- LASTNAME -->
-                    <li class='list-inline-item'>
-                        <label class='block' for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
-                        <input autocomplete='off' class='clean-form' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
-                    </li>
-
-                    <!-- EMAIL -->
-                    <li class='list-inline-item'>
-                        <label class='block' for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
-                        <input autocomplete='off' class='clean-form' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
-                    </li>
-
-                    <!-- TEAM -->
-                    <li class='list-inline-item'>
-                        <label class='block' for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team'|trans }}</label>
-                        <select class='clean-form' name='team' id='usersUpdateTeam_{{ user.userid }}'>
-                            {% for team in teamsArr %}
-                            <option value='{{ team.team_id }}' {{ user.team == team.team_id ? " selected='selected'" }}>{{ team.team_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </li>
-
-                    <!-- PERMISSION GROUP -->
-                    <li class='list-inline-item'>
-                        <label class='block' for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
-                        <select class='clean-form' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
-                            {% if App.Session.get('is_sysadmin') %}
-                                <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
-                            {% endif %}
-                            <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
-                            <option value='3' {{ user.usergroup == '3' ? " selected='selected'" }}>Admins + Lock power</option>
-                            <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
-
-                        </select>
-                    </li>
-
-                    <!-- RESET PASSWORD -->
-                    <li class='list-inline-item'>
-                        <label class='block' for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                            <span class='smallgray'>({{ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) }} {{ 'characters minimum'|trans }})</span>
-                        </label>
-                        <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
-                        <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                        <input type='text' style='display:none'>
-                        <input type='password' style='display:none'>
-                        {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) ~ ',}' %}
-                        <input autocomplete='new-password' class='clean-form' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
-                    </li>
-
-                    <!-- ACTIVE ACCOUNT -->
-                    <li class='list-inline-item'>
-                        <label class='block' for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
-                        <select class='clean-form' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
-                            <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                            <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-                        </select>
-                    </li>
-
-                    <!-- ARCHIVE USER -->
-                    <li class='list-inline-item'>
-                    {% if user.archived %}
-                        <p>{{ 'User is archived'|trans }}</p>
-                    {% else %}
-                        <button class='button button-delete archive-user' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
-                    {% endif %}
-                    </li>
-
-                    <li class='list-inline-item'>
-                        <button type='submit' class='button'>{{ 'Save'|trans }}</button>
-                    </li>
-                </ul>
-            </form>
-        </li>
+{% if isSearching %}
+    <div class='box'>
+        <h3>{{ 'Edit Users'|trans }}</h3>
         <hr>
-        {% endfor %}
-    </ul>
-</div>
+        {% if usersArr %}
+        <ul class='list-group'>
+
+            {% for user in usersArr %}
+            <li>
+                    <ul class='list-inline'>
+                        <p>Team: {{ user.teamname|raw }}</p>
+                        <form method='post' action='app/controllers/UsersController.php'>
+                            <input type='hidden' value='true' name='usersUpdate' />
+                            {{ App.Csrf.getHiddenInput()|raw }}
+                            {% if fromSysconfig %}
+                                <input type='hidden' value='1' name='fromSysconfig' />
+                            {% endif %}
+
+                            <!-- USERID (readonly) -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdateUserid_{{ user.userid }}'>{{ 'User ID'|trans }}</label>
+                                <input type='text' class='clean-form' value='{{ user.userid }}' name='userid' readonly />
+                            </li>
+
+                            <!-- FIRSTNAME -->
+                            <li class='list-inline-item'>
+                                {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
+                                <label class='block' for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
+                                <input autocomplete='off' class='clean-form' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
+                            </li>
+
+                            <!-- LASTNAME -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
+                                <input autocomplete='off' class='clean-form' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
+                            </li>
+
+                            <!-- EMAIL -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
+                                <input autocomplete='off' class='clean-form' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
+                            </li>
+
+                            <!-- TEAM -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team'|trans }}</label>
+                                <select class='clean-form' name='team' id='usersUpdateTeam_{{ user.userid }}'>
+                                    {% for team in teamsArr %}
+                                    <option value='{{ team.id }}' {{ user.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </li>
+
+                            <!-- PERMISSION GROUP -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Group'|trans }}</label>
+                                <select class='clean-form' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
+                                    {% if App.Session.get('is_sysadmin') %}
+                                        <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
+                                    {% endif %}
+                                    <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
+                                    <option value='3' {{ user.usergroup == '3' ? " selected='selected'" }}>Admins + Lock power</option>
+                                    <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
+
+                                </select>
+                            </li>
+
+                            <!-- RESET PASSWORD -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
+                                    <span class='smallgray'>({{ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) }} {{ 'characters minimum'|trans }})</span>
+                                </label>
+                                <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
+                                <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
+                                <input type='text' style='display:none'>
+                                <input type='password' style='display:none'>
+                                {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) ~ ',}' %}
+                                <input autocomplete='new-password' class='clean-form' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
+                            </li>
+
+                            <!-- ACTIVE ACCOUNT -->
+                            <li class='list-inline-item'>
+                                <label class='block' for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
+                                <select class='clean-form' autocomplete='off' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
+                                    <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                                    <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                                </select>
+                            </li>
+
+                            <!-- SAVE -->
+                            <li class='list-inline-item'>
+                                <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+                            </li>
+
+                            <!-- ARCHIVE USER -->
+                            <li class='list-inline-item'>
+                            {% if user.archived %}
+                                <p>{{ 'User is archived'|trans }}</p>
+                            {% else %}
+                                <button class='button button-delete archiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                            {% endif %}
+                            </li>
+
+                            <!-- DESTROY USER -->
+                            <li class='list-inline-item'>
+                                <button class='button button-delete destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                           </li>
+                        </form>
+
+                        <hr>
+                    </ul>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{ 'No user found!'|trans }}</p>
+    {% endif %}
+    </div>
+{% endif %}
+<!--
+<script src='app/js/editusers.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/editusers.js?v={{ v }}'></script>

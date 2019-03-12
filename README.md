@@ -1,4 +1,10 @@
-![elabftw logo](https://i.imgur.com/hq6SAZf.png)
+<p align='center'>
+    <img src='https://i.imgur.com/hq6SAZf.png' alt='elabftw logo' />
+</p>
+
+<p align='center'>
+<strong>A free, modern, flexible electronic lab notebook for researchers</strong>
+</p>
 
 [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)
 
@@ -12,6 +18,8 @@
 [![Release](https://img.shields.io/github/release/elabftw/elabftw.svg)](https://github.com/elabftw/elabftw/releases/latest)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/elabftw/elabftw)
 [![Joss](http://joss.theoj.org/papers/10.21105/joss.00146/status.svg)](http://joss.theoj.org/papers/10.21105/joss.00146)
+
+-----------------------------------------
 
 # Description
 
@@ -57,10 +65,12 @@ gpg --search-keys "Nicolas CARPi"
 
 Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.
 
+You can also join the [chat room on Gitter](https://gitter.im/elabftw/elabftw).
+
 [Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out!
 
 # Funding
 
-This project is sponsored by [Institut Curie](https://science.curie.fr/).
+This project is supported by [Institut Curie](https://science.curie.fr/).
 
 Thank you for using **eLabFTW**, I hope it will bring happiness in your lab ;)

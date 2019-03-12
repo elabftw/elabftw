@@ -1,7 +1,8 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
-use PDO;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\ImproperActionException;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,8 +25,8 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa', 1), 'New name', 'fffccc', 0, 1));
-        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa', 1), 'New name', 'fffccc', 1, 0));
+        $this->Status->update($this->Status->create('Yep', 'fffaaa', 1), 'New name', 'fffccc', 0, 1);
+        $this->Status->update($this->Status->create('Yep2', 'fffaaa', 1), 'New name', 'fffccc', 1, 0);
     }
 
     public function testReadColor()
@@ -38,12 +39,12 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     }
     public function testDestroy()
     {
-        $this->assertTrue($this->Status->destroy(2));
-        $this->expectException(\Exception::class);
-        $this->assertEquals(1, $this->Status->destroy(1));
+        $this->Status->destroy(2);
+        $this->expectException(ImproperActionException::class);
+        $this->Status->destroy(1);
     }
     public function testDestroyAll()
     {
-        $this->assertFalse($this->Status->destroyAll());
+        $this->Status->destroyAll();
     }
 }

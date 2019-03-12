@@ -1,55 +1,55 @@
 <?php
 /**
- * metadata.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
-/**
- *  This page displays an XML file with all the infos of the Service Provider
- */
 namespace Elabftw\Elabftw;
 
-use Exception;
-use OneLogin_Saml2_Error;
-use OneLogin_Saml2_Settings;
+use Elabftw\Models\Config;
+use Elabftw\Models\Idps;
+use Elabftw\Exceptions\ImproperActionException;
+use OneLogin\Saml2\Error;
+use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ *  This page displays an XML file with all the settings of the Service Provider
+ */
 require_once 'app/init.inc.php';
+
+$Response = new Response();
+$Response->prepare($Request);
 
 try {
 
-    $Saml = new Saml(new Config, new Idps);
-    // TODO this is the id of the idp to use to get the settings
-    $settingsArr = $Saml->getSettings(1);
+    $Saml = new Saml(new Config(), new Idps());
+    $settingsArr = $Saml->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
-        throw new Exception('No Service Provider configured. Aborting.');
+        throw new ImproperActionException('No Service Provider configured. Aborting.');
     }
 
     // Now we only validate SP settings
-    $Settings = new OneLogin_Saml2_Settings($settingsArr, true);
+    $Settings = new Settings($settingsArr, true);
     $metadata = $Settings->getSPMetadata();
     $errors = $Settings->validateMetadata($metadata);
     if (empty($errors)) {
-        $Response = new Response();
-        $Response->prepare($Request);
         $Response->setContent($metadata);
         $Response->headers->set('Content-Type', 'text/xml');
         $Response->send();
     } else {
-        throw new OneLogin_Saml2_Error(
+        throw new Error(
             'Invalid SP metadata: ' . implode(', ', $errors),
-            OneLogin_Saml2_Error::METADATA_SP_INVALID
+            Error::METADATA_SP_INVALID
         );
     }
 
-} catch (Exception $e) {
-    $Response = new Response();
-    $Response->prepare($Request);
+} catch (ImproperActionException | Error $e) {
     $Response->setContent($e->getMessage());
+} finally {
     $Response->send();
 }

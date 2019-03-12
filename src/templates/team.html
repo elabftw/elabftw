@@ -9,6 +9,7 @@
         <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
         <li class='tabhandle' id='tab2'>{{ 'Information'|trans }}</li>
         <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
+        <li class='tabhandle' id='tab4'>{{ 'Email'|trans }}</li>
     </ul>
 </menu>
 
@@ -43,10 +44,15 @@
     {% endif %}
 </div>
 
-<!-- TAB 2 INFOS -->
+<!-- TAB 2 INFO -->
 <div class='divhandle' id='tab2div'>
-    {{ 'You belong to the %s team. %s'|trans|format(teamArr.team_name, TeamsView.showStats(true))|msg('ok', false) }}
+    <div class='alert alert-success'><i class='fas fa-info-circle'></i>
+    {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
+    {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+    </div>
 
+<section class='box'>
+    <h5><i class='fas fa-users'></i> {{ 'Members'|trans }}</h5>
     <table id='teamtable' class='table'>
         <tr>
             <th>{{ 'Name'|trans }}</th>
@@ -74,10 +80,11 @@
         </tr>
         {% endfor %}
     </table>
+</section>
 
 <!-- TAG CLOUD -->
 <section class='box'>
-    <i class='fas fa-cloud fa-lg mr-1'></i><h5 class='d-inline'>{{ 'Tag cloud'|trans }}</h5>
+    <h5><i class='fas fa-cloud'></i> {{ 'Tag cloud'|trans }}</h5>
     <hr>
     <div>
         {# handle minimum tag count #}
@@ -104,7 +111,7 @@
     {% if templatesArr|length > 0 %}
         <ul class='nav nav-pills' role='tablist'>
             {% for template in templatesArr %}
-                <li class='sortable subtabhandle clickable badge badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
+                <li class='sortable subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
             {% endfor %}
         </ul>
         {% for template in templatesArr %}
@@ -132,12 +139,33 @@
         </div>
         {% endfor %}
     {% else %}
-        <p>{{ 'No templates from other members of the team to diplay!'|trans }}</p>
+        <p>{{ 'No templates from other members of the team to display!'|trans }}</p>
     {% endif %}
 </div>
 </div>
 
-<div id='infos'
+<!-- TAB 4 EMAIL -->
+<div class='divhandle' id='tab4div'>
+<section class='box'>
+    <h5><i class='fas fa-envelope'></i> {{ 'Send an email to all team members'|trans }}</h5>
+    <form id='emailTeamForm' method="post" action="app/controllers/TeamController.php">
+        {{ App.Csrf.getHiddenInput|raw }}
+        <input type='hidden' name='emailTeam' />
+        <div class="form-group">
+            <label for="emailSubject">{{ 'Subject'|trans }}</label>
+            <input type='text' id='emailSubject' name='subject' class='form-control' required />
+            <label for="emailBody">{{ 'Content'|trans }}</label>
+            <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' required /></textarea>
+        </div>
+        <div class='submitButtonDiv'>
+            <button type='submit' class='button'>{{ 'Send'|trans }}</button>
+        </div>
+    </form>
+
+</section>
+</div>
+
+<div id='info'
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"></div>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>

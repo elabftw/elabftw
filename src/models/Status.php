@@ -1,16 +1,18 @@
 <?php
 /**
- * \Elabftw\Elabftw\Status
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-namespace Elabftw\Elabftw;
+declare(strict_types=1);
 
-use Exception;
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
@@ -18,7 +20,8 @@ use PDO;
  */
 class Status extends AbstractCategory
 {
-    use EntityTrait;
+    /** @var Users $Users our user */
+    public $Users;
 
     /**
      * Constructor
@@ -61,9 +64,11 @@ class Status extends AbstractCategory
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':is_timestampable', $isTimestampable, PDO::PARAM_INT);
-        $req->bindValue(':is_default', $default, PDO::PARAM_INT);
+        $req->bindParam(':is_default', $default, PDO::PARAM_INT);
 
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return $this->Db->lastInsertId();
     }
@@ -97,9 +102,15 @@ class Status extends AbstractCategory
             FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -113,9 +124,15 @@ class Status extends AbstractCategory
         $sql = "SELECT color FROM status WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        return $req->fetchColumn();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            return '00FF00';
+        }
+        return $res;
     }
 
     /**
@@ -129,7 +146,9 @@ class Status extends AbstractCategory
         $sql = "SELECT is_timestampable FROM status WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $status, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return (bool) $req->fetchColumn();
     }
@@ -139,15 +158,17 @@ class Status extends AbstractCategory
      * If we set true to is_default somewhere, it's best to remove all other default
      * in the team so we won't have two default status
      *
-     * @return bool true if sql success
+     * @return void
      */
-    private function setDefaultFalse(): bool
+    private function setDefaultFalse(): void
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -158,15 +179,16 @@ class Status extends AbstractCategory
      * @param string $color New color
      * @param int $isTimestampable May this status be timestamped
      * @param int $isDefault
-     * @return bool true if sql success
+     * @return void
      */
-    public function update(int $id, string $name, string $color, int $isTimestampable, int $isDefault): bool
+    public function update(int $id, string $name, string $color, int $isTimestampable, int $isDefault): void
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
         $default = 0;
-        if ($isDefault && $this->setDefaultFalse()) {
+        if ($isDefault) {
+            $this->setDefaultFalse();
             $default = 1;
         }
 
@@ -185,7 +207,9 @@ class Status extends AbstractCategory
         $req->bindParam(':id', $id);
         $req->bindParam(':team', $this->Users->userData['team']);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -196,10 +220,12 @@ class Status extends AbstractCategory
      */
     protected function countItems(int $id): int
     {
-        $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
+        $sql = "SELECT COUNT(*) FROM experiments WHERE category = :category";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':status', $id, PDO::PARAM_INT);
-        $req->execute();
+        $req->bindParam(':category', $id, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         return (int) $req->fetchColumn();
     }
@@ -208,28 +234,31 @@ class Status extends AbstractCategory
      * Destroy a status
      *
      * @param int $id id of the status
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
         // don't allow deletion of a status with experiments
         if ($this->countItems($id) > 0) {
-            throw new Exception(_("Remove all experiments with this status before deleting this status."));
+            throw new ImproperActionException(_("Remove all experiments with this status before deleting this status."));
         }
 
         $sql = "DELETE FROM status WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Not implemented
      *
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        return false;
+        return;
     }
 }

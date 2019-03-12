@@ -7,15 +7,45 @@
     <hr>
     <div>
         <p>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</p>
-    <p>{{ count }} {% trans %}
-        experiments done since
-        {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
         <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
-        <div id='api_div'><h4>{{ 'API key'|trans }}</h4>
-            {% if App.Users.userData.api_key|length > 0 %}
-            <input value='{{ App.Users.userData.api_key }}' />
-            {% endif %}
-            <button class='button generateApiKey'>{% trans %}Generate an API Key{% endtrans %}</button></p>
+        <div id='api_div'><h4>{{ 'API keys'|trans }}</h4>
+            <h5>{{ 'Existing keys'|trans }}</h5>
+            <table class='table'>
+              <thead>
+                <tr>
+                  <th scope='col'>#</th>
+                  <th scope='col'>{{ 'Name'|trans }}</th>
+                  <th scope='col'>{{ 'Permissions'|trans }}</th>
+                  <th scope='col'>{{ 'Creation date'|trans }}</th>
+                  <th scope='col'>{{ 'Action'|trans }}</th>
+                </tr>
+              </thead>
+          <tbody>
+            {% for key in apiKeysArr %}
+                <tr>
+                  <th scope='row'>{{ loop.index }}</th>
+                  <td>{{ key.name }}</td>
+                  <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
+                  <td>{{ key.created_at }}</td>
+                  <td><i class='fas fa-trash-alt fa-2x clickable keyDestroy' title='Delete' data-id='{{ key.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i></td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+            <h5>{{ 'Create new key'|trans }}</h5>
+        <form method='post' action='app/controllers/ProfileController.php' autocomplete='off'>
+            {{ App.Csrf.getHiddenInput|raw }}
+            <input type='hidden' name='createApiKey' />
+            <label for='name'>{{ 'Name'|trans }}</label>
+            <input id='name' name='name' type='text' required />
+            <label for='canWrite'>{{ 'Permissions'|trans }}</label>
+            <select name='canWrite' id='canWrite' autocomplete='off'>
+                <option value='0'>{{ 'Read Only'|trans }}</option>
+                <option value='1'>{{ 'Read/Write'|trans }}</option>
+            </select>
+            <button class='button' type='submit'>{{ 'Generate an API Key'|trans }}</button>
+        </form>
         </div>
     </div>
 </section>
@@ -27,22 +57,25 @@
     {% else %}
     <i class='fas fa-chart-pie fa-lg mr-1'></i><h5 class='d-inline'>{{ 'Statistics'|trans }}</h5>
         <hr>
-        <!-- BEGIN TEMPORARY DOWNGRADE -->
-        <p>No pretty pie chart until this issue is resolved: <a href='https://github.com/google/google-visualization-issues/issues/1356'>https://github.com/google/google-visualization-issues/issues/1356</a></p>
-        {% for status, percent in UserStats.percentArr %}
-        {{ status }} => {{ percent }}% <br>
-        {% endfor %}
-        <!-- END TEMPORARY DOWNGRADE -->
+        <p>{{ count }} {% trans %}
+            experiments done since
+            {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
         <div id='stats' data-stats='{{ statsJson|raw }}' data-title='{% trans %}
                 Experiment
                 {% plural 2 %}
                 Experiments
                 {% endtrans %}'
         data-colors='{{ colorsJson|raw }}'></div>
-        <div id='chart_div' class='text-center'></div>
+        <div id='pieChart' class='text-center'></div>
     {% endif %}
 </section>
 
-<!--script src='https://www.google.com/jsapi'></script-->
-<script src='app/js/profile.min.js?v={{ v }}'></script>
+<script src='https://www.gstatic.com/charts/loader.js'></script>
+
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/profile.js?v={{ v }}'></script>
+{% else %}
+    <script src='app/js/profile.min.js?v={{ v }}'></script>
+{% endif %}
+
 {% endblock body %}

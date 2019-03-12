@@ -12,11 +12,12 @@
  */
 
 // CORE
-import { library, dom } from '@fortawesome/fontawesome-svg-core'
+import { library, dom } from '@fortawesome/fontawesome-svg-core';
 
 // SOLID
 import {
     faBold,
+    faCalendarPlus,
     faChartPie,
     faCheck,
     faCheckSquare,
@@ -30,6 +31,7 @@ import {
     faComments,
     faDna,
     faDownload,
+    faEnvelope,
     faExclamationTriangle,
     faEye,
     faFile,
@@ -68,10 +70,12 @@ import {
     faTrashAlt,
     faUpload,
     faUser,
-} from '@fortawesome/free-solid-svg-icons'
+    faUsers,
+} from '@fortawesome/free-solid-svg-icons';
 
 library.add(
     faBold,
+    faCalendarPlus,
     faChartPie,
     faCheck,
     faCheckSquare,
@@ -85,6 +89,7 @@ library.add(
     faComments,
     faDna,
     faDownload,
+    faEnvelope,
     faExclamationTriangle,
     faEye,
     faFile,
@@ -122,16 +127,17 @@ library.add(
     faTimes,
     faTrashAlt,
     faUpload,
-    faUser
-)
+    faUser,
+    faUsers
+);
 
 // REGULAR
 import { faCalendarAlt, faCalendarCheck, faCopy} from '@fortawesome/free-regular-svg-icons';
-library.add(faCalendarAlt, faCalendarCheck, faCopy)
+library.add(faCalendarAlt, faCalendarCheck, faCopy);
 
 // BRANDS
-import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
-library.add(faTwitter, faGithub)
+import { faGithub, faGitter, faTwitter } from '@fortawesome/free-brands-svg-icons';
+library.add(faGithub, faGitter, faTwitter);
 
 // Kicks off the process of finding <i> tags and replacing with <svg>
-dom.watch()
+dom.watch();

@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Steps
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,11 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
 /**
@@ -40,10 +41,12 @@ class Steps implements CrudInterface
      * Add a step to an experiment
      *
      * @param string $body the text for the step
-     * @return bool
+     * @return void
      */
-    public function create(string $body): bool
+    public function create(string $body): void
     {
+        $this->Experiments->canOrExplode('write');
+
         // remove any | as they are used in the group_concat
         $body = str_replace('|', ' ', $body);
         $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
@@ -51,24 +54,30 @@ class Steps implements CrudInterface
         $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Toggle the finished column of a step
      *
      * @param int $stepid
-     * @return bool
+     * @return void
      */
-    public function finish(int $stepid): bool
+    public function finish(int $stepid): void
     {
+        $this->Experiments->canOrExplode('write');
+
         $sql = "UPDATE experiments_steps SET finished = !finished,
             finished_time = NOW()
             WHERE id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $stepid, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -81,9 +90,15 @@ class Steps implements CrudInterface
         $sql = "SELECT * FROM experiments_steps WHERE item_id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -98,7 +113,9 @@ class Steps implements CrudInterface
         $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
-        $stepreq->execute();
+        if ($stepreq->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         while ($steps = $stepreq->fetch()) {
             $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
@@ -114,28 +131,28 @@ class Steps implements CrudInterface
      * Delete a step
      *
      * @param int $id ID of the step
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
+        $this->Experiments->canOrExplode('write');
+
         $sql = "DELETE FROM experiments_steps WHERE id= :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Delete all the steps for an experiment
+     * Now handled by cascade
      *
-     * @return bool
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        $sql = "DELETE FROM experiments_steps WHERE item_id = :item_id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
-
-        return $req->execute();
     }
 }

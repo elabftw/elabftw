@@ -1,16 +1,23 @@
 <?php
 /**
- * app/controllers/TagsController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Templates;
+use Elabftw\Models\Tags;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -20,18 +27,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+$Response->setData(array(
+    'res' => true,
+    'msg' => _('Saved')
+));
+
 try {
     if ($App->Session->has('anon')) {
-        throw new Exception(Tools::error(true));
+        throw new IllegalActionException('Anonymous user tried to access database controller.');
     }
-
-    $Response = new JsonResponse();
 
     // id of the item (experiment or database item)
     $id = 1;
 
     if ($Request->request->has('item_id')) {
-        $id = $Request->request->get('item_id');
+        $id = (int) $Request->request->get('item_id');
     }
 
     if ($Request->request->get('type') === 'experiments' ||
@@ -47,16 +58,7 @@ try {
 
     // CREATE TAG
     if ($Request->request->has('createTag')) {
-        $Entity->canOrExplode('write');
-        // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        // also remove | because we use this as separator for tags in SQL
-        $tag = str_replace(array('\\', '|'), array('', ' '), $Request->request->filter('tag', null, FILTER_SANITIZE_STRING));
-        // empty tags are disallowed
-        if ($tag === '') {
-            throw new Exception(_('Tag is too short!'));
-        }
-
-        $Tags->create($tag);
+        $Tags->create($Request->request->get('tag'));
     }
 
     // GET TAG LIST
@@ -66,7 +68,7 @@ try {
     }
 
     // UPDATE TAG
-    if ($Request->request->has('update') && $Session->get('is_admin')) {
+    if ($Request->request->has('update') && $App->Session->get('is_admin')) {
         $Tags->update($Request->request->get('tag'), $Request->request->get('newtag'));
     }
 
@@ -76,11 +78,10 @@ try {
         $Response->setData(array('res' => true, 'msg' => "Removed $deduplicated duplicates"));
     }
 
-
     // UNREFERENCE TAG
     if ($Request->request->has('unreferenceTag')) {
-        if (Tools::checkId($Request->request->get('tag_id')) === false) {
-            throw new Exception('Bad id value');
+        if (Tools::checkId((int) $Request->request->get('tag_id')) === false) {
+            throw new IllegalActionException('Bad id value');
         }
         $Tags->unreference((int) $Request->request->get('tag_id'));
     }
@@ -88,30 +89,34 @@ try {
     // DELETE TAG
     if ($Request->request->has('destroyTag') && $App->Session->get('is_admin')) {
         if (Tools::checkId($Request->request->get('tag_id')) === false) {
-            throw new Exception('Bad id value');
+            throw new IllegalActionException('Bad id value');
         }
-        try {
-            $res = $Tags->destroy((int) $Request->request->get('tag_id'));
-        } catch (Exception $e) {
-            $errMsg = $e->getMessage();
-        }
-        if ($res) {
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved')
-            ));
-        } else {
-            $Response->setData(array(
-                'res' => false,
-                'msg' => $errMsg
-            ));
-        }
+        $Tags->destroy((int) $Request->request->get('tag_id'));
     }
 
-    $Response->send();
+} catch (ImproperActionException $e) {
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error(true)
+    ));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
-    $Session->getFlashBag()->add('ko', Tools::error());
-    header('Location: ../../experiments.php');
+
+} finally {
+    $Response->send();
 }

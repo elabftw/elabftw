@@ -1,0 +1,2456 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"Project-Id-Version: elabftw\n"
+"Language: id\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"Language-Team: \n"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:235
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:254
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:273
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:506
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:598
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:188
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:149
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:174
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:235
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:254
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:273
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:506
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:598
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:188
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:149
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:174
+msgid "Yes"
+msgstr "Ya"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:241
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:260
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:279
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:512
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:604
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:194
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:155
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:180
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:241
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:260
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:279
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:512
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:604
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:194
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:155
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:180
+msgid "No"
+msgstr "Tidak"
+
+#: web/app/controllers/IdpsController.php:39
+#: web/app/controllers/IdpsController.php:57
+#: web/app/controllers/IdpsController.php:66
+#: web/app/controllers/SysconfigController.php:97
+#: web/app/controllers/SysconfigController.php:152
+#: web/app/controllers/UsersController.php:80
+#: web/app/controllers/AdminController.php:59
+#: web/app/controllers/AdminController.php:71
+msgid "Configuration updated successfully."
+msgstr "Pengaturan berhasil diperbarui."
+
+#: src/models/Users.php:769
+msgid "Wrong password!"
+msgstr "Kata sandi salah!"
+
+#: src/models/Users.php:776
+msgid "No user with this email or user not in your team"
+msgstr "Tidak ada pengguna dengan surel ini, atau pengguna tidak di dalam tim anda"
+
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:90
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:121
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:90
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:121
+#: src/models/Users.php:609
+msgid "The passwords do not match!"
+msgstr "Kata sandi tidak cocok!"
+
+#: web/app/controllers/RegisterController.php:38
+#: web/app/controllers/LoginController.php:50
+msgid "A mandatory field is missing!"
+msgstr "Ada kolom wajib diisi yang masih kosong!"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:80
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:95
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:80
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:95
+msgid "Password"
+msgstr "Kata sandi"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:63
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:105
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:516
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:63
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:105
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:516
+msgid "Firstname"
+msgstr "Nama depan"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:79
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:113
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:527
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:79
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:113
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:527
+msgid "Lastname"
+msgstr "Nama belakang"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:141
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:95
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:72
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:88
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:480
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:141
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:95
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:72
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:88
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:480
+msgid "Email"
+msgstr "Surel"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:453
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:289
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:124
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:39
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:65
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:453
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:289
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:92
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:124
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:92
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:39
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:65
+#: src/views/TeamsView.php:49
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "Eksperimen"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:46
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:100
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:100
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:46
+msgid "Database"
+msgstr "Basis data"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:59
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:408
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:95
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:125
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:112
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:59
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:408
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:95
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:112
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:125
+msgid "Team"
+msgstr "Tim"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:153
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:139
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:211
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:153
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:139
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:211
+msgid "Date"
+msgstr "Tanggal"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:276
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:145
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:236
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:276
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:145
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:236
+msgid "Title"
+msgstr "Judul"
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:39
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:39
+msgid "Infos"
+msgstr "Informasi"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:168
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:82
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:105
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:168
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:82
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:105
+msgid "Visibility"
+msgstr "Tampilan"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:206
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:74
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:107
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:206
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:74
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:107
+msgid "Status"
+msgid_plural "Status"
+msgstr[0] "Status"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:793
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:133
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:227
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:793
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:133
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:227
+msgid "Edit"
+msgstr "Sunting"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:290
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:361
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:413
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:572
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:640
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:804
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:944
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:985
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:1053
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:224
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:534
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:565
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:591
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:453
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:654
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:775
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:554
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:622
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:672
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:744
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:834
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:290
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:361
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:413
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:572
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:640
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:804
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:944
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:985
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:1053
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:224
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:534
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:565
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:591
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:453
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:654
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:775
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:554
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:622
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:672
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:744
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:834
+msgid "Save"
+msgstr "Simpan"
+
+#: web/app/controllers/ItemsTypesController.php:43
+#: web/app/controllers/ItemsTypesController.php:57
+#: web/app/controllers/ExperimentsController.php:56
+#: web/app/controllers/ExperimentsController.php:73
+#: web/app/controllers/ExperimentsController.php:107
+#: web/app/controllers/CommentsController.php:51
+#: web/app/controllers/StatusController.php:42
+#: web/app/controllers/StatusController.php:54
+#: web/app/controllers/SysconfigController.php:40
+#: web/app/controllers/SysconfigController.php:56
+#: web/app/controllers/SysconfigController.php:64
+#: web/app/controllers/SysconfigController.php:127
+#: web/app/controllers/SysconfigController.php:137
+#: web/app/controllers/EntityController.php:83
+#: web/app/controllers/EntityController.php:123
+#: web/app/controllers/EntityController.php:160
+#: web/app/controllers/EntityController.php:183
+#: web/app/controllers/EntityController.php:213
+#: web/app/controllers/EntityController.php:236
+#: web/app/controllers/EntityController.php:258
+#: web/app/controllers/TagsController.php:102
+#: web/app/controllers/DatabaseController.php:50
+#: web/app/controllers/UsersController.php:44
+#: web/app/controllers/UsersController.php:97
+#: web/app/controllers/UcpController.php:59
+#: web/app/controllers/UcpController.php:119
+#: web/app/controllers/TodolistController.php:54
+#: web/app/controllers/TodolistController.php:65
+#: web/app/controllers/SchedulerController.php:39
+#: web/app/controllers/SchedulerController.php:58
+#: web/app/controllers/SchedulerController.php:69
+#: web/app/controllers/AdminController.php:44
+#: web/app/controllers/AdminController.php:81
+msgid "Saved"
+msgstr "Tersimpan"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:567
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:567
+msgid "Cancel"
+msgstr "Batal"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:563
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:563
+msgid "Saving"
+msgstr "Menyimpan"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:323
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:323
+msgid "Save and go back"
+msgstr "Simpan dan kembali"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:208
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:208
+msgid "Action"
+msgstr "Tindakan"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:212
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:212
+msgid "Shortcut"
+msgstr "Pintasan"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:217
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:354
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:217
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:354
+msgid "Create"
+msgstr "Membuat"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:237
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:237
+msgid "Submit"
+msgstr "Kirim"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:247
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:247
+msgid "TODO list"
+msgstr "Daftar tugas"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:960
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:755
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:542
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:581
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:655
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:697
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:143
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:960
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:755
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:542
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:581
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:655
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:697
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:143
+msgid "Name"
+msgstr "Nama"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:545
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:147
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:545
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:147
+msgid "Phone"
+msgstr "Telepon"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:555
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:151
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:555
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:151
+msgid "Mobile"
+msgstr "Seluler"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:577
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:155
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:577
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:155
+msgid "Website"
+msgstr "Situs web"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:567
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:159
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:567
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:159
+msgid "Skype"
+msgstr "Skype"
+
+#: src/classes/Email.php:190
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Pengguna baru telah terdaftar"
+
+#: web/app/controllers/ResetPasswordController.php:79 src/classes/Email.php:244
+msgid "There was a problem sending the email! Error was logged."
+msgstr "Ada masalah saat mengirim surel! Kesalahan telah dicatat."
+
+#: web/app/controllers/ResetPasswordController.php:82
+msgid "Email sent. Check your INBOX."
+msgstr "Surel terkirim. Periksa kotak masuk anda."
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:49
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:49
+msgid "There are users waiting for validation of their account:"
+msgstr "Ada pengguna yang menunggu validasi akunnya:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:129
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:99
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:129
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:99
+msgid "Users"
+msgstr "Pengguna"
+
+#. what/where is this used (for)?
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:111
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:111
+msgid "Types of items"
+msgstr "Jenis-jenis komponen"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:115
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:115
+msgid "Experiments template"
+msgstr "Templat eksperimen"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:142
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:142
+msgid "Users can delete experiments:"
+msgstr "Pengguna dapat menghapus eksperimen:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:188
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:188
+msgid "Name of the link in the top menu:"
+msgstr "Nama tautan di menu utama:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:199
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:199
+msgid "Address where this link should point:"
+msgstr "Alamat yang dituju tautan ini:"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:178
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:178
+msgid "Has an active account?"
+msgstr "Punya akun yang aktif?"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:307
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:307
+msgid "Delete an account"
+msgstr "Hapus akun"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:323
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:323
+msgid "Type your password:"
+msgstr "Ketik kata sandi:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:329
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:329
+msgid "Delete this user!"
+msgstr "Hapus pengguna ini!"
+
+#: src/models/Status.php:217
+msgid "Remove all experiments with this status before deleting this status."
+msgstr "Hapus seluruh eksperimen dengan status ini sebelum menghapus statusnya."
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:614
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:614
+msgid "Default status"
+msgstr "Status awal"
+
+#: src/models/ItemsTypes.php:187
+msgid "Remove all database items with this type before deleting this type."
+msgstr "Hapus seluruh komponen basis data dengan jenis ini sebelum menghapus jenisnya."
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:820
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:820
+msgid "This is the default text when someone creates an experiment."
+msgstr "Ini adalah teks awal ketika seseorang membuat eksperimen."
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:855
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:915
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:855
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:915
+msgid "You should make a backup of your database before importing thousands of items!"
+msgstr "Anda disarankan membuat cadangan basis data sebelum mengimpor ribuan komponen!"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:861
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:861
+msgid "1. Select a type of item to import to:"
+msgstr "1. Pilih jenis komponen untuk diimpor:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:888
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:888
+msgid "2. Select a CSV file to import:"
+msgstr "2. Pilih berkas CSV untuk diimpor:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:895
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:895
+msgid "Import CSV"
+msgstr "Impor CSV"
+
+#: src/models/Users.php:400
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "Hanya sysadmin yang dapat menjadikan seseorang sysadmin."
+
+#: web/app/controllers/UsersController.php:120
+msgid "Everything was purged successfully."
+msgstr "Semua telah berhasil dibersihkan."
+
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:76
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:76
+msgid "Type it again"
+msgstr "Ketik lagi"
+
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:84
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:84
+msgid "Complexity"
+msgstr "Kerumitan"
+
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:125
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:125
+msgid "Save new password"
+msgstr "Simpan kata sandi baru"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:140
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:100
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:140
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:100
+msgid "Weak password"
+msgstr "Kata sandi lemah"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:144
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:104
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:144
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:104
+msgid "Average password"
+msgstr "Kata sandi oke"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:148
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:108
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:148
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:108
+msgid "Good password"
+msgstr "Kata sandi bagus"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:152
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:112
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:152
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:112
+msgid "Strong password"
+msgstr "Kata sandi kuat"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:156
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:116
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:156
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:116
+msgid "No way that is your real password!"
+msgstr "Tidak mungkin itu kata sandi anda!"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:602
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:602
+#: src/models/Database.php:53 src/models/Experiments.php:64
+#: src/classes/ImportCsv.php:70 src/classes/Tools.php:95
+msgid "Untitled"
+msgstr "Tanpa Judul"
+
+#: web/app/controllers/ExperimentsController.php:175
+msgid "You don't have the rights to delete this experiment."
+msgstr "Anda tidak memiliki hak untuk menghapus eksperimen ini."
+
+#: web/app/controllers/EntityController.php:111
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Anda tidak memiliki hak untuk mengunci/membuka kunci ini."
+
+#: src/models/Experiments.php:301
+msgid "This experiment was locked by"
+msgstr "Eksperimen ini dikunci oleh"
+
+#: web/app/controllers/LoginController.php:72 src/classes/Auth.php:66
+msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
+msgstr "Gagal masuk. Mungkin anda salah mengetik kata sandi atau akun anda belum aktif."
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:97
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:97
+msgid "Login"
+msgstr "Masuk"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:66
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:66
+msgid "Sign in to your account"
+msgstr "Masuk ke akun anda"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:104
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:104
+msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr "Tidak punya akun? %sDaftar%s sekarang!<br>Lupa kata sandi? %sAtur ulang!%s!"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:113
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:113
+msgid "Enter your email address"
+msgstr "Masukkan alamat surel anda"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:117
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:117
+msgid "Send new password"
+msgstr "Kirim kata sandi baru"
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:53
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:53
+msgid "experiments done since"
+msgstr "eksperimen selesai sejak"
+
+#: src/models/Users.php:98 src/models/Users.php:620
+msgid "Someone is already using that email address!"
+msgstr "Seseorang telah menggunakan alamat surel itu!"
+
+#: src/classes/Email.php:207
+msgid "Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account."
+msgstr "Tidak dapat mengirim surel untuk memberitahukan admin. Kesalahan telah dicatat. Langsung hubungi admin untuk memvalidasi akun anda."
+
+#: web/app/controllers/RegisterController.php:55
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Pendaftaran berhasil :)<br>Selamat datang di eLabFTW o/"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:39
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:39
+msgid "go back to login page"
+msgstr "kembali ke halaman masuk"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:47
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:47
+msgid "Create your account"
+msgstr "Buat akun anda"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:174
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:64
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:174
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:64
+msgid "Select a team"
+msgstr "Pilih tim"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:121
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:121
+msgid "Password complexity"
+msgstr "Kerumitan kata sandi"
+
+#: /tmp/elabftw-twig-cache/fe/fe3d8f1f479dbc406d73654493bf0adcb0b05ff5efdbbfb1fd0d5de537b71e1d.php:130
+#: /tmp/elabftw-twig-cache/75/7569f37dfbf0a22c9ff83d548e81c84c7774dc64b1447c6d148e1dfadac7723f.php:130
+msgid "create"
+msgstr "buat"
+
+#: web/app/controllers/ResetPasswordController.php:74
+msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
+msgstr "Hai. Seseorang (mungkin anda) dengan alamat IP: %s dan agen pengguna %s meminta kata sandi baru di eLabFTW. Silahkan ikuti tautan ini untuk mengatur ulang kata sandi : %s"
+
+#: web/app/controllers/ResetPasswordController.php:38
+msgid "Email not found in database!"
+msgstr "Surel tidak ditemukan di basis data!"
+
+#: /tmp/elabftw-twig-cache/fc/fcd103934e2d017e35866b49ebffd020e00cd24304b6d50e7149bb4ede9c4bc4.php:74
+#: /tmp/elabftw-twig-cache/2f/2fa1fa9ee8a5eb33a79083962b22a9d712f7d56dde1b2ee1aa973d6b58e0e84f.php:74
+msgid "Restore"
+msgstr "Pulihkan"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:124
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:124
+msgid "Search"
+msgstr "Cari"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:166
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:166
+msgid "Search only in experiments owned by:"
+msgstr "Cari hanya di eksperimen yang dimiliki oleh:"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:171
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:171
+msgid "Yourself"
+msgstr "Diri anda"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:34
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:34
+msgid "Search in"
+msgstr "Cari di"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:216
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:216
+msgid "Where date is between"
+msgstr "Pada periode antara"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:224
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:312
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:224
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:312
+msgid "and"
+msgstr "dan"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:241
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:241
+msgid "And title contains"
+msgstr "Dan judul mengandung"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:295
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:295
+msgid "And body contains"
+msgstr "Dan isi mengandung"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:254
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:254
+msgid "And status is"
+msgstr "Dan statusnya"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:328
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:328
+msgid "And rating is"
+msgstr "Dan peringkatnya"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:337
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:337
+msgid "Unrated"
+msgstr "Tanpa peringkat"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:371
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:371
+msgid "Launch search"
+msgstr "Lakukan pencarian"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:290
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:290
+msgid "Sorry. I couldn't find anything :("
+msgstr "Maaf. Saya tidak dapat menemukan apa-apa :("
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:121
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:121
+msgid "Server"
+msgstr "Peladen"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:133
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:133
+#, fuzzy
+msgid "Timestamp"
+msgstr "Audit"
+
+#: src/views/ExperimentsView.php:74
+msgid "on"
+msgstr "pada"
+
+#: src/views/ExperimentsView.php:75
+msgid "at"
+msgstr "pada"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:137
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:137
+msgid "Security"
+msgstr "Keamanan"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:447
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:447
+#: src/views/TeamsView.php:48
+msgid "Members"
+msgstr "Anggota"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:461
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:461
+#: src/views/TeamsView.php:50
+msgid "Items"
+msgstr "Komponen"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:465
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:465
+msgid "Created"
+msgstr "Dibuat"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:499
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:499
+#, fuzzy
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "Tim dapat menggunakan kredensial di bawah ini untuk mengaudit:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:549
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:246
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:549
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:246
+#, fuzzy
+msgid "Login for external timestamping service:"
+msgstr "Masuk untuk layanan audit dari luar:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:557
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:261
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:557
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:261
+#, fuzzy
+msgid "Password for external timestamping service:"
+msgstr "Kata sandi untuk layanan audit dari luar:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:591
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:591
+msgid "Users need validation by admin after registration:"
+msgstr "Pengguna membutuhkan validasi oleh admin setelah pendaftaran:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:609
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:609
+msgid "Set to yes for added security."
+msgstr "Atur ke ya untuk keamanan tambahan."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:613
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:613
+msgid "Number of allowed login attempts:"
+msgstr "Jumlah usaha masuk yang dibolehkan:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:621
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:621
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 mungkin terlalu sedikit. Coba deh :)"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:634
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:634
+msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
+msgstr "Untuk mengidentifikasi pengguna, kami menggunakan md5 dari agen pengguna + IP. Sebab kalau hanya alamat IP bisa menimbulkan masalah."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:718
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:718
+msgid "Address of the SMTP server:"
+msgstr "Alamat peladen SMTP:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:745
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:745
+msgid "Probably TLS"
+msgstr "Mungkin TLS"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:749
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:749
+msgid "SMTP Port:"
+msgstr "Port SMTP:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:757
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:757
+msgid "Default is 587."
+msgstr "Standarnya 587."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:761
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:761
+msgid "SMTP username:"
+msgstr "Nama pengguna SMTP:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:769
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:769
+msgid "SMTP password"
+msgstr "Kata sandi SMTP"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:222
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:222
+msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
+msgstr "Admin tim dapat menyunting status dan tipe komponen yang tersedia (%sPanel Admin%s)."
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:234
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:234
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "Pintasan ubah suai tersedia (%sPanel Kontrol%s)."
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:240
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:240
+msgid "You can duplicate experiments in one click."
+msgstr "Anda dapat menyalin eksperimen dalam satu klik."
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:246
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:246
+msgid "Click a tag to list all items with this tag."
+msgstr "Pilih label untuk mendata semua komponen dengan label ini."
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:252
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:252
+#, fuzzy
+msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
+msgstr "Sekali diaudit, eksperimen tidak dapat dibuka atau diubah. Hanya komentar yang dapat ditambahkan."
+
+#: web/app/controllers/UcpController.php:43
+msgid "Profile updated."
+msgstr "Profil diperbarui."
+
+#: web/app/controllers/UcpController.php:30
+msgid "Preferences updated."
+msgstr "Preferensi diperbarui."
+
+#: web/app/controllers/UcpController.php:76
+msgid "You must specify a name for the template!"
+msgstr "Anda harus memberikan nama untuk templat!"
+
+#: web/app/controllers/UcpController.php:80
+msgid "The template name must be 3 characters long."
+msgstr "Nama templat setidaknya 3 karakter."
+
+#: web/app/controllers/UcpController.php:90
+msgid "Experiment template successfully added."
+msgstr "Templat eksperimen berhasil ditambahkan."
+
+#: web/app/controllers/UcpController.php:104
+msgid "Template successfully edited."
+msgstr "Templat berhasil disunting."
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:51
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:51
+msgid "Account"
+msgstr "Akun"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:47
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:47
+msgid "Preferences"
+msgstr "Preferensi"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:55
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:55
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:75
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:55
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:55
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:75
+msgid "Templates"
+msgstr "Templat"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:471
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:471
+msgid "Modify your personal informations"
+msgstr "Ubah informasi pribadi anda"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:509
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:509
+msgid "Modify your identity"
+msgstr "Ubah identitas anda"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:490
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:490
+msgid "Modify your password"
+msgstr "Ubah kata sandi anda"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:494
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:67
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:494
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:67
+msgid "New password"
+msgstr "Kata sandi baru"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:499
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:499
+msgid "Confirm new password"
+msgstr "Pastikan kata sandi baru"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:539
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:539
+msgid "Modify your contact information"
+msgstr "Ubah informasi kontak anda"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:589
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:589
+msgid "Update profile"
+msgstr "Perbarui profil"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:110
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:110
+msgid "Items per page:"
+msgstr "Komponen per halaman:"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:607
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:55
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:607
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:55
+msgid "Create new"
+msgstr "Buat baru"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:174
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:68
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:174
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:68
+msgid "Language"
+msgstr "Bahasa"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:488
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:488
+msgid "Last modified by"
+msgstr "Terakhir diubah oleh"
+
+#: src/views/ExperimentsView.php:74
+#, fuzzy
+msgid "Experiment was timestamped by"
+msgstr "Eksperimen telah diaudit oleh"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:473
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:473
+msgid "Unique eLabID:"
+msgstr "eLabID unik:"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:513
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:513
+msgid "Comments"
+msgstr "Komentar"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:584
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:584
+msgid "Add a comment"
+msgstr "Tambahkan komentar"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:70
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:108
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:598
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:546
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:639
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:705
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:805
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:491
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:1005
+#: /tmp/elabftw-twig-cache/42/42448f30413290fa050d998a836a85612d6f376cf9ee10cfc5d5d59026ca5529.php:74
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:70
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:108
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:598
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:546
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:639
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:705
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:805
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:491
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:1005
+#: /tmp/elabftw-twig-cache/4f/4f0506ed3f90b5caab20107eb5a49949e9f734dbaeb54f601b95bc8c0de7d6a5.php:74
+msgid "Delete this?"
+msgstr "Hapus ini?"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:220
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:220
+msgid "Tag cloud"
+msgstr "Awan label"
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:97
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:97
+msgid "Statistics"
+msgstr "Statistik"
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:91
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:91
+msgid "No statistics available yet."
+msgstr "Belum ada statistik tersedia."
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:164
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:164
+msgid "Filter status"
+msgstr "Saring status"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:76
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:673
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:318
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:76
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:673
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:318
+msgid "Tags"
+msgstr "Label"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:132
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:729
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:132
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:729
+msgid "Add a tag"
+msgstr "Tambahkan label"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:131
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:131
+msgid "Only me"
+msgstr "Hanya saya"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:437
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:437
+msgid "Linked items"
+msgstr "Komponen terkait"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:485
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:485
+msgid "Add a link"
+msgstr "Tambahkan tautan"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:490
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:490
+msgid "from the database"
+msgstr "dari basis data"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:165
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:165
+msgid "Howdy,"
+msgstr "Apa kabar,"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:168
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:168
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:173
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:173
+msgid "Settings"
+msgstr "Pengaturan"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:189
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:269
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:189
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:269
+msgid "Logout"
+msgstr "Keluar"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:40
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:40
+msgid "Sysadmin panel"
+msgstr "Panel sysadmin"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:51
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:51
+msgid "Admin panel"
+msgstr "Panel admin"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:75
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:75
+msgid "Powered by"
+msgstr "Dipersembahkan oleh"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:80
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:80
+msgid "Page generated in"
+msgstr "Halaman dibuat pada"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:210
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:210
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr "Anda dapat memiliki templat eksperimen (%sPanel Kontrol%s)."
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:228
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:228
+msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
+msgstr "Jika anda menekan Ctrl Shift D di editor, tanggal akan muncul di bawah kursor."
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:60
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:60
+msgid "Go to user control panel"
+msgstr "Menuju panel kontrol pengguna"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:125
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:125
+#: src/views/TeamsView.php:45
+msgid "Teams"
+msgstr "Tim"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:522
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:217
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:522
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:217
+#, fuzzy
+msgid "URL for external timestamping service:"
+msgstr "URL untuk layanan audit luar:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:536
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:233
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:536
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:233
+#, fuzzy
+msgid "Chain of certificates of the external timestamping service:"
+msgstr "Rantai sertifikat dari layanan audit luar:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:254
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:254
+#, fuzzy
+msgid "This should be the login associated with your timestamping service provider"
+msgstr "Ini harusnya akun terkait penyedia layanan audit anda"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:283
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:283
+#, fuzzy
+msgid "Your timestamping service provider password"
+msgstr "Kata sandi penyedia layanan audit anda"
+
+#: web/app/controllers/RevisionsController.php:39 src/models/Users.php:381
+#: src/models/Users.php:395 src/classes/EntityTrait.php:42
+msgid "The id parameter is not valid!"
+msgstr "Parameter id tidak valid!"
+
+#: src/models/Experiments.php:309
+#, fuzzy
+msgid "You cannot unlock or edit in any way a timestamped experiment."
+msgstr "Anda tidak dapat membuka kunci atau mengubah eksperimen yang sudah diaudit."
+
+#: web/app/controllers/LoginController.php:45
+msgid "Your session expired. Please retry."
+msgstr "Sesi anda berakhir. Silakan coba lagi."
+
+#: web/app/controllers/RegisterController.php:53
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "Pendaftaran berhasil :)<br>Akun anda harus divalidasi oleh admin.<br>Anda akan menerima surel jika sudah selesai."
+
+#: /tmp/elabftw-twig-cache/42/42448f30413290fa050d998a836a85612d6f376cf9ee10cfc5d5d59026ca5529.php:34
+#: /tmp/elabftw-twig-cache/4f/4f0506ed3f90b5caab20107eb5a49949e9f734dbaeb54f601b95bc8c0de7d6a5.php:34
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "Berkas terlampir"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:505
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:505
+msgid "Attach a file"
+msgstr "Lampirkan berkas"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:578
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:578
+msgid "Drop files here to upload"
+msgstr "Taruh berkas di sini untuk mengunggah"
+
+#: src/models/Revisions.php:142
+msgid "You cannot restore a revision of a locked item!"
+msgstr "Anda tidak dapat memulihkan revisi dari berkas yang terkunci!"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:551
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:551
+msgid "Molecule drawer"
+msgstr "Laci molekul"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:475
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:475
+msgid "Enter your password to edit infos."
+msgstr "Masukkan kata sandi untuk menyunting informasi."
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:78
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:78
+msgid "With the tag"
+msgstr "Dengan label"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:530
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:225
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:530
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:225
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "Ini harusnya URL yang digunakan untuk permintaan audit yang kompatibel dengan %sRFC 3161%s."
+
+#: src/views/ExperimentsView.php:78
+#, fuzzy
+msgid "Download timestamped pdf"
+msgstr "Unduh pdf hasil audit"
+
+#: web/app/controllers/ImportController.php:35
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "komponen berhasil diimpor."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:57
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:57
+msgid "Installed version:"
+msgstr "Versi terpasang:"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:327
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:327
+msgid "Miscellaneous"
+msgstr "Lain-lain"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:974
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:974
+msgid "Import ZIP"
+msgstr "Impor ZIP"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:84
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:84
+msgid "seconds"
+msgstr "detik"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:160
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:160
+msgid "An admin account will always be able to delete experiments."
+msgstr "Akun admin selalu bisa menghapus eksperimen."
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:198
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:198
+msgid "There is a manual available %shere%s."
+msgstr "Panduan tersedia %sdi sini%s."
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:199
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:199
+msgid "Order by"
+msgstr "Urut berdasarkan"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:244
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:244
+msgid "Sort"
+msgstr "Urut"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:266
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:266
+msgid "Reset"
+msgstr "Ulang"
+
+#: /tmp/elabftw-twig-cache/61/610f1c1418d3c66e380c77ca24a1d93eda12b8ff0399fc23c735698ee027a5a6.php:38
+#: /tmp/elabftw-twig-cache/17/1752fec2a2d4bbabbef16d800188b4013512969a4a0e23e88e7f7a8a5808fa24.php:38
+msgid "Your file is ready:"
+msgstr "Berkas anda siap:"
+
+#: src/views/ExperimentsView.php:79
+msgid "Download token"
+msgstr "Unduh token"
+
+#: src/classes/TrustedTimestamps.php:118
+#, fuzzy
+msgid "Please configure Timestamping in the admin panel."
+msgstr "Harap atur Audit di panel admin."
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:91
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:91
+msgid "Remember me"
+msgstr "Ingat saya"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:178
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:178
+msgid "All the team"
+msgstr "Semua tim"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:305
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:305
+#, fuzzy
+msgid "Space means"
+msgstr "Spasi berarti"
+
+#: web/app/controllers/EntityController.php:323
+#: web/app/controllers/TodolistController.php:73
+#: web/app/controllers/TodolistController.php:81
+msgid "Item deleted successfully"
+msgstr "Komponen berhasil dihapus"
+
+#: web/app/controllers/SysconfigController.php:74
+#: web/app/controllers/SysconfigController.php:88
+msgid "Email sent"
+msgstr "Surel terkirim"
+
+#: web/app/controllers/StatusController.php:62
+msgid "Status deleted successfully"
+msgstr "Status berhasil dihapus"
+
+#: web/app/controllers/EntityController.php:201
+msgid "Comment is too short"
+msgstr "Komentar terlalu pendek"
+
+#: web/app/controllers/EntityController.php:206
+#: web/app/controllers/TodolistController.php:48
+msgid "The id parameter is invalid"
+msgstr "Parameter id tidak valid"
+
+#: web/app/controllers/EntityController.php:293
+msgid "File deleted successfully"
+msgstr "Berkas berhasil dihapus"
+
+#: web/app/controllers/ExperimentsController.php:124
+msgid "Link deleted successfully"
+msgstr "Tautan berhasil dihapus"
+
+#: web/app/controllers/ExperimentsController.php:181
+msgid "Experiment successfully deleted"
+msgstr "Eksperimen berhasil dihapus"
+
+#: web/app/controllers/ItemsTypesController.php:66
+msgid "Item type deleted successfully"
+msgstr "Tipe komponen berhasil dihapus"
+
+#: web/app/controllers/ResetPasswordController.php:100
+msgid "Invalid link. Reset links are only valid for one hour."
+msgstr "Tautan tidak valid. Tautan atur ulang hanya berlaku satu jam."
+
+#: web/app/controllers/ResetPasswordController.php:109
+msgid "New password inserted. You can now login."
+msgstr "Kata sandi baru sudah dicatat. Anda dapat masuk."
+
+#: web/app/controllers/CommentsController.php:59
+msgid "Comment successfully deleted"
+msgstr "Komentar berhasil dihapus"
+
+#: web/app/controllers/SchedulerController.php:80
+msgid "Event deleted successfully"
+msgstr "Kegiatan berhasil dihapus"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:664
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:664
+msgid "Show all"
+msgstr "Perlihatkan semua"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:212
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:212
+msgid "Lock/Unlock item"
+msgstr "Kunci/Buka komponen"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:256
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:256
+#, fuzzy
+msgid "Timestamp this experiment?"
+msgstr "Audit eksperimen ini?"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:262
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:262
+#, fuzzy
+msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
+msgstr "Sekali diaudit, eksperimen tidak dapat diubah lagi! Yakin untuk melakukannya?"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:814
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:814
+msgid "Send a test email"
+msgstr "Kirim surel percobaan"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:819
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:841
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:819
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:841
+msgid "Send"
+msgstr "Kirim"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:101
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:101
+msgid "No templates found"
+msgstr "Templat tidak ditemukan"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:164
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:164
+msgid "Filter by type"
+msgstr "Saring berdasarkan jenis"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:192
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:192
+msgid "Filter"
+msgstr "Saring"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:212
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:133
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:205
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:212
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:133
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:205
+msgid "Category"
+msgstr "Kategori"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:220
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:220
+msgid "Rating"
+msgstr "Peringkat"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:177
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:250
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:177
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:250
+msgid "DESC"
+msgstr "Turun"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:171
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:256
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:171
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:256
+msgid "ASC"
+msgstr "Naik"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:261
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:261
+msgid "Order"
+msgstr "Urut"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:534
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:534
+msgid "Add a New Status"
+msgstr "Tambahkan Status Baru"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:546
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:591
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:659
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:710
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:546
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:591
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:659
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:710
+msgid "Color"
+msgstr "Warna"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:564
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:564
+msgid "Edit an Existing Status"
+msgstr "Sunting Status yang Ada"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:427
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:629
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:752
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:415
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:427
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:629
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:752
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:415
+msgid "Delete"
+msgstr "Hapus"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:649
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:649
+msgid "Add a new type of item"
+msgstr "Tambahkan tipe komponen baru"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:663
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:728
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:663
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:728
+msgid "Bookable"
+msgstr "Dapat dipesan"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:665
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:665
+msgid "in the %sscheduler%s"
+msgstr "pada %spenjadwal%s"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:680
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:680
+msgid "Database Items Types"
+msgstr "Basis Data Tipe Komponen"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:736
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:736
+msgid "Edit the template"
+msgstr "Sunting templat"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:355
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:355
+msgid "Add a New Team"
+msgstr "Tambahkan Tim Baru"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:369
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:369
+msgid "Edit Existing Teams"
+msgstr "Sunting Tim yang Ada"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:827
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:827
+msgid "Send a Mass Email"
+msgstr "Kirim Surel Massal"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:831
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:831
+msgid "Email Subject"
+msgstr "Judul Surel"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:836
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:836
+msgid "Email Body"
+msgstr "Isi Surel"
+
+#: src/models/Users.php:604
+msgid "Please input your current password!"
+msgstr "Harap masukkan kata sandi saat ini!"
+
+#: src/classes/Tools.php:252
+msgid "This section is out of your reach!"
+msgstr "Bagian ini di luar jangkauan anda!"
+
+#: src/classes/Tools.php:254
+msgid "An error occurred!"
+msgstr "Terjadi galat!"
+
+#: src/classes/MolViewer.php:79
+#, fuzzy
+msgid "Stick"
+msgstr "Tempel"
+
+#: src/classes/MolViewer.php:68
+msgid "Style"
+msgstr "Gaya"
+
+#: src/classes/Auth.php:174
+msgid "Password must contain at least %s characters."
+msgstr "Kata sandi harus setidaknya %s karakter."
+
+#: web/app/controllers/TagsController.php:57
+msgid "Tag is too short!"
+msgstr "Label terlalu pendek!"
+
+#: src/models/Comments.php:110
+msgid "[eLabFTW] New comment posted"
+msgstr "[eLabFTW] Ada Komentar Baru"
+
+#: src/classes/Email.php:126
+msgid "[eLabFTW] Test email"
+msgstr "[eLabFTW] Surel percobaan"
+
+#: src/classes/Email.php:132
+msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
+msgstr "Selamat, anda telah mengatur eLabFTW untuk mengirim surel :)"
+
+#: src/models/ItemsTypes.php:86
+msgid "Nothing to show with this id"
+msgstr "Tidak ada yang bisa ditampilkan dengan id ini"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:54
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:54
+msgid "Note: You need cookies enabled to log in."
+msgstr "Catatan: Anda membutuhkan kuki untuk masuk."
+
+#: /tmp/elabftw-twig-cache/fc/fcd103934e2d017e35866b49ebffd020e00cd24304b6d50e7149bb4ede9c4bc4.php:54
+#: /tmp/elabftw-twig-cache/2f/2fa1fa9ee8a5eb33a79083962b22a9d712f7d56dde1b2ee1aa973d6b58e0e84f.php:54
+msgid "Go back"
+msgstr "Kembali"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:47
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:47
+msgid "Scheduler"
+msgstr "Penjadwal"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:67
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:67
+msgid "No bookable items."
+msgstr "Tidak ada komponen yang bisa dipesan."
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:94
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:94
+msgid "Select an equipment"
+msgstr "Pilih peralatan"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:74
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:74
+msgid "Change item"
+msgstr "Ubah komponen"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:136
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:136
+msgid "You belong to the %s team. %s"
+msgstr "Anda termasuk dalam %s tim. %s"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:104
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:104
+msgid "Display"
+msgstr "Tampilan"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:198
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:198
+msgid "Keyboard Shortcuts"
+msgstr "Pintasan Papan Ketik"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:270
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:270
+msgid "Experiments Templates"
+msgstr "Templat Eksperimen"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:635
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:635
+msgid "Import from File"
+msgstr "Impor dari Berkas"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:643
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:643
+msgid "Name of the Template"
+msgstr "Nama Templat"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:318
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:318
+msgid "or"
+msgstr "atau"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:81
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:81
+msgid "Validate"
+msgstr "Validasi"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:103
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:103
+msgid "Groups"
+msgstr "Grup"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:133
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:133
+msgid "Configure your Team"
+msgstr "Atur Tim Anda"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:210
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:210
+#, fuzzy
+msgid "Override general timestamping config"
+msgstr "Timpa pengaturan umum audit"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:26
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:26
+msgid "Edit Users"
+msgstr "Sunting Pengguna"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:111
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:434
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:146
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:111
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:434
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:146
+msgid "Group"
+msgstr "Grup"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:148
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:148
+msgid "Reset user password"
+msgstr "Atur ulang kata sandi"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:154
+#: /tmp/elabftw-twig-cache/b7/b757e9bc26e7b9c984fd3d03bb424b17fde96a69de8add0a1ab60d725818f01e.php:42
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:154
+#: /tmp/elabftw-twig-cache/c7/c73ecfd61bb948dfc87264ad9b65b9ac7ba7330c5ae00e658f9fae3c41db4a21.php:42
+msgid "characters minimum"
+msgstr "minimal karakter"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:816
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:816
+#, fuzzy
+msgid "Common Experiment Template"
+msgstr "Templat Eksperimen Bersama"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:845
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:845
+msgid "Import a CSV File"
+msgstr "Impor berkas CSV"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:905
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:905
+msgid "Import a ZIP File"
+msgstr "Impor berkas ZIP"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:921
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:921
+msgid "1. Select where to import:"
+msgstr "1. Pilih impor di mana:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:967
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:967
+msgid "2. Select a ZIP file to import:"
+msgstr "2. Pilih berkas ZIP untuk diimpor:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:342
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:342
+msgid "Manage Groups of Users"
+msgstr "Kelola Grup Pengguna"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:349
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:349
+msgid "Create a group"
+msgstr "Buat Grup"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:365
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:365
+msgid "Add this user"
+msgstr "Tambahakan Pengguna"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:389
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:389
+msgid "to this group"
+msgstr "ke grup ini"
+
+#: /tmp/elabftw-twig-cache/fe/fe6b0fa4a1d6a8f3f7f642d65557e893b9f626a3498ffd6e1ddda6e8f60e98d3.php:36
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:412
+#: /tmp/elabftw-twig-cache/66/6666b51a4d7bdcb415dd61104f03aaa797b95ce8c1a687c38abbb2a8e1de4c22.php:36
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:412
+msgid "Add"
+msgstr "Tambah"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:421
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:421
+msgid "Remove this user"
+msgstr "Hapus pengguna ini"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:445
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:445
+msgid "from this group"
+msgstr "dari grup ini"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:468
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:468
+msgid "Remove"
+msgstr "Hapus"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:477
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:477
+msgid "Existing groups"
+msgstr "Grup yang ada"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:85
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:85
+msgid "Latest version:"
+msgstr "Versi terakhir:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:156
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:156
+msgid "Usage Statistics"
+msgstr "Statistik Penggunaan"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:213
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:213
+msgid "Address of the Proxy:"
+msgstr "Alamat Proksi:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:298
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:298
+msgid "Informations"
+msgstr "Informasi"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:304
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:304
+msgid "Operating System"
+msgstr "Sistem Operasi"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:310
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:310
+msgid "PHP Version"
+msgstr "Versi PHP"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:316
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:316
+msgid "Largest integer supported"
+msgstr "Integer terbesar yang didukung"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:322
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:322
+msgid "PHP configuration directory"
+msgstr "Direktori pengaturan PHP"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:493
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:493
+#, fuzzy
+msgid "Timestamping Configuration"
+msgstr "Pengaturan Audit"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:583
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:583
+msgid "Security Settings"
+msgstr "Pengaturan Keamanan"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:625
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:625
+msgid "Time of the ban after failed login attempts (in minutes):"
+msgstr "Waktu blokir setelah usaha masuk gagal (dalam menit):"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:652
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:652
+msgid "E-mail Settings"
+msgstr "Pengaturan Surel"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:664
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:664
+msgid "Send e-mails via:"
+msgstr "Kirim surel melalui:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:672
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:672
+msgid "Select mailing method..."
+msgstr "Pilih metode menyurat..."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:679
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:679
+msgid "Local MTA (default)"
+msgstr "MTA Lokal (standar)"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:685
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:685
+msgid "SMTP"
+msgstr "SMTP"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:694
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:694
+msgid "Sender address:"
+msgstr "Alamat pengirim:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:706
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:706
+msgid "Path to sendmail:"
+msgstr "Lokasi sendmail:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:727
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:727
+msgid "SMTP encryption:"
+msgstr "Enkripsi SMTP:"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:167
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:177
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:167
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:177
+msgid "My Profile"
+msgstr "Profil Saya"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:185
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:185
+msgid "Help"
+msgstr "Bantuan"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:216
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:216
+msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
+msgstr "Anda dapat membuat tautan di dalam teks dengan mengetik # dan menu akan muncul dengan daftar eksperimen/komponen."
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:108
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:108
+msgid "And visibility is:"
+msgstr "Dan tampilannya:"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:113
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:113
+msgid "Select visibility"
+msgstr "Pilih tampilan"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:399
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:119
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:399
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:119
+msgid "Organization"
+msgstr "Organisasi"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:95
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:95
+msgid "Memory usage:"
+msgstr "Penggunaan memori:"
+
+#: /tmp/elabftw-twig-cache/44/446153b1a66826749d30a616f96580c5e21a956d3d17ba5e89267a9f6340ebff.php:103
+#: /tmp/elabftw-twig-cache/87/87edea657d5680ee3057894cc39f4d6cc1bfe445f35299c186ed8f265679628c.php:103
+msgid "bytes"
+msgstr "bita"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:44
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:44
+msgid "Number of login attempt left before being banned for %s minutes: %s"
+msgstr "Jumlah usaha masuk tersisa sebelum diblokir selama %s menit: %s"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:133
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:133
+msgid "Login through your institution"
+msgstr "Masuk melalui institusi anda"
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:64
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:64
+msgid "API key"
+msgstr "Kunci API"
+
+#: /tmp/elabftw-twig-cache/10/104674f5faf324d21548fedc785e5d6295041ff5fc2b02161e2a07077ed11f62.php:77
+#: /tmp/elabftw-twig-cache/ea/ea386d92972df91f8ad015fe10371befdf3dac718c272e1ef7d6ee1e3c7a2ec7.php:77
+msgid "Generate an API Key"
+msgstr "Buat kunci API"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:233
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:233
+msgid "Not enough tags to make a tagcloud"
+msgstr "Tidak cukup label untuk membuat awan label"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:152
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:152
+msgid "Duplicate"
+msgstr "Salin"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:168
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:168
+msgid "Make a PDF"
+msgstr "Buat PDF"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:181
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:181
+msgid "Make a ZIP"
+msgstr "Buat ZIP"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:195
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:195
+msgid "Show related"
+msgstr "Tampilkan terkait"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:248
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:248
+#, fuzzy
+msgid "Timestamp Experiment"
+msgstr "Audit Eksperimen"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:343
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:502
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:343
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:502
+msgid "Next step"
+msgstr "Langkah berikutnya"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:360
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:360
+msgid "Experiments steps"
+msgstr "Langkah-langkah eksperimen"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:426
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:426
+msgid "Add a step"
+msgstr "Tambahkan langkah"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:519
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:519
+msgid "Draw something"
+msgstr "Gambar sesuatu"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:526
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:526
+msgid "Clear"
+msgstr "Bersihkan"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:544
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:241
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:544
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:241
+#, fuzzy
+msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
+msgstr "Ini harusnya mengacu pada rantai sertifikat yang digunakan oleh penyedia layanan audit luar anda untuk mengaudit.%sLokasi bergantung pada direktori eLabFTW terpasang. Anda harus menambahkannya pada folder 'uploads'. Berkas harus dalam %sPEM-encoded (ASCII)%s format!"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:782
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:268
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:782
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:268
+msgid "A password is already set."
+msgstr "Kata sandi telah diatur."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:786
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:272
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:786
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:272
+msgid "%sClear it%s or change it below:"
+msgstr "%sBersihkan%s atau ubah di bawah ini:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:550
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:604
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:550
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:604
+#, fuzzy
+msgid "Allow timestamp"
+msgstr "Bolehkan audit"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:780
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:780
+msgid "Modify ordering"
+msgstr "Ubah urutan"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:120
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:120
+msgid "Order by:"
+msgstr "Urut berdasarkan:"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:127
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:165
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:127
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:165
+msgid "Use default"
+msgstr "Gunakan standar"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:151
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:228
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:151
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:228
+msgid "Comment"
+msgstr "Komentar"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:158
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:158
+msgid "Sort:"
+msgstr "Urut:"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:184
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:184
+msgid "Use single column layout:"
+msgstr "Gunakan tampilan satu kolom:"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:202
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:202
+msgid "Only lowercase letters are allowed."
+msgstr "Hanya huruf kecil yang dibolehkan."
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:371
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:371
+msgid "Disable the rich text editor and write Markdown directly"
+msgstr "Matikan penyunting teks kaya dan tulis penanda secara langsung"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:389
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:389
+msgid "Default visibility for new experiments"
+msgstr "Tampilan awal untuk eksperimen baru"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:417
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:417
+msgid "User"
+msgstr "Pengguna"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:764
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:764
+msgid "Template content"
+msgstr "Konten templat"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:41
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:41
+msgid "Error getting latest version information from server! Check the proxy setting."
+msgstr "Galat saat mendapatkan informasi versi terbaru! Periksa pengaturan proksi."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:96
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:96
+msgid "%s - A new version is available! %sUpdate elabftw%sRead changelog%s"
+msgstr "%s - Versi baru tersedia! %sPerbarui eLabFTW%sBaca catatan perubahan%s"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:110
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:110
+msgid "Please finalize install: %slink to documentation%s."
+msgstr "Harap selesaikan pemasangan: %s tautan ke dokumentasi%s."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:145
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:145
+msgid "SAML"
+msgstr "SAML"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:440
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:440
+msgid "Archive"
+msgstr "Arsip"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:221
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:221
+msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
+msgstr "Jika anda menggunakan firewall/proksi, masukkan alamatnya di sini. Contoh: http://proxy.example.com:3128"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:247
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:247
+msgid "Enable local account creation:"
+msgstr "Sediakan pembuatan akun lokal:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:266
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:266
+msgid "Show local login form:"
+msgstr "Tampilkan formulir masuk lokal:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:284
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:284
+msgid "You can still show the local login form by appending ?letmein to the login page URL."
+msgstr "Anda tetap dapat menampilkan formulir masuk lokal dengan menambahkan ?letmein ke URL halaman masuk."
+
+#: /tmp/elabftw-twig-cache/be/be3c9ade9e8ecbd371757954db0b6dbfc2b76098b15b7d395ac04a5faedcb5b6.php:51
+#: /tmp/elabftw-twig-cache/8b/8b6e92ebde1528283cd5da26a0a2dbb2f9587c51485abebb11d8adf4a6aad06d.php:51
+msgid "Back to listing"
+msgstr "Kembali ke daftar"
+
+#: /tmp/elabftw-twig-cache/be/be3c9ade9e8ecbd371757954db0b6dbfc2b76098b15b7d395ac04a5faedcb5b6.php:60
+#: /tmp/elabftw-twig-cache/8b/8b6e92ebde1528283cd5da26a0a2dbb2f9587c51485abebb11d8adf4a6aad06d.php:60
+msgid "Experiment of %s"
+msgstr "Eksperimen dari %s"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:109
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:109
+msgid "Manage templates"
+msgstr "Kelola templat"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:297
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:297
+msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
+msgstr "Selamat datang ke eLabFTW. Gunakan tombol 'buat baru' untuk memulai!"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:313
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:313
+msgid "Select all"
+msgstr "Pilih semua"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:317
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:317
+msgid "Clear selection"
+msgstr "Batal memilih"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:321
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:321
+msgid "Invert selection"
+msgstr "Balikkan pilihan"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:327
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:327
+msgid "With selected:"
+msgstr "Untuk yang terpilih:"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:340
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:340
+msgid "Change status"
+msgstr "Ubah status"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:346
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:346
+msgid "Change item type"
+msgstr "Ubah tipe komponen"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:407
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:407
+msgid "Make Zip"
+msgstr "Buat ZIP"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:411
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:411
+msgid "Make Csv"
+msgstr "Buat CSV"
+
+#: web/app/controllers/EntityController.php:289
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "Pastikan pada isi tidak ada lagi referensi ke berkas ini!"
+
+#: web/app/controllers/ExperimentsController.php:90
+msgid "Step deleted successfully"
+msgstr "Langkah berhasil dihapus"
+
+#: web/app/controllers/ExperimentsController.php:153
+#, fuzzy
+msgid "This experiment cannot be timestamped!"
+msgstr "Eksperimen ini tidak dapat diaudit!"
+
+#: web/app/controllers/RevisionsController.php:43
+msgid "Revision restored successfully."
+msgstr "Revisi berhasil dipulihkan."
+
+#: src/views/ExperimentsView.php:80
+msgid "Decode token"
+msgstr "Membaca token"
+
+#: src/views/UploadsView.php:131
+msgid "Insert in text at cursor position"
+msgstr "Sisipkan teks pada posisi kursor"
+
+#: src/classes/Email.php:196
+msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account: "
+msgstr "Hai. Pengguna baru mendaftar di eLabFTW. Kunjungi panel admin untuk memvalidasi akun: "
+
+#: src/models/Users.php:720
+msgid "User %s (%s) now has an active account."
+msgstr "Pengguna %s (%s) sekarang memiliki akun aktif."
+
+#: src/models/Experiments.php:303
+msgid "You don't have the rights to unlock this."
+msgstr "Anda tidak memiliki wewenang untuk membuka ini."
+
+#: src/models/Comments.php:117
+msgid "Hi. %s left a comment on your experiment. Have a look: %s"
+msgstr "Hai. %s meninggalkan komentar pada eksperimen anda. Silahkan lihat: %s"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:265
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:265
+msgid "Anonymous"
+msgstr "Anonim"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:206
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:206
+msgid "User is archived"
+msgstr "Pengguna diarsipkan"
+
+#: /tmp/elabftw-twig-cache/24/2463e13e8b0ca6bacffdd7e03a1e81c5f177a703bebe53836f0c673ea6d8f080.php:214
+#: /tmp/elabftw-twig-cache/1a/1a04f9e4fddd929eef7f0af70773ac7c52f0d76d3561294a41fdab5b43365109.php:214
+msgid "Archive user"
+msgstr "Arsipkan pengguna"
+
+#: /tmp/elabftw-twig-cache/54/54d3a6a6c8575716bc91f0090c4be7db464085ee84a5fe0a8431863ed66e0679.php:167
+#: /tmp/elabftw-twig-cache/3d/3d4ac660f885ba8a45d3b0b9ffac0096ff423e6a0666d0ce70aad2385ef66c68.php:167
+msgid "Login as anonymous visitor"
+msgstr "Masuk sebagai pengunjung anonim"
+
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:311
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:311
+msgid "Import to your profile"
+msgstr "Impor ke profil anda"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:167
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:167
+msgid "Anonymous visitors can see database items:"
+msgstr "Pengunjung anonim dapat melihat komponen basis data:"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:318
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:318
+msgid "Type EMAIL ADDRESS of a member to delete this user and all their experiments/files forever:"
+msgstr "Ketik ALAMAT SUREL dari anggota untuk menghapus pengguna ini dan semua eksperimen/berkasnya:"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:262
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:262
+msgid "PDF configuration"
+msgstr "Pengaturan PDF"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:268
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:268
+msgid "Select paper format for PDF"
+msgstr "Pilih format kertas untuk PDF"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:305
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:305
+msgid "Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)"
+msgstr "Buat pdf dengan PDF/A (termasuk jenis huruf dan membuat ukuran berkas membesar)"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:316
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:316
+msgid "Add attached files summary to the pdf"
+msgstr "Tambah lampiran kesimpulan ke pdf"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:338
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:338
+msgid "Show experiments from the team on the Experiments page"
+msgstr "Tampilkan eksperimen dari tim pada halaman Eksperimen"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:349
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:349
+msgid "Display a warning before closing an edit window/tab"
+msgstr "Tampilkan peringatan sebelum menutup layar sunting"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:360
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:360
+msgid "Display the molecule drawer in edit mode"
+msgstr "Tampilkan laci molekul di mode sunting"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:228
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:228
+msgid "Allow anonymous visitors to login and see Public experiments:"
+msgstr "Bolehkan pengunjung anonim untuk masuk dan lihat eksperimen Publik:"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:309
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:309
+msgid "result shown"
+msgid_plural "results shown"
+msgstr[0] "hasil yang ditampilkan"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:379
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:379
+msgid "Change visibility"
+msgstr "Ubah tampilan"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:649
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:649
+msgid "Previous page"
+msgstr "Halaman sebelum"
+
+#: /tmp/elabftw-twig-cache/67/67ccdf2036ab877ce3b88d9e4934141216d1d2c0066ea14db99867c049124a1c.php:658
+#: /tmp/elabftw-twig-cache/e1/e17da0ea3513b3eb2aad5e1fb3fae6e031e68408b62efe6e4c7a4af676b91165.php:658
+msgid "Next page"
+msgstr "Halaman berikut"
+
+#: web/app/controllers/EntityController.php:272
+msgid "File replaced successfully"
+msgstr "Berkas berhasil diganti"
+
+#: /tmp/elabftw-twig-cache/42/42448f30413290fa050d998a836a85612d6f376cf9ee10cfc5d5d59026ca5529.php:100
+#: /tmp/elabftw-twig-cache/4f/4f0506ed3f90b5caab20107eb5a49949e9f734dbaeb54f601b95bc8c0de7d6a5.php:100
+msgid "Upload a new version of this file"
+msgstr "Unggah versi terbaru berkas ini"
+
+#: src/classes/MolViewer.php:75
+msgid "Cartoon (proteins only)"
+msgstr "Kartun (hanya protein)"
+
+#: src/classes/MolViewer.php:76
+#, fuzzy
+msgid "Cross"
+msgstr "Silang"
+
+#: src/classes/MolViewer.php:77
+msgid "Line"
+msgstr "Garis"
+
+#: src/classes/MolViewer.php:78
+msgid "Sphere"
+msgstr "Bola"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:200
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:200
+msgid "Installation URL:"
+msgstr "URL pemasangan:"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:208
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:208
+msgid "This is the canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org"
+msgstr "Ini alamat resmi dari pemasang eLabFTW. Jika kosong, eLabFTW akan menebaknya. Tapi dalam beberapa kasus mungkin tidak tepat. Jadi sebaiknya anda isi saja. Contoh: https://elabftw.example.org"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:328
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:328
+msgid "Maximum file size for uploaded files"
+msgstr "Ukuran berkas maksimal untuk diunggah"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:337
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:337
+msgid "Timezone"
+msgstr "Zona waktu"
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:517
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:517
+#, fuzzy
+msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel."
+msgstr "Anda dapat mengatur apakah tim bisa menggunakan akun audit umum. Jika diatur ke <em>tidak</em>, admin tim harus menambahkan informasi masuk pada panel admin."
+
+#: /tmp/elabftw-twig-cache/53/53116049f4478ad9ac761ed6727e0ef0bc971b9a365d22fb1e9bf329ece67d29.php:659
+#: /tmp/elabftw-twig-cache/b7/b774ab967e0702fb94981bf9e4d61554a9c445ef129b229499da6a2f1c8373f5.php:659
+msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific smtp2go.com account and add the information here."
+msgstr "Tanpa cara valid mengirim surel, pengguna tidak dapat mengatur ulang kata sandi. Direkomendasikan untuk membuat akun smtp2go.com spesifik dan tambahkan informasinya di sini."
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:295
+#: /tmp/elabftw-twig-cache/3a/3a0eb0e583fd02747ac01a66f0b96ee2008d582172bd9c26ec9a6607e909c578.php:51
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:295
+#: /tmp/elabftw-twig-cache/74/7472a58b3e64dd1135bb434675f6cb92cffd5652d78c4c44a9df0ab8d9a7ad1d.php:51
+msgid "Information"
+msgstr "Informasi"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:344
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:617
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:344
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:617
+msgid "revision available"
+msgid_plural "revisions available"
+msgstr[0] "revisi tersedia"
+
+#: /tmp/elabftw-twig-cache/a6/a6eb052a4b50c71a98011feba8a22054c6a17ef1d7f94c5f54e9aa0c82fda465.php:397
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:413
+#: /tmp/elabftw-twig-cache/5e/5e9993d04d275f2b2745e9399cde2875adc23ffe0e0926778665488006c45b88.php:397
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:413
+msgid "completed"
+msgstr "selesai"
+
+#: /tmp/elabftw-twig-cache/d7/d7b0862ad843fa5e11f50b9583f178e81f4800ad4f5dc20fb8f3ba7078fa7097.php:531
+#: /tmp/elabftw-twig-cache/40/405534b17442158ff4e0f90db260927d859a8b313398fbbbc7238a980260bc3a.php:531
+msgid "commented"
+msgstr "dikomentari"
+
+#: /tmp/elabftw-twig-cache/fe/fe6b0fa4a1d6a8f3f7f642d65557e893b9f626a3498ffd6e1ddda6e8f60e98d3.php:26
+#: /tmp/elabftw-twig-cache/66/6666b51a4d7bdcb415dd61104f03aaa797b95ce8c1a687c38abbb2a8e1de4c22.php:26
+msgid "Close"
+msgstr "Tutup"
+
+#: /tmp/elabftw-twig-cache/fe/fe6b0fa4a1d6a8f3f7f642d65557e893b9f626a3498ffd6e1ddda6e8f60e98d3.php:30
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:181
+#: /tmp/elabftw-twig-cache/66/6666b51a4d7bdcb415dd61104f03aaa797b95ce8c1a687c38abbb2a8e1de4c22.php:30
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:181
+#, fuzzy
+msgid "Todolist"
+msgstr "Daftar Tugas"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:294
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:294
+msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
+msgstr "Sediakan huruf Mandarin, Jepang, dan Korea di pembuatan PDF (PERINGATAN: ini akan memperbesar ukuran berkas kecuali anda menonaktifkan PDF/A)"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:382
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:382
+msgid "Allow members of the team to edit your experiments"
+msgstr "Bolehkan anggota tim menyunting eksperimen anda"
+
+#: /tmp/elabftw-twig-cache/bc/bccdac3fdc86418948d42a0b5c2105f9583f910043e81d39dae1559b21a487f7.php:602
+#: /tmp/elabftw-twig-cache/96/96f6c2b4523ef199e5d67efacf54f1d8359a31888fc85f1779a7de0239ae7b39.php:602
+msgid "Experiment Templates"
+msgstr "Templat Eksperimen"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:119
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:119
+msgid "Import"
+msgstr "Impor"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:123
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:123
+msgid "Tag manager"
+msgstr "Pengelola label"
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:851
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:851
+msgid "Import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file. The third column should be the title."
+msgstr "Impor berkas .csv (excel spreadsheet) ke basis data.<br>Pertama anda harus membuka berkas .xls/.xlsx di Excel atau Libreoffice dan simpan sebagai .csv.<br>Untuk mendapatkan hasil impor yang bagus, baris pertama harus berisi nama kolom. Anda dapat membuat impor kecil berisi 3 baris untuk melihat bagaimana hasilnya sebelum mengimpor berkas yang lebih besar. Kolom ketiga harusnya berisi judul."
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:911
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:911
+msgid "Import a .elabftw.zip archive."
+msgstr "Impor arsip .elabftw.zip."
+
+#: /tmp/elabftw-twig-cache/44/4421274cbb1c278a358565496d6b65dc133551eb27dbb8d994600f069c3f1528.php:987
+#: /tmp/elabftw-twig-cache/f4/f48f61ce682981da0de6e4e348ec9babae894fa2bde427bf3dcb55e1859f0370.php:987
+msgid "Manage tags of the team"
+msgstr "Kelola label tim"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:259
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:259
+msgid "Select status"
+msgstr "Pilih status"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:333
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:333
+msgid "Select number of stars"
+msgstr "Pilih jumlah bintang"
+
+#: /tmp/elabftw-twig-cache/7c/7c7a35e8b9fb363471086139efff6fca8c91a5fc64f23cf8f16b52c390339809.php:364
+#: /tmp/elabftw-twig-cache/c9/c9720cfc395c122bda406b7386b6adaee8fa482e281122143b4c25c97301abc1.php:364
+msgid "Tip: you can use '%' as wildcard"
+msgstr "Tip: anda bisa gunakan '%' sebagai penebak"
+
+#: /tmp/elabftw-twig-cache/b3/b32a6ccf291f7897ab708d222014469a9207af4c944d8fcbdcfb5a18053f5a44.php:204
+#: /tmp/elabftw-twig-cache/74/74378db7752f8c14dad94fa6e7688988a55b0699fb8cca6bce6474ed6e900ef9.php:204
+#, fuzzy
+msgid "You can use a TODOlist by pressing '%s'."
+msgstr "Anda dapat menggunakan DAFTAR TUGAS dengan menekan '%s'."

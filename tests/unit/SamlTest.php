@@ -1,6 +1,9 @@
 <?php
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Config;
+use Elabftw\Models\Idps;
+
 class SamlTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()

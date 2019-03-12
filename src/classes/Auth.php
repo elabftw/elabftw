@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Auth
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -12,10 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Exception;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Provide methods to login a user
@@ -31,18 +30,19 @@ class Auth
     /** @var Request $Request current request */
     private $Request;
 
-    /** @var Session $Session the current session */
+    /** @var SessionInterface $Session the current session */
     private $Session;
 
     /** @var array $userData All the user data for a user */
-    private $userData;
+    private $userData = array();
 
     /**
      * Constructor
      *
      * @param Request $request
+     * @param SessionInterface $session
      */
-    public function __construct(Request $request, Session $session)
+    public function __construct(Request $request, SessionInterface $session)
     {
         $this->Db = Db::getConnection();
         $this->Request = $request;
@@ -60,10 +60,12 @@ class Auth
         $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
         $res = $req->fetchColumn();
         if ($res === false) {
-            throw new Exception(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
+            throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
         }
         return $res;
     }
@@ -87,12 +89,31 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
 
-        if ($req->execute() && $req->rowCount() === 1) {
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        if ($req->rowCount() === 1) {
             $this->userData = $req->fetch();
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Update last login time of user
+     *
+     * @return void
+     */
+    private function updateLastLogin(): void
+    {
+        $sql = "UPDATE users SET last_login = :last_login WHERE userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
+        $req->bindParam(':userid', $this->userData['userid']);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -106,10 +127,13 @@ class Auth
         $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        //Check whether the query was successful or not
-        if ($req->execute() && $req->rowCount() === 1) {
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        if ($req->rowCount() === 1) {
             // populate the userData
             $this->userData = $req->fetch();
+            $this->updateLastLogin();
             return true;
         }
         return false;
@@ -118,23 +142,24 @@ class Auth
     /**
      * Store userid and permissions in session
      *
-     * @return bool
+     * @return void
      */
-    private function populateSession(): bool
+    private function populateSession(): void
     {
         $this->Session->set('auth', 1);
         $this->Session->set('userid', $this->userData['userid']);
 
         // load permissions
-        $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-        $perm_req = $this->Db->prepare($perm_sql);
-        $perm_req->bindParam(':group_id', $this->userData['usergroup'], PDO::PARAM_INT);
-        $perm_req->execute();
-        $group = $perm_req->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT * FROM groups WHERE id = :id LIMIT 1";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $group = $req->fetch(PDO::FETCH_ASSOC);
 
         $this->Session->set('is_admin', $group['is_admin']);
         $this->Session->set('is_sysadmin', $group['is_sysadmin']);
-        return true;
     }
 
     /**
@@ -142,9 +167,9 @@ class Auth
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
      *
-     * @return bool
+     * @return void
      */
-    private function setToken(): bool
+    private function setToken(): void
     {
         $token = \hash('sha256', \bin2hex(\random_bytes(16)));
 
@@ -158,20 +183,22 @@ class Auth
         $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Check the number of character of a password
      *
      * @param string $password The password to check
-     * @throws Exception
+     * @throws ImproperActionException
      * @return bool
      */
     public function checkPasswordLength(string $password): bool
     {
         if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            throw new Exception(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
+            throw new ImproperActionException(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;
     }
@@ -193,7 +220,10 @@ class Auth
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
 
-        return $req->execute() && $req->rowCount() === 1;
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        return $req->rowCount() === 1;
     }
 
     /**
@@ -210,7 +240,7 @@ class Auth
             $this->populateUserDataFromEmail($email);
             $this->populateSession();
             if ($setCookie === 'on') {
-                return $this->setToken();
+                $this->setToken();
             }
             return true;
         }

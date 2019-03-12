@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\Config;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -114,6 +116,28 @@ class Tools
     }
 
     /**
+     * Check if we have a correct value for visibility
+     *
+     * @param string $visibility
+     * @return string
+     */
+    public static function checkVisibility(string $visibility): string
+    {
+        $validArr = array(
+            'public',
+            'organization',
+            'team',
+            'user'
+        );
+
+        if (!\in_array($visibility, $validArr, true) && Tools::checkId((int) $visibility) === false) {
+            throw new IllegalActionException('The visibility parameter is wrong.');
+        }
+
+        return $visibility;
+    }
+
+    /**
      * Convert markdown to html
      *
      * @param string $md Markdown code
@@ -179,7 +203,9 @@ class Tools
         // nice display of filesize
         if ($bytes < 1024) {
             return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
+        }
+
+        if ($bytes < 1048576) {
             return round($bytes / 1024, 2) . ' KiB';
         } elseif ($bytes < 1073741824) {
             return round($bytes / 1048576, 2) . ' MiB';
@@ -268,6 +294,7 @@ class Tools
             'en_GB' => 'en',
             'es_ES' => 'es',
             'fr_FR' => 'fr',
+            'id_ID' => 'id',
             'it_IT' => 'it',
             'pl_PL' => 'pl',
             'pt_BR' => 'pt-br',
@@ -293,6 +320,7 @@ class Tools
             'en_GB' => 'English (UK)',
             'es_ES' => 'Spanish',
             'fr_FR' => 'French',
+            'id_ID' => 'Indonesian',
             'it_IT' => 'Italian',
             'pl_PL' => 'Polish',
             'pt_BR' => 'Portuguese (Brazilian)',
@@ -363,70 +391,7 @@ class Tools
      */
     public static function getUrlFromRequest(Request $Request): string
     {
-        return $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
-    }
-
-    /**
-     * Get the correct class for icon from the extension
-     *
-     * @param string $ext Extension of the file
-     * @return string Class of the fa icon
-     */
-    public static function getIconFromExtension(string $ext): string
-    {
-        switch ($ext) {
-            // ARCHIVE
-            case 'zip':
-            case 'rar':
-            case 'xz':
-            case 'gz':
-            case 'tgz':
-            case '7z':
-            case 'bz2':
-            case 'tar':
-                return 'fa-file-archive';
-
-            // CODE
-            case 'py':
-            case 'jupyter':
-            case 'js':
-            case 'm':
-            case 'r':
-            case 'R':
-                return 'fa-file-code';
-
-            // EXCEL
-            case 'xls':
-            case 'xlsx':
-            case 'ods':
-            case 'csv':
-                return 'fa-file-excel';
-
-            // POWERPOINT
-            case 'ppt':
-            case 'pptx':
-            case 'pps':
-            case 'ppsx':
-            case 'odp':
-                return 'fa-file-powerpoint';
-
-            // VIDEO
-            case 'mov':
-            case 'avi':
-            case 'mp4':
-            case 'wmv':
-            case 'mpeg':
-            case 'flv':
-                return 'fa-file-video';
-
-            // WORD
-            case 'doc':
-            case 'docx':
-            case 'odt':
-                return 'fa-file-word';
-
-            default:
-                return 'fa-file';
-        }
+        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
+        return \str_replace('app/controllers', '', $url);
     }
 }

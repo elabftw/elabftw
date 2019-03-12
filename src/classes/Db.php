@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use PDOException;
 use PDO;
 
@@ -88,7 +89,12 @@ final class Db
      */
     public function q($sql): \PDOStatement
     {
-        return $this->connection->query($sql);
+        $res = $this->connection->query($sql);
+        if ($res === false) {
+            throw new DatabaseErrorException('Error executing query!');
+        }
+
+        return $res;
     }
 
     /**

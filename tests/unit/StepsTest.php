@@ -1,5 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,11 +12,11 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertTrue($this->Steps->create('do this'));
+        $this->Steps->create('do this');
     }
     public function testFinish()
     {
-        $this->assertTrue($this->Steps->finish(1));
+        $this->Steps->finish(1);
     }
     public function testReadAll()
     {
@@ -24,6 +24,6 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     }
     public function testDestroy()
     {
-        $this->assertTrue($this->Steps->destroy(1));
+        $this->Steps->destroy(1);
     }
 }

@@ -1,6 +1,4 @@
 /**
- * tags.js - for the tags
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,12 +8,12 @@
 (function() {
     'use strict';
     $(document).ready(function() {
-        let id = $('#entityInfos').data('id');
-        let type = $('#entityInfos').data('type');
+        const id = $('#info').data('id');
+        let type = $('#info').data('type');
         if (type === undefined) {
             type = 'experiments_tpl';
         }
-        let confirmText = $('#entityInfos').data('confirm');
+        const confirmText = $('#info').data('confirmtag');
 
         class Tag {
 
@@ -52,7 +50,7 @@
                         item_id: id,
                         type: type
                     }).done(function () {
-                        $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
+                        $('#tags_div').load('?mode=edit&id=' + id + ' #tags_div');
                         // clear input field
                         $('#createTagInput').val('');
                     });
@@ -64,8 +62,8 @@
                 $.post(this.controller, {
                     deduplicate: true,
                     tag: tag
-                }).done(function (data) {
-                    notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
                     $('#tag_manager').load(location + '?tab=9 #tag_manager');
                 });
             }
@@ -141,7 +139,7 @@
                     response(cache[term]);
                     return;
                 }
-                $.getJSON("app/controllers/TagsController.php", request, function(data, status, xhr) {
+                $.getJSON('app/controllers/TagsController.php', request, function(data) {
                     cache[term] = data;
                     response(data);
                 });

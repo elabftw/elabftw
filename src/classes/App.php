@@ -12,9 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Models\Config;
+use Elabftw\Models\Users;
+use Elabftw\Models\Todolist;
+use Elabftw\Models\Teams;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -35,6 +39,9 @@ class App
     /** @var Logger $Log instance of Logger */
     public $Log;
 
+    /** @var Csrf $Csrf instance of Csrf */
+    public $Csrf;
+
     /** @var Users $Users instance of Users */
     public $Users;
 
@@ -48,10 +55,13 @@ class App
     public $pageTitle = 'Lab manager';
 
     /** @var array $ok the ok messages from flashBag */
-    public $ok;
+    public $ok = array();
 
     /** @var array $ko the ko messages from flashBag */
-    public $ko;
+    public $ko = array();
+
+    /** @var array $warning the warning messages from flashBag */
+    public $warning = array();
 
     /** @var array $todoItems items on the todolist, populated if logged in */
     public $todoItems = array();
@@ -71,7 +81,8 @@ class App
         Session $session,
         Request $request,
         Config $config,
-        Logger $log
+        Logger $log,
+        Csrf $csrf
     ) {
         $this->Request = $request;
         $this->Config = $config;
@@ -81,10 +92,12 @@ class App
 
         $this->Db = Db::getConnection();
         $this->Session = $session;
+        $this->Csrf = $csrf;
         $this->Twig = $this->getTwig();
 
-        $this->ok = $this->Session->getFlashBag()->get('ok', array());
-        $this->ko = $this->Session->getFlashBag()->get('ko', array());
+        $this->ok = $this->Session->getFlashBag()->get('ok');
+        $this->ko = $this->Session->getFlashBag()->get('ko');
+        $this->warning = $this->Session->getFlashBag()->get('warning');
     }
 
     /**
@@ -98,7 +111,7 @@ class App
         $loader = new \Twig_Loader_Filesystem("$elabRoot/src/templates");
         $cache = "$elabRoot/cache/twig";
         if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new RuntimeException("Unable to create the cache directory ($cache)");
+            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
         }
         $options = array();
 
@@ -109,18 +122,25 @@ class App
         $TwigEnvironment = new \Twig_Environment($loader, $options);
 
         // custom twig filters
+        //
+        // WARNING: MIRROR MODIFS TO SRC/TOOLS/GENERATE-CACHE.PHP!!
+        //
         $filterOptions = array('is_safe' => array('html'));
         $msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
         $dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
         $mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
         $starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
         $bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
+        $extFilter = new \Twig_SimpleFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
+        $filesizeFilter = new \Twig_SimpleFilter('filesize', '\filesize', $filterOptions);
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($dateFilter);
         $TwigEnvironment->addFilter($mdFilter);
         $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
+        $TwigEnvironment->addFilter($extFilter);
+        $TwigEnvironment->addFilter($filesizeFilter);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
@@ -179,7 +199,7 @@ class App
     public function getLangForHtmlAttribute(): string
     {
         $lang = 'en';
-        if ($this->Users->userid) {
+        if (isset($this->Users->userData['lang'])) {
             $lang = \substr($this->Users->userData['lang'], 0, 2);
         }
 

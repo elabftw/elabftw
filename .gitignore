@@ -13,4 +13,4 @@ web/test.php
 tests/_output/*
 tests/_support/_generated*
 uploads
-vendor
+/vendor/

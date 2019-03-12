@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Links
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,8 +8,11 @@
  */
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
 /**
@@ -40,19 +41,22 @@ class Links implements CrudInterface
      * Add a link to an experiment
      *
      * @param int $link ID of database item
-     * @return bool
+     * @return void
      */
-    public function create(int $link): bool
+    public function create(int $link): void
     {
         $Database = new Database($this->Entity->Users, $link);
         $Database->canOrExplode('read');
+        $this->Entity->canOrExplode('write');
 
         $sql = 'INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
@@ -62,6 +66,8 @@ class Links implements CrudInterface
      */
     public function readAll(): array
     {
+        $this->Entity->canOrExplode('read');
+
         $sql = "SELECT items.id AS itemid,
             experiments_links.id AS linkid,
             experiments_links.*,
@@ -69,13 +75,19 @@ class Links implements CrudInterface
             items_types.*
             FROM experiments_links
             LEFT JOIN items ON (experiments_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.type = items_types.id)
+            LEFT JOIN items_types ON (items.category = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -91,7 +103,9 @@ class Links implements CrudInterface
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
         $linkreq = $this->Db->prepare($linksql);
         $linkreq->bindParam(':id', $id, PDO::PARAM_INT);
-        $linkreq->execute();
+        if ($linkreq->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
 
         while ($links = $linkreq->fetch()) {
             $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
@@ -107,28 +121,29 @@ class Links implements CrudInterface
      * Delete a link
      *
      * @param int $id ID of our link
-     * @return bool
+     * @return void
      */
-    public function destroy(int $id): bool
+    public function destroy(int $id): void
     {
+        $this->Entity->setId($id);
+        $this->Entity->canOrExplode('write');
+
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
-        return $req->execute();
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**
      * Delete all the links for an experiment
+     * Now handled by cascade
      *
-     * @return bool
+     * @return void
      */
-    public function destroyAll(): bool
+    public function destroyAll(): void
     {
-        $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-
-        return $req->execute();
     }
 }

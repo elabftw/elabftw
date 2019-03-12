@@ -13,7 +13,7 @@
     $(document).ready(function() {
         // TEAMS
         var Teams = {
-            controller: 'app/controllers/SysconfigController.php',
+            controller: 'app/controllers/SysconfigAjaxController.php',
             create: function() {
                 document.getElementById('teamsCreateButton').disabled = true;
                 var name = $('#teamsName').val();
@@ -46,12 +46,10 @@
                     Teams.destructor(data);
                 });
             },
-            destructor: function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            destructor: function(json) {
+                notif(json);
+                if (json.res) {
                     $('#teamsDiv').load('sysconfig.php #teamsDiv');
-                } else {
-                    notif(data.msg, 'ko');
                 }
             }
         };
@@ -70,24 +68,24 @@
             Teams.destroy($(this).data('id'));
         });
         $(document).on('click', '.teamsArchiveButton', function() {
-            notif('Feature not yet implemented :)', 'ok');
+            notif({'msg': 'Feature not yet implemented :)', 'res': true});
         });
 
         // MAIL METHOD in a function because is also called in document ready
         function toggleMailMethod(method) {
             switch (method) {
-                case 'sendmail':
-                    $('#smtp_config').hide();
-                    $('#sendmail_config').show();
-                    break;
-                case 'smtp':
-                    $('#smtp_config').show();
-                    $('#sendmail_config').hide();
-                    break;
-                default:
-                    $('#smtp_config').hide();
-                    $('#sendmail_config').hide();
-                    $('#general_mail_config').hide();
+            case 'sendmail':
+                $('#smtp_config').hide();
+                $('#sendmail_config').show();
+                break;
+            case 'smtp':
+                $('#smtp_config').show();
+                $('#sendmail_config').hide();
+                break;
+            default:
+                $('#smtp_config').hide();
+                $('#sendmail_config').hide();
+                $('#general_mail_config').hide();
             }
         }
         $(document).on('change', '#selectMailMethod', function() {
@@ -98,16 +96,15 @@
         $(document).on('click', '#massSend', function() {
             $('#massSend').prop('disabled', true);
             $('#massSend').text('Sending…');
-            $.post("app/controllers/SysconfigController.php", {
+            $.post('app/controllers/SysconfigAjaxController.php', {
                 massEmail: true,
                 subject: $('#massSubject').val(),
                 body: $('#massBody').val()
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     $('#massSend').text('Sent!');
                 } else {
-                    notif(data.msg, 'ko');
                     $('#massSend').prop('disabled', false);
                     $('#massSend').css('background-color', '#e6614c');
                     $('#massSend').text('Error');
@@ -120,16 +117,15 @@
             var email = $('#testemailEmail').val();
             document.getElementById('testemailButton').disabled = true;
             $('#testemailButton').text('Sending…');
-            $.post('app/controllers/SysconfigController.php', {
+            $.post('app/controllers/SysconfigAjaxController.php', {
                 testemailSend: true,
                 testemailEmail: email
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     $('#massSend').text('Sent!');
                     document.getElementById('testemailButton').disabled = false;
                 } else {
-                    notif(data.msg, 'ko');
                     $('#testemailButton').text('Error');
                     $('#testemailButton').css('background-color', '#e6614c');
                 }
@@ -152,17 +148,13 @@
         $(document).on('click', '.idpsDestroy', function() {
             const elem = $(this);
             if (confirm($(this).data('confirm'))) {
-                $.post('app/controllers/IdpsController.php', {
+                $.post('app/controllers/SysconfigAjaxController.php', {
                     idpsDestroy: true,
-                    id: $(this).data('id'),
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                        console.log(elem);
-                        console.log(elem.closest('div'));
+                    id: $(this).data('id')
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         elem.closest('div').hide(600);
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }

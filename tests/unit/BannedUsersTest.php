@@ -1,7 +1,5 @@
 <?php
-namespace Elabftw\Elabftw;
-
-use PDO;
+namespace Elabftw\Models;
 
 class BannedUsersTest extends \PHPUnit\Framework\TestCase
 {

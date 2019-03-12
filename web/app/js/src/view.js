@@ -1,6 +1,4 @@
 /**
- * view.js - for the ?mode=view
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -14,28 +12,26 @@
         // add the title in the page name (see #324)
         document.title = $('.title_view').text() + ' - eLabFTW';
 
-        var type = $('#entityInfos').data('type');
-        var id = $('#entityInfos').data('id');
-        var confirmText = $('#entityInfos').data('confirm');
+        var type = $('#info').data('type');
+        var id = $('#info').data('id');
+        var confirmText = $('#info').data('confirm');
 
         // EDIT
         key($('#shortcuts').data('edit'), function() {
-            window.location.href = '?mode=edit&id=' + $('#entityInfos').data('id');
+            window.location.href = '?mode=edit&id=' + id;
         });
 
         // TOGGLE LOCK
         $(document).on('click', '#lock', function() {
-            $.post("app/controllers/EntityController.php", {
+            $.post('app/controllers/EntityAjaxController.php', {
                 lock: true,
                 type: type,
                 id: id
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
                     // change the lock icon
                     $('#lock').toggleClass('fa-lock-open').toggleClass('fa-lock');
-                } else {
-                    notif(data.msg, 'ko');
                 }
             });
         });
@@ -46,8 +42,8 @@
         });
 
         // DECODE ASN1
-        $(document).on('click', '.decode-asn1', function() {
-            $.post('app/controllers/ExperimentsController.php', {
+        $(document).on('click', '.decodeAsn1', function() {
+            $.post('app/controllers/ExperimentsAjaxController.php', {
                 asn1: $(this).data('token'),
                 id: $(this).data('id')
             }).done(function(data) {
@@ -55,51 +51,56 @@
             });
         });
 
+        // DUPLICATE
+        $(document).on('click', '.duplicateItem', function() {
+            $.post('app/controllers/EntityAjaxController.php', {
+                duplicate: true,
+                id: $(this).data('id'),
+                type: type
+            }).done(function(data) {
+                window.location.replace('?mode=edit&id=' + data.msg);
+            });
+        });
+
+
         // COMMENTS
         var Comments = {
-            controller: 'app/controllers/CommentsController.php',
+            controller: 'app/controllers/CommentsAjaxController.php',
             create: function() {
                 document.getElementById('commentsCreateButton').disabled = true;
                 const comment = $('#commentsCreateArea').val();
-                // check length
-                if (comment.length < 2) {
-                    notif('Comment too short!');
-                    document.getElementById('commentsCreateButton').disabled = false;
-                    return false;
-                }
 
                 $.post(this.controller, {
                     create: true,
                     comment: comment,
-                    type: $('#entityInfos').data('type'),
+                    type: type,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
-                            makeEditableComment($('#comment_' + data.msg));
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
+                        $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
+                            makeEditableComment($('#comment_' + json.id));
                             relativeMoment();
                         });
                     } else {
-                        notif(data.msg, 'ko');
+                        document.getElementById('commentsCreateButton').disabled = false;
                     }
                 });
             },
             destroy: function(comment) {
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
-                    destroy: true,
-                    type: $('#entityInfos').data('type'),
-                    id: comment
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                        $('#comment_container').load("?mode=view&id=" + id + " #comment", function() {
-                            relativeMoment();
-                        });
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
+                        destroy: true,
+                        type: $('#info').data('type'),
+                        id: comment
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
+                            $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
+                                relativeMoment();
+                            });
+                        }
+                    });
                 } else {
                     return false;
                 }
@@ -133,14 +134,13 @@
                 buttons: {
                     'Timestamp it': function() {
                         $('#confirmTimestampDiv').text($(this).data('wait'));
-                        $.post('app/controllers/ExperimentsController.php', {
+                        $.post('app/controllers/ExperimentsAjaxController.php', {
                             timestamp: true,
                             id: id
-                        }).done(function (data) {
-                            if (data.res) {
-                                window.location.replace("experiments.php?mode=view&id=" + id);
-                            } else {
-                                notif(data.msg, 'ko');
+                        }).done(function(json) {
+                            notif(json);
+                            if (json.res) {
+                                window.location.replace('experiments.php?mode=view&id=' + id);
                             }
                         });
                     },

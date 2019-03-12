@@ -1,34 +1,41 @@
 <?php
 /**
- * LoginController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
 use Exception;
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 // default location for redirect
 $location = '../../login.php';
+$Response = new RedirectResponse($location);
 
 try {
-    $FormKey = new FormKey($Session);
     $Saml = new Saml($App->Config, new Idps);
     $Teams = new Teams($App->Users);
 
-    if ($Request->request->has('idp_id')) { // login with SAML
-        $idpId = (int) $Request->request->get('idp_id');
-        $settings = $Saml->getSettings($idpId);
-        $SamlAuth = new OneLogin_Saml2_Auth($settings);
-        $returnUrl = $settings['baseurl'] . "/index.php?acs&idp=" . $idpId;
+    // LOGIN WITH SAML
+    if ($Request->request->has('saml_login')) {
+        $settings = $Saml->getSettings();
+        $SamlAuth = new SamlAuth($settings);
+        $returnUrl = $settings['baseurl'] . "/index.php?acs";
         $SamlAuth->login($returnUrl);
 
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
@@ -43,14 +50,12 @@ try {
 
     } else {
 
-        // FORMKEY
-        if (!$Request->request->has('formkey') || !$FormKey->validate($Request->request->get('formkey'))) {
-            throw new Exception(_("Your session expired. Please retry."));
-        }
+        // CSRF
+        $App->Csrf->validate();
 
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
-            throw new Exception(_('A mandatory field is missing!'));
+            throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 
         if ($Request->request->has('rememberme')) {
@@ -84,10 +89,24 @@ try {
             );
         }
     }
+    $Response = new RedirectResponse($location);
+
+} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('IllegalAction' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Error' => $e)));
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 
 } catch (Exception $e) {
-    $Session->getFlashBag()->add('ko', $e->getMessage());
-}
+    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Exception' => $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error());
 
-$Response = new RedirectResponse($location);
-$Response->send();
+} finally {
+    $Response->send();
+}

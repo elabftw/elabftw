@@ -1,7 +1,7 @@
 <!-- UPLOADED FILES -->
 <div id='filesdiv'>
 {% set uploadsArr = Entity.Uploads.readAll %}
-{% if uploadsArr|length > 0 %}
+{% if uploadsArr %}
     <div class='box'>
         <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{% trans %}Attached file
             {% plural uploadsArr|length %}
@@ -9,25 +9,112 @@
             {% endtrans %}
         </h3>
         {% if mode == 'edit' %}
-        <i class='fas fa-eye clickable align_right' title='Toggle visibility' id='hideUploads'></i>
+        <i class='fas fa-eye clickable align_right togglableNext' title='Toggle visibility'></i>
         {% endif %}
 
         <div class='row' id='uploadsDiv'>
         {% for upload in uploadsArr %}
+            {% set ext = upload.real_name|getExt %}
+
             <div class='col-md-4 col-sm-6'>
                 <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>
                     {% if mode == 'edit' %}
-                    <a class='uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
-                        data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}'>
-                        <i class='fas fa-trash-alt fa-pull-right clickable'></i>
-                    </a>
+                        <a class='uploadsDestroy' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
+                            data-itemid='{{ upload.item_id }}' data-msg='{{ 'Delete this?'|trans }}'>
+                            <i class='fas fa-trash-alt fa-pull-right clickable'></i>
+                        </a>
                     {% endif %}
 
-                    {{ Uv.displayUpload(mode, upload)|raw }}
+                    {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg)$/i' %}
+                        <a href='app/download.php?f={{ upload.long_name }}'
+                           {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
+                               data-fancybox='group'
+                           {% endif %}
+                           {% if upload.comment != 'Click to add a comment' %}
+                               title='{{ upload.comment }}' data-caption='{{ upload.comment }}'
+                           {% endif %}
+                           ><img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
+                        </a>
+                            {% elseif mode == 'view' and ext == 'mol' and App.Users.userData.chem_editor %}
+                            <div class='text-center'>
+                                <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}'></canvas>
+                            </div>
+                            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
+                                <!--  build control dropdown to change the representation style -->
+                                <div style='padding-bottom: 5px' class='btn-group'>
+                                    <button type='button'
+                                        class='btn btn-secondary btn-xs dropdown-toggle'
+                                        data-toggle='dropdown'
+                                        aria-haspopup='true'
+                                        aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
+                                    </button>
+
+                                    <ul class='dropdown-menu clickable'>
+
+                                        {% set moldivId = '3Dmol_' ~ upload.id %}
+                                        <li class='dropdown-item'>
+                                            <span data-divid='{{ moldivId }}' class='3dmol-cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
+                                        </li>
+                                        <li class='dropdown-item'>
+                                            <span data-divid='{{ moldivId }}' class='3dmol-cross'>{{ 'Cross'|trans }}</span/>
+                                        </li>
+                                        <li class='dropdown-item'>
+                                            <span data-divid='{{ moldivId }}' class='3dmol-line'>{{'Line'|trans }}</span/>
+                                        </li>
+                                        <li class='dropdown-item'>
+                                            <span data-divid='{{ moldivId }}' class='3dmol-sphere'>{{'Sphere'|trans }}</span/>
+                                        </li>
+                                        <li class='dropdown-item'>
+                                            <span data-divid='{{ moldivId }}' class='3dmol-stick'>{{ 'Stick'|trans }}</span/>
+                                        </li>
+
+                                    </ul>
+                                </div>
+
+                                <div class='row viewer_3Dmoljs' data-href='app/download.php?f={{ upload.long_name }}' data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}" data-backgroundcolor='0xffffff' id='3Dmol_{{ upload.id }}'>
+                                </div>
+
+            {% else %}
+            <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
+            {% endif %}
+
+        <div class='caption'><i class='fas fa-download mr-1'></i>
+        <a href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
+        <span class='smallgray' style='display:inline'> {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }}</span><br>
+        {# if we are in view mode, we don't show the comment if it's the default text. This is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because you are in view mode #}
+
+        {% if mode == 'edit' or upload.comment != 'Click to add a comment' %}
+            <i class='fas fa-comments'></i>
+            <p class='file-comment editable d-inline'
+                data-type='{{ upload.type }}'
+                data-itemid='{{ upload.item_id }}'
+                id='filecomment_{{ upload.id }}'>{{ upload.comment}}</p>
+            {% endif %}
+
+            {# INSERT IN TEXT in edit mode for images #}
+            {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
+            <div class='inserter clickable' data-link='{{ upload.long_name }}'>
+                <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Insert in text at cursor position'|trans }}</p>
+            </div>
+            {% endif %}
+
+        </div>
 
                     {% if mode == 'edit' %}
-                    <div class='replacer clickable' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
+                    <div class='clickable replaceUpload' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
                         <i class='fas fa-sync-alt mr-1'></i><p class='d-inline'>{{ 'Upload a new version of this file'|trans }}</p>
+                    </div>
+                    <!-- replace upload form -->
+                    <div class='replaceUploadForm' style='display:none'>
+                        <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
+                            <input type='hidden' name='replace' />
+                            <input type='hidden' name='upload_id' value='{{ upload.id }}' />
+                            <input type='hidden' name='id' value='{{ upload.item_id }}' />
+                            <input type='hidden' name='type' value='{{ upload.type }}' />
+                            {{ App.Csrf.getHiddenInput|raw }}
+                            <input type='file' style='display:inline' name='file' />
+                            <button type='submit' class='button'>OK</button>
+                        </form>
                     </div>
                     {% endif %}
                 </div>
@@ -37,4 +124,7 @@
     </div>
 {% endif %}
 </div>
+<!--
 <script src='app/js/uploads.min.js?v={{ v }}'></script>
+-->
+<script src='app/js/src/uploads.js?v={{ v }}'></script>

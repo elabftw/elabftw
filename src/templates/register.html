@@ -7,64 +7,80 @@
     </a>
 </menu>
 
-<section class='text-center'>
+<section>
     <h2>{{ 'Create your account'|trans }}</h2>
     <br><br>
     <!-- Register form -->
-    <form id='regform' method="post" class='loginform' autocomplete="off" action="app/controllers/RegisterController.php">
+    {# min pass length minimum, no maximum #}
+    {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) ~ ',}' %}
+
+    <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
 
         <input style='display:none' type='text' name='bot' value=''>
+        {{ App.Csrf.getHiddenInput|raw }}
 
         <div class='row'>
             <div class='col-md-4'>
-                <label class='block' for='team'>{{ 'Team'|trans }}</label>
-                <select name='team' id='team' required>
-                    <option selected disabled>{{ '------ Select a team ------'|trans }}</option>
+            </div>
+            <div class='form-group col-md-4'>
+                <label for='team'>{{ 'Team'|trans }}</label>
+                <select name='team' class='form-control' id='team' required>
+                    <option selected disabled>{{ 'Select a team'|trans }}</option>
                     {% for team in teamsArr %}
-                        <option value = '{{ team['team_id'] }}'>{{ team['team_name'] }}</option>
+                        <option value = '{{ team.id }}'>{{ team.name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class='col-md-4'>
-                <label class='block' for="email">{{ 'Email'|trans }}</label>
-                <input name="email" type="email" id="email" required />
-            </div>
-            <div class='col-md-4'>
-                <label class='block' for="password">{{ 'Password'|trans }}</label>
-                <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
             </div>
         </div>
-
         <div class='row'>
             <div class='col-md-4'>
-                <label class='block' for="firstname">{{ 'Firstname'|trans }}</label>
-                <input name='firstname' type='text' id='firstname' required />
             </div>
-
-            <div class='col-md-4'>
-                <label class='block' for="lastname">{{ 'Lastname'|trans }}</label>
-                <input name='lastname' type='text' id='lastname' required />
+            <div class='form-group col-md-4'>
+                <label for='email'>{{ 'Email'|trans }}</label>
+                <input name='email' class='form-control' type='email' id='email' required />
             </div>
-
             <div class='col-md-4'>
-                <label class='block' for='complexity'>{{ 'Password complexity'|trans }}</label>
-                <input id="complexity" disabled />
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-4'>
+            </div>
+            <div class='form-group col-md-4'>
+                <label for='password'>{{ 'Password'|trans }}</label>
+                <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' required />
+            </div>
+            <div class='col-md-4'>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-4'>
+            </div>
+            <div class='form-group col-md-4'>
+                <label for='firstname'>{{ 'Firstname'|trans }}</label>
+                <input name='firstname' class='form-control' type='text' id='firstname' required />
+            </div>
+            <div class='col-md-4'>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-4'>
+            </div>
+            <div class='form-group col-md-4'>
+                <label for='lastname'>{{ 'Lastname'|trans }}</label>
+                <input name='lastname' class='form-control' type='text' id='lastname' required />
+            </div>
+            <div class='col-md-4'>
             </div>
         </div>
 
+
         <div class='submitButtonDiv'>
-            <button type="submit" name="Submit" class='button'>{{ 'create'|trans }}</button>
+            <button type='submit' name='Submit' class='button'>{{ 'create'|trans }}</button>
         </div>
     </form>
 <!-- end register form -->
 </section>
 
-<div id='complexityDiv'
-    data-weak='{{ 'Weak password'|trans }}'
-    data-average='{{ 'Average password'|trans }}'
-    data-good='{{ 'Good password'|trans }}'
-    data-strong='{{ 'Strong password'|trans }}'
-    data-wtf='{{ 'No way that is your real password!'|trans }}'></div>
-
-<script src='app/js/register.min.js?v={{ v }}'></script>
 {% endblock body %}

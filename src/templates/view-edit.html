@@ -1,9 +1,9 @@
 {% if Entity.Users.userData.chem_editor %}
     <link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>
-    <script src='app/js/chemdoodle/chemdoodle.min.js?v={{ v }}'></script>
+    <script src='app/js/chemdoodle.min.js?v={{ v }}'></script>
 {% endif %}
 
-{% if Entity.Users.userData.use_markdown %}
+{% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
     <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
     <script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 {% endif %}
@@ -13,6 +13,6 @@
     <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Back to listing'|trans }}
 </a>
 
-{% if Entity.entityData.userid != Entity.Users.userid and Entity.type == 'experiments' %}
+{% if Entity.entityData.userid != Entity.Users.userData.userid and Entity.type == 'experiments' %}
     {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
 {% endif %}

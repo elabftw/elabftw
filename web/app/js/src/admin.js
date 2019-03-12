@@ -1,6 +1,4 @@
 /**
- * admin.js - for the admin panel
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -10,7 +8,28 @@
 (function() {
     'use strict';
 
+    function tinyMceInitLight() {
+        tinymce.init({
+            mode: 'specific_textareas',
+            editor_selector: 'mceditable',
+            browser_spellcheck: true,
+            content_css: 'app/css/tinymce.css',
+            plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak codesample',
+            pagebreak_separator: '<pagebreak>',
+            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+            removed_menuitems: 'newdocument',
+            image_caption: true,
+            content_style: '.mce-content-body {font-size:10pt;}',
+            language : $('#info').data('lang')
+        });
+    }
+
     $(document).ready(function() {
+        const confirmText = $('#info').data('confirm');
+
+        // activate editors in new item type and common template
+        tinyMceInitLight();
+
         // TEAMGROUPS
         var TeamGroups = {
             controller: 'app/controllers/TeamGroupsController.php',
@@ -19,10 +38,12 @@
                 if (name.length > 0) {
                     $.post(this.controller, {
                         teamGroupCreate: name
-                    }).done(function() {
-                        $('#team_groups_div').load('admin.php #team_groups_div');
-                        $('#teamGroupCreate').val('');
-                        notif('Saved', 'ok');
+                    }).done(function(json) {
+                        notif(json);
+                        if (json.res) {
+                            $('#team_groups_div').load('admin.php #team_groups_div');
+                            $('#teamGroupCreate').val('');
+                        }
                     });
                 }
             },
@@ -45,38 +66,18 @@
                     $('#team_groups_div').load('admin.php #team_groups_div');
                 });
             },
-            destroy: function(id, confirmText) {
+            destroy: function(id) {
                 if (confirm(confirmText)) {
                     $.post(this.controller, {
                         teamGroupDestroy: true,
                         teamGroupGroup: id
                     }).done(function() {
-                        $("#team_groups_div").load("admin.php #team_groups_div");
+                        $('#team_groups_div').load('admin.php #team_groups_div');
                     });
                 }
                 return false;
             }
         };
-
-        // ARCHIVE USER
-        $(document).on('click', '.archive-user', function(e) {
-            // don't trigger the form
-            e.preventDefault();
-            // show alert
-            if(confirm('Are you sure you want to archive this user?')) {
-                $.post('app/controllers/UsersController.php', {
-                    usersArchive: true,
-                    userid: $(this).data('userid')
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                        window.location.replace('admin.php?tab=2');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
-        });
 
         // TEAM GROUP
         $(document).on('click', '#teamGroupCreateBtn', function() {
@@ -92,7 +93,21 @@
         });
 
         $(document).on('click', '.teamGroupDelete', function() {
-            TeamGroups.destroy($(this).data('id'), $(this).data('confirm'));
+            TeamGroups.destroy($(this).data('id'));
+        });
+
+        // VALIDATE USERS
+        $(document).on('click', '.usersValidate', function() {
+            $(this).attr('disabled', 'disabled').text('Please wait…');
+            $.post('app/controllers/UsersAjaxController.php', {
+                usersValidate: true,
+                userid: $(this).data('userid')
+            }).done(function(json) {
+                notif(json);
+                if (json.res) {
+                    window.location.reload();
+                }
+            });
         });
 
         // STATUS
@@ -108,12 +123,10 @@
                     name: name,
                     color: color,
                     isTimestampable: isTimestampable
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         window.location.replace('admin.php?tab=4');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             },
@@ -130,24 +143,18 @@
                     color: color,
                     isTimestampable: isTimestampable,
                     isDefault: isDefault
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
+                }).done(function(json) {
+                    notif(json);
                 });
             },
             destroy: function(id) {
                 $.post(this.controller, {
                     statusDestroy: true,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#status_' + id).hide();
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -166,11 +173,11 @@
 
         // ITEMSTYPES
         var ItemsTypes = {
-            controller: 'app/controllers/ItemsTypesController.php',
+            controller: 'app/controllers/ItemsTypesAjaxController.php',
             create: function() {
                 var name = $('#itemsTypesName').val();
                 var color = $('#itemsTypesColor').val();
-                var checkbox = $('#itemsTypesBookable').is(":checked");
+                var checkbox = $('#itemsTypesBookable').is(':checked');
                 var bookable = 0;
                 if (checkbox) {
                     bookable = 1;
@@ -182,22 +189,22 @@
                     color: color,
                     bookable: bookable,
                     template: template
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         window.location.replace('admin.php?tab=5');
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             },
             showEditor: function(id) {
+                $('#itemsTypesTemplate_' + id).addClass('mceditable');
+                tinyMceInitLight();
                 $('#itemsTypesEditor_' + id).toggle();
             },
             update: function(id) {
                 var name = $('#itemsTypesName_' + id).val();
                 var color = $('#itemsTypesColor_' + id).val();
-                var checkbox = $('#itemsTypesBookable_' + id).is(":checked");
+                var checkbox = $('#itemsTypesBookable_' + id).is(':checked');
                 var bookable = 0;
                 if (checkbox) {
                     bookable = 1;
@@ -211,24 +218,18 @@
                     color: color,
                     bookable: bookable,
                     template: template
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
+                }).done(function(json) {
+                    notif(json);
                 });
             },
             destroy: function(id) {
                 $.post(this.controller, {
                     itemsTypesDestroy: true,
                     id: id
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
+                }).done(function(json) {
+                    notif(json);
+                    if (json.res) {
                         $('#itemstypes_' + id).hide();
-                    } else {
-                        notif(data.msg, 'ko');
                     }
                 });
             }
@@ -250,33 +251,21 @@
         // COMMON TEMPLATE
         $('#commonTplTemplate').closest('div').find('.button').click(function() {
             var template = tinymce.get('commonTplTemplate').getContent();
-            $.post('app/controllers/AdminController.php', {
+            $.post('app/controllers/AjaxController.php', {
                 commonTplUpdate: template
-            }).done(function(data) {
-                if (data.res) {
-                    notif(data.msg, 'ok');
-                } else {
-                    notif(data.msg, 'ko');
-                }
+            }).done(function(json) {
+                notif(json);
             });
         });
 
-
-        // IMPORT
-        $('.importBlock').hide();
-        $('.itemSelector').on('change', function() {
-            document.cookie = 'importTarget=' + this.value;
-            $(this).next('.importBlock').show();
-        });
-
         // validate on enter
-        $('#create_teamgroup').keypress(function (e) {
-            var keynum;
+        $('#teamGroupCreate').keypress(function (e) {
+            let keynum;
             if (e.which) {
                 keynum = e.which;
             }
             if (keynum === 13) { // if the key that was pressed was Enter (ascii code 13)
-                teamGroupCreate();
+                TeamGroups.create();
             }
         });
         // edit the team group name
@@ -285,38 +274,10 @@
             name : 'teamGroupUpdateName',
             submit : 'Save',
             cancel : 'Cancel',
+            cancelcssclass : 'button button-delete',
+            submitcssclass : 'button',
             style : 'display:inline'
 
-        });
-        // SORTABLE for ITEMS TYPES or STATUS
-        $('.sortable').sortable({
-            // limit to horizontal dragging
-            axis : 'y',
-            helper : 'clone',
-            // do ajax request to update db with new order
-            update: function(event, ui) {
-                // switch between status or items_types
-                let table = 'status';
-                let elements = '.sortable-status';
-                if ($(this).data('type') === 'items') {
-                    table = 'items_types';
-                    elements = '.sortable-itemstypes';
-                }
-                // send the orders as an array
-                var ordering = $(elements).sortable("toArray");
-
-                $.post("app/controllers/AdminController.php", {
-                    'updateOrdering': true,
-                    'table': table,
-                    'ordering': ordering
-                }).done(function(data) {
-                    if (data.res) {
-                        notif(data.msg, 'ok');
-                    } else {
-                        notif(data.msg, 'ko');
-                    }
-                });
-            }
         });
 
         // COLORPICKER
@@ -332,7 +293,7 @@
         $('#itemsTypesColor').val(colorInput);
         $('#statusColor').val(colorInput);
 
-        $('.tag-editable').editable(function(value, settings) {
+        $('.tag-editable').editable(function(value) {
             $.post('app/controllers/TagsController.php', {
                 update: true,
                 newtag: value,
@@ -340,22 +301,11 @@
             });
 
             return(value);
-            }, {
-         tooltip : 'Click to edit',
-         indicator : 'Saving...',
-         onblur: 'submit',
-         style : 'display:inline'
-        });
-
-        // EDITOR
-        tinymce.init({
-            mode : "specific_textareas",
-            editor_selector : "mceditable",
-            content_css : "app/css/tinymce.css",
-            plugins : "table textcolor searchreplace lists advlist code fullscreen insertdatetime paste charmap save image link",
-            toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
-            removed_menuitems : "newdocument",
-            language : $('#commonTplTemplate').data('lang')
+        }, {
+            tooltip : 'Click to edit',
+            indicator : 'Saving...',
+            onblur: 'submit',
+            style : 'display:inline'
         });
     });
 }());

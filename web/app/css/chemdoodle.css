@@ -1,34 +1,15 @@
-/*
-//
-// ChemDoodle Web Components 7.0.0
-//
-// http://web.chemdoodle.com
-//
-// Copyright 2009-2014 iChemLabs, LLC.  All rights reserved.
-//
-// The ChemDoodle Web Components library is licensed under version 3
-// of the GNU GENERAL PUBLIC LICENSE.
-//
-// You may redistribute it and/or modify it under the terms of the
-// GNU General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// Please contact iChemLabs <http://www.ichemlabs.com/contact-us> for
-// alternate licensing options.
-//
-*/
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
 .ChemDoodleWebComponent {
-    border: 1px solid #f2f2f2;
+    border: 1px solid #dcdddc;
 }
 
-.chemdoodle div label{
+.chemdoodle div label {
     margin: 0;
 }

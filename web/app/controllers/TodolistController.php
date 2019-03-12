@@ -1,15 +1,20 @@
 <?php
 /**
- * app/controllers/TodolistController.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Todolist;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -18,76 +23,79 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new JsonResponse();
+$Response->setData(array(
+    'res' => true,
+    'msg' => _('Saved')
+));
+
 try {
     $Todolist = new Todolist($App->Users);
-    $Response = new JsonResponse();
-
-    $res = false;
-    $msg = Tools::error();
 
     // CREATE
     if ($Request->request->has('create')) {
         $id = $Todolist->create($Request->request->get('body'));
         if ($id) {
-            $res = true;
-            $msg = $id;
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'id' => $id
+            ));
         }
     }
 
     // UPDATE
     if ($Request->request->has('update')) {
-        try {
-            $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
-
-            if (\mb_strlen($body) === 0 || $body === ' ') {
-                throw new Exception('Body is too short');
-            }
-
-            $id_arr = explode('_', $Request->request->get('id'));
-            if (Tools::checkId((int) $id_arr[1]) === false) {
-                throw new Exception(_('The id parameter is invalid'));
-            }
-            $id = (int) $id_arr[1];
-
-            if ($Todolist->update($id, $body)) {
-                $res = true;
-                $msg = _('Saved');
-            }
-        } catch (Exception $e) {
-            $msg = $e->getMessage();
+        $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
+        $id_arr = explode('_', $Request->request->get('id'));
+        $id = (int) $id_arr[1];
+        if (Tools::checkId($id) === false) {
+            throw new IllegalActionException('The id parameter is invalid');
         }
-    }
-
-    // UPDATE ORDERING
-    if ($Request->request->has('updateOrdering')) {
-        if ($Todolist->updateOrdering($Request->request->all())) {
-            $res = true;
-            $msg = _('Saved');
-        }
+        $Todolist->update($id, $body);
     }
 
     // DESTROY
     if ($Request->request->has('destroy')) {
-        if ($Todolist->destroy($Request->request->get('id'))) {
-            $res = true;
-            $msg = _('Item deleted successfully');
-        }
+        $Todolist->destroy((int) $Request->request->get('id'));
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('Item deleted successfully')
+        ));
     }
 
     // DESTROY ALL
     if ($Request->request->has('destroyAll')) {
-        if ($Todolist->destroyAll()) {
-            $res = true;
-            $msg = _('Item deleted successfully');
-        }
+        $Todolist->destroyAll();
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('Item deleted successfully')
+        ));
     }
 
+} catch (ImproperActionException $e) {
     $Response->setData(array(
-        'res' => $res,
-        'msg' => $msg
+        'res' => false,
+        'msg' => $e->getMessage()
     ));
-    $Response->send();
+
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error(true)
+    ));
+
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage()
+    ));
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+
+} finally {
+    $Response->send();
 }

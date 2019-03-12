@@ -14,20 +14,21 @@
  */
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
 
 try {
     // Check if there is already a config file
     if (file_exists(\dirname(__DIR__, 2) . '/config.php')) {
-        throw new Exception('Remove config file.');
+        throw new ImproperActionException('Remove config file.');
     }
 
     // MYSQL
     if (isset($_POST['mysql'])) {
         $pdo_options = array();
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        $pdo = new PDO(
+        new PDO(
             'mysql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'],
             $_POST['db_user'],
             $_POST['db_password'],
@@ -36,6 +37,6 @@ try {
         echo 1;
     }
 
-} catch (Exception $e) {
+} catch (ImproperActionException | Exception $e) {
     echo $e->getMessage();
 }

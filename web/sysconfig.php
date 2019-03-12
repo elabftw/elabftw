@@ -11,8 +11,11 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ReleaseCheckException;
 use Exception;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -25,19 +28,28 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    if ($Session->get('is_sysadmin') != 1) {
-        throw new Exception(Tools::error(true));
+    if (!$App->Session->get('is_sysadmin')) {
+        throw new IllegalActionException('Non sysadmin user tried to access sysconfig panel.');
     }
 
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
-    $TeamsView = new TeamsView(new Teams($App->Users));
-    $teamsArr = $TeamsView->Teams->readAll();
-    $usersArr = $App->Users->readAll();
+    $Teams = new Teams($App->Users);
+    $teamsArr = $Teams->readAll();
+    $teamsStats = $Teams->getAllStats();
+
+    // Users search
+    $isSearching = false;
+    $usersArr = array();
+    if ($Request->query->has('q')) {
+        $isSearching = true;
+        $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING));
+    }
+
     $ReleaseCheck = new ReleaseCheck($App->Config);
     try {
         $ReleaseCheck->getUpdatesIni();
-    } catch (RuntimeException $e) {
+    } catch (ReleaseCheckException $e) {
         $App->Log->warning('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     }
 
@@ -52,26 +64,33 @@ try {
         ini_get('date.timezone')
     );
 
-    $elabimgVersion = getenv('ELABIMG_VERSION') ? getenv('ELABIMG_VERSION') : 'Not in Docker';
+    $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
 
     $template = 'sysconfig.html';
     $renderArr = array(
+        'Teams' => $Teams,
         'elabimgVersion' => $elabimgVersion,
         'ReleaseCheck' => $ReleaseCheck,
-        'TeamsView' => $TeamsView,
         'langsArr' => $langsArr,
         'fromSysconfig' => true,
         'idpsArr' => $idpsArr,
+        'isSearching' => $isSearching,
         'phpInfos' => $phpInfos,
         'teamsArr' => $teamsArr,
+        'teamsStats' => $teamsStats,
         'usersArr' => $usersArr
     );
 
+} catch (IllegalActionException $e) {
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error(true));
+
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-}
 
-$Response->setContent($App->render($template, $renderArr));
-$Response->send();
+} finally {
+    $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
+}

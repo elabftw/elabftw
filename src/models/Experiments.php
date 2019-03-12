@@ -264,7 +264,6 @@ class Experiments extends AbstractEntity implements CreateInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-
     }
 
     /**

@@ -23,7 +23,6 @@ try {
     $Populate = new Populate();
     $Populate->generate($Experiments);
     $Populate->generate($Database);
-
 } catch (DatabaseErrorException $e) {
     echo $e->getMessage();
 }

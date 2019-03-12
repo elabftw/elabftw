@@ -22,7 +22,6 @@ try {
     $Cleaner = new Cleaner();
     $orphans = $Cleaner->cleanup();
     printf("Deleted %d files\n", $orphans);
-
 } catch (FilesystemErrorException | DatabaseErrorException $e) {
     echo $e->getMessage();
 }

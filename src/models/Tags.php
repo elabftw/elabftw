@@ -53,8 +53,8 @@ class Tags implements CrudInterface
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
         }
         return $tag;
-
     }
+
     /**
      * Create a tag
      *
@@ -259,7 +259,6 @@ class Tags implements CrudInterface
         }
 
         return count($tagsToDelete);
-
     }
 
     /**

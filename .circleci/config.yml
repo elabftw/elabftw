@@ -44,8 +44,12 @@ jobs:
     - run: yes|sudo pecl install gmagick-2.0.4RC1
     - run: sudo docker-php-ext-enable gmagick
     # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
-    - run: yarn install
-    - run: composer global require "squizlabs/php_codesniffer=*"
+    - run:
+        name: Install JS dependencies
+        command: yarn install
+    - run:
+        name: Install PHPCS
+        command: composer global require "squizlabs/php_codesniffer=*"
     - run:
         name: Build all
         command: yarn run buildall
@@ -63,8 +67,18 @@ jobs:
     - run: sudo mysql -uroot phpunit < src/sql/structure.sql
     - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
     # Tests
-    - run: yarn run csslint
-    - run: yarn run jslint
-    - run: yarn run phpcs
-    - run: yarn run unit
-    - run: yarn run vulns
+    - run:
+        name: Run CSS linter
+        command: yarn run csslint
+    - run:
+        name: Run Javascript linter
+        command: yarn run jslint
+    - run:
+        name: Run PHP CodeSniffer
+        command: yarn run phpcs
+    - run:
+        name: Run unit tests
+        command: yarn run unit
+    - run:
+        name: Check for vulnerabilities
+        command: yarn run vulns

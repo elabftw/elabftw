@@ -1188,7 +1188,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -1493,16 +1493,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v2.7.1",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "c0dd4dc5f44e541c9c0e0506da76aa4f14b41c69"
+                "reference": "70c59531da43afe598c66135e39cac39475a2f51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c0dd4dc5f44e541c9c0e0506da76aa4f14b41c69",
-                "reference": "c0dd4dc5f44e541c9c0e0506da76aa4f14b41c69",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/70c59531da43afe598c66135e39cac39475a2f51",
+                "reference": "70c59531da43afe598c66135e39cac39475a2f51",
                 "shasum": ""
             },
             "require": {
@@ -1556,7 +1556,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-03-12T15:45:07+00:00"
+            "time": "2019-03-12T18:48:26+00:00"
         }
     ],
     "packages-dev": [

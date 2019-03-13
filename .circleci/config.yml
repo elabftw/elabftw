@@ -73,9 +73,10 @@ jobs:
     - run:
         name: Run Javascript linter
         command: yarn run jslint
+    # Don't use the yarn run phpcs command as it uses a phar directly in $PATH
     - run:
         name: Run PHP CodeSniffer
-        command: yarn run phpcs
+        command: ~/.composer/vendor/bin/phpcs -n --standard=PSR1,PSR2 -d memory_limit=1G --exclude=Squiz.WhiteSpace.ControlStructureSpacing src web/*.php web/app/controllers web/install
     - run:
         name: Run unit tests
         command: yarn run unit

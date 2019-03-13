@@ -256,11 +256,11 @@
 </div>
 
 {% if App.Config.configArr.debug %}
-    <script src='app/js/src/edit.js?v={{ v }}'></script>
-    <script src='app/js/src/tags.js'></script>
+  <script src='app/js/src/edit.js?v={{ v }}'></script>
+  <script src='app/js/src/tags.js'></script>
 {% else %}
-    <script src='app/js/edit.min.js?v={{ v }}'></script>
-    <script src='app/js/tags.min.js'></script>
+  <script src='app/js/edit.min.js?v={{ v }}'></script>
+  <script src='app/js/tags.min.js'></script>
 {% endif %}
 
 {% endblock body %}

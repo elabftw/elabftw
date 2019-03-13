@@ -480,6 +480,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 <div class='divhandle' id='tab8div'>
     <div class='box'>
         <h3>{{ 'Adjust your privacy policy notice'|trans }}</h3>
+        <hr>
         {% if App.Config.configArr.privacy_policy is null %}
             {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
         {% endif %}

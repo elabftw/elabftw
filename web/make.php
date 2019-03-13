@@ -63,7 +63,7 @@ try {
                 $Response->headers->set('Cache-Control', '');
                 $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'elabftw-export.zip');
                 $Response->headers->set('Content-Disposition', $contentDisposition);
-                $Response->setCallback(function() use($Make) {
+                $Response->setCallback(function () use ($Make) {
                     $Make->output();
                 });
                 $Response->send();

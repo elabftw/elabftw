@@ -59,4 +59,3 @@ try {
 } finally {
     $Response->send();
 }
-

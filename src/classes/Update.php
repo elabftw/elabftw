@@ -41,7 +41,7 @@ class Update
     private $Sql;
 
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 46;
+    private const REQUIRED_SCHEMA = 47;
 
     /**
      * Constructor

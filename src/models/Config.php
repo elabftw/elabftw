@@ -202,7 +202,8 @@ class Config
             ('url', NULL),
             ('schema', :schema),
             ('open_science', '0'),
-            ('open_team', NULL);";
+            ('open_team', NULL),
+            ('privacy_policy', NULL);";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

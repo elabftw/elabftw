@@ -65,12 +65,14 @@ p {
 }
 
 /* LINKS */
-a {
+a,
+.link-like {
     color: #29aeb9;
     text-decoration: none;
 }
 
-a:hover {
+a:hover,
+.link-like:hover {
     color: #29aeb9;
     text-decoration: none;
 }

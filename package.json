@@ -51,7 +51,7 @@
     "buildall": "grunt && yarn build",
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
     "lint": "eslint web/app/js/src",
-    "phpcs": "phpcs -n --standard=PSR2 -d memory_limit=1G --exclude=Squiz.WhiteSpace.ControlStructureSpacing src web/*.php web/app/controllers web/install",
+    "phpcs": "phpcs -n --standard=PSR1,PSR2 -d memory_limit=1G --exclude=Squiz.WhiteSpace.ControlStructureSpacing src web/*.php web/app/controllers web/install",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
     "phpstan": "phpstan analyse --memory-limit 2G -l 7 src",
     "psalm": "psalm -c=src/tools/psalm.xml",

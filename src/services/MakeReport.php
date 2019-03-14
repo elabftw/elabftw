@@ -37,7 +37,7 @@ class MakeReport extends AbstractMake
     {
         $this->Teams = $teams;
         $this->Uploads = $uploads;
-        $this->outputContent = $this->makeCsv($this->getColumns(), $this->getData());
+        $this->outputContent = $this->makeCsv($this->getHeader(), $this->getRows());
     }
 
     /**

@@ -52,12 +52,15 @@ try {
         case 'csv':
             $Make = new MakeCsv($Entity, $Request->query->get('id'));
             $Response = new Response(
-                $Make->outputContent, 200, [
+                $Make->outputContent,
+                200,
+                array(
                     'Content-Encoding' => 'none',
                     'Content-Type' => 'text/csv; charset=UTF-8',
                     'Content-Disposition' => 'attachment; filename="' . $Make->getFileName() . '"',
                     'Content-Description' => 'File Transfer',
-                ]);
+                )
+            );
             $Response->send();
             break;
 
@@ -93,12 +96,15 @@ try {
             }
             $Make = new MakeReport(new Teams($App->Users), new Uploads());
             $Response = new Response(
-                $Make->outputContent, 200, [
+                $Make->outputContent,
+                200,
+                array(
                     'Content-Encoding' => 'none',
                     'Content-Type' => 'text/csv; charset=UTF-8',
                     'Content-Disposition' => 'attachment; filename="' . $Make->getFileName() . '"',
                     'Content-Description' => 'File Transfer',
-                ]);
+                )
+            );
             $Response->send();
             break;
 

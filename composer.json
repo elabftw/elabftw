@@ -12,7 +12,7 @@
     "ext-pdo": "*",
     "ext-zip": "*",
     "defuse/php-encryption": "2.2.*",
-    "mpdf/mpdf": "7.1.*",
+    "mpdf/mpdf": "8.0.*",
     "swiftmailer/swiftmailer":"6.2.*",
     "onelogin/php-saml": "3.1.*",
     "guzzlehttp/guzzle": "6.3.*",
@@ -24,7 +24,8 @@
     "maennchen/zipstream-php": "v1.0.0-alpha.2",
     "ext-fileinfo": "*",
     "ext-json": "*",
-    "league/csv": "^9.2"
+    "league/csv": "^9.2",
+    "mpdf/qrcode": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

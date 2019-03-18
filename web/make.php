@@ -51,6 +51,17 @@ try {
     switch ($Request->query->get('what')) {
         case 'csv':
             $Make = new MakeCsv($Entity, $Request->query->get('id'));
+            $Response = new Response(
+                $Make->outputContent,
+                200,
+                array(
+                    'Content-Encoding' => 'none',
+                    'Content-Type' => 'text/csv; charset=UTF-8',
+                    'Content-Disposition' => 'attachment; filename="' . $Make->getFileName() . '"',
+                    'Content-Description' => 'File Transfer',
+                )
+            );
+            $Response->send();
             break;
 
         case 'zip':
@@ -84,6 +95,17 @@ try {
                 throw new IllegalActionException('Non sysadmin user tried to generate report.');
             }
             $Make = new MakeReport(new Teams($App->Users), new Uploads());
+            $Response = new Response(
+                $Make->outputContent,
+                200,
+                array(
+                    'Content-Encoding' => 'none',
+                    'Content-Type' => 'text/csv; charset=UTF-8',
+                    'Content-Disposition' => 'attachment; filename="' . $Make->getFileName() . '"',
+                    'Content-Description' => 'File Transfer',
+                )
+            );
+            $Response->send();
             break;
 
         default:
@@ -91,7 +113,7 @@ try {
     }
 
     // the pdf is shown directly, but for csv or zip we want a download page
-    if (\in_array($Request->query->get('what'), array('csv', 'zip', 'report'), true) && !$Request->cookies->has('stream_zip')) {
+    if ($Request->query->get('what') === 'zip' && !$Request->cookies->has('stream_zip')) {
 
         $template = 'make.html';
         $renderArr = array(

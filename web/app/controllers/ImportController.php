@@ -21,7 +21,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Import a zip or a csv
- *
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -46,6 +45,7 @@ try {
     } else {
         throw new IllegalActionException('Invalid argument');
     }
+    $Import->import();
 
     $msg = $Import->inserted . ' ' .
         ngettext('item imported successfully.', 'items imported successfully.', $Import->inserted);

@@ -53,7 +53,15 @@ class ImportZip extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
+    }
 
+    /**
+     * Do the import
+     *
+     * @return null
+     */
+    public function import(): void
+    {
         // this is where we will extract the zip
         $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \bin2hex(\random_bytes(16));
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {

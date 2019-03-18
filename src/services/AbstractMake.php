@@ -15,6 +15,8 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
+use League\Csv\Reader;
+use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -33,6 +35,9 @@ abstract class AbstractMake
 
     /** @var string $filePath the full path of the file */
     public $filePath;
+
+    /** @var string $outputContent content generated */
+    public $outputContent;
 
     /**
      * Constructor
@@ -83,26 +88,28 @@ abstract class AbstractMake
     }
 
     /**
-     * Write a CSV file
+     * Create a CSV file from header and rows
      *
+     * @param array $headers the column names
      * @param array $rows the rows to write
      * @return void
      */
-    protected function writeCsv($rows): void
+    protected function makeCsv(array $header, array $rows): string
     {
-        $fp = \fopen($this->filePath, 'w+b');
-        if ($fp === false) {
-            throw new FilesystemErrorException('Error: could not create csv file!');
-        }
+        // load the CSV document from a string
+        $csv = Writer::createFromString('');
 
-        // utf8 headers
-        \fwrite($fp, "\xEF\xBB\xBF");
-        foreach ($rows as $row) {
-            \fputcsv($fp, $row);
-        }
-        \fclose($fp);
+        // insert the header
+        $csv->insertOne($header);
+
+        // insert all the records
+        $csv->insertAll($rows);
+
+        // add UTF8 BOM
+        $csv->setOutputBOM(Reader::BOM_UTF8);
+
+        return $csv->getContent();
     }
-
 
     /**
      * Return the url of the item or experiment

@@ -59,13 +59,6 @@ abstract class AbstractImport
     }
 
     /**
-     * Read the file input
-     *
-     * @return void
-     */
-    abstract protected function openFile(): void;
-
-    /**
      * Look at mime type. not a trusted source, but it can prevent dumb errors
      * There is null in the mimes array because it can happen that elabftw files are like that.
      *

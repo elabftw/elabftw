@@ -40,12 +40,12 @@ try {
 
     if ($Request->request->get('type') === 'csv') {
         $Import = new ImportCsv($App->Users, $App->Request);
-        $Import->import();
     } elseif ($Request->request->get('type') === 'zip') {
         $Import = new ImportZip($App->Users, $App->Request);
     } else {
         throw new IllegalActionException('Invalid argument');
     }
+    $Import->import();
 
     $msg = $Import->inserted . ' ' .
         ngettext('item imported successfully.', 'items imported successfully.', $Import->inserted);

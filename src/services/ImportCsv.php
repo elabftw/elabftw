@@ -72,6 +72,8 @@ class ImportCsv extends AbstractImport
             VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
         $req = $this->Db->prepare($sql);
 
+        $date = Tools::kdate();
+
         // now loop the rows and do the import
         foreach ($csv as $row) {
             if (empty($row['title'])) {
@@ -79,7 +81,7 @@ class ImportCsv extends AbstractImport
             }
             $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':title', $row['title']);
-            $req->bindParam(':date', Tools::kdate());
+            $req->bindParam(':date', $date);
             $req->bindParam(':body', $this->getBodyFromRow($row));
             $req->bindParam(':userid', $this->Users->userData['userid']);
             $req->bindParam(':category', $this->target);

@@ -79,10 +79,12 @@ class ImportCsv extends AbstractImport
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
+            $body = $this->getBodyFromRow($row);
+
             $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':date', $date);
-            $req->bindParam(':body', $this->getBodyFromRow($row));
+            $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->Users->userData['userid']);
             $req->bindParam(':category', $this->target);
             $req->bindParam(':visibility', $this->visibility);

@@ -21,7 +21,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Import a zip or a csv
- *
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -41,6 +40,7 @@ try {
 
     if ($Request->request->get('type') === 'csv') {
         $Import = new ImportCsv($App->Users, $App->Request);
+        $Import->import();
     } elseif ($Request->request->get('type') === 'zip') {
         $Import = new ImportZip($App->Users, $App->Request);
     } else {

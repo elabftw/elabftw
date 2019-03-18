@@ -12,7 +12,9 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Users;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -22,9 +24,6 @@ class ImportCsv extends AbstractImport
 {
     /** @var int $inserted number of items we got into the database */
     public $inserted = 0;
-
-    /** @var resource|false $handle our file handle */
-    private $handle = false;
 
     /**
      * Constructor
@@ -36,9 +35,25 @@ class ImportCsv extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
+    }
 
-        $this->openFile();
-        $this->readCsv();
+    /**
+     * Generate a body from a row. Add column name in bold and content after that.
+     *
+     * @param array $row row from the csv
+     * @return string
+     */
+    private function getBodyFromRow(array $row): string
+    {
+        // get rid of the title
+        unset($row['title']);
+        // deal with the rest of the columns
+        $body = '';
+        foreach ($row as $subheader => $content) {
+            $body .= "<p><strong>" . $subheader . ":</strong> " . $content . '</p>';
+        }
+
+        return $body;
     }
 
     /**
@@ -47,77 +62,32 @@ class ImportCsv extends AbstractImport
      * @throws ImproperActionException
      * @return void
      */
-    private function readCsv(): void
+    public function import(): void
     {
-        $row = 0;
-        $column = array();
-        // loop the lines
-        while ($data = fgetcsv($this->handle, 0, ",")) {
-            $num = count($data);
-            // get the column names (first line)
-            if ($row == 0) {
-                for ($i = 0; $i < $num; $i++) {
-                    $column[] = $data[$i];
-                }
-                $row++;
-                continue;
-            }
-            $row++;
+        $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
+        $csv->setHeaderOffset(0);
 
-            $title = $data[2];
-            if (empty($title)) {
-                $title = _('Untitled');
-            }
-            $body = '';
-            $j = 0;
-            foreach ($data as $line) {
-                $body .= "<p><strong>" . $column[$j] . " :</strong> " . $line . '</p>';
-                $j++;
-            }
-            // clean the body
-            $body = str_replace('<p><strong> :</strong> </p>', '', $body);
+        // SQL for importing
+        $sql = "INSERT INTO items(team, title, date, body, userid, category, visibility)
+            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
+        $req = $this->Db->prepare($sql);
 
-            // SQL for importing
-            $sql = "INSERT INTO items(team, title, date, body, userid, category, visibility)
-                VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
-            $req = $this->Db->prepare($sql);
-            $result = $req->execute(array(
-                'team' => $this->Users->userData['team'],
-                'title' => $title,
-                'date' => Tools::kdate(),
-                'body' => $body,
-                'userid' => $this->Users->userData['userid'],
-                'category' => $this->target,
-                'visibility' => $this->visibility
-            ));
-            if (!$result) {
-                throw new ImproperActionException('Error in SQL query!');
+        // now loop the rows and do the import
+        foreach ($csv as $row) {
+            if (empty($row['title'])) {
+                throw new ImproperActionException('Could not find the title column!');
+            }
+            $req->bindParam(':team', $this->Users->userData['team']);
+            $req->bindParam(':title', $row['title']);
+            $req->bindParam(':date', Tools::kdate());
+            $req->bindParam(':body', $this->getBodyFromRow($row));
+            $req->bindParam(':userid', $this->Users->userData['userid']);
+            $req->bindParam(':category', $this->target);
+            $req->bindParam(':visibility', $this->visibility);
+            if ($req->execute() === false) {
+                throw new DatabaseErrorException('Error inserting data in database!');
             }
             $this->inserted++;
         }
-    }
-
-    /**
-     * Open the file, as the name suggests
-     *
-     * @throws ImproperActionException
-     * @return void
-     */
-    protected function openFile(): void
-    {
-        $handle = fopen($this->UploadedFile->getPathname(), 'rb');
-        if ($handle === false) {
-            throw new ImproperActionException('Cannot open file!');
-        }
-        $this->handle = $handle;
-    }
-
-    /**
-     * Close our open file
-     *
-     */
-    public function __destruct()
-    {
-        fclose($this->handle);
     }
 }

@@ -324,8 +324,7 @@
     <h3>{{ 'Import a CSV File'|trans }}</h3>
     <hr>
     <p style='text-align:justify'>
-      {{ "Import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. The third column must be the title. You should make a tiny import of 3 lines to see if everything works before you import a big file."|trans|raw }}
-      <span class='font-weight-bold'>{{ "You should make a backup of your database before importing thousands of items!"|trans }}</span>
+      {{ "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."|trans }}
     </p>
 
     <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>

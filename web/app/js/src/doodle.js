@@ -32,12 +32,12 @@
                 id: id,
                 fileType: 'png',
                 string: image
-            }).done(function() {
+            }).done(function(json) {
                 if (type === 'items') {
                     type = 'database';
                 }
                 $('#filesdiv').load(type + '.php?mode=edit&id=' + id + ' #filesdiv');
-                notif('Saved', 'ok');
+                notif(json);
             });
         });
 

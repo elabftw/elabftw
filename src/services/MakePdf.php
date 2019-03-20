@@ -42,6 +42,10 @@ class MakePdf extends AbstractMake
             $this->filePath = $this->getTmpPath() . $this->getUniqueString();
         } else {
             $this->filePath = $this->getUploadsPath() . $this->longName;
+            $dir = \dirname($this->filePath);
+            if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+                throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
+            }
         }
 
         // suppress the "A non-numeric value encountered" error from mpdf

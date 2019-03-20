@@ -34,7 +34,7 @@ try {
         $App->Config->update(array('smtp_password' => null));
     }
 
-    // TAB 3 to 6 + 8
+    // TAB 1 and 4 to 8
     if ($Request->request->has('updateConfig')) {
         if ($Request->request->has('lang')) {
             $tab = '1';
@@ -53,6 +53,10 @@ try {
         }
 
         if ($Request->request->has('saml_debug')) {
+            $tab = '7';
+        }
+
+        if ($Request->request->has('privacy_policy')) {
             $tab = '8';
         }
 

@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Tools
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -130,7 +128,7 @@ class Tools
             'user'
         );
 
-        if (!\in_array($visibility, $validArr, true) && Tools::checkId((int) $visibility) === false) {
+        if (!\in_array($visibility, $validArr, true) && self::checkId((int) $visibility) === false) {
             throw new IllegalActionException('The visibility parameter is wrong.');
         }
 

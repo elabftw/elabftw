@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 
@@ -18,15 +19,6 @@ use Elabftw\Models\Experiments;
  */
 class MakeCsv extends AbstractMake
 {
-    /** @var string $fileName a sha512 sum */
-    public $fileName;
-
-    /** @var array $list the lines in the csv file */
-    private $list = array();
-
-    /** @var string $idList the input ids */
-    private $idList;
-
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
      *
@@ -37,71 +29,7 @@ class MakeCsv extends AbstractMake
     {
         parent::__construct($entity);
 
-        $this->fileName = $this->getUniqueString();
-        $this->filePath = $this->getTmpPath() . $this->fileName;
-
-        $this->idList = $idList;
-
-        // set the column names
-        $this->list[] = $this->getColumns();
-
-        // main loop
-        $this->loopIdArr();
-    }
-
-    /**
-     * Here we populate the first row: it will be the column names
-     *
-     * @return array
-     */
-    private function getColumns(): array
-    {
-        if ($this->Entity instanceof Experiments) {
-            return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
-        }
-        return  array('id', 'date', 'title', 'description', 'category', 'rating', 'url');
-    }
-
-    /**
-     * Main loop
-     *
-     * @return void
-     */
-    private function loopIdArr(): void
-    {
-        $idArr = explode(" ", $this->idList);
-        foreach ($idArr as $id) {
-            $this->Entity->setId((int) $id);
-            $permissions = $this->Entity->getPermissions();
-            if ($permissions['read']) {
-                $this->addLine();
-            }
-        }
-        $this->writeCsv($this->list);
-    }
-
-    /**
-     * The column names will be different depending on type
-     *
-     * @return void
-     */
-    private function addLine(): void
-    {
-        if ($this->Entity instanceof Experiments) {
-            $elabidOrRating = $this->Entity->entityData['elabid'];
-        } else {
-            $elabidOrRating = $this->Entity->entityData['rating'];
-        }
-
-        $this->list[] = array(
-            $this->Entity->entityData['id'],
-            $this->Entity->entityData['date'],
-            htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
-            html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
-            htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
-            $elabidOrRating,
-            $this->getUrl()
-        );
+        $this->outputContent = $this->makeCsv($this->getHeader(), $this->getRows($idList));
     }
 
     /**
@@ -111,6 +39,52 @@ class MakeCsv extends AbstractMake
      */
     public function getFileName(): string
     {
-        return 'export.elabftw.csv';
+        return Tools::kdate() . '-export.elabftw.csv';
+    }
+
+    /**
+     * Here we populate the first row: it will be the column names
+     *
+     * @return array
+     */
+    private function getHeader(): array
+    {
+        if ($this->Entity instanceof Experiments) {
+            return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
+        }
+        return  array('id', 'date', 'title', 'description', 'category', 'rating', 'url');
+    }
+
+    /**
+     * Generate an array for the requested data
+     *
+     * @return array
+     */
+    private function getRows($idList): array
+    {
+        $rows = array();
+        $idArr = explode(" ", $idList);
+        foreach ($idArr as $id) {
+            $this->Entity->setId((int) $id);
+            $permissions = $this->Entity->getPermissions();
+            if ($permissions['read']) {
+                if ($this->Entity instanceof Experiments) {
+                    $elabidOrRating = $this->Entity->entityData['elabid'];
+                } else {
+                    $elabidOrRating = $this->Entity->entityData['rating'];
+                }
+                $rows[] = array(
+                    $this->Entity->entityData['id'],
+                    $this->Entity->entityData['date'],
+                    htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
+                    html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
+                    htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
+                    $elabidOrRating,
+                    $this->getUrl()
+                );
+            }
+        }
+
+        return $rows;
     }
 }

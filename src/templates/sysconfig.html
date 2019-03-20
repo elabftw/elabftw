@@ -48,6 +48,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
         <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li>
+        <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
     </ul>
 </menu>
 
@@ -475,10 +476,35 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </div>
 </div>
 
-<!--
-<script src='app/js/sysconfig.min.js?v={{ v }}'></script>
--->
-<script src='app/js/src/sysconfig.js?v={{ v }}'></script>
+<!-- TAB 8 PRIVACY POLICY -->
+<div class='divhandle' id='tab8div'>
+    <div class='box'>
+        <h3>{{ 'Adjust your privacy policy notice'|trans }}</h3>
+        <hr>
+        {% if App.Config.configArr.privacy_policy is null %}
+            {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
+        {% endif %}
 
+        <form method='post' action='app/controllers/SysconfigController.php'>
+            <input type='hidden' name='updateConfig' value='true' />
+            {{ App.Csrf.getHiddenInput|raw }}
+            <textarea name='privacy_policy' class='mceditable'>
+                {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
+            </textarea>
+            <div class='submitButtonDiv'>
+                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if App.Config.configArr.debug %}
+    <script src='app/js/src/sysconfig.js?v={{ v }}'></script>
+{% else %}
+    <script src='app/js/sysconfig.min.js?v={{ v }}'></script>
+{% endif %}
+
+<!-- WYSIWYG editor -->
+<script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 {% endblock body %}

@@ -234,12 +234,10 @@ class ExperimentsController extends AbstractEntityController
         if ($this->App->Request->getSession()->get('anon')) {
             $this->Entity->visibilityFilter = "AND experiments.visibility = 'public'";
             $itemsArr = $this->Entity->read($getTags);
-
         // related filter
         } elseif (Tools::checkId((int) $this->App->Request->query->get('related')) !== false) {
             $searchType = 'related';
             $itemsArr = $this->Entity->readRelated((int) $this->App->Request->query->get('related'));
-
         } else {
             // filter by user only if we are not making a search
             if (!$this->Entity->Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {

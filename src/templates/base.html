@@ -1,6 +1,6 @@
 <!-- HEAD (but when we load show.html from searchpage we don't want it -->
 {% if not searchPage %}
-    {% include('head.html') %}
+  {% include('head.html') %}
 {% endif %}
 
 <!-- BODY -->
@@ -8,7 +8,7 @@
 
 <!-- TODOLIST (only for logged in users) -->
 {% if App.Session.get('auth') %}
-    {% include('todolist.html') %}
+  {% include('todolist.html') %}
 {% endif %}
 
 <!-- FOOTER -->

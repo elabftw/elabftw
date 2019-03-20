@@ -27,9 +27,6 @@ class MakeReport extends AbstractMake
     /** @var Uploads $Uploads instance of Uploads */
     private $Uploads;
 
-    /** @var string $fileName a sha512 sum */
-    public $fileName;
-
     /**
      * Constructor
      *
@@ -40,9 +37,7 @@ class MakeReport extends AbstractMake
     {
         $this->Teams = $teams;
         $this->Uploads = $uploads;
-        $this->fileName = $this->getUniqueString();
-        $this->filePath = $this->getTmpPath() . $this->fileName;
-        $this->run();
+        $this->outputContent = $this->makeCsv($this->getHeader(), $this->getRows());
     }
 
     /**
@@ -60,7 +55,7 @@ class MakeReport extends AbstractMake
      *
      * @return array
      */
-    private function getColumns(): array
+    private function getHeader(): array
     {
         return array(
             'userid',
@@ -84,7 +79,7 @@ class MakeReport extends AbstractMake
      *
      * @return array
      */
-    private function getData(): array
+    private function getRows(): array
     {
         $allUsers = $this->Teams->Users->readFromQuery('');
         foreach ($allUsers as $key => $user) {
@@ -101,21 +96,5 @@ class MakeReport extends AbstractMake
             $allUsers[$key]['exp_total'] = $count;
         }
         return $allUsers;
-    }
-
-    /**
-     * Generate the CSV and write the file
-     *
-     * @return void
-     */
-    private function run(): void
-    {
-        $rows = array();
-        $rows[] = $this->getColumns();
-        $allUsers = $this->getData();
-        foreach ($allUsers as $user) {
-            $rows[] = $user;
-        }
-        $this->writeCsv($rows);
     }
 }

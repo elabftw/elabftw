@@ -19,6 +19,7 @@
         <input style='display:none' type='text' name='bot' value=''>
         {{ App.Csrf.getHiddenInput|raw }}
 
+        <!-- TEAM -->
         <div class='row'>
             <div class='col-md-4'>
             </div>
@@ -34,6 +35,8 @@
             <div class='col-md-4'>
             </div>
         </div>
+
+        <!-- EMAIL -->
         <div class='row'>
             <div class='col-md-4'>
             </div>
@@ -44,6 +47,8 @@
             <div class='col-md-4'>
             </div>
         </div>
+
+        <!-- PASSWORD -->
         <div class='row'>
             <div class='col-md-4'>
             </div>
@@ -54,6 +59,8 @@
             <div class='col-md-4'>
             </div>
         </div>
+
+        <!-- FIRSTNAME -->
         <div class='row'>
             <div class='col-md-4'>
             </div>
@@ -64,6 +71,8 @@
             <div class='col-md-4'>
             </div>
         </div>
+
+        <!-- LASTNAME -->
         <div class='row'>
             <div class='col-md-4'>
             </div>
@@ -75,12 +84,34 @@
             </div>
         </div>
 
+        <!-- PRIVACY POLICY -->
+        {% if App.Config.configArr.privacy_policy %}
+        <div class='row'>
+            <div class='col-md-4'>
+            </div>
+            <div class='form-group form-check col-md-4 text-center'>
+                <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
+                <label class='form-check-label' for='privacy-policy'>
+                    {{ 'I agree with the %sPrivacy Policy%s'|format("<span class='privacyPolicyLink clickable link-like'>", "</span>")|trans|raw }}
+                </label>
+            </div>
+            <div style='display:none' class='box' id='privacyPolicy'>
+                {{ privacyPolicy|raw }}
+            </div>
 
+            <div class='col-md-4'>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- SUBMIT -->
         <div class='submitButtonDiv'>
             <button type='submit' name='Submit' class='button'>{{ 'create'|trans }}</button>
         </div>
     </form>
+
 <!-- end register form -->
 </section>
 
+<script src='app/js/register.min.js?v={{ v }}'></script>
 {% endblock body %}

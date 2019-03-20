@@ -35,6 +35,8 @@ module.exports = function(grunt) {
 
           'web/app/js/team.min.js': 'web/app/js/src/team.js',
 
+          'web/app/js/register.min.js': 'web/app/js/src/register.js',
+
           'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 

@@ -206,19 +206,19 @@ abstract class AbstractEntity
             $where = "WHERE experiments.team = :team";
 
             $sql = $select . ' ';
-                if ($getTags) {
-                    $sql .= $tagsSelect . ' ';
-                }
-                $sql .= $from . ' ' .
-                $usersJoin . ' ' .
-                $stepsJoin . ' ';
-                if ($getTags) {
-                    $sql .= $tagsJoin . ' ';
-                }
-                $sql .= $statusJoin . ' ' .
-                $uploadsJoin . ' ' .
-                $commentsJoin . ' ' .
-                $where;
+            if ($getTags) {
+                $sql .= $tagsSelect . ' ';
+            }
+            $sql .= $from . ' ' .
+            $usersJoin . ' ' .
+            $stepsJoin . ' ';
+            if ($getTags) {
+                $sql .= $tagsJoin . ' ';
+            }
+            $sql .= $statusJoin . ' ' .
+            $uploadsJoin . ' ' .
+            $commentsJoin . ' ' .
+            $where;
         } elseif ($this instanceof Database) {
             $sql = "SELECT DISTINCT items.*, items_types.name AS category,
                 items_types.color,
@@ -287,7 +287,8 @@ abstract class AbstractEntity
      *
      * @return array
      */
-    public function getTags(int $id): array {
+    public function getTags(int $id): array
+    {
         $sql = "SELECT DISTINCT tags2entity.tag_id, tags.tag FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             WHERE tags2entity.item_id = :id and tags2entity.item_type = :type";
@@ -596,5 +597,4 @@ abstract class AbstractEntity
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
-
 }

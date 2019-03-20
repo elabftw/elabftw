@@ -20,7 +20,6 @@ use PDO;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 
-
 /**
  * All about the comments
  */

@@ -66,6 +66,8 @@ try {
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
 
+    $privacyPolicyTemplate = \file_get_contents(\dirname(__DIR__) . '/src/templates/privacy-policy.html');
+
     $template = 'sysconfig.html';
     $renderArr = array(
         'Teams' => $Teams,
@@ -76,6 +78,7 @@ try {
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
         'phpInfos' => $phpInfos,
+        'privacyPolicyTemplate' => $privacyPolicyTemplate,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,
         'usersArr' => $usersArr

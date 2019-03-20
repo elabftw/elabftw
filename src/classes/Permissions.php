@@ -83,7 +83,6 @@ class Permissions
             ($this->item['team'] == $this->Users->userData['team']) &&
             !isset($this->Users->userData['anon']) &&
             ($this->item['userid'] === $this->Users->userData['userid'])) {
-
             return array('read' => true, 'write' => true);
         }
 

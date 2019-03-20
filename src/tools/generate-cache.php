@@ -10,22 +10,22 @@ require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 $tplDir = \dirname(__DIR__, 2) . '/src/templates';
 $tmpDir = '/tmp/elabftw-twig-cache/';
 
-$loader = new \Twig_Loader_Filesystem($tplDir);
+$loader = new \Twig\Loader\FilesystemLoader($tplDir);
 
 // force auto-reload to always have the latest version of the template
-$Twig = new Twig_Environment($loader, array(
+$Twig = new Twig\Environment($loader, array(
     'cache' => $tmpDir,
     'auto_reload' => true
 ));
 // custom twig filters
 $filterOptions = array('is_safe' => array('html'));
-$msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-$dateFilter = new \Twig_SimpleFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-$mdFilter = new \Twig_SimpleFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-$starsFilter = new \Twig_SimpleFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
-$bytesFilter = new \Twig_SimpleFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
-$extFilter = new \Twig_SimpleFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-$filesizeFilter = new \Twig_SimpleFilter('filesize', '\filesize', $filterOptions);
+$msgFilter = new \Twig\TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+$dateFilter = new \Twig\TwigFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
+$mdFilter = new \Twig\TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
+$starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
+$bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
+$extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
+$filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
 
 $Twig->addFilter($msgFilter);
 $Twig->addFilter($dateFilter);

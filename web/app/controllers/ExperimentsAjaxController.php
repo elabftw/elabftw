@@ -124,6 +124,10 @@ try {
 
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => Tools::error()
+    ));
 
 } finally {
     $Response->send();

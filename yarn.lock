@@ -5459,10 +5459,10 @@ snyk-go-plugin@1.6.1:
     tmp "0.0.33"
     toml "^2.3.2"
 
-snyk-gradle-plugin@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/snyk-gradle-plugin/-/snyk-gradle-plugin-2.2.0.tgz#dca0cdb0aaa885a58b369e33ce8909647238b31c"
-  integrity sha512-z8Lz+qQc7920pUFVnXrlez74acsFjKKhmegGuvq0OY6/qE7ruMbDOB6Xq+OmlJJW7TWWrt3XFgXdTABOc+7A4g==
+snyk-gradle-plugin@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/snyk-gradle-plugin/-/snyk-gradle-plugin-2.3.0.tgz#478b09f17c32001fca27f4b6263794f6f091f305"
+  integrity sha512-XnADEkQ4YXxFrKnd+F2+ixmvhgDG4yyBpYE1RMx3i/2y9auXkt/E+pWTmU4xnofFEtuAnZiYcfvOE6dIGk06KA==
   dependencies:
     clone-deep "^0.3.0"
 
@@ -5539,10 +5539,10 @@ snyk-python-plugin@1.9.1:
   dependencies:
     tmp "0.0.33"
 
-snyk-resolve-deps@4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/snyk-resolve-deps/-/snyk-resolve-deps-4.0.2.tgz#c3fa08a14fff6667628ec590061360de15f67ae6"
-  integrity sha512-nlw62wiWhGOTw3BD3jVIwrUkRR4iNxEkkO4Y/PWs8BsUWseGu1H6QgLesFXJb3qx7ANJ5UbUCJMgV+eL0Lf9cA==
+snyk-resolve-deps@4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/snyk-resolve-deps/-/snyk-resolve-deps-4.0.3.tgz#f44389430c3712af8f574952e9ff188c6448dbd7"
+  integrity sha512-GP3VBrkz1iDDw2q8ftTqppHqzIAxmsUIoXR+FRWDKcipkKHXHJyUmtEo11QVT5fNRV0D0RCsssk2S5CTxTCu6A==
   dependencies:
     ansicolors "^0.3.2"
     debug "^3.2.5"
@@ -5591,9 +5591,9 @@ snyk-try-require@1.3.1, snyk-try-require@^1.1.1, snyk-try-require@^1.3.1:
     then-fs "^2.0.0"
 
 snyk@1.*:
-  version "1.140.0"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.140.0.tgz#0f5108c55b2020a6cd2eca64a71b8ca7e6b3890f"
-  integrity sha512-ukACvP85wnxviHv4a7kPTL4kpfgFrM17zsCZSzbhsUM12Ue8HiGy85J0agZDAQhNMy73h9VrW17aePMrQtMVwA==
+  version "1.143.0"
+  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.143.0.tgz#d4f25b0835fdbc21a274a86cc2ddf90e1b626040"
+  integrity sha512-3hndcJH+fxQoC2Bg8YN/RqFBuQo+goZJnFlBm3PoQAaCg2zIWIfCuuzmn+6E/Ssy7LhJb0KbYmhxawS1Ib4rJg==
   dependencies:
     "@snyk/dep-graph" "1.4.0"
     "@snyk/gemfile" "1.2.0"
@@ -5616,7 +5616,7 @@ snyk@1.*:
     snyk-config "2.2.1"
     snyk-docker-plugin "1.22.0"
     snyk-go-plugin "1.6.1"
-    snyk-gradle-plugin "2.2.0"
+    snyk-gradle-plugin "2.3.0"
     snyk-module "1.9.1"
     snyk-mvn-plugin "2.0.1"
     snyk-nodejs-lockfile-parser "1.11.0"
@@ -5625,7 +5625,7 @@ snyk@1.*:
     snyk-policy "1.13.3"
     snyk-python-plugin "1.9.1"
     snyk-resolve "1.0.1"
-    snyk-resolve-deps "4.0.2"
+    snyk-resolve-deps "4.0.3"
     snyk-sbt-plugin "2.0.1"
     snyk-tree "^1.0.0"
     snyk-try-require "1.3.1"

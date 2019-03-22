@@ -15,29 +15,29 @@
 
 # Description
 
-- Tired of that shared excel file for your antibodies or plasmids ?
+- Tired of that shared excel file for your antibodies or plasmids?
 
-- Want to be able to search in your past experiments as easily as you'd do it on google ?
+- Want to be able to search in your past experiments as easily as you would do it on google?
 
-- Want an electronic lab notebook that lets you timestamp legally your experiments ?
+- Want an electronic lab notebook that lets you timestamp legally your experiments?
 
-Then you are at the right place !
+Then you are at the right place!
 
-**eLabFTW** is an electronic lab notebook manager for research teams. It also features a database where you can store any kind of objects (think antibodies, plasmids, cell lines, boxes, _etc_…)
-It is accessed _via_ the browser by the users. Several research teams can be hosted on the same install, so **eLabFTW** can be installed at the institute level and host everyone at the same place (this is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe).
+**eLabFTW** is an electronic lab notebook manager for research teams. It features a database where any kind of objects (such as antibodies, plasmids, cell lines, boxes, _etc_.) can be stored.
+It can be accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe.
 
 Click the image below to see it in bigger size:
 [![Demo gif](https://i.imgur.com/pH6Qvwf.gif)](https://gfycat.com/WillingIncompleteAstarte)
 
-**eLabFTW** is designed to be installed on a server, and people from the team would just log into it from their browser.
+**eLabFTW** is designed to be installed on a server, and people from the team can log in from their browser.
 
 ![server client](https://i.imgur.com/BcfFgQS.gif)
 
-Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
+Without a server, even an old computer with 1 GB of RAM and an old CPU can be used. Make sure to install a recent GNU/Linux distribution on it and plug it to the intranet.
 
 # Installation
 
-**eLabFTW** can easily be installed on any GNU/Linux server. It requires 512 Mo of RAM (1 Go recommended) and 300 Mo of disk space minimum. It is installed with Docker, so you will also need to have [Docker](https://www.docker.com/) installed. Because it runs in a Docker container, you don't have to install php, a webserver or mysql on your server, you also don't need to worry about which version will work or which extension you need. Everything is provided by the container.
+**eLabFTW** can easily be installed on any GNU/Linux server. It requires at least 512 MB of RAM (1 GB recommended) and 300 MB of disk space. Installation is done through Docker, so [Docker](https://www.docker.com/) needs to be installed on your computer. Since it runs in a Docker container, php, webservers or mysql do not have to be installed on your server.  Everything is provided by the container so different versions and extensions do not matter.
 
 The documentation explains everything:
 
@@ -47,7 +47,7 @@ The documentation explains everything:
 
 **eLabFTW** is a collaborative project. See the [contributing page](https://doc.elabftw.net/contributing.html).
 
-If you've found a security issue, please report it by email to the address associated to my GPG key:
+If you have found a security issue, please report it by email to the address associated to my GPG key:
 
 ~~~bash
 gpg --search-keys "Nicolas CARPi"
@@ -57,10 +57,10 @@ gpg --search-keys "Nicolas CARPi"
 
 Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.
 
-[Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out!
+[Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
 
 # Funding
 
 This project is sponsored by [Institut Curie](https://science.curie.fr/).
 
-Thank you for using **eLabFTW**, I hope it will bring happiness in your lab ;)
+Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

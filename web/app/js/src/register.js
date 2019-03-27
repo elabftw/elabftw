@@ -6,11 +6,11 @@
  * @package elabftw
  */
 (function() {
-    'use strict';
+  'use strict';
 
-    $(document).ready(function() {
-        $(document).on('click', '.privacyPolicyLink', function() {
-            $('#privacyPolicy').toggle();
-        });
+  $(document).ready(function() {
+    $(document).on('click', '.privacyPolicyLink', function() {
+      $('#privacyPolicy').toggle();
     });
+  });
 })();

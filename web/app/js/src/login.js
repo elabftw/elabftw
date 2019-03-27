@@ -8,12 +8,12 @@
  * @package elabftw
  */
 (function() {
-    'use strict';
+  'use strict';
 
-    $(document).ready(function(){
-        $('.toggle_container').hide();
-        $('a.trigger').click(function(){
-            $('.toggle_container').slideToggle('slow');
-        });
+  $(document).ready(function(){
+    $('.toggle_container').hide();
+    $('a.trigger').click(function(){
+      $('.toggle_container').slideToggle('slow');
     });
+  });
 }());

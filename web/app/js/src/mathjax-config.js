@@ -15,5 +15,7 @@ window.MathJax = {
     },
     'HTML-CSS': {
         fonts: ['TeX']
+    },
+    TeX: { extensions: ["autoload-all.js"] 
     }
 };

@@ -49,7 +49,8 @@
             tag: tag,
             item_id: id,
             type: type
-          }).done(function () {
+          }).done(function(json) {
+            notif(json);
             $('#tags_div').load('?mode=edit&id=' + id + ' #tags_div');
             // clear input field
             $('#createTagInput').val('');

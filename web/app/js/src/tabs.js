@@ -12,7 +12,7 @@
 var params = getGetParameters();
 var tab = parseInt(params.tab, 10);
 if (tab % 1 !== 0) {
-    tab = 1;
+  tab = 1;
 }
 var initdiv = '#tab' + tab + 'div';
 var inittab = '#tab' + tab;
@@ -22,12 +22,12 @@ $(initdiv).show();
 $(inittab).addClass('selected');
 
 $('.tabhandle' ).click(function(event) {
-    var tabhandle = '#' + event.target.id;
-    var divhandle = '#' + event.target.id + 'div';
-    $('.divhandle').hide();
-    $(divhandle).show();
-    $('.tabhandle').removeClass('selected');
-    $(tabhandle).addClass('selected');
+  var tabhandle = '#' + event.target.id;
+  var divhandle = '#' + event.target.id + 'div';
+  $('.divhandle').hide();
+  $(divhandle).show();
+  $('.tabhandle').removeClass('selected');
+  $(tabhandle).addClass('selected');
 });
 
 /**
@@ -41,10 +41,10 @@ $(initdiv).show();
 $(inittab).addClass('selected');
 
 $('.subtabhandle' ).click(function(event) {
-    var tabhandle = '#' + event.target.id;
-    var divhandle = '#' + event.target.id + 'div';
-    $('.subdivhandle').hide();
-    $(divhandle).show();
-    $('.subtabhandle').removeClass('badgetabactive');
-    $(tabhandle).addClass('badgetabactive');
+  var tabhandle = '#' + event.target.id;
+  var divhandle = '#' + event.target.id + 'div';
+  $('.subdivhandle').hide();
+  $(divhandle).show();
+  $('.subtabhandle').removeClass('badgetabactive');
+  $(tabhandle).addClass('badgetabactive');
 });

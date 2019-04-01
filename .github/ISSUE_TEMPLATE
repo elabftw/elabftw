@@ -1,16 +1,19 @@
 # Description of the problem
 
-DO NOT DELETE THE TEXT BELOW
-BUT FILL THE REQUESTED INFOS!!!!!!
+Delete this line and enter here your text.
 
-# Informations
+
+
+Please fill the requested information below:
+
+# Information
 
 * Elabftw version (visible in Sysadmin panel) :
-* Installation method (git, docker or zip archive) :
+* Installation method (docker or git/zip archive) :
 * Operating system + version :
 * Browser used (firefox/chrome) :
 
-For git/zip installation method:
+For non docker users:
 
 * PHP version:
 * MySQL version:

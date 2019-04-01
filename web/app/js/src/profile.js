@@ -8,35 +8,35 @@
  * @package elabftw
  */
 (function() {
-    'use strict';
+  'use strict';
 
-    function drawChart() {
-        var json = $('#stats').data('stats');
-        var data = new google.visualization.DataTable(json);
-        var options = {
-            title: $('#stats').data('title'),
-            backgroundColor: '#fff',
-            colors: $('#stats').data('colors')
-        };
-        var chart = new google.visualization.PieChart(document.getElementById('pieChart'));
-        chart.draw(data, options);
-    }
+  function drawChart() {
+    var json = $('#stats').data('stats');
+    var data = new google.visualization.DataTable(json);
+    var options = {
+      title: $('#stats').data('title'),
+      backgroundColor: '#fff',
+      colors: $('#stats').data('colors')
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('pieChart'));
+    chart.draw(data, options);
+  }
 
-    $(document).ready(function() {
+  $(document).ready(function() {
 
-        // GENERATE STATUS PIE CHART
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
+    // GENERATE STATUS PIE CHART
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
 
-        $(document).on('click', '.keyDestroy', function() {
-            $.post('app/controllers/AjaxController.php', {
-                destroyApiKey: true,
-                id: $(this).data('id')
-            }).done(function(json) {
-                notif(json);
-                $('#api_div').load('profile.php #api_div');
-            });
-        });
-
+    $(document).on('click', '.keyDestroy', function() {
+      $.post('app/controllers/AjaxController.php', {
+        destroyApiKey: true,
+        id: $(this).data('id')
+      }).done(function(json) {
+        notif(json);
+        $('#api_div').load('profile.php #api_div');
+      });
     });
+
+  });
 }());

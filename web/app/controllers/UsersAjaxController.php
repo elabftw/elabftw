@@ -62,6 +62,10 @@ try {
         }
         $targetUser = new Users((int) $Request->request->get('userid'));
 
+        if ($targetUser->userData['validated'] === '0') {
+            throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
+        }
+
         $targetUser->archive();
     }
 

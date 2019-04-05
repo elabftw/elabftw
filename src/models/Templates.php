@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use PDO;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\SortableTrait;
 
 /**
@@ -123,7 +124,12 @@ class Templates extends AbstractEntity
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetch();
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new ImproperActionException('No template found with this id!');
+        }
+
+        return $res;
     }
 
     /**

@@ -150,7 +150,7 @@ class Auth
         $this->Session->set('userid', $this->userData['userid']);
 
         // load permissions
-        $sql = "SELECT * FROM groups WHERE id = :id LIMIT 1";
+        $sql = "SELECT * FROM `groups` WHERE id = :id LIMIT 1";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
         if ($req->execute() !== true) {

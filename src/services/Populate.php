@@ -27,13 +27,15 @@ class Populate
     {
         $Faker = \Faker\Factory::create();
 
+
         for ($i = 0; $i <= $iter; $i++) {
             $id = $Entity->create(1);
             $Entity->setId($id);
             $Tags = new Tags($Entity);
-            $Tags->create('generated tag ' . $i);
-            $Tags->create('generated tag');
-            $Entity->update($Faker->name, $Faker->dateTimeThisCentury->format('Ymd'), $Faker->text);
+            $Tags->create('auto-generated');
+            $Tags->create($Faker->word);
+            $Tags->create($Faker->word);
+            $Entity->update($Faker->sentence, $Faker->dateTimeThisCentury->format('Ymd'), $Faker->text);
         }
         printf("Generated %d %s \n", $iter, $Entity->type);
     }

@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+namespace Elabftw\Commands;
+
+use Symfony\Component\Console\Application;
+
+require \dirname(__DIR__) . '/vendor/autoload.php';
+require_once \dirname(__DIR__) . '/config.php';
+
+$Application = new Application();
+
+$Application->add(new CheckDatabase());
+$Application->add(new CleanDatabase());
+$Application->add(new UpdateDatabase());
+$Application->add(new UpdateTo3());
+
+$Application->run();

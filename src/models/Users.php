@@ -259,7 +259,7 @@ class Users
     {
         $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             groups.can_lock, groups.is_admin, groups.is_sysadmin FROM users
-            LEFT JOIN groups ON groups.id = users.usergroup
+            LEFT JOIN `groups` ON groups.id = users.usergroup
             WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);

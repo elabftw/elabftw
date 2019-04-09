@@ -25,7 +25,8 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "league/csv": "^9.2",
-    "mpdf/qrcode": "^1.0"
+    "mpdf/qrcode": "^1.0",
+    "symfony/console": "^4.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -37,6 +38,7 @@
     "psr-4": {
       "Elabftw\\Controllers\\" : ["src/controllers"],
       "Elabftw\\Elabftw\\" : ["src/classes"],
+      "Elabftw\\Commands\\" : ["src/commands"],
       "Elabftw\\Exceptions\\" : ["src/exceptions"],
       "Elabftw\\Interfaces\\" : ["src/interfaces"],
       "Elabftw\\Models\\" : ["src/models"],

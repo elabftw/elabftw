@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
 use FilesystemIterator;
 use PDO;
@@ -65,6 +66,16 @@ class Update
     {
         return self::REQUIRED_SCHEMA;
     }
+
+    public function checkSchema(): void
+    {
+        $currentSchema = (int) $this->Config->configArr['schema'];
+
+        if ($currentSchema !== self::REQUIRED_SCHEMA) {
+            throw new InvalidSchemaException('Database schema is different from required schema. Please run update command: docker exec -it elabftw bin/console db:update');
+        }
+    }
+
 
     /**
      * Update the database schema if needed

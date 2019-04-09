@@ -19,8 +19,8 @@ require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once \dirname(__DIR__, 2) . '/config.php';
 
 try {
-    $Cleaner = new Cleaner();
-    $orphans = $Cleaner->cleanup();
+    $UploadsCleaner = new UploadsCleaner();
+    $orphans = $UploadsCleaner->cleanup();
     printf("Deleted %d files\n", $orphans);
 } catch (FilesystemErrorException | DatabaseErrorException $e) {
     echo $e->getMessage();

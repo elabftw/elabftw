@@ -11,12 +11,13 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Interfaces\CleanerInterface;
 
 /**
  * This is used to find out if there are untracked files that should have been deleted
  * but were not deleted because of a bug fixed in 2.0.7
  */
-class Cleaner
+class UploadsCleaner implements CleanerInterface
 {
     /**
      * Loop of uploaded file and check if it is referenced in the uploads table

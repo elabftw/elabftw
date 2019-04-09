@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Exception;
@@ -62,7 +63,7 @@ try {
 
     // UPDATE SQL SCHEMA if necessary
     $Update = new Update($App->Config, new Sql());
-    $Update->runUpdateScript();
+    $Update->checkSchema();
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
@@ -138,7 +139,7 @@ try {
     textdomain($domain);
     // END i18n
 
-} catch (ImproperActionException | Exception $e) {
+} catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());
 }

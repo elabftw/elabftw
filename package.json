@@ -22,7 +22,7 @@
     "marked": "0.6.*",
     "mathjax": "2.7.5",
     "moment": "2.24.*",
-    "popper.js": "1.14.*",
+    "popper.js": "1.15.*",
     "prismjs": "1.16.*",
     "tinymce": "4.9.*",
     "tinymce-mention": "4.0.2",

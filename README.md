@@ -1,9 +1,9 @@
 <p align='center'>
-    <img src='https://i.imgur.com/hq6SAZf.png' alt='elabftw logo' />
+  <img src='https://i.imgur.com/hq6SAZf.png' alt='elabftw logo' />
 </p>
 
 <p align='center'>
-<strong>A free, modern, flexible electronic lab notebook for researchers</strong>
+  <strong>A free, modern, flexible electronic lab notebook for researchers</strong>
 </p>
 
 [Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)

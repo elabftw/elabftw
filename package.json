@@ -16,7 +16,7 @@
     "dropzone": "5.5.*",
     "file-saver": "2.0.*",
     "fullcalendar": "3.10.*",
-    "jquery": "3.3.*",
+    "jquery": "3.4.*",
     "jquery-jeditable": "2.0.*",
     "jquery-ui-dist": "1.12.*",
     "marked": "0.6.*",

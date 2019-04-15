@@ -24,7 +24,7 @@
                 {% set tagsValueArr = Entity.entityData.tags|split('|') %}
                 {% set inc = 0 %}
                 {% for tag in tagsValueArr %}
-                    <span class='tag clickable'>
+                    <span class='tag m-1 clickable'>
                         <a class='tagUnreference' data-tagid='{{ tagsIdArr[inc] }}'>
                             {{ tag|raw }}
                         </a>

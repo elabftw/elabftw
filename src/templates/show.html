@@ -123,7 +123,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
             results shown
         {% endtrans %}
         <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
-        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> - 
+        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> -
             <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
     </p>
 
@@ -225,7 +225,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
                 {% if tagsArr|length > 0 %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>
                     {% for tag in tagsArr %}
-                    <a href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                    <a class='tag' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                     {% endfor %}
                 {% endif %}
 

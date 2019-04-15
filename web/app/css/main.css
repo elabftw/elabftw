@@ -954,7 +954,7 @@ input[type='checkbox'] {
     border-radius: 5px;
     border: 1px solid #ccc;
     color: #5d5d5d;
-    margin: auto 5px;
+    margin: auto 0;
     padding: 0 5px;
 }
 

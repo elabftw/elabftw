@@ -38,9 +38,6 @@ class MakeTimestamp extends AbstractMake
     /** @var Config $Config instance of Config */
     private $Config;
 
-    /** @var Experiments $Experiments instance of Experiments */
-    private $Experiments;
-
     /** @var string $pdfPath full path to pdf */
     private $pdfPath = '';
 

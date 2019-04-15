@@ -9,8 +9,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Interfaces\CleanerInterface;
 
 /**

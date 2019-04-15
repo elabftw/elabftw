@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Tags;

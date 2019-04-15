@@ -137,8 +137,6 @@ class TeamGroups implements CrudInterface
             return $visibilityArr;
         }
 
-
-        /** @noinspection AdditionOperationOnArraysInspection */
         return $visibilityArr + $tgArr;
     }
 

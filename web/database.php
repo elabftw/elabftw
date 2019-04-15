@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpUnusedLocalVariableInspection */
-/** @noinspection PhpUnusedLocalVariableInspection */
+<?php
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi

@@ -42,7 +42,7 @@
           if (json.res) {
             // add the todoitem
             $('#todoItems-list').prepend('<li class="todoItem" id="todoItem_' +
-                            json.id + '"><i class="fas fa-trash-alt destroyTodoItem" data-id="' +
+                            json.id + '"><i class="fas fa-trash-alt align_right destroyTodoItem" data-id="' +
                             json.id+ '"></i><span style="font-size:60%;display:block;">' +
                             datetime + '</span><span id="todoItemBody_' + json.id + '" class="editable">' + body +
                             '</li>');

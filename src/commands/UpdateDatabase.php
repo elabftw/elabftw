@@ -57,6 +57,5 @@ class UpdateDatabase extends Command
             $Update->runUpdateScript();
             $output->writeln('All done.');
         }
-
     }
 }

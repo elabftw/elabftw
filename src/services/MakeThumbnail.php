@@ -65,24 +65,6 @@ final class MakeThumbnail
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $this->mime = finfo_file($finfo, $this->filePath);
         $this->thumbPath = $this->filePath . '_th.jpg';
-
-        if ($this->checkFile()) {
-            $this->makeThumb();
-        }
-    }
-
-    /**
-     * Check if the file is readable and not too big, or if thumb exists already
-     *
-     * @return bool
-     */
-    private function checkFile(): bool
-    {
-        if (\is_readable($this->filePath) === false) {
-            throw new FilesystemErrorException("File not found! (" . \substr($this->filePath, 0, 42) . "…)");
-        }
-
-        return !(filesize($this->filePath) > self::BIG_FILE_THRESHOLD || \file_exists($this->thumbPath));
     }
 
     /**
@@ -166,10 +148,25 @@ final class MakeThumbnail
     /**
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      *
+     * @param bool $force force regeneration of thumbnail even if file exist (useful if upload was replaced)
      * @return void
      */
-    private function makeThumb(): void
+    public function makeThumb($force = false): void
     {
+        if (\is_readable($this->filePath) === false) {
+            throw new FilesystemErrorException("File not found! (" . \substr($this->filePath, 0, 42) . "…)");
+        }
+
+        // do nothing for big files
+        if (\filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
+            return;
+        }
+
+        // don't bother if the thumbnail exists already
+        if (\file_exists($this->thumbPath) && $force === false) {
+            return;
+        }
+
         // use gmagick preferentially
         if (\extension_loaded('gmagick')) {
             $this->useGmagick();

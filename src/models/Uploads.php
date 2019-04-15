@@ -195,7 +195,8 @@ class Uploads implements CrudInterface
 
         // final sql
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        new MakeThumbnail($fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb();
     }
 
     /**
@@ -216,7 +217,8 @@ class Uploads implements CrudInterface
         $this->moveFile($filePath, $fullPath);
 
         $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
-        new MakeThumbnail($fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb();
     }
 
     /**
@@ -249,7 +251,8 @@ class Uploads implements CrudInterface
         }
 
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        new MakeThumbnail($fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb();
     }
 
     /**
@@ -369,7 +372,8 @@ class Uploads implements CrudInterface
             throw new IllegalActionException('User tried to replace an upload of another user.');
         }
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        new MakeThumbnail($fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb(true);
     }
 
     /**

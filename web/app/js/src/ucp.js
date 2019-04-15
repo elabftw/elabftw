@@ -74,9 +74,28 @@
       mode : 'specific_textareas',
       editor_selector : 'mceditable',
       content_css : 'app/css/tinymce.css',
-      plugins : 'table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link',
+      plugins : 'table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link mention',
       toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link',
       removed_menuitems : 'newdocument',
+      mentions: {
+        // # is for items + all experiments of the team, $ is for items + user's experiments
+        delimiter: ['#', '$'],
+        // get the source from json with get request
+        source: function (query, process, delimiter) {
+          let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
+          if (delimiter === '#') {
+            $.getJSON(url, function(data) {
+              process(data);
+            });
+          }
+          if (delimiter === '$') {
+            url += '&userFilter=1';
+            $.getJSON(url, function(data) {
+              process(data);
+            });
+          }
+        }
+      },
       language : $('#language').data('lang')
     });
   });

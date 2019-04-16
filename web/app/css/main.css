@@ -896,7 +896,6 @@ input[type='checkbox'] {
 
 .date {
     color: #5d5d5d;
-    margin: 15px auto;
     padding: 0 5px;
 }
 
@@ -941,24 +940,12 @@ input[type='checkbox'] {
 }
 
 /* TAGS */
-.tags {
-    line-height: 150%;
-    margin-bottom: 10px;
-    width: 90%;
-}
-
-.tags a {
-    text-decoration: none;
-    color: #29aeb9;
-}
-
 a.tag {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
     line-height: 300%;
     border-radius: 5px;
     border: 1px solid #ccc;
     color: #797979;
-    margin: auto 0;
     padding: 0 5px;
 }
 

@@ -25,7 +25,7 @@
                 {% set inc = 0 %}
                 {% for tag in tagsValueArr %}
                     <span class='tag m-1 clickable'>
-                        <a class='tagUnreference' data-tagid='{{ tagsIdArr[inc] }}'>
+                        <a class='tag tag-delete tagUnreference' data-tagid='{{ tagsIdArr[inc] }}'>
                             {{ tag|raw }}
                         </a>
                     </span>

@@ -952,22 +952,27 @@ input[type='checkbox'] {
     color: #29aeb9;
 }
 
-.tag {
+a.tag {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
     line-height: 300%;
     border-radius: 5px;
     border: 1px solid #ccc;
-    color: #5d5d5d;
+    color: #797979;
     margin: auto 0;
     padding: 0 5px;
 }
 
-.tag:hover {
-    color: #900;
+a.tag:hover {
+    color: #29aeb9 !important;
+}
+
+a.tag-delete:hover {
+    transition: color 0.8s ease;
+    color: #dd1e00 !important;
 }
 
 .tags a:hover {
-    color: #343434;
+    color: #5d5d5d;
 }
 
 /* FOOTER */

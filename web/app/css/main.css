@@ -64,6 +64,10 @@ p {
     color: #797979;
 }
 
+section.item p {
+    margin-bottom: 0;
+}
+
 /* LINKS */
 a,
 .link-like {

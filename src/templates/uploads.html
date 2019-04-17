@@ -80,7 +80,7 @@
 
         <div class='caption'><i class='fas fa-download mr-1'></i>
         <a href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&forceDownload' rel='noopener'>{{ upload.real_name }}</a>
-        <span class='smallgray' style='display:inline'> {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }}</span><br>
+        <span class='smallgray' style='display:inline'> {{ (Entity.Uploads.getUploadsPath ~ upload.long_name)|filesize|formatBytes }} - {{ upload.datetime }}</span><br>
         {# if we are in view mode, we don't show the comment if it's the default text. This is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because you are in view mode #}
 
         {% if mode == 'edit' or upload.comment != 'Click to add a comment' %}

@@ -17,7 +17,7 @@
       plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak',
       pagebreak_separator: '<pagebreak>',
       toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
-      removed_menuitems: 'newdocument',
+      removed_menuitems: 'newdocument, image',
       image_caption: true,
       content_style: '.mce-content-body {font-size:10pt;}',
       language : $('#info').data('lang')

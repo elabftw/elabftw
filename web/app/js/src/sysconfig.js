@@ -167,7 +167,7 @@
       plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak hr',
       pagebreak_separator: '<pagebreak>',
       toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
-      removed_menuitems: 'newdocument',
+      removed_menuitems: 'newdocument, image',
       image_caption: false,
       content_style: '.mce-content-body {font-size:10pt;}',
       language: 'en_GB'

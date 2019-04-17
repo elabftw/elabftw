@@ -76,7 +76,7 @@
       content_css : 'app/css/tinymce.css',
       plugins : 'table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link mention',
       toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link',
-      removed_menuitems : 'newdocument',
+      removed_menuitems: 'newdocument, image',
       mentions: {
         // # is for items + all experiments of the team, $ is for items + user's experiments
         delimiter: ['#', '$'],

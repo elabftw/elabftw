@@ -18,7 +18,7 @@
     "guzzlehttp/guzzle": "6.3.*",
     "michelf/php-markdown": "1.8.*",
     "symfony/http-foundation": "4.2.*",
-    "twig/twig": "2.7.*",
+    "twig/twig": "2.8.*",
     "twig/extensions": "1.5.*",
     "monolog/monolog": "1.24.*",
     "maennchen/zipstream-php": "v1.0.0-alpha.2",

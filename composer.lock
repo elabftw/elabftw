@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ad95515e7e7f2ac372018879180c68e",
+    "content-hash": "e9d84f86bb690f861adbe71a80e442d0",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -432,7 +432,7 @@
         },
         {
             "name": "maennchen/zipstream-php",
-            "version": "v1.0.0-alpha.2",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maennchen/ZipStream-PHP.git",
@@ -4189,7 +4189,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "maennchen/zipstream-php": 15,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

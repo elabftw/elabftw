@@ -18,7 +18,7 @@ START TRANSACTION;
     ALTER TABLE `items_types` ADD CONSTRAINT `fk_items_types_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `status` ADD CONSTRAINT `fk_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `tags` ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;
-    ALTER TABLE `tags2entity` ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON DELETE cascade ON UPDATE cascade;
+    -- ALTER TABLE `tags2entity` ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `team_events` ADD CONSTRAINT `fk_team_events_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `team_events` ADD CONSTRAINT `fk_team_events_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
     ALTER TABLE `team_groups` ADD CONSTRAINT `fk_team_groups_teams_id` FOREIGN KEY (`team`) REFERENCES `teams`(`id`) ON DELETE cascade ON UPDATE cascade;

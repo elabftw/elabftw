@@ -43,7 +43,7 @@ try {
             throw new IllegalActionException('Non admin user tried to edit user.');
         }
 
-        $targetUser = new Users((int) $Request->request->get('userid'));
+        $targetUser = new Users((int) $Request->request->get('userid'), new Auth($Request, $Session));
         // check we edit user of our team
         if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
             throw new IllegalActionException('User tried to edit user from other team.');

@@ -40,7 +40,7 @@ class ReleaseCheck
     private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
 
     /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.0.2';
+    public const INSTALLED_VERSION = '3.0.3';
 
     /**
      * Fetch the update info on object creation

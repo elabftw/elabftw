@@ -100,10 +100,10 @@
             {# tinymce or markdown? #}
             {% set editor = 'tiny' %}
             {% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
-            {% set editor = 'md' %}
+              {% set editor = 'md' %}
             {% endif %}
             {% if App.Request.query.get('editor') == 'tiny' %}
-            {% set editor = 'tiny' %}
+              {% set editor = 'tiny' %}
             {% endif %}
 
             <p class='align_right inline switchEditor' id='iHazEditor' data-editor='{{ editor }}'><a href='#'>{{ 'Switch editor' }}</a></p>

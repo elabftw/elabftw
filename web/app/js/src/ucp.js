@@ -73,9 +73,10 @@
     tinymce.init({
       mode : 'specific_textareas',
       editor_selector : 'mceditable',
-      content_css : 'app/css/tinymce.css',
-      plugins : 'table textcolor searchreplace code lists advlist fullscreen insertdatetime paste charmap save image link mention',
-      toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link',
+      skin_url: 'app/css/tinymce',
+      plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr',
+      pagebreak_separator: '<pagebreak>',
+      toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
       removed_menuitems: 'newdocument, image',
       mentions: {
         // # is for items + all experiments of the team, $ is for items + user's experiments

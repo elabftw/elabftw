@@ -45,8 +45,7 @@ module.exports = {
       'prismjs/components/prism-ruby.js'
     ],
     tinymce: [
-      'tinymce',
-      'tinymce/themes/modern/theme',
+      './web/app/js/src/tinymce.es.js'
     ],
     moment: 'moment',
   },

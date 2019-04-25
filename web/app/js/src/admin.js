@@ -12,14 +12,14 @@
     tinymce.init({
       mode: 'specific_textareas',
       editor_selector: 'mceditable',
+      skin_url: 'app/css/tinymce',
       browser_spellcheck: true,
       content_css: 'app/css/tinymce.css',
-      plugins: 'table textcolor searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak',
+      plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak',
       pagebreak_separator: '<pagebreak>',
-      toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+      toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
       removed_menuitems: 'newdocument, image',
       image_caption: true,
-      content_style: '.mce-content-body {font-size:10pt;}',
       language : $('#info').data('lang')
     });
   }

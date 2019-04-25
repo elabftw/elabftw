@@ -102,6 +102,9 @@
     $('#unselectAllBoxes').click(function() {
       $('input:checkbox').prop('checked', false);
       $('input[type=checkbox]').parent().parent().css('background-color', '');
+      // hide menu
+      $('#withSelected').hide();
+      $('#advancedSelectOptions').hide();
     });
 
     // INVERT SELECTION

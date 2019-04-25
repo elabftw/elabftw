@@ -137,7 +137,7 @@
         const json = {
           'msg': 'Nothing selected!',
           'res': false
-        }
+        };
         notif(json);
         return;
       }
@@ -167,7 +167,7 @@
         const json = {
           'msg': 'Nothing selected!',
           'res': false
-        }
+        };
         notif(json);
         return;
       }
@@ -196,7 +196,7 @@
         const json = {
           'msg': 'Nothing selected!',
           'res': false
-        }
+        };
         notif(json);
         return;
       }
@@ -217,7 +217,7 @@
         const json = {
           'msg': 'Nothing selected!',
           'res': false
-        }
+        };
         notif(json);
         return;
       }

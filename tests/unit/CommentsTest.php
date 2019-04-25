@@ -5,7 +5,7 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Entity = new Experiments($this->Users, 1);
@@ -25,13 +25,12 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $id = $this->Comments->create('Ohai');
-        $this->assertInternalType("int", $id);
+        $this->assertIsInt($this->Comments->create('Ohai'));
     }
 
     public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Comments->readAll()));
+        $this->assertIsArray($this->Comments->readAll());
     }
 
     public function testUpdate()

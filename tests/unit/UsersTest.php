@@ -3,7 +3,7 @@ namespace Elabftw\Models;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users= new Users(1);
     }

@@ -6,7 +6,7 @@ use Elabftw\Exceptions\IllegalActionException;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Experiments = new Experiments($this->Users);
@@ -83,6 +83,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('read');
-        $this->assertInternalType("int", $this->Experiments->duplicate());
+        $this->assertIsInt($this->Experiments->duplicate());
     }
 }

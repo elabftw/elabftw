@@ -89,7 +89,7 @@ class Teams implements CrudInterface
      * @param string $name The new name of the team
      * @return int the new team id
      */
-    public function create(string $name)
+    public function create(string $name): int
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
 

@@ -5,7 +5,7 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $Users = new Users(1);
         $this->Teams= new Teams($Users);
@@ -13,7 +13,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertInternalType('int', (int) $this->Teams->create('Test team'));
+        $this->assertIsInt($this->Teams->create('Test team'));
     }
 
     public function testRead()

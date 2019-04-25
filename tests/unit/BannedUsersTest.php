@@ -3,7 +3,7 @@ namespace Elabftw\Models;
 
 class BannedUsersTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->BannedUsers= new BannedUsers(new Config);
     }

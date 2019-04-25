@@ -6,7 +6,7 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Status = new Status(new Users(1));
     }

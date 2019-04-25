@@ -3,14 +3,10 @@ namespace Elabftw\Models;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Entity= new Database($this->Users);
-    }
-
-    protected function tearDown()
-    {
     }
 
     public function testGetIconFromExtension()

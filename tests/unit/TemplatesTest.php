@@ -3,7 +3,7 @@ namespace Elabftw\Models;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Templates= new Templates(new Users(1));
     }
@@ -21,7 +21,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testDuplicate()
     {
         $this->Templates->setId(1);
-        $this->assertInternalType("int", $this->Templates->duplicate());
+        $this->assertIsInt($this->Templates->duplicate());
     }
     public function testReadAll()
     {

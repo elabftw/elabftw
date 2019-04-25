@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import tinymce from 'tinymce/tinymce';
+import 'tinymce/tinymce';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';

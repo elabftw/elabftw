@@ -133,6 +133,14 @@
       var ajaxs = [];
       // get the item id of all checked boxes
       var checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        const json = {
+          'msg': 'Nothing selected!',
+          'res': false
+        }
+        notif(json);
+        return;
+      }
       // loop on it and update the status/item type
       $.each(checked, function(index, value) {
         ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
@@ -155,6 +163,14 @@
       var ajaxs = [];
       // get the item id of all checked boxes
       var checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        const json = {
+          'msg': 'Nothing selected!',
+          'res': false
+        }
+        notif(json);
+        return;
+      }
       // loop on it and update the status/item type
       $.each(checked, function(index, value) {
         ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
@@ -175,23 +191,39 @@
 
     // MAKE ZIP/CSV
     $('.csvzip').on('click', function() {
+      var checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        const json = {
+          'msg': 'Nothing selected!',
+          'res': false
+        }
+        notif(json);
+        return;
+      }
       // grey out the box to signal it has been clicked
       $(this).attr('disabled', 'disabled');
       // also display a wait text
       $(this).html('Please wait…');
       var type = $('#type').data('type');
-      var checked = getCheckedBoxes();
       var what = $(this).data('what');
       window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+');
     });
 
     // THE DELETE BUTTON FOR CHECKED BOXES
     $('#deleteChecked').on('click', function() {
+      // get the item id of all checked boxes
+      var checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        const json = {
+          'msg': 'Nothing selected!',
+          'res': false
+        }
+        notif(json);
+        return;
+      }
       if (!confirm($('#info').data('confirm'))) {
         return false;
       }
-      // get the item id of all checked boxes
-      var checked = getCheckedBoxes();
       // loop on it and delete stuff
       $.each(checked, function(index, value) {
         $.post('app/controllers/EntityAjaxController.php', {

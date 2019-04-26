@@ -3,14 +3,6 @@ namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
-    {
-    }
-
-    protected function tearDown()
-    {
-    }
-
     public function testKdate()
     {
         $this->assertEquals('19690721', Tools::kdate('19690721'));

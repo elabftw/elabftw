@@ -5,7 +5,7 @@ use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $Users = new Users(1);
         $this->TeamGroups = new TeamGroups($Users);

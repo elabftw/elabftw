@@ -5,7 +5,7 @@ use Elabftw\Elabftw\Tools;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Experiments = new Experiments($this->Users, 1);

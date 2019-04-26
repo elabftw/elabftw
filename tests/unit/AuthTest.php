@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class AuthTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $Request = Request::createFromGlobals();
 

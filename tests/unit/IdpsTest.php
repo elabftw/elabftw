@@ -3,7 +3,7 @@ namespace Elabftw\Models;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Idps= new Idps();
     }
@@ -39,6 +39,6 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll()
     {
-        $this->assertInternalType('array', $this->Idps->readAll());
+        $this->assertIsArray($this->Idps->readAll());
     }
 }

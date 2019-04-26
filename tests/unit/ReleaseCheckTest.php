@@ -5,7 +5,7 @@ use Elabftw\Models\Config;
 
 class ReleaseCheckTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->ReleaseCheck = new ReleaseCheck(new Config());
     }
@@ -17,6 +17,6 @@ class ReleaseCheckTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateIsAvailable()
     {
-        $this->assertInternalType('bool', $this->ReleaseCheck->updateIsAvailable());
+        $this->assertIsBool($this->ReleaseCheck->updateIsAvailable());
     }
 }

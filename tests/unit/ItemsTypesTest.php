@@ -3,7 +3,7 @@ namespace Elabftw\Models;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->ItemsTypes= new ItemsTypes(new Users(1));
     }

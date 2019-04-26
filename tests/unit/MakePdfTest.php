@@ -5,7 +5,7 @@ use Elabftw\Services\MakePdf;
 
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Entity = new Experiments($this->Users);

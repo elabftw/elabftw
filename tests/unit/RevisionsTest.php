@@ -3,7 +3,7 @@ namespace Elabftw\Models;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->Users = new Users(1);
         $this->Experiments = new Experiments($this->Users, 1);
@@ -22,9 +22,9 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadCount()
     {
-        $this->assertInternalType('int', $this->Revisions->readCount());
+        $this->assertIsInt($this->Revisions->readCount());
         $this->Revisions = new Revisions(new Database($this->Users, '1'));
-        $this->assertInternalType('int', $this->Revisions->readCount());
+        $this->assertIsInt($this->Revisions->readCount());
     }
 
     public function testRestore()

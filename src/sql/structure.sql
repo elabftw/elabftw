@@ -758,9 +758,9 @@ ALTER TABLE `users`
 --
 -- Indexes for table `users2team_groups`
 --
-ALTER TABLE `users2team_groups`
-  ADD KEY `fk_users2team_groups_users_userid` (`userid`),
-  ADD KEY `fk_users2team_groups_team_groups_id` (`groupid`);
+-- ALTER TABLE `users2team_groups`
+  -- ADD KEY `fk_users2team_groups_users_userid` (`userid`),
+  -- ADD KEY `fk_users2team_groups_team_groups_id` (`groupid`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -982,8 +982,8 @@ ALTER TABLE `tags`
 --
 -- Constraints for table `tags2entity`
 --
-ALTER TABLE `tags2entity`
-  ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- ALTER TABLE `tags2entity`
+  -- ADD CONSTRAINT `fk_tags2entity_tags_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `team_events`

@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 class TagCloudTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->TagCloud = new TagCloud(1);
     }

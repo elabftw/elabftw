@@ -122,7 +122,7 @@
     {% set tagsValueArr = Entity.entityData.tags|split('|') %}
     {% for key, tag in tagsValueArr %}
         {# the key allows to get the id stored in tagsIdArr #}
-        <a class='tag' href='?mode=show&tag={{ tag|url_encode }}'>{{ tag|raw }}</a>
+        <a class='tag' href='?mode=show&tags[]={{ tag|url_encode }}'>{{ tag|raw }}</a>
     {% endfor %}
 {% endif %}
 

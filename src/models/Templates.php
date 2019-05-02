@@ -75,11 +75,12 @@ class Templates extends AbstractEntity
      */
     public function createDefault(int $team): void
     {
-        $defaultBody = "<p><span style='font-size: 14pt;'><strong>Goal :</strong></span></p>
-        <p>&nbsp;</p>
-        <p><span style='font-size: 14pt;'><strong>Procedure :</strong></span></p>
-        <p>&nbsp;</p>
-        <p><span style='font-size: 14pt;'><strong>Results :</strong></span></p><p>&nbsp;</p>";
+        $defaultBody = "<h1><span style='font-size: 14pt;'>Goal :</span></h1>
+            <p>&nbsp;</p>
+            <h1><span style='font-size: 14pt;'>Procedure :</span></h1>
+            <p>&nbsp;</p>
+            <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
+            <p>&nbsp;</p>";
 
         $this->create('default', $defaultBody, 0, $team);
     }

@@ -59,8 +59,8 @@ try {
     // ADD OR REMOVE USER TO/FROM TEAM GROUP
     if ($Request->request->has('teamGroupUser')) {
         $TeamGroups->updateMember(
-            $Request->request->get('teamGroupUser'),
-            $Request->request->get('teamGroupGroup'),
+            (int) $Request->request->get('teamGroupUser'),
+            (int) $Request->request->get('teamGroupGroup'),
             $Request->request->get('action')
         );
     }

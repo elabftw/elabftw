@@ -458,6 +458,7 @@
           typingTimer = setTimeout(doneTyping, doneTypingInterval);
         });
       },
+      /* eslint-disable */
       mentions: {
         // use @ for autocompletion
         delimiter: '@',
@@ -469,6 +470,7 @@
           });
         }
       },
+      /* eslint-enable */
       language: $('#info').data('lang'),
       style_formats_merge: true,
       style_formats: [

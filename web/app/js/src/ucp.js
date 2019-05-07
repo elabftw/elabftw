@@ -79,6 +79,7 @@
       toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
       removed_menuitems: 'newdocument, image',
       paste_as_text: true,
+      /* eslint-disable */
       mentions: {
         // use @ for autocompletion
         delimiter: '@',
@@ -90,6 +91,7 @@
           });
         }
       },
+      /* eslint-enable */
       language : $('#language').data('lang')
     });
   });

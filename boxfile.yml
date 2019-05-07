@@ -6,7 +6,7 @@ run.config:
         nginx_document_root: '/web'
         nginx_index_list:
             - index.php
-        runtime: php-7.1
+        runtime: php-7.2
         extensions:
             - ctype
             - curl
@@ -19,6 +19,7 @@ run.config:
             - pdo_mysql
             - session
             - zip
+            - zlib
         zend_extensions:
             - opcache
         writable_dirs:

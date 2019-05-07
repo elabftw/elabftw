@@ -502,16 +502,12 @@ abstract class AbstractEntity
      * Get a list of experiments with title starting with $term and optional user filter
      *
      * @param string $term the query
-     * @param bool $userFilter filter experiments for user or not
      * @return array
      */
-    public function getExpList(string $term, bool $userFilter = false): array
+    public function getExpList(string $term): array
     {
         $Experiments = new Experiments($this->Users);
         $Experiments->titleFilter = " AND title LIKE '%$term%'";
-        if ($userFilter) {
-            $Experiments->setUseridFilter();
-        }
 
         return $Experiments->read();
     }
@@ -553,10 +549,9 @@ abstract class AbstractEntity
      * for use with the mention plugin of tinymce (# and $ autocomplete)
      *
      * @param string $term the query
-     * @param bool $userFilter filter experiments for user or not
      * @return array
      */
-    public function getMentionList(string $term, bool $userFilter = false): array
+    public function getMentionList(string $term): array
     {
         $mentionArr = array();
 
@@ -569,7 +564,7 @@ abstract class AbstractEntity
 
         // complete the list with experiments
         // fix #191
-        $experimentsArr = $this->getExpList($term, $userFilter);
+        $experimentsArr = $this->getExpList($term);
         foreach ($experimentsArr as $item) {
             $mentionArr[] = array("name" => "<a href='experiments.php?mode=view&id=" .
                 $item['id'] . "'>" . $item['title'] . "</a>");

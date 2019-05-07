@@ -459,22 +459,14 @@
         });
       },
       mentions: {
-        // # is for items + all experiments of the team, $ is for items + user's experiments
-        delimiter: ['#', '$'],
+        // use @ for autocompletion
+        delimiter: '@',
         // get the source from json with get request
         source: function (query, process, delimiter) {
           let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
-          if (delimiter === '#') {
-            $.getJSON(url, function(data) {
-              process(data);
-            });
-          }
-          if (delimiter === '$') {
-            url += '&userFilter=1';
-            $.getJSON(url, function(data) {
-              process(data);
-            });
-          }
+          $.getJSON(url, function(data) {
+            process(data);
+          });
         }
       },
       language: $('#info').data('lang'),

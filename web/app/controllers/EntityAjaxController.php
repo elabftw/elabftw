@@ -61,12 +61,8 @@ try {
 
     // GET MENTION LIST
     if ($Request->query->has('term') && $Request->query->has('mention')) {
-        $userFilter = false;
         $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
-        if ($Request->query->has('userFilter')) {
-            $userFilter = true;
-        }
-        $Response->setData($Entity->getMentionList($term, $userFilter));
+        $Response->setData($Entity->getMentionList($term));
     }
 
     // GET BODY

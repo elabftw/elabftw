@@ -458,19 +458,17 @@
           typingTimer = setTimeout(doneTyping, doneTypingInterval);
         });
       },
-      /* eslint-disable */
       mentions: {
         // use @ for autocompletion
         delimiter: '@',
         // get the source from json with get request
-        source: function (query, process, delimiter) {
+        source: function (query, process) {
           let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
           $.getJSON(url, function(data) {
             process(data);
           });
         }
       },
-      /* eslint-enable */
       language: $('#info').data('lang'),
       style_formats_merge: true,
       style_formats: [

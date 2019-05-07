@@ -79,19 +79,17 @@
       toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
       removed_menuitems: 'newdocument, image',
       paste_as_text: true,
-      /* eslint-disable */
       mentions: {
         // use @ for autocompletion
         delimiter: '@',
         // get the source from json with get request
-        source: function (query, process, delimiter) {
+        source: function (query, process) {
           let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
           $.getJSON(url, function(data) {
             process(data);
           });
         }
       },
-      /* eslint-enable */
       language : $('#language').data('lang')
     });
   });

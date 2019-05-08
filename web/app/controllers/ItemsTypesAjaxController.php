@@ -50,7 +50,7 @@ try {
     // UPDATE ITEM TYPE
     if ($Request->request->has('itemsTypesUpdate')) {
         $ItemsTypes->update(
-            $Request->request->get('id'),
+            (int) $Request->request->get('id'),
             $Request->request->get('name'),
             $Request->request->get('color'),
             (int) $Request->request->get('bookable'),

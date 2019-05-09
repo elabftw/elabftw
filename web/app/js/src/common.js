@@ -265,7 +265,7 @@ function insertParamAndReload(key, value) { // eslint-disable-line no-unused-var
 }
 
 // DISPLAY 2D MOL FILES
-function displayMolFiles() {
+function displayMolFiles() { // eslint-disable-line no-unused-vars
   // loop all the mol files and display the molecule with ChemDoodle
   $.each($('.molFile'), function() {
     // id of the canvas to attach the viewer to

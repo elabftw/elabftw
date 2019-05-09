@@ -14606,24 +14606,24 @@ var tooltip = $.widget( "ui.tooltip", {
 
     var touch = event.originalEvent.changedTouches[0],
         simulatedEvent = document.createEvent('MouseEvents');
-    
+
     // Initialize the simulated mouse event using the touch event's coordinates
     simulatedEvent.initMouseEvent(
       simulatedType,    // type
-      true,             // bubbles                    
-      true,             // cancelable                 
-      window,           // view                       
-      1,                // detail                     
-      touch.screenX,    // screenX                    
-      touch.screenY,    // screenY                    
-      touch.clientX,    // clientX                    
-      touch.clientY,    // clientY                    
-      false,            // ctrlKey                    
-      false,            // altKey                     
-      false,            // shiftKey                   
-      false,            // metaKey                    
-      0,                // button                     
-      null              // relatedTarget              
+      true,             // bubbles
+      true,             // cancelable
+      window,           // view
+      1,                // detail
+      touch.screenX,    // screenX
+      touch.screenY,    // screenY
+      touch.clientX,    // clientX
+      touch.clientY,    // clientY
+      false,            // ctrlKey
+      false,            // altKey
+      false,            // shiftKey
+      false,            // metaKey
+      0,                // button
+      null              // relatedTarget
     );
 
     // Dispatch the simulated event to the target element
@@ -14657,7 +14657,7 @@ var tooltip = $.widget( "ui.tooltip", {
 
     // Simulate the mousedown event
     simulateMouseEvent(event, 'mousedown');
-    
+
     // iChemLabs - making touchmove less sensitive
     this.psave = {x: event.originalEvent.changedTouches?event.originalEvent.changedTouches[0].pageX:event.pageX, y: event.originalEvent.changedTouches?event.originalEvent.changedTouches[0].pageY:event.pageY};
   };
@@ -14699,7 +14699,7 @@ var tooltip = $.widget( "ui.tooltip", {
 
     // iChemLabs - making touchmove less sensitive
     this.psave = undefined;
-    
+
     // Ignore event if not handled
     if (!touchHandled) {
       return;
@@ -14729,7 +14729,7 @@ var tooltip = $.widget( "ui.tooltip", {
    * original mouse event handling methods.
    */
   mouseProto._mouseInit = function () {
-    
+
     var self = this;
 
     // Delegate the touch handlers to the widget's element
@@ -14747,7 +14747,7 @@ var tooltip = $.widget( "ui.tooltip", {
    * Remove the touch event handlers
    */
   mouseProto._mouseDestroy = function () {
-    
+
     var self = this;
 
     // Delegate the touch handlers to the widget's element
@@ -15358,7 +15358,7 @@ ChemDoodle.uis = (function(undefined) {
 			maxY = m.max(this.ps[i].y, maxY);
 		}
 		this.center = new structures.Point((maxX + minX) / 2, (maxY + minY) / 2);
-		this.horizontal = horizontal;		
+		this.horizontal = horizontal;
 	};
 	var _ = actions.FlipAction.prototype = new actions._Action();
 	_.innerForward = _.innerReverse = function() {
@@ -16211,7 +16211,7 @@ ChemDoodle.uis = (function(undefined) {
 (function(extensions, math, structures, d2, actions, states, m, undefined) {
 	'use strict';
 	var controlsize = 4;
-	
+
 	states.DynamicBracketState = function(sketcher) {
 		this.setup(sketcher);
 		this.dontTranslateOnDrag = true;
@@ -16681,7 +16681,7 @@ ChemDoodle.uis = (function(undefined) {
 	//var SCALE = 3;
 	var transformType = undefined;
 	var paintRotate = false;
-	
+
 	states.LassoState = function(sketcher) {
 		this.setup(sketcher);
 		this.dontTranslateOnDrag = true;
@@ -17126,7 +17126,7 @@ ChemDoodle.uis = (function(undefined) {
 			beginning = new structures.Atom('C', newX, newY);
 			chain.push(beginning);
 		}
-		
+
 		var allAs = this.sketcher.getAllAtoms();
 		for ( var i = 0, ii = allAs.length; i < ii; i++) {
 			allAs[i].isOverlap = false;
@@ -17502,9 +17502,9 @@ ChemDoodle.uis = (function(undefined) {
 })(ChemDoodle.math, ChemDoodle.monitor, ChemDoodle.uis.actions, ChemDoodle.uis.states, ChemDoodle.structures, Math);
 (function(math, monitor, actions, states, io, structures, m, undefined) {
 	'use strict';
-	
+
 	var INTERPRETER = new io.JSONInterpreter();
-	
+
 	states.NewTemplateState = function(sketcher) {
 		this.setup(sketcher);
 		this.template = {"a":[{"x":270,"i":"a0","y":105},{"x":252.6795,"i":"a1","y":115},{"x":252.6795,"i":"a2","y":135},{"x":270,"i":"a3","y":145},{"x":287.3205,"i":"a4","y":135},{"x":287.3205,"i":"a5","y":115},{"x":270,"i":"a6","y":85},{"x":287.3205,"i":"a7","y":75},{"x":270,"i":"a8","y":165,"l":"O"},{"x":252.6795,"i":"a9","y":175},{"x":252.6795,"i":"a10","y":195},{"x":252.6795,"i":"a11","y":215},{"x":252.6795,"i":"a12","y":235,"l":"Si"},{"x":272.6795,"i":"a13","y":235},{"x":232.6795,"i":"a14","y":235},{"x":252.6795,"i":"a15","y":255}],"b":[{"b":0,"e":1,"i":"b0","o":2},{"b":1,"e":2,"i":"b1"},{"b":2,"e":3,"i":"b2","o":2},{"b":3,"e":4,"i":"b3"},{"b":4,"e":5,"i":"b4","o":2},{"b":5,"e":0,"i":"b5"},{"b":0,"e":6,"i":"b6"},{"b":6,"e":7,"i":"b7","o":2},{"b":3,"e":8,"i":"b8"},{"b":8,"e":9,"i":"b9"},{"b":9,"e":10,"i":"b10"},{"b":10,"e":11,"i":"b11","o":3},{"b":11,"e":12,"i":"b12"},{"b":12,"e":13,"i":"b13"},{"b":12,"e":14,"i":"b14"},{"b":12,"e":15,"i":"b15"}]};
@@ -18050,7 +18050,7 @@ ChemDoodle.uis = (function(undefined) {
 	_.innermousedown = function(e) {
 		if(!this.sketcher.hovering && (!this.start || !(this.start instanceof d2.VAP))){
 			// out of convenience, since the user cannot drag from the VAP asterisk and may accidentally try to, don't allow placement of another vap within 30 pixels
-			var add = true; 
+			var add = true;
 			for ( var i = 0, ii = this.sketcher.shapes.length; i < ii; i++) {
 				var s = this.sketcher.shapes[i];
 				if(s instanceof d2.VAP && s.asterisk.distance(e.p)<30){
@@ -18357,7 +18357,7 @@ ChemDoodle.uis.gui.imageDepot = (function(undefined) {
 ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 	'use strict';
 	var d = [];
-	
+
 	var group = {name:'Amino Acids', templates:[]};
 	group.templates.push({
 		name: 'Alanine <b>Ala</b> <i>A</i>',
@@ -18600,7 +18600,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-20.0014,"y":10},{"x":0.0014,"y":10},{"x":20.0014,"y":10},{"x":0.0014,"y":-10}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Cyclic Terpenes', templates:[]};
 	group.templates.push({
 		name: 'Bornane',
@@ -18639,7 +18639,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-24.0519,"y":2.3998},{"x":-12.2969,"y":-13.7808},{"x":-12.2969,"y":18.5784},{"x":6.7214,"y":-7.5993},{"x":6.7214,"y":12.399},{"x":-18.4764,"y":37.5967},{"x":6.7214,"y":-27.5976},{"x":24.0519,"y":2.3998},{"x":24.0419,"y":-37.5967},{"x":-10.5971,"y":-37.5967}],"b":[{"b":3,"e":4},{"b":3,"e":7},{"b":3,"e":1},{"b":3,"e":6},{"b":4,"e":7},{"b":4,"e":2},{"b":2,"e":0},{"b":2,"e":5},{"b":1,"e":0},{"b":6,"e":8},{"b":6,"e":9}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Cycloalkanes', templates:[]};
 	group.templates.push({
 		name: '<a></a><b>9</b> Nonane <i>packed</i>',
@@ -18738,7 +18738,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":140.862,"y":274},{"x":147.042,"y":293.02},{"x":140.862,"y":254},{"x":158.798,"y":309.202},{"x":147.042,"y":234.98},{"x":174.978,"y":320.958},{"x":158.798,"y":218.798},{"x":194,"y":327.138},{"x":174.978,"y":207.042},{"x":214,"y":327.138},{"x":194,"y":200.862},{"x":233.022,"y":320.958},{"x":214,"y":200.862},{"x":249.202,"y":309.202},{"x":233.02,"y":207.042},{"x":260.958,"y":293.02},{"x":249.202,"y":218.798},{"x":267.138,"y":274},{"x":260.958,"y":234.978},{"x":267.138,"y":254}],"b":[{"b":0,"e":1},{"b":0,"e":2},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":4,"e":6},{"b":5,"e":7},{"b":8,"e":6},{"b":7,"e":9},{"b":10,"e":8},{"b":9,"e":11},{"b":10,"e":12},{"b":11,"e":13},{"b":14,"e":12},{"b":13,"e":15},{"b":16,"e":14},{"b":15,"e":17},{"b":18,"e":16},{"b":17,"e":19},{"b":19,"e":18}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Functional Groups', templates:[]};
 	group.templates.push({
 		name: 'Alkenyl',
@@ -18869,7 +18869,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":178.018,"y":264.002},{"x":195.34,"y":254,"l":"S"},{"x":212.66,"y":264.002},{"x":229.982,"y":274,"l":"N"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":2,"e":3,"o":3}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Sugars (Hexoses)', templates:[]};
 	group.templates.push({
 		name: 'Allose <i>Fisher Projection</i>',
@@ -18968,7 +18968,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-36.6654,"y":-9.7292},{"x":-22.0845,"y":15.5237},{"x":-54.1679,"y":-0.0514,"l":"H"},{"x":-36.6654,"y":-29.7292,"l":"O"},{"x":-8.6254,"y":-2.3409},{"x":-41.6882,"y":11.5623,"l":"O"},{"x":-22.0845,"y":35.5237,"l":"H"},{"x":6.1279,"y":8.1324},{"x":19.5899,"y":-9.7292,"l":"O"},{"x":-8.6254,"y":24.8818,"l":"H"},{"x":-23.6658,"y":-15.5237},{"x":34.1679,"y":15.5237},{"x":20.3041,"y":22.2404,"l":"H"},{"x":6.1279,"y":-11.8676,"l":"O"},{"x":-23.6658,"y":-35.5237,"l":"O"},{"x":54.1679,"y":15.5237,"l":"O"}],"b":[{"b":0,"e":1},{"b":4,"e":0},{"b":8,"e":4},{"b":11,"e":7},{"b":11,"e":8},{"b":4,"e":9},{"b":7,"e":13},{"b":7,"e":12},{"b":4,"e":10},{"b":10,"e":14},{"b":0,"e":3},{"b":0,"e":2},{"b":1,"e":6},{"b":1,"e":5},{"b":1,"e":7,"o":1},{"b":11,"e":15,"o":1}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Sugars (Other Monosaccharides)', templates:[]};
 	group.templates.push({
 		name: 'Glyceraldehyde <i>Fisher Projection</i>',
@@ -18999,7 +18999,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":0,"y":-20},{"x":-20,"y":-20,"l":"O"},{"x":0,"y":-40,"l":"CHO"},{"x":20,"y":-20,"l":"H"},{"x":0,"y":0},{"x":20,"y":0,"l":"H"},{"x":0,"y":20},{"x":-20,"y":0,"l":"O"},{"x":20,"y":20,"l":"O"},{"x":-20,"y":20,"l":"H"},{"x":0,"y":40,"l":"CH2OH"}],"b":[{"b":0,"e":2},{"b":0,"e":4},{"b":4,"e":6},{"b":6,"e":10},{"b":0,"e":1},{"b":0,"e":3},{"b":4,"e":7},{"b":4,"e":5},{"b":6,"e":9},{"b":6,"e":8}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Nucleotides', templates:[]};
 	group.templates.push({
 		name: 'Adenine',
@@ -19066,7 +19066,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-18.6602,"y":-0.6571,"l":"O"},{"x":1.3398,"y":-0.6571,"l":"P"},{"c":-1,"x":8.6025,"y":17.9776,"l":"O"},{"x":11.3398,"y":-17.9776,"l":"O"},{"c":-1,"x":18.6603,"y":9.3429,"l":"O"}],"b":[{"b":0,"e":1},{"b":1,"e":2},{"b":1,"e":3,"o":2},{"b":1,"e":4}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Other', templates:[]};
 	group.templates.push({
 		name: 'Adamantane',
@@ -19145,7 +19145,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-9.5219,"y":-26.0012},{"x":7.2133,"y":-26.1571},{"x":-14.5434,"y":-10.0357},{"x":12.5334,"y":-10.2879},{"x":-28.325,"y":0.1651},{"x":13.5307,"y":10.0357},{"x":28.325,"y":-1.1706},{"x":-13.5501,"y":10.2879},{"x":8.5073,"y":26.0012},{"x":-8.228,"y":26.1571}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":3,"e":6},{"b":6,"e":5},{"b":5,"e":8},{"b":8,"e":9},{"b":9,"e":7},{"b":7,"e":3},{"b":7,"e":4},{"b":4,"e":2},{"b":2,"e":0},{"b":2,"e":5}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Platonic Solids', templates:[]};
 	group.templates.push({
 		name: 'Cubane',
@@ -19168,7 +19168,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-10.8801,"y":10.377,"z":-0.0003},{"x":9.7747,"y":11.0081,"z":0.0004},{"x":-2.0447,"y":-11.0081,"z":0.0002},{"x":10.8801,"y":0.3176,"z":-0.0007}],"b":[{"b":0,"e":1},{"b":0,"e":3},{"b":3,"e":1},{"b":1,"e":2},{"b":2,"e":3},{"b":2,"e":0}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Ring Conformers', templates:[]};
 	group.templates.push({
 		name: '<b>4</b> Cyclobutane',
@@ -19207,7 +19207,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":188.5,"y":239},{"x":171.5,"y":260},{"x":205.5,"y":248},{"x":180.5,"y":274},{"x":229.5,"y":245},{"x":201.5,"y":289},{"x":236.5,"y":270},{"x":223.5,"y":273}],"b":[{"b":0,"e":1},{"b":2,"e":0},{"b":1,"e":3},{"b":4,"e":2},{"b":3,"e":5},{"b":6,"e":4},{"b":5,"e":7},{"b":7,"e":6}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Stereocenters and Geometries', templates:[]};
 	group.templates.push({
 		name: 'Bent Away',
@@ -19290,7 +19290,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":186.68,"y":265.34},{"x":204.002,"y":255.34},{"x":214,"y":272.66},{"x":221.32,"y":265.34}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2}]}
 	});
 	d.push(group);
-	
+
 	group = {name:'Vitamins', templates:[]};
 	group.templates.push({
 		name: 'Vitamin A',
@@ -19349,7 +19349,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		data: {"a":[{"x":-155.8846,"y":40},{"x":-155.8846,"y":20},{"x":-138.5641,"y":10},{"x":-173.2051,"y":10},{"x":-121.2436,"y":20},{"x":-103.9231,"y":10},{"x":-86.6025,"y":20},{"x":-86.6025,"y":40},{"x":-69.2821,"y":10},{"x":-51.9615,"y":20},{"x":-34.641,"y":10},{"x":-17.3205,"y":20},{"x":0,"y":10},{"x":-17.3205,"y":40},{"x":17.3205,"y":20},{"x":34.641,"y":10},{"x":51.9615,"y":20},{"x":69.2821,"y":10},{"x":51.9615,"y":40},{"x":86.6026,"y":20},{"x":103.9231,"y":10},{"x":121.2437,"y":20},{"x":103.9231,"y":-10},{"x":138.5641,"y":10},{"x":121.2437,"y":40,"l":"O"},{"x":121.2437,"y":-20},{"x":86.6026,"y":-20},{"x":155.8847,"y":20},{"x":138.5641,"y":-10},{"x":121.2437,"y":-40,"l":"O"},{"x":173.2051,"y":10},{"x":155.8847,"y":-20},{"x":173.2051,"y":-10}],"b":[{"b":0,"e":1},{"b":1,"e":3},{"b":1,"e":2},{"b":2,"e":4},{"b":4,"e":5},{"b":5,"e":6},{"b":6,"e":7},{"b":6,"e":8},{"b":8,"e":9},{"b":9,"e":10},{"b":10,"e":11},{"b":11,"e":13},{"b":11,"e":12},{"b":12,"e":14},{"b":14,"e":15},{"b":15,"e":16},{"b":16,"e":18},{"b":16,"e":17,"o":2},{"b":17,"e":19},{"b":19,"e":20},{"b":20,"e":22,"o":2},{"b":22,"e":26},{"b":22,"e":25},{"b":25,"e":29,"o":2},{"b":25,"e":28},{"b":28,"e":23,"o":2},{"b":23,"e":27},{"b":27,"e":30,"o":2},{"b":30,"e":32},{"b":32,"e":31,"o":2},{"b":28,"e":31},{"b":23,"e":21},{"b":20,"e":21},{"b":21,"e":24,"o":2}]}
 	});
 	d.push(group);
-	
+
 	// this is the user's template group, don't remove this or the templates widget won't work
 	// IE/Edge doesn't allow localStorage from local files
 	var saved;
@@ -19517,13 +19517,13 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 	_.addDropDown = function(tooltip) {
 		this.dropDown = new desktop.DropDown(this.id + '_dd', tooltip, this.buttons[this.buttons.length - 1]);
 	};
-	
+
 	_.disable = function() {
 		for (var i = 0, ii = this.buttons.length; i < ii; i++) {
 			this.buttons[i].disable();
 		}
 	};
-	
+
 	_.enable = function() {
 		for (var i = 0, ii = this.buttons.length; i < ii; i++) {
 			this.buttons[i].enable();
@@ -19558,12 +19558,12 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 	_.setup = function() {
 		this.getElement().click(this.func);
 	};
-	
+
 	_.check = function() {
 		this.checked = true;
 		this.getElement().prop('checked', true);
 	};
-	
+
 	_.uncheck = function() {
 		this.checked = false;
 		this.getElement().removeAttr('checked');
@@ -19692,7 +19692,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		sb.push('</div></div>');
 		for ( var i = 0, ii = this.components.length; i < ii; i++) {
 			sb.push(this.components[i].getSource(buttonGroup));
-			sb.push('<br>');	
+			sb.push('<br>');
 		}
 		sb.push('</div>');
 		return sb.join('');
@@ -19756,7 +19756,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		sb.push('</tr>');
 		return sb.join('');
 	};
-	
+
 	desktop.AtomQueryDialog = function(sketcher, subid) {
 		this.sketcher = sketcher;
 		this.id = sketcher.id + subid;
@@ -19780,7 +19780,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		q('#'+this.id+'_el_hal').prop("checked", use.elements.v.indexOf('x')!==-1);
 		q('#'+this.id+'_el_met').prop("checked", use.elements.v.indexOf('m')!==-1);
 		q('#'+this.id+'_elements_not').prop("checked", use.elements.not);
-		
+
 		q('#'+this.id+'_aromatic_include').prop("checked", use.aromatic!==undefined);
 		q('#'+this.id+'_aromatic_not').prop("checked", use.aromatic!==undefined&&use.aromatic.not);
 		q('#'+this.id+'_charge_include').prop("checked", use.charge!==undefined);
@@ -19861,7 +19861,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		var self = this;
 		function setNewQuery(){
 			var query = new structures.Query(structures.Query.TYPE_ATOM);
-			
+
 			if(q('#'+self.id+'_el_any').is(':checked')){
 				query.elements.v.push('a');
 			}
@@ -19885,7 +19885,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			if(q('#'+self.id+'_elements_not').is(':checked')){
 				query.elements.not = true;
 			}
-			
+
 			if(q('#'+self.id+'_aromatic_include').is(':checked')){
 				query.aromatic = {v:true,not:q('#'+self.id+'_aromatic_not').is(':checked')};
 			}
@@ -19916,7 +19916,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				}
 				query.chirality = {v:val,not:q('#'+self.id+'_chirity_not').is(':checked')};
 			}
-			
+
 			self.sketcher.historyManager.pushUndo(new actions.ChangeQueryAction(self.a, query));
 			q(this).dialog('close');
 		};
@@ -19983,7 +19983,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		sb.push('</tr>');
 		return sb.join('');
 	};
-	
+
 	desktop.BondQueryDialog = function(sketcher, subid) {
 		this.sketcher = sketcher;
 		this.id = sketcher.id + subid;
@@ -20016,7 +20016,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				break;
 			}
 		}
-		
+
 		q('#'+this.id+'_type_0').prop("checked", use.orders.v.indexOf('0')!==-1).button('refresh');
 		q('#'+this.id+'_type_1').prop("checked", use.orders.v.indexOf('1')!==-1).button('refresh');
 		q('#'+this.id+'_type_2').prop("checked", use.orders.v.indexOf('2')!==-1).button('refresh');
@@ -20028,7 +20028,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		q('#'+this.id+'_type_r').prop("checked", use.orders.v.indexOf('r')!==-1).button('refresh');
 		q('#'+this.id+'_type_a').prop("checked", use.orders.v.indexOf('a')!==-1).button('refresh');
 		q('#'+this.id+'_orders_not').prop("checked", use.orders.not);
-		
+
 		q('#'+this.id+'_aromatic_include').prop("checked", use.aromatic!==undefined);
 		q('#'+this.id+'_aromatic_not').prop("checked", use.aromatic!==undefined&&use.aromatic.not);
 		q('#'+this.id+'_ringCount_include').prop("checked", use.ringCount!==undefined);
@@ -20103,7 +20103,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			if(q('#'+self.id+'_orders_not').is(':checked')){
 				query.orders.not = true;
 			}
-			
+
 			if(q('#'+self.id+'_aromatic_include').is(':checked')){
 				query.aromatic = {v:true,not:q('#'+self.id+'_aromatic_not').is(':checked')};
 			}
@@ -20119,7 +20119,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				}
 				query.stereo = {v:val,not:q('#'+self.id+'_stereo_not').is(':checked')};
 			}
-			
+
 			self.sketcher.historyManager.pushUndo(new actions.ChangeQueryAction(self.b, query));
 			q(this).dialog('close');
 		};
@@ -20407,10 +20407,10 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 
 (function(c, io, desktop, templateDepot, q, m, document, JSON, localStorage, undefined) {
 	'use strict';
-	
+
 	var INTERPRETER = new io.JSONInterpreter();
 	var allowedRegex = /[^A-z0-9]|\[|\]/g;
-	
+
 	desktop.TemplateDialog = function(sketcher, subid) {
 		this.sketcher = sketcher;
 		this.id = sketcher.id + subid;
@@ -20549,7 +20549,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			}
 			ctx.restore();
 		};
-		
+
 		this.getElement().dialog({
 			autoOpen : false,
 			width : 260,
@@ -20562,7 +20562,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				}
 			}
 		});
-		
+
 		var select = q('#'+this.id+'_select');
 		select.change(function(){
 			var index = this.selectedIndex;
@@ -20574,7 +20574,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			q('#'+self.id+'_scroll').scrollTop(0);
 			self.loadTemplate(index, 0, true);
 		});
-		
+
 		q('#'+this.id+'_button_add').click(function(){
 			if(self.sketcher.lasso.atoms.length===0){
 				alert('Please select a structure to define a template.');
@@ -20693,7 +20693,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 	'use strict';
 	gui.DialogManager = function(sketcher) {
 		var self = this;
-	
+
 		if (sketcher.useServices) {
 			this.saveDialog = new desktop.SaveFileDialog(sketcher.id + '_save_dialog', sketcher);
 		} else {
@@ -20824,7 +20824,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			}
 		};
 		this.inputDialog.setup();
-		
+
 		if(this.makeOtherDialogs){
 			this.makeOtherDialogs(sketcher);
 		}
@@ -20959,13 +20959,13 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		}
 		return sb.join('');
 	};
-	
+
 	_.check = function() {
 		var element = this.getElement();
 		element.prop('checked', true);
 		element.button('refresh');
 	};
-	
+
 	_.uncheck = function() {
 		var element = this.getElement();
 		element.removeAttr('checked');
@@ -21069,7 +21069,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		if(this.sketcher.floatDrawTools){
 			this.drawTools = new desktop.FloatingToolbar(sketcher);
 		}
-		
+
 		// open
 		this.buttonOpen = new desktop.Button(sketcher.id + '_button_open', imageDepot.OPEN, 'Open', function() {
 			sketcher.dialogManager.openPopup.show();
@@ -21103,7 +21103,9 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
                 id: item,
                 string: c.writeMOL(sketcher.molecules[0])
             }).done(function() {
-                $("#filesdiv").load("?mode=edit&id=" + item + " #filesdiv");
+                $("#filesdiv").load("?mode=edit&id=" + item + " #filesdiv", function() {
+                  displayMolFiles()
+                });
             });
             // END ELABFTW CUSTOMIZATION
         });
@@ -21249,7 +21251,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 
 		// label set
 		this.makeLabelSet(this);
-		
+
 		// query
 		this.buttonTextInput = new desktop.Button(sketcher.id + '_button_text_input', imageDepot.TEXT, 'Set Atom Label', function() {
 			sketcher.stateManager.setState(sketcher.stateManager.STATE_TEXT_INPUT);
@@ -21265,7 +21267,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 
 		// ring set
 		this.makeRingSet(this);
-		
+
 		// chain
 		this.buttonChain = new desktop.Button(sketcher.id + '_button_chain', imageDepot.CHAIN_CARBON, 'Add Carbon Chain', function() {
 			sketcher.stateManager.setState(sketcher.stateManager.STATE_NEW_CHAIN);
@@ -21277,7 +21279,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 
 		// shape set
 		this.makeShapeSet(this);
-		
+
 		if(this.makeOtherButtons){
 			this.makeOtherButtons(this);
 		}
@@ -21422,7 +21424,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		this.buttonPaste = new desktop.Button(self.sketcher.id + '_button_paste', imageDepot.PASTE, 'Paste', function() {
 			self.sketcher.copyPasteManager.paste();
 		});
-		
+
 		this.copySet = new desktop.ButtonSet(self.sketcher.id + '_buttons_copy');
 		this.copySet.toggle = false;
 		this.copySet.buttons.push(this.buttonCut);
@@ -21440,7 +21442,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			self.sketcher.checkScale();
 			self.sketcher.repaint();
 		});
-		
+
 		this.scaleSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_scale');
 		this.scaleSet.toggle = false;
 		this.scaleSet.buttons.push(this.buttonScalePlus);
@@ -21468,7 +21470,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				self.sketcher.lasso.selectNextMolecule();
 			}
 		});
-		
+
 		this.lassoSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_lasso');
 		this.buttonLasso = new desktop.DummyButton(self.sketcher.id + '_button_lasso', 'Selection Tool');
 		this.lassoSet.buttons.push(this.buttonLasso);
@@ -21496,7 +21498,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		this.buttonFlipHor = new desktop.Button(self.sketcher.id + '_button_flip_ver', imageDepot.FLIP_VER, 'Flip Vertically', function() {
 			action(false);
 		});
-		
+
 		this.flipSet = new desktop.ButtonSet(self.sketcher.id + '_buttons_flip');
 		this.flipSet.toggle = false;
 		this.flipSet.buttons.push(this.buttonFlipVert);
@@ -21509,7 +21511,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		this.buttonRedo = new desktop.Button(self.sketcher.id + '_button_redo', imageDepot.REDO, 'Redo', function() {
 			self.sketcher.historyManager.redo();
 		});
-		
+
 		this.historySet = new desktop.ButtonSet(self.sketcher.id + '_buttons_history');
 		this.historySet.toggle = false;
 		this.historySet.buttons.push(this.buttonUndo);
@@ -21567,7 +21569,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			}
 			self.sketcher.dialogManager.periodicTableDialog.open();
 		});
-		
+
 		this.buttonLabel = new desktop.DummyButton(self.sketcher.id + '_button_label', 'Set Label');
 		if(self.sketcher.floatDrawTools){
 			this.labelTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_label', this.buttonLabel, 3);
@@ -21655,7 +21657,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			self.sketcher.stateManager.STATE_NEW_BOND.bondOrder = 3;
 			self.sketcher.stateManager.STATE_NEW_BOND.stereo = structures.Bond.STEREO_NONE;
 		});
-		
+
 		this.buttonBond = new desktop.DummyButton(self.sketcher.id + '_button_bond', self.sketcher.floatDrawTools?'Draw Bond':'Other Bond');
 		if(self.sketcher.floatDrawTools){
 			this.bondTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_bond', this.buttonBond, 2);
@@ -21729,7 +21731,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			self.sketcher.stateManager.STATE_NEW_RING.numSides = -1;
 			self.sketcher.stateManager.STATE_NEW_RING.unsaturated = false;
 		});
-		
+
 		this.buttonRing = new desktop.DummyButton(self.sketcher.id + '_button_ring', self.sketcher.floatDrawTools?'Draw Ring':'Other Ring');
 		if(self.sketcher.floatDrawTools){
 			this.ringTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_ring', this.buttonRing, 2);
@@ -21783,7 +21785,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_RADICAL);
 			self.sketcher.stateManager.STATE_RADICAL.delta = -1;
 		});
-	
+
 		this.buttonAttribute = new desktop.DummyButton(self.sketcher.id + '_button_attribute', 'Attributes');
 		if(self.sketcher.floatDrawTools){
 			this.attributeTray = new desktop.Tray(self.sketcher, self.sketcher.id + '_buttons_attribute', this.buttonAttribute, 2);
@@ -21855,7 +21857,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		this.buttonVAP = new desktop.Button(self.sketcher.id + '_button_vap', imageDepot.VARIABLE_ATTACHMENT_POINTS, 'Variable Attachment Points', function() {
 			self.sketcher.stateManager.setState(self.sketcher.stateManager.STATE_VAP);
 		});
-		
+
 		if(!this.sketcher.oneMolecule){
 			this.buttonShape = new desktop.DummyButton(self.sketcher.id + '_button_shape', self.sketcher.floatDrawTools?'Reactions':'Shapes');
 			if(self.sketcher.floatDrawTools){
@@ -22207,9 +22209,9 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 
 (function(informatics, io, structures, uis, actions, undefined) {
 	'use strict';
-	
+
 	var SPLITTER = new informatics.Splitter();
-	
+
 	uis.CopyPasteManager = function(sketcher) {
 		this.sketcher = sketcher;
 		this.data = undefined;
@@ -22218,7 +22220,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 	_.interpreter = new io.JSONInterpreter();
 	_.copy = function(remove) {
 		if (this.sketcher.lasso.isActive()) {
-			var mols = SPLITTER.split({atoms:this.sketcher.lasso.atoms, bonds:this.sketcher.lasso.getBonds()}); 
+			var mols = SPLITTER.split({atoms:this.sketcher.lasso.atoms, bonds:this.sketcher.lasso.getBonds()});
 			var shapes = this.sketcher.lasso.shapes;
 			this.data = this.interpreter.contentTo(mols, shapes);
 			if(remove){
@@ -23326,7 +23328,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 	};
 	var _ = desktop.SpecsDialog.prototype = new desktop.Dialog();
 	_.title = 'Visual Specifications';
-	
+
 	_.makeProjectionSet = function(self) {
 		this.projectionSet = new desktop.ButtonSet(self.id + '_projection_group');
 		this.buttonPerspective = new desktop.TextButton(self.id + '_button_Perspective', 'Perspective',function() {
@@ -23342,7 +23344,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		});
 		this.projectionSet.buttons.push(this.buttonOrthographic);
 	};
-	
+
 	_.makeAtomColorSet = function(self) {
 		this.atomColorSet = new desktop.ButtonSet(self.id + '_atom_color_group');
 		this.atomColorSet.toggle = true;
@@ -23361,7 +23363,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		});
 		this.atomColorSet.buttons.push(this.buttonPymolColors);
 	};
-	
+
 	_.makeBondColorSet = function(self) {
 		this.bondColorSet = new desktop.ButtonSet(self.id + '_bond_color_group');
 		this.bondColorSet.toggle = true;
@@ -23380,7 +23382,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		});
 		this.bondColorSet.buttons.push(this.buttonPymolBondColors);
 	};
-	
+
 	_.makeCompassPositionSet = function(self) {
 		this.compassPositionSet = new desktop.ButtonSet(self.id + '_compass_position_group');
 		this.buttonCompassCorner = new desktop.TextButton(self.id + '_button_compass_corner', 'Corner',function() {
@@ -23400,7 +23402,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		});
 		this.compassPositionSet.buttons.push(this.buttonCompassOrigin);
 	};
-	
+
 	_.makeFogModeSet = function(self) {
 		this.fogModeSet = new desktop.ButtonSet(self.id + '_fog_mode_group');
 		this.buttonFogMode0 = new desktop.TextButton(self.id + '_button_fog_mode_0', 'No Fogging', function() {
@@ -23428,23 +23430,23 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		});
 		this.fogModeSet.buttons.push(this.buttonFogMode3);
 	};
-	
+
 	_.setup = function(self, editor) {
 		// canvas
 		this.makeProjectionSet(this);
 		this.bgcolor = new desktop.ColorPicker(this.id + '_bgcolor', 'Background Color: ', function(hex) {editor.specs.backgroundColor = hex;editor.setupScene();editor.repaint();self.update(editor.specs);});
 		this.makeFogModeSet(this);
 		this.fogcolor = new desktop.ColorPicker(this.id + '_fogcolor', 'Fog Color: ', function(hex) {editor.specs.fog_color_3D = hex;editor.setupScene();editor.repaint();self.update(editor.specs);});
-		
+
 		// atoms
 		this.atomsDisplayToggle = new desktop.CheckBox(this.id + '_atoms_display_toggle', 'Display atoms', function() { editor.specs.atoms_display=!editor.specs.atoms_display;editor.updateScene();self.update(editor.specs);}, true);
 		this.atomcolor = new desktop.ColorPicker(this.id + '_atomcolor', 'Atom Color: ', function(hex) {editor.specs.atoms_color = hex;editor.setupScene();editor.repaint();self.update(editor.specs);});
 		this.makeAtomColorSet(this);
-		this.atomColorSetToggle = new desktop.CheckBox(this.id + '_atom_color_group_toggle', 'Color Schemes', function() { 
-				if (self.buttonJmolColors.getElement().prop('disabled')) { 
+		this.atomColorSetToggle = new desktop.CheckBox(this.id + '_atom_color_group_toggle', 'Color Schemes', function() {
+				if (self.buttonJmolColors.getElement().prop('disabled')) {
 					self.atomColorSet.enable();
 					editor.specs.atoms_useJMOLColors = true;
-				} else { 
+				} else {
 					self.atomColorSet.disable();
 					editor.specs.atoms_useJMOLColors = false;
 					editor.specs.atoms_usePYMOLColors = false;
@@ -23457,36 +23459,36 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		this.vdwToggle = new desktop.CheckBox(this.id + '_vdw_toggle', 'Use VDW Diameters', function() { editor.specs.atoms_useVDWDiameters_3D=!editor.specs.atoms_useVDWDiameters_3D;editor.updateScene();self.update(editor.specs); }, false);
 		this.atomsNonBondedAsStarsToggle = new desktop.CheckBox(this.id + '_non_bonded_as_stars_toggle', 'Non-bonded as stars', function() { editor.specs.atoms_nonBondedAsStars_3D=!editor.specs.atoms_nonBondedAsStars_3D;editor.updateScene();self.update(editor.specs); }, false);
 		this.displayLabelsToggle = new desktop.CheckBox(this.id + '_display_labels_toggle', 'Atom labels', function() { editor.specs.atoms_displayLabels_3D=!editor.specs.atoms_displayLabels_3D;editor.updateScene();self.update(editor.specs); }, false);
-		
+
 		//bonds
 		this.bondsDisplayToggle = new desktop.CheckBox(this.id + '_bonds_display_toggle', 'Display bonds', function() { editor.specs.bonds_display=!editor.specs.bonds_display;editor.updateScene();self.update(editor.specs);}, true);
 		this.bondcolor = new desktop.ColorPicker(this.id + '_bondcolor', 'Bond Color: ', function(hex) {editor.specs.bonds_color = hex;editor.setupScene();editor.repaint();self.update(editor.specs);});
 		this.makeBondColorSet(this);
-		this.bondColorSetToggle =  new desktop.CheckBox(this.id + '_bond_color_group_toggle', 'Color Schemes', function() { 
-			if (self.buttonJmolBondColors.getElement().prop('disabled')) { 
-				self.bondColorSet.enable(); 
+		this.bondColorSetToggle =  new desktop.CheckBox(this.id + '_bond_color_group_toggle', 'Color Schemes', function() {
+			if (self.buttonJmolBondColors.getElement().prop('disabled')) {
+				self.bondColorSet.enable();
 				editor.specs.bonds_useJMOLColors = true;
-			} else { 
+			} else {
 				self.bondColorSet.disable();
 				editor.specs.bonds_useJMOLColors = false;
 				editor.specs.bonds_usePYMOLColors = false;
 				self.buttonJmolBondColors.uncheck();
 				self.buttonPymolBondColors.uncheck();
-				
-			} 
+
+			}
 			editor.updateScene();
 			self.update(editor.specs);
 		}, false);
 		this.bondOrderToggle = new desktop.CheckBox(this.id + '_bond_order_toggle', 'Show order', function() { editor.specs.bonds_showBondOrders_3D=!editor.specs.bonds_showBondOrders_3D;editor.updateScene();self.update(editor.specs); }, false);
 		this.bondsRenderAsLinesToggle = new desktop.CheckBox(this.id + '_bonds_render_as_lines_toggle', 'Render as lines', function() { editor.specs.bonds_renderAsLines_3D=!editor.specs.bonds_renderAsLines_3D;editor.updateScene();self.update(editor.specs);}, false);
-		
+
 		// proteins
 		this.ribbonsToggle = new desktop.CheckBox(this.id + '_ribbons_toggle', 'Ribbons', function() { editor.specs.proteins_displayRibbon=!editor.specs.proteins_displayRibbon;editor.updateScene();self.update(editor.specs); }, false);
 		this.backboneToggle = new desktop.CheckBox(this.id + '_backbone_toggle', 'Backbone', function() { editor.specs.proteins_displayBackbone=!editor.specs.proteins_displayBackbone;editor.updateScene();self.update(editor.specs); }, false);
 		this.pipeplankToggle = new desktop.CheckBox(this.id + '_pipeplank_toggle', 'Pipe and Plank', function() { editor.specs.proteins_displayPipePlank=!editor.specs.proteins_displayPipePlank;editor.updateScene();self.update(editor.specs); }, false);
 		this.cartoonizeToggle = new desktop.CheckBox(this.id + '_cartoonize_toggle', 'Cartoonize', function() { editor.specs.proteins_ribbonCartoonize=!editor.specs.proteins_ribbonCartoonize;editor.updateScene();self.update(editor.specs); }, false);
 		this.colorByChainToggle = new desktop.CheckBox(this.id + '_color_by_chain_toggle', 'Color by Chain', function() { editor.specs.macro_colorByChain=!editor.specs.macro_colorByChain;editor.updateScene();self.update(editor.specs); }, false);
-		this.proteinColorToggle = new desktop.CheckBox(this.id + '_protein_color_toggle', 'Color by Segment', function() { 
+		this.proteinColorToggle = new desktop.CheckBox(this.id + '_protein_color_toggle', 'Color by Segment', function() {
 			if (self.proteinColorToggle.checked) {
 				editor.specs.proteins_residueColor = 'none';
 				self.proteinColorToggle.uncheck();
@@ -23498,9 +23500,9 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			}
 			editor.updateScene();
 			self.update(editor.specs);}, false);
-		
+
 		//nucleics
-		this.nucleicAcidColorToggle = new desktop.CheckBox(this.id + '_nucleic_acid_color_toggle', 'Color by Segment', function() { 
+		this.nucleicAcidColorToggle = new desktop.CheckBox(this.id + '_nucleic_acid_color_toggle', 'Color by Segment', function() {
 			if (self.nucleicAcidColorToggle.checked) {
 				editor.specs.nucleics_residueColor = 'none';
 				self.nucleicAcidColorToggle.uncheck();
@@ -23512,17 +23514,17 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			}
 			editor.updateScene();
 			self.update(editor.specs);}, false);
-		
+
 		// text
 		//this.boldTextToggle = new desktop.CheckBox(this.id + '_bold_text_toggle', 'Bold', function() { editor.specs.text_font_bold=!editor.specs.text_font_bold;editor.updateScene();self.update(editor.specs); }, false);
 		//this.italicTextToggle = new desktop.CheckBox(this.id + '_italic_text_toggle', 'Italic', function() { editor.specs.text_font_italics=!editor.specs.text_font_italics;editor.updateScene();self.update(editor.specs); }, false);
-		
+
 		// shapes
 		this.shapecolor = new desktop.ColorPicker(this.id + '_shapecolor', 'Shape Color: ', function(hex) {editor.specs.shapes_color = hex;editor.setupScene();editor.repaint();self.update(editor.specs);});
-		
+
 		// compass
-		this.displayCompassToggle = new desktop.CheckBox(this.id + '_display_compass_toggle', 'Display Compass', function() { 
-			if (self.displayCompassToggle.checked) { 
+		this.displayCompassToggle = new desktop.CheckBox(this.id + '_display_compass_toggle', 'Display Compass', function() {
+			if (self.displayCompassToggle.checked) {
 				editor.specs.compass_display = false;
 				editor.setupScene();
 				editor.updateScene();
@@ -23530,7 +23532,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				self.buttonCompassCorner.uncheck();
 				self.displayCompassToggle.uncheck();
 				self.update(editor.specs);
-			} else { 
+			} else {
 				editor.specs.compass_display = true;
 				editor.specs.compass_type_3D = 0;
 				editor.specs.compass_size_3D = 50;
@@ -23540,11 +23542,11 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				editor.setupScene();
 				editor.updateScene();
 				self.update(editor.specs);
-			} 
+			}
 		}, false);
 		this.makeCompassPositionSet(this);
 		//this.axisLabelsToggle = new desktop.CheckBox(this.id + '_axis_labels_toggle', 'Axis Labels', function() { editor.specs.compass_displayText_3D=!editor.specs.compass_displayText_3D;editor.updateScene();self.update(editor.specs); }, false);
-		
+
 		var sb = [];
 		sb.push('<div style="font-size:12px;text-align:left;overflow-y:scroll;height:300px;" id="');
 		sb.push(this.id);
@@ -23650,7 +23652,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		this.fogcolor.setup();
 		this.atomcolor.setup();
 		this.bondcolor.setup();
-		this.shapecolor.setup();	
+		this.shapecolor.setup();
 		q('#reps').change(function() {
 			var i = this.selectedIndex;
 			var ops = this.options;
@@ -23677,7 +23679,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				editor.specs.proteins_residueColor = 'acidity';
 				break;
 			}
-				
+
 			editor.updateScene();
 			self.update(editor.specs);
 		});
@@ -23691,11 +23693,11 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 				editor.specs.nucleics_residueColor = 'rainbow';
 				break;
 			}
-				
+
 			editor.updateScene();
 			self.update(editor.specs);
 		});
-		
+
 		q('#fogstart').change(function() {
 			editor.specs.fog_start_3D = parseInt(this.value)/100;
 			editor.updateScene();
@@ -23720,7 +23722,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 			editor.specs.bonds_cylinderDiameter_3D = parseFloat(this.value);
 			editor.updateScene();
 		});
-		
+
 		this.projectionSet.setup();
 		this.fogModeSet.setup();
 		this.atomsDisplayToggle.setup();
@@ -24014,7 +24016,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		// from "_Canvas3D"
 
 		gl.disable(gl.DEPTH_TEST);
-		
+
 		var translationMatrix = m4.create();
 
 		var height = this.height / 20;
@@ -24161,7 +24163,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
 		// you can force a check by sending true to this function after
 		// calling check with a false
 		if (force && this.doChecks) {
-			
+
 		}
 		this.doChecks = !force;
 	};

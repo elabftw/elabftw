@@ -11,7 +11,7 @@
   'use strict';
 
   $(document).ready(function() {
-    displayMolFiles();
+    displayMolFiles(); // eslint-disable-line no-undef
 
     // REPLACE UPLOAD toggle form
     $(document).on('click', '.replaceUpload', function() {

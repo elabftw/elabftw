@@ -36,7 +36,7 @@
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
             // make the comment zone editable (fix issue #54)
             makeEditableFileComment();
-            displayMolFiles();
+            displayMolFiles(); // eslint-disable-line no-undef
           });
         }
       });

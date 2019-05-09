@@ -35,7 +35,7 @@
                            {% endif %}
                            ><img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
                         </a>
-                            {% elseif mode == 'view' and ext == 'mol' and App.Users.userData.chem_editor %}
+                            {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
                             <div class='text-center'>
                                 <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}'></canvas>
                             </div>

@@ -20732,11 +20732,15 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
             molFiles.push([allLinks[ii].innerHTML, allLinks[ii].attributes.href.value]);
           }
         }
-        var listHtml = '<ul>';
-        for (var iy = 0; iy < molFiles.length; iy++) {
-          listHtml += '<li class="clickable loadableMolLink" data-target="' + molFiles[iy][1] + '">' + molFiles[iy][0] + '</li>';
+        if (molFiles.length > 0) {
+          var listHtml = '<ul>';
+          for (var iy = 0; iy < molFiles.length; iy++) {
+            listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="' + molFiles[iy][1] + '">' + molFiles[iy][0] + '</li>';
+          }
+          return listHtml + '</ul>';
+        } else {
+          return 'No mol files found.';
         }
-        return listHtml + '</ul>';
       }
       sb.push('<div width="100%">Select from uploaded files:<br>' + getUploadedMolFilesList() + '</div>');
       // END ELABFTW MODIF

@@ -95,7 +95,7 @@
             {% endtrans %}
         {% else %}
         {% for tag, class in cloudArr %}
-            <a href='experiments.php?mode=show&tag={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
+            <a href='experiments.php?mode=show&tags[]={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
         {% endfor %}
 
         {% endif %}

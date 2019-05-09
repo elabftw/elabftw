@@ -97,6 +97,13 @@
     // END DATA RECOVERY
     ////////////////////
 
+    // Load the content of a mol file from the list in the mol editor
+    $(document).on('click', '.loadableMolLink', function() {
+      $.get($(this).data('target')).done(function(molContent) {
+        $('#sketcher_open_text').val(molContent);
+      });
+    });
+
 
     class Entity {
 

@@ -194,9 +194,6 @@ li.dropdown-item:hover{ color:#29AEB9;}
                     <i class='align_right fas fa-plus-circle mr-1' title='Show more'></i>
                 </div>
                 <p style='padding-left:20px; margin-bottom: 5px'>
-                    {% if searchPage %}
-                        {{ item.fullname|raw }}
-                    {% endif %}
                     <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' style='width:15px;vertical-align:-3px;' />
                 {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>

@@ -346,8 +346,8 @@
       </select>
 
       {{ App.Csrf.getHiddenInput|raw }}
-      <label class='block' for='uploader'>{{ '3. Select a CSV file to import:'|trans }}</label>
-      <input id='uploader' name='file' type='file' accept='.csv' />
+      <label class='block' for='csvuploader'>{{ '3. Select a CSV file to import:'|trans }}</label>
+      <input id='csvuploader' name='file' type='file' accept='.csv' />
       <input name='type' type='hidden' value='csv' />
       <div class='submitButtonDiv'>
         <button type='submit' class='button'>{{ 'Import CSV'|trans }}</button>
@@ -388,8 +388,8 @@
       </select>
 
       {{ App.Csrf.getHiddenInput|raw }}
-      <label class='block' for='uploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
-      <input id='uploader' name='file' type='file' accept='.elabftw.zip' />
+      <label class='block' for='zipuploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
+      <input id='zipuploader' name='file' type='file' accept='.elabftw.zip' />
       <input name='type' type='hidden' value='zip' />
 
       <div class='submitButtonDiv'>

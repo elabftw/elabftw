@@ -459,8 +459,8 @@
         });
       },
       mentions: {
-        // use @ for autocompletion
-        delimiter: '@',
+        // use # for autocompletion
+        delimiter: '#',
         // get the source from json with get request
         source: function (query, process) {
           let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;

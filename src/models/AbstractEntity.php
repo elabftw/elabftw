@@ -509,7 +509,7 @@ abstract class AbstractEntity
         $Experiments = new Experiments($this->Users);
         $Experiments->titleFilter = " AND title LIKE '%$term%'";
 
-        return $Experiments->read();
+        return $Experiments->read(false);
     }
 
     /**
@@ -523,7 +523,7 @@ abstract class AbstractEntity
         $Database = new Database($this->Users);
         $Database->titleFilter = " AND title LIKE '%$term%'";
 
-        return $Database->read();
+        return $Database->read(false);
     }
 
     /**

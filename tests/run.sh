@@ -8,7 +8,7 @@ set -eu
 # kill chromedriver on exit
 function cleanup {
     killall chromedriver
-    sudo cp config.php.docker config.php
+    sudo cp config.php.dev config.php
     sudo chown 100:101 config.php
 }
 trap cleanup EXIT

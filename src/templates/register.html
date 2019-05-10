@@ -28,7 +28,7 @@
                 <select name='team' class='form-control' id='team' required>
                     <option selected disabled>{{ 'Select a team'|trans }}</option>
                     {% for team in teamsArr %}
-                        <option value = '{{ team.id }}'>{{ team.name }}</option>
+                        <option value='{{ team.id }}'>{{ team.name }}</option>
                     {% endfor %}
                 </select>
             </div>

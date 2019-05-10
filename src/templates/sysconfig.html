@@ -384,6 +384,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <textarea id='x509' name='saml_privatekey' />{{ App.Config.configArr.saml_privatekey }}</textarea>
             <label class='block' for='saml-team'>What attribute to look for the team name:</label>
             <input type='text' id='saml-team' name='saml_team' value='{{ App.Config.configArr.saml_team }}' />
+            <label class='block' for='saml-team-default'>If no team attribute is found, to which team user is assigned?</label>
+            <select name='saml_team_default' id='saml-team-default'>
+            {% for team in teamsArr %}
+              <option value='{{ team.id }}'>{{ team.name }}</option>
+            {% endfor %}
+            </select>
+
             <label class='block' for='saml-email'>What attribute to look for the email:</label>
             <input type='text' id='saml-email' name='saml_email' value='{{ App.Config.configArr.saml_email }}' />
             <label class='block' for='saml-firstname'>What attribute to look for the firstname:</label>

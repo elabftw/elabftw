@@ -1,6 +1,4 @@
 /**
- * profile.js - for the profile page
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -28,6 +26,7 @@
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
 
+    // DESTROY API KEY
     $(document).on('click', '.keyDestroy', function() {
       $.post('app/controllers/AjaxController.php', {
         destroyApiKey: true,

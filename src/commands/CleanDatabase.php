@@ -21,7 +21,7 @@ class CleanDatabase extends Command
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'db:clean';
 
-    protected function configure()
+    protected function configure(): void
     {
          $this
             // the short description shown while running "php bin/console list"

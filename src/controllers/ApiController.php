@@ -72,12 +72,7 @@ class ApiController implements ControllerInterface
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads)
-        $endpoint = array_shift($args);
-        if ($endpoint === null) {
-            throw new ImproperActionException('Could not find endpoint!');
-        }
-
-        $this->endpoint = $endpoint;
+        $this->endpoint = array_shift($args);
     }
 
     /**
@@ -367,10 +362,9 @@ class ApiController implements ControllerInterface
         // GET UPLOAD
         if ($this->endpoint === 'uploads') {
             return $this->getUpload((int) $Users->userData['userid']);
-
-        // load Entity
         }
 
+        // load Entity
         if ($this->endpoint === 'experiments') {
             $this->Entity = new Experiments($Users, $this->id);
         } elseif ($this->endpoint === 'items') {

@@ -193,6 +193,7 @@ class Config
             ('saml_x509', NULL),
             ('saml_privatekey', NULL),
             ('saml_team', NULL),
+            ('saml_team_default', NULL),
             ('saml_email', NULL),
             ('saml_firstname', NULL),
             ('saml_lastname', NULL),

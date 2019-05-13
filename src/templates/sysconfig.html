@@ -352,46 +352,78 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <div class='box'>
         <form method='post' action='app/controllers/SysconfigController.php'>
             <h3>Service provider (this instance of eLabFTW)</h3>
-            <input type='hidden' name='updateConfig' value='true' />
-            <label class='block' for='saml-debug'>Debug mode:</label>
-            <select class="clean-form col-3-form" id='saml-debug' name='saml_debug'>
-                <option value='1'{{ App.Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
-                <option value='0'{{ App.Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
-            </select>
-            <label class='block' for='saml-strict'>Strict mode:</label>
-            <select class="clean-form col-3-form" id='saml-strict' name='saml_strict'>
-                <option value='1'{{ App.Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
-                <option value='0'{{ App.Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
-            </select>
-            <label class='block' for='saml-base'>Base url:</label>
-            <input type='url' id='saml-base' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_baseurl }}' />
-            <label class='block' for='saml-entityid'>EntityId:</label>
-            <input type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
-            <label class='block' for='saml-acs-url'>Assertion consumer service URL: (add /index.php?acs to baseurl)</label>
-            <input type='url' id='saml-acs-url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ App.Config.configArr.saml_acs_url }}' />
-            <label class='block' for='saml-acs-binding'>SAML protocol binding to be used when returning the Response message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
-            <input type='text' id='saml-acs-binding' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_acs_binding}}' />
+            <div class='form-group'>
+              <input type='hidden' name='updateConfig' value='true' />
 
-            <label class='block' for='saml-slo-url'>Single Logout Service</label>
-            <input type='url' id='saml-slo-url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_slo_url }}' />
-            <label class='block' for='saml-slo-binding'>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
-            <input type='text' id='saml-slo-binding' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_slo_binding }}' />
-            <label class='block' for='saml-nameidformat'>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</label>
-            <input type='text' id='saml-nameidformat' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ App.Config.configArr.saml_nameidformat }}' />
-            <label class='block' for='x509'>x509 Certificate in PEM format</label>
-            <textarea id='x509' name='saml_x509' />{{ App.Config.configArr.saml_x509 }}</textarea>
-            <label class='block' for='x509'>x509 Certificate private key</label>
-            <textarea id='x509' name='saml_privatekey' />{{ App.Config.configArr.saml_privatekey }}</textarea>
-            <label class='block' for='saml-team'>What attribute to look for the team name:</label>
-            <input type='text' id='saml-team' name='saml_team' value='{{ App.Config.configArr.saml_team }}' />
-            <label class='block' for='saml-email'>What attribute to look for the email:</label>
-            <input type='text' id='saml-email' name='saml_email' value='{{ App.Config.configArr.saml_email }}' />
-            <label class='block' for='saml-firstname'>What attribute to look for the firstname:</label>
-            <input type='text' id='saml-firstname' name='saml_firstname' value='{{ App.Config.configArr.saml_firstname }}' />
-            <label class='block' for='saml-lastname'>What attribute to look for the lastname:</label>
-            <input type='text' id='saml-lastname' name='saml_lastname' value='{{ App.Config.configArr.saml_lastname }}' />
-            <div class='submitButtonDiv'>
-                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+              <label for='saml-debug'>Debug mode:</label>
+              <select class='form-control col-md-4' id='saml-debug' name='saml_debug'>
+                  <option value='1'{{ App.Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-strict'>Strict mode:</label>
+              <select class='form-control col-md-4' id='saml-strict' name='saml_strict'>
+                  <option value='1'{{ App.Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-base'>Base url:</label>
+              <input class='form-control col-md-4' type='url' id='saml-base' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_baseurl }}' />
+
+              <label for='saml-entityid'>EntityId:</label>
+              <input class='form-control col-md-4' type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
+
+              <label for='saml-acs-url'>Assertion consumer service URL: (add /index.php?acs to baseurl)</label>
+              <input class='form-control col-md-4' type='url' id='saml-acs-url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ App.Config.configArr.saml_acs_url }}' />
+
+              <label for='saml-acs-binding'>SAML protocol binding to be used when returning the Response message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
+              <input class='form-control col-md-4' type='text' id='saml-acs-binding' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_acs_binding}}' />
+
+              <label for='saml-slo-url'>Single Logout Service</label>
+              <input class='form-control col-md-4' type='url' id='saml-slo-url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_slo_url }}' />
+
+              <label for='saml-slo-binding'>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
+              <input class='form-control col-md-4' type='text' id='saml-slo-binding' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_slo_binding }}' />
+
+              <label for='saml-nameidformat'>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</label>
+              <input class='form-control col-md-4' type='text' id='saml-nameidformat' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ App.Config.configArr.saml_nameidformat }}' />
+
+              <label for='x509'>x509 Certificate in PEM format</label>
+              <textarea class='form-control col-md-4' id='x509' name='saml_x509' />{{ App.Config.configArr.saml_x509 }}</textarea>
+
+              <label for='x509'>x509 Certificate private key</label>
+              <textarea class='form-control col-md-4' id='x509' name='saml_privatekey' />{{ App.Config.configArr.saml_privatekey }}</textarea>
+
+              <label for='saml-team'>What attribute to look for the team name:</label>
+              <input class='form-control col-md-4' type='text' id='saml-team' name='saml_team' value='{{ App.Config.configArr.saml_team }}' />
+
+              <label for='saml-team-create'>Create team sent by IDP if it doesn't exist already:</label>
+              <select class='form-control col-md-4' id='saml-team-create' name='saml_team_create'>
+                  <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-team-default'>If no team attribute is found, to which team user is assigned?</label>
+              <select class='form-control col-md-4' name='saml_team_default' id='saml-team-default'>
+                {% for team in teamsArr %}
+                  <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
+                {% endfor %}
+                <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+              </select>
+
+              <label for='saml-email'>What attribute to look for the email:</label>
+              <input class='form-control col-md-4' type='text' id='saml-email' name='saml_email' value='{{ App.Config.configArr.saml_email }}' />
+
+              <label for='saml-firstname'>What attribute to look for the firstname:</label>
+              <input class='form-control col-md-4' type='text' id='saml-firstname' name='saml_firstname' value='{{ App.Config.configArr.saml_firstname }}' />
+
+              <label for='saml-lastname'>What attribute to look for the lastname:</label>
+              <input class='form-control col-md-4' type='text' id='saml-lastname' name='saml_lastname' value='{{ App.Config.configArr.saml_lastname }}' />
+
+              <div class='submitButtonDiv'>
+                  <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+              </div>
+
             </div>
         </form>
     </div>
@@ -402,38 +434,40 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <div class='box'>
             <h4>Add new Identity Provider</h4>
             <form method='post' action='app/controllers/IdpsController.php'>
+              <div class='form-group'>
                 <input type='hidden' name='idpsCreate' />
 
-                <label class='block' for='name'>{{ 'Name'|trans }}</label>
-                <input type='text' id='name' name='name' required />
+                <label for='name'>{{ 'Name'|trans }}</label>
+                <input class='form-control col-md-4' type='text' id='name' name='name' required />
 
-                <label class='block' for='entityid'>EntityId</label>
-                <input type='url' id='entityid' name='entityid' required />
+                <label for='entityid'>EntityId</label>
+                <input class='form-control col-md-4' type='url' id='entityid' name='entityid' required />
 
-                <label class='block' for='ssoUrl'>SSO URL</label>
-                <input type='url' id='ssoUrl' name='ssoUrl' required />
+                <label for='ssoUrl'>SSO URL</label>
+                <input class='form-control col-md-4' type='url' id='ssoUrl' name='ssoUrl' required />
 
-                <label class='block' for='ssoBinding'>SSO Binding</label>
-                <input type='text' id='ssoBinding' name='ssoBinding' required />
+                <label for='ssoBinding'>SSO Binding</label>
+                <input class='form-control col-md-4' type='text' id='ssoBinding' name='ssoBinding' required />
 
-                <label class='block' for='sloUrl'>SLO URL</label>
-                <input type='url' id='sloUrl' name='sloUrl' />
+                <label for='sloUrl'>SLO URL</label>
+                <input class='form-control col-md-4' type='url' id='sloUrl' name='sloUrl' />
 
-                <label class='block' for='sloBinding'>SLO Binding</label>
-                <input type='text' id='sloBinding' name='sloBinding' />
+                <label for='sloBinding'>SLO Binding</label>
+                <input class='form-control col-md-4' type='text' id='sloBinding' name='sloBinding' />
 
-                <label class='block' for='x509'>x509 Certificate</label>
-                <textarea id='x509' name='x509' required /></textarea>
+                <label for='x509'>x509 Certificate</label>
+                <textarea class='form-control col-md-4' id='x509' name='x509' required /></textarea>
 
-                <label class='block' for='active'>Active</label>
-                <select id='active' autocomplete='off' name='active'>
+                <label for='active'>Active</label>
+                <select class='form-control col-md-4' id='active' autocomplete='off' name='active'>
                     <option value='1' selected='selected'>{{ 'Yes'|trans }}</option>
                     <option value='0'>{{ 'No'|trans }}</option>
                 </select>
 
                 <div class='submitButtonDiv'>
-                    <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+                  <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
                 </div>
+              </div>
             </form>
         </div>
 
@@ -441,35 +475,38 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                    <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
-                    <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
-                    <form method='post' action='app/controllers/IdpsController.php'>
-                    <input type='hidden' name='idpsUpdate' />
-                    <input type='hidden' name='id' value='{{ idp.id }}' />
-                    <p>Name:</p>
-                    <input type='text' id='editIdpName' name='name' value='{{ idp.name }}' />
-                    <p>entityId:</p>
-                    <input type='url' name='entityid' value='{{ idp.entityid }}' />
-                    <p>Single Sign-On URL:</p>
-                    <input type='url' name='ssoUrl' value='{{ idp.sso_url }}' />
-                    <p>Single Sign-On binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST".</p>
-                    <input type='text' name='ssoBinding' value='{{ idp.sso_binding }}' />
-                    <p>Single Log Out URL:</p>
-                    <input type='url' name='sloUrl' value='{{ idp.slo_url }}' />
-                    <p>Single Log Out binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</p>
-                    <input type='text' name='sloBinding' value='{{ idp.slo_binding }}' />
-                    <p>x509cert:</p>
-                    <textarea name='x509'>{{ idp.x509 }}</textarea>
-                    <p>Active</p>
-                    <select autocomplete='off' name='active'>
-                        <option value='1' {{ idp.active ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                        <option value='0' {{ not idp.active ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-                    </select>
-                    <div class='submitButtonDiv'>
-                        <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+                  <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
+                  <form method='post' action='app/controllers/IdpsController.php'>
+                    <div class='form-group'>
+                      <input type='hidden' name='idpsUpdate' />
+                      <input type='hidden' name='id' value='{{ idp.id }}' />
+
+                      <label for='editIdpName_{{ idp.id }}'>Name:</label>
+                      <input class='form-control col-md-4' type='text' id='editIdpName_{{ idp.id }}' name='name' value='{{ idp.name }}' />
+                      <label for='entityId_{{ idp.id }}'>entityId:</label>
+                      <input class='form-control col-md-4' type='url' id='entityId_{{ idp.id }}' name='entityid' value='{{ idp.entityid }}' />
+                      <label for='ssoUrl_{{ idp.id }}'>Single Sign-On URL:</label>
+                      <input class='form-control col-md-4' type='url' id='ssoUrl_{{ idp.id }}' name='ssoUrl' value='{{ idp.sso_url }}' />
+                      <label for='ssoBinding_{{ idp.id }}'>Single Sign-On binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST".</label>
+                      <input class='form-control col-md-4' type='text' id='ssoBinding_{{ idp.id }}' name='ssoBinding' value='{{ idp.sso_binding }}' />
+                      <label for='sloUrl_{{ idp.id }}'>Single Log Out URL:</label>
+                      <input class='form-control col-md-4' type='url' id='sloUrl_{{ idp.id }}' name='sloUrl' value='{{ idp.slo_url }}' />
+                      <label for='sloBinding_{{ idp.id }}'>Single Log Out binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
+                      <input class='form-control col-md-4' type='text' id='sloBinding_{{ idp.id }}' name='sloBinding' value='{{ idp.slo_binding }}' />
+                      <label for='x509_{{ idp.id }}'>x509cert:</label>
+                      <textarea class='form-control col-md-4' name='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
+                      <label for='active_{{ idp.id }}'>Active</label>
+                      <select class='form-control col-md-4 col-md-4' autocomplete='off' id='active_{{ idp.id }}' name='active'>
+                          <option value='1' {{ idp.active ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                          <option value='0' {{ not idp.active ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                      </select>
+                      <div class='submitButtonDiv'>
+                          <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
+                      </div>
                     </div>
+                  </form>
                 </div>
-            </form>
             {% endfor %}
         {% endif %}
 

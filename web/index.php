@@ -84,7 +84,8 @@ try {
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
             } else {
-                $teamId = $Teams->initializeIfNeeded($team);
+
+                $teamId = $Teams->initializeIfNeeded($team, (bool) $Saml->Config->configArr['saml_team_create']);
             }
 
             // GET FIRSTNAME AND LASTNAME

@@ -513,10 +513,12 @@ section.item {
     margin: 5px 0 0;
 }
 
+/* DEPRECATED */
 .clean-form {
     margin: 0 0 15px;
 }
 
+/* DEPRECATED */
 .col-3-form {
     width: 30%;
 }

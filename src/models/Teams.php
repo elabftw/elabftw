@@ -61,26 +61,31 @@ class Teams implements CrudInterface
      * Check if the team exists already and create one if not
      *
      * @param string $name Name of the team (case sensitive)
+     * @param bool $allowCreate depends on the value of saml_team_create in Config
      * @return int The team ID
      */
-    public function initializeIfNeeded(string $name): int
+    public function initializeIfNeeded(string $name, bool $allowCreate): int
     {
         $sql = 'SELECT id, name, orgid FROM teams';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $name);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         $teamsArr = $req->fetchAll();
-        if ($teamsArr === false) {
-            return $this->create($name);
-        }
 
-        foreach ($teamsArr as $team) {
-            if (($team['name'] === $name) || ($team['orgid'] === $name)) {
-                return (int) $team['id'];
+        if (is_array($teamsArr)) {
+            foreach ($teamsArr as $team) {
+                if (($team['name'] === $name) || ($team['orgid'] === $name)) {
+                    return (int) $team['id'];
+                }
             }
         }
-        return $this->create($name);
+
+        if ($allowCreate) {
+            return $this->create($name);
+        }
+        throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.');
     }
 
     /**

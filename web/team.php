@@ -40,7 +40,7 @@ try {
 
     $Teams = new Teams($App->Users);
     $teamArr = $Teams->read();
-    $teamsStats = $Teams->getAllStats();
+    $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
 
     $Database = new Database($App->Users);
     // we only want the bookable type of items

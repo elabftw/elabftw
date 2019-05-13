@@ -387,7 +387,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <label class='block' for='saml-team-default'>If no team attribute is found, to which team user is assigned?</label>
             <select name='saml_team_default' id='saml-team-default'>
             {% for team in teamsArr %}
-              <option value='{{ team.id }}'>{{ team.name }}</option>
+            <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
             {% endfor %}
             </select>
 

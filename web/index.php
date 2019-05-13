@@ -78,13 +78,14 @@ try {
             }
             // if no team attribute is sent by the IDP, use the default team
             if (empty($team)) {
-                $team = $Saml->Config->configArr['saml_team_default'];
+                // we directly get the id from the stored config
+                $teamId = (int) $Saml->Config->configArr['saml_team_default'];
+                if ($teamId === 0) {
+                    throw new ImproperActionException('Could not find team ID to assign user!');
+                }
+            } else {
+                $teamId = $Teams->initializeIfNeeded($team);
             }
-            if ($team === null) {
-                throw new ImproperActionException('Could not find team ID to assign user!');
-            }
-
-            $teamId = $Teams->initializeIfNeeded($team);
 
             // GET FIRSTNAME AND LASTNAME
             $firstnameAttribute = $Saml->Config->configArr['saml_firstname'];

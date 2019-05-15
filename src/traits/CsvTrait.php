@@ -23,7 +23,7 @@ trait CsvTrait
      *
      * @return string
      */
-    public function getOutput(): string
+    public function getCsv(): string
     {
         // load the CSV document from a string
         $csv = Writer::createFromString('');

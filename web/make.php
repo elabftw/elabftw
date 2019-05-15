@@ -52,7 +52,7 @@ try {
         case 'csv':
             $Make = new MakeCsv($Entity, $Request->query->get('id'));
             $Response = new Response(
-                $Make->getOutput(),
+                $Make->getCsv(),
                 200,
                 array(
                     'Content-Encoding' => 'none',
@@ -96,7 +96,7 @@ try {
             }
             $Make = new MakeReport(new Teams($App->Users), new Uploads());
             $Response = new Response(
-                $Make->getOutput(),
+                $Make->getCsv(),
                 200,
                 array(
                     'Content-Encoding' => 'none',

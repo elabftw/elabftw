@@ -129,7 +129,11 @@ try {
 
     // ADD MOL FILE OR PNG
     if ($Request->request->has('addFromString')) {
-        $Entity->Uploads->createFromString($Request->request->get('fileType'), $Request->request->get('string'));
+        $Entity->Uploads->createFromString(
+            $Request->request->get('fileType'),
+            $Request->request->get('realName'),
+            $Request->request->get('string')
+        );
     }
 
     // DESTROY ENTITY

@@ -21117,12 +21117,17 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
       var item = params.id;
       var page = location.pathname.substring(1);
       var type = 'experiments';
+      var realName = prompt('Enter name of the file');
+      if (realName == null) {
+        return;
+      }
       if (page === 'database.php') {
         type = 'items';
       }
       $.post('app/controllers/EntityAjaxController.php', {
         addFromString: true,
         fileType: 'mol',
+        realName: realName,
         type: type,
         id: item,
         string: c.writeMOL(sketcher.molecules[0])

@@ -26,9 +26,14 @@
       var image = ($('#doodleCanvas')[0]).toDataURL();
       var type = $(this).data('type');
       var id = $(this).data('id');
+      var realName = prompt('Enter name of the file');
+      if (realName == null) {
+        return;
+      }
       $.post('app/controllers/EntityAjaxController.php', {
         addFromString: true,
         type: type,
+        realName: realName,
         id: id,
         fileType: 'png',
         string: image

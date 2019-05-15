@@ -13,12 +13,15 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Traits\CsvTrait;
 
 /**
  * Make a CSV file from a list of id and a type
  */
 class MakeCsv extends AbstractMake
 {
+    use CsvTrait;
+
     /** @var string $idList list of id to make csv from */
     private $idList;
 

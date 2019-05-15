@@ -14,7 +14,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 
 /**
  * For things related to file storage
- *
  */
 trait UploadTrait
 {

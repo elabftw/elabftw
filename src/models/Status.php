@@ -129,7 +129,7 @@ class Status extends AbstractCategory
         }
 
         $res = $req->fetchColumn();
-        if ($res === false) {
+        if ($res === false || $res === null) {
             return '00FF00';
         }
         return $res;

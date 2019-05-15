@@ -15,12 +15,15 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
+use Elabftw\Traits\CsvTrait;
 
 /**
  * Create a report of usage for all users
  */
 class MakeReport extends AbstractMake
 {
+    use CsvTrait;
+
     /** @var Teams $Teams instance of Teams */
     private $Teams;
 

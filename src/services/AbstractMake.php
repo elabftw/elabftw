@@ -15,12 +15,10 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Traits\UploadTrait;
-use League\Csv\Reader;
-use League\Csv\Writer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Mother class of MakeCsv, MakePdf and MakeZip
+ * Mother class of the Make* services
  *
  */
 abstract class AbstractMake
@@ -54,28 +52,6 @@ abstract class AbstractMake
      * @return string
      */
     abstract public function getFileName(): string;
-
-    /**
-     * Create a CSV file from header and rows
-     *
-     * @return string
-     */
-    public function getOutput(): string
-    {
-        // load the CSV document from a string
-        $csv = Writer::createFromString('');
-
-        // insert the header
-        $csv->insertOne($this->getHeader());
-
-        // insert all the records
-        $csv->insertAll($this->getRows());
-
-        // add UTF8 BOM
-        $csv->setOutputBOM(Reader::BOM_UTF8);
-
-        return $csv->getContent();
-    }
 
     /**
      * Create a unique long filename with a folder

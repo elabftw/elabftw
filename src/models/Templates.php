@@ -216,7 +216,7 @@ class Templates extends AbstractEntity
         }
 
         $res = $req->fetchColumn();
-        if ($res === false) {
+        if ($res === false || $res === null) {
             return '';
         }
         return $res;

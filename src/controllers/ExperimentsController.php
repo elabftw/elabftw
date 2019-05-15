@@ -185,7 +185,7 @@ class ExperimentsController extends AbstractEntityController
 
         if ($order === 'cat') {
             $this->Entity->order = 'status.id';
-        } elseif ($order === 'date' || $order === 'rating' || $order === 'title') {
+        } elseif ($order === 'date' || $order === 'rating' || $order === 'title' || $order === 'id') {
             $this->Entity->order = 'experiments.' . $order;
         } elseif ($order === 'comment') {
             $this->Entity->order = 'experiments_comments.recent_comment';

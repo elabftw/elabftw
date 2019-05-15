@@ -80,6 +80,7 @@ li.dropdown-item:hover{ color:#29AEB9;}
 <select name='order' style='-moz-appearance:none' class='form-control select-order'>
     <option value=''>{{ 'Order by'|trans }}</option>
     <option value='cat' {{ App.Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
+    <option value='id' {{ App.Request.query.get('order') == 'id' ? 'selected' }}>{{ 'Id'|trans }}</option>
     <option value='date' {{ App.Request.query.get('order') == 'date' ? 'selected' }}>{{ 'Date'|trans }}</option>
     {% if Entity.type == 'database' %}
         <option value='rating' {{ App.Request.query.get('order') == 'rating' ? 'selected' }}>{{ 'Rating'|trans }}</option>

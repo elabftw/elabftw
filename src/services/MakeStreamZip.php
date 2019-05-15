@@ -64,11 +64,6 @@ class MakeStreamZip extends AbstractMake
         $this->idList = $idList;
     }
 
-    public function output(): void
-    {
-        $this->loopIdArr();
-    }
-
     /**
      * Make a title without special char for folder inside .zip
      *
@@ -170,7 +165,7 @@ class MakeStreamZip extends AbstractMake
     private function addCsv(int $id): void
     {
         $MakeCsv = new MakeCsv($this->Entity, (string) $id);
-        $this->Zip->addFromString($this->folder . '/' . $this->cleanTitle . '.csv', $MakeCsv->outputContent);
+        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getCsv());
     }
 
     /**
@@ -187,6 +182,7 @@ class MakeStreamZip extends AbstractMake
         if ($permissions['read']) {
             $uploadedFilesArr = $this->Entity->Uploads->readAll();
             $entityArr = $this->Entity->entityData;
+            // save the uploads in entityArr for the json file
             $entityArr['uploads'] = $uploadedFilesArr;
 
             $this->nameFolder();
@@ -212,7 +208,7 @@ class MakeStreamZip extends AbstractMake
      *
      * @return void
      */
-    private function loopIdArr(): void
+    public function getZip(): void
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {

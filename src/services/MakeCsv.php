@@ -31,7 +31,7 @@ class MakeCsv extends AbstractMake
      * @param AbstractEntity $entity
      * @param string $idList 1 4 5 2
      */
-    public function __construct(AbstractEntity $entity, $idList)
+    public function __construct(AbstractEntity $entity, string $idList)
     {
         parent::__construct($entity);
         $this->idList = $idList;

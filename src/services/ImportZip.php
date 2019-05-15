@@ -58,7 +58,7 @@ class ImportZip extends AbstractImport
     /**
      * Do the import
      *
-     * @return null
+     * @return void
      */
     public function import(): void
     {

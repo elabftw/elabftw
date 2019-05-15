@@ -94,6 +94,7 @@ class MakeController implements ControllerInterface
                 'Content-Type' => 'text/csv; charset=UTF-8',
                 'Content-Disposition' => 'attachment; filename="' . $Make->getFileName() . '"',
                 'Content-Description' => 'File Transfer',
+                'Cache-Control' => 'no-store',
             )
         );
     }
@@ -108,7 +109,16 @@ class MakeController implements ControllerInterface
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
         $Make = new MakePdf($this->Entity);
-        return new Response($Make->outputToBrowser());
+        return new Response(
+            $Make->getPdf(),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
+                'Cache-Control' => 'no-store',
+                'Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT',
+            )
+        );
     }
 
     /**
@@ -130,6 +140,7 @@ class MakeController implements ControllerInterface
                 'Content-Type' => 'text/csv; charset=UTF-8',
                 'Content-Disposition' => 'attachment; filename="' . $Make->getFileName() . '"',
                 'Content-Description' => 'File Transfer',
+                'Cache-Control' => 'no-store',
             )
         );
     }
@@ -145,7 +156,7 @@ class MakeController implements ControllerInterface
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');
-        $Response->headers->set('Cache-Control', '');
+        $Respnose->headers->set('Cache-Control', 'no-store');
         $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName());
         $Response->headers->set('Content-Disposition', $contentDisposition);
         $Response->setCallback(function () use ($Make) {

@@ -65,13 +65,13 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Generate pdf and output it to the browser
+     * Generate pdf and return it as string
      *
-     * @return void
+     * @return string
      */
-    public function outputToBrowser(): void
+    public function getPdf(): string
     {
-        $this->generate()->Output($this->getFileName(), 'I');
+        return $this->generate()->Output('', 'S');
     }
 
     /**

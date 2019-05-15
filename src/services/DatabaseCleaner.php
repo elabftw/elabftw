@@ -34,7 +34,7 @@ class DatabaseCleaner implements CleanerInterface
      * @param string $table the table to clean
      * @param string $foreignTable the table where we check if the id exists
      * @param string $foreignKey the name of the FK in the $table
-     * @param string $foreingId is id everywhere except userid in users table
+     * @param string $foreignId is id everywhere except userid in users table
      * @return void
      */
     private function findOrphans(string $table, string $foreignTable, string $foreignKey, string $foreignId = 'id'): void

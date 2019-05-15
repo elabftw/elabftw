@@ -46,10 +46,9 @@ class MakeController implements ControllerInterface
     public function __construct(App $app)
     {
         $this->App = $app;
+        $this->Entity = new Database($this->App->Users);
         if ($this->App->Request->query->get('type') === 'experiments') {
             $this->Entity = new Experiments($this->App->Users);
-        } else {
-            $this->Entity = new Database($this->App->Users);
         }
     }
 

@@ -39,4 +39,18 @@ trait CsvTrait
 
         return $csv->getContent();
     }
+
+    /**
+     * Get the column names
+     *
+     * @return array
+     */
+    abstract protected function getHeader(): array;
+
+    /**
+     * Get all the rows
+     *
+     * @return array
+     */
+    abstract protected function getRows(): array;
 }

@@ -59,14 +59,9 @@ class MakeStreamZip extends AbstractMake
             throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
-        $this->Zip = new ZipStream('elabftw-export.zip');
+        $this->Zip = new ZipStream();
 
         $this->idList = $idList;
-    }
-
-    public function output(): void
-    {
-        $this->loopIdArr();
     }
 
     /**
@@ -170,7 +165,7 @@ class MakeStreamZip extends AbstractMake
     private function addCsv(int $id): void
     {
         $MakeCsv = new MakeCsv($this->Entity, (string) $id);
-        $this->Zip->addFromString($this->folder . '/' . $this->cleanTitle . '.csv', $MakeCsv->outputContent);
+        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getCsv());
     }
 
     /**
@@ -187,6 +182,7 @@ class MakeStreamZip extends AbstractMake
         if ($permissions['read']) {
             $uploadedFilesArr = $this->Entity->Uploads->readAll();
             $entityArr = $this->Entity->entityData;
+            // save the uploads in entityArr for the json file
             $entityArr['uploads'] = $uploadedFilesArr;
 
             $this->nameFolder();
@@ -201,6 +197,11 @@ class MakeStreamZip extends AbstractMake
         }
     }
 
+    /**
+     * Get the name of the generated file
+     *
+     * @return string
+     */
     public function getFileName(): string
     {
         return 'elabftw-export.zip';
@@ -212,7 +213,7 @@ class MakeStreamZip extends AbstractMake
      *
      * @return void
      */
-    private function loopIdArr(): void
+    public function getZip(): void
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {

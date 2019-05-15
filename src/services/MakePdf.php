@@ -443,7 +443,7 @@ Witness' signature:<br><br>
      */
     public function getFileName(): string
     {
-        return $this->Entity->entityData['date'] . "-" .
+        return $this->Entity->entityData['date'] . " - " .
             preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
     }
 }

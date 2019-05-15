@@ -3,6 +3,7 @@
 *.bak
 _apidoc
 _srcdoc
+build
 cache
 config.php*
 *.min.css

@@ -72,7 +72,7 @@ class Update
         $currentSchema = (int) $this->Config->configArr['schema'];
 
         if ($currentSchema !== self::REQUIRED_SCHEMA) {
-            throw new InvalidSchemaException('Database schema is different from required schema. Please run update command: docker exec -it elabftw bin/console db:update');
+            throw new InvalidSchemaException();
         }
     }
 

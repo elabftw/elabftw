@@ -59,7 +59,7 @@ class MakeStreamZip extends AbstractMake
             throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
-        $this->Zip = new ZipStream('elabftw-export.zip');
+        $this->Zip = new ZipStream();
 
         $this->idList = $idList;
     }

@@ -315,13 +315,11 @@ class Experiments extends AbstractEntity implements CreateInterface
                 throw new DatabaseErrorException('Error while executing SQL query.');
             }
             $firstname = $req->fetchColumn();
-            if ($firstname === false) {
+            if ($firstname === false || $firstname === null) {
                 throw new \RuntimeException('Could not find the firstname of the locker!');
             }
             throw new ImproperActionException(
-                _('This experiment was locked by') .
-                ' ' . $firstname . '. ' .
-                _("You don't have the rights to unlock this.")
+                sprintf(_("This experiment was locked by %s. You don't have the rights to unlock this."), $firstname)
             );
         }
 

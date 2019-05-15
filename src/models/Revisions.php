@@ -124,7 +124,7 @@ class Revisions implements CrudInterface
         }
 
         $res = $req->fetchColumn();
-        if ($res === false) {
+        if ($res === false || $res === null) {
             return '';
         }
         return $res;

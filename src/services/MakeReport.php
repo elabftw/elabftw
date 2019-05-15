@@ -37,7 +37,6 @@ class MakeReport extends AbstractMake
     {
         $this->Teams = $teams;
         $this->Uploads = $uploads;
-        $this->outputContent = $this->makeCsv($this->getHeader(), $this->getRows());
     }
 
     /**
@@ -55,7 +54,7 @@ class MakeReport extends AbstractMake
      *
      * @return array
      */
-    private function getHeader(): array
+    protected function getHeader(): array
     {
         return array(
             'userid',
@@ -79,7 +78,7 @@ class MakeReport extends AbstractMake
      *
      * @return array
      */
-    private function getRows(): array
+    protected function getRows(): array
     {
         $allUsers = $this->Teams->Users->readFromQuery('');
         foreach ($allUsers as $key => $user) {

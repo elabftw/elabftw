@@ -36,9 +36,6 @@ abstract class AbstractMake
     /** @var string $filePath the full path of the file */
     public $filePath;
 
-    /** @var string $outputContent content generated */
-    public $outputContent;
-
     /**
      * Constructor
      *
@@ -57,6 +54,28 @@ abstract class AbstractMake
      * @return string
      */
     abstract public function getFileName(): string;
+
+    /**
+     * Create a CSV file from header and rows
+     *
+     * @return string
+     */
+    public function getOutput(): string
+    {
+        // load the CSV document from a string
+        $csv = Writer::createFromString('');
+
+        // insert the header
+        $csv->insertOne($this->getHeader());
+
+        // insert all the records
+        $csv->insertAll($this->getRows());
+
+        // add UTF8 BOM
+        $csv->setOutputBOM(Reader::BOM_UTF8);
+
+        return $csv->getContent();
+    }
 
     /**
      * Create a unique long filename with a folder
@@ -85,30 +104,6 @@ abstract class AbstractMake
         }
 
         return $tmpPath;
-    }
-
-    /**
-     * Create a CSV file from header and rows
-     *
-     * @param array $headers the column names
-     * @param array $rows the rows to write
-     * @return void
-     */
-    protected function makeCsv(array $header, array $rows): string
-    {
-        // load the CSV document from a string
-        $csv = Writer::createFromString('');
-
-        // insert the header
-        $csv->insertOne($header);
-
-        // insert all the records
-        $csv->insertAll($rows);
-
-        // add UTF8 BOM
-        $csv->setOutputBOM(Reader::BOM_UTF8);
-
-        return $csv->getContent();
     }
 
     /**

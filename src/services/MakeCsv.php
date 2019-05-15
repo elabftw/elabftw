@@ -19,17 +19,19 @@ use Elabftw\Models\Experiments;
  */
 class MakeCsv extends AbstractMake
 {
+    /** @var string $idList list of id to make csv from */
+    private $idList;
+
     /**
-     * Give me a list of id+id+id and a type, I make good csv for you
+     * Give me a list of "id id id" and a type, I make good csv for you
      *
      * @param AbstractEntity $entity
-     * @param string $idList 1+4+5+2
+     * @param string $idList 1 4 5 2
      */
     public function __construct(AbstractEntity $entity, $idList)
     {
         parent::__construct($entity);
-
-        $this->outputContent = $this->makeCsv($this->getHeader(), $this->getRows($idList));
+        $this->idList = $idList;
     }
 
     /**
@@ -47,7 +49,7 @@ class MakeCsv extends AbstractMake
      *
      * @return array
      */
-    private function getHeader(): array
+    protected function getHeader(): array
     {
         if ($this->Entity instanceof Experiments) {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
@@ -60,10 +62,10 @@ class MakeCsv extends AbstractMake
      *
      * @return array
      */
-    private function getRows($idList): array
+    protected function getRows(): array
     {
         $rows = array();
-        $idArr = explode(" ", $idList);
+        $idArr = explode(" ", $this->idList);
         foreach ($idArr as $id) {
             $this->Entity->setId((int) $id);
             $permissions = $this->Entity->getPermissions();

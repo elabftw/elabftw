@@ -96,7 +96,7 @@ class ItemsTypes extends AbstractCategory
         }
 
         $res = $req->fetchColumn();
-        if ($res === false) {
+        if ($res === false || $res === null) {
             return '';
         }
         return $res;
@@ -145,7 +145,7 @@ class ItemsTypes extends AbstractCategory
         }
 
         $res = $req->fetchColumn();
-        if ($res === false) {
+        if ($res === false || $res === null) {
             return '';
         }
         return $res;

@@ -17,9 +17,9 @@
 <div class='divhandle' id='tab1div'>
     {% if itemsArr|length == 0 %}
         {{ 'No bookable items.'|trans|msg('warning', false) }}
-    {% elseif Scheduler.Database.id is not null %}
+    {% elseif itemData is not null %}
         <a href='#' id='change-item'>{{ 'Change item'|trans }}</a>
-        <h4><span style='color:#{{ Scheduler.itemData.color }}'>{{ Scheduler.itemData.category }}</span> - {{ Scheduler.itemData.title }}</h4>
+        <h4><span style='color:#{{ itemData.color }}'>{{ itemData.category }}</span> - {{ itemData.title }}</h4>
         <div id='scheduler'></div>
     {% else %}
     <div class='row'>

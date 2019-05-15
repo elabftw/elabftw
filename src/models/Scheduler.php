@@ -25,9 +25,6 @@ class Scheduler
     /** @var Database $Database instance of Database */
     public $Database;
 
-    /** @var array $itemData data array for item if it's selected */
-    public $itemData;
-
     /**
      * Constructor
      *
@@ -37,15 +34,6 @@ class Scheduler
     {
         $this->Db = Db::getConnection();
         $this->Database = $database;
-    }
-
-    /**
-     * Read the db items and store it in itemData
-     *
-     */
-    public function populate(): void
-    {
-        $this->itemData = $this->Database->read();
     }
 
     /**

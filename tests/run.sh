@@ -6,7 +6,7 @@
 set -eu
 
 # kill chromedriver on exit
-function cleanup {
+cleanup() {
     killall chromedriver
     sudo cp config.php.dev config.php
     sudo chown 100:101 config.php
@@ -15,7 +15,7 @@ trap cleanup EXIT
 
 # swap config file for docker with the one for localhost
 # sudo is needed because config file for docker is owned by 100:101
-sudo cp config.php config.php.docker
+sudo cp config.php config.php.dev
 sudo cp tests/config-home.php config.php
 sudo chmod +r config.php
 # start chromedriver

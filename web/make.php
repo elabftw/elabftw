@@ -22,7 +22,6 @@ use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
-use Elabftw\Services\MakeZip;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -65,22 +64,17 @@ try {
             break;
 
         case 'zip':
-            // use experimental stream zip feature
-            if ($Request->cookies->has('stream_zip')) {
-                $Make = new MakeStreamZip($Entity, $Request->query->get('id'));
-                $Response = new StreamedResponse();
-                $Response->headers->set('X-Accel-Buffering', 'no');
-                $Response->headers->set('Content-Type', 'application/zip');
-                $Response->headers->set('Cache-Control', '');
-                $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'elabftw-export.zip');
-                $Response->headers->set('Content-Disposition', $contentDisposition);
-                $Response->setCallback(function () use ($Make) {
-                    $Make->getZip();
-                });
-                $Response->send();
-            } else {
-                $Make = new MakeZip($Entity, $Request->query->get('id'));
-            }
+            $Make = new MakeStreamZip($Entity, $Request->query->get('id'));
+            $Response = new StreamedResponse();
+            $Response->headers->set('X-Accel-Buffering', 'no');
+            $Response->headers->set('Content-Type', 'application/zip');
+            $Response->headers->set('Cache-Control', '');
+            $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'elabftw-export.zip');
+            $Response->headers->set('Content-Disposition', $contentDisposition);
+            $Response->setCallback(function () use ($Make) {
+                $Make->getZip();
+            });
+            $Response->send();
             break;
 
         case 'pdf':
@@ -112,26 +106,12 @@ try {
             throw new IllegalActionException('Bad make what value');
     }
 
-    // the pdf is shown directly, but for csv or zip we want a download page
-    if ($Request->query->get('what') === 'zip' && !$Request->cookies->has('stream_zip')) {
-
-        $template = 'make.html';
-        $renderArr = array(
-            'what' => $Request->query->get('what'),
-            'Make' => $Make
-        );
-        $Response = new Response();
-        $Response->prepare($Request);
-        $Response->setContent($App->render($template, $renderArr));
-        $Response->send();
-    }
-    $Response->setContent($App->render($template, $renderArr));
-
 } catch (ImproperActionException $e) {
     // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
 
 } catch (IllegalActionException $e) {
     // log notice and show message
@@ -139,6 +119,7 @@ try {
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
 
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     // log error and show message
@@ -146,6 +127,7 @@ try {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
 
 } catch (Exception $e) {
     // log error and show general error message
@@ -153,7 +135,5 @@ try {
     $template = 'error.html';
     $renderArr = array('error' => Tools::error());
     $Response->setContent($App->render($template, $renderArr));
-
-} finally {
     $Response->send();
 }

@@ -157,11 +157,6 @@
               {{ App.Users.userData.allow_edit == '1' ? " checked='checked'" }}
             />
             <label for='allow_edit'>{{ 'Allow members of the team to edit your experiments'|trans }}</label>
-            <br>
-            <input id='stream_zip' type='checkbox' name='stream_zip'
-              {{ App.Request.cookies.get('stream_zip') == '1' ? " checked='checked'" }}
-            />
-            <label for='stream_zip'>{{ 'Use EXPERIMENTAL zip stream feature (allows creation of big zip archives) (setting is only set for this browser)' }}</label>
             </p>
 
             <p>

@@ -585,14 +585,6 @@ class Users
             $new_default_vis = Tools::checkVisibility($params['default_vis']);
         }
 
-        // STREAM ZIP
-        // only use cookie here because it's temporary code
-        if (isset($params['stream_zip']) && $params['stream_zip'] === 'on') {
-            \setcookie('stream_zip', '1', time() + 2592000, '/', '', true, true);
-        } else {
-            \setcookie('stream_zip', '0', time() - 3600, '/', '', true, true);
-        }
-
         // Signature pdf
         // only use cookie here because it's temporary code
         if (isset($params['pdf_sig']) && $params['pdf_sig'] === 'on') {

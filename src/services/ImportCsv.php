@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Users;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use function League\Csv\delimiter_detect;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -57,6 +58,24 @@ class ImportCsv extends AbstractImport
     }
 
     /**
+     * Make sure the delimiter character is ','
+     *
+     * @param Reader $csv
+     * @return void
+     */
+    private function checkDelimiter(Reader $csv): void
+    {
+        $delimitersCount = delimiter_detect($csv, [",", "|", "\t", ";"], -1);
+        // reverse sort the array by value to get the delimiter with highest probability
+        arsort($delimitersCount, SORT_NUMERIC);
+        // get the first element
+        $delimiter = key($delimitersCount);
+        if ($delimiter !== ',') {
+            throw new ImproperActionException("It looks like the delimiter is different from «,». Make sure to use «,» as delimiter!");
+        }
+    }
+
+    /**
      * Do the work
      *
      * @throws ImproperActionException
@@ -65,6 +84,7 @@ class ImportCsv extends AbstractImport
     public function import(): void
     {
         $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
+        $this->checkDelimiter($csv);
         $csv->setHeaderOffset(0);
 
         // SQL for importing

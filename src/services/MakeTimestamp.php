@@ -119,8 +119,7 @@ class MakeTimestamp extends AbstractMake
 
         $login = $config['stamplogin'];
 
-
-        if ($config['stamppass'] ?? "" !== '') {
+        if (($config['stamppass'] ?? "") !== '') {
             $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } else {
             $password = '';

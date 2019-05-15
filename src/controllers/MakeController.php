@@ -148,7 +148,7 @@ class MakeController implements ControllerInterface
         $Response->headers->set('Cache-Control', '');
         $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName());
         $Response->headers->set('Content-Disposition', $contentDisposition);
-        $Response->setCallback(function() use ($Make) {
+        $Response->setCallback(function () use ($Make) {
             $Make->getZip();
         });
         return $Response;

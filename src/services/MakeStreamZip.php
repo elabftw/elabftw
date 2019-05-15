@@ -197,6 +197,11 @@ class MakeStreamZip extends AbstractMake
         }
     }
 
+    /**
+     * Get the name of the generated file
+     *
+     * @return string
+     */
     public function getFileName(): string
     {
         return 'elabftw-export.zip';

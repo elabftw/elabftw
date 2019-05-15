@@ -156,7 +156,7 @@ class MakeController implements ControllerInterface
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');
-        $Respnose->headers->set('Cache-Control', 'no-store');
+        $Response->headers->set('Cache-Control', 'no-store');
         $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName());
         $Response->headers->set('Content-Disposition', $contentDisposition);
         $Response->setCallback(function () use ($Make) {

@@ -366,7 +366,7 @@ class Uploads implements CrudInterface
     /**
      * Replace an uploaded file by another
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      * @return void
      */
     public function replace(Request $request): void
@@ -381,6 +381,14 @@ class Uploads implements CrudInterface
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);
+
+        $sql = "UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 
     /**

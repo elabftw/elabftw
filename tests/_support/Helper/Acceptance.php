@@ -5,5 +5,25 @@ namespace Helper;
 
 class Acceptance extends \Codeception\Module
 {
+     public function seeFileExists($filePath)
+     {
+         \PHPUnit_Framework_Assert::assertTrue(file_exists($filePath));
+     }
 
+     public function seeFileIsZip($filePath)
+     {
+         $ret = $this->runSh('unzip -Z ' . escapeshellarg($filePath));
+         \PHPUnit_Framework_Assert::assertTrue($ret['retcode'] === 0);
+     }
+
+     private function runSh($cmd)
+     {
+        $retarray = array();
+        exec("sh -c \"" . $cmd . "\" 2>&1", $retarray, $retcode);
+
+        return array(
+            "retarray" => $retarray,
+            "retcode" => $retcode
+        );
+     }
 }

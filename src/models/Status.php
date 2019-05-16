@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\ColorTrait;
 use PDO;
 
 /**
@@ -20,6 +21,8 @@ use PDO;
  */
 class Status extends AbstractCategory
 {
+    use ColorTrait;
+
     /** @var Users $Users our user */
     public $Users;
 
@@ -50,8 +53,7 @@ class Status extends AbstractCategory
             $team = $this->Users->userData['team'];
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        // we remove the # of the hexacode and sanitize string
-        $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
+        $color = $this->checkColor($color);
 
         if ($name === '') {
             $name = 'Unnamed';
@@ -184,7 +186,7 @@ class Status extends AbstractCategory
     public function update(int $id, string $name, string $color, int $isTimestampable, int $isDefault): void
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $color = filter_var($color, FILTER_SANITIZE_STRING);
+        $color = $this->checkColor($color);
 
         $default = 0;
         if ($isDefault) {

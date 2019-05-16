@@ -1156,3 +1156,7 @@ figure.image figcaption {
 .togglableHidden {
     display: none;
 }
+
+input[type='color'] {
+    padding: 5px 10px;
+}

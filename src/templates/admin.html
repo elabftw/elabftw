@@ -184,9 +184,9 @@
         <input class='form-control' type='text' id='statusName' />
       </div>
 
-      <div class='col-auto'>
+      <div class='col-1'>
         <label for='statusColor'>{{ 'Color'|trans }}</label>
-        <input class='colorpicker form-control' type='text' id='statusColor' value='000000' />
+        <input class='form-control randomColor' type='color' id='statusColor' />
       </div>
 
       <div class='col-auto'>
@@ -209,8 +209,8 @@
       {% for status in statusArr %}
         <li id='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
-            <li class='list-inline-item'>{{ 'Name'|trans }} <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
-            <li class='list-inline-item' style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker form-control' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
+            <li class='list-inline-item'><label for='statusName_{{ status.category_id }}'>{{ 'Name'|trans }}</label> <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
+            <li class='list-inline-item col-1 align-top'><label for='statusColor_{{ status.category_id }}'>{{ 'Color'|trans }}</label> <input class='form-control' type='color' id='statusColor_{{ status.category_id }}' value='#{{ status.color }}' />
             </li>
             <li class='list-inline-item'><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> <label for='statusTimestamp_{{ status.category_id }}'>{{ 'Allow timestamp'|trans }}</label></li>
             <li class='list-inline-item'><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} /> <label for='statusDefault_{{ status.category_id }}'>{{ 'Default status'|trans }}</label></li>
@@ -242,22 +242,31 @@
   <div class='box'>
     <h3>{{ 'Add a new type of item'|trans }}</h3>
     <hr>
-    <ul class='list-inline form-group'>
-      <li class='list-inline-item'>
+    <div class='form-row align-items-center mb-2'>
+      <div class='col-auto'>
         <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
-        <input type='text' class='form-control' id='itemsTypesName' />
-      </li>
-      <li class='list-inline-item'>
+        <input class='form-control' type='text' id='itemsTypesName' />
+      </div>
+
+      <div class='col-1'>
         <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
-        <input class='colorpicker form-control' type='text' id='itemsTypesColor' value='29AEB9' />
-      </li>
-      <li class='list-inline-item'><input type='checkbox' id='itemsTypesBookable'> <label for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label></li>
-    </ul>
+        <input class='form-control randomColor' type='color' id='itemsTypesColor' />
+      </div>
+
+      <div class='col-auto'>
+        <div class='form-check mt-4'>
+          <input class='form-check-input' type='checkbox' id='itemsTypesBookable' />
+          <label class='form-check-label' for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label>
+        </div>
+      </div>
+    </div>
+
     <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
     <div class='submitButtonDiv'>
       <button id='itemsTypesCreate' class='button'>{{ 'Save'|trans }}</button>
     </div>
   </div>
+
 
   <div class='box'>
     <h3>{{ 'Database Items Types'|trans }}</h3>
@@ -271,9 +280,9 @@
               <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
             </li>
 
-            <li class='list-inline-item'>
-              <label style='color:#{{ itemType.color }}' for='itemsTypesColor_{{ itemType.category_id }}'>{{ 'Color'|trans }}</label>
-              <input class='colorpicker form-control' type='text' id='itemsTypesColor_{{ itemType.category_id }}' value='{{ itemType.color }}' />
+            <li class='list-inline-item col-1 align-top'>
+              <label for='itemsTypesColor_{{ itemType.category_id }}'>{{ 'Color'|trans }}</label>
+              <input class='form-control' type='color' id='itemsTypesColor_{{ itemType.category_id }}' value='#{{ itemType.color }}' />
             </li>
             <li class='list-inline-item'>
               <input id='itemsTypesBookable_{{ itemType.category_id }}' type='checkbox' {{ itemType.bookable ? " checked" }} />

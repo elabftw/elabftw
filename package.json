@@ -25,8 +25,7 @@
     "popper.js": "1.15.*",
     "prismjs": "1.16.*",
     "tinymce": "5.0.*",
-    "tinymce-mention": "4.0.2",
-    "vanderlee-colorpicker": "1.2.*"
+    "tinymce-mention": "4.0.2"
   },
   "devDependencies": {
     "apidoc": "0.17.*",

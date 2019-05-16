@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\ColorTrait;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 
@@ -22,6 +23,7 @@ use PDO;
  */
 class ItemsTypes extends AbstractCategory
 {
+    use ColorTrait;
     use EntityTrait;
 
     /**
@@ -59,7 +61,7 @@ class ItemsTypes extends AbstractCategory
         if ($name === '') {
             $name = 'Unnamed';
         }
-        $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
+        $color = $this->checkColor($color);
         $template = Tools::checkBody($template);
 
         $sql = "INSERT INTO items_types(name, color, bookable, template, team)
@@ -164,7 +166,7 @@ class ItemsTypes extends AbstractCategory
     public function update(int $id, string $name, string $color, int $bookable, string $template): void
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $color = filter_var($color, FILTER_SANITIZE_STRING);
+        $color = $this->checkColor($color);
         $template = Tools::checkBody($template);
         $sql = "UPDATE items_types SET
             name = :name,

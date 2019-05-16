@@ -16,7 +16,6 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'web/app/js/elabftw.min.js': [
-              'node_modules/vanderlee-colorpicker/jquery.colorpicker.js',
               'node_modules/jquery-jeditable/src/jquery.jeditable.js',
               'web/app/js/vendor/keymaster.js',
               'web/app/js/vendor/cornify.js',
@@ -84,7 +83,6 @@ module.exports = function(grunt) {
               'node_modules/dropzone/dist/dropzone.css',
               'node_modules/fullcalendar/dist/fullcalendar.css',
               'node_modules/bootstrap/dist/css/bootstrap.css',
-              'node_modules/vanderlee-colorpicker/jquery.colorpicker.css',
               'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
               'node_modules/jquery-ui-dist/jquery-ui.css',
               'web/app/css/main.css'],

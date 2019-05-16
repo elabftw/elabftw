@@ -3315,12 +3315,7 @@ jquery-ui-dist@1.12.*:
   resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.12.1.tgz#5c0815d3cc6f90ff5faaf5b268a6e23b4ca904fa"
   integrity sha1-XAgV08xvkP9fqvWyaKbiO0ypBPo=
 
-jquery-ui@>=1.7:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"
-  integrity sha1-vLQEXI3QU5wTS8FIjN0+dop6nlE=
-
-jquery@3.4.*, jquery@>=1.5, jquery@>=1.8.3, jquery@>=3.4.0:
+jquery@3.4.*, jquery@>=1.8.3, jquery@>=3.4.0:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
   integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
@@ -6543,14 +6538,6 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
-
-vanderlee-colorpicker@1.2.*:
-  version "1.2.16"
-  resolved "https://registry.yarnpkg.com/vanderlee-colorpicker/-/vanderlee-colorpicker-1.2.16.tgz#f871cb5383407a39857aec847dc036090e71c9b0"
-  integrity sha1-+HHLU4NAejmFeuyEfcA2CQ5xybA=
-  dependencies:
-    jquery ">=1.5"
-    jquery-ui ">=1.7"
 
 vfile-location@^2.0.0:
   version "2.0.4"

@@ -116,6 +116,11 @@
       controller: 'app/controllers/StatusController.php',
       create: function() {
         var name = $('#statusName').val();
+        if (name === '') {
+          notif({'res': false, 'msg': 'Name cannot be empty'});
+          $('#statusName').css('border-color', 'red');
+          return false;
+        }
         var color = $('#statusColor').val();
         var isTimestampable = +$('#statusTimestamp').is(':checked');
 
@@ -177,6 +182,11 @@
       controller: 'app/controllers/ItemsTypesAjaxController.php',
       create: function() {
         var name = $('#itemsTypesName').val();
+        if (name === '') {
+          notif({'res': false, 'msg': 'Name cannot be empty'});
+          $('#itemsTypesName').css('border-color', 'red');
+          return false;
+        }
         var color = $('#itemsTypesColor').val();
         var checkbox = $('#itemsTypesBookable').is(':checked');
         var bookable = 0;
@@ -289,18 +299,10 @@
 
     });
 
-    // COLORPICKER
-    $('.colorpicker').colorpicker({
-      hsv: false,
-      okOnEnter: true,
-      rgb: false
-    });
-
     // randomize the input of the color picker so even if user doesn't change the color it's a different one!
     // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
-    var colorInput = Math.floor(Math.random()*16777215).toString(16);
-    $('#itemsTypesColor').val(colorInput);
-    $('#statusColor').val(colorInput);
+    var colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
+    $('.randomColor').val(colorInput);
 
     $('.tag-editable').editable(function(value) {
       $.post('app/controllers/TagsController.php', {

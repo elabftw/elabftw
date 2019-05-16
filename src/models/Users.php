@@ -433,7 +433,7 @@ class Users
         }
 
         // a non sysadmin cannot put someone sysadmin
-        if ($usergroup == 1 && $this->userData['is_sysadmin'] != 1) {
+        if ($usergroup == 1 && $this->Auth->Session->get('is_sysadmin') != 1) {
             throw new ImproperActionException(_('Only a sysadmin can put someone sysadmin.'));
         }
 

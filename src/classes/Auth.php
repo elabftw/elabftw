@@ -31,7 +31,7 @@ class Auth
     private $Request;
 
     /** @var SessionInterface $Session the current session */
-    private $Session;
+    public $Session;
 
     /** @var array $userData All the user data for a user */
     private $userData = array();

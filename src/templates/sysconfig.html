@@ -362,17 +362,22 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h3>Service provider (this instance of eLabFTW)</h3>
             <div class='form-group'>
               <input type='hidden' name='updateConfig' value='true' />
+              <label for='saml-toggle'>Toggle SAML login:</label>
+              <select class='form-control col-md-4' id='saml-toggle' name='saml_toggle'>
+                <option value='1'{{ App.Config.configArr.saml_toggle == '1' ? ' selected' }}>Enabled</option>
+                <option value='0'{{ App.Config.configArr.saml_toggle == '0' ? ' selected' }}>Disabled</option>
+              </select>
 
               <label for='saml-debug'>Debug mode:</label>
               <select class='form-control col-md-4' id='saml-debug' name='saml_debug'>
-                  <option value='1'{{ App.Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
-                  <option value='0'{{ App.Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
+                <option value='1'{{ App.Config.configArr.saml_debug == '1' ? ' selected' }}>Yes</option>
+                <option value='0'{{ App.Config.configArr.saml_debug == '0' ? ' selected' }}>No</option>
               </select>
 
               <label for='saml-strict'>Strict mode:</label>
               <select class='form-control col-md-4' id='saml-strict' name='saml_strict'>
-                  <option value='1'{{ App.Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
-                  <option value='0'{{ App.Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
+                <option value='1'{{ App.Config.configArr.saml_strict == '1' ? ' selected' }}>Yes</option>
+                <option value='0'{{ App.Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
               </select>
 
               <label for='saml-base'>Base url:</label>

@@ -45,7 +45,7 @@
     </div>
   {% endif %}
 
-  {% if idpsArr %}
+  {% if App.Config.configArr.saml_toggle %}
     <h2>{{ 'Login through your institution'|trans }}</h2>
     <br>
     <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>

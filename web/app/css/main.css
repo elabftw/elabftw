@@ -109,20 +109,15 @@ input,
 select,
 textarea {
     padding: 7px;
-    background-color: #f2f2f2;
     color: #797979;
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
 }
 
-.disabled-input {
-    color: #989898;
-}
-
 select {
     -moz-appearance: none;
     -webkit-appearance: none;
-    background: #f2f2f2 url("images/ico-arrow.png") no-repeat 93% 56%;
+    background: #fff url("images/ico-arrow.png") no-repeat 93% 56%;
     padding-right: 31px;
 }
 
@@ -505,22 +500,6 @@ section.item {
 /* show-hide canvas / molecule editor */
 .show-hide {
     font-size: 110%;
-}
-
-/* LOGIN.PHP */
-.block {
-    display: block;
-    margin: 5px 0 0;
-}
-
-/* DEPRECATED */
-.clean-form {
-    margin: 0 0 15px;
-}
-
-/* DEPRECATED */
-.col-3-form {
-    width: 30%;
 }
 
 #loginButtonDiv {
@@ -1172,4 +1151,8 @@ figure.image figcaption {
 /* make the markdown editor full width */
 .markdown-textarea {
     width: 100%;
+}
+
+.togglableHidden {
+    display: none;
 }

@@ -14,180 +14,169 @@
 
 <!-- TAB 1 - USER PREFERENCES -->
 <div class='divhandle' id='tab1div'>
+  <form class='form-group' action='app/controllers/UcpController.php' method='post'>
+    <!-- LANGUAGE -->
+    <section class='box'>
+      <h3>{{ 'Language'|trans }}</h3>
+      <hr>
+      <select class='form-control col-md-3' id='lang' name='lang'>
+        {% for lang, text in langsArr %}
+          <option value='{{ lang }}'
+            {{ App.Users.userData.lang == lang ? ' selected' }}
+            >{{ text }}</option>
+        {% endfor %}
+      </select>
+    </section>
 
-    <form action='app/controllers/UcpController.php' method='post'>
-        <!-- LANGUAGE -->
-        <section class='box'>
-            <h3>{{ 'Language'|trans }}</h3>
-            <hr>
-            <p>
-            <select id='lang' name='lang'>
-            {% for lang, text in langsArr %}
-                <option value='{{ lang }}'
-                  {{ App.Users.userData.lang == lang ? ' selected' }}
-                  >{{ text }}</option>
-            {% endfor %}
-            </select>
-        </section>
+    <!-- DISPLAY -->
+    <section class='box'>
+      <h3>{{ 'Display'|trans }}</h3>
+      <hr>
+      <label for='limit'>{{ 'Items per page:'|trans }}</label>
+      <input id='limit' class='form-control col-md-2' type='text' size='2' maxlength='2' value='{{ App.Users.userData.limit_nb }}' name='limit'>
+      <label for='orderby'>{{ 'Order by:'|trans }}</label>
+      <select id='orderby' name='orderby' class='form-control col-md-3'>
+          <option value='default' {{ App.Users.userData.orderby == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
+          <option value='cat' {{ App.Users.userData.orderby == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
+          <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
+          <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
+          <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
+      </select>
+      <label for='sort'>{{ 'Sort:'|trans }}</label>
+      <select id='sort' name='sort' class='form-control col-md-3'>
+        <option value='default' {{ App.Users.userData.sort == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
+        <option value='asc' {{ App.Users.userData.sort == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
+        <option value='desc' {{ App.Users.userData.sort == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
+      </select>
+      <input id='layout' class='mt-2' type='checkbox' name='single_column_layout'
+          {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
+      />
+      <label for='layout'>{{ 'Use single column layout'|trans }}</label>
+    </section>
 
-        <!-- DISPLAY -->
-        <section class='box'>
+    <section class='box'>
+        <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
+        <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
+        <p>
+            <table>
+            <tr><th>{{ 'Action'|trans }}</th>
+                <th>{{ 'Shortcut'|trans }}</th></tr>
 
-            <h3>{{ 'Display'|trans }}</h3>
-            <hr>
-            <p>
-                <label for='limit'>{{ 'Items per page:'|trans }}</label>
-                <input id='limit' type='text' size='2' maxlength='2' value='{{ App.Users.userData.limit_nb }}' name='limit'>
-            </p>
-            <p>
-                <label for='orderby'>{{ 'Order by:'|trans }}</label>
-                <select id='orderby' name='orderby'>
-                    <option value='default' {{ App.Users.userData.orderby == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
-                    <option value='cat' {{ App.Users.userData.orderby == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
-                    <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
-                    <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
-                    <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
-                </select>
-            </p>
-            <p>
-                <label for='sort'>{{ 'Sort:'|trans }}</label>
-                <select id='sort' name='sort'>
-                    <option value='default' {{ App.Users.userData.sort == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
-                    <option value='asc' {{ App.Users.userData.sort == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
-                    <option value='desc' {{ App.Users.userData.sort == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
-                </select>
-            </p>
-            <p>
-                <label for='layout'>{{ 'Use single column layout:'|trans }}</label>
-                <input id='layout' type='checkbox' name='single_column_layout'
-                    {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
-                />
-            </p>
-        </section>
+            <tr><td>{{ 'Create'|trans }}</td><td>
+                <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' name='sc_create' />
+                </td></tr>
 
-        <section class='box'>
-            <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
-            <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
-            <p>
-                <table>
-                <tr><th>{{ 'Action'|trans }}</th>
-                    <th>{{ 'Shortcut'|trans }}</th></tr>
+                <tr><td>{{ 'Edit'|trans }}</td><td>
+                <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' name='sc_edit' />
+                </td></tr>
 
-                <tr><td>{{ 'Create'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' name='sc_create' />
-                    </td></tr>
+                <tr><td>{{ 'Submit'|trans }}</td><td>
+                <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_submit }}' name='sc_submit' />
+                </td></tr>
 
-                    <tr><td>{{ 'Edit'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' name='sc_edit' />
-                    </td></tr>
+                <tr><td>{{ 'TODO list'|trans }}</td><td>
+                <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' name='sc_todo' />
+                </td></tr>
+            </table>
+        </p>
+    </section>
 
-                    <tr><td>{{ 'Submit'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_submit }}' name='sc_submit' />
-                    </td></tr>
+    <!-- PDF CONFIG -->
+    <section class='box'>
+        <h3>{{ 'PDF configuration'|trans }}</h3>
 
-                    <tr><td>{{ 'TODO list'|trans }}</td><td>
-                    <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' name='sc_todo' />
-                    </td></tr>
-                </table>
-            </p>
-        </section>
+        <p>
+        <label for='pdf_format'>{{ 'Select paper format for PDF'|trans }}</label>
+        <select id='pdf_format' name='pdf_format'>
+            <option value='A4' {{ App.Users.userData.pdf_format == 'A4' ? 'selected' : '' }}>A4</option>
+            <option value='LETTER' {{ App.Users.userData.pdf_format == 'LETTER' ? 'selected' : '' }}>Letter</option>
+            <option value='ROYAL' {{ App.Users.userData.pdf_format == 'ROYAL' ? 'selected' : '' }}>Royal</option>
+        </select>
+        <br>
 
-        <!-- PDF CONFIG -->
-        <section class='box'>
-            <h3>{{ 'PDF configuration'|trans }}</h3>
-
-            <p>
-            <label for='pdf_format'>{{ 'Select paper format for PDF'|trans }}</label>
-            <select id='pdf_format' name='pdf_format'>
-                <option value='A4' {{ App.Users.userData.pdf_format == 'A4' ? 'selected' : '' }}>A4</option>
-                <option value='LETTER' {{ App.Users.userData.pdf_format == 'LETTER' ? 'selected' : '' }}>Letter</option>
-                <option value='ROYAL' {{ App.Users.userData.pdf_format == 'ROYAL' ? 'selected' : '' }}>Royal</option>
-            </select>
-            <br>
-
-            <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
-              {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
-            />
-            <label for='cjk_fonts'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
-            <br>
-            <input id='pdfa' type='checkbox' name='pdfa'
-              {{ App.Users.userData.pdfa == '1' ? " checked='checked'" }}
-            />
-            <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
-            <br>
-            <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
-              {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
-            />
-            <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
-            <br>
-            <input id='pdf_sig' type='checkbox' name='pdf_sig'
-              {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
-            />
-            <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)' }}</label>
-
-            </p>
-        </section>
-
-
-
-        <section class='box'>
-            <h3>{{ 'Miscellaneous'|trans }}</h3>
-            <p>
-            <input id='show_team' type='checkbox' name='show_team'
-              {{ App.Users.userData.show_team == '1' ? " checked='checked'" }}
-            />
-            <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
-            <br>
-            <input id='close_warning' type='checkbox' name='close_warning'
-              {{ App.Users.userData.close_warning == '1' ? " checked='checked'" }}
-            />
-            <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab'|trans }}</label>
-            <br>
-            <input id='chem_editor' type='checkbox' name='chem_editor'
-              {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
-            />
-            <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode'|trans }}</label>
-            <br>
-            <input id='use_markdown' type='checkbox' name='use_markdown'
-              {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
-            />
-            <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
-            <br>
-            <input id='allow_edit' type='checkbox' name='allow_edit'
-              {{ App.Users.userData.allow_edit == '1' ? " checked='checked'" }}
-            />
-            <label for='allow_edit'>{{ 'Allow members of the team to edit your experiments'|trans }}</label>
-            </p>
-
-            <p>
-            <label for='default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
-            <select id='default_vis' name='default_vis'>
-                <option value='organization'
-                  {{ App.Users.userData.default_vis == 'organization' ? " selected='selected'" }}
-                >{{ 'Organization'|trans }}</option>
-                <option value='team'
-                  {{ App.Users.userData.default_vis == 'team' ? " selected='selected'" }}
-                >{{ 'Team'|trans }}</option>
-                <option value='user'
-                  {{ App.Users.userData.default_vis == 'user' ? " selected='selected'" }}
-                >{{ 'User'|trans }}</option>
-                {% for teamGroup in teamGroupsArr %}
-                    <option value='{{ teamGroup.id }}'
-                      {{ teamGroup.id == App.Users.userData.default_vis ? " selected='selected'" }}
-                    >{{ 'Group'|trans }} - {{ teamGroup.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            </p>
-
-        </section>
-
-        <div class='text-center mt-3'>
-            <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
-        </div>
+        <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
+          {{ App.Users.userData.cjk_fonts == '1' ? " checked='checked'" }}
+        />
+        <label for='cjk_fonts'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
+        <br>
+        <input id='pdfa' type='checkbox' name='pdfa'
+          {{ App.Users.userData.pdfa == '1' ? " checked='checked'" }}
+        />
+        <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
+        <br>
+        <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
+          {{ App.Users.userData.inc_files_pdf == '1' ? " checked='checked'" }}
+        />
+        <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
+        <br>
+        <input id='pdf_sig' type='checkbox' name='pdf_sig'
+          {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
+        />
+        <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)' }}</label>
 
         </p>
-    </form>
+    </section>
+
+
+
+    <section class='box'>
+        <h3>{{ 'Miscellaneous'|trans }}</h3>
+        <p>
+        <input id='show_team' type='checkbox' name='show_team'
+          {{ App.Users.userData.show_team == '1' ? " checked='checked'" }}
+        />
+        <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
+        <br>
+        <input id='close_warning' type='checkbox' name='close_warning'
+          {{ App.Users.userData.close_warning == '1' ? " checked='checked'" }}
+        />
+        <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab'|trans }}</label>
+        <br>
+        <input id='chem_editor' type='checkbox' name='chem_editor'
+          {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
+        />
+        <label for='chem_editor'>{{ 'Display the molecule drawer in edit mode'|trans }}</label>
+        <br>
+        <input id='use_markdown' type='checkbox' name='use_markdown'
+          {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
+        />
+        <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
+        <br>
+        <input id='allow_edit' type='checkbox' name='allow_edit'
+          {{ App.Users.userData.allow_edit == '1' ? " checked='checked'" }}
+        />
+        <label for='allow_edit'>{{ 'Allow members of the team to edit your experiments'|trans }}</label>
+        </p>
+
+        <p>
+        <label for='default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
+        <select id='default_vis' name='default_vis'>
+            <option value='organization'
+              {{ App.Users.userData.default_vis == 'organization' ? " selected='selected'" }}
+            >{{ 'Organization'|trans }}</option>
+            <option value='team'
+              {{ App.Users.userData.default_vis == 'team' ? " selected='selected'" }}
+            >{{ 'Team'|trans }}</option>
+            <option value='user'
+              {{ App.Users.userData.default_vis == 'user' ? " selected='selected'" }}
+            >{{ 'User'|trans }}</option>
+            {% for teamGroup in teamGroupsArr %}
+                <option value='{{ teamGroup.id }}'
+                  {{ teamGroup.id == App.Users.userData.default_vis ? " selected='selected'" }}
+                >{{ 'Group'|trans }} - {{ teamGroup.name }}
+                </option>
+            {% endfor %}
+        </select>
+        </p>
+
+    </section>
+
+    <div class='text-center mt-3'>
+        <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+    </div>
+
+    </p>
+  </form>
 
 </div>
 
@@ -195,60 +184,60 @@
 <div class='divhandle' id='tab2div'>
     <div class='box'>
 
-    <form method="post" action="app/controllers/UcpController.php">
-        <div class='row'>
-            <div class='col-md-6'>
-                <h4>{{ 'Modify your personal informations'|trans }}</h4>
-                <label class='block' for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
-                <input id='currpass' name='currpass' type='password' pattern='.{8,}' required />
-                <label class='block' for='email'>{{ 'Email'|trans }}</label>
-                <input name='email' id='email' type='email' value='{{ App.Users.userData.email }}' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <h4>{{ 'Modify your password'|trans }}</h4>
-                <label class='block' for='newpass'>{{ 'New password'|trans }}</label>
-                <input id='newpass' name="newpass" type="password" pattern=".{8,}" />
-                <label class='block' for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-                <input id='cnewpass' name="cnewpass" type="password" pattern=".{8,}" />
-            </div>
+    <form class='form-group' method='post' action='app/controllers/UcpController.php'>
+      <div class='row'>
+        <div class='col-md-6'>
+          <h4>{{ 'Modify your personal informations'|trans }}</h4>
+          <label for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
+          <input class='form-control' id='currpass' name='currpass' type='password' pattern='.{8,}' required />
+          <label for='email'>{{ 'Email'|trans }}</label>
+          <input class='form-control' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
         </div>
+        <div class='col-md-6'>
+          <h4>{{ 'Modify your password'|trans }}</h4>
+          <label for='newpass'>{{ 'New password'|trans }}</label>
+          <input class='form-control' id='newpass' name="newpass" type="password" pattern=".{8,}" />
+          <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
+          <input class='form-control' id='cnewpass' name="cnewpass" type="password" pattern=".{8,}" />
+        </div>
+      </div>
 
         <hr><br>
 
         <h4>{{ 'Modify your identity'|trans }}</h4>
 
         <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='firstname'>{{ 'Firstname'|trans }}</label>
-                <input id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' cols='20' rows='1' />
-            </div>
+          <div class='col-md-6'>
+            <label for='firstname'>{{ 'Firstname'|trans }}</label>
+            <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+          </div>
 
-            <div class='col-md-6'>
-                <label class='block' for='lastname'>{{ 'Lastname'|trans }}</label>
-                <input id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' cols='20' rows='1' />
-            </div>
+          <div class='col-md-6'>
+            <label for='lastname'>{{ 'Lastname'|trans }}</label>
+            <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+          </div>
         </div>
 
         <hr><br>
         <h4>{{ 'Modify your contact information'|trans }}</h4>
         <div class='row'>
             <div class='col-md-6'>
-                <label class='block' for='phone'>{{ 'Phone'|trans }} </label>
-                <input id='phone' name='phone' value='{{ App.Users.userData.phone }}' cols='20' rows='1' />
+                <label for='phone'>{{ 'Phone'|trans }} </label>
+                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
-                <label class='block' for='cellphone'>{{ 'Mobile'|trans }}</label>
-                <input id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' cols='20' rows='1' />
+                <label for='cellphone'>{{ 'Mobile'|trans }}</label>
+                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' cols='20' rows='1' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
-                <label class='block' for='skype'>{{ 'Skype'|trans }}</label>
-                <input id='skype' name='skype' value='{{ App.Users.userData.skype }}' cols='20' rows='1' />
+                <label for='skype'>{{ 'Skype'|trans }}</label>
+                <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
-                <label class='block' for='website'>{{ 'Website'|trans }}</label>
-                <input id='website' name='website' type='url' value='{{ App.Users.userData.website }}' cols='20' rows='1' />
+                <label for='website'>{{ 'Website'|trans }}</label>
+                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' cols='20' rows='1' />
             </div>
         </div>
 
@@ -292,47 +281,47 @@
     </div>
 
     {% for template in templatesArr %}
-    <div class='subdivhandle' id='subtab_{{ template.id }}div'>
-    <!-- TAGS -->
-    <i class='fas fa-tags'></i>
-    <label>{{ 'Tags'|trans }}</label>
-    <div class='tags'>
-        <span id='tags_div_{{ template.id }}'>
-            <!--  build the tag array -->
-            {% if template.tags|length > 0 %}
-                {% set tagsIdArr = template.tags_id|split(',') %}
-                {% set tagsValueArr = template.tags|split('|') %}
-                {% for key, tag in tagsValueArr %}
-                    {# the key allows to get the id stored in tagsIdArr #}
-                    <span class='tag'>
-                        <a class='tagUnreferenceForTemplate clickable' data-type='experiments_tpl' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
-                            {{ tag|raw }}
-                        </a>
-                    </span>
-                {% endfor %}
-            {% endif %}
-        </span>
-        <input type='text' style='width:auto' class='createTagInput' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
-    </div>
-            <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
-                <i class='fas fa-download fa-pull-right clickable'></i>
-            </a>
-            <a class='destroy-template' title='Destroy template' data-id='{{ template.id }}'>
-                <i class='fas fa-trash-alt fa-pull-right mr-1 clickable'></i>
-            </a>
+      <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+        <!-- TAGS -->
+        <i class='fas fa-tags'></i>
+        <label>{{ 'Tags'|trans }}</label>
+        <div class='tags'>
+          <span id='tags_div_{{ template.id }}'>
+              <!--  build the tag array -->
+              {% if template.tags|length > 0 %}
+                  {% set tagsIdArr = template.tags_id|split(',') %}
+                  {% set tagsValueArr = template.tags|split('|') %}
+                  {% for key, tag in tagsValueArr %}
+                      {# the key allows to get the id stored in tagsIdArr #}
+                      <span class='tag'>
+                          <a class='tagUnreferenceForTemplate clickable' data-type='experiments_tpl' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+                              {{ tag|raw }}
+                          </a>
+                      </span>
+                  {% endfor %}
+              {% endif %}
+          </span>
+          <input type='text' style='width:auto' class='createTagInput' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+        </div>
+          <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
+              <i class='fas fa-download fa-pull-right clickable'></i>
+          </a>
+          <a class='destroy-template' title='Destroy template' data-id='{{ template.id }}'>
+              <i class='fas fa-trash-alt fa-pull-right mr-1 clickable'></i>
+          </a>
 
-            <form action='app/controllers/UcpController.php' method='post'>
-                <input type='hidden' name='tpl_form' />
-                <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
-                <label class='block'>{{ 'Name'|trans }}</label>
-                <input name='tpl_name[]' value='{{ template.name|raw }}' style='width:90%' /><br />
-                {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-                <label class='block'>{{ 'Template content'|trans }}</label>
-                <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
-                <div class='text-center'>
-                    <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
-                </div>
-            </form>
+          <form action='app/controllers/UcpController.php' method='post'>
+            <input type='hidden' name='tpl_form' />
+            <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
+            <label for='tplName_{{' template.id' }}'>{{ 'Name'|trans }}</label>
+            <input id='tplName_{{' template.id' }}' name='tpl_name[]' class='form-control' value='{{ template.name|raw }}' />
+            {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+            <label for='e{{ template.id }}'>{{ 'Template content'|trans }}</label>
+            <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
+            <div class='text-center'>
+              <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
+            </div>
+          </form>
         </div>
     {% endfor %}
     </div>

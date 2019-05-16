@@ -205,16 +205,15 @@
   <div class='box'>
     <h3>{{ 'Edit an Existing Status'|trans }}</h3>
     <hr>
-    <ul class='draggable list-group'>
+    <ul class='list-group'>
       {% for status in statusArr %}
         <li id='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
-            <li class='list-inline-item'>{{ 'Name'|trans }} <input required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
-            <li class='list-inline-item' style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
+            <li class='list-inline-item'>{{ 'Name'|trans }} <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' /></li>
+            <li class='list-inline-item' style='color:#{{ status.color }}'>{{ 'Color'|trans }} <input class='colorpicker form-control' type='text' maxlength='6' id='statusColor_{{ status.category_id }}' value='{{ status.color }}' />
             </li>
-            <li class='list-inline-item'><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> {{ 'Allow timestamp'|trans }}</li>
-            <li class='list-inline-item'><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} />
-            {{ 'Default status'|trans }}</li>
+            <li class='list-inline-item'><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> <label for='statusTimestamp_{{ status.category_id }}'>{{ 'Allow timestamp'|trans }}</label></li>
+            <li class='list-inline-item'><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} /> <label for='statusDefault_{{ status.category_id }}'>{{ 'Default status'|trans }}</label></li>
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button statusSave'>{{ 'Save'|trans }}</button></li>
 
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
@@ -243,9 +242,15 @@
   <div class='box'>
     <h3>{{ 'Add a new type of item'|trans }}</h3>
     <hr>
-    <ul class='list-inline'>
-      <li class='list-inline-item'>{{ 'Name'|trans }} <input type='text' id='itemsTypesName' /></li>
-      <li class='list-inline-item'>{{ 'Color'|trans }} <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li>
+    <ul class='list-inline form-group'>
+      <li class='list-inline-item'>
+        <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
+        <input type='text' class='form-control' id='itemsTypesName' />
+      </li>
+      <li class='list-inline-item'>
+        <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
+        <input class='colorpicker form-control' type='text' id='itemsTypesColor' value='29AEB9' />
+      </li>
       <li class='list-inline-item'><input type='checkbox' id='itemsTypesBookable'> <label for='itemsTypesBookable'>{{ 'Bookable'|trans }} {{ 'in the %sscheduler%s'|trans|format("<a href='team.php'>", "</a>")|raw }}</label></li>
     </ul>
     <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
@@ -257,15 +262,18 @@
   <div class='box'>
     <h3>{{ 'Database Items Types'|trans }}</h3>
     <hr>
-    <ul class='list-group'>
+    <ul class='list-group form-group'>
       {% for itemType in itemsTypesArr %}
         <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
             <li class='list-inline-item'>
-              {{ 'Name'|trans }} <input type='text' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
+              <label for='itemsTypesName_{{ itemType.category_id }}'>{{ 'Name'|trans }}</label>
+              <input type='text' class='form-control' id='itemsTypesName_{{ itemType.category_id }}' value='{{ itemType.category }}' />
             </li>
-            <li class='list-inline-item' style='color:#{{ itemType.color }}'>
-              {{ 'Color'|trans }} <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_{{ itemType.category_id }}' value='{{ itemType.color }}' />
+
+            <li class='list-inline-item'>
+              <label style='color:#{{ itemType.color }}' for='itemsTypesColor_{{ itemType.category_id }}'>{{ 'Color'|trans }}</label>
+              <input class='colorpicker form-control' type='text' id='itemsTypesColor_{{ itemType.category_id }}' value='{{ itemType.color }}' />
             </li>
             <li class='list-inline-item'>
               <input id='itemsTypesBookable_{{ itemType.category_id }}' type='checkbox' {{ itemType.bookable ? " checked" }} />
@@ -326,17 +334,17 @@
       {{ "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv WITH COMMA (,) AS SEPARATOR. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."|trans }}
     </p>
 
-    <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
-      <label class='block' for='target_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
-      <select class='clean-form col-3-form' id='target_csv' autocomplete='off' name='target'>
+    <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+      <label for='target_csv'>{{ '1. Select a type of item to import to:'|trans }}</label>
+      <select class='form-control col-md-4' id='target_csv' autocomplete='off' name='target'>
         <option selected disabled>--------</option>
         {% for itemsType in itemsTypesArr %}
         <option value='{{ itemsType.category_id }}' name='category'>{{ itemsType.category }}</option>
         {% endfor %}
       </select>
 
-      <label class='block' for='visibility_csv'>{{ '2. Select a visibility:'|trans }}</label>
-      <select class='clean-form col-3-form' id='visibility_csv' autocomplete='off' name='visibility'>
+      <label for='visibility_csv'>{{ '2. Select a visibility:'|trans }}</label>
+      <select class='form-control col-md-4' id='visibility_csv' autocomplete='off' name='visibility'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
           {{ 'team' == key ? ' selected' }}
@@ -345,7 +353,7 @@
       </select>
 
       {{ App.Csrf.getHiddenInput|raw }}
-      <label class='block' for='csvuploader'>{{ '3. Select a CSV file to import:'|trans }}</label>
+      <label for='csvuploader' class='d-block'>{{ '3. Select a CSV file to import:'|trans }}</label>
       <input id='csvuploader' name='file' type='file' accept='.csv' />
       <input name='type' type='hidden' value='csv' />
       <div class='submitButtonDiv'>
@@ -358,27 +366,25 @@
     <h3>{{ 'Import a ZIP File'|trans }}</h3>
     <hr>
     <p>
-      {{ "Import a .elabftw.zip archive."|trans }}
-      <br><span class='font-weight-bold'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
+      {{ "Import a .elabftw.zip archive."|trans }} <span class='font-weight-bold'>{{ 'You should make a backup of your database before importing thousands of items!'|trans }}</span>
     </p>
 
-    <form enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
-
-      <label class='block' for='target_zip'>{{ '1. Select where to import:'|trans }}</label>
-      <select class='clean-form col-3-form' id='target_zip' autocomplete='off' name='target'>
+    <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
+      <label for='target_zip'>{{ '1. Select where to import:'|trans }}</label>
+      <select class='form-control col-md-4' id='target_zip' autocomplete='off' name='target'>
         <option selected disabled>-------</option>
-        <option class='disabled-input' disabled>Import in database</option>
+        <option disabled>Import in database</option>
         {% for itemsType in itemsTypesArr %}
           <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
         {% endfor %}
-        <option class='disabled-input' disabled>Import in experiments</option>
+        <option disabled>Import in experiments</option>
         {% for user in allTeamUsersArr %}
           <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>
         {% endfor %}
       </select>
 
-      <label class='block' for='visibility_zip'>{{ '2. Select a visibility:'|trans }}</label>
-      <select class='clean-form col-3-form' id='visibility_zip' autocomplete='off' name='visibility'>
+      <label for='visibility_zip'>{{ '2. Select a visibility:'|trans }}</label>
+      <select class='form-control col-md-4' id='visibility_zip' autocomplete='off' name='visibility'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
           {{ 'team' == key ? ' selected' }}
@@ -387,7 +393,7 @@
       </select>
 
       {{ App.Csrf.getHiddenInput|raw }}
-      <label class='block' for='zipuploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
+      <label class='d-block' for='zipuploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
       <input id='zipuploader' name='file' type='file' accept='.elabftw.zip' />
       <input name='type' type='hidden' value='zip' />
 

@@ -36,7 +36,7 @@
                     <!-- FIRSTNAME -->
                     <li class='list-inline-item'>
                       {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
-                      <label class='block' for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
+                      <label for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
                       <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
                     </li>
 

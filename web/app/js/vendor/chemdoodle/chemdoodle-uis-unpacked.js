@@ -20721,28 +20721,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
       // Contact us for permission to remove it,
       // http://www.ichemlabs.com/contact-us
       // ELABFTW modif
-      // original line:
-      //sb.push('<div width="100%">Or paste <em>MOLFile</em> or <em>ChemDoodle JSON</em> text and press the <strong>Load</strong> button.<br><br><center><a href="http://www.chemdoodle.com" target="_blank">Where do I get MOLFiles or ChemDoodle JSON?</a></center><br></div>');
-      // new lines:
-      function getUploadedMolFilesList() {
-        var molFiles = [];
-        var allLinks = document.getElementsByTagName('a');
-        for (var ii = 0; ii < allLinks.length; ii++) {
-          if (allLinks[ii].innerHTML.match('.mol')) {
-            molFiles.push([allLinks[ii].innerHTML, allLinks[ii].attributes.href.value]);
-          }
-        }
-        if (molFiles.length > 0) {
-          var listHtml = '<ul>';
-          for (var iy = 0; iy < molFiles.length; iy++) {
-            listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="' + molFiles[iy][1] + '">' + molFiles[iy][0] + '</li>';
-          }
-          return listHtml + '</ul>';
-        } else {
-          return 'No mol files found.';
-        }
-      }
-      sb.push('<div width="100%">Select from uploaded files:<br>' + getUploadedMolFilesList() + '</div>');
+      sb.push('<div width="100%"><button class="button getMolButton">Select from uploaded files</button><div class="getMolDiv"></div></div>');
       // END ELABFTW MODIF
       sb.push('<div width="100%">Or paste <em>MOLFile</em> or <em>ChemDoodle JSON</em> text and press the <strong>Load</strong> button.<br><br><center><a href="http://www.chemdoodle.com" target="_blank">Where do I get MOLFiles or ChemDoodle JSON?</a></center><br></div>');
       sb.push('<textarea rows="12" id="'+sketcher.id+'_open_text" style="width:100%;"></textarea>');

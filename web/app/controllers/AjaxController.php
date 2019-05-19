@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,6 +56,14 @@ try {
     if ($Request->request->has('destroyApiKey')) {
         $ApiKeys = new ApiKeys($App->Users);
         $ApiKeys->destroy((int) $Request->request->get('id'));
+    }
+
+    // GET UPLOADED FILES
+    if ($Request->query->has('getFiles')) {
+        $Experiments = new Experiments($App->Users, (int) $Request->query->get('id'));
+        $Experiments->canOrExplode('read');
+        $uploads = $Experiments->Uploads->readAll();
+        $Response->setData($uploads);
     }
 
 } catch (ImproperActionException $e) {

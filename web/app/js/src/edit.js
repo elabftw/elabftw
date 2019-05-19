@@ -97,13 +97,42 @@
     // END DATA RECOVERY
     ////////////////////
 
+    // GET MOL FILES
+    function getListFromMolFiles() {
+      let mols = [];
+      $.get('app/controllers/AjaxController.php', {
+        id: id,
+        getFiles: true
+      }).done(function(uploadedFiles) {
+        uploadedFiles.forEach(function(upload) {
+          if (upload.real_name.split('.').pop() === 'mol') {
+            mols.push([upload.real_name, upload.long_name]);
+          }
+        });
+        if (mols.length === 0) {
+          notif({res: false, msg: 'No mol files found.'});
+          return;
+        }
+        let listHtml = '<ul class="text-left">';
+        mols.forEach(function(mol, index) {
+          listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
+        });
+        $('.getMolButton').text('Refresh list');
+        $('.getMolDiv').html(listHtml + '</ul>');
+      });
+    }
+
+    $(document).on('click', '.getMolButton', function() {
+      getListFromMolFiles();
+    });
+
     // Load the content of a mol file from the list in the mol editor
     $(document).on('click', '.loadableMolLink', function() {
       $.get($(this).data('target')).done(function(molContent) {
         $('#sketcher_open_text').val(molContent);
       });
     });
-
+    // END GET MOL FILES
 
     class Entity {
 

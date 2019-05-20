@@ -50,7 +50,7 @@ class TeamGroups implements CrudInterface
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (\mb_strlen($name) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (%d characters minimum)'), 2));
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->Db->prepare($sql);

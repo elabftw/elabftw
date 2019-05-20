@@ -41,7 +41,7 @@ class Status extends AbstractCategory
      * Create a new status
      *
      * @param string $name
-     * @param string $color
+     * @param string $color #29AEB9
      * @param int $isTimestampable
      * @param int $default
      * @param int|null $team
@@ -83,10 +83,10 @@ class Status extends AbstractCategory
      */
     public function createDefault(int $team): bool
     {
-        return $this->create('Running', '29AEB9', 0, 1, $team) &&
-            $this->create('Success', '54AA08', 1, 0, $team) &&
-            $this->create('Need to be redone', 'C0C0C0', 1, 0, $team) &&
-            $this->create('Fail', 'C24F3D', 1, 0, $team);
+        return $this->create('Running', '#29AEB9', 0, 1, $team) &&
+            $this->create('Success', '#54AA08', 1, 0, $team) &&
+            $this->create('Need to be redone', '#C0C0C0', 1, 0, $team) &&
+            $this->create('Fail', '#C24F3D', 1, 0, $team);
     }
 
     /**

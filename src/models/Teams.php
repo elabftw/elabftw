@@ -118,7 +118,7 @@ class Teams implements CrudInterface
         $ItemsTypes = new ItemsTypes($this->Users);
         $ItemsTypes->create(
             'Edit me',
-            '32a100',
+            '#32a100',
             0,
             '<p>Go to the admin panel to edit/add more items types!</p>',
             $newId

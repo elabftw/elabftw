@@ -88,7 +88,7 @@ try {
 
     // DELETE TAG
     if ($Request->request->has('destroyTag') && $App->Session->get('is_admin')) {
-        if (Tools::checkId($Request->request->get('tag_id')) === false) {
+        if (Tools::checkId((int) $Request->request->get('tag_id')) === false) {
             throw new IllegalActionException('Bad id value');
         }
         $Tags->destroy((int) $Request->request->get('tag_id'));

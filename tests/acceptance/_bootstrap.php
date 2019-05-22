@@ -1,5 +1,15 @@
 <?php
-// Here you can initialize variables that will be available to your tests
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/**
+ * Login to the test instance
+ */
 function testLogin($I)
 {
     // if snapshot exists -> skip login

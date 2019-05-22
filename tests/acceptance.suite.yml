@@ -1,5 +1,11 @@
-# config file for codeception acceptance tests
-
+## config file for codeception acceptance tests
+#
+# @author Nicolas CARPi <nicolas.carpi@curie.fr>
+# @copyright 2012 Nicolas CARPi
+# @see https://www.elabftw.net Official website
+# @license AGPL-3.0
+# @package elabftw
+##
 class_name: AcceptanceTester
 modules:
     enabled:

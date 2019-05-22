@@ -61,9 +61,11 @@ gpg --search-keys "Nicolas CARPi"
 
 # Support
 
-Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.
+Free support is available through [GitHub issues](https://github.com/elabftw/elabftw/issues/new). Please open an issue if you have a problem, want to make a suggestion, ask a question or discuss a feature.
 
 You can also join the [chat room on Gitter](https://gitter.im/elabftw/elabftw).
+
+Pro support, hosting or commercial license is available from [Deltablot](https://www.deltablot.com/elabftw).
 
 [Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
 

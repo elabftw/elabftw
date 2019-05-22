@@ -6179,9 +6179,9 @@ tinymce-mention@4.0.2:
     jquery ">=1.8.3"
 
 tinymce@5.0.*:
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.5.tgz#4e46cb61a095605db1ed457253447f2ec28466b9"
-  integrity sha512-3cE7gfufXlbFBz4TMV/nfJtMM+a8J7K5Jy8keEU+T5QIRXcykF5/j7Dd32OXKQczqijy11+ffqM5tnvAbHzo/A==
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.6.tgz#a31972acf3fe4c4440229d3223b17b965a302258"
+  integrity sha512-9/pcrO8awssCrbfSeNzlt2talFO4ZBCxiwWFLTrSOy5kJI4gXKGKHsZzstoyt7cbwbT1cUjLlUiDqW8IgmL6JA==
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

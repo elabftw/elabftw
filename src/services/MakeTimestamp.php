@@ -24,6 +24,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Exception\RequestException;
 use PDO;
 use Psr\Http\Message\StreamInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -82,7 +84,6 @@ class MakeTimestamp extends AbstractMake
         /** set the name of the pdf (elabid + -timestamped.pdf) */
         $this->pdfRealName = $this->getFileName();
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
-        $this->generatePdf();
     }
 
     /**
@@ -141,19 +142,22 @@ class MakeTimestamp extends AbstractMake
     }
 
     /**
-     * Run OpenSSL via exec() with a provided command
-     * @param string $cmd
-     * @return array<string,null|array|integer>
+     * Run a process
+     *
+     * @param array $args arguments including the executable
+     * @return string
      */
-    private function runOpenSSL($cmd): array
+    private function runProcess(array $args): string
     {
-        $retarray = array();
-        \exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
+        $Process = new Process($args);
+        $Process->run();
 
-        return array(
-            "retarray" => $retarray,
-            "retcode" => $retcode
-        );
+        // executes after the command finishes
+        if (!$Process->isSuccessful()) {
+            throw new ProcessFailedException($Process);
+        }
+
+        return $Process->getOutput();
     }
 
     /**
@@ -184,20 +188,18 @@ class MakeTimestamp extends AbstractMake
         // we don't keep this file around
         $this->trash[] = $this->requestfilePath;
 
-        $cmd = "ts -query -data " . escapeshellarg($this->pdfPath) . " -cert -" .
-            $this->stampParams['hash'] . " -no_nonce -out " . escapeshellarg($this->requestfilePath);
-        $opensslResult = $this->runOpenSSL($cmd);
-        $retarray = $opensslResult['retarray'];
-
-        if ($opensslResult['retcode'] !== 0) {
-            throw new ImproperActionException("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
-        }
-
-        if ($retarray[0] && stripos($retarray[0], "openssl:Error") !== false) {
-            throw new ImproperActionException(
-                "There was an error with OpenSSL. Is version >= 0.99 installed?: " . implode(", ", $retarray)
-            );
-        }
+        $this->runProcess(array(
+            'openssl',
+            'ts',
+            '-query',
+            '-data',
+            $this->pdfPath,
+            '-cert',
+            '-' . $this->stampParams['hash'],
+            '-no_nonce',
+            '-out',
+            $this->requestfilePath
+        ));
     }
 
     /**
@@ -208,21 +210,18 @@ class MakeTimestamp extends AbstractMake
      */
     private function setResponseTime(): void
     {
-        if (!is_readable($this->responsefilePath)) {
+        if (!\is_readable($this->responsefilePath)) {
             throw new ImproperActionException('The token is not readable.');
         }
 
-        $cmd = "ts -reply -in " . escapeshellarg($this->responsefilePath) . " -text";
-        $opensslResult = $this->runOpenSSL($cmd);
-        $retarray = $opensslResult['retarray'];
-
-        if ($opensslResult['retcode'] !== 0) {
-            throw new ImproperActionException("The reply failed: " . implode(", ", $retarray));
-        }
-
-        if (!is_array($retarray)) {
-            throw new ImproperActionException('$retarray must be an array.');
-        }
+        $output = $this->runProcess(array(
+            'openssl',
+            'ts',
+            '-reply',
+            '-in',
+            $this->responsefilePath,
+            '-text'
+        ));
 
         /*
          * Format of answer:
@@ -248,14 +247,10 @@ class MakeTimestamp extends AbstractMake
          *   Extensions:
          */
         $matches = array();
-
-        // loop each line to find the Time stamp line
-        foreach ($retarray as $retline) {
-            if (preg_match("~^Time\sstamp\:\s(.*)~", $retline, $matches)) {
-                // try to automatically convert time to unique unix timestamp
-                // and then convert it to proper format
+        $lines = explode("\n", $output);
+        foreach ($lines as $line) {
+            if (preg_match("~^Time\sstamp\:\s(.*)~", $line, $matches)) {
                 $this->responseTime = date("Y-m-d H:i:s", strtotime($matches[1]));
-
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
                 // currently this accounts for the format used presumably by Universign.eu
                 if (!$this->responseTime) {
@@ -268,7 +263,6 @@ class MakeTimestamp extends AbstractMake
                         throw new ImproperActionException('Could not get response time!');
                     }
                 }
-                break;
             }
         }
     }
@@ -378,40 +372,26 @@ class MakeTimestamp extends AbstractMake
     private function validate(): bool
     {
         $elabRoot = \dirname(__DIR__, 2);
-        $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg($elabRoot . '/' . $this->stampParams['stampcert']);
 
-        $opensslResult = $this->runOpenSSL($cmd);
-        $retarray = $opensslResult['retarray'];
-
-        /*
-         * just 2 "normal" cases:
-         *  1) Everything okay -> retcode 0 + retarray[0] == "Verification: OK"
-         *  2) Hash is wrong -> retcode 1 + strpos(retarray[somewhere], "message imprint mismatch") !== false
-         *
-         * every other case (Certificate not found / invalid / openssl is not installed / ts command not known)
-         * are being handled the same way -> retcode 1 + any retarray NOT containing "message imprint mismatch"
-         */
-        if (!is_array($retarray)) {
-            throw new ImproperActionException('$retarray must be an array.');
+        try {
+            $output = $this->runProcess(array(
+                'openssl',
+                'ts',
+                '-verify',
+                '-data',
+                $this->pdfPath,
+                '-in',
+                $this->responsefilePath,
+                '-CAfile',
+                $elabRoot . '/' . $this->stampParams['stampcert']
+            ));
+        } catch (ProcessFailedException $e) {
+            // we are facing the OpenSSL bug discussed here:
+            // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
+            return $this->validateWithJava();
         }
 
-        if ($opensslResult['retcode'] === 0 && (strtolower(trim($retarray[0])) === "verification: ok" ||
-            strtolower(trim($retarray[1])) === "verification: ok")) {
-            return true;
-        }
-
-        foreach ($retarray as $retline) {
-            if (stripos($retline, "message imprint mismatch") !== false) {
-                return false;
-            }
-            if (stripos($retline, "TS_CHECK_SIGNING_CERTS") || stripos($retline, "FAILED")) {
-                // we are facing the OpenSSL bug discussed here:
-                // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
-                return $this->validateWithJava();
-            }
-        }
-
-        throw new ImproperActionException("System command failed: " . implode(", ", $retarray));
+        return true;
     }
 
     /**
@@ -502,49 +482,50 @@ class MakeTimestamp extends AbstractMake
      */
     public function decodeAsn1($token): string
     {
-        $cmd = "asn1parse -inform DER -in " . escapeshellarg($this->getUploadsPath() . $token);
-
-        $opensslResult = $this->runOpenSSL($cmd);
-        $retarray = $opensslResult['retarray'];
-
-        if ($opensslResult['retcode'] !== 0) {
-            throw new ImproperActionException("Error decoding ASN1 file: " . implode(", ", $retarray));
-        }
+        $output = $this->runProcess(array(
+            'openssl',
+            'asn1parse',
+            '-inform',
+            'DER',
+            '-in',
+            $this->getUploadsPath() . $token
+        ));
+        $lines = explode("\n", $output);
 
         // now let's parse this
         $out = "<br><hr>";
 
-        $statusArr = explode(":", $retarray[4]);
+        $statusArr = explode(":", $lines[4]);
         $status = $statusArr[3];
 
-        $versionArr = explode(":", $retarray[111]);
+        $versionArr = explode(":", $lines[111]);
         $version = $versionArr[3];
 
-        $oidArr = explode(":", $retarray[148]);
+        $oidArr = explode(":", $lines[148]);
         $oid = $oidArr[3];
 
-        $hashArr = explode(":", $retarray[12]);
+        $hashArr = explode(":", $lines[12]);
         $hash = $hashArr[3];
 
-        $messageArr = explode(":", $retarray[17]);
+        $messageArr = explode(":", $lines[17]);
         $message = $messageArr[3];
 
-        $utctimeArr = explode(":", $retarray[142]);
+        $utctimeArr = explode(":", $lines[142]);
         $utctime = rtrim($utctimeArr[3], 'Z');
         $timestamp = \DateTime::createFromFormat('ymdHis', $utctime);
         if ($timestamp === false) {
             return 'Error: Could not parse timestamp!';
         }
 
-        $countryArr = explode(":", $retarray[31]);
+        $countryArr = explode(":", $lines[31]);
         $country = $countryArr[3];
 
-        $tsaArr = explode(":", $retarray[121]);
+        $tsaArr = explode(":", $lines[121]);
         $tsa = $tsaArr[3];
 
-        $tsaArr = explode(":", $retarray[39]);
+        $tsaArr = explode(":", $lines[39]);
         $tsa .= ", " . $tsaArr[3];
-        $tsaArr = explode(":", $retarray[43]);
+        $tsaArr = explode(":", $lines[43]);
         $tsa .= ", " . $tsaArr[3];
 
         $out .= "<strong>Status</strong>: " . $status;
@@ -574,7 +555,10 @@ class MakeTimestamp extends AbstractMake
             throw new ImproperActionException('Timestamping is not allowed for this experiment.');
         }
 
-        // first we create the request file
+        // generate the pdf of the experiment that will be timestamped
+        $this->generatePdf();
+
+        // create the request file that will be sent to the TSA
         $this->createRequestfile();
 
         // get an answer from the TSA and

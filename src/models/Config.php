@@ -179,7 +179,7 @@ class Config
             ('stamppass', ''),
             ('stampshare', '1'),
             ('stampprovider', 'http://zeitstempel.dfn.de/'),
-            ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
+            ('stampcert', 'src/dfn-cert/pki.dfn.pem'),
             ('stamphash', 'sha256'),
             ('saml_toggle', '0'),
             ('saml_debug', '0'),

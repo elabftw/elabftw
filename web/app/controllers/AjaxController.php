@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
 use Exception;
@@ -60,9 +61,13 @@ try {
 
     // GET UPLOADED FILES
     if ($Request->query->has('getFiles')) {
-        $Experiments = new Experiments($App->Users, (int) $Request->query->get('id'));
-        $Experiments->canOrExplode('read');
-        $uploads = $Experiments->Uploads->readAll();
+        if ($Request->query->get('type') === 'experiments') {
+            $Entity = new Experiments($App->Users, (int) $Request->query->get('id'));
+        } else {
+            $Entity = new Database($App->Users, (int) $Request->query->get('id'));
+        }
+        $Entity->canOrExplode('read');
+        $uploads = $Entity->Uploads->readAll();
         $Response->setData($uploads);
     }
 

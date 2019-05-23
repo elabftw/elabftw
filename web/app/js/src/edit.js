@@ -101,8 +101,9 @@
     function getListFromMolFiles() {
       let mols = [];
       $.get('app/controllers/AjaxController.php', {
+        getFiles: true,
+        type: type,
         id: id,
-        getFiles: true
       }).done(function(uploadedFiles) {
         uploadedFiles.forEach(function(upload) {
           if (upload.real_name.split('.').pop() === 'mol') {

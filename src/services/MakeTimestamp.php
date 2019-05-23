@@ -371,7 +371,11 @@ class MakeTimestamp extends AbstractMake
      */
     private function validate(): bool
     {
-        $elabRoot = \dirname(__DIR__, 2);
+        $certPath = \dirname(__DIR__, 2) . '/' . $this->stampParams['stampcert'];
+
+        if (!\is_readable($certPath)) {
+            throw new ImproperActionException('Cannot read the certificate file!');
+        }
 
         try {
             $output = $this->runProcess(array(
@@ -383,7 +387,7 @@ class MakeTimestamp extends AbstractMake
                 '-in',
                 $this->responsefilePath,
                 '-CAfile',
-                $elabRoot . '/' . $this->stampParams['stampcert']
+                $certPath
             ));
         } catch (ProcessFailedException $e) {
             // we are facing the OpenSSL bug discussed here:

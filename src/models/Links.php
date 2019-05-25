@@ -125,7 +125,6 @@ class Links implements CrudInterface
      */
     public function destroy(int $id): void
     {
-        $this->Entity->setId($id);
         $this->Entity->canOrExplode('write');
 
         $sql = "DELETE FROM experiments_links WHERE id= :id";

@@ -3315,7 +3315,7 @@ jquery-ui-dist@1.12.*:
   resolved "https://registry.yarnpkg.com/jquery-ui-dist/-/jquery-ui-dist-1.12.1.tgz#5c0815d3cc6f90ff5faaf5b268a6e23b4ca904fa"
   integrity sha1-XAgV08xvkP9fqvWyaKbiO0ypBPo=
 
-jquery@3.4.*, jquery@>=1.8.3, jquery@>=3.4.0:
+jquery@3.4.*, jquery@>=3.4.0:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
   integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
@@ -6171,13 +6171,6 @@ tiny-lr@^1.1.1:
     livereload-js "^2.3.0"
     object-assign "^4.1.0"
     qs "^6.4.0"
-
-tinymce-mention@4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/tinymce-mention/-/tinymce-mention-4.0.2.tgz#9c95f71e2858034c9cea95ce7a7157bdd901d5e9"
-  integrity sha1-nJX3HihYA0yc6pXOenFXvdkB1ek=
-  dependencies:
-    jquery ">=1.8.3"
 
 tinymce@5.0.*:
   version "5.0.6"

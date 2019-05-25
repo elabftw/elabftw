@@ -125,12 +125,18 @@ class MakeTimestamp extends AbstractMake
         $login = $config['stamplogin'];
 
         if (($config['stamppass'] ?? "") !== '') {
+
             $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } else {
             $password = '';
         }
         $provider = $config['stampprovider'];
         $cert = $config['stampcert'];
+        // fix for previous value of stampcert that was not updated when the cert was moved
+        if ($cert === 'app/dfn-cert/pki.dfn.pem') {
+            $cert = 'src/dfn-cert/pki.dfn.pem';
+            $this->Config->update(array('stampcert' => $cert));
+        }
         $hash = $config['stamphash'];
 
         $allowedAlgos = array('sha256', 'sha384', 'sha512');

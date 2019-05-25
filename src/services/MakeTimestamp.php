@@ -22,6 +22,8 @@ use Elabftw\Models\Teams;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Exception\RequestException;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
 use PDO;
 use Psr\Http\Message\StreamInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -150,31 +152,9 @@ class MakeTimestamp extends AbstractMake
     private function runProcess(array $args): string
     {
         $Process = new Process($args);
-        $Process->run();
-
-        // executes after the command finishes
-        if (!$Process->isSuccessful()) {
-            throw new ProcessFailedException($Process);
-        }
+        $Process->mustRun();
 
         return $Process->getOutput();
-    }
-
-    /**
-     * Run a shell command
-     *
-     * @param string $cmd
-     * @return array<string,null|array|integer>
-     */
-    private function runSh($cmd): array
-    {
-        $retarray = array();
-        exec("sh -c \"" . $cmd . "\" 2>&1", $retarray, $retcode);
-
-        return array(
-            "retarray" => $retarray,
-            "retcode" => $retcode
-        );
     }
 
     /**
@@ -405,8 +385,11 @@ class MakeTimestamp extends AbstractMake
      */
     private function isJavaInstalled(): bool
     {
-        $res = $this->runSh("java");
-        return (bool) stripos($res['retarray'][0], 'class');
+        try {
+            $this->runProcess(array('which', 'java'));
+        } catch (ProcessFailedException $e) {
+            throw new ImproperActionException("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
+        }
     }
 
     /**
@@ -418,20 +401,28 @@ class MakeTimestamp extends AbstractMake
      */
     private function validateWithJava(): bool
     {
-        if (!$this->isJavaInstalled()) {
-            throw new ImproperActionException("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
+        $this->isJavaInstalled();
+
+        chdir(\dirname(__DIR__, 2) . '/src/dfn-cert/timestampverifier/');
+        try {
+            $output = $this->runProcess(array(
+                './verify.sh',
+                $this->requestfilePath,
+                $this->responsefilePath
+            ));
+        } catch (ProcessFailedException $e) {
+
+            $Log = new Logger('elabftw');
+            $Log->pushHandler(new ErrorLogHandler());
+            $Log->error('', array(array('userid' => $this->Entity->Users->userData['userid']), array('Error', $e)));
+            $msg = 'Could not validate the timestamp with java failsafe method. Maybe your java version is too old? Please report this bug on GitHub.';
+            throw new ImproperActionException($msg);
         }
 
-        $elabRoot = \dirname(__DIR__, 2);
-        chdir($elabRoot . '/src/dfn-cert/timestampverifier/');
-        $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
-        $javaRes = $this->runSh($cmd);
-        if (stripos($javaRes['retarray'][0], 'matches')) {
+        if (stripos($output, 'matches')) {
             return true;
         }
-        $msg = 'Could not validate the timestamp with java failsafe method. Maybe your java version is too old? Please report this bug on GitHub. Error is: ';
-        $msg .= $javaRes['retarray'][0];
-        throw new ImproperActionException($msg);
+        return false;
     }
 
     /**

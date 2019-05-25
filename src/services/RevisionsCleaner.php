@@ -51,7 +51,7 @@ class RevisionsCleaner implements CleanerInterface
     /**
      * Do the purge
      *
-     * @return int number of removed rows
+     * @return void
      */
     public function cleanup()
     {

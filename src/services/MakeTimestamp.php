@@ -63,8 +63,8 @@ class MakeTimestamp extends AbstractMake
     /** @var string $responsefilePath where we store the asn1 token */
     private $responsefilePath = '';
 
-    /** @var string $responseTime the time of the timestamp */
-    private $responseTime;
+    /** @var Experiments $Entity instance of Experiments */
+    protected $Entity;
 
     /**
      * Pdf is generated on instanciation and after you need to call timestamp()
@@ -86,6 +86,8 @@ class MakeTimestamp extends AbstractMake
         /** set the name of the pdf (elabid + -timestamped.pdf) */
         $this->pdfRealName = $this->getFileName();
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
+        // we don't keep this file around
+        $this->trash[] = $this->requestfilePath;
     }
 
     /**
@@ -165,8 +167,6 @@ class MakeTimestamp extends AbstractMake
      */
     private function createRequestfile(): void
     {
-        // we don't keep this file around
-        $this->trash[] = $this->requestfilePath;
 
         $this->runProcess(array(
             'openssl',
@@ -186,9 +186,9 @@ class MakeTimestamp extends AbstractMake
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
      * @throws ImproperActionException if unhappy
-     * @return void
+     * @return string
      */
-    private function setResponseTime(): void
+    private function getResponseTime(): string
     {
         if (!\is_readable($this->responsefilePath)) {
             throw new ImproperActionException('The token is not readable.');
@@ -230,21 +230,22 @@ class MakeTimestamp extends AbstractMake
         $lines = explode("\n", $output);
         foreach ($lines as $line) {
             if (preg_match("~^Time\sstamp\:\s(.*)~", $line, $matches)) {
-                $this->responseTime = date("Y-m-d H:i:s", strtotime($matches[1]));
+                $responseTime = date("Y-m-d H:i:s", strtotime($matches[1]));
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
                 // currently this accounts for the format used presumably by Universign.eu
-                if (!$this->responseTime) {
+                if (!$responseTime) {
                     $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
-                    if ($date) {
+                    if ($date instanceof DateTime) {
                         // Return formatted time as this is what we will store in the database.
                         // PHP will take care of correct timezone conversions (if configured correctly)
-                        $this->responseTime = date("Y-m-d H:i:s", $date->getTimestamp());
-                    } else {
-                        throw new ImproperActionException('Could not get response time!');
+                        return date("Y-m-d H:i:s", $date->getTimestamp());
                     }
+                } else {
+                    return $responseTime;
                 }
             }
         }
+        throw new ImproperActionException('Could not get response time!');
     }
 
     /**
@@ -381,9 +382,9 @@ class MakeTimestamp extends AbstractMake
     /**
      * Check if we have java
      *
-     * @return bool
+     * @return void
      */
-    private function isJavaInstalled(): bool
+    private function isJavaInstalled(): void
     {
         try {
             $this->runProcess(array('which', 'java'));
@@ -560,14 +561,11 @@ class MakeTimestamp extends AbstractMake
         // save the token to .asn1 file
         $this->saveToken($this->postData()->getBody());
 
-        // set the responseTime
-        $this->setResponseTime();
-
         // validate everything so we are sure it is OK
         $this->validate();
 
         // SQL
-        $this->Entity->updateTimestamp($this->responseTime, $this->responsefilePath);
+        $this->Entity->updateTimestamp($this->getResponseTime(), $this->responsefilePath);
         $this->sqlInsertPdf();
     }
 

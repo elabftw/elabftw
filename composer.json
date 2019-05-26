@@ -26,7 +26,8 @@
     "ext-json": "*",
     "league/csv": "^9.2",
     "mpdf/qrcode": "^1.0",
-    "symfony/console": "^4.2"
+    "symfony/console": "^4.2",
+    "symfony/process": "^4.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

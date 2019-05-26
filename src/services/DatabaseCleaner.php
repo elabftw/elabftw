@@ -77,7 +77,7 @@ class DatabaseCleaner implements CleanerInterface
     /**
      * Check all the things
      *
-     * @return int number of orphan files
+     * @return void
      */
     public function cleanup()
     {

@@ -12,3 +12,4 @@ class=de.dfncert.timestampverifier.TimeStampVerifier
 libs=libs/bcpkix-jdk15on-152.jar:libs/bcprov-jdk15on-152.jar
 
 java -cp $libs:. $class "$request" "$response" "$chain" "$root" "$crl"
+exit 0

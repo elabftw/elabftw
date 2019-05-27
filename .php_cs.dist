@@ -49,6 +49,7 @@ return PhpCsFixer\Config::create()
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->name('/\.php|\.php.dist$/')
+            ->notPath('web/install/index.php')
             ->in(['bin', 'src', 'tests', 'web'])
     )
 ;

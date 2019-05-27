@@ -30,7 +30,6 @@ $errflag = false;
 // we disable errors to avoid having notice stopping the redirect
 error_reporting(E_ERROR);
 
-
 try {
     // create Request object
     $Request = Request::createFromGlobals();
@@ -240,7 +239,7 @@ try {
     </section>
 
     <script src='../app/js/install.min.js'></script>
-    <?php
+<?php
 } catch (ImproperActionException | FilesystemErrorException | Exception $e) {
         echo Tools::displayMessage($e->getMessage(), 'ko', false);
         echo '</section></section>';

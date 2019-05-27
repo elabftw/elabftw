@@ -48,9 +48,6 @@ jobs:
         name: Install JS dependencies
         command: yarn install
     - run:
-        name: Install PHPCS
-        command: composer global require "squizlabs/php_codesniffer=*"
-    - run:
         name: Build all
         command: yarn run buildall
         no_output_timeout: 20m
@@ -73,10 +70,6 @@ jobs:
     - run:
         name: Run Javascript linter
         command: yarn run jslint
-    # Don't use the yarn run phpcs command as it uses a phar directly in $PATH
-    - run:
-        name: Run PHP CodeSniffer
-        command: ~/.composer/vendor/bin/phpcs -n --standard=PSR1,PSR2 -d memory_limit=1G --exclude=Squiz.WhiteSpace.ControlStructureSpacing src web/*.php web/app/controllers web/install
     - run:
         name: Run unit tests
         command: yarn run unit

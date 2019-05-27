@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Tools;
@@ -67,6 +67,5 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $this->Database->toggleLock();
         $item = $this->Database->read();
         $this->assertFalse((bool) $item['locked']);
-
     }
 }

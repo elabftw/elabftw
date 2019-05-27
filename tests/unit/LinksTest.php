@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Elabftw\Models;
 
 class LinksTest extends \PHPUnit\Framework\TestCase

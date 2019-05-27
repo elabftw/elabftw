@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\IllegalActionException;
@@ -24,7 +24,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->create('Group Name');
         $all = $this->TeamGroups->readAll();
         $last = array_pop($all);
-        $id = $last['id'];
+        $id = (int) $last['id'];
         $this->assertEquals('Group Name', $this->TeamGroups->readName($id));
     }
     public function testUpdate()

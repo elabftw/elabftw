@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Tools;
@@ -21,8 +21,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $this->Templates = new Templates($this->Users);
-        $this->Templates->create('my template', 'is so cool', '1');
-        $new = $this->Experiments->create('1');
+        $this->Templates->create('my template', 'is so cool', 1);
+        $new = $this->Experiments->create(1);
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
@@ -36,7 +36,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
-        $this->Experiments->setId('1');
+        $this->Experiments->setId(1);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read();
         $this->assertTrue(is_array($experiment));
@@ -69,7 +69,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->updateVisibility('organization');
         $this->Experiments->updateVisibility('team');
         $this->Experiments->updateVisibility('user');
-        $this->Experiments->updateVisibility(1);
     }
 
     public function testUpdateCategory()

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 session_start();
 if (\getenv('CIRCLE_BUILD_URL')) {
     require_once 'tests/config-circleci.php';

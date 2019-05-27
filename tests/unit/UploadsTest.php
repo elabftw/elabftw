@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Elabftw\Models;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase

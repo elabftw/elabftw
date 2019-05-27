@@ -36,9 +36,8 @@ try {
     $renderArr = array(
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
-        'templatesArr' => $templatesArr
+        'templatesArr' => $templatesArr,
     );
-
 } catch (Exception $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());

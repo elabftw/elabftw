@@ -14,9 +14,9 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Templates;
-use Elabftw\Models\Status;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Status;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -29,7 +29,7 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new JsonResponse();
 $Response->setData(array(
     'res' => true,
-    'msg' => _('Saved')
+    'msg' => _('Saved'),
 ));
 
 try {
@@ -70,7 +70,7 @@ try {
         $Entity->canOrExplode('read');
         $Response->setData(array(
             'res' => true,
-            'msg' => Tools::md2html($Entity->entityData['body'])
+            'msg' => Tools::md2html($Entity->entityData['body']),
         ));
     }
 
@@ -105,7 +105,7 @@ try {
         $id = $Entity->duplicate();
         $Response->setData(array(
             'res' => true,
-            'msg' => $id
+            'msg' => $id,
         ));
     }
 
@@ -148,7 +148,6 @@ try {
 
     // UPDATE CATEGORY (item type or status)
     if ($Request->request->has('updateCategory')) {
-
         $Entity->updateCategory((int) $Request->request->get('categoryId'));
         // get the color of the status/item type for updating the css
         if ($Entity instanceof Experiments) {
@@ -159,7 +158,7 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
-            'color' => $Category->readColor((int) $Request->request->get('categoryId'))
+            'color' => $Category->readColor((int) $Request->request->get('categoryId')),
         ));
     }
 
@@ -176,31 +175,26 @@ try {
         }
         $Response->setData(array(
             'res' => true,
-            'msg' => _('File deleted successfully') . $msg
+            'msg' => _('File deleted successfully') . $msg,
         ));
     }
-
-
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->getMessage()
+        'msg' => $e->getMessage(),
     ));
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error(true)
+        'msg' => Tools::error(true),
     ));
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid') ?? 'anon'), array('Exception' => $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error()
+        'msg' => Tools::error(),
     ));
-
 } finally {
     $Response->send();
 }

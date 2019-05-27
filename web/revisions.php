@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * revisions.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -33,11 +34,8 @@ $Response->prepare($Request);
 try {
     if ($Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users);
-
     } elseif ($Request->query->get('type') === 'items') {
-
         $Entity = new Database($App->Users);
-
     } else {
         throw new IllegalActionException('Bad type!');
     }
@@ -51,38 +49,33 @@ try {
     $template = 'revisions.html';
     $renderArr = array(
         'Entity' => $Entity,
-        'revisionsArr' => $revisionsArr
+        'revisionsArr' => $revisionsArr,
     );
 
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (ImproperActionException $e) {
     // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error());
     $Response->setContent($App->render($template, $renderArr));
-
 } finally {
     $Response->send();
 }

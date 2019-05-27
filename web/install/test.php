@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * install/test.php
  *
@@ -12,6 +12,7 @@
 /**
  * Check if we can connect to database
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
@@ -36,7 +37,6 @@ try {
         );
         echo 1;
     }
-
 } catch (ImproperActionException | Exception $e) {
     echo $e->getMessage();
 }

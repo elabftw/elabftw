@@ -16,8 +16,8 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,18 +35,14 @@ try {
 
     $ApiController = new ApiController($Request);
     $Response = $ApiController->getResponse();
-
 } catch (ImproperActionException $e) {
     $Response = new Response($e->getMessage(), 400);
-
 } catch (IllegalActionException $e) {
     $Log->notice('', array('IllegalAction' => $e));
     $Response = new Response(Tools::error(true), 403);
-
 } catch (Exception | DatabaseErrorException | FilesystemErrorException $e) {
     $Log->error('', array('Exception' => $e));
     $Response = new Response(Tools::error(), 500);
-
 } finally {
     $Response->send();
 }

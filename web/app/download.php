@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * app/download.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -111,7 +112,6 @@ try {
         }
     }
     fclose($file);
-
 } catch (Exception $e) {
     $App->Log->error('', array('exception' => $e));
     $Session->getFlashBag()->add('ko', $e->getMessage());

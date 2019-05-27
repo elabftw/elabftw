@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Teams;
-use Elabftw\Models\Scheduler;
-use Elabftw\Models\Templates;
-use Elabftw\Models\Database;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Scheduler;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -76,38 +76,33 @@ try {
         'teamArr' => $teamArr,
         'teamsStats' => $teamsStats,
         'templatesArr' => $templatesArr,
-        'lang' => Tools::getCalendarLang($App->Users->userData['lang'])
+        'lang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );
 
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (ImproperActionException $e) {
     // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error());
     $Response->setContent($App->render($template, $renderArr));
-
 } finally {
     $Response->send();
 }

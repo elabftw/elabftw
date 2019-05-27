@@ -12,9 +12,9 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Tags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 
 /**
@@ -108,7 +108,7 @@ $renderArr = array(
     'body' => $body,
     'andor' => $andor,
     'selectedTagsArr' => $selectedTagsArr,
-    'tagsArr' => $tagsArr
+    'tagsArr' => $tagsArr,
 );
 echo $App->render('search.html', $renderArr);
 
@@ -233,7 +233,6 @@ if ($Request->query->count() > 0) {
             $Entity->categoryFilter = $sqlStatus;
             // VISIBILITY FILTER
             $Entity->visibilityFilter = $sqlVisibility;
-
         } else {
             // DATABASE SEARCH
             $Entity = new Database($App->Users);
@@ -265,7 +264,7 @@ if ($Request->query->count() > 0) {
             // we are on the search page, so we don't want any "click here to create your first..."
             'searchType' => 'something',
             // generate light show page
-            'searchPage' => true
+            'searchPage' => true,
         ));
     }
 } else {

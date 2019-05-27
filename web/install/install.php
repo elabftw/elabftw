@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * install/install.php
  *
@@ -13,16 +13,17 @@
  * This file reads info from POST and creates the config.php file (unless it exists)
  *
  */
+
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 $configFilePath = \dirname(__DIR__, 2) . '/config.php';
@@ -92,9 +93,8 @@ try {
         $msg = 'Congratulations, you successfully installed eLabFTW, 
         now you need to <strong>register</strong> your account (you will have full admin rights).';
         $Session->getFlashBag()->add('ok', $msg);
-        // redirect to install/index.php to import SQL structure
+        // redirect to install/index.php to import SQL structure
         header('Location: index.php');
-
     } else {
         // send the file
         $Response = new Response($config);
@@ -108,7 +108,7 @@ try {
         $Response->send();
     }
 
-// just show everything here
+    // just show everything here
 } catch (IllegalActionException | ImproperActionException | Exception $e) {
     echo Tools::displayMessage('Error: ' . $e->getMessage(), 'ko', false);
 }

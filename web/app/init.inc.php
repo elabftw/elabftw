@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
@@ -136,7 +137,6 @@ try {
     bindtextdomain($domain, \dirname(__DIR__, 2) . "/src/langs");
     textdomain($domain);
     // END i18n
-
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

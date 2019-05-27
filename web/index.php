@@ -24,9 +24,7 @@ require_once 'app/init.inc.php';
 $Response = new RedirectResponse("experiments.php");
 
 try {
-
     if ($Request->query->has('acs')) {
-
         $Saml = new Saml(new Config, new Idps);
 
         $settings = $Saml->getSettings();
@@ -84,7 +82,6 @@ try {
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
             } else {
-
                 $teamId = $Teams->initializeIfNeeded($team, (bool) $Saml->Config->configArr['saml_team_create']);
             }
 
@@ -107,9 +104,7 @@ try {
                 throw new ImproperActionException("Not authenticated!");
             }
         }
-
     }
-
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
@@ -124,7 +119,6 @@ try {
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));
-
 } finally {
     $Response->send();
 }

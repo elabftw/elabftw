@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * install/index.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -57,7 +58,7 @@ try {
         $req->execute();
         $res = $req->fetch();
         if ($res['tablesCount'] < 2) {
-            // bootstrap MySQL database
+            // bootstrap MySQL database
             $Sql = new Sql();
             $Sql->execFile('structure.sql');
 
@@ -78,8 +79,7 @@ try {
         }
         $message = 'It looks like eLabFTW is already installed. Delete the config.php file if you wish to reinstall it.';
         throw new ImproperActionException($message);
-    }
-    ?>
+    } ?>
     <!DOCTYPE HTML>
     <html>
     <head>
@@ -171,8 +171,7 @@ try {
     }
 
     $message = 'Everything is good on your server. You can install eLabFTW :)';
-    echo Tools::displayMessage($message, 'ok', false);
-    ?>
+    echo Tools::displayMessage($message, 'ok', false); ?>
     <h3>Configuration</h3>
 
     <!-- MYSQL -->
@@ -201,8 +200,7 @@ try {
         echo 'root';
     } else {
         echo 'elabftw';
-    }
-    ?>' />
+    } ?>' />
     <p class='smallgray'>(should be 'elabftw' or 'root' if you're on Mac/Windows)</p>
     </p>
 
@@ -244,10 +242,8 @@ try {
     <script src='../app/js/install.min.js'></script>
     <?php
 } catch (ImproperActionException | FilesystemErrorException | Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko', false);
-    echo "</section></section>";
-} finally {
-    echo "</body></html>";
-}
-
-
+        echo Tools::displayMessage($e->getMessage(), 'ko', false);
+        echo "</section></section>";
+    } finally {
+        echo "</body></html>";
+    }

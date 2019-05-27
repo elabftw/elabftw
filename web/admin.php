@@ -1,13 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * admin.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -79,24 +78,20 @@ try {
         'teamsArr' => $teamsArr,
         'commonTplBody' => $commonTplBody,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
-        'usersArr' => $usersArr
+        'usersArr' => $usersArr,
     );
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
-
 } catch (DatabaseErrorException | FilesystemErrorException | ImproperActionException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error());
-
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

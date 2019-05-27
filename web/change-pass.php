@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * change-pass.php
  *
@@ -8,13 +8,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -33,7 +34,6 @@ try {
     if (!$Request->query->has('key') ||
         !$Request->query->has('deadline') ||
         Tools::checkId((int) $Request->query->get('userid')) === false) {
-
         throw new IllegalActionException('Bad parameters in url.');
     }
 
@@ -47,13 +47,11 @@ try {
     $renderArr = array(
         'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
         'deadline' => $Request->query->filter('deadline', null, FILTER_SANITIZE_STRING),
-        'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING)
+        'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING),
     );
-
 } catch (Exception $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

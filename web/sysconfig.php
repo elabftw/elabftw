@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * sysconfig.php
  *
@@ -11,10 +11,10 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ReleaseCheckException;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,7 +61,7 @@ try {
         PHP_INT_MAX,
         PHP_SYSCONFDIR,
         ini_get('upload_max_filesize'),
-        ini_get('date.timezone')
+        ini_get('date.timezone'),
     );
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
@@ -81,18 +81,15 @@ try {
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,
-        'usersArr' => $usersArr
+        'usersArr' => $usersArr,
     );
-
 } catch (IllegalActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
-
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

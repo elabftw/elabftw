@@ -33,10 +33,12 @@ return PhpCsFixer\Config::create()
         'standardize_not_equals' => true,
         'ternary_operator_spaces' => true,
         'trailing_comma_in_multiline_array' => true,
+        'trim_array_spaces' => true,
+        'unary_operator_spaces' => true,
     ))
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->name('/\.php|\.php.dist$/')
-            ->in(['src', 'tests'])
+            ->in(['src', 'tests', 'web'])
     )
 ;

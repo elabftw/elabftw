@@ -43,10 +43,10 @@ try {
     $stats['cols'] = array(
         array(
         'type' => 'string',
-        'label' => 'Status'),
+        'label' => 'Status', ),
         array(
         'type' => 'number',
-        'label' => 'Experiments number')
+        'label' => 'Experiments number', ),
     );
     // rows
     foreach ($UserStats->percentArr as $name => $percent) {
@@ -62,9 +62,8 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'colorsJson' => $colorsJson,
         'statsJson' => $statsJson,
-        'count' => $count
+        'count' => $count,
     );
-
 } catch (Exception $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());

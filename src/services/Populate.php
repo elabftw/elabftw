@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;

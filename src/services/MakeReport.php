@@ -72,7 +72,7 @@ class MakeReport extends AbstractMake
             'teamname',
             'diskusage_in_bytes',
             'diskusage_formatted',
-            'exp_total'
+            'exp_total',
         );
     }
 

@@ -104,7 +104,7 @@ class MakePdf extends AbstractMake
         $mpdf = new Mpdf(array(
             'format' => $format,
             'tempDir' => $tmpDir,
-            'mode' => 'utf-8'
+            'mode' => 'utf-8',
         ));
 
         // make sure header and footer are not overlapping the body text

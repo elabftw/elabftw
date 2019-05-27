@@ -81,7 +81,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $visibility,
-            'userid' => $this->Users->userData['userid']
+            'userid' => $this->Users->userData['userid'],
         ));
         $newId = $this->Db->lastInsertId();
 
@@ -190,7 +190,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $this->entityData['visibility'],
-            'userid' => $this->Users->userData['userid']));
+            'userid' => $this->Users->userData['userid'], ));
         $newId = $this->Db->lastInsertId();
 
         $this->Links->duplicate($this->id, $newId);
@@ -243,7 +243,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         return array(
             'timestamper' => $timestamper,
             'pdf' => $pdf,
-            'token' => $token
+            'token' => $token,
         );
     }
 

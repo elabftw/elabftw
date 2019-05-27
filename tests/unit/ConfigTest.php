@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
@@ -24,7 +25,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'stampcert' => "src/dfn-cert/pki.dfn.pem",
             'stamppass' => "",
             'login_tries' => 15,
-            'ban_time' => 42
+            'ban_time' => 42,
         );
 
         $this->Config->update($post);

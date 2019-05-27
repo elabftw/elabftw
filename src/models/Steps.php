@@ -122,7 +122,7 @@ class Steps implements CrudInterface
             $req = $this->Db->prepare($sql);
             $req->execute(array(
                 'item_id' => $newId,
-                'body' => $steps['body']
+                'body' => $steps['body'],
             ));
         }
     }

@@ -53,7 +53,7 @@ class Database extends AbstractEntity implements CreateInterface
             'date' => Tools::kdate(),
             'body' => $itemsTypes->read(),
             'userid' => $this->Users->userData['userid'],
-            'category' => $category
+            'category' => $category,
         ));
 
         return $this->Db->lastInsertId();
@@ -95,7 +95,7 @@ class Database extends AbstractEntity implements CreateInterface
             'date' => Tools::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
-            'category' => $this->entityData['category_id']
+            'category' => $this->entityData['category_id'],
         ));
         $newId = $this->Db->lastInsertId();
 

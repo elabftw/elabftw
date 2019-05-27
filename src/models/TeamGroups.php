@@ -97,7 +97,7 @@ class TeamGroups implements CrudInterface
             $fullGroups[] = array(
                 'id' => $group['id'],
                 'name' => $group['name'],
-                'users' => $usersInGroup
+                'users' => $usersInGroup,
             );
         }
 
@@ -118,7 +118,7 @@ class TeamGroups implements CrudInterface
             'public' => _('Public'),
             'organization' => _('Everyone with an account'),
             'team' => _('Only the team'),
-            'user' => _('Only me')
+            'user' => _('Only me'),
         );
         $groups = $this->readAll();
 

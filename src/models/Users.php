@@ -404,8 +404,8 @@ class Users
             'options' => array(
                 'default' => 15,
                 'min_range' => 1,
-                'max_range' => 500
-            ));
+                'max_range' => 500,
+            ), );
         $new_limit = filter_var($params['limit'], FILTER_VALIDATE_INT, $filter_options);
 
         // ORDER BY

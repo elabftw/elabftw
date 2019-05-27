@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
@@ -31,7 +32,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             'stampprovider' => 'http://zeitstempel.dfn.de/',
             'stampcert' => 'src/dfn-cert/pki.dfn.pem',
             'stamplogin' => '',
-            'stamppass' => 'something'
+            'stamppass' => 'something',
         );
         $this->Teams->update($post);
 
@@ -44,7 +45,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             'stampprovider' => 'http://zeitstempel.dfn.de/',
             'stampcert' => 'src/dfn-cert/pki.dfn.pem',
             'stamplogin' => '',
-            'stamppass' => ''
+            'stamppass' => '',
         );
         $this->Teams->update($post);
 

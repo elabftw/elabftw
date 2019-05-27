@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
@@ -40,7 +41,7 @@ class UpdateDatabase extends Command
         $command = $this->getApplication()->find('db:check');
 
         $arguments = array(
-            'command' => 'db:check'
+            'command' => 'db:check',
         );
 
         $cmdInput = new ArrayInput($arguments);

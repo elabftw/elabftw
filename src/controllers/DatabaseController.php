@@ -61,7 +61,7 @@ class DatabaseController extends AbstractEntityController
             'Entity' => $this->Entity,
             'commentsArr' => $commentsArr,
             'mode' => 'view',
-            'revNum' => $revNum
+            'revNum' => $revNum,
         );
 
         $Response = new Response();
@@ -101,7 +101,7 @@ class DatabaseController extends AbstractEntityController
             'mode' => 'edit',
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'revNum' => $revNum,
-            'visibilityArr' => $visibilityArr
+            'visibilityArr' => $visibilityArr,
         );
 
         $Response = new Response();
@@ -213,7 +213,7 @@ class DatabaseController extends AbstractEntityController
             'offset' => $offset,
             'query' => $query,
             'searchType' => $searchType,
-            'visibilityArr' => $visibilityArr
+            'visibilityArr' => $visibilityArr,
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);

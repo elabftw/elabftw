@@ -156,7 +156,7 @@ class Auth
             'metadata.php',
             'register.php',
             'RegisterController.php',
-            'ResetPasswordController.php'
+            'ResetPasswordController.php',
         );
 
         return !\in_array(\basename($this->Request->getScriptName()), $nologinArr, true);

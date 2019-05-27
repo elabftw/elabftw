@@ -143,13 +143,13 @@ class ReleaseCheck
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
             'headers' => array(
-                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION
+                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION,
             ),
             // add proxy if there is one
             'proxy' => $this->Config->configArr['proxy'],
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
-            'timeout' => 5
+            'timeout' => 5,
         ));
     }
 

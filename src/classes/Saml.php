@@ -104,9 +104,9 @@ class Saml
                                 'isRequired' => false,
                                 'nameFormat' => '',
                                 'friendlyName' => '',
-                                'attributeValue' => ''
-                            )
-                        )
+                                'attributeValue' => '',
+                            ),
+                        ),
                 ),
                 // Specifies info about where and how the <Logout Response> message MUST be
                 // returned to the requester, in this case our SP.

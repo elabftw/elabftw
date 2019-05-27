@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
@@ -58,7 +59,7 @@ class CheckDatabase extends Command
             'Database check',
             '==============',
             'Current version: ' . $current,
-            'Required version: ' . $required
+            'Required version: ' . $required,
         ));
         if ($current === $required) {
             $output->writeln('No upgrade required.');

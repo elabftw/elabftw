@@ -68,7 +68,7 @@ abstract class AbstractImport
     {
         $mimes = array(null, 'application/vnd.ms-excel', 'text/plain',
             'text/csv', 'text/tsv',
-            'application/zip', 'application/force-download', 'application/x-zip-compressed');
+            'application/zip', 'application/force-download', 'application/x-zip-compressed', );
 
         if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
             return true;

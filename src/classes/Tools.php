@@ -140,7 +140,7 @@ class Tools
             'public',
             'organization',
             'team',
-            'user'
+            'user',
         );
 
         if (!\in_array($visibility, $validArr, true) && self::checkId((int) $visibility) === false) {
@@ -274,8 +274,8 @@ class Tools
     {
         $filter_options = array(
             'options' => array(
-                'min_range' => 1
-            ));
+                'min_range' => 1,
+            ), );
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
     }
 
@@ -315,7 +315,7 @@ class Tools
             'ru_RU' => 'ru',
             'sl_SI' => 'sl',
             'sk_SK' => 'sk',
-            'zh_CN' => 'zh-cn'
+            'zh_CN' => 'zh-cn',
         );
         return $map[$lang];
     }
@@ -341,7 +341,7 @@ class Tools
             'ru_RU' => 'Russian',
             'sl_SI' => 'Slovenian',
             'sk_SK' => 'Slovak',
-            'zh_CN' => 'Chinese Simplified'
+            'zh_CN' => 'Chinese Simplified',
         );
 
         return $langs;

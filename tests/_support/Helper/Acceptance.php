@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Helper;
 
 // here you can define custom actions
@@ -24,7 +25,7 @@ class Acceptance extends \Codeception\Module
 
         return array(
             "retarray" => $retarray,
-            "retcode" => $retcode
+            "retcode" => $retcode,
         );
     }
 }

@@ -74,7 +74,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $Response = new JsonResponse();
             $Response->setData(array(
                 'res' => true,
-                'msg' => _('Saved')
+                'msg' => _('Saved'),
             ));
             return $Response;
         }

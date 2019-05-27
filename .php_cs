@@ -27,6 +27,12 @@ return PhpCsFixer\Config::create()
         'non_printable_character' => true,
         'ordered_imports' => true,
         'ordered_class_elements' => true,
+        'single_blank_line_before_namespace' => true,
+        'single_class_element_per_statement' => true,
+        'space_after_semicolon' => true,
+        'standardize_not_equals' => true,
+        'ternary_operator_spaces' => true,
+        'trailing_comma_in_multiline_array' => true,
     ))
     ->setFinder(
         PhpCsFixer\Finder::create()

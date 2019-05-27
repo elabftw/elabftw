@@ -112,7 +112,7 @@ class Links implements CrudInterface
             $req = $this->Db->prepare($sql);
             $req->execute(array(
                 'link_id' => $links['link_id'],
-                'item_id' => $newId
+                'item_id' => $newId,
             ));
         }
     }

@@ -544,7 +544,7 @@ abstract class AbstractEntity
         $itemsArr = $this->getDbList($term);
         foreach ($itemsArr as $item) {
             $mentionArr[] = array("name" => "<a href='database.php?mode=view&id=" .
-                $item['id'] . "'>" . $item['title'] . "</a>");
+                $item['id'] . "'>" . $item['title'] . "</a>", );
         }
 
         // complete the list with experiments
@@ -552,7 +552,7 @@ abstract class AbstractEntity
         $experimentsArr = $this->getExpList($term);
         foreach ($experimentsArr as $item) {
             $mentionArr[] = array("name" => "<a href='experiments.php?mode=view&id=" .
-                $item['id'] . "'>" . $item['title'] . "</a>");
+                $item['id'] . "'>" . $item['title'] . "</a>", );
         }
 
         return $mentionArr;

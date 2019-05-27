@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase

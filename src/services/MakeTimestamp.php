@@ -132,7 +132,7 @@ class MakeTimestamp extends AbstractMake
             '-inform',
             'DER',
             '-in',
-            $this->getUploadsPath() . $token
+            $this->getUploadsPath() . $token,
         ));
         $lines = explode("\n", $output);
 
@@ -274,7 +274,7 @@ class MakeTimestamp extends AbstractMake
                     'stamppassword' => $password,
                     'stampprovider' => $provider,
                     'stampcert' => $cert,
-                    'hash' => $hash);
+                    'hash' => $hash, );
     }
 
     /**
@@ -310,7 +310,7 @@ class MakeTimestamp extends AbstractMake
             '-' . $this->stampParams['hash'],
             '-no_nonce',
             '-out',
-            $this->requestfilePath
+            $this->requestfilePath,
         ));
     }
 
@@ -332,7 +332,7 @@ class MakeTimestamp extends AbstractMake
             '-reply',
             '-in',
             $this->responsefilePath,
-            '-text'
+            '-text',
         ));
 
         /*
@@ -396,20 +396,20 @@ class MakeTimestamp extends AbstractMake
             'headers' => array(
                 'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
                 'Content-Type' => 'application/timestamp-query',
-                'Content-Transfer-Encoding' => 'base64'
+                'Content-Transfer-Encoding' => 'base64',
             ),
             // add proxy if there is one
             'proxy' => $this->Config->configArr['proxy'],
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
             // in seconds
             'timeout' => 5,
-            'body' => \file_get_contents($this->requestfilePath)
+            'body' => \file_get_contents($this->requestfilePath),
         );
 
         if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
             $options['auth'] = array(
                 $this->stampParams['stamplogin'],
-                $this->stampParams['stamppassword']
+                $this->stampParams['stamppassword'],
             );
         }
 
@@ -500,7 +500,7 @@ class MakeTimestamp extends AbstractMake
                 '-in',
                 $this->responsefilePath,
                 '-CAfile',
-                $certPath
+                $certPath,
             ));
         } catch (ProcessFailedException $e) {
             // we are facing the OpenSSL bug discussed here:
@@ -541,7 +541,7 @@ class MakeTimestamp extends AbstractMake
             $output = $this->runProcess(array(
                 './verify.sh',
                 $this->requestfilePath,
-                $this->responsefilePath
+                $this->responsefilePath,
             ), $cwd);
         } catch (ProcessFailedException $e) {
             $Log = new Logger('elabftw');

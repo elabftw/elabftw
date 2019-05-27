@@ -41,7 +41,7 @@ final class MakeThumbnail
         'image/x-eps',
         'image/svg+xml',
         'application/pdf',
-        'application/postscript'
+        'application/postscript',
     );
 
     /** @var string $filePath full path to file */

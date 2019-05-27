@@ -85,7 +85,7 @@ class MakeCsv extends AbstractMake
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                     htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
                     $elabidOrRating,
-                    $this->getUrl()
+                    $this->getUrl(),
                 );
             }
         }

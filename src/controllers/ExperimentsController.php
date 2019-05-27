@@ -72,7 +72,7 @@ class ExperimentsController extends AbstractEntityController
             'stepsArr' => $stepsArr,
             'timestampInfo' => $timestampInfo,
             'commentsArr' => $commentsArr,
-            'mode' => 'view'
+            'mode' => 'view',
         );
 
         $Response = new Response();
@@ -122,7 +122,7 @@ class ExperimentsController extends AbstractEntityController
             'mode' => 'edit',
             'revNum' => $revNum,
             'stepsArr' => $stepsArr,
-            'visibilityArr' => $visibilityArr
+            'visibilityArr' => $visibilityArr,
         );
 
         $Response = new Response();
@@ -258,7 +258,7 @@ class ExperimentsController extends AbstractEntityController
             'searchType' => $searchType,
             'tag' => $tag,
             'templatesArr' => $templatesArr,
-            'visibilityArr' => $visibilityArr
+            'visibilityArr' => $visibilityArr,
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);

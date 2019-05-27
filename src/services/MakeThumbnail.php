@@ -68,6 +68,38 @@ final class MakeThumbnail
     }
 
     /**
+     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
+     *
+     * @param bool $force force regeneration of thumbnail even if file exist (useful if upload was replaced)
+     * @return void
+     */
+    public function makeThumb($force = false): void
+    {
+        if (\is_readable($this->filePath) === false) {
+            throw new FilesystemErrorException("File not found! (" . \substr($this->filePath, 0, 42) . "…)");
+        }
+
+        // do nothing for big files
+        if (\filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
+            return;
+        }
+
+        // don't bother if the thumbnail exists already
+        if (\file_exists($this->thumbPath) && $force === false) {
+            return;
+        }
+
+        // use gmagick preferentially
+        if (\extension_loaded('gmagick')) {
+            $this->useGmagick();
+
+        // if we don't have gmagick, try with gd
+        } elseif (extension_loaded('gd')) {
+            $this->useGd();
+        }
+    }
+
+    /**
      * Create a thumbnail with Gmagick extension
      *
      * @return void
@@ -143,37 +175,5 @@ final class MakeThumbnail
 
         // create the physical thumbnail image to its destination (85% quality)
         imagejpeg($virtualImage, $this->thumbPath, 85);
-    }
-
-    /**
-     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
-     *
-     * @param bool $force force regeneration of thumbnail even if file exist (useful if upload was replaced)
-     * @return void
-     */
-    public function makeThumb($force = false): void
-    {
-        if (\is_readable($this->filePath) === false) {
-            throw new FilesystemErrorException("File not found! (" . \substr($this->filePath, 0, 42) . "…)");
-        }
-
-        // do nothing for big files
-        if (\filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
-            return;
-        }
-
-        // don't bother if the thumbnail exists already
-        if (\file_exists($this->thumbPath) && $force === false) {
-            return;
-        }
-
-        // use gmagick preferentially
-        if (\extension_loaded('gmagick')) {
-            $this->useGmagick();
-
-        // if we don't have gmagick, try with gd
-        } elseif (extension_loaded('gd')) {
-            $this->useGd();
-        }
     }
 }

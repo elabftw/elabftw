@@ -20,11 +20,11 @@ use PDO;
  */
 class Links implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var Experiments $Entity instance of Experiments */
     public $Entity;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor

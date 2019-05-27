@@ -135,21 +135,6 @@ abstract class AbstractEntity
     abstract public function toggleLock(): void;
 
     /**
-     * Now that we have an id, load the data in entityData array
-     *
-     * @return void
-     */
-    protected function populate(): void
-    {
-        if ($this->id === null) {
-            throw new ImproperActionException('No id was set.');
-        }
-
-        // load the entity in entityData array
-        $this->entityData = $this->read();
-    }
-
-    /**
      * Read all from the entity
      * Optionally with filters
      * Here be dragons!
@@ -591,5 +576,20 @@ abstract class AbstractEntity
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+    }
+
+    /**
+     * Now that we have an id, load the data in entityData array
+     *
+     * @return void
+     */
+    protected function populate(): void
+    {
+        if ($this->id === null) {
+            throw new ImproperActionException('No id was set.');
+        }
+
+        // load the entity in entityData array
+        $this->entityData = $this->read();
     }
 }

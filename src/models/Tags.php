@@ -21,11 +21,11 @@ use PDO;
  */
 class Tags implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var AbstractEntity $Entity an instance of AbstractEntity */
     public $Entity;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -36,23 +36,6 @@ class Tags implements CrudInterface
     {
         $this->Db = Db::getConnection();
         $this->Entity = $entity;
-    }
-
-    /**
-     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-     * also remove | because we use this as separator for tags in SQL
-     *
-     * @param string $tag The tag to check
-     * @return string
-     */
-    private function checkTag(string $tag): string
-    {
-        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), filter_var($tag, FILTER_SANITIZE_STRING)));
-        // empty tags are disallowed
-        if ($tag === '') {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        return $tag;
     }
 
     /**
@@ -335,5 +318,22 @@ class Tags implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+    }
+
+    /**
+     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+     * also remove | because we use this as separator for tags in SQL
+     *
+     * @param string $tag The tag to check
+     * @return string
+     */
+    private function checkTag(string $tag): string
+    {
+        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), filter_var($tag, FILTER_SANITIZE_STRING)));
+        // empty tags are disallowed
+        if ($tag === '') {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
+        }
+        return $tag;
     }
 }

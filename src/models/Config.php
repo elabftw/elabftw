@@ -25,11 +25,11 @@ use PDO;
  */
 class Config
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var array $configArr the array with all config */
     public $configArr;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Get Db and load the configArr

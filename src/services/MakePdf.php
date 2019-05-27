@@ -75,6 +75,17 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Replace weird characters by underscores
+     *
+     * @return string The file name of the pdf
+     */
+    public function getFileName(): string
+    {
+        return $this->Entity->entityData['date'] . " - " .
+            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
+    }
+
+    /**
      * Build the pdf
      *
      * @return Mpdf
@@ -438,16 +449,5 @@ Witness' signature:<br><br>
         $content .= $this->buildInfoBlock();
 
         return $content;
-    }
-
-    /**
-     * Replace weird characters by underscores
-     *
-     * @return string The file name of the pdf
-     */
-    public function getFileName(): string
-    {
-        return $this->Entity->entityData['date'] . " - " .
-            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
     }
 }

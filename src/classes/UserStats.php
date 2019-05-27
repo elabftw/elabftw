@@ -19,6 +19,12 @@ use PDO;
  */
 class UserStats
 {
+
+    /** @var array $colorsArr colors for status */
+    public $colorsArr = array();
+
+    /** @var array $percentArr percentage and status name */
+    public $percentArr = array();
     /** @var Users $Users instance of Users */
     private $Users;
 
@@ -33,12 +39,6 @@ class UserStats
 
     /** @var array $statusArr status id and name */
     private $statusArr = array();
-
-    /** @var array $colorsArr colors for status */
-    public $colorsArr = array();
-
-    /** @var array $percentArr percentage and status name */
-    public $percentArr = array();
 
     /**
      * Init the object with a userid and the total count of experiments

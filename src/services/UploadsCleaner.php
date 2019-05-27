@@ -19,6 +19,22 @@ use Elabftw\Interfaces\CleanerInterface;
  */
 class UploadsCleaner implements CleanerInterface
 {
+
+    /**
+     * Remove orphan files from filesystem
+     *
+     * @return int number of orphan files
+     */
+    public function cleanup(): int
+    {
+        $orphans = $this->findOrphans();
+        foreach ($orphans as $orphan) {
+            if (\unlink($orphan) === false) {
+                throw new FilesystemErrorException("Could not remove file: $orphan");
+            }
+        }
+        return \count($orphans);
+    }
     /**
      * Loop of uploaded file and check if it is referenced in the uploads table
      *
@@ -64,21 +80,5 @@ class UploadsCleaner implements CleanerInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         return (bool) $req->fetch();
-    }
-
-    /**
-     * Remove orphan files from filesystem
-     *
-     * @return int number of orphan files
-     */
-    public function cleanup(): int
-    {
-        $orphans = $this->findOrphans();
-        foreach ($orphans as $orphan) {
-            if (\unlink($orphan) === false) {
-                throw new FilesystemErrorException("Could not remove file: $orphan");
-            }
-        }
-        return \count($orphans);
     }
 }

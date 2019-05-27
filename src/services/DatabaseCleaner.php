@@ -29,6 +29,38 @@ class DatabaseCleaner implements CleanerInterface
     }
 
     /**
+     * Check all the things
+     *
+     * @return void
+     */
+    public function cleanup()
+    {
+        $this->findOrphans('experiments_templates', 'teams', 'team');
+        $this->findOrphans('experiments', 'teams', 'team');
+        $this->findOrphans('experiments', 'users', 'userid', 'userid');
+        $this->findOrphans('experiments_comments', 'experiments', 'item_id');
+        $this->findOrphans('experiments_comments', 'users', 'userid', 'userid');
+        $this->findOrphans('experiments_links', 'experiments', 'item_id');
+        $this->findOrphans('experiments_links', 'items', 'link_id');
+        $this->findOrphans('experiments_revisions', 'experiments', 'item_id');
+        $this->findOrphans('experiments_revisions', 'users', 'userid', 'userid');
+        $this->findOrphans('items_revisions', 'items', 'item_id');
+        $this->findOrphans('items_revisions', 'users', 'userid', 'userid');
+        $this->findOrphans('experiments_steps', 'experiments', 'item_id');
+        $this->findOrphans('items', 'teams', 'team');
+        $this->findOrphans('items_comments', 'items', 'item_id');
+        $this->findOrphans('items_comments', 'users', 'userid', 'userid');
+        $this->findOrphans('items_types', 'teams', 'team');
+        $this->findOrphans('status', 'teams', 'team');
+        $this->findOrphans('tags', 'teams', 'team');
+        $this->findOrphans('team_events', 'teams', 'team');
+        $this->findOrphans('team_events', 'users', 'userid', 'userid');
+        $this->findOrphans('team_groups', 'teams', 'team');
+        $this->findOrphans('todolist', 'users', 'userid', 'userid');
+        $this->findOrphans('users', 'teams', 'team');
+    }
+
+    /**
      * Find orphaned rows
      *
      * @param string $table the table to clean
@@ -72,37 +104,5 @@ class DatabaseCleaner implements CleanerInterface
             $req->bindParam(':id', $orphan['id']);
             $req->execute();
         }
-    }
-
-    /**
-     * Check all the things
-     *
-     * @return void
-     */
-    public function cleanup()
-    {
-        $this->findOrphans('experiments_templates', 'teams', 'team');
-        $this->findOrphans('experiments', 'teams', 'team');
-        $this->findOrphans('experiments', 'users', 'userid', 'userid');
-        $this->findOrphans('experiments_comments', 'experiments', 'item_id');
-        $this->findOrphans('experiments_comments', 'users', 'userid', 'userid');
-        $this->findOrphans('experiments_links', 'experiments', 'item_id');
-        $this->findOrphans('experiments_links', 'items', 'link_id');
-        $this->findOrphans('experiments_revisions', 'experiments', 'item_id');
-        $this->findOrphans('experiments_revisions', 'users', 'userid', 'userid');
-        $this->findOrphans('items_revisions', 'items', 'item_id');
-        $this->findOrphans('items_revisions', 'users', 'userid', 'userid');
-        $this->findOrphans('experiments_steps', 'experiments', 'item_id');
-        $this->findOrphans('items', 'teams', 'team');
-        $this->findOrphans('items_comments', 'items', 'item_id');
-        $this->findOrphans('items_comments', 'users', 'userid', 'userid');
-        $this->findOrphans('items_types', 'teams', 'team');
-        $this->findOrphans('status', 'teams', 'team');
-        $this->findOrphans('tags', 'teams', 'team');
-        $this->findOrphans('team_events', 'teams', 'team');
-        $this->findOrphans('team_events', 'users', 'userid', 'userid');
-        $this->findOrphans('team_groups', 'teams', 'team');
-        $this->findOrphans('todolist', 'users', 'userid', 'userid');
-        $this->findOrphans('users', 'teams', 'team');
     }
 }

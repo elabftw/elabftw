@@ -56,125 +56,6 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Create a clean filename
-     * Remplace all non letters/numbers by '.' (this way we don't lose the file extension)
-     *
-     * @param string $rawName The name of the file as it was on the user's computer
-     * @return string The cleaned filename
-     */
-    private function getSanitizedName(string $rawName): string
-    {
-        return preg_replace('/[^A-Za-z0-9]/', '.', $rawName) ?? 'file.data';
-    }
-
-    /**
-     * Place a file somewhere
-     *
-     * @param string $orig from
-     * @param string $dest to
-     * @throws FilesystemErrorException
-     * @return void
-     */
-    private function moveFile(string $orig, string $dest): void
-    {
-        // fix for FreeBSD and rename across different filesystems
-        // see http://php.net/manual/en/function.rename.php#117590
-        if (PHP_OS === 'FreeBSD') {
-            if (\copy($orig, $dest) !== true) {
-                throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
-            }
-            if (\unlink($orig) !== true) {
-                throw new FilesystemErrorException('Error deleting file!');
-            }
-        }
-
-        if (\rename($orig, $dest) !== true) {
-            throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
-        }
-    }
-
-    /**
-     * Generate the hash based on selected algorithm
-     *
-     * @param string $file The full path to the file
-     * @return string the hash or an empty string if file is too big
-     */
-    private function getHash(string $file): string
-    {
-        if (filesize($file) < self::BIG_FILE_THRESHOLD) {
-            return hash_file($this->hashAlgorithm, $file);
-        }
-
-        return '';
-    }
-
-    /**
-     * Check if extension is allowed for upload
-     *
-     * @param string $realName The name of the file
-     * @return void
-     */
-    private function checkExtension(string $realName): void
-    {
-        if (Tools::getExt($realName) === 'php') {
-            throw new ImproperActionException('PHP files are forbidden!');
-        }
-    }
-
-    /**
-     * Make the final SQL request to store the file
-     *
-     * @param string $realName The clean name of the file
-     * @param string $longName The sha512 name
-     * @param string $hash The hash string of our file
-     * @param string|null $comment The file comment
-     * @throws DatabaseErrorException
-     * @return void
-     */
-    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): void
-    {
-        if ($comment === null) {
-            $comment = 'Click to add a comment';
-        }
-
-        $sql = "INSERT INTO uploads(
-            real_name,
-            long_name,
-            comment,
-            item_id,
-            userid,
-            type,
-            hash,
-            hash_algorithm
-        ) VALUES(
-            :real_name,
-            :long_name,
-            :comment,
-            :item_id,
-            :userid,
-            :type,
-            :hash,
-            :hash_algorithm
-        )";
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':real_name', $realName);
-        $req->bindParam(':long_name', $longName);
-        // comment can be edited after upload
-        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
-        $req->bindValue(':comment', $comment);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
-        $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
      * Main method for normal file upload
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -469,6 +350,125 @@ class Uploads implements CrudInterface
 
         foreach ($uploadArr as $upload) {
             $this->destroy((int) $upload['id']);
+        }
+    }
+
+    /**
+     * Create a clean filename
+     * Remplace all non letters/numbers by '.' (this way we don't lose the file extension)
+     *
+     * @param string $rawName The name of the file as it was on the user's computer
+     * @return string The cleaned filename
+     */
+    private function getSanitizedName(string $rawName): string
+    {
+        return preg_replace('/[^A-Za-z0-9]/', '.', $rawName) ?? 'file.data';
+    }
+
+    /**
+     * Place a file somewhere
+     *
+     * @param string $orig from
+     * @param string $dest to
+     * @throws FilesystemErrorException
+     * @return void
+     */
+    private function moveFile(string $orig, string $dest): void
+    {
+        // fix for FreeBSD and rename across different filesystems
+        // see http://php.net/manual/en/function.rename.php#117590
+        if (PHP_OS === 'FreeBSD') {
+            if (\copy($orig, $dest) !== true) {
+                throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+            }
+            if (\unlink($orig) !== true) {
+                throw new FilesystemErrorException('Error deleting file!');
+            }
+        }
+
+        if (\rename($orig, $dest) !== true) {
+            throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
+        }
+    }
+
+    /**
+     * Generate the hash based on selected algorithm
+     *
+     * @param string $file The full path to the file
+     * @return string the hash or an empty string if file is too big
+     */
+    private function getHash(string $file): string
+    {
+        if (filesize($file) < self::BIG_FILE_THRESHOLD) {
+            return hash_file($this->hashAlgorithm, $file);
+        }
+
+        return '';
+    }
+
+    /**
+     * Check if extension is allowed for upload
+     *
+     * @param string $realName The name of the file
+     * @return void
+     */
+    private function checkExtension(string $realName): void
+    {
+        if (Tools::getExt($realName) === 'php') {
+            throw new ImproperActionException('PHP files are forbidden!');
+        }
+    }
+
+    /**
+     * Make the final SQL request to store the file
+     *
+     * @param string $realName The clean name of the file
+     * @param string $longName The sha512 name
+     * @param string $hash The hash string of our file
+     * @param string|null $comment The file comment
+     * @throws DatabaseErrorException
+     * @return void
+     */
+    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): void
+    {
+        if ($comment === null) {
+            $comment = 'Click to add a comment';
+        }
+
+        $sql = "INSERT INTO uploads(
+            real_name,
+            long_name,
+            comment,
+            item_id,
+            userid,
+            type,
+            hash,
+            hash_algorithm
+        ) VALUES(
+            :real_name,
+            :long_name,
+            :comment,
+            :item_id,
+            :userid,
+            :type,
+            :hash,
+            :hash_algorithm
+        )";
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':real_name', $realName);
+        $req->bindParam(':long_name', $longName);
+        // comment can be edited after upload
+        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
+        $req->bindValue(':comment', $comment);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+        $req->bindParam(':hash', $hash);
+        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
 }

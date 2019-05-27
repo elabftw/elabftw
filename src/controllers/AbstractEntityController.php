@@ -45,27 +45,6 @@ abstract class AbstractEntityController implements ControllerInterface
     }
 
     /**
-     * View mode
-     *
-     * @return Response
-     */
-    abstract protected function view(): Response;
-
-    /**
-     * Edit mode
-     *
-     * @return Response
-     */
-    abstract protected function edit(): Response;
-
-    /**
-     * Show mode
-     *
-     * @return Response
-     */
-    abstract protected function show(): Response;
-
-    /**
      * Get the Response object from the Request
      *
      * @return Response
@@ -103,4 +82,25 @@ abstract class AbstractEntityController implements ControllerInterface
         // DEFAULT MODE IS SHOW
         return $this->show();
     }
+
+    /**
+     * View mode
+     *
+     * @return Response
+     */
+    abstract protected function view(): Response;
+
+    /**
+     * Edit mode
+     *
+     * @return Response
+     */
+    abstract protected function edit(): Response;
+
+    /**
+     * Show mode
+     *
+     * @return Response
+     */
+    abstract protected function show(): Response;
 }

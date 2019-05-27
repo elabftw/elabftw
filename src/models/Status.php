@@ -156,24 +156,6 @@ class Status extends AbstractCategory
     }
 
     /**
-     * Remove all the default status for a team.
-     * If we set true to is_default somewhere, it's best to remove all other default
-     * in the team so we won't have two default status
-     *
-     * @return void
-     */
-    private function setDefaultFalse(): void
-    {
-        $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
      * Update a status
      *
      * @param int $id ID of the status
@@ -215,24 +197,6 @@ class Status extends AbstractCategory
     }
 
     /**
-     * Count all experiments with this status
-     *
-     * @param int $id
-     * @return int
-     */
-    protected function countItems(int $id): int
-    {
-        $sql = "SELECT COUNT(*) FROM experiments WHERE category = :category";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-
-        return (int) $req->fetchColumn();
-    }
-
-    /**
      * Destroy a status
      *
      * @param int $id id of the status
@@ -262,5 +226,41 @@ class Status extends AbstractCategory
     public function destroyAll(): void
     {
         return;
+    }
+
+    /**
+     * Count all experiments with this status
+     *
+     * @param int $id
+     * @return int
+     */
+    protected function countItems(int $id): int
+    {
+        $sql = "SELECT COUNT(*) FROM experiments WHERE category = :category";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':category', $id, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Remove all the default status for a team.
+     * If we set true to is_default somewhere, it's best to remove all other default
+     * in the team so we won't have two default status
+     *
+     * @return void
+     */
+    private function setDefaultFalse(): void
+    {
+        $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

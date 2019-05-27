@@ -39,6 +39,9 @@ class MakeTimestamp extends AbstractMake
     /** default hash algo for file */
     private const HASH_ALGORITHM = 'sha256';
 
+    /** @var Experiments $Entity instance of Experiments */
+    protected $Entity;
+
     /** @var Config $Config instance of Config */
     private $Config;
 
@@ -63,9 +66,6 @@ class MakeTimestamp extends AbstractMake
     /** @var string $responsefilePath where we store the asn1 token */
     private $responsefilePath = '';
 
-    /** @var Experiments $Entity instance of Experiments */
-    protected $Entity;
-
     /**
      * Pdf is generated on instanciation and after you need to call timestamp()
      *
@@ -88,6 +88,133 @@ class MakeTimestamp extends AbstractMake
         $this->requestfilePath = $this->getTmpPath() . $this->getUniqueString();
         // we don't keep this file around
         $this->trash[] = $this->requestfilePath;
+    }
+
+    /**
+     * Delete all temporary files
+     *
+     */
+    public function __destruct()
+    {
+        foreach ($this->trash as $file) {
+            unlink($file);
+        }
+    }
+
+    /**
+     * The realname is elabid-timestamped.pdf
+     *
+     * @throws ImproperActionException
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        $sql = "SELECT elabid FROM experiments WHERE id = :id";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        if (!$req->execute()) {
+            throw new ImproperActionException('Cannot get elabid!');
+        }
+        return $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
+    }
+
+    /**
+     * Decode asn1 encoded token
+     *
+     * @param string $token
+     * @return string
+     */
+    public function decodeAsn1($token): string
+    {
+        $output = $this->runProcess(array(
+            'openssl',
+            'asn1parse',
+            '-inform',
+            'DER',
+            '-in',
+            $this->getUploadsPath() . $token
+        ));
+        $lines = explode("\n", $output);
+
+        // now let's parse this
+        $out = "<br><hr>";
+
+        $statusArr = explode(":", $lines[4]);
+        $status = $statusArr[3];
+
+        $versionArr = explode(":", $lines[111]);
+        $version = $versionArr[3];
+
+        $oidArr = explode(":", $lines[148]);
+        $oid = $oidArr[3];
+
+        $hashArr = explode(":", $lines[12]);
+        $hash = $hashArr[3];
+
+        $messageArr = explode(":", $lines[17]);
+        $message = $messageArr[3];
+
+        $utctimeArr = explode(":", $lines[142]);
+        $utctime = rtrim($utctimeArr[3], 'Z');
+        $timestamp = \DateTime::createFromFormat('ymdHis', $utctime);
+        if ($timestamp === false) {
+            return 'Error: Could not parse timestamp!';
+        }
+
+        $countryArr = explode(":", $lines[31]);
+        $country = $countryArr[3];
+
+        $tsaArr = explode(":", $lines[121]);
+        $tsa = $tsaArr[3];
+
+        $tsaArr = explode(":", $lines[39]);
+        $tsa .= ", " . $tsaArr[3];
+        $tsaArr = explode(":", $lines[43]);
+        $tsa .= ", " . $tsaArr[3];
+
+        $out .= "<strong>Status</strong>: " . $status;
+        $out .= "<br>Version: " . $version;
+        $out .= "<br>OID: " . $oid;
+        $out .= "<br>Hash algorithm: " . $hash;
+        $out .= "<br>Message data: 0x" . $message;
+        $out .= "<br>Timestamp: " . $timestamp->format('Y-m-d H:i:s P');
+
+        $out .= "<br><br><strong>TSA info:</strong>";
+        $out .= "<br>TSA: " . $tsa;
+        $out .= "<br>Country: " . $country;
+
+        return $out;
+    }
+
+    /**
+     * The main function.
+     * Request a timestamp and parse the response.
+     *
+     * @throws ImproperActionException
+     * @return void
+     */
+    public function timestamp(): void
+    {
+        if (!$this->Entity->isTimestampable()) {
+            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
+        }
+
+        // generate the pdf of the experiment that will be timestamped
+        $this->generatePdf();
+
+        // create the request file that will be sent to the TSA
+        $this->createRequestfile();
+
+        // get an answer from the TSA and
+        // save the token to .asn1 file
+        $this->saveToken($this->postData()->getBody());
+
+        // validate everything so we are sure it is OK
+        $this->validate();
+
+        // SQL
+        $this->Entity->updateTimestamp($this->getResponseTime(), $this->responsefilePath);
+        $this->sqlInsertPdf();
     }
 
     /**
@@ -431,23 +558,6 @@ class MakeTimestamp extends AbstractMake
     }
 
     /**
-     * The realname is elabid-timestamped.pdf
-     *
-     * @throws ImproperActionException
-     * @return string
-     */
-    public function getFileName(): string
-    {
-        $sql = "SELECT elabid FROM experiments WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if (!$req->execute()) {
-            throw new ImproperActionException('Cannot get elabid!');
-        }
-        return $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
-    }
-
-    /**
      * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
      * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
      * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
@@ -471,116 +581,6 @@ class MakeTimestamp extends AbstractMake
 
         if (!$req->execute()) {
             throw new ImproperActionException('Cannot insert into SQL!');
-        }
-    }
-
-    /**
-     * Decode asn1 encoded token
-     *
-     * @param string $token
-     * @return string
-     */
-    public function decodeAsn1($token): string
-    {
-        $output = $this->runProcess(array(
-            'openssl',
-            'asn1parse',
-            '-inform',
-            'DER',
-            '-in',
-            $this->getUploadsPath() . $token
-        ));
-        $lines = explode("\n", $output);
-
-        // now let's parse this
-        $out = "<br><hr>";
-
-        $statusArr = explode(":", $lines[4]);
-        $status = $statusArr[3];
-
-        $versionArr = explode(":", $lines[111]);
-        $version = $versionArr[3];
-
-        $oidArr = explode(":", $lines[148]);
-        $oid = $oidArr[3];
-
-        $hashArr = explode(":", $lines[12]);
-        $hash = $hashArr[3];
-
-        $messageArr = explode(":", $lines[17]);
-        $message = $messageArr[3];
-
-        $utctimeArr = explode(":", $lines[142]);
-        $utctime = rtrim($utctimeArr[3], 'Z');
-        $timestamp = \DateTime::createFromFormat('ymdHis', $utctime);
-        if ($timestamp === false) {
-            return 'Error: Could not parse timestamp!';
-        }
-
-        $countryArr = explode(":", $lines[31]);
-        $country = $countryArr[3];
-
-        $tsaArr = explode(":", $lines[121]);
-        $tsa = $tsaArr[3];
-
-        $tsaArr = explode(":", $lines[39]);
-        $tsa .= ", " . $tsaArr[3];
-        $tsaArr = explode(":", $lines[43]);
-        $tsa .= ", " . $tsaArr[3];
-
-        $out .= "<strong>Status</strong>: " . $status;
-        $out .= "<br>Version: " . $version;
-        $out .= "<br>OID: " . $oid;
-        $out .= "<br>Hash algorithm: " . $hash;
-        $out .= "<br>Message data: 0x" . $message;
-        $out .= "<br>Timestamp: " . $timestamp->format('Y-m-d H:i:s P');
-
-        $out .= "<br><br><strong>TSA info:</strong>";
-        $out .= "<br>TSA: " . $tsa;
-        $out .= "<br>Country: " . $country;
-
-        return $out;
-    }
-
-    /**
-     * The main function.
-     * Request a timestamp and parse the response.
-     *
-     * @throws ImproperActionException
-     * @return void
-     */
-    public function timestamp(): void
-    {
-        if (!$this->Entity->isTimestampable()) {
-            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
-        }
-
-        // generate the pdf of the experiment that will be timestamped
-        $this->generatePdf();
-
-        // create the request file that will be sent to the TSA
-        $this->createRequestfile();
-
-        // get an answer from the TSA and
-        // save the token to .asn1 file
-        $this->saveToken($this->postData()->getBody());
-
-        // validate everything so we are sure it is OK
-        $this->validate();
-
-        // SQL
-        $this->Entity->updateTimestamp($this->getResponseTime(), $this->responsefilePath);
-        $this->sqlInsertPdf();
-    }
-
-    /**
-     * Delete all temporary files
-     *
-     */
-    public function __destruct()
-    {
-        foreach ($this->trash as $file) {
-            unlink($file);
         }
     }
 }

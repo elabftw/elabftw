@@ -189,23 +189,6 @@ class ItemsTypes extends AbstractCategory
     }
 
     /**
-     * Count all items of this type
-     *
-     * @param int $id of the type
-     * @return int
-     */
-    protected function countItems(int $id): int
-    {
-        $sql = "SELECT COUNT(*) FROM items WHERE category = :category";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        return (int) $req->fetchColumn();
-    }
-
-    /**
      * Destroy an item type
      *
      * @param int $id
@@ -235,5 +218,22 @@ class ItemsTypes extends AbstractCategory
     public function destroyAll(): void
     {
         return;
+    }
+
+    /**
+     * Count all items of this type
+     *
+     * @param int $id of the type
+     * @return int
+     */
+    protected function countItems(int $id): int
+    {
+        $sql = "SELECT COUNT(*) FROM items WHERE category = :category";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':category', $id, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        return (int) $req->fetchColumn();
     }
 }

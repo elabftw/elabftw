@@ -55,6 +55,20 @@ final class Db
     }
 
     /**
+     * Disallow cloning the class
+     */
+    private function __clone()
+    {
+    }
+
+    /**
+     * Disallow wakeup also
+     */
+    public function __wakeup()
+    {
+    }
+
+    /**
      * Return the instance of the class
      *
      * @throws PDOException If connection to database failed
@@ -115,19 +129,5 @@ final class Db
     public function getNumberOfQueries(): int
     {
         return $this->nq;
-    }
-
-    /**
-     * Disallow cloning the class
-     */
-    private function __clone()
-    {
-    }
-
-    /**
-     * Disallow wakeup also
-     */
-    public function __wakeup()
-    {
     }
 }

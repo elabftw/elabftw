@@ -32,17 +32,17 @@ use PDO;
  */
 class Update
 {
-    /** @var Db $Db SQL Database */
-    private $Db;
-
-    /** @var Config $Config instance of Config */
-    public $Config;
-
-    /** @var Sql $Sql instance of Sql */
-    private $Sql;
 
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
     private const REQUIRED_SCHEMA = 48;
+
+    /** @var Config $Config instance of Config */
+    public $Config;
+    /** @var Db $Db SQL Database */
+    private $Db;
+
+    /** @var Sql $Sql instance of Sql */
+    private $Sql;
 
     /**
      * Constructor

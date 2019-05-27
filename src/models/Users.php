@@ -24,8 +24,6 @@ use PDO;
  */
 class Users
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var Auth $Auth instance of Auth */
     public $Auth;
@@ -38,6 +36,8 @@ class Users
 
     /** @var array $userData what you get when you read() */
     public $userData = array();
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -160,42 +160,6 @@ class Users
     }
 
     /**
-     * Get what will be the value of the validated column in users table
-     *
-     * @param int $group
-     * @return int
-     */
-    private function getValidated(int $group): int
-    {
-        // validation is required for normal user
-        if ($this->Config->configArr['admin_validate'] === '1' && $group === 4) {
-            return 0; // so new user will need validation
-        }
-        return 1;
-    }
-
-    /**
-     * Return the group int that will be assigned to a new user in a team
-     * 1 = sysadmin if it's the first user ever
-     * 2 = admin for first user in a team
-     * 4 = normal user
-     *
-     * @param int $team
-     * @return int
-     */
-    private function getGroup(int $team): int
-    {
-        if ($this->isFirstUser()) {
-            return 1;
-        }
-
-        if ($this->isFirstUserInTeam($team)) {
-            return 2;
-        }
-        return 4;
-    }
-
-    /**
      * Check we have not a duplicate email in DB
      *
      * @param string $email
@@ -211,42 +175,6 @@ class Users
         }
 
         return (bool) $req->rowCount();
-    }
-
-    /**
-     * Do we have users in the DB ?
-     *
-     * @return bool
-     */
-    private function isFirstUser(): bool
-    {
-        $sql = "SELECT COUNT(*) AS usernb FROM users";
-        $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $test = $req->fetch();
-
-        return $test['usernb'] === '0';
-    }
-
-    /**
-     * Are we the first user to register in a team ?
-     *
-     * @param int $team
-     * @return bool
-     */
-    private function isFirstUserInTeam(int $team): bool
-    {
-        $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $test = $req->fetch();
-
-        return $test['usernb'] === '0';
     }
 
     /**
@@ -816,5 +744,77 @@ class Users
             $Experiments = new Experiments($this, (int) $exp['id']);
             $Experiments->destroy();
         }
+    }
+
+    /**
+     * Get what will be the value of the validated column in users table
+     *
+     * @param int $group
+     * @return int
+     */
+    private function getValidated(int $group): int
+    {
+        // validation is required for normal user
+        if ($this->Config->configArr['admin_validate'] === '1' && $group === 4) {
+            return 0; // so new user will need validation
+        }
+        return 1;
+    }
+
+    /**
+     * Return the group int that will be assigned to a new user in a team
+     * 1 = sysadmin if it's the first user ever
+     * 2 = admin for first user in a team
+     * 4 = normal user
+     *
+     * @param int $team
+     * @return int
+     */
+    private function getGroup(int $team): int
+    {
+        if ($this->isFirstUser()) {
+            return 1;
+        }
+
+        if ($this->isFirstUserInTeam($team)) {
+            return 2;
+        }
+        return 4;
+    }
+
+    /**
+     * Do we have users in the DB ?
+     *
+     * @return bool
+     */
+    private function isFirstUser(): bool
+    {
+        $sql = "SELECT COUNT(*) AS usernb FROM users";
+        $req = $this->Db->prepare($sql);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $test = $req->fetch();
+
+        return $test['usernb'] === '0';
+    }
+
+    /**
+     * Are we the first user to register in a team ?
+     *
+     * @param int $team
+     * @return bool
+     */
+    private function isFirstUserInTeam(int $team): bool
+    {
+        $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $test = $req->fetch();
+
+        return $test['usernb'] === '0';
     }
 }

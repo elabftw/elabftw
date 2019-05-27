@@ -27,11 +27,11 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-    /** @var AbstractEntity $Entity instance of Entity */
-    private $Entity;
 
     /** @var int $inserted number of item we have inserted */
     public $inserted = 0;
+    /** @var AbstractEntity $Entity instance of Entity */
+    private $Entity;
 
     /** @var string $tmpPath the folder where we extract the zip */
     private $tmpPath;
@@ -56,6 +56,21 @@ class ImportZip extends AbstractImport
     }
 
     /**
+     * Cleanup : remove the temporary folder created
+     */
+    public function __destruct()
+    {
+        // first remove content
+        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
+        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($ri as $file) {
+            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
+        }
+        // and remove folder itself
+        rmdir($this->tmpPath);
+    }
+
+    /**
      * Do the import
      *
      * @return void
@@ -71,6 +86,17 @@ class ImportZip extends AbstractImport
         $this->openFile();
         $this->readJson();
         $this->importAll();
+    }
+
+    /**
+     * Extract the zip to the temporary folder
+     *
+     * @return void
+     */
+    protected function openFile(): void
+    {
+        $Zip = new ZipArchive();
+        $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
     }
 
     /**
@@ -203,31 +229,5 @@ class ImportZip extends AbstractImport
             }
             ++$this->inserted;
         }
-    }
-
-    /**
-     * Extract the zip to the temporary folder
-     *
-     * @return void
-     */
-    protected function openFile(): void
-    {
-        $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
-    }
-
-    /**
-     * Cleanup : remove the temporary folder created
-     */
-    public function __destruct()
-    {
-        // first remove content
-        $di = new RecursiveDirectoryIterator($this->tmpPath, FilesystemIterator::SKIP_DOTS);
-        $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($ri as $file) {
-            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
-        }
-        // and remove folder itself
-        rmdir($this->tmpPath);
     }
 }

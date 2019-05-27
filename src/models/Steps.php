@@ -20,11 +20,11 @@ use PDO;
  */
 class Steps implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** instance of Experiments */
     public $Experiments;
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor

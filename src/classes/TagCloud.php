@@ -37,6 +37,38 @@ class TagCloud
     }
 
     /**
+     * Create an array with tag => css class for tag cloud in profile
+     *
+     * @return array
+     */
+    public function getCloudArr(): array
+    {
+        $tags = $this->readAll();
+        $first = reset($tags);
+        $last = end($tags);
+        $spread = $first['total'] - $last['total'];
+
+        if ($spread === 0) {
+            $spread = 1;
+        }
+
+        // randomize the tags
+        shuffle($tags);
+
+        // fill the array
+        $cloudArr = array();
+        foreach ($tags as $tag) {
+            // calculate ratio
+            $ratio = (int) floor((($tag['total'] - $last['total']) / $spread) * 100);
+            // assign a class: font size will be different depending on ratio
+            $cssClass = $this->getClassFromRatio($ratio);
+            $cloudArr[$tag['tag']] = $cssClass;
+        }
+
+        return $cloudArr;
+    }
+
+    /**
      * Read all the tags from the team
      *
      * @return array
@@ -69,37 +101,5 @@ class TagCloud
     private function getClassFromRatio(int $ratio): string
     {
         return 'cloud-' . round($ratio, -1);
-    }
-
-    /**
-     * Create an array with tag => css class for tag cloud in profile
-     *
-     * @return array
-     */
-    public function getCloudArr(): array
-    {
-        $tags = $this->readAll();
-        $first = reset($tags);
-        $last = end($tags);
-        $spread = $first['total'] - $last['total'];
-
-        if ($spread === 0) {
-            $spread = 1;
-        }
-
-        // randomize the tags
-        shuffle($tags);
-
-        // fill the array
-        $cloudArr = array();
-        foreach ($tags as $tag) {
-            // calculate ratio
-            $ratio = (int) floor((($tag['total'] - $last['total']) / $spread) * 100);
-            // assign a class: font size will be different depending on ratio
-            $cssClass = $this->getClassFromRatio($ratio);
-            $cloudArr[$tag['tag']] = $cssClass;
-        }
-
-        return $cloudArr;
     }
 }

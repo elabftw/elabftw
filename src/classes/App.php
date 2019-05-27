@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\App
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -101,58 +99,6 @@ class App
     }
 
     /**
-     * Prepare the Twig object
-     *
-     * @return \Twig_Environment
-     */
-    private function getTwig(): \Twig_Environment
-    {
-        $elabRoot = \dirname(__DIR__, 2);
-        $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
-        $cache = "$elabRoot/cache/twig";
-        if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
-        }
-        $options = array();
-
-        // enable cache if not in debug (dev) mode
-        if (!$this->Config->configArr['debug']) {
-            $options = array('cache' => $cache);
-        }
-        $TwigEnvironment = new \Twig\Environment($loader, $options);
-
-        // custom twig filters
-        //
-        // WARNING: MIRROR MODIFS TO SRC/TOOLS/GENERATE-CACHE.PHP!!
-        //
-        $filterOptions = array('is_safe' => array('html'));
-        $msgFilter = new \Twig\TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-        $dateFilter = new \Twig\TwigFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-        $mdFilter = new \Twig\TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-        $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
-        $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
-        $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
-
-        $TwigEnvironment->addFilter($msgFilter);
-        $TwigEnvironment->addFilter($dateFilter);
-        $TwigEnvironment->addFilter($mdFilter);
-        $TwigEnvironment->addFilter($starsFilter);
-        $TwigEnvironment->addFilter($bytesFilter);
-        $TwigEnvironment->addFilter($extFilter);
-        $TwigEnvironment->addFilter($filesizeFilter);
-
-        // i18n for twig
-        $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
-
-        // add the version as a global var so we can have it for the ?v=x.x.x for js files
-        $ReleaseCheck = new ReleaseCheck($this->Config);
-        $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
-
-        return $TwigEnvironment;
-    }
-
-    /**
      * Get the page generation time (called in the footer)
      *
      * @return float
@@ -216,5 +162,57 @@ class App
     public function render(string $template, array $variables): string
     {
         return $this->Twig->render($template, array_merge(array('App' => $this), $variables));
+    }
+
+    /**
+     * Prepare the Twig object
+     *
+     * @return \Twig_Environment
+     */
+    private function getTwig(): \Twig_Environment
+    {
+        $elabRoot = \dirname(__DIR__, 2);
+        $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
+        $cache = "$elabRoot/cache/twig";
+        if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
+            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
+        }
+        $options = array();
+
+        // enable cache if not in debug (dev) mode
+        if (!$this->Config->configArr['debug']) {
+            $options = array('cache' => $cache);
+        }
+        $TwigEnvironment = new \Twig\Environment($loader, $options);
+
+        // custom twig filters
+        //
+        // WARNING: MIRROR MODIFS TO SRC/TOOLS/GENERATE-CACHE.PHP!!
+        //
+        $filterOptions = array('is_safe' => array('html'));
+        $msgFilter = new \Twig\TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+        $dateFilter = new \Twig\TwigFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
+        $mdFilter = new \Twig\TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
+        $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
+        $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
+        $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
+        $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
+
+        $TwigEnvironment->addFilter($msgFilter);
+        $TwigEnvironment->addFilter($dateFilter);
+        $TwigEnvironment->addFilter($mdFilter);
+        $TwigEnvironment->addFilter($starsFilter);
+        $TwigEnvironment->addFilter($bytesFilter);
+        $TwigEnvironment->addFilter($extFilter);
+        $TwigEnvironment->addFilter($filesizeFilter);
+
+        // i18n for twig
+        $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
+
+        // add the version as a global var so we can have it for the ?v=x.x.x for js files
+        $ReleaseCheck = new ReleaseCheck($this->Config);
+        $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
+
+        return $TwigEnvironment;
     }
 }

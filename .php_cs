@@ -16,8 +16,6 @@ return PhpCsFixer\Config::create()
         'psr4' => true,
         'array_syntax' => ['syntax' => 'long'],
         'php_unit_construct' => true,
-        'php_unit_fqcn_annotation' => true,
-        'silenced_deprecation_error' => true,
         'declare_strict_types' => true,
         'strict_param' => true,
         'dir_constant' => true,
@@ -28,6 +26,7 @@ return PhpCsFixer\Config::create()
         'no_php4_constructor' => true,
         'non_printable_character' => true,
         'ordered_imports' => true,
+        'ordered_class_elements' => true,
     ))
     ->setFinder(
         PhpCsFixer\Finder::create()

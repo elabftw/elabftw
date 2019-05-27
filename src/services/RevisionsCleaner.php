@@ -29,6 +29,17 @@ class RevisionsCleaner implements CleanerInterface
     }
 
     /**
+     * Do the purge
+     *
+     * @return void
+     */
+    public function cleanup()
+    {
+        $this->removeRows('experiments');
+        $this->removeRows('items');
+    }
+
+    /**
      * Remove every other row
      *
      * @param string $table
@@ -46,16 +57,5 @@ class RevisionsCleaner implements CleanerInterface
                 WHERE `rownum` % 2 = 0)";
         $req = $this->Db->prepare($sql);
         $req->execute();
-    }
-
-    /**
-     * Do the purge
-     *
-     * @return void
-     */
-    public function cleanup()
-    {
-        $this->removeRows('experiments');
-        $this->removeRows('items');
     }
 }

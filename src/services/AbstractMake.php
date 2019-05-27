@@ -25,14 +25,14 @@ abstract class AbstractMake
 {
     use UploadTrait;
 
+    /** @var string $filePath the full path of the file */
+    public $filePath;
+
     /** @var AbstractEntity $Entity instance of Experiments or Database */
     protected $Entity;
 
     /** @var Db $Db SQL Database */
     protected $Db;
-
-    /** @var string $filePath the full path of the file */
-    public $filePath;
 
     /**
      * Constructor

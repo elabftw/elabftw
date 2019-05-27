@@ -21,14 +21,14 @@ use PDO;
  */
 class Revisions implements CrudInterface
 {
+
+    /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
+    private const MIN_DELTA = 20;
     /** @var Db $Db SQL Database */
     private $Db;
 
     /** @var AbstractEntity $Entity an instance of Experiments or Database */
     private $Entity;
-
-    /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
-    private const MIN_DELTA = 20;
 
     /**
      * Constructor
@@ -109,46 +109,6 @@ class Revisions implements CrudInterface
     }
 
     /**
-     * Get the body of a revision
-     *
-     * @param int $revId The id of the revision
-     * @return string
-     */
-    private function readRev(int $revId)
-    {
-        $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            return '';
-        }
-        return $res;
-    }
-
-    /**
-     * Check if item is locked before restoring it
-     *
-     * @return bool
-     */
-    private function isLocked(): bool
-    {
-        $sql = "SELECT locked FROM " . $this->Entity->type . " WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $locked = $req->fetch();
-
-        return $locked['locked'] == 1;
-    }
-
-    /**
      * Restore a revision
      *
      * @param int $revId The id of the revision we want to restore
@@ -192,5 +152,45 @@ class Revisions implements CrudInterface
     public function destroyAll(): void
     {
         return;
+    }
+
+    /**
+     * Get the body of a revision
+     *
+     * @param int $revId The id of the revision
+     * @return string
+     */
+    private function readRev(int $revId)
+    {
+        $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $res = $req->fetchColumn();
+        if ($res === false || $res === null) {
+            return '';
+        }
+        return $res;
+    }
+
+    /**
+     * Check if item is locked before restoring it
+     *
+     * @return bool
+     */
+    private function isLocked(): bool
+    {
+        $sql = "SELECT locked FROM " . $this->Entity->type . " WHERE id = :id";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $locked = $req->fetch();
+
+        return $locked['locked'] == 1;
     }
 }

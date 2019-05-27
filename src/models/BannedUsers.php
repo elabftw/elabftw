@@ -18,11 +18,12 @@ use PDO;
  */
 class BannedUsers
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var Config $Config Master configuration */
     public $Config;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor

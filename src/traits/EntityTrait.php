@@ -21,8 +21,6 @@ use Elabftw\Models\Users;
  */
 trait EntityTrait
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /** @var Users $Users our user */
     public $Users;
@@ -32,6 +30,8 @@ trait EntityTrait
 
     /** @var array $entityData content of entity */
     public $entityData = array();
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Check and set id

@@ -17,7 +17,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testRead()
     {
         $this->Templates->setId(1);
-        $this->assertTrue(is_array($this->Templates->read(1)));
+        $this->assertTrue(is_array($this->Templates->read()));
     }
 
     public function testDuplicate()

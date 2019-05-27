@@ -74,10 +74,10 @@ final class Db
      * @throws PDOException If connection to database failed
      * @return Db The instance of the class
      */
-    public static function getConnection(): Db
+    public static function getConnection(): self
     {
         if (self::$instance === null) {
-            self::$instance = new Db();
+            self::$instance = new self();
         }
 
         return self::$instance;

@@ -233,7 +233,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
         $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
 
-        $Uploads = new Uploads(new Experiments($this->Users, (int) $this->entityData['id']));
+        $Uploads = new Uploads(new self($this->Users, (int) $this->entityData['id']));
         $Uploads->Entity->type = 'exp-pdf-timestamp';
         $pdf = $Uploads->readAll();
 

@@ -104,7 +104,7 @@ try {
 
     // load the Users with a userid if we are auth
     if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users($Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
+        $App->loadUser(new Users((int) $Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
     }
 
     // ANONYMOUS

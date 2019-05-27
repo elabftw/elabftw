@@ -143,7 +143,7 @@ abstract class AbstractEntity
      *
      * @return array
      */
-    public function read($getTags = true): array
+    public function read(bool $getTags = true): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
@@ -259,8 +259,7 @@ abstract class AbstractEntity
         }
         // reduce the dimension of the array if we have only one item (idFilter set)
         if (count($finalArr) === 1 && !empty($this->idFilter)) {
-            $item = $finalArr[0];
-            return $item;
+            return $finalArr[0];
         }
         return $finalArr;
     }

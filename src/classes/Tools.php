@@ -327,7 +327,7 @@ class Tools
      */
     public static function getLangsArr(): array
     {
-        $langs = array(
+        return array(
             'ca_ES' => 'Spanish (Catalan)',
             'de_DE' => 'German',
             'en_GB' => 'English (UK)',
@@ -343,8 +343,6 @@ class Tools
             'sk_SK' => 'Slovak',
             'zh_CN' => 'Chinese Simplified',
         );
-
-        return $langs;
     }
 
     /**

@@ -59,7 +59,7 @@ abstract class AbstractMake
      */
     protected function getLongName(): string
     {
-        $hash = \hash("sha512", \bin2hex(\random_bytes(16)));
+        $hash = \hash('sha512', \bin2hex(\random_bytes(16)));
         $folder = substr($hash, 0, 2);
 
         return $folder . '/' . $hash;
@@ -91,6 +91,6 @@ abstract class AbstractMake
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
 
-        return $url . "?mode=view&id=" . $this->Entity->id;
+        return $url . '?mode=view&id=' . $this->Entity->id;
     }
 }

@@ -45,7 +45,7 @@ try {
 
     // UPDATE TEAM
     if ($Request->request->has('teamsUpdate')) {
-        $orgid = "";
+        $orgid = '';
         if ($Request->request->has('teamsUpdateOrgid')) {
             $orgid = $Request->request->get('teamsUpdateOrgid');
         }

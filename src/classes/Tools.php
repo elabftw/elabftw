@@ -88,7 +88,7 @@ class Tools
         $begin = "<div class='alert alert-" . $alert .
             "'><i class='fas " . $icon .
             "'></i>";
-        $end = "</div>";
+        $end = '</div>';
 
         return $begin . $crossLink . ' ' . $message . $end;
     }
@@ -117,9 +117,9 @@ class Tools
      */
     public static function checkBody(string $input): string
     {
-        $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
+        $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
-            <details><summary><figure><figcaption>";
+            <details><summary><figure><figcaption>';
         $body = strip_tags($input, $whitelist);
         // use strlen() instead of mb_strlen() because we want the size in bytes
         if (\strlen($body) > self::MAX_BODY_SIZE) {
@@ -288,9 +288,9 @@ class Tools
     public static function error(bool $permission = false): string
     {
         if ($permission) {
-            return _("This section is out of your reach!");
+            return _('This section is out of your reach!');
         }
-        return _("An error occurred!");
+        return _('An error occurred!');
     }
 
     /**

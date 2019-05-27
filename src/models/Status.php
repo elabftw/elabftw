@@ -59,8 +59,8 @@ class Status extends AbstractCategory
             $name = 'Unnamed';
         }
 
-        $sql = "INSERT INTO status(name, color, team, is_timestampable, is_default)
-            VALUES(:name, :color, :team, :is_timestampable, :is_default)";
+        $sql = 'INSERT INTO status(name, color, team, is_timestampable, is_default)
+            VALUES(:name, :color, :team, :is_timestampable, :is_default)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
@@ -96,12 +96,12 @@ class Status extends AbstractCategory
      */
     public function readAll(): array
     {
-        $sql = "SELECT status.id AS category_id,
+        $sql = 'SELECT status.id AS category_id,
             status.name AS category,
             status.color,
             status.is_timestampable,
             status.is_default
-            FROM status WHERE team = :team ORDER BY ordering ASC";
+            FROM status WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -123,7 +123,7 @@ class Status extends AbstractCategory
      */
     public function readColor(int $id): string
     {
-        $sql = "SELECT color FROM status WHERE id = :id";
+        $sql = 'SELECT color FROM status WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -145,7 +145,7 @@ class Status extends AbstractCategory
      */
     public function isTimestampable(int $status): bool
     {
-        $sql = "SELECT is_timestampable FROM status WHERE id = :id";
+        $sql = 'SELECT is_timestampable FROM status WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $status, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -176,12 +176,12 @@ class Status extends AbstractCategory
             $default = 1;
         }
 
-        $sql = "UPDATE status SET
+        $sql = 'UPDATE status SET
             name = :name,
             color = :color,
             is_timestampable = :is_timestampable,
             is_default = :is_default
-            WHERE id = :id AND team = :team";
+            WHERE id = :id AND team = :team';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
@@ -206,10 +206,10 @@ class Status extends AbstractCategory
     {
         // don't allow deletion of a status with experiments
         if ($this->countItems($id) > 0) {
-            throw new ImproperActionException(_("Remove all experiments with this status before deleting this status."));
+            throw new ImproperActionException(_('Remove all experiments with this status before deleting this status.'));
         }
 
-        $sql = "DELETE FROM status WHERE id = :id";
+        $sql = 'DELETE FROM status WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
 
@@ -236,7 +236,7 @@ class Status extends AbstractCategory
      */
     protected function countItems(int $id): int
     {
-        $sql = "SELECT COUNT(*) FROM experiments WHERE category = :category";
+        $sql = 'SELECT COUNT(*) FROM experiments WHERE category = :category';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -255,7 +255,7 @@ class Status extends AbstractCategory
      */
     private function setDefaultFalse(): void
     {
-        $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
+        $sql = 'UPDATE status SET is_default = 0 WHERE team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 

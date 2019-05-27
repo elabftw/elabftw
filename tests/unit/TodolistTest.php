@@ -25,7 +25,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Todolist->update(1, "write more unit tests");
+        $this->Todolist->update(1, 'write more unit tests');
     }
 
     public function testUpdateOrdering()

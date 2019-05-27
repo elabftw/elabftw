@@ -68,7 +68,7 @@ class Uploads implements CrudInterface
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $this->checkExtension($realName);
 
-        $longName = $this->getLongName() . "." . Tools::getExt($realName);
+        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
         $fullPath = $this->getUploadsPath() . $longName;
 
         // Try to move the file to its final place
@@ -92,7 +92,7 @@ class Uploads implements CrudInterface
         $realName = basename($filePath);
         $this->checkExtension($realName);
 
-        $longName = $this->getLongName() . "." . Tools::getExt($realName);
+        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
         $fullPath = $this->getUploadsPath() . $longName;
 
         $this->moveFile($filePath, $fullPath);
@@ -135,7 +135,7 @@ class Uploads implements CrudInterface
         $fullPath = $this->getUploadsPath() . $longName;
 
         if (!empty($content) && !file_put_contents($fullPath, $content)) {
-            throw new FilesystemErrorException("Could not write to file!");
+            throw new FilesystemErrorException('Could not write to file!');
         }
 
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
@@ -152,7 +152,7 @@ class Uploads implements CrudInterface
      */
     public function readFromId(int $id): array
     {
-        $sql = "SELECT * FROM uploads WHERE id = :id";
+        $sql = 'SELECT * FROM uploads WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
@@ -174,7 +174,7 @@ class Uploads implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+        $sql = 'SELECT * FROM uploads WHERE item_id = :id AND type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
@@ -197,7 +197,7 @@ class Uploads implements CrudInterface
      */
     public function getDiskUsage(int $userid): int
     {
-        $sql = "SELECT userid, long_name FROM uploads WHERE userid = :userid ORDER BY userid";
+        $sql = 'SELECT userid, long_name FROM uploads WHERE userid = :userid ORDER BY userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -233,7 +233,7 @@ class Uploads implements CrudInterface
         }
         $this->Entity->canOrExplode('write');
         // SQL to update single file comment
-        $sql = "UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id";
+        $sql = 'UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -263,7 +263,7 @@ class Uploads implements CrudInterface
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb(true);
 
-        $sql = "UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id";
+        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
 
@@ -329,7 +329,7 @@ class Uploads implements CrudInterface
 
         // Delete SQL entry (and verify the type)
         // to avoid someone deleting files saying it's DB whereas it's exp
-        $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
+        $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
@@ -435,7 +435,7 @@ class Uploads implements CrudInterface
             $comment = 'Click to add a comment';
         }
 
-        $sql = "INSERT INTO uploads(
+        $sql = 'INSERT INTO uploads(
             real_name,
             long_name,
             comment,
@@ -453,7 +453,7 @@ class Uploads implements CrudInterface
             :type,
             :hash,
             :hash_algorithm
-        )";
+        )';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':real_name', $realName);

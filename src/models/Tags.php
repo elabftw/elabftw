@@ -49,10 +49,10 @@ class Tags implements CrudInterface
         $this->Entity->canOrExplode('write');
         $tag = $this->checkTag($tag);
 
-        $insertSql2 = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
+        $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
         // check if the tag doesn't exist already for the team
-        $sql = "SELECT id FROM tags WHERE tag = :tag AND team = :team";
+        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
@@ -63,7 +63,7 @@ class Tags implements CrudInterface
 
         // tag doesn't exist already
         if ($req->rowCount() === 0) {
-            $insertSql = "INSERT INTO tags (team, tag) VALUES (:team, :tag)";
+            $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
             $insertReq = $this->Db->prepare($insertSql);
             $insertReq->bindParam(':tag', $tag);
             $insertReq->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
@@ -92,7 +92,7 @@ class Tags implements CrudInterface
      */
     public function readAll(?string $term = null): array
     {
-        $tagFilter = "";
+        $tagFilter = '';
         if ($term !== null) {
             $tagFilter = " AND tags.tag LIKE '%$term%'";
         }
@@ -123,7 +123,7 @@ class Tags implements CrudInterface
      */
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
-        $sql = "SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type";
+        $sql = 'SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':item_type', $this->Entity->type);
@@ -131,7 +131,7 @@ class Tags implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         if ($req->rowCount() > 0) {
-            $insertSql = "INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)";
+            $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
             $insertReq = $this->Db->prepare($insertSql);
 
             $type = $this->Entity->type;
@@ -179,7 +179,7 @@ class Tags implements CrudInterface
     {
         $newtag = $this->checkTag($newtag);
 
-        $sql = "UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team";
+        $sql = 'UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':newtag', $newtag);
@@ -199,7 +199,7 @@ class Tags implements CrudInterface
      */
     public function deduplicate(string $tag): int
     {
-        $sql = "SELECT * FROM tags WHERE tag = :tag AND team = :team";
+        $sql = 'SELECT * FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
@@ -222,7 +222,7 @@ class Tags implements CrudInterface
         $tagsToDelete = array_slice($tags, 1);
 
         foreach ($tagsToDelete as $tag) {
-            $sql = "UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id";
+            $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':target_tag_id', $targetTagId, PDO::PARAM_INT);
             $req->bindParam(':tag_id', $tag['id'], PDO::PARAM_INT);
@@ -232,7 +232,7 @@ class Tags implements CrudInterface
         }
 
         // now delete the duplicate tags from the tags table
-        $sql = "DELETE FROM tags WHERE id = :id";
+        $sql = 'DELETE FROM tags WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach ($tagsToDelete as $tag) {
             $req->bindParam(':id', $tag['id'], PDO::PARAM_INT);
@@ -252,7 +252,7 @@ class Tags implements CrudInterface
      */
     public function unreference(int $tagId): void
     {
-        $sql = "DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id";
+        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -262,7 +262,7 @@ class Tags implements CrudInterface
         }
 
         // now check if another entity is referencing it, if not, remove it from the tags table
-        $sql = "SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id";
+        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
 
@@ -285,7 +285,7 @@ class Tags implements CrudInterface
     public function destroy(int $tagId): void
     {
         // first unreference the tag
-        $sql = "DELETE FROM tags2entity WHERE tag_id = :tag_id";
+        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -293,7 +293,7 @@ class Tags implements CrudInterface
         }
 
         // now delete it from the tags table
-        $sql = "DELETE FROM tags WHERE id = :tag_id";
+        $sql = 'DELETE FROM tags WHERE id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -310,7 +310,7 @@ class Tags implements CrudInterface
      */
     public function destroyAll(): void
     {
-        $sql = "DELETE FROM tags2entity WHERE item_id = :id";
+        $sql = 'DELETE FROM tags2entity WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 

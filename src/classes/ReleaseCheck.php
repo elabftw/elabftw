@@ -122,8 +122,8 @@ class ReleaseCheck
      */
     public function getChangelogLink(): string
     {
-        $base = "https://doc.elabftw.net/changelog.html#version-";
-        $dashedVersion = str_replace(".", "-", $this->version);
+        $base = 'https://doc.elabftw.net/changelog.html#version-';
+        $dashedVersion = str_replace('.', '-', $this->version);
 
         return $base . $dashedVersion;
     }

@@ -77,15 +77,15 @@ class DatabaseCleaner implements CleanerInterface
             $tableId = 'userid';
         }
 
-        $sql = "SELECT " . $table . "." . $tableId . "
-            FROM " . $table . "
-            LEFT JOIN " . $foreignTable . " ON (" . $table . "." . $foreignKey . " = " . $foreignTable . "." . $foreignId . ")
-            WHERE " . $foreignTable . "." . $foreignId . " IS NULL";
+        $sql = 'SELECT ' . $table . '.' . $tableId . '
+            FROM ' . $table . '
+            LEFT JOIN ' . $foreignTable . ' ON (' . $table . '.' . $foreignKey . ' = ' . $foreignTable . '.' . $foreignId . ')
+            WHERE ' . $foreignTable . '.' . $foreignId . ' IS NULL';
         $req = $this->Db->prepare($sql);
         $req->execute();
         $res = $req->fetchAll();
         if (!empty($res)) {
-            echo "Found " . \count($res) . " rows to delete in " . $table . "\n";
+            echo 'Found ' . \count($res) . ' rows to delete in ' . $table . "\n";
             $this->deleteFrom($table, $res);
         }
     }
@@ -99,7 +99,7 @@ class DatabaseCleaner implements CleanerInterface
      */
     private function deleteFrom(string $table, array $results): void
     {
-        $sql = "DELETE FROM " . $table . " WHERE id = :id";
+        $sql = 'DELETE FROM ' . $table . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach ($results as $orphan) {
             $req->bindParam(':id', $orphan['id']);

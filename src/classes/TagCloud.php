@@ -75,11 +75,11 @@ class TagCloud
      */
     private function readAll(): array
     {
-        $sql = "SELECT tag, COUNT(tag_id) AS total
+        $sql = 'SELECT tag, COUNT(tag_id) AS total
             FROM tags
             LEFT JOIN tags2entity ON (tags.id = tags2entity.tag_id)
             WHERE team = :team
-            GROUP BY tag ORDER BY total DESC";
+            GROUP BY tag ORDER BY total DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->execute();

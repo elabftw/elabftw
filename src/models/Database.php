@@ -44,8 +44,8 @@ class Database extends AbstractEntity implements CreateInterface
         $itemsTypes = new ItemsTypes($this->Users, $category);
 
         // SQL for create DB item
-        $sql = "INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)";
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category)
+            VALUES(:team, :title, :date, :body, :userid, :category)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -86,8 +86,8 @@ class Database extends AbstractEntity implements CreateInterface
      */
     public function duplicate(): int
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)";
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category)
+            VALUES(:team, :title, :date, :body, :userid, :category)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -112,7 +112,7 @@ class Database extends AbstractEntity implements CreateInterface
     public function destroy(): void
     {
         // delete the database item
-        $sql = "DELETE FROM items WHERE id = :id";
+        $sql = 'DELETE FROM items WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -125,7 +125,7 @@ class Database extends AbstractEntity implements CreateInterface
 
         // delete links of this item in experiments with this item linked
         // get all experiments with that item linked
-        $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
+        $sql = 'SELECT id FROM experiments_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -133,7 +133,7 @@ class Database extends AbstractEntity implements CreateInterface
         }
 
         while ($links = $req->fetch()) {
-            $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
+            $delete_sql = 'DELETE FROM experiments_links WHERE id = :links_id';
             $delete_req = $this->Db->prepare($delete_sql);
             $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
             if ($delete_req->execute() !== true) {
@@ -149,7 +149,7 @@ class Database extends AbstractEntity implements CreateInterface
      */
     public function toggleLock(): void
     {
-        $sql = "UPDATE items SET locked = IF(locked = 1, 0, 1) WHERE id = :id";
+        $sql = 'UPDATE items SET locked = IF(locked = 1, 0, 1) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 

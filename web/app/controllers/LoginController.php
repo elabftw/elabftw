@@ -35,7 +35,7 @@ try {
     if ($Request->request->has('saml_login')) {
         $settings = $Saml->getSettings();
         $SamlAuth = new SamlAuth($settings);
-        $returnUrl = $settings['baseurl'] . "/index.php?acs";
+        $returnUrl = $settings['baseurl'] . '/index.php?acs';
         $SamlAuth->login($returnUrl);
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {

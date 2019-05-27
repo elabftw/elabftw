@@ -49,8 +49,8 @@ class Idps implements CrudInterface
      */
     public function create(string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509, string $active): int
     {
-        $sql = "INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, active)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :active)";
+        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, active)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :active)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -76,7 +76,7 @@ class Idps implements CrudInterface
      */
     public function read(int $id): array
     {
-        $sql = "SELECT * FROM idps WHERE id = :id";
+        $sql = 'SELECT * FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -96,7 +96,7 @@ class Idps implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT * FROM idps";
+        $sql = 'SELECT * FROM idps';
         $req = $this->Db->prepare($sql);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -125,7 +125,7 @@ class Idps implements CrudInterface
      */
     public function update(int $id, string $name, string $entityid, string $ssoUrl, string $ssoBinding, string $sloUrl, string $sloBinding, string $x509, string $active): void
     {
-        $sql = "UPDATE idps SET
+        $sql = 'UPDATE idps SET
             name = :name,
             entityid = :entityid,
             sso_url = :sso_url,
@@ -134,7 +134,7 @@ class Idps implements CrudInterface
             slo_binding = :slo_binding,
             x509 = :x509,
             active = :active
-            WHERE id = :id";
+            WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
@@ -158,7 +158,7 @@ class Idps implements CrudInterface
      */
     public function getActive(): array
     {
-        $sql = "SELECT * FROM idps WHERE active = 1 LIMIT 1";
+        $sql = 'SELECT * FROM idps WHERE active = 1 LIMIT 1';
         $req = $this->Db->prepare($sql);
 
         if ($req->execute() !== true) {
@@ -180,7 +180,7 @@ class Idps implements CrudInterface
      */
     public function destroy(int $id): void
     {
-        $sql = "DELETE FROM idps WHERE id = :id";
+        $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 

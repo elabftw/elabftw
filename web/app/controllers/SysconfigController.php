@@ -82,6 +82,6 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
 } finally {
-    $Response = new RedirectResponse("../../sysconfig.php?tab=" . $tab);
+    $Response = new RedirectResponse('../../sysconfig.php?tab=' . $tab);
     $Response->send();
 }

@@ -68,7 +68,7 @@ class Links implements CrudInterface
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = "SELECT items.id AS itemid,
+        $sql = 'SELECT items.id AS itemid,
             experiments_links.id AS linkid,
             experiments_links.*,
             items.*,
@@ -76,7 +76,7 @@ class Links implements CrudInterface
             FROM experiments_links
             LEFT JOIN items ON (experiments_links.link_id = items.id)
             LEFT JOIN items_types ON (items.category = items_types.id)
-            WHERE experiments_links.item_id = :id";
+            WHERE experiments_links.item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -100,7 +100,7 @@ class Links implements CrudInterface
     public function duplicate(int $id, int $newId): void
     {
         // LINKS
-        $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
+        $linksql = 'SELECT link_id FROM experiments_links WHERE item_id = :id';
         $linkreq = $this->Db->prepare($linksql);
         $linkreq->bindParam(':id', $id, PDO::PARAM_INT);
         if ($linkreq->execute() !== true) {
@@ -108,7 +108,7 @@ class Links implements CrudInterface
         }
 
         while ($links = $linkreq->fetch()) {
-            $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
+            $sql = 'INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)';
             $req = $this->Db->prepare($sql);
             $req->execute(array(
                 'link_id' => $links['link_id'],
@@ -127,7 +127,7 @@ class Links implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = "DELETE FROM experiments_links WHERE id= :id";
+        $sql = 'DELETE FROM experiments_links WHERE id= :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 

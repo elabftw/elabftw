@@ -93,7 +93,7 @@ try {
     }
 
     // DECODE ASN1 TOKEN
-    if ($Request->request->has('asn1') && \is_readable(\dirname(__DIR__, 3) . "/uploads/" . $Request->request->get('asn1'))) {
+    if ($Request->request->has('asn1') && \is_readable(\dirname(__DIR__, 3) . '/uploads/' . $Request->request->get('asn1'))) {
         $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
         $Response->setData(array(
             'res' => true,

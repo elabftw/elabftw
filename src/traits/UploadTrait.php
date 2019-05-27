@@ -34,7 +34,7 @@ trait UploadTrait
      */
     protected function getUniqueString(): string
     {
-        return \hash("sha512", \bin2hex(\random_bytes(16)));
+        return \hash('sha512', \bin2hex(\random_bytes(16)));
     }
 
     /**

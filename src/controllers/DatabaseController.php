@@ -127,12 +127,12 @@ class DatabaseController extends AbstractEntityController
 
         // CATEGORY FILTER
         if (Tools::checkId((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->categoryFilter = "AND items_types.id = " . $this->App->Request->query->get('cat');
+            $this->Entity->categoryFilter = 'AND items_types.id = ' . $this->App->Request->query->get('cat');
             $searchType = 'category';
         }
         // TAG FILTER
         if (!empty($this->App->Request->query->get('tags'))) {
-            $having = "HAVING ";
+            $having = 'HAVING ';
             foreach ($this->App->Request->query->get('tags') as $tag) {
                 $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
                 $having .= "tags LIKE '%$tag%' AND ";

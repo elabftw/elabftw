@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse("../../experiments.php");
+$Response = new RedirectResponse('../../experiments.php');
 
 try {
     if ($App->Session->has('anon')) {
@@ -53,7 +53,7 @@ try {
         $Entity = new Database($App->Users, $id);
     }
 
-    $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=edit&id=" . $Entity->id);
+    $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=edit&id=' . $Entity->id);
 
     // UPDATE
     if ($Request->request->has('update')) {
@@ -63,7 +63,7 @@ try {
             $Request->request->get('body')
         );
         // redirect to view mode (Save and go back button)
-        $Response = new RedirectResponse("../../" . $Entity->page . ".php?mode=view&id=" . $Entity->id);
+        $Response = new RedirectResponse('../../' . $Entity->page . '.php?mode=view&id=' . $Entity->id);
     }
 
     // REPLACE UPLOAD

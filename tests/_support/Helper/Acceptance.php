@@ -21,11 +21,11 @@ class Acceptance extends \Codeception\Module
     private function runSh($cmd)
     {
         $retarray = array();
-        exec("sh -c \"" . $cmd . "\" 2>&1", $retarray, $retcode);
+        exec('sh -c "' . $cmd . '" 2>&1', $retarray, $retcode);
 
         return array(
-            "retarray" => $retarray,
-            "retcode" => $retcode,
+            'retarray' => $retarray,
+            'retcode' => $retcode,
         );
     }
 }

@@ -76,7 +76,7 @@ final class MakeThumbnail
     public function makeThumb($force = false): void
     {
         if (\is_readable($this->filePath) === false) {
-            throw new FilesystemErrorException("File not found! (" . \substr($this->filePath, 0, 42) . "…)");
+            throw new FilesystemErrorException('File not found! (' . \substr($this->filePath, 0, 42) . '…)');
         }
 
         // do nothing for big files

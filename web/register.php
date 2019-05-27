@@ -32,7 +32,7 @@ try {
         throw new ImproperActionException(sprintf(
             _('Please %slogout%s before you register another account.'),
             "<a style='alert-link' href='app/logout.php'>",
-            "</a>"
+            '</a>'
         ));
     }
 
@@ -46,7 +46,7 @@ try {
 
     $template = 'register.html';
     $renderArr = array(
-        'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? "",
+        'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
         'teamsArr' => $teamsArr, );
 } catch (ImproperActionException $e) {
     $template = 'error.html';

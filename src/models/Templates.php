@@ -55,7 +55,7 @@ class Templates extends AbstractEntity
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $body = Tools::checkBody($body);
 
-        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
+        $sql = 'INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
@@ -94,7 +94,7 @@ class Templates extends AbstractEntity
     {
         $template = $this->read();
 
-        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
+        $sql = 'INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':name', $template['name']);
@@ -118,7 +118,7 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false): array
     {
-        $sql = "SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team";
+        $sql = 'SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -206,10 +206,10 @@ class Templates extends AbstractEntity
     {
         // don't load the common template if you are using markdown because it's probably in html
         if ($this->Users->userData['use_markdown']) {
-            return "";
+            return '';
         }
 
-        $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
+        $sql = 'SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -259,10 +259,10 @@ class Templates extends AbstractEntity
         $name = Tools::checkTitle($name);
         $this->setId($id);
 
-        $sql = "UPDATE experiments_templates SET
+        $sql = 'UPDATE experiments_templates SET
             name = :name,
             body = :body
-            WHERE userid = :userid AND id = :id";
+            WHERE userid = :userid AND id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':body', $body);
@@ -281,7 +281,7 @@ class Templates extends AbstractEntity
      */
     public function destroy(): void
     {
-        $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
+        $sql = 'DELETE FROM experiments_templates WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);

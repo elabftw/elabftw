@@ -74,10 +74,10 @@ class UserStats
 
         // count experiments for each status
         foreach (array_keys($this->statusArr) as $key) {
-            $sql = "SELECT COUNT(id)
+            $sql = 'SELECT COUNT(id)
                 FROM experiments
                 WHERE userid = :userid
-                AND category = :category";
+                AND category = :category';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $key, PDO::PARAM_INT);

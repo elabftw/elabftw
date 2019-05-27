@@ -19,11 +19,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $post = array(
             'smtp_address' => 'smtp.mailgun.org',
-            'smtp_encryption' => "tls",
-            'smtp_password' => "yep",
+            'smtp_encryption' => 'tls',
+            'smtp_password' => 'yep',
             'smtp_port' => 587,
-            'stampcert' => "src/dfn-cert/pki.dfn.pem",
-            'stamppass' => "",
+            'stampcert' => 'src/dfn-cert/pki.dfn.pem',
+            'stamppass' => '',
             'login_tries' => 15,
             'ban_time' => 42,
         );

@@ -51,8 +51,8 @@ class ImportCsv extends AbstractImport
         $csv->setHeaderOffset(0);
 
         // SQL for importing
-        $sql = "INSERT INTO items(team, title, date, body, userid, category, visibility)
-            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, visibility)
+            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)';
         $req = $this->Db->prepare($sql);
 
         $date = Tools::kdate();
@@ -91,7 +91,7 @@ class ImportCsv extends AbstractImport
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
-            $body .= "<p><strong>" . $subheader . ":</strong> " . $content . '</p>';
+            $body .= '<p><strong>' . $subheader . ':</strong> ' . $content . '</p>';
         }
 
         return $body;
@@ -105,13 +105,13 @@ class ImportCsv extends AbstractImport
      */
     private function checkDelimiter(Reader $csv): void
     {
-        $delimitersCount = delimiter_detect($csv, array(",", "|", "\t", ";"), -1);
+        $delimitersCount = delimiter_detect($csv, array(',', '|', "\t", ';'), -1);
         // reverse sort the array by value to get the delimiter with highest probability
         arsort($delimitersCount, SORT_NUMERIC);
         // get the first element
         $delimiter = key($delimitersCount);
         if ($delimiter !== ',') {
-            throw new ImproperActionException("It looks like the delimiter is different from «,». Make sure to use «,» as delimiter!");
+            throw new ImproperActionException('It looks like the delimiter is different from «,». Make sure to use «,» as delimiter!');
         }
     }
 }

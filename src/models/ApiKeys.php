@@ -51,7 +51,7 @@ class ApiKeys implements CrudInterface
         $apiKey = \bin2hex(\random_bytes(42));
         $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO api_keys (name, hash, can_write, userid) VALUES (:name, :hash, :can_write, :userid)";
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid) VALUES (:name, :hash, :can_write, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':hash', $hash);
@@ -72,7 +72,7 @@ class ApiKeys implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid";
+        $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
 
@@ -94,7 +94,7 @@ class ApiKeys implements CrudInterface
      */
     public function readFromApiKey(string $apiKey): array
     {
-        $sql = "SELECT hash, userid, can_write FROM api_keys";
+        $sql = 'SELECT hash, userid, can_write FROM api_keys';
         $req = $this->Db->prepare($sql);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -117,7 +117,7 @@ class ApiKeys implements CrudInterface
      */
     public function destroy(int $id): void
     {
-        $sql = "DELETE FROM api_keys WHERE id = :id";
+        $sql = 'DELETE FROM api_keys WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         if ($req->execute() !== true) {

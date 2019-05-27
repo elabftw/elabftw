@@ -70,8 +70,8 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
 
         // SQL for create experiments
-        $sql = "INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)";
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -105,8 +105,8 @@ class Experiments extends AbstractEntity implements CreateInterface
         $itemsArr = array();
 
         // get the id of related experiments
-        $sql = "SELECT item_id FROM experiments_links
-            WHERE link_id = :link_id";
+        $sql = 'SELECT item_id FROM experiments_links
+            WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $itemId, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -129,7 +129,7 @@ class Experiments extends AbstractEntity implements CreateInterface
     public function isTimestampable(): bool
     {
         $currentCategory = (int) $this->entityData['category_id'];
-        $sql = "SELECT is_timestampable FROM status WHERE id = :category;";
+        $sql = 'SELECT is_timestampable FROM status WHERE id = :category;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $currentCategory, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -147,7 +147,7 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function updateTimestamp(string $responseTime, string $responsefilePath): void
     {
-        $sql = "UPDATE experiments SET
+        $sql = 'UPDATE experiments SET
             locked = 1,
             lockedby = :userid,
             lockedwhen = :when,
@@ -155,7 +155,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             timestampedby = :userid,
             timestampedwhen = :when,
             timestamptoken = :longname
-            WHERE id = :id;";
+            WHERE id = :id;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':when', $responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
@@ -179,8 +179,8 @@ class Experiments extends AbstractEntity implements CreateInterface
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = "INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)";
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -213,7 +213,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $this->Tags->destroyAll();
         $this->Uploads->destroyAll();
 
-        $sql = "DELETE FROM experiments WHERE id = :id";
+        $sql = 'DELETE FROM experiments WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -263,7 +263,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         // if we try to unlock something we didn't lock
         if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
-            $sql = "SELECT firstname FROM users WHERE userid = :userid";
+            $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
             if ($req->execute() !== true) {
@@ -283,7 +283,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
         }
 
-        $sql = "UPDATE experiments SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
+        $sql = 'UPDATE experiments SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -335,6 +335,6 @@ class Experiments extends AbstractEntity implements CreateInterface
     private function generateElabid(): string
     {
         $date = Tools::kdate();
-        return $date . "-" . \sha1(\bin2hex(\random_bytes(16)));
+        return $date . '-' . \sha1(\bin2hex(\random_bytes(16)));
     }
 }

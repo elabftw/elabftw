@@ -81,11 +81,11 @@ class Comments implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT " . $this->Entity->type . "_comments.*,
+        $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM " . $this->Entity->type . "_comments
-            LEFT JOIN users ON (" . $this->Entity->type . "_comments.userid = users.userid)
-            WHERE item_id = :id ORDER BY " . $this->Entity->type . "_comments.datetime ASC";
+            FROM " . $this->Entity->type . '_comments
+            LEFT JOIN users ON (' . $this->Entity->type . '_comments.userid = users.userid)
+            WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.datetime ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -209,7 +209,7 @@ class Comments implements CrudInterface
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
         // not pretty but gets the job done
         $url = str_replace('app/controllers/', '', $url);
-        $url .= "?mode=view&id=" . $this->Entity->id;
+        $url .= '?mode=view&id=' . $this->Entity->id;
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 

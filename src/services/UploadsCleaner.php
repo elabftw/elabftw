@@ -73,7 +73,7 @@ class UploadsCleaner implements CleanerInterface
         $folder = substr($longName, 0, 2);
         $longNameWithFolder = $folder . '/' . $longName;
         $Db = Db::getConnection();
-        $sql = "SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder";
+        $sql = 'SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder';
         $req = $Db->prepare($sql);
         $req->bindParam(':long_name', $longName);
         $req->bindParam(':long_name_with_folder', $longNameWithFolder);

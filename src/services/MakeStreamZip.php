@@ -94,13 +94,13 @@ class MakeStreamZip extends AbstractMake
      */
     public function getZip(): void
     {
-        $this->idArr = explode(" ", $this->idList);
+        $this->idArr = explode(' ', $this->idList);
         foreach ($this->idArr as $id) {
             $this->addToZip((int) $id);
         }
 
         // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFile(".elabftw.json", (string) json_encode($this->jsonArr));
+        $this->Zip->addFile('.elabftw.json', (string) json_encode($this->jsonArr));
 
         $this->Zip->finish();
     }
@@ -154,9 +154,9 @@ class MakeStreamZip extends AbstractMake
     private function nameFolder(): void
     {
         if ($this->Entity instanceof Experiments) {
-            $this->folder = $this->Entity->entityData['date'] . " - " . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['date'] . ' - ' . $this->cleanTitle;
         } elseif ($this->Entity instanceof Database) {
-            $this->folder = $this->Entity->entityData['category'] . " - " . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['category'] . ' - ' . $this->cleanTitle;
         }
     }
 

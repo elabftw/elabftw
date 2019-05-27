@@ -24,9 +24,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 if ($Request->request->has('fromSysconfig')) {
-    $location = "../../sysconfig.php?tab=3";
+    $location = '../../sysconfig.php?tab=3';
 } else {
-    $location = "../../admin.php?tab=3";
+    $location = '../../admin.php?tab=3';
 }
 
 $Response = new RedirectResponse($location);

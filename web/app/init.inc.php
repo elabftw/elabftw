@@ -134,7 +134,7 @@ try {
     $domain = 'messages';
     putenv("LC_ALL=$locale");
     setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, \dirname(__DIR__, 2) . "/src/langs");
+    bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {

@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse("../../admin.php?tab=1");
+$Response = new RedirectResponse('../../admin.php?tab=1');
 
 try {
     if (!$App->Session->get('is_admin')) {

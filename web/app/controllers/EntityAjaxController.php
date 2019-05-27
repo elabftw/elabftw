@@ -168,10 +168,10 @@ try {
         $upload = $Entity->Uploads->readFromId((int) $Request->request->get('upload_id'));
         $Entity->Uploads->destroy((int) $Request->request->get('upload_id'));
         // check that the filename is not in the body. see #432
-        $msg = "";
+        $msg = '';
         if (strpos($Entity->entityData['body'], $upload['long_name'])) {
-            $msg = ". ";
-            $msg .= _("Please make sure to remove any reference to this file in the body!");
+            $msg = '. ';
+            $msg .= _('Please make sure to remove any reference to this file in the body!');
         }
         $Response->setData(array(
             'res' => true,

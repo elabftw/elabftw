@@ -107,7 +107,7 @@ class ImportZip extends AbstractImport
      */
     private function readJson(): void
     {
-        $file = $this->tmpPath . "/.elabftw.json";
+        $file = $this->tmpPath . '/.elabftw.json';
         $content = file_get_contents($file);
         if ($content === false) {
             throw new ImproperActionException('Unable to read the json file!');
@@ -141,12 +141,12 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, category, visibility)
-            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)";
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, visibility)
+            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)';
 
         if ($this->type === 'experiments') {
-            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, category, elabid)
-                VALUES(:team, :title, :date, :body, :userid, :visibility, :category, :elabid)";
+            $sql = 'INSERT into experiments(team, title, date, body, userid, visibility, category, elabid)
+                VALUES(:team, :title, :date, :body, :userid, :visibility, :category, :elabid)';
         }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

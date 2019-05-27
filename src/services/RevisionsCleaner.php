@@ -49,13 +49,13 @@ class RevisionsCleaner implements CleanerInterface
     private function removeRows(string $table): void
     {
         // from https://stackoverflow.com/a/14261704
-        $sql = "DELETE FROM " . $table . "_revisions
+        $sql = 'DELETE FROM ' . $table . "_revisions
                 WHERE id IN (
                     SELECT `id` FROM (
                         SELECT @row := @row + 1 AS 'rownum', t.`id`
-                        FROM (SELECT @row :=0) r, (SELECT `id` FROM " . $table . "_revisions ORDER BY `id`) t
+                        FROM (SELECT @row :=0) r, (SELECT `id` FROM " . $table . '_revisions ORDER BY `id`) t
                     ) rev
-                WHERE `rownum` % 2 = 0)";
+                WHERE `rownum` % 2 = 0)';
         $req = $this->Db->prepare($sql);
         $req->execute();
     }

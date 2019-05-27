@@ -206,7 +206,7 @@ class Email
         $arr = array();
         $Db = Db::getConnection();
 
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
+        $sql = 'SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team';
         $req = $Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();

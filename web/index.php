@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
-$Response = new RedirectResponse("experiments.php");
+$Response = new RedirectResponse('experiments.php');
 
 try {
     if ($Request->query->has('acs')) {
@@ -58,7 +58,7 @@ try {
         }
 
         if ($email === null) {
-            throw new ImproperActionException("Could not find email in response from IDP! Aborting.");
+            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
         }
 
         if (!$App->Users->Auth->loginFromSaml($email)) {
@@ -101,7 +101,7 @@ try {
             $App->Users->create($email, $teamId, $firstname, $lastname);
             // ok now the user is created, try logging in again
             if (!$App->Users->Auth->loginFromSaml($email)) {
-                throw new ImproperActionException("Not authenticated!");
+                throw new ImproperActionException('Not authenticated!');
             }
         }
     }

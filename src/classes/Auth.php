@@ -75,8 +75,8 @@ class Auth
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
-        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash
-            AND validated = 1 AND archived = 0";
+        $sql = 'SELECT * FROM users WHERE email = :email AND password = :passwordHash
+            AND validated = 1 AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
@@ -200,7 +200,7 @@ class Auth
      */
     private function getSalt(string $email): string
     {
-        $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
+        $sql = 'SELECT salt FROM users WHERE email = :email AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         if ($req->execute() !== true) {
@@ -228,7 +228,7 @@ class Auth
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
 
         // Now compare current cookie with the token from SQL
-        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
+        $sql = 'SELECT * FROM users WHERE token = :token LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
 
@@ -250,7 +250,7 @@ class Auth
      */
     private function updateLastLogin(): void
     {
-        $sql = "UPDATE users SET last_login = :last_login WHERE userid = :userid";
+        $sql = 'UPDATE users SET last_login = :last_login WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
         $req->bindParam(':userid', $this->userData['userid']);
@@ -267,7 +267,7 @@ class Auth
      */
     private function populateUserDataFromEmail(string $email): bool
     {
-        $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
+        $sql = 'SELECT * FROM users WHERE email = :email AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         if ($req->execute() !== true) {
@@ -293,7 +293,7 @@ class Auth
         $this->Session->set('userid', $this->userData['userid']);
 
         // load permissions
-        $sql = "SELECT * FROM `groups` WHERE id = :id LIMIT 1";
+        $sql = 'SELECT * FROM `groups` WHERE id = :id LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -321,7 +321,7 @@ class Auth
         \setcookie('token', $token, time() + 2592000, '/', '', true, true);
 
         // Update the token in SQL
-        $sql = "UPDATE users SET token = :token WHERE userid = :userid";
+        $sql = 'UPDATE users SET token = :token WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);

@@ -160,7 +160,7 @@ try {
     $extensionArr = array('curl', 'gettext', 'gd', 'openssl', 'mbstring');
     foreach ($extensionArr as $ext) {
         if (!extension_loaded($ext)) {
-            $message = "The <em>" . $ext . "</em> extension is <strong>NOT</strong> loaded.
+            $message = 'The <em>' . $ext . "</em> extension is <strong>NOT</strong> loaded.
                     <a href='https://doc.elabftw.net/faq.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
             $errflag = true;
         }
@@ -243,7 +243,7 @@ try {
     <?php
 } catch (ImproperActionException | FilesystemErrorException | Exception $e) {
         echo Tools::displayMessage($e->getMessage(), 'ko', false);
-        echo "</section></section>";
+        echo '</section></section>';
     } finally {
-        echo "</body></html>";
+        echo '</body></html>';
     }

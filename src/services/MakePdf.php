@@ -81,7 +81,7 @@ class MakePdf extends AbstractMake
      */
     public function getFileName(): string
     {
-        return $this->Entity->entityData['date'] . " - " .
+        return $this->Entity->entityData['date'] . ' - ' .
             preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
     }
 
@@ -138,9 +138,9 @@ class MakePdf extends AbstractMake
     private function addElabid(): string
     {
         if ($this->Entity instanceof Experiments) {
-            return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . "</p>";
+            return "<p class='elabid'>Unique eLabID: " . $this->Entity->entityData['elabid'] . '</p>';
         }
-        return "";
+        return '';
     }
 
     /**
@@ -157,10 +157,10 @@ class MakePdf extends AbstractMake
             // separate the date and time
             $lockdate = explode(' ', $this->Entity->entityData['lockedwhen']);
 
-            return "<p class='elabid'>locked by " . $Locker->userData['fullname'] . " on " .
-                $lockdate[0] . " at " . $lockdate[1] . "</p>";
+            return "<p class='elabid'>locked by " . $Locker->userData['fullname'] . ' on ' .
+                $lockdate[0] . ' at ' . $lockdate[1] . '</p>';
         }
-        return "";
+        return '';
     }
 
     /**
@@ -177,11 +177,11 @@ class MakePdf extends AbstractMake
         }
 
         $html .= "<section class='no-break'>";
-        $html .= "<h3>Linked item";
+        $html .= '<h3>Linked item';
         if (count($linksArr) > 1) {
             $html .= 's';
         }
-        $html .= ":</h3>";
+        $html .= ':</h3>';
         // add the item with a link
 
         // create Request object
@@ -191,12 +191,12 @@ class MakePdf extends AbstractMake
         $url = str_replace('app/classes/', '', $url);
 
         foreach ($linksArr as $link) {
-            $fullItemUrl = $url . "?mode=view&id=" . $link['link_id'];
+            $fullItemUrl = $url . '?mode=view&id=' . $link['link_id'];
             $html .= "<p class='pdf-ul'>";
             $html .= "<span style='color:#" . $link['color'] . "'>" .
-                $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . "</a></p>";
+                $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . '</a></p>';
         }
-        $html .= "</section>";
+        $html .= '</section>';
 
         return $html;
     }
@@ -223,7 +223,7 @@ class MakePdf extends AbstractMake
         }
 
         foreach ($commentsArr as $comment) {
-            $html .= "<p class='pdf-ul'>On " . $comment['datetime'] . " " . $comment['fullname'] . " wrote :<br />";
+            $html .= "<p class='pdf-ul'>On " . $comment['datetime'] . ' ' . $comment['fullname'] . ' wrote :<br />';
             $html .= $comment['comment'] . '</p>';
         }
 
@@ -266,9 +266,9 @@ class MakePdf extends AbstractMake
         if ($fileNb > 0) {
             $html .= "<section class='no-break'>";
             if ($fileNb === 1) {
-                $html .= "<h3>Attached file:</h3>";
+                $html .= '<h3>Attached file:</h3>';
             } else {
-                $html .= "<h3>Attached files:</h3>";
+                $html .= '<h3>Attached files:</h3>';
             }
 
             foreach ($uploadsArr as $upload) {
@@ -276,12 +276,12 @@ class MakePdf extends AbstractMake
                 $html .= "<p class='pdf-ul'>" . $upload['real_name'];
                 // add a comment ? don't add if it's the default text
                 if ($upload['comment'] != 'Click to add a comment') {
-                    $html .= " (" . $upload['comment'] . ")";
+                    $html .= ' (' . $upload['comment'] . ')';
                 }
                 // add hash ? don't add if we don't have it
                 // length must be greater (sha2 hashes) or equal (md5) 32 bits
                 if (\mb_strlen((string) $upload['hash']) >= 32) { // we have hash
-                    $html .= "<br>" . $upload['hash_algorithm'] . " : " . $upload['hash'];
+                    $html .= '<br>' . $upload['hash_algorithm'] . ' : ' . $upload['hash'];
                 }
                 // if this is an image file, add the thumbnail picture
                 $ext = filter_var(Tools::getExt($upload['real_name']), FILTER_SANITIZE_STRING);
@@ -294,9 +294,9 @@ class MakePdf extends AbstractMake
                     $html .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
                 }
 
-                $html .= "</p>";
+                $html .= '</p>';
             }
-            $html .= "</section>";
+            $html .= '</section>';
         }
         return $html;
     }
@@ -321,12 +321,12 @@ class MakePdf extends AbstractMake
         foreach ($stepsArr as $step) {
             $html .= "<p class='pdf-ul'>" . $step['body'];
             if ($step['finished']) {
-                $html .= " (" . $step['finished_time'] . ")";
+                $html .= ' (' . $step['finished_time'] . ')';
             }
-            $html .= "</p>";
+            $html .= '</p>';
         }
 
-        $html .= "</section>";
+        $html .= '</section>';
         return $html;
     }
 
@@ -338,7 +338,7 @@ class MakePdf extends AbstractMake
     private function addUrl(): string
     {
         $full_url = $this->getUrl();
-        return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
+        return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . '</a></p>';
     }
 
     /**
@@ -355,7 +355,7 @@ class MakePdf extends AbstractMake
             $body = Tools::md2html($body);
         }
         // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
-        return str_replace("src=\"app/download.php?f=", "src=\"" . \dirname(__DIR__, 2) . "/uploads/", $body);
+        return str_replace('src="app/download.php?f=', 'src="' . \dirname(__DIR__, 2) . '/uploads/', $body);
     }
 
     /**
@@ -370,7 +370,7 @@ class MakePdf extends AbstractMake
             </td><td class='noborder'>" .
             $this->addElabid() .
             $this->addLockinfo() .
-            $this->addUrl() . "</td></tr></table>";
+            $this->addUrl() . '</td></tr></table>';
     }
 
     /**
@@ -383,10 +383,10 @@ class MakePdf extends AbstractMake
         $date = new \DateTime($this->Entity->entityData['date'] ?? Tools::kdate());
 
         // add a CJK font for the body if we want CJK fonts
-        $cjkStyle = "";
-        $cjkFont = "";
+        $cjkStyle = '';
+        $cjkFont = '';
         if ($this->Entity->Users->userData['cjk_fonts']) {
-            $cjkFont = "font-family:sun-extA;";
+            $cjkFont = 'font-family:sun-extA;';
             $cjkStyle = " style='" . $cjkFont . "'";
         }
 

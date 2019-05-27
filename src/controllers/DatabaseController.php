@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Elabftw\Tools;
-use Elabftw\Elabftw\App;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

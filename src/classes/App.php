@@ -14,11 +14,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\Teams;
-use Monolog\Logger;
+use Elabftw\Models\Todolist;
+use Elabftw\Models\Users;
 use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 

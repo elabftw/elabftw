@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Users;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Users;
 
 /**
  * Determine read and write access for a user and an entity

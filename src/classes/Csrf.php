@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Defuse\Crypto\Key;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

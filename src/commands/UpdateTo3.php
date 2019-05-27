@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -24,7 +24,7 @@ class UpdateTo3 extends Command
 
     protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Prepare the database for the update to 3.0')
 

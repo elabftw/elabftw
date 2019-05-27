@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\Extensions;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -122,7 +122,7 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Make the final SQL request to store the file
+     * Make the final SQL request to store the file
      *
      * @param string $realName The clean name of the file
      * @param string $longName The sha512 name
@@ -234,14 +234,14 @@ class Uploads implements CrudInterface
         $this->Entity->canOrExplode('write');
 
         $allowedFileTypes = array('png', 'mol');
-        if (!\in_array($fileType, $allowedFileTypes)) {
+        if (!\in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }
 
         if ($fileType === 'png') {
             // get the image in binary
             $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
-            $content = base64_decode($content);
+            $content = base64_decode($content, true);
         }
 
         // make sure the file has a name

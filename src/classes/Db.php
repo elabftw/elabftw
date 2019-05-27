@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
-use PDOException;
 use PDO;
+use PDOException;
 
 /**
  * Connect to the database with a singleton class
@@ -108,7 +108,7 @@ final class Db
     }
 
     /**
-     * Get number of SQL queries for the page
+     * Get number of SQL queries for the page
      *
      * @return int
      */

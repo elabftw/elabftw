@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -23,7 +23,7 @@ class CleanDatabase extends Command
 
     protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Clean the database from orphans')
 

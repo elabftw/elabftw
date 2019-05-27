@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -25,7 +25,7 @@ class SnapFingers extends Command
 
     protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Remove half of the stored revisions')
 

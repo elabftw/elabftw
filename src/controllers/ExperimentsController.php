@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Status;
 use Elabftw\Models\Revisions;
+use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
-use Elabftw\Elabftw\Tools;
-use Elabftw\Elabftw\App;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

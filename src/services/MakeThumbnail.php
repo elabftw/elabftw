@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\FilesystemErrorException;
-use Gmagick;
 use Exception;
+use Gmagick;
 
 /**
  * Create a thumbnail from a file

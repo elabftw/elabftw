@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use PDO;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\SortableTrait;
+use PDO;
 
 /**
  * All about the templates

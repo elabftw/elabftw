@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
-use Elabftw\Models\Users;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
 use function League\Csv\delimiter_detect;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,7 +65,7 @@ class ImportCsv extends AbstractImport
      */
     private function checkDelimiter(Reader $csv): void
     {
-        $delimitersCount = delimiter_detect($csv, [",", "|", "\t", ";"], -1);
+        $delimitersCount = delimiter_detect($csv, array(",", "|", "\t", ";"), -1);
         // reverse sort the array by value to get the delimiter with highest probability
         arsort($delimitersCount, SORT_NUMERIC);
         // get the first element

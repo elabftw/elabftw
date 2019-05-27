@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -9,8 +9,8 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
-use Elabftw\Models\Config;
 use Elabftw\Elabftw\Update;
+use Elabftw\Models\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,7 +26,7 @@ class UpdateDatabase extends Command
 
     protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Update the database structure')
 

@@ -16,14 +16,14 @@ use DateTime;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\ReleaseCheck;
+use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
-use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Exception\RequestException;
-use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use PDO;
 use Psr\Http\Message\StreamInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -125,7 +125,6 @@ class MakeTimestamp extends AbstractMake
         $login = $config['stamplogin'];
 
         if (($config['stamppass'] ?? "") !== '') {
-
             $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
         } else {
             $password = '';
@@ -140,7 +139,7 @@ class MakeTimestamp extends AbstractMake
         $hash = $config['stamphash'];
 
         $allowedAlgos = array('sha256', 'sha384', 'sha512');
-        if (!in_array($hash, $allowedAlgos)) {
+        if (!in_array($hash, $allowedAlgos, true)) {
             $hash = self::HASH_ALGORITHM;
         }
 
@@ -174,7 +173,6 @@ class MakeTimestamp extends AbstractMake
      */
     private function createRequestfile(): void
     {
-
         $this->runProcess(array(
             'openssl',
             'ts',
@@ -268,11 +266,11 @@ class MakeTimestamp extends AbstractMake
         $options = array(
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
-            'headers' => [
+            'headers' => array(
                 'User-Agent' => 'Elabftw/' . ReleaseCheck::INSTALLED_VERSION,
                 'Content-Type' => 'application/timestamp-query',
                 'Content-Transfer-Encoding' => 'base64'
-            ],
+            ),
             // add proxy if there is one
             'proxy' => $this->Config->configArr['proxy'],
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
@@ -419,7 +417,6 @@ class MakeTimestamp extends AbstractMake
                 $this->responsefilePath
             ), $cwd);
         } catch (ProcessFailedException $e) {
-
             $Log = new Logger('elabftw');
             $Log->pushHandler(new ErrorLogHandler());
             $Log->error('', array(array('userid' => $this->Entity->Users->userData['userid']), array('Error', $e)));

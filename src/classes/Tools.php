@@ -231,7 +231,7 @@ class Tools
     }
 
     /**
-     * Take a 8 digits input and output 2014.08.16
+     * Take a 8 digits input and output 2014.08.16
      *
      * @param string $date Input date '20140302'
      * @param string $s an optionnal param to specify the separator
@@ -397,7 +397,7 @@ class Tools
     }
 
     /**
-     * Get the URL from the Request
+     * Get the URL from the Request
      *
      * @param Request $Request
      * @return string the url

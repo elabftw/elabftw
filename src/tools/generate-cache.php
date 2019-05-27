@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * generate-cache.php
  * force the generation of Twig cache files

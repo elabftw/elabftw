@@ -40,6 +40,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         //$this->expectException(\Exception::class);
         //$this->Revisions->restore(2);
     }
+
     public function testDestroy()
     {
         $this->Revisions->destroy(1);

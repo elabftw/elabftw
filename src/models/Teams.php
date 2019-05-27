@@ -23,9 +23,9 @@ use PDO;
  */
 class Teams implements CrudInterface
 {
-
     /** @var Users $Users instance of Users */
     public $Users;
+
     /** @var Db $Db SQL Database */
     protected $Db;
 

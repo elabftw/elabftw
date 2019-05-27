@@ -24,7 +24,6 @@ use PDO;
  */
 class Users
 {
-
     /** @var Auth $Auth instance of Auth */
     public $Auth;
 
@@ -36,6 +35,7 @@ class Users
 
     /** @var array $userData what you get when you read() */
     public $userData = array();
+
     /** @var Db $Db SQL Database */
     protected $Db;
 

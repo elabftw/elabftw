@@ -21,7 +21,6 @@ use GuzzleHttp\Exception\RequestException;
  */
 class ReleaseCheck
 {
-
     /** @var string INSTALLED_VERSION the current version of elabftw */
     public const INSTALLED_VERSION = '3.2.2';
 
@@ -33,6 +32,7 @@ class ReleaseCheck
 
     /** @var bool $success this is used to check if we managed to get a version or not */
     public $success = false;
+
     /** @var Config $Config instance of Config */
     private $Config;
 

@@ -32,12 +32,12 @@ use PDO;
  */
 class Update
 {
-
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
     private const REQUIRED_SCHEMA = 48;
 
     /** @var Config $Config instance of Config */
     public $Config;
+
     /** @var Db $Db SQL Database */
     private $Db;
 
@@ -75,7 +75,6 @@ class Update
             throw new InvalidSchemaException();
         }
     }
-
 
     /**
      * Update the database schema if needed

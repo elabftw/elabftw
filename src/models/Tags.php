@@ -21,9 +21,9 @@ use PDO;
  */
 class Tags implements CrudInterface
 {
-
     /** @var AbstractEntity $Entity an instance of AbstractEntity */
     public $Entity;
+
     /** @var Db $Db SQL Database */
     protected $Db;
 
@@ -300,7 +300,6 @@ class Tags implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
-
 
     /**
      * Destroy all the tags for an item ID

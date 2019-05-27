@@ -20,7 +20,6 @@ use Elabftw\Interfaces\CleanerInterface;
  */
 class UploadsCleaner implements CleanerInterface
 {
-
     /**
      * Remove orphan files from filesystem
      *
@@ -36,6 +35,7 @@ class UploadsCleaner implements CleanerInterface
         }
         return \count($orphans);
     }
+
     /**
      * Loop of uploaded file and check if it is referenced in the uploads table
      *

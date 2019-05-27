@@ -45,7 +45,6 @@ abstract class AbstractMake
         $this->Db = Db::getConnection();
     }
 
-
     /**
      * The filename for what we are making
      *

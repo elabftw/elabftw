@@ -21,7 +21,6 @@ use Elabftw\Models\Users;
  */
 trait EntityTrait
 {
-
     /** @var Users $Users our user */
     public $Users;
 
@@ -30,6 +29,7 @@ trait EntityTrait
 
     /** @var array $entityData content of entity */
     public $entityData = array();
+
     /** @var Db $Db SQL Database */
     protected $Db;
 

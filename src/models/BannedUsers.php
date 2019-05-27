@@ -18,7 +18,6 @@ use PDO;
  */
 class BannedUsers
 {
-
     /** @var Config $Config Master configuration */
     public $Config;
 

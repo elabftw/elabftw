@@ -25,9 +25,9 @@ use PDO;
  */
 class Config
 {
-
     /** @var array $configArr the array with all config */
     public $configArr;
+
     /** @var Db $Db SQL Database */
     protected $Db;
 

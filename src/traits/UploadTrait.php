@@ -17,7 +17,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
  */
 trait UploadTrait
 {
-
     /**
      * Get the uploads folder absolute path
      *
@@ -27,6 +26,7 @@ trait UploadTrait
     {
         return \dirname(__DIR__, 2) . '/uploads/';
     }
+
     /**
      * Generate a long and unique string
      *

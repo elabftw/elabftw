@@ -34,16 +34,19 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('0096ff', $this->Status->readColor(1));
     }
+
     public function testIsTimestampable()
     {
         $this->assertFalse($this->Status->isTimestampable(1));
     }
+
     public function testDestroy()
     {
         $this->Status->destroy(2);
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy(1);
     }
+
     public function testDestroyAll()
     {
         $this->Status->destroyAll();

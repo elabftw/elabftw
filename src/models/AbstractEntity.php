@@ -425,7 +425,6 @@ abstract class AbstractEntity
         return ucfirst($this->entityData['visibility']);
     }
 
-
     /**
      * Check if we have the permission to read/write or throw an exception
      *

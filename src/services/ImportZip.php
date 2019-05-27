@@ -27,9 +27,9 @@ use ZipArchive;
  */
 class ImportZip extends AbstractImport
 {
-
     /** @var int $inserted number of item we have inserted */
     public $inserted = 0;
+
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 

@@ -19,12 +19,12 @@ use PDO;
  */
 class UserStats
 {
-
     /** @var array $colorsArr colors for status */
     public $colorsArr = array();
 
     /** @var array $percentArr percentage and status name */
     public $percentArr = array();
+
     /** @var Users $Users instance of Users */
     private $Users;
 

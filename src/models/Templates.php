@@ -113,9 +113,10 @@ class Templates extends AbstractEntity
     /**
      * Read a template
      *
+     * @param bool $getTags
      * @return array
      */
-    public function read($getTags = false): array
+    public function read(bool $getTags = false): array
     {
         $sql = "SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team";
         $req = $this->Db->prepare($sql);

@@ -155,11 +155,12 @@ class MakeTimestamp extends AbstractMake
      * Run a process
      *
      * @param array $args arguments including the executable
+     * @param string|null $cwd command working directory
      * @return string
      */
-    private function runProcess(array $args): string
+    private function runProcess(array $args, ?string $cwd = null): string
     {
-        $Process = new Process($args);
+        $Process = new Process($args, $cwd);
         $Process->mustRun();
 
         return $Process->getOutput();
@@ -410,13 +411,13 @@ class MakeTimestamp extends AbstractMake
     {
         $this->isJavaInstalled();
 
-        chdir(\dirname(__DIR__, 2) . '/src/dfn-cert/timestampverifier/');
+        $cwd = \dirname(__DIR__, 2) . '/src/dfn-cert/timestampverifier/';
         try {
             $output = $this->runProcess(array(
                 './verify.sh',
                 $this->requestfilePath,
                 $this->responsefilePath
-            ));
+            ), $cwd);
         } catch (ProcessFailedException $e) {
 
             $Log = new Logger('elabftw');

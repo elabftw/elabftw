@@ -39,6 +39,6 @@ return PhpCsFixer\Config::create()
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->name('/\.php|\.php.dist$/')
-            ->in(['src', 'tests', 'web'])
+            ->in(['bin', 'src', 'tests', 'web'])
     )
 ;

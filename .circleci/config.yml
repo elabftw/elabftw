@@ -86,4 +86,4 @@ jobs:
           name: Code coverage
           command: ./vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-xml
       - codecov/upload:
-          file: ./coverage.xml
+          file: {{ coverage_report_filepath }}

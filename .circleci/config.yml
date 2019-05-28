@@ -86,4 +86,4 @@ jobs:
           name: Code coverage
           command: ./vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-xml
       - codecov/upload:
-          file: /home/circleci/elabftw/elabftw/coverage.xml
+          file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml

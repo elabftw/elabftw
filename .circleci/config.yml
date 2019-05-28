@@ -1,6 +1,7 @@
 # circle ci config for elabftw
 # https://www.elabftw.net
 version: 2.1
+# code coverage
 orbs:
   codecov: codecov/codecov@1.0.2
 jobs:

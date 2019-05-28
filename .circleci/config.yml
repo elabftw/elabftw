@@ -20,7 +20,7 @@ jobs:
     - image: circleci/php:7.2-cli-node-browsers
     steps:
       - codecov/upload:
-          file: {{ coverage_report_filepath }}
+          file: coverage.xml
       # Machine Setup
       #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
       # The following `checkout` command checks out your code to your working directory. In 1.0 we did this implicitly. In 2.0 you can choose where in the course of a job your code should be checked out.

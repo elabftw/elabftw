@@ -711,7 +711,7 @@ ALTER TABLE `tags`
 --
 -- Indexes for table `tags2entity`
 --
---ALTER TABLE `tags2entity`
+-- ALTER TABLE `tags2entity`
 -- ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
 
 --

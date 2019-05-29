@@ -1,6 +1,9 @@
 # circle ci config for elabftw
 # https://www.elabftw.net
-version: 2
+version: 2.1
+# code coverage orb
+orbs:
+  codecov: codecov/codecov@1.0.2
 jobs:
   build:
     working_directory: ~/elabftw/elabftw
@@ -17,69 +20,70 @@ jobs:
     docker:
     - image: circleci/php:7.2-cli-node-browsers
     steps:
-    # Machine Setup
-    #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-    # The following `checkout` command checks out your code to your working directory. In 1.0 we did this implicitly. In 2.0 you can choose where in the course of a job your code should be checked out.
-    - checkout
-    # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
-    # In many cases you can simplify this from what is generated here.
-    # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
-    - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-    # Dependencies
-    #   This would typically go in either a build or a build-and-test job when using workflows
-    # Restore the dependency cache
-    - restore_cache:
-        keys:
-        # This branch if available
-        - v1-dep-{{ .Branch }}-
-        # Default branch if not
-        - v1-dep-master-
-        # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
-        - v1-dep-
-    # This is based on your 1.0 configuration file or project settings
-    - run: sudo apt-get update
-    - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev
-    - run: sudo service mysql start
-    - run: sudo docker-php-ext-install gd gettext zip pdo_mysql
-    - run: yes|sudo pecl install gmagick-2.0.4RC1
-    - run: sudo docker-php-ext-enable gmagick
-    # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
-    - run:
-        name: Install JS dependencies
-        command: yarn install
-    - run:
-        name: Install PHPCS
-        command: composer global require "squizlabs/php_codesniffer=*"
-    - run:
-        name: Build all
-        command: yarn run buildall
-        no_output_timeout: 20m
-    - run: composer install --no-interaction
-    # Save dependency cache
-    - save_cache:
-        key: v1-dep-{{ .Branch }}-{{ epoch }}
-        paths:
-        - ./node_modules
-        - ./vendor
-    - run: sudo mysql -uroot -e "create database phpunit;"
-    - run: sudo mysql -uroot -e "create user phpunit identified by 'phpunit';"
-    - run: sudo mysql -uroot -e "grant all privileges on phpunit.* to 'phpunit'@'%'"
-    - run: sudo mysql -uroot phpunit < src/sql/structure.sql
-    - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
-    # Tests
-    - run:
-        name: Run CSS linter
-        command: yarn run csslint
-    - run:
-        name: Run Javascript linter
-        command: yarn run jslint
-    # Don't use the yarn run phpcs command as it uses a phar directly in $PATH
-    - run:
-        name: Run PHP CodeSniffer
-        command: ~/.composer/vendor/bin/phpcs -n --standard=PSR1,PSR2 -d memory_limit=1G --exclude=Squiz.WhiteSpace.ControlStructureSpacing src web/*.php web/app/controllers web/install
-    - run:
-        name: Run unit tests
-        command: yarn run unit
-    - run:
-        name: Check for vulnerabilities
-        command: yarn run vulns
+      # Machine Setup
+      #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
+      # The following `checkout` command checks out your code to your working directory. In 1.0 we did this implicitly. In 2.0 you can choose where in the course of a job your code should be checked out.
+      - checkout
+      # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
+      # In many cases you can simplify this from what is generated here.
+      # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
+      - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+      # Dependencies
+      #   This would typically go in either a build or a build-and-test job when using workflows
+      # Restore the dependency cache
+      - restore_cache:
+          keys:
+          # This branch if available
+          - v1-dep-{{ .Branch }}-
+          # Default branch if not
+          - v1-dep-master-
+          # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
+          - v1-dep-
+      # This is based on your 1.0 configuration file or project settings
+      - run: sudo apt-get update
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev
+      - run: sudo service mysql start
+      - run: sudo docker-php-ext-install gd gettext zip pdo_mysql
+      - run: yes|sudo pecl install gmagick-2.0.5RC1
+      - run: sudo docker-php-ext-enable gmagick
+      # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
+      - run:
+          name: Install JS dependencies
+          command: yarn install
+      - run:
+          name: Build all
+          command: yarn run buildall
+          no_output_timeout: 20m
+      - run: composer install --no-interaction
+      # Save dependency cache
+      - save_cache:
+          key: v1-dep-{{ .Branch }}-{{ epoch }}
+          paths:
+          - ./node_modules
+          - ./vendor
+      - run: sudo mysql -uroot -e "create database phpunit;"
+      - run: sudo mysql -uroot -e "create user phpunit identified by 'phpunit';"
+      - run: sudo mysql -uroot -e "grant all privileges on phpunit.* to 'phpunit'@'%'"
+      - run: sudo mysql -uroot phpunit < src/sql/structure.sql
+      - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
+      # Tests
+      - run:
+          name: Run CSS linter
+          command: yarn run csslint
+      - run:
+          name: Run Javascript linter
+          command: yarn run jslint
+      - run:
+          name: Run PHP-CS-Fixer
+          command: ./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no
+      - run:
+          name: Run unit tests
+          command: yarn run unit
+      - run:
+          name: Check for vulnerabilities
+          command: yarn run vulns
+      - run:
+          name: Code coverage
+          command: ./vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-xml
+      - codecov/upload:
+          file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml

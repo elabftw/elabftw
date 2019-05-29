@@ -24,14 +24,14 @@ class Auth
     /** the minimum password length */
     public const MIN_PASSWORD_LENGTH = 8;
 
+    /** @var SessionInterface $Session the current session */
+    public $Session;
+
     /** @var Db $Db SQL Database */
     protected $Db;
 
     /** @var Request $Request current request */
     private $Request;
-
-    /** @var SessionInterface $Session the current session */
-    public $Session;
 
     /** @var array $userData All the user data for a user */
     private $userData = array();
@@ -47,145 +47,6 @@ class Auth
         $this->Db = Db::getConnection();
         $this->Request = $request;
         $this->Session = $session;
-    }
-
-    /**
-     * Get the salt for the user so we can generate a correct hash
-     *
-     * @param string $email
-     * @return string
-     */
-    private function getSalt(string $email): string
-    {
-        $sql = "SELECT salt FROM users WHERE email = :email AND archived = 0";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
-        }
-        return $res;
-    }
-
-    /**
-     * Login with the cookie
-     *
-     * @return bool true if token in cookie is found in database
-     */
-    private function loginWithCookie(): bool
-    {
-        // If user has a cookie; check cookie is valid
-        // the token is a sha256 sum: 64 char
-        if (!$this->Request->cookies->has('token') || \mb_strlen($this->Request->cookies->get('token')) !== 64) {
-            return false;
-        }
-        $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
-
-        // Now compare current cookie with the token from SQL
-        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        if ($req->rowCount() === 1) {
-            $this->userData = $req->fetch();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Update last login time of user
-     *
-     * @return void
-     */
-    private function updateLastLogin(): void
-    {
-        $sql = "UPDATE users SET last_login = :last_login WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
-        $req->bindParam(':userid', $this->userData['userid']);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Populate userData from email
-     *
-     * @param string $email
-     * @return bool
-     */
-    private function populateUserDataFromEmail(string $email): bool
-    {
-        $sql = "SELECT * FROM users WHERE email = :email AND archived = 0";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        if ($req->rowCount() === 1) {
-            // populate the userData
-            $this->userData = $req->fetch();
-            $this->updateLastLogin();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Store userid and permissions in session
-     *
-     * @return void
-     */
-    private function populateSession(): void
-    {
-        $this->Session->set('auth', 1);
-        $this->Session->set('userid', $this->userData['userid']);
-
-        // load permissions
-        $sql = "SELECT * FROM `groups` WHERE id = :id LIMIT 1";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $group = $req->fetch(PDO::FETCH_ASSOC);
-
-        $this->Session->set('is_admin', $group['is_admin']);
-        $this->Session->set('is_sysadmin', $group['is_sysadmin']);
-    }
-
-    /**
-     * Set a $_COOKIE['token'] and update the database with this token.
-     * Works only in HTTPS, valable for 1 month.
-     * 1 month = 60*60*24*30 =  2592000
-     *
-     * @return void
-     */
-    private function setToken(): void
-    {
-        $token = \hash('sha256', \bin2hex(\random_bytes(16)));
-
-        // create cookie
-        // name, value, expire, path, domain, secure, httponly
-        \setcookie('token', $token, time() + 2592000, '/', '', true, true);
-
-        // Update the token in SQL
-        $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
     }
 
     /**
@@ -214,8 +75,8 @@ class Auth
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
-        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash
-            AND validated = 1 AND archived = 0";
+        $sql = 'SELECT * FROM users WHERE email = :email AND password = :passwordHash
+            AND validated = 1 AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
@@ -295,7 +156,7 @@ class Auth
             'metadata.php',
             'register.php',
             'RegisterController.php',
-            'ResetPasswordController.php'
+            'ResetPasswordController.php',
         );
 
         return !\in_array(\basename($this->Request->getScriptName()), $nologinArr, true);
@@ -329,5 +190,144 @@ class Auth
         }
 
         return false;
+    }
+
+    /**
+     * Get the salt for the user so we can generate a correct hash
+     *
+     * @param string $email
+     * @return string
+     */
+    private function getSalt(string $email): string
+    {
+        $sql = 'SELECT salt FROM users WHERE email = :email AND archived = 0';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':email', $email);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $res = $req->fetchColumn();
+        if ($res === false || $res === null) {
+            throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
+        }
+        return $res;
+    }
+
+    /**
+     * Login with the cookie
+     *
+     * @return bool true if token in cookie is found in database
+     */
+    private function loginWithCookie(): bool
+    {
+        // If user has a cookie; check cookie is valid
+        // the token is a sha256 sum: 64 char
+        if (!$this->Request->cookies->has('token') || \mb_strlen($this->Request->cookies->get('token')) !== 64) {
+            return false;
+        }
+        $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+
+        // Now compare current cookie with the token from SQL
+        $sql = 'SELECT * FROM users WHERE token = :token LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':token', $token);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        if ($req->rowCount() === 1) {
+            $this->userData = $req->fetch();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update last login time of user
+     *
+     * @return void
+     */
+    private function updateLastLogin(): void
+    {
+        $sql = 'UPDATE users SET last_login = :last_login WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
+        $req->bindParam(':userid', $this->userData['userid']);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
+     * Populate userData from email
+     *
+     * @param string $email
+     * @return bool
+     */
+    private function populateUserDataFromEmail(string $email): bool
+    {
+        $sql = 'SELECT * FROM users WHERE email = :email AND archived = 0';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':email', $email);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        if ($req->rowCount() === 1) {
+            // populate the userData
+            $this->userData = $req->fetch();
+            $this->updateLastLogin();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Store userid and permissions in session
+     *
+     * @return void
+     */
+    private function populateSession(): void
+    {
+        $this->Session->set('auth', 1);
+        $this->Session->set('userid', $this->userData['userid']);
+
+        // load permissions
+        $sql = 'SELECT * FROM `groups` WHERE id = :id LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $group = $req->fetch(PDO::FETCH_ASSOC);
+
+        $this->Session->set('is_admin', $group['is_admin']);
+        $this->Session->set('is_sysadmin', $group['is_sysadmin']);
+    }
+
+    /**
+     * Set a $_COOKIE['token'] and update the database with this token.
+     * Works only in HTTPS, valable for 1 month.
+     * 1 month = 60*60*24*30 =  2592000
+     *
+     * @return void
+     */
+    private function setToken(): void
+    {
+        $token = \hash('sha256', \bin2hex(\random_bytes(16)));
+
+        // create cookie
+        // name, value, expire, path, domain, secure, httponly
+        \setcookie('token', $token, time() + 2592000, '/', '', true, true);
+
+        // Update the token in SQL
+        $sql = 'UPDATE users SET token = :token WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':token', $token);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
     }
 }

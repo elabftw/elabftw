@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
@@ -19,6 +20,22 @@ use Elabftw\Interfaces\CleanerInterface;
  */
 class UploadsCleaner implements CleanerInterface
 {
+    /**
+     * Remove orphan files from filesystem
+     *
+     * @return int number of orphan files
+     */
+    public function cleanup(): int
+    {
+        $orphans = $this->findOrphans();
+        foreach ($orphans as $orphan) {
+            if (\unlink($orphan) === false) {
+                throw new FilesystemErrorException("Could not remove file: $orphan");
+            }
+        }
+        return \count($orphans);
+    }
+
     /**
      * Loop of uploaded file and check if it is referenced in the uploads table
      *
@@ -56,7 +73,7 @@ class UploadsCleaner implements CleanerInterface
         $folder = substr($longName, 0, 2);
         $longNameWithFolder = $folder . '/' . $longName;
         $Db = Db::getConnection();
-        $sql = "SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder";
+        $sql = 'SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder';
         $req = $Db->prepare($sql);
         $req->bindParam(':long_name', $longName);
         $req->bindParam(':long_name_with_folder', $longNameWithFolder);
@@ -64,21 +81,5 @@ class UploadsCleaner implements CleanerInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         return (bool) $req->fetch();
-    }
-
-    /**
-     * Remove orphan files from filesystem
-     *
-     * @return int number of orphan files
-     */
-    public function cleanup(): int
-    {
-        $orphans = $this->findOrphans();
-        foreach ($orphans as $orphan) {
-            if (\unlink($orphan) === false) {
-                throw new FilesystemErrorException("Could not remove file: $orphan");
-            }
-        }
-        return \count($orphans);
     }
 }

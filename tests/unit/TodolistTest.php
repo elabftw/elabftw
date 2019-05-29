@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Tools;
@@ -24,7 +25,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Todolist->update(1, "write more unit tests");
+        $this->Todolist->update(1, 'write more unit tests');
     }
 
     public function testUpdateOrdering()
@@ -34,7 +35,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $this->Todolist->create($body);
         $post = array(
             'ordering' => array('todoItem_3', 'todoItem_2', 'todoItem_4'),
-            'table' => 'todolist'
+            'table' => 'todolist',
         );
         $this->Todolist->updateOrdering($this->Users, $post);
     }

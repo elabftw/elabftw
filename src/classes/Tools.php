@@ -88,7 +88,7 @@ class Tools
         $begin = "<div class='alert alert-" . $alert .
             "'><i class='fas " . $icon .
             "'></i>";
-        $end = "</div>";
+        $end = '</div>';
 
         return $begin . $crossLink . ' ' . $message . $end;
     }
@@ -117,9 +117,9 @@ class Tools
      */
     public static function checkBody(string $input): string
     {
-        $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
+        $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
             <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
-            <details><summary><figure><figcaption>";
+            <details><summary><figure><figcaption>';
         $body = strip_tags($input, $whitelist);
         // use strlen() instead of mb_strlen() because we want the size in bytes
         if (\strlen($body) > self::MAX_BODY_SIZE) {
@@ -140,7 +140,7 @@ class Tools
             'public',
             'organization',
             'team',
-            'user'
+            'user',
         );
 
         if (!\in_array($visibility, $validArr, true) && self::checkId((int) $visibility) === false) {
@@ -231,7 +231,7 @@ class Tools
     }
 
     /**
-     * Take a 8 digits input and output 2014.08.16
+     * Take a 8 digits input and output 2014.08.16
      *
      * @param string $date Input date '20140302'
      * @param string $s an optionnal param to specify the separator
@@ -274,8 +274,8 @@ class Tools
     {
         $filter_options = array(
             'options' => array(
-                'min_range' => 1
-            ));
+                'min_range' => 1,
+            ), );
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
     }
 
@@ -288,9 +288,9 @@ class Tools
     public static function error(bool $permission = false): string
     {
         if ($permission) {
-            return _("This section is out of your reach!");
+            return _('This section is out of your reach!');
         }
-        return _("An error occurred!");
+        return _('An error occurred!');
     }
 
     /**
@@ -315,7 +315,7 @@ class Tools
             'ru_RU' => 'ru',
             'sl_SI' => 'sl',
             'sk_SK' => 'sk',
-            'zh_CN' => 'zh-cn'
+            'zh_CN' => 'zh-cn',
         );
         return $map[$lang];
     }
@@ -327,7 +327,7 @@ class Tools
      */
     public static function getLangsArr(): array
     {
-        $langs = array(
+        return array(
             'ca_ES' => 'Spanish (Catalan)',
             'de_DE' => 'German',
             'en_GB' => 'English (UK)',
@@ -341,10 +341,8 @@ class Tools
             'ru_RU' => 'Russian',
             'sl_SI' => 'Slovenian',
             'sk_SK' => 'Slovak',
-            'zh_CN' => 'Chinese Simplified'
+            'zh_CN' => 'Chinese Simplified',
         );
-
-        return $langs;
     }
 
     /**
@@ -397,7 +395,7 @@ class Tools
     }
 
     /**
-     * Get the URL from the Request
+     * Get the URL from the Request
      *
      * @param Request $Request
      * @return string the url

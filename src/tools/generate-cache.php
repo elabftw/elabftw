@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * generate-cache.php
  * force the generation of Twig cache files
@@ -15,7 +15,7 @@ $loader = new \Twig\Loader\FilesystemLoader($tplDir);
 // force auto-reload to always have the latest version of the template
 $Twig = new Twig\Environment($loader, array(
     'cache' => $tmpDir,
-    'auto_reload' => true
+    'auto_reload' => true,
 ));
 // custom twig filters
 $filterOptions = array('is_safe' => array('html'));

@@ -15,8 +15,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -53,6 +53,83 @@ class ApiController implements ControllerInterface
     {
         $this->Request = $request;
         $this->parseReq();
+    }
+
+    /**
+     * Get Response from Request
+     *
+     * @return Response
+     */
+    public function getResponse(): Response
+    {
+        // Check the HTTP method is allowed
+        if (!\in_array($this->Request->server->get('REQUEST_METHOD'), $this->allowedMethods, true)) {
+            // send error 405 for Method Not Allowed, with Allow header as per spec:
+            // https://tools.ietf.org/html/rfc7231#section-7.4.1
+            return new Response('Invalid HTTP request method!', 405, array('Allow' => \implode(', ', $this->allowedMethods)));
+        }
+
+        // Check if the Authorization Token was sent along
+        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
+            // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:
+            // https://tools.ietf.org/html/rfc7235#section-3.1
+            return new Response('No access token provided!', 401, array('WWW-Authenticate' => 'Bearer'));
+        }
+
+        // verify the key and load user info
+        $Users = new Users();
+        $ApiKeys = new ApiKeys($Users);
+        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
+        $Users->setId((int) $keyArr['userid']);
+        $canWrite = (bool) $keyArr['canWrite'];
+
+        // GET UPLOAD
+        if ($this->endpoint === 'uploads') {
+            return $this->getUpload((int) $Users->userData['userid']);
+        }
+
+        // load Entity
+        if ($this->endpoint === 'experiments') {
+            $this->Entity = new Experiments($Users, $this->id);
+        } elseif ($this->endpoint === 'items') {
+            $this->Entity = new Database($Users, $this->id);
+        } else {
+            throw new ImproperActionException('Bad endpoint!');
+        }
+
+        // GET ENTITY
+        if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
+            return $this->getEntity($this->id);
+        }
+
+        // POST request
+
+        // POST means write access for the access token
+        if (!$canWrite) {
+            return new Response('Cannot use readonly key with POST method!', 403);
+        }
+        // FILE UPLOAD
+        if ($this->Request->files->count() > 0) {
+            return $this->uploadFile();
+        }
+
+        // TITLE DATE BODY UPDATE
+        if ($this->Request->request->has('title')) {
+            return $this->updateEntity();
+        }
+
+        // ADD TAG
+        if ($this->Request->request->has('tag')) {
+            return $this->createTag();
+        }
+
+        // ADD LINK
+        if ($this->Request->request->has('link')) {
+            return $this->createLink();
+        }
+
+        // CREATE AN EXPERIMENT
+        return $this->createExperiment();
     }
 
     /**
@@ -329,82 +406,5 @@ class ApiController implements ControllerInterface
         $this->Entity->Uploads->create($this->Request);
 
         return new JsonResponse(array('result' => 'success'));
-    }
-
-    /**
-     * Get Response from Request
-     *
-     * @return Response
-     */
-    public function getResponse(): Response
-    {
-        // Check the HTTP method is allowed
-        if (!\in_array($this->Request->server->get('REQUEST_METHOD'), $this->allowedMethods, true)) {
-            // send error 405 for Method Not Allowed, with Allow header as per spec:
-            // https://tools.ietf.org/html/rfc7231#section-7.4.1
-            return new Response('Invalid HTTP request method!', 405, array('Allow' => \implode(', ', $this->allowedMethods)));
-        }
-
-        // Check if the Authorization Token was sent along
-        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
-            // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:
-            // https://tools.ietf.org/html/rfc7235#section-3.1
-            return new Response('No access token provided!', 401, array('WWW-Authenticate' => 'Bearer'));
-        }
-
-        // verify the key and load user info
-        $Users = new Users();
-        $ApiKeys = new ApiKeys($Users);
-        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
-        $Users->setId((int) $keyArr['userid']);
-        $canWrite = (bool) $keyArr['canWrite'];
-
-        // GET UPLOAD
-        if ($this->endpoint === 'uploads') {
-            return $this->getUpload((int) $Users->userData['userid']);
-        }
-
-        // load Entity
-        if ($this->endpoint === 'experiments') {
-            $this->Entity = new Experiments($Users, $this->id);
-        } elseif ($this->endpoint === 'items') {
-            $this->Entity = new Database($Users, $this->id);
-        } else {
-            throw new ImproperActionException('Bad endpoint!');
-        }
-
-        // GET ENTITY
-        if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
-            return $this->getEntity($this->id);
-        }
-
-        // POST request
-
-        // POST means write access for the access token
-        if (!$canWrite) {
-            return new Response('Cannot use readonly key with POST method!', 403);
-        }
-        // FILE UPLOAD
-        if ($this->Request->files->count() > 0) {
-            return $this->uploadFile();
-        }
-
-        // TITLE DATE BODY UPDATE
-        if ($this->Request->request->has('title')) {
-            return $this->updateEntity();
-        }
-
-        // ADD TAG
-        if ($this->Request->request->has('tag')) {
-            return $this->createTag();
-        }
-
-        // ADD LINK
-        if ($this->Request->request->has('link')) {
-            return $this->createLink();
-        }
-
-        // CREATE AN EXPERIMENT
-        return $this->createExperiment();
     }
 }

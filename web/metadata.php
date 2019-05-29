@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Exceptions\ImproperActionException;
 use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +26,6 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-
     $Saml = new Saml(new Config(), new Idps());
     $settingsArr = $Saml->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
@@ -47,7 +46,6 @@ try {
             Error::METADATA_SP_INVALID
         );
     }
-
 } catch (ImproperActionException | Error $e) {
     $Response->setContent($e->getMessage());
 } finally {

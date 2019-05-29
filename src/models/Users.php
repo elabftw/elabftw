@@ -24,9 +24,6 @@ use PDO;
  */
 class Users
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** @var Auth $Auth instance of Auth */
     public $Auth;
 
@@ -38,6 +35,9 @@ class Users
 
     /** @var array $userData what you get when you read() */
     public $userData = array();
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -99,9 +99,9 @@ class Users
         $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
-        $salt = \hash("sha512", \bin2hex(\random_bytes(16)));
+        $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
         // Create hash
-        $passwordHash = \hash("sha512", $salt . $password);
+        $passwordHash = \hash('sha512', $salt . $password);
 
         // Registration date is stored in epoch
         $registerDate = \time();
@@ -112,7 +112,7 @@ class Users
         // will new user be validated?
         $validated = $this->getValidated($group);
 
-        $sql = "INSERT INTO users (
+        $sql = 'INSERT INTO users (
             `email`,
             `password`,
             `firstname`,
@@ -133,7 +133,7 @@ class Users
             :salt,
             :register_date,
             :validated,
-            :lang);";
+            :lang);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -160,42 +160,6 @@ class Users
     }
 
     /**
-     * Get what will be the value of the validated column in users table
-     *
-     * @param int $group
-     * @return int
-     */
-    private function getValidated(int $group): int
-    {
-        // validation is required for normal user
-        if ($this->Config->configArr['admin_validate'] === '1' && $group === 4) {
-            return 0; // so new user will need validation
-        }
-        return 1;
-    }
-
-    /**
-     * Return the group int that will be assigned to a new user in a team
-     * 1 = sysadmin if it's the first user ever
-     * 2 = admin for first user in a team
-     * 4 = normal user
-     *
-     * @param int $team
-     * @return int
-     */
-    private function getGroup(int $team): int
-    {
-        if ($this->isFirstUser()) {
-            return 1;
-        }
-
-        if ($this->isFirstUserInTeam($team)) {
-            return 2;
-        }
-        return 4;
-    }
-
-    /**
      * Check we have not a duplicate email in DB
      *
      * @param string $email
@@ -203,7 +167,7 @@ class Users
      */
     public function isDuplicateEmail(string $email): bool
     {
-        $sql = "SELECT email FROM users WHERE email = :email AND archived = 0";
+        $sql = 'SELECT email FROM users WHERE email = :email AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         if ($req->execute() !== true) {
@@ -211,42 +175,6 @@ class Users
         }
 
         return (bool) $req->rowCount();
-    }
-
-    /**
-     * Do we have users in the DB ?
-     *
-     * @return bool
-     */
-    private function isFirstUser(): bool
-    {
-        $sql = "SELECT COUNT(*) AS usernb FROM users";
-        $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $test = $req->fetch();
-
-        return $test['usernb'] === '0';
-    }
-
-    /**
-     * Are we the first user to register in a team ?
-     *
-     * @param int $team
-     * @return bool
-     */
-    private function isFirstUserInTeam(int $team): bool
-    {
-        $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $test = $req->fetch();
-
-        return $test['usernb'] === '0';
     }
 
     /**
@@ -282,9 +210,9 @@ class Users
      */
     public function populateFromEmail(string $email): void
     {
-        $sql = "SELECT userid
+        $sql = 'SELECT userid
             FROM users
-            WHERE email = :email AND archived = 0 LIMIT 1";
+            WHERE email = :email AND archived = 0 LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         if ($req->execute() !== true) {
@@ -311,14 +239,14 @@ class Users
             $whereTeam = 'users.team = ' . $this->userData['team'] . ' AND ';
         }
 
-        $sql = "SELECT users.userid,
+        $sql = 'SELECT users.userid,
             users.firstname, users.lastname, users.team, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
             teams.name as teamname
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
-            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
+            WHERE ' . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
         if ($req->execute() !== true) {
@@ -342,13 +270,13 @@ class Users
     {
         $valSql = '';
         if (is_int($validated)) {
-            $valSql = " users.validated = :validated AND ";
+            $valSql = ' users.validated = :validated AND ';
         }
         $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
             teams.name AS teamname
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
-            WHERE " . $valSql . " users.team = :team";
+            WHERE " . $valSql . ' users.team = :team';
         $req = $this->Db->prepare($sql);
         if (is_int($validated)) {
             $req->bindValue(':validated', $validated);
@@ -373,7 +301,7 @@ class Users
      */
     public function getAllEmails(bool $fromTeam = false): array
     {
-        $sql = "SELECT email FROM users WHERE validated = 1 AND archived = 0";
+        $sql = 'SELECT email FROM users WHERE validated = 1 AND archived = 0';
         if ($fromTeam) {
             $sql .= ' AND team = :team';
         }
@@ -441,14 +369,14 @@ class Users
             $this->updatePassword($params['password']);
         }
 
-        $sql = "UPDATE users SET
+        $sql = 'UPDATE users SET
             firstname = :firstname,
             lastname = :lastname,
             email = :email,
             team = :team,
             usergroup = :usergroup,
             validated = :validated
-            WHERE userid = :userid";
+            WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
@@ -476,8 +404,8 @@ class Users
             'options' => array(
                 'default' => 15,
                 'min_range' => 1,
-                'max_range' => 500
-            ));
+                'max_range' => 500,
+            ), );
         $new_limit = filter_var($params['limit'], FILTER_VALIDATE_INT, $filter_options);
 
         // ORDER BY
@@ -593,7 +521,7 @@ class Users
             \setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
         }
 
-        $sql = "UPDATE users SET
+        $sql = 'UPDATE users SET
             limit_nb = :new_limit,
             orderby = :new_orderby,
             sort = :new_sort,
@@ -613,7 +541,7 @@ class Users
             use_markdown = :new_use_markdown,
             allow_edit = :new_allow_edit,
             inc_files_pdf = :new_inc_files_pdf
-            WHERE userid = :userid;";
+            WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
         $req->bindParam(':new_orderby', $new_orderby);
@@ -651,7 +579,7 @@ class Users
     {
         // check that we got the good password
         if (!$this->Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
-            throw new ImproperActionException(_("Please input your current password!"));
+            throw new ImproperActionException(_('Please input your current password!'));
         }
         // PASSWORD CHANGE
         if (!empty($params['newpass'])) {
@@ -680,7 +608,7 @@ class Users
         // Check website
         $params['website'] = filter_var($params['website'], FILTER_VALIDATE_URL);
 
-        $sql = "UPDATE users SET
+        $sql = 'UPDATE users SET
             email = :email,
             firstname = :firstname,
             lastname = :lastname,
@@ -688,7 +616,7 @@ class Users
             cellphone = :cellphone,
             skype = :skype,
             website = :website
-            WHERE userid = :userid";
+            WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $params['email']);
@@ -715,10 +643,10 @@ class Users
     {
         $this->Auth->checkPasswordLength($password);
 
-        $salt = \hash("sha512", \bin2hex(\random_bytes(16)));
-        $passwordHash = \hash("sha512", $salt . $password);
+        $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
+        $passwordHash = \hash('sha512', $salt . $password);
 
-        $sql = "UPDATE users SET salt = :salt, password = :password, token = null WHERE userid = :userid";
+        $sql = 'UPDATE users SET salt = :salt, password = :password, token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
@@ -736,7 +664,7 @@ class Users
      */
     public function validate(): void
     {
-        $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
+        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 
@@ -757,7 +685,7 @@ class Users
      */
     public function hasExperiments(int $userid): bool
     {
-        $sql = "SELECT COUNT(id) FROM experiments WHERE userid = :userid";
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -774,15 +702,15 @@ class Users
      */
     public function archive(): void
     {
-        $sql = "UPDATE users SET archived = 1, token = null WHERE userid = :userid";
+        $sql = 'UPDATE users SET archived = 1, token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        $sql = "UPDATE experiments
-            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid";
+        $sql = 'UPDATE experiments
+            SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
@@ -798,7 +726,7 @@ class Users
      */
     public function destroy(): void
     {
-        $sql = "DELETE FROM users WHERE userid = :userid";
+        $sql = 'DELETE FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -806,7 +734,7 @@ class Users
         }
 
         // remove all experiments from this user
-        $sql = "SELECT id FROM experiments WHERE userid = :userid";
+        $sql = 'SELECT id FROM experiments WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -816,5 +744,77 @@ class Users
             $Experiments = new Experiments($this, (int) $exp['id']);
             $Experiments->destroy();
         }
+    }
+
+    /**
+     * Get what will be the value of the validated column in users table
+     *
+     * @param int $group
+     * @return int
+     */
+    private function getValidated(int $group): int
+    {
+        // validation is required for normal user
+        if ($this->Config->configArr['admin_validate'] === '1' && $group === 4) {
+            return 0; // so new user will need validation
+        }
+        return 1;
+    }
+
+    /**
+     * Return the group int that will be assigned to a new user in a team
+     * 1 = sysadmin if it's the first user ever
+     * 2 = admin for first user in a team
+     * 4 = normal user
+     *
+     * @param int $team
+     * @return int
+     */
+    private function getGroup(int $team): int
+    {
+        if ($this->isFirstUser()) {
+            return 1;
+        }
+
+        if ($this->isFirstUserInTeam($team)) {
+            return 2;
+        }
+        return 4;
+    }
+
+    /**
+     * Do we have users in the DB ?
+     *
+     * @return bool
+     */
+    private function isFirstUser(): bool
+    {
+        $sql = 'SELECT COUNT(*) AS usernb FROM users';
+        $req = $this->Db->prepare($sql);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $test = $req->fetch();
+
+        return $test['usernb'] === '0';
+    }
+
+    /**
+     * Are we the first user to register in a team ?
+     *
+     * @param int $team
+     * @return bool
+     */
+    private function isFirstUserInTeam(int $team): bool
+    {
+        $sql = 'SELECT COUNT(*) AS usernb FROM users WHERE team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $test = $req->fetch();
+
+        return $test['usernb'] === '0';
     }
 }

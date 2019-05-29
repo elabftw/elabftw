@@ -21,12 +21,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
 
-$Response = new RedirectResponse("experiments.php");
+$Response = new RedirectResponse('experiments.php');
 
 try {
-
     if ($Request->query->has('acs')) {
-
         $Saml = new Saml(new Config, new Idps);
 
         $settings = $Saml->getSettings();
@@ -60,7 +58,7 @@ try {
         }
 
         if ($email === null) {
-            throw new ImproperActionException("Could not find email in response from IDP! Aborting.");
+            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
         }
 
         if (!$App->Users->Auth->loginFromSaml($email)) {
@@ -84,7 +82,6 @@ try {
                     throw new ImproperActionException('Could not find team ID to assign user!');
                 }
             } else {
-
                 $teamId = $Teams->initializeIfNeeded($team, (bool) $Saml->Config->configArr['saml_team_create']);
             }
 
@@ -104,12 +101,10 @@ try {
             $App->Users->create($email, $teamId, $firstname, $lastname);
             // ok now the user is created, try logging in again
             if (!$App->Users->Auth->loginFromSaml($email)) {
-                throw new ImproperActionException("Not authenticated!");
+                throw new ImproperActionException('Not authenticated!');
             }
         }
-
     }
-
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
@@ -124,7 +119,6 @@ try {
     $Response = new Response();
     $Response->prepare($Request);
     $Response->setContent($App->render($template, $renderArr));
-
 } finally {
     $Response->send();
 }

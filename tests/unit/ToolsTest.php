@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase

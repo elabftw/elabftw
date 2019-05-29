@@ -12,9 +12,9 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Tags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 
 /**
@@ -47,7 +47,7 @@ $titleWithSpace = false;
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
     $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
     // check if there is a space in the query
-    if (\strrpos($title, " ") !== false) {
+    if (\strrpos($title, ' ') !== false) {
         $titleArr = \explode(' ', $title);
         $titleWithSpace = true;
     }
@@ -59,7 +59,7 @@ $bodyWithSpace = false;
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
     $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
     // check if there is a space in the query
-    if (\strrpos($body, " ") !== false) {
+    if (\strrpos($body, ' ') !== false) {
         $bodyArr = \explode(' ', $body);
         $bodyWithSpace = true;
     }
@@ -108,7 +108,7 @@ $renderArr = array(
     'body' => $body,
     'andor' => $andor,
     'selectedTagsArr' => $selectedTagsArr,
-    'tagsArr' => $tagsArr
+    'tagsArr' => $tagsArr,
 );
 echo $App->render('search.html', $renderArr);
 
@@ -149,35 +149,35 @@ if ($Request->query->count() > 0) {
 
     // Title search
     if ($titleWithSpace) {
-        $sqlTitle = " AND (";
+        $sqlTitle = ' AND (';
         foreach ($titleArr as $key => $value) {
             if ($key !== 0) {
                 $sqlTitle .= $andor;
             }
             $sqlTitle .= $table . ".title LIKE '%$value%'";
         }
-        $sqlTitle .= ")";
+        $sqlTitle .= ')';
     } elseif (!empty($title)) {
-        $sqlTitle = " AND " . $table . ".title LIKE '%$title%'";
+        $sqlTitle = ' AND ' . $table . ".title LIKE '%$title%'";
     }
 
     // Body search
     if ($bodyWithSpace) {
-        $sqlBody = " AND (";
+        $sqlBody = ' AND (';
         foreach ($bodyArr as $key => $value) {
             if ($key != 0) {
                 $sqlBody .= $andor;
             }
             $sqlBody .= "$table.body LIKE '%$value%'";
         }
-        $sqlBody .= ")";
+        $sqlBody .= ')';
     } elseif (!empty($body)) {
         $sqlBody = " AND $table.body LIKE '%$body%'";
     }
 
     // Tag search
     if (!empty($selectedTagsArr)) {
-        $having = "HAVING ";
+        $having = 'HAVING ';
         foreach ($selectedTagsArr as $tag) {
             $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
             $having .= "tags LIKE '%$tag%' AND ";
@@ -222,7 +222,7 @@ if ($Request->query->count() > 0) {
                 } elseif (empty($Request->query->get('owner'))) {
                     $owner = $App->Users->userData['userid'];
                 }
-                $sqlUserid = " AND experiments.userid = " . $owner;
+                $sqlUserid = ' AND experiments.userid = ' . $owner;
                 // all the team is 0 as userid
                 if ($Request->query->get('owner') === '0') {
                     $sqlUserid = '';
@@ -233,7 +233,6 @@ if ($Request->query->count() > 0) {
             $Entity->categoryFilter = $sqlStatus;
             // VISIBILITY FILTER
             $Entity->visibilityFilter = $sqlVisibility;
-
         } else {
             // DATABASE SEARCH
             $Entity = new Database($App->Users);
@@ -243,7 +242,7 @@ if ($Request->query->count() > 0) {
 
             // FILTER ON DATABASE ITEMS TYPES
             if (Tools::checkId((int) $Request->query->get('type')) !== false) {
-                $Entity->categoryFilter = "AND items_types.id = " . $Request->query->get('type');
+                $Entity->categoryFilter = 'AND items_types.id = ' . $Request->query->get('type');
             }
         }
 
@@ -265,7 +264,7 @@ if ($Request->query->count() > 0) {
             // we are on the search page, so we don't want any "click here to create your first..."
             'searchType' => 'something',
             // generate light show page
-            'searchPage' => true
+            'searchPage' => true,
         ));
     }
 } else {

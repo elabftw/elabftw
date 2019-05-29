@@ -30,7 +30,7 @@ final class Extensions
         'prmtop',
         'sdf',
         'vasp',
-        'xyz'
+        'xyz',
     );
 
     /** @var array ARCHIVE archive files */
@@ -42,7 +42,7 @@ final class Extensions
         'tgz',
         '7z',
         'bz2',
-        'tar'
+        'tar',
     );
 
     /** @var array ARCHIVE archive files */
@@ -52,7 +52,7 @@ final class Extensions
         'js',
         'm',
         'r',
-        'R'
+        'R',
     );
 
     /** @var array ARCHIVE archive files */
@@ -60,7 +60,7 @@ final class Extensions
         'xls',
         'xlsx',
         'ods',
-        'csv'
+        'csv',
     );
 
     /** @var array ARCHIVE archive files */
@@ -69,7 +69,7 @@ final class Extensions
         'pptx',
         'pps',
         'ppsx',
-        'odp'
+        'odp',
     );
 
     /** @var array ARCHIVE archive files */
@@ -79,13 +79,13 @@ final class Extensions
         'mp4',
         'wmv',
         'mpeg',
-        'flv'
+        'flv',
     );
 
     /** @var array ARCHIVE archive files */
     public const DOCUMENT = array(
         'doc',
         'docx',
-        'odt'
+        'odt',
     );
 }

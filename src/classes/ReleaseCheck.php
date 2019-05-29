@@ -21,6 +21,18 @@ use GuzzleHttp\Exception\RequestException;
  */
 class ReleaseCheck
 {
+    /** @var string INSTALLED_VERSION the current version of elabftw */
+    public const INSTALLED_VERSION = '3.2.2';
+
+    /** @var string $URL this file contains the latest version information */
+    private const URL = 'https://get.elabftw.net/updates.ini';
+
+    /** @var string URL_HTTP if we can't connect in https for some reason, use http */
+    private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
+
+    /** @var bool $success this is used to check if we managed to get a version or not */
+    public $success = false;
+
     /** @var Config $Config instance of Config */
     private $Config;
 
@@ -30,18 +42,6 @@ class ReleaseCheck
     /** @var string $releaseDate release date of the version */
     private $releaseDate = '';
 
-    /** @var bool $success this is used to check if we managed to get a version or not */
-    public $success = false;
-
-    /** @var string $URL this file contains the latest version information */
-    private const URL = 'https://get.elabftw.net/updates.ini';
-
-    /** @var string URL_HTTP if we can't connect in https for some reason, use http */
-    private const URL_HTTP = 'http://get.elabftw.net/updates.ini';
-
-    /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.2.2';
-
     /**
      * Fetch the update info on object creation
      *
@@ -50,44 +50,6 @@ class ReleaseCheck
     public function __construct(Config $config)
     {
         $this->Config = $config;
-    }
-
-    /**
-     * Make a GET request with Guzzle
-     *
-     * @param string $url URL to hit
-     * @throws \GuzzleHttp\Exception\RequestException
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    private function get($url): \Psr\Http\Message\ResponseInterface
-    {
-        $client = new \GuzzleHttp\Client();
-
-        return $client->request('GET', $url, [
-            // add user agent
-            // http://developer.github.com/v3/#user-agent-required
-            'headers' => [
-                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION
-            ],
-            // add proxy if there is one
-            'proxy' => $this->Config->configArr['proxy'],
-            // add a timeout, because if you need proxy, but don't have it, it will mess up things
-            // in seconds
-            'timeout' => 5
-        ]);
-    }
-
-    /**
-     * Check if the version string actually looks like a version
-     *
-     * @return void
-     */
-    private function validateVersion(): void
-    {
-        $res = preg_match('/^[0-99]+\.[0-99]+\.[0-99]+.*$/', $this->version);
-        if ($res === false) {
-            throw new ReleaseCheckException('Could not parse version!');
-        }
     }
 
     /**
@@ -160,9 +122,47 @@ class ReleaseCheck
      */
     public function getChangelogLink(): string
     {
-        $base = "https://doc.elabftw.net/changelog.html#version-";
-        $dashedVersion = str_replace(".", "-", $this->version);
+        $base = 'https://doc.elabftw.net/changelog.html#version-';
+        $dashedVersion = str_replace('.', '-', $this->version);
 
         return $base . $dashedVersion;
+    }
+
+    /**
+     * Make a GET request with Guzzle
+     *
+     * @param string $url URL to hit
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    private function get($url): \Psr\Http\Message\ResponseInterface
+    {
+        $client = new \GuzzleHttp\Client();
+
+        return $client->request('GET', $url, array(
+            // add user agent
+            // http://developer.github.com/v3/#user-agent-required
+            'headers' => array(
+                'User-Agent' => 'Elabftw/' . self::INSTALLED_VERSION,
+            ),
+            // add proxy if there is one
+            'proxy' => $this->Config->configArr['proxy'],
+            // add a timeout, because if you need proxy, but don't have it, it will mess up things
+            // in seconds
+            'timeout' => 5,
+        ));
+    }
+
+    /**
+     * Check if the version string actually looks like a version
+     *
+     * @return void
+     */
+    private function validateVersion(): void
+    {
+        $res = preg_match('/^[0-99]+\.[0-99]+\.[0-99]+.*$/', $this->version);
+        if ($res === false) {
+            throw new ReleaseCheckException('Could not parse version!');
+        }
     }
 }

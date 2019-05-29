@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;

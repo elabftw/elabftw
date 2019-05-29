@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase

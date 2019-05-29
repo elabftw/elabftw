@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Defuse\Crypto\Key;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -44,16 +44,6 @@ class Csrf
     }
 
     /**
-     * Generate a CSRF token
-     *
-     * @return string
-     */
-    private function generate(): string
-    {
-        return Key::createNewRandomKey()->saveToAsciiSafeString();
-    }
-
-    /**
      * Return the form key for inclusion in HTML
      *
      * @return string
@@ -71,26 +61,6 @@ class Csrf
     public function getToken(): string
     {
         return $this->Session->get('csrf');
-    }
-
-    /**
-     * AJAX requests find the token in header
-     *
-     * @return bool
-     */
-    private function validateAjax(): bool
-    {
-        return $this->Request->headers->get('X-CSRF-Token') === $this->getToken();
-    }
-
-    /**
-     * Normal forms send the token with hidden field
-     *
-     * @return bool
-     */
-    private function validateForm(): bool
-    {
-        return $this->Request->request->get('csrf') === $this->getToken();
     }
 
     /**
@@ -113,5 +83,35 @@ class Csrf
         if ($res === false) {
             throw new InvalidCsrfTokenException();
         }
+    }
+
+    /**
+     * Generate a CSRF token
+     *
+     * @return string
+     */
+    private function generate(): string
+    {
+        return Key::createNewRandomKey()->saveToAsciiSafeString();
+    }
+
+    /**
+     * AJAX requests find the token in header
+     *
+     * @return bool
+     */
+    private function validateAjax(): bool
+    {
+        return $this->Request->headers->get('X-CSRF-Token') === $this->getToken();
+    }
+
+    /**
+     * Normal forms send the token with hidden field
+     *
+     * @return bool
+     */
+    private function validateForm(): bool
+    {
+        return $this->Request->request->get('csrf') === $this->getToken();
     }
 }

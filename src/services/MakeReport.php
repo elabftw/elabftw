@@ -12,9 +12,9 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\Users;
 use Elabftw\Traits\CsvTrait;
 
 /**
@@ -72,7 +72,7 @@ class MakeReport extends AbstractMake
             'teamname',
             'diskusage_in_bytes',
             'diskusage_formatted',
-            'exp_total'
+            'exp_total',
         );
     }
 

@@ -25,11 +25,11 @@ use PDO;
  */
 class Config
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** @var array $configArr the array with all config */
     public $configArr;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Get Db and load the configArr
@@ -55,7 +55,7 @@ class Config
     {
         $configArr = array();
 
-        $sql = "SELECT * FROM config";
+        $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -111,7 +111,7 @@ class Config
 
         // loop the array and update config
         foreach ($post as $name => $value) {
-            $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
+            $sql = 'UPDATE config SET conf_value = :value WHERE conf_name = :name';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
@@ -142,7 +142,7 @@ class Config
      */
     public function restoreDefaults(): void
     {
-        $sql = "DELETE FROM config";
+        $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');

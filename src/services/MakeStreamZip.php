@@ -65,6 +65,47 @@ class MakeStreamZip extends AbstractMake
     }
 
     /**
+     * Clean up the temporary files (csv and pdf)
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        foreach ($this->trash as $file) {
+            unlink($file);
+        }
+    }
+
+    /**
+     * Get the name of the generated file
+     *
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        return 'elabftw-export.zip';
+    }
+
+    /**
+     * Loop on each id and add it to our zip archive
+     * This could be called the main function.
+     *
+     * @return void
+     */
+    public function getZip(): void
+    {
+        $this->idArr = explode(' ', $this->idList);
+        foreach ($this->idArr as $id) {
+            $this->addToZip((int) $id);
+        }
+
+        // add the (hidden) .elabftw.json file useful for reimport
+        $this->Zip->addFile('.elabftw.json', (string) json_encode($this->jsonArr));
+
+        $this->Zip->finish();
+    }
+
+    /**
      * Make a title without special char for folder inside .zip
      *
      * @return void
@@ -113,9 +154,9 @@ class MakeStreamZip extends AbstractMake
     private function nameFolder(): void
     {
         if ($this->Entity instanceof Experiments) {
-            $this->folder = $this->Entity->entityData['date'] . " - " . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['date'] . ' - ' . $this->cleanTitle;
         } elseif ($this->Entity instanceof Database) {
-            $this->folder = $this->Entity->entityData['category'] . " - " . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['category'] . ' - ' . $this->cleanTitle;
         }
     }
 
@@ -194,47 +235,6 @@ class MakeStreamZip extends AbstractMake
             $this->addPdf();
             // add an entry to the json file
             $this->jsonArr[] = $entityArr;
-        }
-    }
-
-    /**
-     * Get the name of the generated file
-     *
-     * @return string
-     */
-    public function getFileName(): string
-    {
-        return 'elabftw-export.zip';
-    }
-
-    /**
-     * Loop on each id and add it to our zip archive
-     * This could be called the main function.
-     *
-     * @return void
-     */
-    public function getZip(): void
-    {
-        $this->idArr = explode(" ", $this->idList);
-        foreach ($this->idArr as $id) {
-            $this->addToZip((int) $id);
-        }
-
-        // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFile(".elabftw.json", (string) json_encode($this->jsonArr));
-
-        $this->Zip->finish();
-    }
-
-    /**
-     * Clean up the temporary files (csv and pdf)
-     *
-     * @return void
-     */
-    public function __destruct()
-    {
-        foreach ($this->trash as $file) {
-            unlink($file);
         }
     }
 }

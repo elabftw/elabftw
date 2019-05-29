@@ -18,16 +18,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 trait UploadTrait
 {
     /**
-     * Generate a long and unique string
-     *
-     * @return string a random sha512 hash
-     */
-    protected function getUniqueString(): string
-    {
-        return \hash("sha512", \bin2hex(\random_bytes(16)));
-    }
-
-    /**
      * Get the uploads folder absolute path
      *
      * @return string absolute path
@@ -35,6 +25,16 @@ trait UploadTrait
     public function getUploadsPath(): string
     {
         return \dirname(__DIR__, 2) . '/uploads/';
+    }
+
+    /**
+     * Generate a long and unique string
+     *
+     * @return string a random sha512 hash
+     */
+    protected function getUniqueString(): string
+    {
+        return \hash('sha512', \bin2hex(\random_bytes(16)));
     }
 
     /**

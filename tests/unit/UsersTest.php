@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
@@ -25,7 +26,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'close_warning' => 'on',
             'chem_editor' => 'on',
             'lang' => 'en_GB',
-            'default_vis' => 'organization'
+            'default_vis' => 'organization',
         );
         $this->Users->updatePreferences($prefsArr);
     }

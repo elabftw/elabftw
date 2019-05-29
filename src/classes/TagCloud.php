@@ -37,41 +37,6 @@ class TagCloud
     }
 
     /**
-     * Read all the tags from the team
-     *
-     * @return array
-     */
-    private function readAll(): array
-    {
-        $sql = "SELECT tag, COUNT(tag_id) AS total
-            FROM tags
-            LEFT JOIN tags2entity ON (tags.id = tags2entity.tag_id)
-            WHERE team = :team
-            GROUP BY tag ORDER BY total DESC";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $req->execute();
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
-     * Get the CSS class for a given ratio
-     * Classes are in css/tagcloud.css
-     *
-     * @param int $ratio between 0 and 100
-     * @return string
-     */
-    private function getClassFromRatio(int $ratio): string
-    {
-        return 'cloud-' . round($ratio, -1);
-    }
-
-    /**
      * Create an array with tag => css class for tag cloud in profile
      *
      * @return array
@@ -101,5 +66,40 @@ class TagCloud
         }
 
         return $cloudArr;
+    }
+
+    /**
+     * Read all the tags from the team
+     *
+     * @return array
+     */
+    private function readAll(): array
+    {
+        $sql = 'SELECT tag, COUNT(tag_id) AS total
+            FROM tags
+            LEFT JOIN tags2entity ON (tags.id = tags2entity.tag_id)
+            WHERE team = :team
+            GROUP BY tag ORDER BY total DESC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->execute();
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
+     * Get the CSS class for a given ratio
+     * Classes are in css/tagcloud.css
+     *
+     * @param int $ratio between 0 and 100
+     * @return string
+     */
+    private function getClassFromRatio(int $ratio): string
+    {
+        return 'cloud-' . round($ratio, -1);
     }
 }

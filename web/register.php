@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * register.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
@@ -31,7 +32,7 @@ try {
         throw new ImproperActionException(sprintf(
             _('Please %slogout%s before you register another account.'),
             "<a style='alert-link' href='app/logout.php'>",
-            "</a>"
+            '</a>'
         ));
     }
 
@@ -45,9 +46,8 @@ try {
 
     $template = 'register.html';
     $renderArr = array(
-        'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? "",
-        'teamsArr' => $teamsArr);
-
+        'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
+        'teamsArr' => $teamsArr, );
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
@@ -59,7 +59,6 @@ try {
     $App->Log->error('', array('Exception' => $e));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error());
-
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

@@ -24,9 +24,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 if ($Request->request->has('fromSysconfig')) {
-    $location = "../../sysconfig.php?tab=3";
+    $location = '../../sysconfig.php?tab=3';
 } else {
-    $location = "../../admin.php?tab=3";
+    $location = '../../admin.php?tab=3';
 }
 
 $Response = new RedirectResponse($location);
@@ -52,23 +52,18 @@ try {
     }
 
     $Session->getFlashBag()->add('ok', _('Saved'));
-
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-
 } finally {
     $Response->send();
 }

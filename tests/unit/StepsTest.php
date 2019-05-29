@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
@@ -14,14 +15,17 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Steps->create('do this');
     }
+
     public function testFinish()
     {
         $this->Steps->finish(1);
     }
+
     public function testReadAll()
     {
         $this->assertTrue(is_array($this->Steps->readAll()));
     }
+
     public function testDestroy()
     {
         $this->Steps->destroy(1);

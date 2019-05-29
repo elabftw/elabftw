@@ -711,8 +711,8 @@ ALTER TABLE `tags`
 --
 -- Indexes for table `tags2entity`
 --
-ALTER TABLE `tags2entity`
-  ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
+-- ALTER TABLE `tags2entity`
+-- ADD KEY `fk_tags2entity_tags_id` (`tag_id`);
 
 --
 -- Indexes for table `teams`
@@ -1013,9 +1013,9 @@ ALTER TABLE `users`
 --
 -- Constraints for table `users2team_groups`
 --
-ALTER TABLE `users2team_groups`
-  ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- ALTER TABLE `users2team_groups`
+--  ADD CONSTRAINT `fk_users2team_groups_team_groups_id` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+--  ADD CONSTRAINT `fk_users2team_groups_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

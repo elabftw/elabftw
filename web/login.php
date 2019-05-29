@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * login.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -18,8 +19,8 @@ use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Login page
@@ -34,7 +35,7 @@ $Response->prepare($Request);
 try {
     // Check if already logged in
     if ($Session->has('auth') || $Session->has('anon')) {
-        $Response = new RedirectResponse("experiments.php");
+        $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;
     }
@@ -84,38 +85,32 @@ try {
         'Session' => $Session,
         'idpsArr' => $idpsArr,
         'teamsArr' => $teamsArr,
-        'showLocal' => $showLocal
+        'showLocal' => $showLocal,
     );
     $Response->setContent($App->render($template, $renderArr));
-
-
 } catch (ImproperActionException $e) {
     // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $template = 'error.html';
     $renderArr = array('error' => Tools::error());
     $Response->setContent($App->render($template, $renderArr));
-
 } finally {
     $Response->send();
 }

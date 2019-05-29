@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * install/index.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -28,7 +29,6 @@ $configFilePath = \dirname(__DIR__, 2) . '/config.php';
 $errflag = false;
 // we disable errors to avoid having notice stopping the redirect
 error_reporting(E_ERROR);
-
 
 try {
     // create Request object
@@ -57,7 +57,7 @@ try {
         $req->execute();
         $res = $req->fetch();
         if ($res['tablesCount'] < 2) {
-            // bootstrap MySQL database
+            // bootstrap MySQL database
             $Sql = new Sql();
             $Sql->execFile('structure.sql');
 
@@ -78,8 +78,7 @@ try {
         }
         $message = 'It looks like eLabFTW is already installed. Delete the config.php file if you wish to reinstall it.';
         throw new ImproperActionException($message);
-    }
-    ?>
+    } ?>
     <!DOCTYPE HTML>
     <html>
     <head>
@@ -160,7 +159,7 @@ try {
     $extensionArr = array('curl', 'gettext', 'gd', 'openssl', 'mbstring');
     foreach ($extensionArr as $ext) {
         if (!extension_loaded($ext)) {
-            $message = "The <em>" . $ext . "</em> extension is <strong>NOT</strong> loaded.
+            $message = 'The <em>' . $ext . "</em> extension is <strong>NOT</strong> loaded.
                     <a href='https://doc.elabftw.net/faq.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
             $errflag = true;
         }
@@ -171,8 +170,7 @@ try {
     }
 
     $message = 'Everything is good on your server. You can install eLabFTW :)';
-    echo Tools::displayMessage($message, 'ok', false);
-    ?>
+    echo Tools::displayMessage($message, 'ok', false); ?>
     <h3>Configuration</h3>
 
     <!-- MYSQL -->
@@ -201,8 +199,7 @@ try {
         echo 'root';
     } else {
         echo 'elabftw';
-    }
-    ?>' />
+    } ?>' />
     <p class='smallgray'>(should be 'elabftw' or 'root' if you're on Mac/Windows)</p>
     </p>
 
@@ -224,7 +221,7 @@ try {
     <section id='final_section'>
     <p>When you click the button below, it will create the file <em>config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the main elabftw folder.</p>
     <p>To put this file on the server, you can use scp (don't write the '$') :</p>
-    <code>$ scp /path/to/downloaded/config.php your-user@12.34.56.78:<?= dirname(__DIR__, 2) ?></code>
+    <code>$ scp /path/to/downloaded/config.php your-user@12.34.56.78:<?= dirname(__DIR__, 2); ?></code>
     <p>If you want to modify some parameters afterwards, just edit this file directly.</p>
 
     <div class='text-center mt-2'>
@@ -242,12 +239,10 @@ try {
     </section>
 
     <script src='../app/js/install.min.js'></script>
-    <?php
+<?php
 } catch (ImproperActionException | FilesystemErrorException | Exception $e) {
-    echo Tools::displayMessage($e->getMessage(), 'ko', false);
-    echo "</section></section>";
-} finally {
-    echo "</body></html>";
-}
-
-
+        echo Tools::displayMessage($e->getMessage(), 'ko', false);
+        echo '</section></section>';
+    } finally {
+        echo '</body></html>';
+    }

@@ -48,73 +48,6 @@ class Email
     }
 
     /**
-     * Fetch the email(s) of the admin(s) for a team
-     *
-     * @param int $team
-     * @return array
-     */
-    private function getAdminEmail($team): array
-    {
-        // array for storing email adresses of admin(s)
-        $arr = array();
-        $Db = Db::getConnection();
-
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
-        $req = $Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->execute();
-
-        while ($email = $req->fetchColumn()) {
-            $arr[] = $email;
-        }
-
-        // if we have only one admin, we need to have an associative array
-        if (\count($arr) === 1) {
-            return array($arr[0] => 'Admin eLabFTW');
-        }
-
-        return $arr;
-    }
-
-    /**
-     * Return Swift_Mailer instance and choose between sendmail and smtp
-     *
-     * @return Swift_Mailer
-     */
-    private function getMailer(): Swift_Mailer
-    {
-
-        // Choose mail transport method; either smtp or sendmail
-        if ($this->Config->configArr['mail_method'] === 'smtp') {
-            if ($this->Config->configArr['smtp_encryption'] === 'none') {
-                $transport = new Swift_SmtpTransport(
-                    $this->Config->configArr['smtp_address'],
-                    $this->Config->configArr['smtp_port']
-                );
-            } else {
-                $transport = new Swift_SmtpTransport(
-                    $this->Config->configArr['smtp_address'],
-                    $this->Config->configArr['smtp_port'],
-                    $this->Config->configArr['smtp_encryption']
-                );
-            }
-
-            if ($this->Config->configArr['smtp_password']) {
-                $transport->setUsername($this->Config->configArr['smtp_username'])
-                ->setPassword(Crypto::decrypt(
-                    $this->Config->configArr['smtp_password'],
-                    Key::loadFromAsciiSafeString(\SECRET_KEY)
-                ));
-            }
-        } else {
-            // Use locally installed MTA (aka sendmail); Default
-            $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
-        }
-
-        return new Swift_Mailer($transport);
-    }
-
-    /**
      * Send an email
      *
      * @param Swift_Message $message
@@ -259,5 +192,72 @@ class Email
         ->setBody(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url . $footer);
         // now we try to send the email
         $this->send($message);
+    }
+
+    /**
+     * Fetch the email(s) of the admin(s) for a team
+     *
+     * @param int $team
+     * @return array
+     */
+    private function getAdminEmail($team): array
+    {
+        // array for storing email adresses of admin(s)
+        $arr = array();
+        $Db = Db::getConnection();
+
+        $sql = 'SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team';
+        $req = $Db->prepare($sql);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->execute();
+
+        while ($email = $req->fetchColumn()) {
+            $arr[] = $email;
+        }
+
+        // if we have only one admin, we need to have an associative array
+        if (\count($arr) === 1) {
+            return array($arr[0] => 'Admin eLabFTW');
+        }
+
+        return $arr;
+    }
+
+    /**
+     * Return Swift_Mailer instance and choose between sendmail and smtp
+     *
+     * @return Swift_Mailer
+     */
+    private function getMailer(): Swift_Mailer
+    {
+
+        // Choose mail transport method; either smtp or sendmail
+        if ($this->Config->configArr['mail_method'] === 'smtp') {
+            if ($this->Config->configArr['smtp_encryption'] === 'none') {
+                $transport = new Swift_SmtpTransport(
+                    $this->Config->configArr['smtp_address'],
+                    $this->Config->configArr['smtp_port']
+                );
+            } else {
+                $transport = new Swift_SmtpTransport(
+                    $this->Config->configArr['smtp_address'],
+                    $this->Config->configArr['smtp_port'],
+                    $this->Config->configArr['smtp_encryption']
+                );
+            }
+
+            if ($this->Config->configArr['smtp_password']) {
+                $transport->setUsername($this->Config->configArr['smtp_username'])
+                ->setPassword(Crypto::decrypt(
+                    $this->Config->configArr['smtp_password'],
+                    Key::loadFromAsciiSafeString(\SECRET_KEY)
+                ));
+            }
+        } else {
+            // Use locally installed MTA (aka sendmail); Default
+            $transport = new Swift_SendmailTransport($this->Config->configArr['sendmail_path'] . ' -bs');
+        }
+
+        return new Swift_Mailer($transport);
     }
 }

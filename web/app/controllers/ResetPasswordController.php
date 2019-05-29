@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Swift_Message;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,19 +19,17 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Elabftw\Services\Email;
 use Exception;
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
+use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse("../../login.php");
+$Response = new RedirectResponse('../../login.php');
 
 try {
     $Email = new Email($App->Config, new Users());
 
     if ($Request->request->has('email')) {
-
         $email = $Request->request->get('email');
 
         // check email is valid. Input field is of type email so browsers should not let users send invalid email.
@@ -84,7 +83,6 @@ try {
     // second part, update the password
     if ($Request->request->has('password') &&
         $Request->request->get('password') === $Request->request->get('cpassword')) {
-
         $App->Users->setId((int) $Request->request->get('userid'));
 
         // Validate key
@@ -104,23 +102,18 @@ try {
         $App->Log->info('Password was changed for this user', array('userid' => $App->Session->get('userid')));
         $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
-
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (Exception $e) {
     $App->Log->warning('Reset password failed attempt', array(array('ip' => $Request->server->get('REMOTE_ADDR')), array('exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-
 } finally {
     $Response->send();
 }

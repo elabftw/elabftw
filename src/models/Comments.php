@@ -75,96 +75,17 @@ class Comments implements CrudInterface
     }
 
     /**
-     * Sanitize comment and check for size
-     *
-     * @param string $comment
-     * @return string
-     */
-    private function prepare(string $comment): string
-    {
-        $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
-        // check length
-        if (\mb_strlen($comment) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        return $comment;
-    }
-
-    /**
-     * Send an email to the experiment owner to alert a comment was posted
-     * (issue #160). Only send for an experiment.
-     *
-     * @return int number of email sent
-     */
-    private function alertOwner(): int
-    {
-        $Config = new Config();
-
-        // don't do it for Db items or if email is not configured
-        if ($this->Entity instanceof Database || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
-            return 0;
-        }
-
-        // get the first and lastname of the commenter
-        $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $commenter = $req->fetch();
-
-        // get email of the XP owner
-        $sql = "SELECT email, userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users
-            WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
-        $users = $req->fetch();
-
-        // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $this->Entity->Users->userData['userid']) {
-            return 1;
-        }
-
-        // Create the message
-        $Request = Request::createFromGlobals();
-        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
-        // not pretty but gets the job done
-        $url = str_replace('app/controllers/', '', $url);
-        $url .= "?mode=view&id=" . $this->Entity->id;
-
-        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
-
-        $message = (new Swift_Message())
-        // Give the message a subject
-        ->setSubject(_('[eLabFTW] New comment posted'))
-        // Set the From address with an associative array
-        ->setFrom(array($Config->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($users['email'] => $users['fullname']))
-        // Give it a body
-        ->setBody(sprintf(
-            _('Hi. %s left a comment on your experiment. Have a look: %s'),
-            $commenter['fullname'],
-            $url
-        ) . $footer);
-
-        return $this->Email->send($message);
-    }
-
-    /**
      * Read comments for an entity id
      *
      * @return array comments for this entity
      */
     public function readAll(): array
     {
-        $sql = "SELECT " . $this->Entity->type . "_comments.*,
+        $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM " . $this->Entity->type . "_comments
-            LEFT JOIN users ON (" . $this->Entity->type . "_comments.userid = users.userid)
-            WHERE item_id = :id ORDER BY " . $this->Entity->type . "_comments.datetime ASC";
+            FROM " . $this->Entity->type . '_comments
+            LEFT JOIN users ON (' . $this->Entity->type . '_comments.userid = users.userid)
+            WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.datetime ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -228,5 +149,84 @@ class Comments implements CrudInterface
      */
     public function destroyAll(): void
     {
+    }
+
+    /**
+     * Sanitize comment and check for size
+     *
+     * @param string $comment
+     * @return string
+     */
+    private function prepare(string $comment): string
+    {
+        $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
+        // check length
+        if (\mb_strlen($comment) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        }
+        return $comment;
+    }
+
+    /**
+     * Send an email to the experiment owner to alert a comment was posted
+     * (issue #160). Only send for an experiment.
+     *
+     * @return int number of email sent
+     */
+    private function alertOwner(): int
+    {
+        $Config = new Config();
+
+        // don't do it for Db items or if email is not configured
+        if ($this->Entity instanceof Database || $Config->configArr['mail_from'] === 'notconfigured@example.com') {
+            return 0;
+        }
+
+        // get the first and lastname of the commenter
+        $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $commenter = $req->fetch();
+
+        // get email of the XP owner
+        $sql = "SELECT email, userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users
+            WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->execute();
+        $users = $req->fetch();
+
+        // don't send an email if we are commenting on our own XP
+        if ($users['userid'] === $this->Entity->Users->userData['userid']) {
+            return 1;
+        }
+
+        // Create the message
+        $Request = Request::createFromGlobals();
+        $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
+        // not pretty but gets the job done
+        $url = str_replace('app/controllers/', '', $url);
+        $url .= '?mode=view&id=' . $this->Entity->id;
+
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+
+        $message = (new Swift_Message())
+        // Give the message a subject
+        ->setSubject(_('[eLabFTW] New comment posted'))
+        // Set the From address with an associative array
+        ->setFrom(array($Config->configArr['mail_from'] => 'eLabFTW'))
+        // Set the To addresses with an associative array
+        ->setTo(array($users['email'] => $users['fullname']))
+        // Give it a body
+        ->setBody(sprintf(
+            _('Hi. %s left a comment on your experiment. Have a look: %s'),
+            $commenter['fullname'],
+            $url
+        ) . $footer);
+
+        return $this->Email->send($message);
     }
 }

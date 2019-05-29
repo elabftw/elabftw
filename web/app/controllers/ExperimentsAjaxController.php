@@ -29,11 +29,10 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new JsonResponse();
 $Response->setData(array(
     'res' => true,
-    'msg' => _('Saved')
+    'msg' => _('Saved'),
 ));
 
 try {
-
     if ($App->Session->has('anon')) {
         throw new IllegalActionException('Anonymous user tried to access experiments controller.');
     }
@@ -94,41 +93,36 @@ try {
     }
 
     // DECODE ASN1 TOKEN
-    if ($Request->request->has('asn1') && \is_readable(\dirname(__DIR__, 3) . "/uploads/" . $Request->request->get('asn1'))) {
+    if ($Request->request->has('asn1') && \is_readable(\dirname(__DIR__, 3) . '/uploads/' . $Request->request->get('asn1'))) {
         $MakeTimestamp = new MakeTimestamp($App->Config, new Teams($App->Users), $Entity);
         $Response->setData(array(
             'res' => true,
-            'msg' => $MakeTimestamp->decodeAsn1($Request->request->get('asn1'))
+            'msg' => $MakeTimestamp->decodeAsn1($Request->request->get('asn1')),
         ));
     }
-
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->getMessage()
+        'msg' => $e->getMessage(),
     ));
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error(true)
+        'msg' => Tools::error(true),
     ));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => $e->getMessage()
+        'msg' => $e->getMessage(),
     ));
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error()
+        'msg' => Tools::error(),
     ));
-
 } finally {
     $Response->send();
 }

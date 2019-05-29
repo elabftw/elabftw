@@ -13,8 +13,8 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Swift_TransportException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 require_once \dirname(__DIR__) . '/init.inc.php';
 
@@ -40,7 +40,6 @@ try {
         !$Request->request->get('lastname') ||
         !$Request->request->get('email') ||
         !filter_var($Request->request->get('email'), FILTER_VALIDATE_EMAIL)) {
-
         throw new ImproperActionException(_('A mandatory field is missing!'));
     }
 
@@ -63,29 +62,24 @@ try {
 
     // log user creation
     $App->Log->info('New user created');
-
 } catch (Swift_TransportException $e) {
     // for swift error, don't display error to user as it might contain sensitive information
     // but log it and display general error. See #841
     $App->Log->error('', array('exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '../../register.php';
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
     $location = '../../register.php';
-
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array('Exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
     $location = '../../register.php';
-
 } finally {
     $Response = new RedirectResponse($location);
     $Response->send();

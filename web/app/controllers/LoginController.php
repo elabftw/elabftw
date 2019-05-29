@@ -35,9 +35,8 @@ try {
     if ($Request->request->has('saml_login')) {
         $settings = $Saml->getSettings();
         $SamlAuth = new SamlAuth($settings);
-        $returnUrl = $settings['baseurl'] . "/index.php?acs";
+        $returnUrl = $settings['baseurl'] . '/index.php?acs';
         $SamlAuth->login($returnUrl);
-
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {
             $App->Users->Auth->loginAsAnon((int) $Request->request->get('team_id'));
@@ -47,7 +46,6 @@ try {
                 $location = '../../experiments.php';
             }
         }
-
     } else {
 
         // CSRF
@@ -90,23 +88,18 @@ try {
         }
     }
     $Response = new RedirectResponse($location);
-
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('IllegalAction' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Error' => $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-
 } catch (Exception $e) {
     $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-
 } finally {
     $Response->send();
 }

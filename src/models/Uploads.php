@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\Extensions;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -53,6 +53,304 @@ class Uploads implements CrudInterface
             $this->Entity = $entity;
         }
         $this->Db = Db::getConnection();
+    }
+
+    /**
+     * Main method for normal file upload
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return void
+     */
+    public function create(Request $request): void
+    {
+        $this->Entity->canOrExplode('write');
+
+        $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
+        $this->checkExtension($realName);
+
+        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
+        $fullPath = $this->getUploadsPath() . $longName;
+
+        // Try to move the file to its final place
+        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+
+        // final sql
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb();
+    }
+
+    /**
+     * Called from ImportZip class
+     *
+     * @param string $filePath absolute path to the file
+     * @param string $comment
+     * @return void
+     */
+    public function createFromLocalFile(string $filePath, string $comment): void
+    {
+        $realName = basename($filePath);
+        $this->checkExtension($realName);
+
+        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
+        $fullPath = $this->getUploadsPath() . $longName;
+
+        $this->moveFile($filePath, $fullPath);
+
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb();
+    }
+
+    /**
+     * Create an upload from a string, from Chemdoodle or Doodle
+     *
+     * @param string $fileType 'mol' or 'png'
+     * @param string $realName name of the file
+     * @param string $content content of the file
+     * @return void
+     */
+    public function createFromString(string $fileType, string $realName, string $content): void
+    {
+        $this->Entity->canOrExplode('write');
+
+        $allowedFileTypes = array('png', 'mol');
+        if (!\in_array($fileType, $allowedFileTypes, true)) {
+            throw new IllegalActionException('Bad filetype!');
+        }
+
+        if ($fileType === 'png') {
+            // get the image in binary
+            $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
+            $content = base64_decode($content, true);
+        }
+
+        // make sure the file has a name
+        if (empty($realName)) {
+            $realName = 'untitled';
+        }
+
+        $realName = $realName . '.' . $fileType;
+        $longName = $this->getLongName() . '.' . $fileType;
+        $fullPath = $this->getUploadsPath() . $longName;
+
+        if (!empty($content) && !file_put_contents($fullPath, $content)) {
+            throw new FilesystemErrorException('Could not write to file!');
+        }
+
+        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb();
+    }
+
+    /**
+     * Read info from an upload ID
+     *
+     * @param int $id id of the uploaded item
+     * @throws DatabaseErrorException
+     * @return array
+     */
+    public function readFromId(int $id): array
+    {
+        $sql = 'SELECT * FROM uploads WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new ImproperActionException('Nothing to show with this id');
+        }
+        return $res;
+    }
+
+    /**
+     * Read all uploads for an item
+     *
+     * @throws DatabaseErrorException
+     * @return array
+     */
+    public function readAll(): array
+    {
+        $sql = 'SELECT * FROM uploads WHERE item_id = :id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
+     * Get the total size on disk of uploaded files for a user
+     *
+     * @param int $userid
+     * @return int
+     */
+    public function getDiskUsage(int $userid): int
+    {
+        $sql = 'SELECT userid, long_name FROM uploads WHERE userid = :userid ORDER BY userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $uploads = $req->fetchAll();
+        if ($uploads === false) {
+            return 0;
+        }
+        $diskUsage = 0;
+        foreach ($uploads as $upload) {
+            $diskUsage += \filesize($this->getUploadsPath() . $upload['long_name']);
+        }
+        return $diskUsage;
+    }
+
+    /**
+     * Update the comment of a file. We also pass the itemid to make sure we update
+     * the comment associated with the item sent to the controller. Because write access
+     * is checked on this value.
+     *
+     * @param int $id id of the file
+     * @param string $comment
+     * @throws DatabaseErrorException
+     * @return void
+     */
+    public function updateComment(int $id, string $comment): void
+    {
+        // check length
+        if (\mb_strlen($comment) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        }
+        $this->Entity->canOrExplode('write');
+        // SQL to update single file comment
+        $sql = 'UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':comment', $comment);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
+     * Replace an uploaded file by another
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function replace(Request $request): void
+    {
+        $this->Entity->canOrExplode('write');
+        $upload = $this->readFromId((int) $request->request->get('upload_id'));
+        $fullPath = $this->getUploadsPath() . $upload['long_name'];
+        // check user is same as the previously uploaded file
+        if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
+            throw new IllegalActionException('User tried to replace an upload of another user.');
+        }
+        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
+        $MakeThumbnail = new MakeThumbnail($fullPath);
+        $MakeThumbnail->makeThumb(true);
+
+        $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
+     * Get the correct class for icon from the extension
+     *
+     * @param string $ext Extension of the file
+     * @return string Class of the fa icon
+     */
+    public function getIconFromExtension(string $ext): string
+    {
+        if (\in_array($ext, Extensions::ARCHIVE, true)) {
+            return 'fa-file-archive';
+        }
+        if (\in_array($ext, Extensions::CODE, true)) {
+            return 'fa-file-code';
+        }
+        if (\in_array($ext, Extensions::SPREADSHEET, true)) {
+            return 'fa-file-excel';
+        }
+        if (\in_array($ext, Extensions::PRESENTATION, true)) {
+            return 'fa-file-powerpoint';
+        }
+        if (\in_array($ext, Extensions::VIDEO, true)) {
+            return 'fa-file-video';
+        }
+        if (\in_array($ext, Extensions::DOCUMENT, true)) {
+            return 'fa-file-word';
+        }
+
+        return 'fa-file';
+    }
+
+    /**
+     * Destroy an upload
+     *
+     * @param int $id id of the upload
+     * @return void
+     */
+    public function destroy(int $id): void
+    {
+        $this->Entity->canOrExplode('write');
+
+        $uploadArr = $this->readFromId($id);
+
+        // remove thumbnail
+        $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
+        if (file_exists($thumbPath) && unlink($thumbPath) !== true) {
+            throw new FilesystemErrorException('Could not delete file!');
+        }
+        // now delete file from filesystem
+        $filePath = $this->getUploadsPath() . $uploadArr['long_name'];
+        if (file_exists($filePath)) {
+            if (unlink($filePath) !== true) {
+                throw new FilesystemErrorException('Could not delete file!');
+            }
+        }
+
+        // Delete SQL entry (and verify the type)
+        // to avoid someone deleting files saying it's DB whereas it's exp
+        $sql = 'DELETE FROM uploads WHERE id = :id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
+     * Delete all uploaded files for an entity
+     *
+     * @return void
+     */
+    public function destroyAll(): void
+    {
+        $uploadArr = $this->readAll();
+
+        foreach ($uploadArr as $upload) {
+            $this->destroy((int) $upload['id']);
+        }
     }
 
     /**
@@ -122,7 +420,7 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Make the final SQL request to store the file
+     * Make the final SQL request to store the file
      *
      * @param string $realName The clean name of the file
      * @param string $longName The sha512 name
@@ -137,7 +435,7 @@ class Uploads implements CrudInterface
             $comment = 'Click to add a comment';
         }
 
-        $sql = "INSERT INTO uploads(
+        $sql = 'INSERT INTO uploads(
             real_name,
             long_name,
             comment,
@@ -155,7 +453,7 @@ class Uploads implements CrudInterface
             :type,
             :hash,
             :hash_algorithm
-        )";
+        )';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':real_name', $realName);
@@ -171,304 +469,6 @@ class Uploads implements CrudInterface
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Main method for normal file upload
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return void
-     */
-    public function create(Request $request): void
-    {
-        $this->Entity->canOrExplode('write');
-
-        $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
-        $this->checkExtension($realName);
-
-        $longName = $this->getLongName() . "." . Tools::getExt($realName);
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        // Try to move the file to its final place
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-
-        // final sql
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
-    }
-
-    /**
-     * Called from ImportZip class
-     *
-     * @param string $filePath absolute path to the file
-     * @param string $comment
-     * @return void
-     */
-    public function createFromLocalFile(string $filePath, string $comment): void
-    {
-        $realName = basename($filePath);
-        $this->checkExtension($realName);
-
-        $longName = $this->getLongName() . "." . Tools::getExt($realName);
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        $this->moveFile($filePath, $fullPath);
-
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath), $comment);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
-    }
-
-    /**
-     * Create an upload from a string, from Chemdoodle or Doodle
-     *
-     * @param string $fileType 'mol' or 'png'
-     * @param string $realName name of the file
-     * @param string $content content of the file
-     * @return void
-     */
-    public function createFromString(string $fileType, string $realName, string $content): void
-    {
-        $this->Entity->canOrExplode('write');
-
-        $allowedFileTypes = array('png', 'mol');
-        if (!\in_array($fileType, $allowedFileTypes)) {
-            throw new IllegalActionException('Bad filetype!');
-        }
-
-        if ($fileType === 'png') {
-            // get the image in binary
-            $content = str_replace(array('data:image/png;base64,', ' '), array('', '+'), $content);
-            $content = base64_decode($content);
-        }
-
-        // make sure the file has a name
-        if (empty($realName)) {
-            $realName = 'untitled';
-        }
-
-        $realName = $realName . '.' . $fileType;
-        $longName = $this->getLongName() . '.' . $fileType;
-        $fullPath = $this->getUploadsPath() . $longName;
-
-        if (!empty($content) && !file_put_contents($fullPath, $content)) {
-            throw new FilesystemErrorException("Could not write to file!");
-        }
-
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb();
-    }
-
-    /**
-     * Read info from an upload ID
-     *
-     * @param int $id id of the uploaded item
-     * @throws DatabaseErrorException
-     * @return array
-     */
-    public function readFromId(int $id): array
-    {
-        $sql = "SELECT * FROM uploads WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $res = $req->fetch();
-        if ($res === false) {
-            throw new ImproperActionException('Nothing to show with this id');
-        }
-        return $res;
-    }
-
-    /**
-     * Read all uploads for an item
-     *
-     * @throws DatabaseErrorException
-     * @return array
-     */
-    public function readAll(): array
-    {
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
-     * Get the total size on disk of uploaded files for a user
-     *
-     * @param int $userid
-     * @return int
-     */
-    public function getDiskUsage(int $userid): int
-    {
-        $sql = "SELECT userid, long_name FROM uploads WHERE userid = :userid ORDER BY userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-
-        $uploads = $req->fetchAll();
-        if ($uploads === false) {
-            return 0;
-        }
-        $diskUsage = 0;
-        foreach ($uploads as $upload) {
-            $diskUsage += \filesize($this->getUploadsPath() . $upload['long_name']);
-        }
-        return $diskUsage;
-    }
-
-    /**
-     * Update the comment of a file. We also pass the itemid to make sure we update
-     * the comment associated with the item sent to the controller. Because write access
-     * is checked on this value.
-     *
-     * @param int $id id of the file
-     * @param string $comment
-     * @throws DatabaseErrorException
-     * @return void
-     */
-    public function updateComment(int $id, string $comment): void
-    {
-        // check length
-        if (\mb_strlen($comment) < 2) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
-        }
-        $this->Entity->canOrExplode('write');
-        // SQL to update single file comment
-        $sql = "UPDATE uploads SET comment = :comment WHERE id = :id AND item_id = :item_id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':comment', $comment);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Replace an uploaded file by another
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function replace(Request $request): void
-    {
-        $this->Entity->canOrExplode('write');
-        $upload = $this->readFromId((int) $request->request->get('upload_id'));
-        $fullPath = $this->getUploadsPath() . $upload['long_name'];
-        // check user is same as the previously uploaded file
-        if ((int) $upload['userid'] !== (int) $this->Entity->Users->userData['userid']) {
-            throw new IllegalActionException('User tried to replace an upload of another user.');
-        }
-        $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
-        $MakeThumbnail = new MakeThumbnail($fullPath);
-        $MakeThumbnail->makeThumb(true);
-
-        $sql = "UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Get the correct class for icon from the extension
-     *
-     * @param string $ext Extension of the file
-     * @return string Class of the fa icon
-     */
-    public function getIconFromExtension(string $ext): string
-    {
-        if (\in_array($ext, Extensions::ARCHIVE, true)) {
-            return 'fa-file-archive';
-        }
-        if (\in_array($ext, Extensions::CODE, true)) {
-            return 'fa-file-code';
-        }
-        if (\in_array($ext, Extensions::SPREADSHEET, true)) {
-            return 'fa-file-excel';
-        }
-        if (\in_array($ext, Extensions::PRESENTATION, true)) {
-            return 'fa-file-powerpoint';
-        }
-        if (\in_array($ext, Extensions::VIDEO, true)) {
-            return 'fa-file-video';
-        }
-        if (\in_array($ext, Extensions::DOCUMENT, true)) {
-            return 'fa-file-word';
-        }
-
-        return 'fa-file';
-    }
-
-    /**
-     * Destroy an upload
-     *
-     * @param int $id id of the upload
-     * @return void
-     */
-    public function destroy(int $id): void
-    {
-        $this->Entity->canOrExplode('write');
-
-        $uploadArr = $this->readFromId($id);
-
-        // remove thumbnail
-        $thumbPath = $this->getUploadsPath() . $uploadArr['long_name'] . '_th.jpg';
-        if (file_exists($thumbPath) && unlink($thumbPath) !== true) {
-            throw new FilesystemErrorException('Could not delete file!');
-        }
-        // now delete file from filesystem
-        $filePath = $this->getUploadsPath() . $uploadArr['long_name'];
-        if (file_exists($filePath)) {
-            if (unlink($filePath) !== true) {
-                throw new FilesystemErrorException('Could not delete file!');
-            }
-        }
-
-        // Delete SQL entry (and verify the type)
-        // to avoid someone deleting files saying it's DB whereas it's exp
-        $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
-     * Delete all uploaded files for an entity
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-        $uploadArr = $this->readAll();
-
-        foreach ($uploadArr as $upload) {
-            $this->destroy((int) $upload['id']);
         }
     }
 }

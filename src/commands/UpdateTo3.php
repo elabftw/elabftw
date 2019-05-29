@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
@@ -24,7 +25,7 @@ class UpdateTo3 extends Command
 
     protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Prepare the database for the update to 3.0')
 
@@ -46,7 +47,7 @@ class UpdateTo3 extends Command
         $command = $this->getApplication()->find('db:clean');
 
         $arguments = array(
-            'command' => 'db:clean'
+            'command' => 'db:clean',
         );
 
         $cmdInput = new ArrayInput($arguments);
@@ -56,7 +57,7 @@ class UpdateTo3 extends Command
             $command = $this->getApplication()->find('db:update');
 
             $arguments = array(
-                'command' => 'db:update'
+                'command' => 'db:update',
             );
 
             $cmdInput = new ArrayInput($arguments);

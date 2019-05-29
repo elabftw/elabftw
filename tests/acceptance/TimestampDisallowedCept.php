@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,5 +10,5 @@ $I = new AcceptanceTester($scenario);
 $I->wantTo('Timestamp an experiment (timestamping disallowed)');
 testLogin($I);
 $I->amOnPage('experiments.php?mode=view&id=1');
-# not working FIXME
-#$I->dontSeeElement('#confirmTimestamp');
+// not working FIXME
+//$I->dontSeeElement('#confirmTimestamp');

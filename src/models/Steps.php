@@ -20,11 +20,11 @@ use PDO;
  */
 class Steps implements CrudInterface
 {
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** instance of Experiments */
     public $Experiments;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Constructor
@@ -49,7 +49,7 @@ class Steps implements CrudInterface
 
         // remove any | as they are used in the group_concat
         $body = str_replace('|', ' ', $body);
-        $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
+        $sql = 'INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
@@ -69,9 +69,9 @@ class Steps implements CrudInterface
     {
         $this->Experiments->canOrExplode('write');
 
-        $sql = "UPDATE experiments_steps SET finished = !finished,
+        $sql = 'UPDATE experiments_steps SET finished = !finished,
             finished_time = NOW()
-            WHERE id = :id";
+            WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $stepid, PDO::PARAM_INT);
 
@@ -87,7 +87,7 @@ class Steps implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT * FROM experiments_steps WHERE item_id = :id";
+        $sql = 'SELECT * FROM experiments_steps WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -110,7 +110,7 @@ class Steps implements CrudInterface
      */
     public function duplicate(int $id, int $newId): void
     {
-        $stepsql = "SELECT body FROM experiments_steps WHERE item_id = :id";
+        $stepsql = 'SELECT body FROM experiments_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         if ($stepreq->execute() !== true) {
@@ -118,11 +118,11 @@ class Steps implements CrudInterface
         }
 
         while ($steps = $stepreq->fetch()) {
-            $sql = "INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)";
+            $sql = 'INSERT INTO experiments_steps (item_id, body) VALUES(:item_id, :body)';
             $req = $this->Db->prepare($sql);
             $req->execute(array(
                 'item_id' => $newId,
-                'body' => $steps['body']
+                'body' => $steps['body'],
             ));
         }
     }
@@ -137,7 +137,7 @@ class Steps implements CrudInterface
     {
         $this->Experiments->canOrExplode('write');
 
-        $sql = "DELETE FROM experiments_steps WHERE id= :id";
+        $sql = 'DELETE FROM experiments_steps WHERE id= :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 

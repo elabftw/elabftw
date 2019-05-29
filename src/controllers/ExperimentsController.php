@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Status;
 use Elabftw\Models\Revisions;
+use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
-use Elabftw\Elabftw\Tools;
-use Elabftw\Elabftw\App;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -72,7 +72,7 @@ class ExperimentsController extends AbstractEntityController
             'stepsArr' => $stepsArr,
             'timestampInfo' => $timestampInfo,
             'commentsArr' => $commentsArr,
-            'mode' => 'view'
+            'mode' => 'view',
         );
 
         $Response = new Response();
@@ -122,7 +122,7 @@ class ExperimentsController extends AbstractEntityController
             'mode' => 'edit',
             'revNum' => $revNum,
             'stepsArr' => $stepsArr,
-            'visibilityArr' => $visibilityArr
+            'visibilityArr' => $visibilityArr,
         );
 
         $Response = new Response();
@@ -145,12 +145,12 @@ class ExperimentsController extends AbstractEntityController
 
         // CATEGORY FILTER
         if (Tools::checkId((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->categoryFilter = " AND status.id = " . $this->App->Request->query->get('cat');
+            $this->Entity->categoryFilter = ' AND status.id = ' . $this->App->Request->query->get('cat');
             $searchType = 'filter';
         }
         // TAG FILTER
         if (!empty($this->App->Request->query->get('tags'))) {
-            $having = "HAVING ";
+            $having = 'HAVING ';
             foreach ($this->App->Request->query->get('tags') as $tag) {
                 $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
                 $having .= "tags LIKE '%$tag%' AND ";
@@ -258,7 +258,7 @@ class ExperimentsController extends AbstractEntityController
             'searchType' => $searchType,
             'tag' => $tag,
             'templatesArr' => $templatesArr,
-            'visibilityArr' => $visibilityArr
+            'visibilityArr' => $visibilityArr,
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);

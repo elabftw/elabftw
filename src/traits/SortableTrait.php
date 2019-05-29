@@ -45,7 +45,7 @@ trait SortableTrait
             $id = explode('_', $id);
             $id = (int) $id[1];
             // the table param is whitelisted here
-            $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND " . $userOrTeam . " = :userOrTeam";
+            $sql = 'UPDATE ' . $post['table'] . ' SET ordering = :ordering WHERE id = :id AND ' . $userOrTeam . ' = :userOrTeam';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':userOrTeam', $userOrTeamValue);

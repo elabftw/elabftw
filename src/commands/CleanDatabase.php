@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
 use Elabftw\Services\DatabaseCleaner;
@@ -23,7 +24,7 @@ class CleanDatabase extends Command
 
     protected function configure(): void
     {
-         $this
+        $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Clean the database from orphans')
 

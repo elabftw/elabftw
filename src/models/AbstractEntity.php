@@ -135,21 +135,6 @@ abstract class AbstractEntity
     abstract public function toggleLock(): void;
 
     /**
-     * Now that we have an id, load the data in entityData array
-     *
-     * @return void
-     */
-    protected function populate(): void
-    {
-        if ($this->id === null) {
-            throw new ImproperActionException('No id was set.');
-        }
-
-        // load the entity in entityData array
-        $this->entityData = $this->read();
-    }
-
-    /**
      * Read all from the entity
      * Optionally with filters
      * Here be dragons!
@@ -158,26 +143,26 @@ abstract class AbstractEntity
      *
      * @return array
      */
-    public function read($getTags = true): array
+    public function read(bool $getTags = true): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
         }
 
-        $uploadsJoin = "LEFT JOIN (
+        $uploadsJoin = 'LEFT JOIN (
             SELECT uploads.item_id AS up_item_id,
                 (uploads.item_id IS NOT NULL) AS has_attachment,
                 uploads.type
             FROM uploads
             GROUP BY uploads.item_id, uploads.type)
             AS uploads
-            ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
+            ON (uploads.up_item_id = ' . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
         $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-        $tagsJoin = "LEFT JOIN tags2entity ON (" . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
+        $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
 
         if ($this instanceof Experiments) {
-            $select = "SELECT DISTINCT " . $this->type . ".*,
+            $select = 'SELECT DISTINCT ' . $this->type . ".*,
                 status.color, status.name AS category, status.id AS category_id,
                 uploads.up_item_id, uploads.has_attachment,
                 experiments_comments.recent_comment,
@@ -185,25 +170,25 @@ abstract class AbstractEntity
                 SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
-            $from = "FROM experiments";
+            $from = 'FROM experiments';
 
-            $usersJoin = "LEFT JOIN users ON (experiments.userid = users.userid)";
-            $stepsJoin = "LEFT JOIN (
+            $usersJoin = 'LEFT JOIN users ON (experiments.userid = users.userid)';
+            $stepsJoin = 'LEFT JOIN (
                 SELECT experiments_steps.item_id AS steps_item_id,
                 experiments_steps.body AS next_step,
                 experiments_steps.finished AS finished
                 FROM experiments_steps)
                 AS stepst ON (
                 experiments.id = steps_item_id
-                AND stepst.finished = 0)";
+                AND stepst.finished = 0)';
 
-            $statusJoin = "LEFT JOIN status ON (status.id = experiments.category)";
-            $commentsJoin = "LEFT JOIN (
+            $statusJoin = 'LEFT JOIN status ON (status.id = experiments.category)';
+            $commentsJoin = 'LEFT JOIN (
                 SELECT MAX(experiments_comments.datetime) AS recent_comment,
                     experiments_comments.item_id FROM experiments_comments GROUP BY experiments_comments.item_id
                 ) AS experiments_comments
-                ON (experiments_comments.item_id = experiments.id)";
-            $where = "WHERE experiments.team = :team";
+                ON (experiments_comments.item_id = experiments.id)';
+            $where = 'WHERE experiments.team = :team';
 
             $sql = $select . ' ';
             if ($getTags) {
@@ -227,10 +212,10 @@ abstract class AbstractEntity
                 uploads.up_item_id, uploads.has_attachment,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
-            $from = "FROM items
+            $from = 'FROM items
                 LEFT JOIN items_types ON (items.category = items_types.id)
-                LEFT JOIN users ON (users.userid = items.userid)";
-            $where = "WHERE items.team = :team";
+                LEFT JOIN users ON (users.userid = items.userid)';
+            $where = 'WHERE items.team = :team';
 
             $sql .= ' ';
             if ($getTags) {
@@ -254,9 +239,9 @@ abstract class AbstractEntity
             $this->categoryFilter . ' ' .
             $this->queryFilter . ' ' .
             $this->visibilityFilter . ' ' .
-            " GROUP BY id " . ' ' .
+            ' GROUP BY id ' . ' ' .
             $this->tagFilter . ' ' .
-            "ORDER BY " . $this->order . " " . $this->sort . ", " . $this->type . ".id " . $this->sort . " " . $this->limit . " " . $this->offset;
+            'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -274,8 +259,7 @@ abstract class AbstractEntity
         }
         // reduce the dimension of the array if we have only one item (idFilter set)
         if (count($finalArr) === 1 && !empty($this->idFilter)) {
-            $item = $finalArr[0];
-            return $item;
+            return $finalArr[0];
         }
         return $finalArr;
     }
@@ -289,9 +273,9 @@ abstract class AbstractEntity
      */
     public function getTags(int $id): array
     {
-        $sql = "SELECT DISTINCT tags2entity.tag_id, tags.tag FROM tags2entity
+        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags.tag FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            WHERE tags2entity.item_id = :id and tags2entity.item_type = :type";
+            WHERE tags2entity.item_id = :id and tags2entity.item_type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->type);
@@ -331,18 +315,18 @@ abstract class AbstractEntity
         $body = Tools::checkBody($body);
 
         if ($this instanceof Experiments) {
-            $sql = "UPDATE experiments SET
+            $sql = 'UPDATE experiments SET
                 title = :title,
                 date = :date,
                 body = :body
-                WHERE id = :id";
+                WHERE id = :id';
         } else {
-            $sql = "UPDATE items SET
+            $sql = 'UPDATE items SET
                 title = :title,
                 date = :date,
                 body = :body,
                 userid = :userid
-                WHERE id = :id";
+                WHERE id = :id';
         }
 
         $req = $this->Db->prepare($sql);
@@ -352,7 +336,7 @@ abstract class AbstractEntity
         if ($this instanceof Database) {
             // if we are the admin doing an edit on a visibility = user item, we don't want to change the userid
             // first get the visibility
-            $sql = "SELECT userid, visibility FROM items WHERE id = :id";
+            $sql = 'SELECT userid, visibility FROM items WHERE id = :id';
             $req2 = $this->Db->prepare($sql);
             $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
             if ($req2->execute() !== true) {
@@ -416,7 +400,7 @@ abstract class AbstractEntity
         Tools::checkVisibility($visibility);
         $this->canOrExplode('write');
 
-        $sql = "UPDATE " . $this->type . " SET visibility = :visibility WHERE id = :id";
+        $sql = 'UPDATE ' . $this->type . ' SET visibility = :visibility WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':visibility', $visibility);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -439,7 +423,6 @@ abstract class AbstractEntity
         }
         return ucfirst($this->entityData['visibility']);
     }
-
 
     /**
      * Check if we have the permission to read/write or throw an exception
@@ -538,7 +521,7 @@ abstract class AbstractEntity
         $itemsArr = $this->getDbList($term);
 
         foreach ($itemsArr as $item) {
-            $linksArr[] = $item['id'] . " - " . $item['category'] . " - " . substr($item['title'], 0, 60);
+            $linksArr[] = $item['id'] . ' - ' . $item['category'] . ' - ' . substr($item['title'], 0, 60);
         }
 
         return $linksArr;
@@ -558,16 +541,16 @@ abstract class AbstractEntity
         // add items from database
         $itemsArr = $this->getDbList($term);
         foreach ($itemsArr as $item) {
-            $mentionArr[] = array("name" => "<a href='database.php?mode=view&id=" .
-                $item['id'] . "'>" . $item['title'] . "</a>");
+            $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
+                $item['id'] . "'>" . $item['title'] . '</a>', );
         }
 
         // complete the list with experiments
         // fix #191
         $experimentsArr = $this->getExpList($term);
         foreach ($experimentsArr as $item) {
-            $mentionArr[] = array("name" => "<a href='experiments.php?mode=view&id=" .
-                $item['id'] . "'>" . $item['title'] . "</a>");
+            $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
+                $item['id'] . "'>" . $item['title'] . '</a>', );
         }
 
         return $mentionArr;
@@ -583,7 +566,7 @@ abstract class AbstractEntity
     {
         $this->canOrExplode('write');
 
-        $sql = "UPDATE " . $this->type . " SET category = :category WHERE id = :id";
+        $sql = 'UPDATE ' . $this->type . ' SET category = :category WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -591,5 +574,20 @@ abstract class AbstractEntity
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+    }
+
+    /**
+     * Now that we have an id, load the data in entityData array
+     *
+     * @return void
+     */
+    protected function populate(): void
+    {
+        if ($this->id === null) {
+            throw new ImproperActionException('No id was set.');
+        }
+
+        // load the entity in entityData array
+        $this->entityData = $this->read();
     }
 }

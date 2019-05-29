@@ -24,11 +24,11 @@ class Todolist implements CrudInterface
 {
     use SortableTrait;
 
-    /** @var Db $Db SQL Database */
-    protected $Db;
-
     /** @var Users $Users our user */
     public $Users;
+
+    /** @var Db $Db SQL Database */
+    protected $Db;
 
     /**
      * Gimme a userid
@@ -49,8 +49,8 @@ class Todolist implements CrudInterface
      */
     public function create(string $body): int
     {
-        $sql = "INSERT INTO todolist(body, userid)
-            VALUES(:body, :userid)";
+        $sql = 'INSERT INTO todolist(body, userid)
+            VALUES(:body, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -69,7 +69,7 @@ class Todolist implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = "SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC";
+        $sql = 'SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
@@ -95,7 +95,7 @@ class Todolist implements CrudInterface
         if (\mb_strlen($body) < 2) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
-        $sql = "UPDATE todolist SET body = :body WHERE id = :id";
+        $sql = 'UPDATE todolist SET body = :body WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
@@ -113,7 +113,7 @@ class Todolist implements CrudInterface
      */
     public function destroy(int $id): void
     {
-        $sql = "DELETE FROM todolist WHERE id = :id AND userid = :userid";
+        $sql = 'DELETE FROM todolist WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -130,7 +130,7 @@ class Todolist implements CrudInterface
      */
     public function destroyAll(): void
     {
-        $sql = "DELETE FROM todolist WHERE userid = :userid";
+        $sql = 'DELETE FROM todolist WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
 

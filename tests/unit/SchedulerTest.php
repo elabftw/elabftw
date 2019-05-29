@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
@@ -20,6 +21,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->Scheduler->setId(1);
         $this->Scheduler->updateStart('2016-07-22T19:40:00', '2016-07-22T20:40:00');
     }
+
     public function testUpdateEnd()
     {
         $this->Scheduler->setId(1);

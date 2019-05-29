@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * app/logout.php
  *
@@ -8,8 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';

@@ -291,14 +291,4 @@ class Templates extends AbstractEntity
 
         $this->Tags->destroyAll();
     }
-
-    /**
-     * No locking option for templates
-     *
-     * @return void
-     */
-    public function toggleLock(): void
-    {
-        return;
-    }
 }

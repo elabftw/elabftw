@@ -143,20 +143,4 @@ class Database extends AbstractEntity implements CreateInterface
             }
         }
     }
-
-    /**
-     * Lock or unlock an item
-     *
-     * @return void
-     */
-    public function toggleLock(): void
-    {
-        $sql = 'UPDATE items SET locked = IF(locked = 1, 0, 1) WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
 }

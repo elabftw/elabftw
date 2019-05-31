@@ -241,52 +241,6 @@ class Experiments extends AbstractEntity implements CreateInterface
     }
 
     /**
-     * Lock/unlock
-     *
-     * @return void
-     */
-    public function toggleLock(): void
-    {
-        $permissions = $this->getPermissions();
-        if (!$this->Users->userData['can_lock'] && !$permissions['write']) {
-            throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
-        }
-        $locked = (int) $this->entityData['locked'];
-
-        // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
-            // Get the first name of the locker to show in error message
-            $sql = 'SELECT firstname FROM users WHERE userid = :userid';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            $firstname = $req->fetchColumn();
-            if ($firstname === false || $firstname === null) {
-                throw new \RuntimeException('Could not find the firstname of the locker!');
-            }
-            throw new ImproperActionException(
-                sprintf(_("This experiment was locked by %s. You don't have the rights to unlock this."), $firstname)
-            );
-        }
-
-        // check if the experiment is timestamped. Disallow unlock in this case.
-        if ($locked === 1 && $this->entityData['timestamped']) {
-            throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
-        }
-
-        $sql = 'UPDATE experiments SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-    }
-
-    /**
      * Select what will be the status for the experiment
      *
      * @return int The status ID

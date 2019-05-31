@@ -16,7 +16,7 @@
         <ul class='list-group'>
 
             {% for user in usersArr %}
-            <li>
+            <li class='list-group-item'>
               <ul class='list-inline'>
                 <p>Team: {{ user.teamname|raw }}</p>
                 <form method='post' action='app/controllers/UsersController.php'>

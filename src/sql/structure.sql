@@ -274,6 +274,8 @@ CREATE TABLE `items` (
   `rating` tinyint(10) DEFAULT '0',
   `category` int(255) UNSIGNED NOT NULL,
   `locked` tinyint(3) UNSIGNED DEFAULT NULL,
+  `lockedby` int(10) UNSIGNED DEFAULT NULL,
+  `lockedwhen` timestamp NULL DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `visibility` varchar(255) NOT NULL DEFAULT 'team',
   `available` tinyint(1) NOT NULL DEFAULT '1'

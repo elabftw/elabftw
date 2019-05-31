@@ -23,7 +23,7 @@ $Session->start();
 // kill session
 $Session->invalidate();
 // disable token cookie
-setcookie('token', '', time() - 3600, '/', null, true, true);
+setcookie('token', '', time() - 3600, '/', '', true, true);
 // and redirect to login page
 $Response = new RedirectResponse('../login.php');
 $Response->send();

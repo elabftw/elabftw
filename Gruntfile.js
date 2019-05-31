@@ -98,13 +98,6 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      rununit: {
-        command: 'php vendor/bin/codecept run unit'
-      },
-      // xdebug must be ENABLED
-      runcoverage: {
-        command: 'php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html'
-      },
       // run yarn install
       yarninstall: {
         command: 'yarn install'
@@ -121,7 +114,4 @@ module.exports = function(grunt) {
   grunt.registerTask('yarn', 'shell:yarninstall');
   grunt.registerTask('default', ['yarn', 'uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
-  grunt.registerTask('unit', 'shell:rununit');
-  grunt.registerTask('cov', 'shell:runcoverage');
-
 };

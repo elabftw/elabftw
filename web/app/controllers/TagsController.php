@@ -48,7 +48,7 @@ try {
     if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users, $id);
-    } elseif ($Request->request->get('type') === 'experiments_tpl') {
+    } elseif ($Request->request->get('type') === 'experiments_templates') {
         $Entity = new Templates($App->Users, $id);
     } else {
         $Entity = new Database($App->Users, $id);

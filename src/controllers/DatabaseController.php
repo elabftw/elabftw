@@ -48,6 +48,12 @@ class DatabaseController extends AbstractEntityController
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
 
+        // LINKS
+        $linksArr = $this->Entity->Links->readAll();
+
+        // STEPS
+        $stepsArr = $this->Entity->Steps->readAll();
+
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
@@ -62,6 +68,8 @@ class DatabaseController extends AbstractEntityController
             'commentsArr' => $commentsArr,
             'mode' => 'view',
             'revNum' => $revNum,
+            'linksArr' => $linksArr,
+            'stepsArr' => $stepsArr,
         );
 
         $Response = new Response();
@@ -86,6 +94,12 @@ class DatabaseController extends AbstractEntityController
             throw new ImproperActionException(_('This item is locked. You cannot edit it!'));
         }
 
+        // LINKS
+        $linksArr = $this->Entity->Links->readAll();
+
+        // STEPS
+        $stepsArr = $this->Entity->Steps->readAll();
+
         $ItemsTypes = new ItemsTypes($this->Entity->Users);
         $Revisions = new Revisions($this->Entity);
         $revNum = $Revisions->readCount();
@@ -102,6 +116,8 @@ class DatabaseController extends AbstractEntityController
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'revNum' => $revNum,
             'visibilityArr' => $visibilityArr,
+            'linksArr' => $linksArr,
+            'stepsArr' => $stepsArr,
         );
 
         $Response = new Response();

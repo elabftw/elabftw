@@ -3,6 +3,9 @@
 {% block body %}
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
 <script src="app/js/dropzone.min.js?v={{ v }}"></script>
+<!-- add moment lib -->
+<script src='app/js/moment.bundle.js?v={{ v }}'></script>
+<script src='app/js/relative-moment.min.js?v={{ v }}'></script>
 
 <menu>
     <ul>
@@ -270,7 +273,7 @@
         <form action='app/controllers/UcpController.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.tpl' id='import_tpl'>
-            <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='{{ 'Name of the Template'|trans }}' />
+            <input required type='text' class='form-control' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='{{ 'Name of the Template'|trans }}' />
             <br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not App.Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
@@ -293,15 +296,15 @@
                   {% set tagsValueArr = template.tags|split('|') %}
                   {% for key, tag in tagsValueArr %}
                       {# the key allows to get the id stored in tagsIdArr #}
-                      <span class='tag'>
-                          <a class='tagUnreferenceForTemplate clickable' data-type='experiments_tpl' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+                      <span class='tag m-1'>
+                          <a class='tag tag-delete tagUnreferenceForTemplate clickable' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
                               {{ tag|raw }}
                           </a>
                       </span>
                   {% endfor %}
               {% endif %}
           </span>
-          <input type='text' style='width:auto' class='createTagInput' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+          <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
         </div>
           <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
               <i class='fas fa-download fa-pull-right clickable'></i>
@@ -322,6 +325,7 @@
               <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
             </div>
           </form>
+          {% include('steps-links-edit.html') %}
         </div>
     {% endfor %}
     </div>
@@ -329,11 +333,12 @@
 <!-- END PAGE -->
 
 <div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
-<div id='info' data-confirm="{{ 'Delete this?'|trans }}"></div>
+<div id='info' data-confirm="{{ 'Delete this?'|trans }}" data-confirmtag="{{ 'Delete this tag?'|trans }}" data-type='experiments_templates'></div>
 
 <!-- to export templates -->
 <script src='app/js/file-saver.min.js?v={{ v }}'></script>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 <script src='app/js/ucp.min.js?v={{ v }}'></script>
 <script src='app/js/tags.min.js?v={{ v }}'></script>
+<script src='app/js/src/steps-links.js?v={{ v }}'></script>
 {% endblock body %}

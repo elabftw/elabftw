@@ -154,46 +154,6 @@
       }
     }
 
-    class Link {
-
-      create() {
-        // get link
-        let link = $('#linkinput').val();
-        // fix for user pressing enter with no input
-        if (link.length > 0) {
-          // parseint will get the id, and not the rest (in case there is number in title)
-          link = parseInt(link, 10);
-          if (!isNaN(link)) {
-            $.post('app/controllers/ExperimentsAjaxController.php', {
-              createLink: true,
-              id: id,
-              linkId: link
-            }).done(function () {
-              // reload the link list
-              $('#links_div').load('experiments.php?mode=edit&id=' + id + ' #links_div');
-              // clear input field
-              $('#linkinput').val('');
-            });
-          } // end if input is bad
-        } // end if input < 0
-      }
-
-      destroy(linkId) {
-        if (confirm(confirmText)) {
-          $.post('app/controllers/ExperimentsAjaxController.php', {
-            destroyLink: true,
-            id: id,
-            linkId: linkId
-          }).done(function(json) {
-            notif(json);
-            if (json.res) {
-              $('#links_div').load('experiments.php?mode=edit&id=' + id + ' #links_div');
-            }
-          });
-        }
-      }
-    }
-
     class Star {
 
       constructor() {
@@ -211,60 +171,6 @@
     }
 
 
-    class Step {
-
-      create() {
-        // get body
-        let body = $('#stepinput').val();
-        // fix for user pressing enter with no input
-        if (body.length > 0) {
-          $.post('app/controllers/ExperimentsAjaxController.php', {
-            createStep: true,
-            id: id,
-            body: body
-          }).done(function() {
-            // reload the step list
-            $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
-              relativeMoment();
-            });
-            // clear input field
-            $('#stepinput').val('');
-          });
-        } // end if input < 0
-      }
-
-      finish(stepId) {
-        $.post('app/controllers/ExperimentsAjaxController.php', {
-          finishStep: true,
-          id: id,
-          stepId: stepId
-        }).done(function() {
-          // reload the step list
-          $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
-            relativeMoment();
-          });
-          // clear input field
-          $('#stepinput').val('');
-        });
-      }
-
-      destroy(stepId) {
-        if (confirm(confirmText)) {
-          $.post('app/controllers/ExperimentsAjaxController.php', {
-            destroyStep: true,
-            id: id,
-            stepId: stepId
-          }).done(function(json) {
-            notif(json);
-            if (json.res) {
-              $('#steps_div').load('experiments.php?mode=edit&id=' + id + ' #steps_div', function() {
-                relativeMoment();
-              });
-            }
-          });
-        }
-      }
-    }
 
     // DESTROY ENTITY
     const EntityC = new Entity();
@@ -272,68 +178,6 @@
       EntityC.destroy();
     });
 
-    ////////
-    // STEPS
-    const StepC = new Step();
-
-    // CREATE
-    $(document).on('keypress blur', '#stepinput', function (e) {
-      // Enter is ascii code 13
-      if (e.which === 13 || e.type === 'focusout') {
-        StepC.create();
-      }
-    });
-
-    // STEP IS DONE
-    $(document).on('click', 'input[type=checkbox]', function() {
-      StepC.finish($(this).data('stepid'));
-    });
-
-
-    // DESTROY
-    $(document).on('click', '.stepDestroy', function() {
-      StepC.destroy($(this).data('stepid'));
-    });
-
-    // END STEPS
-    ////////////
-
-    ////////
-    // LINKS
-    const LinkC = new Link();
-
-    // CREATE
-    // listen keypress, add link when it's enter or on blur
-    $(document).on('keypress blur', '#linkinput', function (e) {
-      // Enter is ascii code 13
-      if (e.which === 13 || e.type === 'focusout') {
-        LinkC.create();
-      }
-    });
-
-    // AUTOCOMPLETE
-    let cache = {};
-    $( '#linkinput' ).autocomplete({
-      source: function(request, response) {
-        let term = request.term;
-        if (term in cache) {
-          response(cache[term]);
-          return;
-        }
-        $.getJSON('app/controllers/ExperimentsAjaxController.php', request, function(data) {
-          cache[term] = data;
-          response(data);
-        });
-      }
-    });
-
-    // DESTROY
-    $(document).on('click', '.linkDestroy', function() {
-      LinkC.destroy($(this).data('linkid'));
-    });
-
-    // END LINKS
-    ////////////
 
     // VISIBILITY SELECT
     $(document).on('change', '#visibility_select', function() {

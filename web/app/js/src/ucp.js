@@ -25,7 +25,7 @@
           $.post(this.controller, {
             destroy: true,
             id: id,
-            type: 'experiments_tpl'
+            type: 'experiments_templates'
           }).done(function(json) {
             notif(json);
             if (json.res) {

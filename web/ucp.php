@@ -34,7 +34,10 @@ try {
 
     $template = 'ucp.html';
     $renderArr = array(
+        'Entity' => $Templates,
         'langsArr' => Tools::getLangsArr(),
+        'linksArr' => $linksArr,
+        'stepsArr' => $stepsArr,
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr,
     );

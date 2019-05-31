@@ -26,14 +26,14 @@ use PDO;
  * 1. add a file in src/sql/ named 'schemaXX.sql' where XX is the current schema version + 1
  * 2. this file should use transactions (see other files for examples)
  * 3. increment the REQUIRED_SCHEMA number
- * 4. reload the page, the sql file should be read and modify the structure
+ * 4. Run `bin/console db:update`
  * 5. reflect the changes in src/sql/structure.sql
  * 6. reflect the changes in tests/_data/phpunit.sql if needed
  */
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 48;
+    private const REQUIRED_SCHEMA = 49;
 
     /** @var Config $Config instance of Config */
     public $Config;

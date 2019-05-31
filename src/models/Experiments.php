@@ -21,12 +21,6 @@ use PDO;
  */
 class Experiments extends AbstractEntity implements CreateInterface
 {
-    /** @var Links $Links instance of Links */
-    public $Links;
-
-    /** @var Steps $Steps instance of Steps */
-    public $Steps;
-
     /**
      * Constructor
      *
@@ -38,9 +32,6 @@ class Experiments extends AbstractEntity implements CreateInterface
         parent::__construct($users, $id);
         $this->page = 'experiments';
         $this->type = 'experiments';
-
-        $this->Links = new Links($this);
-        $this->Steps = new Steps($this);
     }
 
     /**

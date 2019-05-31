@@ -6,7 +6,7 @@
 
 <!-- add moment lib -->
 <script src='app/js/moment.bundle.js?v={{ v }}'></script>
-<script src='app/js/src/relative-moment.js?v={{ v }}'></script>
+<script src='app/js/relative-moment.min.js?v={{ v }}'></script>
 
 <!-- mathjax lib -->
 <script src='app/js/src/mathjax-config.js'></script>
@@ -156,37 +156,37 @@
     <div id='body_view' class='txt'>{{ body|raw }}</div>
 {% endif %}
 
+<!-- STEPS -->
+{% if stepsArr %}
+    <ul class='list-group mt-2'>
+        {% for step in stepsArr %}
+        <li class='list-group-item {{ step.finished ? 'finished' }}'>
+            <i class='fas fa-{{ step.finished ? 'check-square' : 'square' }} mr-1'></i>{{ step.body|raw }}
+    {% if step.finished %}
+    <span class='mr-2 text-muted'>
+        {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+    </span>
+    {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class='mt-2'>
+<!-- LINKS -->
+{% if linksArr %}
+    <ul class='list-group'>
+        {% for link in linksArr %}
+        <li class='list-group-item'>
+            <i class='fas fa-link mr-1'></i>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                {{ link.title|raw }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</div>
+
 {% if Entity.type == 'experiments' %}
-    <!-- STEPS -->
-    {% if stepsArr %}
-        <ul class='list-group mt-2'>
-            {% for step in stepsArr %}
-            <li class='list-group-item {{ step.finished ? 'finished' }}'>
-                <i class='fas fa-{{ step.finished ? 'check-square' : 'square' }} mr-1'></i>{{ step.body|raw }}
-        {% if step.finished %}
-        <span class='mr-2 text-muted'>
-            {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
-        </span>
-        {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <div class='mt-2'>
-    <!-- LINKS -->
-    {% if linksArr %}
-        <ul class='list-group'>
-            {% for link in linksArr %}
-            <li class='list-group-item'>
-                <i class='fas fa-link mr-1'></i>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                    {{ link.title|raw }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    </div>
-
     <!-- eLabID -->
     <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
 {% endif %}

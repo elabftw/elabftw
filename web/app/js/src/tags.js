@@ -11,7 +11,7 @@
     const id = $('#info').data('id');
     let type = $('#info').data('type');
     if (type === undefined) {
-      type = 'experiments_tpl';
+      type = 'experiments_templates';
     }
     const confirmText = $('#info').data('confirmtag');
 
@@ -23,13 +23,13 @@
 
       saveForTemplate(tplId) {
         // get tag
-        const tag = $('#createTagInput_' + tplId).val();
+        let tag = $('#createTagInput_' + tplId).val();
         // POST request
         $.post(this.controller, {
           createTag: true,
           tag: tag,
           item_id: tplId,
-          type: 'experiments_tpl'
+          type: 'experiments_templates'
         }).done(function () {
           $('#tags_div_' + tplId).load(' #tags_div_' + tplId);
           // clear input field
@@ -117,6 +117,9 @@
     // CREATE for templates
     $(document).on('keypress blur', '.createTagInput', function(e) {
       // Enter is ascii code 13
+      if ($(this).val() === '') {
+        return;
+      }
       if (e.which === 13 || e.type === 'focusout') {
         TagC.saveForTemplate($(this).data('id'));
       }

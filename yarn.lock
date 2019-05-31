@@ -5608,9 +5608,9 @@ snyk-try-require@1.3.1, snyk-try-require@^1.1.1, snyk-try-require@^1.3.1:
     then-fs "^2.0.0"
 
 snyk@1.*:
-  version "1.169.2"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.169.2.tgz#366097b11bdd27447d8a0f40c5920be5bcad39a9"
-  integrity sha512-4Z1mYqy3AQ0yOVGFWynuEm/Hh73F7B2K2eRSkhcGOv+r+21d47I43qZcTWRAlrGtlRK0WuZG7k/Ix07t88v6cQ==
+  version "1.170.0"
+  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.170.0.tgz#44b226d831b197e0b734ddabe7221c95ac5870e8"
+  integrity sha512-hVxWSvXeE+Bd9ov2JutttAd/uxjZxN/IkeVYeVqogjeuCKgGCIsw+bxB9N5gstbASLbGAiahD9vhDq5kg48/rw==
   dependencies:
     "@snyk/dep-graph" "1.4.1"
     "@snyk/gemfile" "1.2.0"

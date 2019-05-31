@@ -177,13 +177,15 @@ class App
         if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
             throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
         }
-        // enable cache if not in debug (dev) mode
-        // add the debug twig function in debug mode
+
+        $options = array('cache' => $cache);
+
+        // Twig debug mode will allow to use dump() and force autoreload
+        // so it will not use the cache
         if ($this->Config->configArr['debug']) {
-            $options = array('debug' => true);
-        } else {
-            $options = array('cache' => $cache);
+            $options['debug'] = true;
         }
+
         $TwigEnvironment = new \Twig\Environment($loader, $options);
 
         // custom twig filters

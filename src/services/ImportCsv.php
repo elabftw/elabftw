@@ -26,6 +26,9 @@ class ImportCsv extends AbstractImport
     /** @var int $inserted number of items we got into the database */
     public $inserted = 0;
 
+    /** @var string $delimiter the separation character of the csv provided by user */
+    private $delimiter;
+
     /**
      * Constructor
      *
@@ -36,6 +39,7 @@ class ImportCsv extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
+        $this->delimiter = filter_var($request->request->get('delimiter'), FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -48,6 +52,7 @@ class ImportCsv extends AbstractImport
     {
         $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
         $this->checkDelimiter($csv);
+        $csv->setDelimiter($this->delimiter);
         $csv->setHeaderOffset(0);
 
         // SQL for importing
@@ -98,7 +103,7 @@ class ImportCsv extends AbstractImport
     }
 
     /**
-     * Make sure the delimiter character is ','
+     * Make sure the delimiter character is what is intended
      *
      * @param Reader $csv
      * @return void
@@ -110,8 +115,8 @@ class ImportCsv extends AbstractImport
         arsort($delimitersCount, SORT_NUMERIC);
         // get the first element
         $delimiter = key($delimitersCount);
-        if ($delimiter !== ',') {
-            throw new ImproperActionException('It looks like the delimiter is different from «,». Make sure to use «,» as delimiter!');
+        if ($delimiter !== $this->delimiter) {
+            throw new ImproperActionException(sprintf('It looks like the delimiter is different from «%1$s». Make sure to use «%1$s» as delimiter!', $this->delimiter));
         }
     }
 }

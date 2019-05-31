@@ -340,7 +340,7 @@
     <h3>{{ 'Import a CSV File'|trans }}</h3>
     <hr>
     <p style='text-align:justify'>
-      {{ "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv WITH COMMA (,) AS SEPARATOR. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."|trans }}
+      {{ "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."|trans }}
     </p>
 
     <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
@@ -361,8 +361,14 @@
         {% endfor %}
       </select>
 
+      <label for='separator_csv'>{{ '3. Select a delimiter:'|trans }}</label>
+      <select class='form-control col-md-4' id='separator_csv' autocomplete='off' name='delimiter'>
+        <option value=';'>; ({{ semicolon }})</option>
+        <option value=','>, ({{ comma }})</option>
+      </select>
+
       {{ App.Csrf.getHiddenInput|raw }}
-      <label for='csvuploader' class='d-block'>{{ '3. Select a CSV file to import:'|trans }}</label>
+      <label for='csvuploader' class='d-block'>{{ '4. Select a CSV file to import:'|trans }}</label>
       <input id='csvuploader' name='file' type='file' accept='.csv' />
       <input name='type' type='hidden' value='csv' />
       <div class='submitButtonDiv'>

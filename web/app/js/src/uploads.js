@@ -18,6 +18,27 @@
       $(this).next('.replaceUploadForm').toggle();
     });
 
+    // Export mol in png
+    $(document).on('click', '.saveAsImage', function() {
+      let molCanvasId = $(this).parent().siblings().find('canvas').attr('id');
+      let png = document.getElementById(molCanvasId).toDataURL();
+      $.post('app/controllers/EntityAjaxController.php', {
+        saveAsImage: true,
+        realName: $(this).data('name'),
+        content: png,
+        id: $('#info').data('id'),
+        type: $('#info').data('type')
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
+            makeEditableFileComment();
+            displayMolFiles(); // eslint-disable-line no-undef
+          });
+        }
+      });
+    });
+
     // DESTROY UPLOAD
     $(document).on('click', '.uploadsDestroy', function() {
       var itemid = $(this).data('itemid');

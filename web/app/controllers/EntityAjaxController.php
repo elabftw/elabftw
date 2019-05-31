@@ -86,6 +86,10 @@ try {
      *
      */
 
+    if ($Request->request->has('saveAsImage')) {
+        $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
+    }
+
     // CREATE STEP
     if ($Request->request->has('createStep')) {
         $Entity->Steps->create($Request->request->get('body'));

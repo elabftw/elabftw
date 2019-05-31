@@ -130,7 +130,7 @@ class Uploads implements CrudInterface
             $realName = 'untitled';
         }
 
-        $realName = $realName . '.' . $fileType;
+        $realName = filter_var($realName, FILTER_SANITIZE_STRING) . '.' . $fileType;
         $longName = $this->getLongName() . '.' . $fileType;
         $fullPath = $this->getUploadsPath() . $longName;
 

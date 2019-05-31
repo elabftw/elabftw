@@ -98,6 +98,13 @@
             </div>
             {% endif %}
 
+            {# SAVE AS IMAGE #}
+            {% if mode == 'edit' and ext matches '/(mol)$/i' %}
+            <div class='saveAsImage clickable' data-name='{{ upload.real_name }}'>
+                <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Save as image'|trans }}</p>
+            </div>
+            {% endif %}
+
         </div>
 
                     {% if mode == 'edit' %}

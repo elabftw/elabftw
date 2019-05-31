@@ -507,6 +507,12 @@ class Users
             $new_allow_edit = 1;
         }
 
+        // ALLOW GROUP EDIT
+        $new_allow_group_edit = 0;
+        if (isset($params['allow_group_edit']) && $params['allow_group_edit'] === 'on') {
+            $new_allow_group_edit = 1;
+        }
+
         // DEFAULT VIS
         $new_default_vis = null;
         if (isset($params['default_vis'])) {
@@ -540,6 +546,7 @@ class Users
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
             allow_edit = :new_allow_edit,
+            allow_group_edit = :new_allow_group_edit,
             inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
@@ -561,6 +568,7 @@ class Users
         $req->bindParam(':new_pdf_format', $new_pdf_format);
         $req->bindParam(':new_use_markdown', $new_use_markdown);
         $req->bindParam(':new_allow_edit', $new_allow_edit);
+        $req->bindParam(':new_allow_group_edit', $new_allow_group_edit);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 

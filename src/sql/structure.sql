@@ -561,6 +561,7 @@ CREATE TABLE `users` (
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `allow_edit` tinyint(1) NOT NULL DEFAULT '0',
+  `allow_group_edit` tinyint(1) NOT NULL DEFAULT '0',
   `last_login` DATETIME NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

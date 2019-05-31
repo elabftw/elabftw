@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Models\AbstractEntity;
 use PDO;
 
 /**
@@ -167,15 +167,5 @@ class Steps implements CrudInterface
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
-    }
-
-    /**
-     * Delete all the steps for an entity
-     * Now handled by cascade
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
     }
 }

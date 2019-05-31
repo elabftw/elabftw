@@ -142,16 +142,6 @@ class Comments implements CrudInterface
     }
 
     /**
-     * Destroy all comments of an experiment
-     * Now handled by cascade
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-    }
-
-    /**
      * Sanitize comment and check for size
      *
      * @param string $comment

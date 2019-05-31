@@ -124,15 +124,4 @@ class ApiKeys implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
-
-    /**
-     * Not implemented
-     * If a user is deleted the FK constraints will take care of deleting the keys anyway
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-        return;
-    }
 }

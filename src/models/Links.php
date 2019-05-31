@@ -165,14 +165,4 @@ class Links implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
-
-    /**
-     * Delete all the links for an experiment
-     * Now handled by cascade
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-    }
 }

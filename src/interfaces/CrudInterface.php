@@ -30,11 +30,4 @@ interface CrudInterface
      * @return void
      */
     public function destroy(int $id): void;
-
-    /**
-     * Detroy all the things
-     *
-     * @return void
-     */
-    public function destroyAll(): void;
 }

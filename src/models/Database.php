@@ -99,6 +99,8 @@ class Database extends AbstractEntity implements CreateInterface
         ));
         $newId = $this->Db->lastInsertId();
 
+        $this->Links->duplicate($this->id, $newId);
+        $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
 
         return $newId;

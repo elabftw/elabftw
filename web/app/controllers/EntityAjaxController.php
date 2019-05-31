@@ -48,7 +48,7 @@ try {
     if ($Request->request->get('type') === 'experiments' ||
         $Request->query->get('type') === 'experiments') {
         $Entity = new Experiments($App->Users, $id);
-    } elseif ($Request->request->get('type') === 'experiments_tpl') {
+    } elseif ($Request->request->get('type') === 'experiments_templates') {
         $Entity = new Templates($App->Users, $id);
     } else {
         $Entity = new Database($App->Users, $id);
@@ -74,10 +74,42 @@ try {
         ));
     }
 
+    // GET LINK LIST
+    if ($Request->query->has('term')) {
+        // we don't care about the entity type as getLinkList() is available in AbstractEntity
+        $Entity = new Experiments($App->Users);
+        $Response->setData($Entity->getLinkList($Request->query->get('term')));
+    }
+
     /**
      * POST REQUESTS
      *
      */
+
+    // CREATE STEP
+    if ($Request->request->has('createStep')) {
+        $Entity->Steps->create($Request->request->get('body'));
+    }
+
+    // FINISH STEP
+    if ($Request->request->has('finishStep')) {
+        $Entity->Steps->finish((int) $Request->request->get('stepId'));
+    }
+
+    // DESTROY STEP
+    if ($Request->request->has('destroyStep')) {
+        $Entity->Steps->destroy((int) $Request->request->get('stepId'));
+    }
+
+    // CREATE LINK
+    if ($Request->request->has('createLink')) {
+        $Entity->Links->create((int) $Request->request->get('linkId'));
+    }
+
+    // DESTROY LINK
+    if ($Request->request->has('destroyLink')) {
+        $Entity->Links->destroy((int) $Request->request->get('linkId'));
+    }
 
     // UPDATE VISIBILITY
     if ($Request->request->has('updateVisibility')) {

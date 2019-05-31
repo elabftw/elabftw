@@ -56,6 +56,8 @@ module.exports = function(grunt) {
           'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/edit.min.js': 'web/app/js/src/edit.js',
+          'web/app/js/steps-links.min.js': 'web/app/js/src/steps-links.js',
+          'web/app/js/relative-moment.min.js': 'web/app/js/src/relative-moment.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
           'web/app/js/tags.min.js': 'web/app/js/src/tags.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',
@@ -96,13 +98,6 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      rununit: {
-        command: 'php vendor/bin/codecept run unit'
-      },
-      // xdebug must be ENABLED
-      runcoverage: {
-        command: 'php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html'
-      },
       // run yarn install
       yarninstall: {
         command: 'yarn install'
@@ -119,7 +114,4 @@ module.exports = function(grunt) {
   grunt.registerTask('yarn', 'shell:yarninstall');
   grunt.registerTask('default', ['yarn', 'uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
-  grunt.registerTask('unit', 'shell:rununit');
-  grunt.registerTask('cov', 'shell:runcoverage');
-
 };

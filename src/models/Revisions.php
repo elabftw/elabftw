@@ -145,16 +145,6 @@ class Revisions implements CrudInterface
     }
 
     /**
-     * Not implemented
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-        return;
-    }
-
-    /**
      * Get the body of a revision
      *
      * @param int $revId The id of the revision

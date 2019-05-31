@@ -177,12 +177,15 @@ class App
         if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
             throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
         }
-        $options = array();
 
-        // enable cache if not in debug (dev) mode
-        if (!$this->Config->configArr['debug']) {
-            $options = array('cache' => $cache);
+        $options = array('cache' => $cache);
+
+        // Twig debug mode will allow to use dump() and force autoreload
+        // so it will not use the cache
+        if ($this->Config->configArr['debug']) {
+            $options['debug'] = true;
         }
+
         $TwigEnvironment = new \Twig\Environment($loader, $options);
 
         // custom twig filters
@@ -212,6 +215,10 @@ class App
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
         $ReleaseCheck = new ReleaseCheck($this->Config);
         $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
+
+        if ($this->Config->configArr['debug']) {
+            $TwigEnvironment->addExtension(new \Twig\Extension\DebugExtension());
+        }
 
         return $TwigEnvironment;
     }

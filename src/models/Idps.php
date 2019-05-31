@@ -188,14 +188,4 @@ class Idps implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
     }
-
-    /**
-     * Not implemented
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
-        return;
-    }
 }

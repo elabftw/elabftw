@@ -30,6 +30,12 @@ abstract class AbstractEntity
     /** @var Comments $Comments instance of Comments */
     public $Comments;
 
+    /** @var Links $Links instance of Links */
+    public $Links;
+
+    /** @var Steps $Steps instance of Steps */
+    public $Steps;
+
     /** @var Tags $Tags instance of Tags */
     public $Tags;
 
@@ -103,6 +109,8 @@ abstract class AbstractEntity
     {
         $this->Db = Db::getConnection();
 
+        $this->Links = new Links($this);
+        $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
         $this->Users = $users;

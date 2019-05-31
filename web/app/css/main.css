@@ -696,12 +696,6 @@ input[type='checkbox'] {
     margin: 0;
 }
 
-/* NEW Template Settings */
-.new-tpl-box input {
-    width: 100%;
-    margin: 0 0 15px;
-}
-
 .draggable {
     cursor: move;
 }

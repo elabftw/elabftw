@@ -206,7 +206,9 @@ class Config
             ('schema', :schema),
             ('open_science', '0'),
             ('open_team', NULL),
-            ('privacy_policy', NULL);";
+            ('privacy_policy', NULL),
+            ('announcement', NULL),
+            ('deletable_xp', 1);";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

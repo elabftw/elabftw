@@ -131,11 +131,15 @@
 
 <!-- INFO BOX (FLASH MESSAGES) -->
 {% for ok in App.ok %}
-    {{ ok|msg('ok') }}
+  {{ ok|msg('ok') }}
 {% endfor %}
 {% for ko in App.ko %}
-    {{ ko|msg('ko') }}
+  {{ ko|msg('ko') }}
 {% endfor %}
 {% for warning in App.warning %}
-    {{ warning|msg('warning') }}
+  {{ warning|msg('warning') }}
 {% endfor %}
+<!-- ANNOUNCEMENT -->
+{% if App.Config.configArr.announcement %}
+  {{ App.Config.configArr.announcement|msg('warning') }}
+{% endif %}

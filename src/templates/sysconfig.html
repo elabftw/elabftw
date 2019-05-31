@@ -56,11 +56,24 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 <div class='divhandle' id='tab1div'>
     <!-- STATS -->
     <div class='box'>
-        <h3>{{ 'Usage Statistics'|trans }}</h3>
-        <hr>
-        <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
-        <hr>
-        <a href='make.php?what=report'><button class='button'>{{ 'Generate report'|trans }}</button></a>
+      <h3>{{ 'Usage Statistics'|trans }}</h3>
+      <hr>
+      <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
+      <hr>
+      <a href='make.php?what=report'><button class='button'>{{ 'Generate report'|trans }}</button></a>
+    </div>
+
+    <div class='box'>
+      <h3>{{ 'Announcement'|trans }}</h3>
+      <hr>
+      <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
+      <form method='post' action='app/controllers/SysconfigController.php'>
+        <input class='form-control' type='text' name='announcement' value='{{ App.Config.configArr.announcement }}' />
+        <div class='submitButtonDiv'>
+          <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+          <button type='submit' name='clear_announcement' class='button button-delete'>{{ 'Clear'|trans }}</button>
+        </div>
+      </form>
     </div>
 
     <form class='box' method='post' action='app/controllers/SysconfigController.php'>
@@ -69,7 +82,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <div class='form-group'>
           <input type='hidden' name='updateConfig' value='true' />
           <label for='lang'>{{ 'Language:'|trans }}</label>
-          <select id='lang' name='lang' class='form-control col-md-4'>
+          <select id='lang' name='lang' class='form-control col-md-4' autocomplete='off'>
               {% for lang, text in langsArr %}
               <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
               {% endfor %}
@@ -83,6 +96,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           <label for='proxy'>{{ 'Address of the Proxy:'|trans }}</label>
           <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.proxy }}' name='proxy' id='proxy' />
           <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
+
+          <label for='deletable_xp'>{{ 'Admins can always delete experiments:'|trans }}</label>
+          <select id='deletable_xp' name='deletable_xp' class='form-control col-md-4' autocomplete='off'>
+              <option {{ App.Config.configArr.deletable_xp == 1 ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
+              <option {{ App.Config.configArr.deletable_xp == 0 ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
+          </select>
+          <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
 
           <h3>Registration and authentication configuration</h3>
 
@@ -128,19 +148,19 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </form>
 
     <div class='box'>
-        <h3>{{ 'Information'|trans }}</h3>
-        <hr>
-        <ul class='clean-list'>
-            <li><p>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</p></li>
-            <li><p>{{ 'PHP Version'|trans }}: {{ phpInfos.1 }}</p></li>
-            <li><p>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</p></li>
-            <li><p>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</p></li>
-            <li><p>{{ 'Maximum file size for uploaded files'|trans }}: {{ phpInfos.4 }}</p></li>
-            {% if phpInfos.5|length > 1 %}
-                <li><p>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</p></li>
-            {% endif %}
-        </ul>
-    </div>
+      <h3>{{ 'Information'|trans }}</h3>
+      <hr>
+      <ul class='list-group'>
+        <li class='list-group-item'>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</li>
+        <li class='list-group-item'>{{ 'PHP Version'|trans }}: {{ phpInfos.1 }}</li>
+        <li class='list-group-item'>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</li>
+        <li class='list-group-item'>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</li>
+        <li class='list-group-item'>{{ 'Maximum file size for uploaded files'|trans }}: {{ phpInfos.4 }}</li>
+        {% if phpInfos.5|length > 1 %}
+          <li class='list-group-item'>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</li>
+        {% endif %}
+      </ul>
+  </div>
 </div>
 
 <!-- TAB 2 TEAMS -->

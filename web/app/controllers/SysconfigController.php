@@ -34,6 +34,15 @@ try {
         $App->Config->update(array('smtp_password' => null));
     }
 
+    // ANNOUNCEMENT
+    if ($Request->request->has('announcement')) {
+        if ($Request->request->has('clear_announcement')) {
+            $App->Config->update(array('announcement' => null));
+        } else {
+            $App->Config->update(array('announcement' => $Request->request->get('announcement')));
+        }
+    }
+
     // TAB 1 and 4 to 8
     if ($Request->request->has('updateConfig')) {
         if ($Request->request->has('lang')) {

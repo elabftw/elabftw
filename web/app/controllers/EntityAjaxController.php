@@ -176,7 +176,8 @@ try {
     if ($Request->request->has('destroy')) {
 
         // check for deletable xp
-        if ($Entity instanceof Experiments && !$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')) {
+        if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin'))
+            || $App->Config->configArr['deletable_xp'] === '0') {
             throw new ImproperActionException('You cannot delete experiments!');
         }
         $Entity->destroy();

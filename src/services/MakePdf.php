@@ -187,11 +187,9 @@ class MakePdf extends AbstractMake
         // create Request object
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/database.php';
-        // not pretty but gets the job done
-        $url = str_replace('app/classes/', '', $url);
 
         foreach ($linksArr as $link) {
-            $fullItemUrl = $url . '?mode=view&id=' . $link['link_id'];
+            $fullItemUrl = $url . '?mode=view&id=' . $link['itemid'];
             $html .= "<p class='pdf-ul'>";
             $html .= "<span style='color:#" . $link['color'] . "'>" .
                 $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . '</a></p>';
@@ -440,10 +438,8 @@ Witness' signature:<br><br>
     {
         $content = $this->buildHeader();
         $content .= $this->buildBody();
-        if ($this->Entity instanceof Experiments) {
-            $content .= $this->addLinkedItems();
-            $content .= $this->addSteps();
-        }
+        $content .= $this->addLinkedItems();
+        $content .= $this->addSteps();
         $content .= $this->addAttachedFiles();
         $content .= $this->addComments();
         $content .= $this->buildInfoBlock();

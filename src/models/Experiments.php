@@ -78,6 +78,8 @@ class Experiments extends AbstractEntity implements CreateInterface
 
         // insert the tags from the template
         if ($tpl !== 0) {
+            $this->Links->duplicate($tpl, $newId, true);
+            $this->Steps->duplicate($tpl, $newId, true);
             $Tags = new Tags($Templates);
             $Tags->copyTags($newId, true);
         }

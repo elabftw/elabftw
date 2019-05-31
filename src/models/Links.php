@@ -125,12 +125,16 @@ class Links implements CrudInterface
      *
      * @param int $id The id of the original entity
      * @param int $newId The id of the new entity that will receive the links
+     * @param bool $fromTpl do we duplicate from template?
      * @return void
      */
-    public function duplicate(int $id, int $newId): void
+    public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
-        // LINKS
-        $linksql = 'SELECT link_id FROM ' . $this->Entity->type . '_links WHERE item_id = :id';
+        $table = $this->Entity->type;
+        if ($fromTpl) {
+            $table = 'experiments_templates';
+        }
+        $linksql = 'SELECT link_id FROM ' . $table . '_links WHERE item_id = :id';
         $linkreq = $this->Db->prepare($linksql);
         $linkreq->bindParam(':id', $id, PDO::PARAM_INT);
         if ($linkreq->execute() !== true) {

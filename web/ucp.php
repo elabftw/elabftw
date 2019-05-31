@@ -36,8 +36,6 @@ try {
     $renderArr = array(
         'Entity' => $Templates,
         'langsArr' => Tools::getLangsArr(),
-        'linksArr' => $linksArr,
-        'stepsArr' => $stepsArr,
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr,
     );

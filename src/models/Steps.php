@@ -129,11 +129,16 @@ class Steps implements CrudInterface
      *
      * @param int $id The id of the original entity
      * @param int $newId The id of the new entity that will receive the steps
+     * @param bool $fromTpl do we duplicate from template?
      * @return void
      */
-    public function duplicate(int $id, int $newId): void
+    public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
-        $stepsql = 'SELECT body FROM ' . $this->Entity->type . '_steps WHERE item_id = :id';
+        $table = $this->Entity->type;
+        if ($fromTpl) {
+            $table = 'experiments_templates';
+        }
+        $stepsql = 'SELECT body FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         if ($stepreq->execute() !== true) {

@@ -43,7 +43,17 @@ try {
         }
     }
 
-    // TAB 1 and 4 to 8
+    // PRIVACY POLICY
+    if ($Request->request->has('privacy_policy')) {
+        $tab = '8';
+        if ($Request->request->has('clear_policy')) {
+            $App->Config->update(array('privacy_policy' => null));
+        } else {
+            $App->Config->update(array('privacy_policy' => $Request->request->get('privacy_policy')));
+        }
+    }
+
+    // TAB 1 and 4 to 7
     if ($Request->request->has('updateConfig')) {
         if ($Request->request->has('lang')) {
             $tab = '1';
@@ -63,10 +73,6 @@ try {
 
         if ($Request->request->has('saml_debug')) {
             $tab = '7';
-        }
-
-        if ($Request->request->has('privacy_policy')) {
-            $tab = '8';
         }
 
         $App->Config->update($Request->request->all());

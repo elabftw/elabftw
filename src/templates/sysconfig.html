@@ -556,13 +556,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         {% endif %}
 
         <form method='post' action='app/controllers/SysconfigController.php'>
-            <input type='hidden' name='updateConfig' value='true' />
             {{ App.Csrf.getHiddenInput|raw }}
             <textarea name='privacy_policy' class='mceditable'>
                 {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
             </textarea>
             <div class='submitButtonDiv'>
                 <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+                <button class='button button-delete' type="submit" name="clear_policy" class='button'>{{ 'Clear'|trans }}</button>
             </div>
         </form>
     </div>

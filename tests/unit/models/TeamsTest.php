@@ -26,12 +26,13 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $post = array(
             'teamsUpdateFull' => 'true',
-            'deletable_xp' => 1,
+            'deletable_xp' => '1',
             'link_name' => 'Taggle',
             'link_href' => 'https://www.elabftw.net',
             'stampprovider' => 'http://zeitstempel.dfn.de/',
             'stampcert' => 'src/dfn-cert/pki.dfn.pem',
             'stamplogin' => '',
+            'public_db' => '0',
             'stamppass' => 'something',
         );
         $this->Teams->update($post);
@@ -45,6 +46,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             'stampprovider' => 'http://zeitstempel.dfn.de/',
             'stampcert' => 'src/dfn-cert/pki.dfn.pem',
             'stamplogin' => '',
+            'public_db' => '0',
             'stamppass' => '',
         );
         $this->Teams->update($post);

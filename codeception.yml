@@ -4,6 +4,8 @@ coverage:
         include:
             - src/models/*
             - src/classes/*
+            - src/services/*
+            - src/traits/*
 actor: Tester
 paths:
     tests: tests

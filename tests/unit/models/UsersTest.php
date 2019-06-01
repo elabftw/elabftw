@@ -26,6 +26,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'close_warning' => 'on',
             'chem_editor' => 'on',
             'lang' => 'en_GB',
+            'pdf_format' => 'A4',
             'default_vis' => 'organization',
         );
         $this->Users->updatePreferences($prefsArr);

@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,6 +27,9 @@ $tab = 1;
 $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
 
 try {
+    // CSRF
+    $App->Csrf->validate();
+
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
         $App->Users->updatePreferences($Request->request->all());
@@ -67,6 +71,17 @@ try {
             $Request->request->get('tpl_name')[0],
             $Request->request->get('tpl_body')[0]
         );
+    }
+
+    // TAB 4 : CREATE API KEY
+    if ($Request->request->has('createApiKey')) {
+        $tab = '4';
+        $ApiKeys = new ApiKeys($App->Users);
+        $key = $ApiKeys->create(
+            $Request->request->get('name'),
+            (int) $Request->request->get('canWrite')
+        );
+        $Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

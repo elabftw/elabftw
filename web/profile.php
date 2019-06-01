@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,9 +30,6 @@ try {
     $Entity->setUseridFilter();
     $itemsArr = $Entity->read(false);
     $count = \count($itemsArr);
-
-    $ApiKeys = new ApiKeys($App->Users);
-    $apiKeysArr = $ApiKeys->readAll();
 
     // generate stats for the pie chart with experiments status
     // see https://developers.google.com/chart/interactive/docs/reference?csw=1#datatable-class
@@ -59,7 +55,6 @@ try {
     $template = 'profile.html';
     $renderArr = array(
         'UserStats' => $UserStats,
-        'apiKeysArr' => $apiKeysArr,
         'colorsJson' => $colorsJson,
         'statsJson' => $statsJson,
         'count' => $count,

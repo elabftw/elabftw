@@ -92,5 +92,16 @@
       },
       language : $('#language').data('lang')
     });
+
+    // DESTROY API KEY
+    $(document).on('click', '.keyDestroy', function() {
+      $.post('app/controllers/AjaxController.php', {
+        destroyApiKey: true,
+        id: $(this).data('id')
+      }).done(function(json) {
+        notif(json);
+        $('#apiTable').load('ucp.php #apiTable');
+      });
+    });
   });
 }());

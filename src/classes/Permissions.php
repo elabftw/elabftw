@@ -124,9 +124,11 @@ class Permissions
         }
 
         // if group edits only are accepted
-        if ($Owner->userData['allow_group_edit'] &&
-            $this->item['team'] === $this->Users->userData['team'] &&
-            !isset($this->Users->userData['anon'])) {
+        if ($Owner->userData['allow_group_edit']
+            && $this->item['team'] === $this->Users->userData['team']
+            && !isset($this->Users->userData['anon'])
+            // don't override the visibility setting if it's a group vis
+            && Tools::checkId((int) $this->item['visibility']) === false) {
             $TeamGroups = new TeamGroups($this->Users);
             if ($TeamGroups->isUserInSameGroup((int) $Owner->userData['userid'])) {
                 return array('read' => true, 'write' => true);

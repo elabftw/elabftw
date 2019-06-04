@@ -89,7 +89,7 @@ try {
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
         if (!stripos($Request->getRequestUri(), 'controllers')) {
-            setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', null, true, true);
+            \setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', '', true, true);
         }
 
         // used by ajax requests to detect a timed out session

@@ -1,0 +1,1925 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"Project-Id-Version: elabftw\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"Language-Team: \n"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:286
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:309
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:362
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:381
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:617
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:708
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1179
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1311
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:277
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:149
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:172
+msgid "Yes"
+msgstr "예"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:292
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:315
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:368
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:387
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:623
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:714
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1183
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1317
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:283
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:155
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:178
+msgid "No"
+msgstr "아니오"
+
+#: /tmp/elabftw-twig-cache/2a/2a8cd94b9539ce2c0b8e1ee6c2401b17b90d15e72a4daa23df640290c3ca04e5.php:112
+#: /tmp/elabftw-twig-cache/2a/2a8cd94b9539ce2c0b8e1ee6c2401b17b90d15e72a4daa23df640290c3ca04e5.php:124
+#: src/models/Users.php:659
+msgid "The passwords do not match!"
+msgstr "암호가 맞지 않습니다!"
+
+#: web/app/controllers/RegisterController.php:44
+#: web/app/controllers/LoginController.php:58
+msgid "A mandatory field is missing!"
+msgstr "필수 정보가 모두 입력되지 않았습니다!"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:92
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:136
+msgid "Password"
+msgstr "암호"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:119
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:154
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:528
+msgid "Firstname"
+msgstr "이름"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:135
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:169
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:539
+msgid "Lastname"
+msgstr "성"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:162
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:151
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:84
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:121
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:492
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:71
+msgid "Email"
+msgstr "이메일"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:194
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:562
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:322
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:111
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:224
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:165
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:51
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:81
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "문서"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:119
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:58
+msgid "Database"
+msgstr "데이터베이스"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:167
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:131
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:84
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:420
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:93
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:137
+msgid "Team"
+msgstr "팀"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:156
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:145
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:235
+msgid "Date"
+msgstr "날짜"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:279
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:151
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:260
+msgid "Title"
+msgstr "제목"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:171
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:125
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:143
+msgid "Visibility"
+msgstr "공개 범위"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:209
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:117
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:105
+msgid "Status"
+msgid_plural "Status"
+msgstr[0] "상태"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:900
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:169
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:228
+msgid "Edit"
+msgstr "수정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:398
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:470
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:522
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:682
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:752
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:912
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1134
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1190
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1323
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1376
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:292
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:568
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:614
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:640
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:465
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:666
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:791
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:521
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:589
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:685
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:764
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:851
+msgid "Save"
+msgstr "저장"
+
+#: web/app/controllers/EntityAjaxController.php:32
+#: web/app/controllers/EntityAjaxController.php:161
+#: web/app/controllers/SortableAjaxController.php:32
+#: web/app/controllers/UsersAjaxController.php:29
+#: web/app/controllers/IdpsController.php:67
+#: web/app/controllers/ExperimentsAjaxController.php:32
+#: web/app/controllers/TeamGroupsController.php:31
+#: web/app/controllers/StatusController.php:31
+#: web/app/controllers/SysconfigController.php:72
+#: web/app/controllers/AjaxController.php:32
+#: web/app/controllers/TagsController.php:33
+#: web/app/controllers/CommentsAjaxController.php:31
+#: web/app/controllers/CommentsAjaxController.php:54
+#: web/app/controllers/CommentsAjaxController.php:67
+#: web/app/controllers/UsersController.php:54
+#: web/app/controllers/RevisionsController.php:53
+#: web/app/controllers/ItemsTypesAjaxController.php:30
+#: web/app/controllers/UcpController.php:72
+#: web/app/controllers/TodolistController.php:29
+#: web/app/controllers/TodolistController.php:41
+#: web/app/controllers/ProfileController.php:43
+#: web/app/controllers/SysconfigAjaxController.php:31
+#: web/app/controllers/SchedulerController.php:32
+#: web/app/controllers/AdminController.php:51
+#: src/controllers/AbstractEntityController.php:98
+msgid "Saved"
+msgstr "저장됨"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:616
+msgid "Cancel"
+msgstr "취소"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:612
+msgid "Saving"
+msgstr "저장중"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:357
+msgid "Save and go back"
+msgstr "저장 후 뒤로 가기"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:209
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:91
+msgid "Action"
+msgstr "수행작업"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:213
+msgid "Shortcut"
+msgstr "단축키"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:218
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:296
+msgid "Create"
+msgstr "생성"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:238
+msgid "Submit"
+msgstr "전송"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:248
+msgid "TODO list"
+msgstr "할일 목록"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1153
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:767
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:79
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:168
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:495
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:548
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:655
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:713
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:186
+msgid "Name"
+msgstr "이름"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:557
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:190
+msgid "Phone"
+msgstr "전화"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:567
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:194
+msgid "Mobile"
+msgstr "핸드폰"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:589
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:198
+msgid "Website"
+msgstr "웹사이트"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:579
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:202
+msgid "Skype"
+msgstr "스카이프"
+
+#: src/services/Email.php:221
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] 새로운 사용자가 등록되었습니다"
+
+#: web/app/controllers/ResetPasswordController.php:81
+msgid "Email sent. Check your INBOX."
+msgstr "이메일 전송 완료. 메일함을 확인하세요."
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:55
+msgid "There are users waiting for validation of their account:"
+msgstr "계정 승인 절차를 기다리는 사용자가 있습니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:150
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:101
+msgid "Users"
+msgstr "사용자"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:109
+msgid "Types of items"
+msgstr "항목 종류"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:113
+msgid "Experiments template"
+msgstr "문서 양식"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:142
+msgid "Users can delete experiments:"
+msgstr "사용자는 다음 문서를 삭제할 수 있습니다:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:184
+msgid "Name of the link in the top menu:"
+msgstr "상단 메뉴의 링크 제목"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:193
+msgid "Address where this link should point:"
+msgstr "링크가 가리키는 주소"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:267
+msgid "Has an active account?"
+msgstr "활성황된 계정이 있나요?"
+
+#: src/models/Status.php:245
+msgid "Remove all experiments with this status before deleting this status."
+msgstr "삭제하기 전에 관련된 모든 문서를 삭제하기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:583
+msgid "Default status"
+msgstr "기본 상태"
+
+#: src/models/ItemsTypes.php:218
+msgid "Remove all database items with this type before deleting this type."
+msgstr "삭제하기 전에 관련된 모든 데이터베이스 항목을 삭제하기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:840
+msgid "This is the default text when someone creates an experiment."
+msgstr "문서를 생성할때 적용되는 기본 문구"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:958
+msgid "You should make a backup of your database before importing thousands of items!"
+msgstr "많은 항목을 읽어 오기 전에 데이터베이스 백업을 해두세요"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:875
+msgid "1. Select a type of item to import to:"
+msgstr "읽어 오려는 항목의 종류 선택"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:941
+msgid "Import CSV"
+msgstr "CSV 읽어 오기"
+
+#: src/models/Users.php:437
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "시스템 관리자만이 사용자를 관리자로 지정할 수 있습니다"
+
+#: /tmp/elabftw-twig-cache/2a/2a8cd94b9539ce2c0b8e1ee6c2401b17b90d15e72a4daa23df640290c3ca04e5.php:97
+msgid "Type it again"
+msgstr "다시 적어주세요"
+
+#: /tmp/elabftw-twig-cache/2a/2a8cd94b9539ce2c0b8e1ee6c2401b17b90d15e72a4daa23df640290c3ca04e5.php:128
+msgid "Save new password"
+msgstr "새로운 암호 저장"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:640
+#: src/models/Database.php:52 src/models/Experiments.php:63
+#: src/classes/Tools.php:105
+msgid "Untitled"
+msgstr "제목없음"
+
+#: web/app/controllers/ExperimentsAjaxController.php:91
+msgid "You don't have the rights to delete this experiment."
+msgstr "이 문서를 삭제할 수 있는 권한이 없습니다"
+
+#: src/models/Experiments.php:304
+msgid "You don't have the rights to lock/unlock this."
+msgstr "잠금/잠금해제 할 권한이 없습니다"
+
+#: web/app/controllers/LoginController.php:88 src/classes/Auth.php:68
+msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
+msgstr "로그인 실패. 암호가 잘못 되었거나 아직 계정이 활성화되지 않았습니다."
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:109
+msgid "Login"
+msgstr "로그인"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:78
+msgid "Sign in to your account"
+msgstr "자신의 계정으로 로그인"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:115
+msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr "아직 계정이 없으신가요?  지금 %sRegister%s 하세요!<br>암호를 잊어버리셨나요? %sReset%s 하세요!"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:123
+msgid "Enter your email address"
+msgstr "이메일 주소를 입력하세요."
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:127
+msgid "Send new password"
+msgstr "새로운 암호 전송"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:215
+msgid "experiments done since"
+msgstr "지금까지 작업된 문서 건수"
+
+#: src/models/Users.php:91 src/models/Users.php:670
+msgid "Someone is already using that email address!"
+msgstr "다른 사용자가 같은 이메일 주소를 이미 사용하고 있습니다"
+
+#: web/app/controllers/RegisterController.php:59
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "등록이 완료되었습니다 :)<br>eLabFTW 사용을 환영합니다 o/"
+
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:51
+msgid "go back to login page"
+msgstr "로그인 페이지로 돌아가기"
+
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:59
+msgid "Create your account"
+msgstr "계정 생성"
+
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:212
+msgid "create"
+msgstr "생성"
+
+#: web/app/controllers/ResetPasswordController.php:77
+msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
+msgstr "안녕하세요. 누군가가 (아마도 본인일 수 있습니다) %s IP 주소에서 %s 사용자에 대해 새로운 암호를 요청하였습니다. 암호를 리셋하려면 다음 링크를 클릭하세요 : %s"
+
+#: src/models/Users.php:295
+msgid "Email not found in database!"
+msgstr "이메일 정보가 없습니다"
+
+#: /tmp/elabftw-twig-cache/da/da71ebe5ccb02133d4fab5816ef6be10902aa4165688f0feec80c6482154fc21.php:93
+msgid "Restore"
+msgstr "복원"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:49
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:143
+msgid "Search"
+msgstr "검색"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:178
+msgid "Search only in experiments owned by:"
+msgstr "다음 사용자가 작성한 문서만 검색:"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:183
+msgid "Yourself"
+msgstr "본인"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:46
+msgid "Search in"
+msgstr "검색"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:228
+msgid "Where date is between"
+msgstr "날짜 구간"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:236
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:324
+msgid "and"
+msgstr "그리고"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:253
+msgid "And title contains"
+msgstr "그리고 다음 제목을 포함"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:307
+msgid "And body contains"
+msgstr "그리고 다음 내용을 포함"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:266
+msgid "And status is"
+msgstr "그리고 다음 상태인 경우"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:340
+msgid "And rating is"
+msgstr "그리고 다음 별점인 경우"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:349
+msgid "Unrated"
+msgstr "별점 없음"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:383
+msgid "Launch search"
+msgstr "검색 시행"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:314
+msgid "Sorry. I couldn't find anything :("
+msgstr "아무 결과도 찾을 수 없습니다 :("
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:142
+msgid "Server"
+msgstr "서버"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:154
+msgid "Timestamp"
+msgstr "시점 인증"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:158
+msgid "Security"
+msgstr "보안"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:190
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:556
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:161
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:180
+msgid "Members"
+msgstr "멤버"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:200
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:570
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:171
+msgid "Items"
+msgstr "항목"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:574
+msgid "Created"
+msgstr "생성됨"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:610
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "시점 인증 하단에 인증을 사용할 수 있습니다"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:659
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:233
+msgid "Login for external timestamping service:"
+msgstr "외부 시점 인증 서비스 로그인"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:667
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:246
+msgid "Password for external timestamping service:"
+msgstr "외부 시점 인증 서비스 암호"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:701
+msgid "Users need validation by admin after registration:"
+msgstr "등록후 승인 과정이 필요한 사용자"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:719
+msgid "Set to yes for added security."
+msgstr "보안 설정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:724
+msgid "Number of allowed login attempts:"
+msgstr "로그인 시도 허용:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:732
+msgid "3 might be too few. See for yourself :)"
+msgstr "3은 너무 적습니다. 직접 확인해 보세요 :)"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:746
+msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
+msgstr "IP 주소만을 기반으로 하면 문제가 발생할 수 있기 때문에 사용자 확인을 위해 사용자 정보 및 IP 의 md5 해시값을 사용합니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:824
+msgid "Address of the SMTP server:"
+msgstr "SMTP server 주소:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:851
+msgid "Probably TLS"
+msgstr "TLS 프로토콜"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:856
+msgid "SMTP Port:"
+msgstr "SMTP 포트:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:864
+msgid "Default is 587."
+msgstr "기본값은 587."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:869
+msgid "SMTP username:"
+msgstr "SMTP 사용자 계정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:877
+msgid "SMTP password"
+msgstr "SMTP 사용자 암호"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:241
+msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
+msgstr "팀 관리자는 항목과 상태를 수정할 수 있습니다 (%sAdmin Panel%s)."
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:253
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "단축키를 지정할 수 있습니다 (%sControl Panel%s)."
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:259
+msgid "You can duplicate experiments in one click."
+msgstr "클릭으로 문서를 복사할 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:265
+msgid "Click a tag to list all items with this tag."
+msgstr "태그를 클릭하면 태그된 항목들을 확인하실 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:271
+msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
+msgstr "시점 인증이 되면 문서는 잠금해제나 수정이 불가능합니다. 의견만 추가할 수 있습니다."
+
+#: web/app/controllers/UcpController.php:50
+msgid "The template name must be 3 characters long."
+msgstr "문서 양식 이름은 최소 3글자 이상이어야 합니다."
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:63
+msgid "Account"
+msgstr "계정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:59
+msgid "Preferences"
+msgstr "환경 설정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:67
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:67
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:90
+msgid "Templates"
+msgstr "양식"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:483
+msgid "Modify your personal informations"
+msgstr "개인 정보 수정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:521
+msgid "Modify your identity"
+msgstr "이름 수정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:502
+msgid "Modify your password"
+msgstr "암호 수정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:506
+#: /tmp/elabftw-twig-cache/2a/2a8cd94b9539ce2c0b8e1ee6c2401b17b90d15e72a4daa23df640290c3ca04e5.php:82
+msgid "New password"
+msgstr "새 암호"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:511
+msgid "Confirm new password"
+msgstr "새 암호 확인"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:551
+msgid "Modify your contact information"
+msgstr "연락처 수정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:601
+msgid "Update profile"
+msgstr "사용자 정보 수정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:118
+msgid "Items per page:"
+msgstr "페이지당 항목 수"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:619
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:71
+msgid "Create new"
+msgstr "새 항목 생성"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:79
+msgid "Language"
+msgstr "언어"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:537
+msgid "Last modified by"
+msgstr "최근 수정한 사용자"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:522
+msgid "Unique eLabID:"
+msgstr "고유 eLabID:"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:562
+msgid "Comments"
+msgstr "의견"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:633
+msgid "Add a comment"
+msgstr "의견 추가"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1213
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:595
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:688
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:812
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:136
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:437
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1082
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1105
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:90
+msgid "Delete this?"
+msgstr "삭제할까요?"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:264
+msgid "Tag cloud"
+msgstr "태그 클라우드"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:208
+msgid "Statistics"
+msgstr "통계"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:202
+msgid "No statistics available yet."
+msgstr "통계가 누적되지 않았습니다."
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:182
+msgid "Filter status"
+msgstr "필터 상태"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:81
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:685
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:366
+msgid "Tags"
+msgstr "태그들"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:131
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:739
+msgid "Add a tag"
+msgstr "태그 추가"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:143
+#: src/models/TeamGroups.php:121
+msgid "Only me"
+msgstr "본인만"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:471
+msgid "Linked items"
+msgstr "링크된 항목"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:519
+msgid "Add a link"
+msgstr "링크 추가"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:524
+msgid "from the database"
+msgstr "데이터베이스 검색"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:184
+msgid "Howdy,"
+msgstr "안녕하세요,"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:214
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:192
+msgid "Settings"
+msgstr "설정"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:208
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:287
+msgid "Logout"
+msgstr "로그아웃"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:58
+msgid "Sysadmin panel"
+msgstr "시스템 관리자 패널"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:69
+msgid "Admin panel"
+msgstr "관리자 패널"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:93
+msgid "Powered by"
+msgstr "Powered by"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:98
+msgid "Page generated in"
+msgstr "Page generated in"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:229
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr "문서양식을 사용할 수 있습니다 (%sControl Panel%s)."
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:247
+msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
+msgstr "편집 화면에서 Ctrl + Shift + D 를 누르시면 커서가 위치한 곳에 오늘 날짜를 입력합니다."
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:63
+msgid "Go to user control panel"
+msgstr "사용자 환경 설정으로 가기"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:146
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:186
+msgid "Teams"
+msgstr "팀"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:633
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:207
+msgid "URL for external timestamping service:"
+msgstr "외부 시점 인증 서비스 URL:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:646
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:221
+msgid "Chain of certificates of the external timestamping service:"
+msgstr "외부 시점 인증 서비스의 인증서 체인:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:241
+msgid "This should be the login associated with your timestamping service provider"
+msgstr "외부 시점 인증 서비스 로그인 정보"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:268
+msgid "Your timestamping service provider password"
+msgstr "외부 시점 인증 서비스 암호"
+
+#: src/models/Experiments.php:328
+msgid "You cannot unlock or edit in any way a timestamped experiment."
+msgstr "시점 인증된 문서는 잠금해제나 수정이 불가능합니다."
+
+#: src/exceptions/InvalidCsrfTokenException.php:29
+msgid "Your session expired. Please retry."
+msgstr "세션이 만료되었습니다. 새로 로그인 하세요."
+
+#: web/app/controllers/RegisterController.php:57
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "등록 성공 :)<br>관리자의 승인을 기다려 주세요.<br>승인이 되면 이메일을 보내드립니다."
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:46
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "첨부 파일"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:539
+msgid "Attach a file"
+msgstr "파일 첨부"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:612
+msgid "Drop files here to upload"
+msgstr "업로드 파일을 드롭하세요"
+
+#: src/models/Revisions.php:161
+msgid "You cannot restore a revision of a locked item!"
+msgstr "잠금 설정된 항목은 이전 문서로 변경할 수 없습니다. "
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:585
+msgid "Molecule drawer"
+msgstr "분자구조 그리기"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:90
+msgid "With the tag"
+msgstr "태그 선택"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:641
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:215
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "%sRFC 3161%s-규격을 준수하는 시점 인증 요청에 사용되는 URL."
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:85
+msgid "Download timestamped pdf"
+msgstr "시점 인증된 pdf 다운로드"
+
+#: web/app/controllers/ImportController.php:51
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "항목을 모두 읽어왔습니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:69
+msgid "Installed version:"
+msgstr "설치된 버전:"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:339
+msgid "Miscellaneous"
+msgstr "기타"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1051
+msgid "Import ZIP"
+msgstr "ZIP 파일 읽어 오기"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:102
+msgid "seconds"
+msgstr "초"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:160
+msgid "An admin account will always be able to delete experiments."
+msgstr "관리자 계정은 문서를 언제든지 삭제할 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:217
+msgid "There is a manual available %shere%s."
+msgstr "다음에 대해 사용자 지침이 있습니다: %shere%s."
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:217
+msgid "Order by"
+msgstr "정렬기준"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:268
+msgid "Sort"
+msgstr "정렬"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:290
+msgid "Reset"
+msgstr "초기화"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:94
+msgid "Download token"
+msgstr "다운로드 토큰"
+
+#: src/services/MakeTimestamp.php:117
+msgid "Please configure Timestamping in the admin panel."
+msgstr "관리자 패널에서 시점 인증 설정을 해주세요."
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:103
+msgid "Remember me"
+msgstr "로그인 정보 기억하기"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:190
+msgid "All the team"
+msgstr "모든 팀"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:317
+msgid "Space means"
+msgstr "공백표시는 다음 규칙을 의미: "
+
+#: web/app/controllers/TodolistController.php:63
+#: web/app/controllers/TodolistController.php:72
+msgid "Item deleted successfully"
+msgstr "항목이 성공적으로 삭제되었습니다"
+
+#: web/app/controllers/EntityAjaxController.php:179
+msgid "File deleted successfully"
+msgstr "파일이 성공적으로 삭제되었습니다"
+
+#: web/app/controllers/ResetPasswordController.php:99
+msgid "Invalid link. Reset links are only valid for one hour."
+msgstr "유효하지 않은 링크. 재설정 링크는 한시간 동안만 유효합니다."
+
+#: web/app/controllers/ResetPasswordController.php:105
+msgid "New password inserted. You can now login."
+msgstr "새로운 암호가 입력되었습니다. 로그인 하실 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:261
+msgid "Lock/Unlock item"
+msgstr "잠금/잠금해제"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:305
+msgid "Timestamp this experiment?"
+msgstr "이 문서를 시점 인증할까요?"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:311
+msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
+msgstr "시점 인증이 된 문서는 더 이상 수정할 수 없습니다. 계속 진행할까요?"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:922
+msgid "Send a test email"
+msgstr "테스트 이메일 발송"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:931
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:957
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:453
+msgid "Send"
+msgstr "발송"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:117
+msgid "No templates found"
+msgstr "양식이 없습니다"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:182
+msgid "Filter by type"
+msgstr "항목 종류에 따른 필터"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:210
+msgid "Filter"
+msgstr "필터"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:215
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:139
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:223
+msgid "Category"
+msgstr "분류"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:244
+msgid "Rating"
+msgstr "별점"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:181
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:274
+msgid "DESC"
+msgstr "내림차순"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:175
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:280
+msgid "ASC"
+msgstr "오름차순"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:285
+msgid "Order"
+msgstr "정렬"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:488
+msgid "Add a New Status"
+msgstr "새로운 상태 추가"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:503
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:558
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:663
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:728
+msgid "Color"
+msgstr "컬러"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:530
+msgid "Edit an Existing Status"
+msgstr "기존 상태 분류 항목 편집"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:536
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:596
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:772
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:439
+msgid "Delete"
+msgstr "삭제"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:648
+msgid "Add a new type of item"
+msgstr "새로운 항목 종류 추가"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:673
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:748
+msgid "Bookable"
+msgstr "예약가능"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:675
+msgid "in the %sscheduler%s"
+msgstr "%sscheduler%s 확인"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:694
+msgid "Database Items Types"
+msgstr "데이터베이스 항목 종류"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:756
+msgid "Edit the template"
+msgstr "양식 수정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:464
+msgid "Add a New Team"
+msgstr "새로운 팀 추가"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:478
+msgid "Edit Existing Teams"
+msgstr "기존 팀 수정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:940
+msgid "Send a Mass Email"
+msgstr "이메일 대량 발송"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:945
+msgid "Email Subject"
+msgstr "이메일 제목"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:951
+msgid "Email Body"
+msgstr "이메일 내용"
+
+#: src/models/Users.php:654
+msgid "Please input your current password!"
+msgstr "현재 암호를 입력하세요!"
+
+#: src/classes/Tools.php:291
+msgid "This section is out of your reach!"
+msgstr "이 부분은 접근할 수 없습니다!"
+
+#: src/classes/Tools.php:293
+msgid "An error occurred!"
+msgstr "에러가 발생했습니다!"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:199
+msgid "Stick"
+msgstr "Stick"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:152
+msgid "Style"
+msgstr "Style"
+
+#: src/classes/Auth.php:201
+msgid "Password must contain at least %s characters."
+msgstr "암호는 최소 %s 자 이상 되어야 합니다."
+
+#: src/models/Comments.php:141
+msgid "[eLabFTW] New comment posted"
+msgstr "[eLabFTW] 새로운 의견이 등록되었습니다"
+
+#: src/services/Email.php:150
+msgid "[eLabFTW] Test email"
+msgstr "[eLabFTW] 이메일 테스트"
+
+#: src/models/ItemsTypes.php:97
+msgid "Nothing to show with this id"
+msgstr "이 계정과 관련된 추가 정보는 없습니다"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:66
+msgid "Note: You need cookies enabled to log in."
+msgstr "주의: 로그인 하려면 쿠키 사용을 활성화해야 합니다."
+
+#: /tmp/elabftw-twig-cache/da/da71ebe5ccb02133d4fab5816ef6be10902aa4165688f0feec80c6482154fc21.php:69
+msgid "Go back"
+msgstr "돌아가기"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:59
+msgid "Scheduler"
+msgstr "일정"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:83
+msgid "No bookable items."
+msgstr "예약가능한 항목이 없습니다."
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:110
+msgid "Select an equipment"
+msgstr "장비 선택"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:90
+msgid "Change item"
+msgstr "항목 변경"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:113
+msgid "Display"
+msgstr "표시"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:199
+msgid "Keyboard Shortcuts"
+msgstr "단축키"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:314
+msgid "Experiments Templates"
+msgstr "문서 양식"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:647
+msgid "Import from File"
+msgstr "파일 내용 읽어 오기"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:655
+msgid "Name of the Template"
+msgstr "양식 이름"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:330
+msgid "or"
+msgstr "or"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:73
+msgid "Validate"
+msgstr "인증"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:97
+msgid "Groups"
+msgstr "그룹"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:131
+msgid "Configure your Team"
+msgstr "팀 설정"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:202
+msgid "Override general timestamping config"
+msgstr "시점 인증 재설정 "
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:61
+msgid "Edit Users"
+msgstr "사용자 수정"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:201
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:446
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:158
+msgid "Group"
+msgstr "그룹"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:237
+msgid "Reset user password"
+msgstr "사용자 암호 초기화"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:243
+#: /tmp/elabftw-twig-cache/2a/2a8cd94b9539ce2c0b8e1ee6c2401b17b90d15e72a4daa23df640290c3ca04e5.php:55
+msgid "characters minimum"
+msgstr "최소 문자수"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:836
+msgid "Common Experiment Template"
+msgstr "공통 문서 양식"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:862
+msgid "Import a CSV File"
+msgstr "CSV 파일 읽어 오기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:950
+msgid "Import a ZIP File"
+msgstr "ZIP 파일 읽어 오기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:965
+msgid "1. Select where to import:"
+msgstr "읽어 오기 할 지점 선택"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:284
+msgid "Manage Groups of Users"
+msgstr "사용자 그룹 관리"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:291
+msgid "Create a group"
+msgstr "그룹 변경"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:307
+msgid "Add this user"
+msgstr "사용자 추가:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:331
+msgid "to this group"
+msgstr "다음 그룹에"
+
+#: /tmp/elabftw-twig-cache/de/dedae743d06b7a0efa1729a9a1ec9b5d4c5adcdf30ea4d8759d1ac589f7435ab.php:48
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:355
+msgid "Add"
+msgstr "추가"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:365
+msgid "Remove this user"
+msgstr "사용자 삭제:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:389
+msgid "from this group"
+msgstr "다음 그룹에서"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:413
+msgid "Remove"
+msgstr "삭제"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:423
+msgid "Existing groups"
+msgstr "기존 그룹"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:97
+msgid "Latest version:"
+msgstr "최신 버전:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:181
+msgid "Usage Statistics"
+msgstr "사용량 통계"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:264
+msgid "Address of the Proxy:"
+msgstr "프록시 주소:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:413
+msgid "Operating System"
+msgstr "운영체제"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:419
+msgid "PHP Version"
+msgstr "PHP 버전"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:425
+msgid "Largest integer supported"
+msgstr "지원되는 최대 정수"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:431
+msgid "PHP configuration directory"
+msgstr "PHP 환경 설정 디렉토리"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:603
+msgid "Timestamping Configuration"
+msgstr "시점 인증 설정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:693
+msgid "Security Settings"
+msgstr "보안 설정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:737
+msgid "Time of the ban after failed login attempts (in minutes):"
+msgstr "잦은 로그인 시도 실패 후 접속 제한 시간 (분):"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:763
+msgid "E-mail Settings"
+msgstr "이메일 설정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:775
+msgid "Send e-mails via:"
+msgstr "이메일 발송 경유지:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:783
+msgid "Select mailing method..."
+msgstr "이메일 송신 방법 선택..."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:802
+msgid "Sender address:"
+msgstr "보내는 사람 주소:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:813
+msgid "Path to sendmail:"
+msgstr "sendmail 경로:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:833
+msgid "SMTP encryption:"
+msgstr "SMTP 암호화 방법:"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:186
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:196
+msgid "My Profile"
+msgstr "내 정보"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:204
+msgid "Help"
+msgstr "도움말"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:235
+msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
+msgstr "#를 입력하면 텍스트 내부에 링크를 만들 수 있으며 자동 완성 메뉴에는 문서/항목 목록이 표시됩니다."
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:120
+msgid "And visibility is:"
+msgstr "공개 범위는 다음과 같습니다:"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:125
+msgid "Select visibility"
+msgstr "공개 범위 선택"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:411
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:131
+msgid "Organization"
+msgstr "조직"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:113
+msgid "Memory usage:"
+msgstr "메모리 사용량:"
+
+#: /tmp/elabftw-twig-cache/5b/5b69e6808bf538dca17a47fbb2107041bddf97e5f8e0a86501dc5c908a719df5.php:121
+msgid "bytes"
+msgstr "bytes"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:56
+msgid "Number of login attempt left before being banned for %s minutes: %s"
+msgstr "%s 분 동안 접속 제한중. 로그인 시도 실패 횟수: %s"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:140
+msgid "Login through your institution"
+msgstr "소속 기관을 통해 로그인"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:187
+msgid "Generate an API Key"
+msgstr "API Key 생성"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:277
+msgid "Not enough tags to make a tagcloud"
+msgstr "태그가 몇 개 없어 태그클라우드가 나타나지 않습니다"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:184
+msgid "Duplicate"
+msgstr "복제"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:203
+msgid "Make a PDF"
+msgstr "PDF 만들기"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:216
+msgid "Make a ZIP"
+msgstr "ZIP 압축하기"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:230
+msgid "Show related"
+msgstr "관련자료 보기"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:297
+msgid "Timestamp Experiment"
+msgstr "시점 인증 문서"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:392
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:526
+msgid "Next step"
+msgstr "다음 단계"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:394
+msgid "Experiments steps"
+msgstr "문서 구성 과정"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:460
+msgid "Add a step"
+msgstr "과정 추가"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:553
+msgid "Draw something"
+msgstr "자유롭게 그리기"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:560
+msgid "Clear"
+msgstr "지우기"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:654
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:229
+msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
+msgstr "외부 시점 인증 서비스 제공자가 시점 인증에 서명하기 위해서 인증서 체인을 지정해야 합니다. eLabFTW 설치 경로에 대한 %s 로컬 상대 경로를 '업로드' 폴더에 추가해야 합니다. 파일은 %sPEM-encoded (ASCII)%s 형식이어야 합니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:890
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:253
+msgid "A password is already set."
+msgstr "암호가 설정되어 있습니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:894
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:257
+msgid "%sClear it%s or change it below:"
+msgstr "%s삭제%s 하거나 변경하세요:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:513
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:573
+msgid "Allow timestamp"
+msgstr "시점 인증 허용"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:612
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:800
+msgid "Modify ordering"
+msgstr "정렬순서 변경"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:126
+msgid "Order by:"
+msgstr "정렬 순서"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:133
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:169
+msgid "Use default"
+msgstr "기본값 사용"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:157
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:252
+msgid "Comment"
+msgstr "의견"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:162
+msgid "Sort:"
+msgstr "정렬:"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:203
+msgid "Only lowercase letters are allowed."
+msgstr "소문자만 허용됩니다."
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:383
+msgid "Disable the rich text editor and write Markdown directly"
+msgstr "전용 편집기를 사용중지하고 마크업 언어로 직접 기록"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:401
+msgid "Default visibility for new experiments"
+msgstr "새로운 문서에 대한 공개 범위 기본 값"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:429
+msgid "User"
+msgstr "사용자"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:780
+msgid "Template content"
+msgstr "양식 자료"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:108
+msgid "%s - A new version is available! %sUpdate elabftw%sRead changelog%s"
+msgstr "%s - 새로운 버전이 출시되었습니다! %selabftw 를 업데이트 하세요%s변경 내역 확인%s"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:122
+msgid "Please finalize install: %slink to documentation%s."
+msgstr "설치를 마무리 하세요: %s소프트웨어 설명페이지%s."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:166
+msgid "SAML"
+msgstr "SAML (보안 보장 마크업 언어)"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:549
+msgid "Archive"
+msgstr "아카이브"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:272
+msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
+msgstr "방화벽/프록시 사용시 주소를 입력하세요. 예: http://proxy.example.com:3128"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:355
+msgid "Enable local account creation:"
+msgstr "로컬 계정 생성 가능"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:374
+msgid "Show local login form:"
+msgstr "로컬 로그인 폼 표시:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:392
+msgid "You can still show the local login form by appending ?letmein to the login page URL."
+msgstr "로그인 페이지 URL 에 ?letmein 을 추가하여 로컬 로그인 폼을 표시할 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/6d/6d2afab9b4d0b4439d996ad5b74f6ea46c3241a01947f8a9de06a70a4c47f44e.php:63
+msgid "Back to listing"
+msgstr "목록으로 돌아가기"
+
+#: /tmp/elabftw-twig-cache/6d/6d2afab9b4d0b4439d996ad5b74f6ea46c3241a01947f8a9de06a70a4c47f44e.php:72
+msgid "Experiment of %s"
+msgstr "%s 개의 문서가 있습니다"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:126
+msgid "Manage templates"
+msgstr "양식 관리"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:321
+msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
+msgstr "eLabFTW 사용을 환영합니다. 시작하시려면 '새 항목 생성' 버튼을 클릭하세요!"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:337
+msgid "Select all"
+msgstr "전체 선택"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:341
+msgid "Clear selection"
+msgstr "선택 해제"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:345
+msgid "Invert selection"
+msgstr "역 선택"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:351
+msgid "With selected:"
+msgstr "다음 선택값 포함:"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:364
+msgid "Change status"
+msgstr "상태 변경"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:370
+msgid "Change item type"
+msgstr "항목 종류 변경"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:431
+msgid "Make Zip"
+msgstr "ZIP 파일 만들기"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:435
+msgid "Make Csv"
+msgstr "CSV 파일 만들기"
+
+#: web/app/controllers/EntityAjaxController.php:175
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "본문에서 이 파일에 대한 참조를 제거하세요!"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:99
+msgid "Decode token"
+msgstr "토큰값 해독"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:278
+msgid "Insert in text at cursor position"
+msgstr "커서 위치에 텍스트 삽입"
+
+#: src/services/Email.php:227
+msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account: "
+msgstr "안녕하세요. 새로운 사용자가 등록을 하였습니다. 관리자 패널에서 계정을 승인하세요: "
+
+#: src/models/Comments.php:148
+msgid "Hi. %s left a comment on your experiment. Have a look: %s"
+msgstr "%s 사용자가 당신의 문서에 의견을 남겼습니다. 확인하세요: %s"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:283
+msgid "Anonymous"
+msgstr "Anonymous"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:303
+msgid "User is archived"
+msgstr "사용자가 차단됩니다"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:311
+msgid "Archive user"
+msgstr "사용자 차단"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:196
+msgid "Login as anonymous visitor"
+msgstr "익명 방문객으로 로그인"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:359
+msgid "Import to your profile"
+msgstr "개인 정보 읽어 오기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:165
+msgid "Anonymous visitors can see database items:"
+msgstr "익명 방문객이 다음 데이터베이스 항목을 볼 수 있습니다:"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:263
+msgid "PDF configuration"
+msgstr "PDF 설정"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:269
+msgid "Select paper format for PDF"
+msgstr "PDF 구성을 위한 용지 선택"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:306
+msgid "Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)"
+msgstr "PDF/A 규격의 pdf 파일 생성 (폰트를 포함하게 되어 파일 사이즈가 커집니다)"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:317
+msgid "Add attached files summary to the pdf"
+msgstr "pdf 에 첨부 파일 요약 추가"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:350
+msgid "Show experiments from the team on the Experiments page"
+msgstr "문서 페이지에서 팀에서 생성한 문서 보기"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:361
+msgid "Display a warning before closing an edit window/tab"
+msgstr "편집 창을 닫기 전에 주의 표시"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:372
+msgid "Display the molecule drawer in edit mode"
+msgstr "분자 구조 편집기를 편집 모드에서 표시"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:279
+msgid "Allow anonymous visitors to login and see Public experiments:"
+msgstr "익명의 방문자가 공개 문서를 볼 수 있도록 처리"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:333
+msgid "result shown"
+msgid_plural "results shown"
+msgstr[0] "결과가 있습니다"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:403
+msgid "Change visibility"
+msgstr "공개 범위 변경"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:671
+msgid "Previous page"
+msgstr "이전 페이지"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:680
+msgid "Next page"
+msgstr "다음 페이지"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:300
+msgid "Upload a new version of this file"
+msgstr "기존 파일 바꾸기"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:167
+msgid "Cartoon (proteins only)"
+msgstr "카툰 (proteins 만 해당)"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:175
+msgid "Cross"
+msgstr "십자"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:183
+msgid "Line"
+msgstr "선"
+
+#: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:191
+msgid "Sphere"
+msgstr "구"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:251
+msgid "Installation URL:"
+msgstr "설치 URL:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:437
+msgid "Maximum file size for uploaded files"
+msgstr "최대 업로드 파일 사이즈"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:446
+msgid "Timezone"
+msgstr "타임존"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:628
+msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel."
+msgstr "팀이 글로벌 시점 인증 계정을 사용할 수 있는 설정할 수 있습니다. <em>no</em> 로 설정된 경우 팀 관리자는 관리자 패널에 로그인 정보를 추가해야 합니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:407
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:328
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:63
+msgid "Information"
+msgstr "정보"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:378
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:666
+msgid "revision available"
+msgid_plural "revisions available"
+msgstr[0] "이전 판이 있습니다"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:431
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:462
+msgid "completed"
+msgstr "완료"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:580
+msgid "commented"
+msgstr "의견 등록 시점:"
+
+#: /tmp/elabftw-twig-cache/de/dedae743d06b7a0efa1729a9a1ec9b5d4c5adcdf30ea4d8759d1ac589f7435ab.php:38
+msgid "Close"
+msgstr "닫기"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:200
+#: /tmp/elabftw-twig-cache/de/dedae743d06b7a0efa1729a9a1ec9b5d4c5adcdf30ea4d8759d1ac589f7435ab.php:42
+msgid "Todolist"
+msgstr "할 일 목록"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:295
+msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
+msgstr "PDF 생성에 중국어, 일본어 및 한국어 폰트 지원 (주의: PDF/A 규격으로 지정하지 않을 경우 파일 사이즈가 매우 커집니다)"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:394
+msgid "Allow members of the team to edit your experiments"
+msgstr "본인 문서를 편집할 수 있는 팀 멤버"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:614
+msgid "Experiment Templates"
+msgstr "문서 양식"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:117
+msgid "Import"
+msgstr "읽어 오기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:121
+msgid "Tag manager"
+msgstr "태그 관리자"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:956
+msgid "Import a .elabftw.zip archive."
+msgstr ".elabftw.zip 압축 파일 읽어 오기"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1064
+msgid "Manage tags of the team"
+msgstr "팀의 태그 관리"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:271
+msgid "Select status"
+msgstr "상태 선택"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:345
+msgid "Select number of stars"
+msgstr "별점 수 선택"
+
+#: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:376
+msgid "Tip: you can use '%' as wildcard"
+msgstr "Tip: '%' 을 와일드카드로 사용할 수 있습니다"
+
+#: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:223
+msgid "You can use a TODOlist by pressing '%s'."
+msgstr "'%s' 을 눌러서 할 일 목록을 사용할 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:210
+#: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:89
+msgid "Select a team"
+msgstr "팀 선택"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:170
+msgid "Privacy policy"
+msgstr "프라이버시 정책"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:207
+msgid "Generate report"
+msgstr "보고서 생성"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:221
+msgid "Language:"
+msgstr "언어:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:259
+msgid "The canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org"
+msgstr "공식 eLabFTW 설치 주소. 이 값이 비어 있으면 eLabFTW 가 추측을 시도하지만 경우에 따라 정확하지 않을 수 있으므로 이 값을 채워주세요. 예제: https://elabftw.example.org"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:297
+msgid "This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible."
+msgstr "이 선택은 팀에 로그인하지 않고 문서를 공개적으로 볼 수 있게 합니다. 각 팀의 관리자는 데이터베이스 항목 공개 범위를 선택할 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:302
+msgid "Switch this instance in open science mode:"
+msgstr "본 서비스를 open science mode 로 변경"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:320
+msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
+msgstr "검색 엔진이 사이트 정보를 크롤링할 수 있도록 합니다. 방문자는 지정된 팀에 자동으로 로그인됩니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:325
+msgid "Select which team will be open to the world in open science mode:"
+msgstr "open science mode 에서 공개할 팀을 선택하세요:"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:350
+msgid "This has no effect if open science mode is disabled."
+msgstr "open science mode 가 비활성화 상태면 효력이 없습니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:770
+msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
+msgstr "이메일을 보낼 수 있는 유효한 방법이 없다면 사용자는 암호를 재설정 할 수 없습니다. 이 경우 %ssmtp2go.com%s 에서 계정을 생성하여 정보를 입력할 수 있습니다."
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:789
+msgid "SMTP (recommended)"
+msgstr "SMTP (추천)"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:795
+msgid "Local MTA"
+msgstr "로컬 MTA (메일 전송 에이전트)"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1347
+msgid "Adjust your privacy policy notice"
+msgstr "프라이버시 정책 공지 수정"
+
+#: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1355
+msgid "Note: the text below is a template and must be edited and saved."
+msgstr "주의: 문서 양식에서 지정된 텍스트입니다. 수정후 저장하세요."
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:39
+msgid "Search users"
+msgstr "사용자 검색"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:104
+msgid "User ID"
+msgstr "사용자 ID"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:324
+msgid "Delete user"
+msgstr "사용자 삭제"
+
+#: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:342
+msgid "No user found!"
+msgstr "사용자가 없습니다!"
+
+#: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:150
+msgid "Select an identity provider"
+msgstr "인증 제공자 선택"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:632
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:709
+msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
+msgstr "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?"
+
+#: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:636
+msgid "Delete this tag?"
+msgstr "이 태그를 삭제할까요?"
+
+#: /tmp/elabftw-twig-cache/da/da71ebe5ccb02133d4fab5816ef6be10902aa4165688f0feec80c6482154fc21.php:81
+msgid "by"
+msgstr "by"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:77
+msgid "Experiment was timestamped by %s on %s at %s"
+msgstr "문서가 %s 에 의해 %s %s 에 시점 인증 되었습니다"
+
+#: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:243
+msgid "Book item"
+msgstr "항목 예약"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:192
+msgid "Use single column layout"
+msgstr "단일 컬럼 배치 사용"
+
+#: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:487
+msgid "Enter your password to edit your profile."
+msgstr "개인 정보를 수정하시려면 암호를 입력하세요."
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:51
+msgid "Info"
+msgstr "정보"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:67
+msgid "API keys"
+msgstr "API keys"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:71
+msgid "Existing keys"
+msgstr "이미 존재하는 키"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:83
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:173
+msgid "Permissions"
+msgstr "허가"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:87
+msgid "Creation date"
+msgstr "생성일"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:126
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:182
+msgid "Read/Write"
+msgstr "읽기/쓰기"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:126
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:178
+msgid "Read Only"
+msgstr "읽기 전용"
+
+#: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:158
+msgid "Create new key"
+msgstr "새로운 키 생성"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:868
+msgid "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv WITH COMMA (,) AS SEPARATOR. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."
+msgstr ".csv 파일을 데이터베이스로 읽어 옵니다. .xls/.xlsx 파일은 엑셀에서 콤마(,)를 구분자로 하여 .csv 파일로 저장하세요. 중요: 한 컬럼은 'title' 이란 이름을 가져야 합니다. 큰 파일을 읽어오기 전 제대로 작동하는지 보기 위해 세 줄만 먼저 읽어와야 합니다."
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:900
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1009
+msgid "2. Select a visibility:"
+msgstr "2. 공개 범위 선택:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:934
+msgid "3. Select a CSV file to import:"
+msgstr "3. 읽어 올 CSV 파일 선택:"
+
+#: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1043
+msgid "3. Select a ZIP file to import:"
+msgstr "3. 읽어 올 ZIP 파일 선택:"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:157
+msgid "You belong to the %s team."
+msgstr "당신은 %s 팀에 속해 있습니다."
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:417
+msgid "No templates from other members of the team to display!"
+msgstr "팀의 다른 멤버들이 구성한 양식이 없습니다!"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:430
+msgid "Send an email to all team members"
+msgstr "팀 구성원 모두에게 이메일 보내기"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:441
+msgid "Subject"
+msgstr "주제"
+
+#: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:446
+msgid "Content"
+msgstr "내용"
+
+#: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:229
+msgid "Id"
+msgstr "Id"
+
+#: web/app/controllers/TeamController.php:39
+msgid "Email sent to %d users"
+msgstr "%d 의 사용자에게 메일 전송됨"
+
+#: web/app/controllers/RegisterController.php:27
+msgid "Registration is disabled."
+msgstr "등록이 불가능합니다."
+
+#: web/app/controllers/ProfileController.php:40
+msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"
+msgstr "key 가 보이는 시점은 지금뿐입니다. 다시 확인이 불가능하므로 안전한 곳에 복사하여 두세요: %s"
+
+#: web/app/controllers/ResetPasswordController.php:38
+msgid "Email provided is invalid."
+msgstr "이메일이 유효하지 않습니다."
+
+#: web/app/controllers/ResetPasswordController.php:92
+msgid "Wrong key for resetting password"
+msgstr "암호 초기화에 필요한 키가 입력되었습니다"
+
+#: src/services/Email.php:259
+msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: "
+msgstr "안녕하세요. eLabFTW 에 신청하신 계정이 관리자에 의해 승인되었습니다. 로그인 하시려면 다음 링크에 접속하세요: "
+
+#: src/controllers/ExperimentsController.php:97
+#: src/controllers/DatabaseController.php:86
+msgid "This item is locked. You cannot edit it!"
+msgstr "이 항목은 잠금 설정되었습니다. 수정할 수 없습니다."
+
+#: src/models/Uploads.php:351 src/models/Comments.php:88 src/models/Tags.php:53
+#: src/models/TeamGroups.php:53 src/models/Todolist.php:96
+msgid "Input is too short! (minimum: %d)"
+msgstr "입력값이 너무 짧습니다! (minimum: %d)"
+
+#: src/models/TeamGroups.php:118
+msgid "Public"
+msgstr "전체 공개"
+
+#: src/models/TeamGroups.php:119
+msgid "Everyone with an account"
+msgstr "계정 사용자 모두"
+
+#: src/models/TeamGroups.php:120
+msgid "Only the team"
+msgstr "팀에게만"
+
+#: src/models/AbstractEntity.php:322
+msgid "Cannot update a locked entity!"
+msgstr "잠금 설정된 항목을 업데이트 할 수 없습니다!"
+
+#: src/models/Experiments.php:322
+msgid "This experiment was locked by %s. You don't have the rights to unlock this."
+msgstr "본 문서는 %s 사용자에 의해 잠금 설정되었습니다. 잠금해제할 권한이 없습니다."

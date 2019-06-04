@@ -158,7 +158,7 @@ class Tools
      */
     public static function md2html(string $md): string
     {
-        return \Michelf\Markdown::defaultTransform($md);
+        return \Michelf\MarkdownExtra::defaultTransform($md);
     }
 
     /**

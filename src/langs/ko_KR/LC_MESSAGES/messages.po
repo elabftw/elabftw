@@ -9,7 +9,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:286
@@ -374,7 +374,7 @@ msgstr "새로운 암호 전송"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:215
 msgid "experiments done since"
-msgstr "지금까지 작업된 문서 건수"
+msgstr " 건의 문서가 다음 시점 이후로 작성되었습니다"
 
 #: src/models/Users.php:91 src/models/Users.php:670
 msgid "Someone is already using that email address!"
@@ -432,23 +432,23 @@ msgstr "날짜 구간"
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:236
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:324
 msgid "and"
-msgstr "그리고"
+msgstr "부터"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:253
 msgid "And title contains"
-msgstr "그리고 다음 제목을 포함"
+msgstr "and 다음 제목을 포함"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:307
 msgid "And body contains"
-msgstr "그리고 다음 내용을 포함"
+msgstr "and 다음 내용을 포함"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:266
 msgid "And status is"
-msgstr "그리고 다음 상태인 경우"
+msgstr "and 다음 상태인 경우"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:340
 msgid "And rating is"
-msgstr "그리고 다음 별점인 경우"
+msgstr "and 다음 별점인 경우"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:349
 msgid "Unrated"
@@ -733,7 +733,7 @@ msgstr "Page generated in"
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:229
 msgid "You can have experiments templates (%sControl Panel%s)."
-msgstr "문서양식을 사용할 수 있습니다 (%sControl Panel%s)."
+msgstr "문서양식을 설정할 수 있습니다 (%sControl Panel%s)."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:247
 msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
@@ -789,7 +789,7 @@ msgstr "파일 첨부"
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:612
 msgid "Drop files here to upload"
-msgstr "업로드 파일을 드롭하세요"
+msgstr "업로드 하려는 파일을 여기에 드롭하세요"
 
 #: src/models/Revisions.php:161
 msgid "You cannot restore a revision of a locked item!"
@@ -839,15 +839,15 @@ msgstr "관리자 계정은 문서를 언제든지 삭제할 수 있습니다."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:217
 msgid "There is a manual available %shere%s."
-msgstr "다음에 대해 사용자 지침이 있습니다: %shere%s."
+msgstr "다음 링크에서 도움말을 보실 수 있습니다: %shere%s."
 
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:217
 msgid "Order by"
-msgstr "정렬기준"
+msgstr "정렬항목"
 
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:268
 msgid "Sort"
-msgstr "정렬"
+msgstr "정렬방법"
 
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:290
 msgid "Reset"
@@ -1085,7 +1085,7 @@ msgstr "문서 양식"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:647
 msgid "Import from File"
-msgstr "파일 내용 읽어 오기"
+msgstr "파일로 부터 읽어 오기"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:655
 msgid "Name of the Template"
@@ -1365,7 +1365,7 @@ msgstr "정렬순서 변경"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:126
 msgid "Order by:"
-msgstr "정렬 순서"
+msgstr "정렬항목"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:133
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:169
@@ -1379,7 +1379,7 @@ msgstr "의견"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:162
 msgid "Sort:"
-msgstr "정렬:"
+msgstr "정렬방법:"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:203
 msgid "Only lowercase letters are allowed."
@@ -1387,7 +1387,7 @@ msgstr "소문자만 허용됩니다."
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:383
 msgid "Disable the rich text editor and write Markdown directly"
-msgstr "전용 편집기를 사용중지하고 마크업 언어로 직접 기록"
+msgstr "전용 편집기 대신 마크업 언어로 직접 작성"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:401
 msgid "Default visibility for new experiments"
@@ -1519,7 +1519,7 @@ msgstr "익명 방문객으로 로그인"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:359
 msgid "Import to your profile"
-msgstr "개인 정보 읽어 오기"
+msgstr "Import to your profile"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:165
 msgid "Anonymous visitors can see database items:"
@@ -1646,7 +1646,7 @@ msgstr "PDF 생성에 중국어, 일본어 및 한국어 폰트 지원 (주의: 
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:394
 msgid "Allow members of the team to edit your experiments"
-msgstr "본인 문서를 편집할 수 있는 팀 멤버"
+msgstr "팀 멤버가 본인 문서를 편집할 수 있음"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:614
 msgid "Experiment Templates"
@@ -1682,7 +1682,7 @@ msgstr "Tip: '%' 을 와일드카드로 사용할 수 있습니다"
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:223
 msgid "You can use a TODOlist by pressing '%s'."
-msgstr "'%s' 을 눌러서 할 일 목록을 사용할 수 있습니다."
+msgstr "'%s' 단축키로 할일 목록을 띄울 수 있습니다."
 
 #: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:210
 #: /tmp/elabftw-twig-cache/76/768b6d3c7383d8a1289202bf0affd96059107e344926ec817d54527674e299b1.php:89
@@ -1788,7 +1788,7 @@ msgstr "항목 예약"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:192
 msgid "Use single column layout"
-msgstr "단일 컬럼 배치 사용"
+msgstr "Use single column layout"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:487
 msgid "Enter your password to edit your profile."
@@ -1804,7 +1804,7 @@ msgstr "API keys"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:71
 msgid "Existing keys"
-msgstr "이미 존재하는 키"
+msgstr "이전에 발급된 키"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:83
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:173

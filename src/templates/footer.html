@@ -15,6 +15,11 @@
             <i class='fab fa-gitter fa-lg'></i>
         </a>
 
+        <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw/issues/new'>
+            <span>Report a bug</span>
+            <i class='fas fa-bug fa-lg'></i>
+        </a>
+
         <span>
             {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}
                 <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>

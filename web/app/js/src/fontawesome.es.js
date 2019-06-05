@@ -15,6 +15,7 @@ import { library, dom } from '@fortawesome/fontawesome-svg-core';
 // SOLID
 import {
   faBold,
+  faBug,
   faCalendarPlus,
   faChartPie,
   faCheck,
@@ -73,6 +74,7 @@ import {
 
 library.add(
   faBold,
+  faBug,
   faCalendarPlus,
   faChartPie,
   faCheck,

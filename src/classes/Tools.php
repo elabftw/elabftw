@@ -118,7 +118,7 @@ class Tools
     public static function checkBody(string $input): string
     {
         $whitelist = '<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
-            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak><pre>
+            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><th><td><code><video><audio><pagebreak><pre>
             <details><summary><figure><figcaption>';
         $body = strip_tags($input, $whitelist);
         // use strlen() instead of mb_strlen() because we want the size in bytes
@@ -158,7 +158,7 @@ class Tools
      */
     public static function md2html(string $md): string
     {
-        return \Michelf\Markdown::defaultTransform($md);
+        return \Michelf\MarkdownExtra::defaultTransform($md);
     }
 
     /**
@@ -309,6 +309,7 @@ class Tools
             'fr_FR' => 'fr',
             'id_ID' => 'id',
             'it_IT' => 'it',
+            'ko_KR' => 'kr',
             'pl_PL' => 'pl',
             'pt_BR' => 'pt-br',
             'pt_PT' => 'pt',
@@ -335,6 +336,7 @@ class Tools
             'fr_FR' => 'French',
             'id_ID' => 'Indonesian',
             'it_IT' => 'Italian',
+            'ko_KR' => 'Korean',
             'pl_PL' => 'Polish',
             'pt_BR' => 'Portuguese (Brazilian)',
             'pt_PT' => 'Portuguese',

@@ -19,7 +19,6 @@
       pagebreak_separator: '<pagebreak>',
       toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
       removed_menuitems: 'newdocument, image',
-      paste_as_text: true,
       image_caption: true,
       language : $('#info').data('lang')
     });

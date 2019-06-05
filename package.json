@@ -8,9 +8,9 @@
   "dependencies": {
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
-    "@fortawesome/free-brands-svg-icons": "5.8.*",
-    "@fortawesome/free-regular-svg-icons": "5.8.*",
-    "@fortawesome/free-solid-svg-icons": "5.8.*",
+    "@fortawesome/free-brands-svg-icons": "5.9.*",
+    "@fortawesome/free-regular-svg-icons": "5.9.*",
+    "@fortawesome/free-solid-svg-icons": "5.9.*",
     "bootstrap": "~4.3.*",
     "bootstrap-markdown-fa5": "2.10.*",
     "dropzone": "5.5.*",
@@ -40,7 +40,7 @@
     "stylelint": "^10.0.0",
     "stylelint-config-recommended": "^2.1.0",
     "stylelint-config-standard": "^18.2.0",
-    "webpack": "4.32.*",
+    "webpack": "4.33.*",
     "webpack-cli": "3.3.*"
   },
   "scripts": {

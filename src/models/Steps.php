@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Models\AbstractEntity;
 use PDO;
 
 /**

@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateInterface;
 use PDO;
 

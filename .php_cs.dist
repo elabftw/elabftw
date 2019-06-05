@@ -21,6 +21,8 @@ return PhpCsFixer\Config::create()
         'no_homoglyph_names' => true,
         'no_null_property_initialization' => true,
         'no_php4_constructor' => true,
+        'no_unused_imports' => true,
+        'no_useless_else' => true,
         'non_printable_character' => true,
         'ordered_imports' => true,
         'ordered_class_elements' => true,

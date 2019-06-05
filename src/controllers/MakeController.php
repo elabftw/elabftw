@@ -22,7 +22,6 @@ use Elabftw\Services\MakeCsv;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;

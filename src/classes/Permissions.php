@@ -103,6 +103,8 @@ class Permissions
      */
     public function forExperiments(): array
     {
+        $write = false;
+
         // if we own the experiment, we have read/write rights on it for sure
         if ($this->item['userid'] === $this->Users->userData['userid']) {
             return array('read' => true, 'write' => true);
@@ -113,41 +115,36 @@ class Permissions
         if ($this->Users->userData['is_admin'] && $this->item['team'] === $this->Users->userData['team']) {
             return array('read' => true, 'write' => true);
         }
+
         // if we don't own the experiment (and we are not admin), we need to check if owner allowed edits
         // get the owner data
         $Owner = new Users((int) $this->item['userid']);
         // owner allows edit and is in same team and we are not anon
         if ($Owner->userData['allow_edit'] &&
-            $this->item['team'] === $this->Users->userData['team'] &&
-            !isset($this->Users->userData['anon'])) {
-            return array('read' => true, 'write' => true);
-        } elseif (!$Owner->userData['allow_edit'] &&
-            $this->item['team'] === $this->Users->userData['team'] &&
-            !isset($this->Users->userData['anon'])) {
-            return array('read' => true, 'write' => false);
+            $this->item['team'] === $this->Users->userData['team']
+            && !isset($this->Users->userData['anon'])) {
+            $write = true;
         }
 
         // if group edits only are accepted
         if ($Owner->userData['allow_group_edit']
             && $this->item['team'] === $this->Users->userData['team']
-            && !isset($this->Users->userData['anon'])
-            // don't override the visibility setting if it's a group vis
-            && Tools::checkId((int) $this->item['visibility']) === false) {
+            && !isset($this->Users->userData['anon'])) {
             $TeamGroups = new TeamGroups($this->Users);
             if ($TeamGroups->isUserInSameGroup((int) $Owner->userData['userid'])) {
-                return array('read' => true, 'write' => true);
+                $write = true;
             }
         }
 
         // if we don't own the experiment (and we are not admin), we need to check the visibility
         // if the vis. setting is public, we can see it for sure
         if ($this->item['visibility'] === 'public') {
-            return array('read' => true, 'write' => false);
+            return array('read' => true, 'write' => $write);
         }
 
         // if it's organization, we need to be logged in
         if (($this->item['visibility'] === 'organization') && $this->Users->userData['userid'] !== null) {
-            return array('read' => true, 'write' => false);
+            return array('read' => true, 'write' => $write);
         }
 
         // if the vis. setting is team, check we are in the same team than the $item
@@ -155,18 +152,18 @@ class Permissions
         if (($this->item['visibility'] === 'team') &&
             ($this->item['team'] === $this->Users->userData['team']) &&
             !isset($this->Users->userData['anon'])) {
-            return array('read' => true, 'write' => false);
+            return array('read' => true, 'write' => $write);
         }
 
         // if the vis. setting is a team group, check we are in the group
         if (Tools::checkId((int) $this->item['visibility']) !== false) {
             $TeamGroups = new TeamGroups($this->Users);
             if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['visibility'])) {
-                return array('read' => true, 'write' => false);
+                return array('read' => true, 'write' => $write);
             }
         }
 
-        return array('read' => false, 'write' => false);
+        return array('read' => false, 'write' => $write);
     }
 
     /**

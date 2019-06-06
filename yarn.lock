@@ -3310,9 +3310,9 @@ isobject@^3.0.0, isobject@^3.0.1:
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
 jquery-jeditable@2.0.*:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.8.tgz#47e83ebc21847a6bc70d367d0eb881db86756341"
-  integrity sha512-Ykx139CB/2JweHEWOToNkl7d6UfIwqHYjRpMs2GX1UKiEdI37hmGXfhsOpJkLpbod8EIdr2dee5i9l0OE5M1fg==
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.10.tgz#8eb6f8278408d53ffcbb3147fc3293530b39e930"
+  integrity sha512-SBXDJCkJ1E+swTLdbsmHWJbNHr8VHIf/p0PkCiuSgQ2pfBYbrgpBRUx1RcupVI4uNNhQX674pGw+Bo+R8lg92g==
   dependencies:
     jquery ">=3.4.0"
 

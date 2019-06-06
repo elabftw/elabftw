@@ -121,6 +121,10 @@ class Permissions
             $this->item['team'] === $this->Users->userData['team'] &&
             !isset($this->Users->userData['anon'])) {
             return array('read' => true, 'write' => true);
+        } elseif (!$Owner->userData['allow_edit'] &&
+            $this->item['team'] === $this->Users->userData['team'] &&
+            !isset($this->Users->userData['anon'])) {
+            return array('read' => true, 'write' => false);
         }
 
         // if group edits only are accepted
@@ -149,7 +153,7 @@ class Permissions
         // if the vis. setting is team, check we are in the same team than the $item
         // we also check for anon because anon will have the same team as real team member
         if (($this->item['visibility'] === 'team') &&
-            ($this->item['team'] == $this->Users->userData['team']) &&
+            ($this->item['team'] === $this->Users->userData['team']) &&
             !isset($this->Users->userData['anon'])) {
             return array('read' => true, 'write' => false);
         }

@@ -12,13 +12,13 @@
     <section class='col-md-6'>
         <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
         <br>
-        <div class='mt-2' id='steps_div'>
+        <div class='mt-2' id='steps_div_{{ Entity_id }}'>
           {% for step in stepsArr %}
 
             <div class='input-group mb-2 '>
                 <div class='input-group-prepend'>
                     <div class='input-group-text'>
-                        <input type='checkbox' autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' >
+                      <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
                     </div>
                 </div>
                 <div class='form-control {{ step.finished ? 'finished' }}'>
@@ -28,7 +28,7 @@
                     {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
                 </span>
                 {% endif %}
-                <a class='stepDestroy' data-stepid='{{ step.id }}'>
+                <a class='stepDestroy' data-stepid='{{ step.id }}' data-id='{{ Entity_id }}'>
                     <i class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
                 </a>
                 </div>
@@ -40,10 +40,10 @@
         <!-- ADD STEP -->
         <div class='input-group mb-3'>
             <div class='input-group-prepend'>
-                <span class='input-group-text' id='step-input-1'>{{ 'Add a step'|trans }}</span>
+                <span class='input-group-text'>{{ 'Add a step'|trans }}</span>
             </div>
 
-            <input type='text' size='60' id='stepinput' data-id='{{ Entity_id }}' class='form-control' />
+            <input type='text' size='60' class='form-control stepinput' data-id='{{ Entity_id }}' />
         </div>
 
     </section>
@@ -51,13 +51,13 @@
     <section class='col-md-6'>
         <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
         <br>
-        <div class='mt-2' id='links_div'>
+        <div class='mt-2' id='links_div_{{ Entity_id }}'>
             {% if linksArr %}
             <ul class='list-group'>
                 {% for link in linksArr %}
                 <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
                         {{ link.title|raw }}</a>
-                    <a class='linkDestroy' data-linkid='{{ link.linkid }}'>
+                  <a class='linkDestroy' data-linkid='{{ link.linkid }}' data-id='{{ Entity_id }}'>
                         <i class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
                     </a>
                 </li>
@@ -69,9 +69,9 @@
         <div class='mt-2'>
             <div class='input-group mb-3'>
                 <div class='input-group-prepend'>
-                    <span class='input-group-text' id='link-input-1'>{{ 'Add a link'|trans }}</span>
+                    <span class='input-group-text'>{{ 'Add a link'|trans }}</span>
                 </div>
-                <input type='text' id='linkinput' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' class='form-control' />
+                <input type='text' class='form-control linkinput' data-id='{{ Entity_id }}' placeholder='{{ 'from the database'|trans }}' />
             </div>
         </div>
     </section>

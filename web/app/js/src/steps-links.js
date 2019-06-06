@@ -9,46 +9,47 @@
   'use strict';
   $(document).ready(function() {
     let type = $('#info').data('type');
-    // TODO deprecated, use data-id
-    let id = $('#info').data('id');
     let confirmText = $('#info').data('confirm');
 
     class Link {
 
-      create() {
+      create(elem) {
+        let id = elem.data('id');
         // get link
-        let link = $('#linkinput').val();
+        let link = elem.val();
         // fix for user pressing enter with no input
         if (link.length > 0) {
           // parseint will get the id, and not the rest (in case there is number in title)
-          link = parseInt(link, 10);
-          if (!isNaN(link)) {
+          let linkId = parseInt(link, 10);
+          if (!isNaN(linkId)) {
             $.post('app/controllers/EntityAjaxController.php', {
               createLink: true,
-              id: $('#linkinput').data('id'),
-              linkId: link,
+              id: id,
+              linkId: linkId,
               type: type
             }).done(function () {
               // reload the link list
-              $('#links_div').load('?mode=edit&id=' + id + ' #links_div');
+              $('#links_div_' + id).load('?mode=edit&id=' + id + ' #links_div_' + id);
               // clear input field
-              $('#linkinput').val('');
+              elem.val('');
             });
           } // end if input is bad
         } // end if input < 0
       }
 
-      destroy(linkId) {
+      destroy(elem) {
+        let id = elem.data('id');
+        let linkId = elem.data('linkid');
         if (confirm(confirmText)) {
           $.post('app/controllers/EntityAjaxController.php', {
             destroyLink: true,
-            id: $('#linkinput').data('id'),
+            id: id,
             linkId: linkId,
             type: type
           }).done(function(json) {
             notif(json);
             if (json.res) {
-              $('#links_div').load('?mode=edit&id=' + id + ' #links_div');
+              $('#links_div_' + id).load('?mode=edit&id=' + id + ' #links_div_' + id);
             }
           });
         }
@@ -57,54 +58,71 @@
 
     class Step {
 
-      create() {
+      create(elem) {
+        let id = elem.data('id');
         // get body
-        let body = $('#stepinput').val();
+        let body = elem.val();
         // fix for user pressing enter with no input
         if (body.length > 0) {
           $.post('app/controllers/EntityAjaxController.php', {
             createStep: true,
-            id: $('#stepinput').data('id'),
+            id: id,
             body: body,
             type: type
           }).done(function() {
+            let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
+            if (type === 'experiments_templates') {
+              loadUrl = '? #steps_div_' + id;
+            }
             // reload the step list
-            $('#steps_div').load('?mode=edit&id=' + id + ' #steps_div', function() {
+            $('#steps_div_' + id).load(loadUrl, function() {
               relativeMoment();
             });
             // clear input field
-            $('#stepinput').val('');
+            elem.val('');
           });
         } // end if input < 0
       }
 
-      finish(stepId) {
+      finish(elem) {
+        // the id of the exp/item/tpl
+        let id = elem.data('id');
+        let stepId = elem.data('stepid');
+
         $.post('app/controllers/EntityAjaxController.php', {
           finishStep: true,
-          id: $('#stepinput').data('id'),
+          id: id,
           stepId: stepId,
           type: type
         }).done(function() {
           // reload the step list
-          $('#steps_div').load('?mode=edit&id=' + id + ' #steps_div', function() {
+          $('#steps_div_' + id).load('?mode=edit&id=' + id + ' #steps_div_' + id, function() {
             relativeMoment();
           });
           // clear input field
-          $('#stepinput').val('');
+          elem.val('');
         });
       }
 
-      destroy(stepId) {
+      destroy(elem) {
+        // the id of the exp/item/tpl
+        let id = elem.data('id');
+        let stepId = elem.data('stepid');
         if (confirm(confirmText)) {
           $.post('app/controllers/EntityAjaxController.php', {
             destroyStep: true,
-            id: $('#stepinput').data('id'),
+            id: id,
             stepId: stepId,
             type: type
           }).done(function(json) {
             notif(json);
             if (json.res) {
-              $('#steps_div').load('?mode=edit&id=' + id + ' #steps_div', function() {
+              let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
+              if (type === 'experiments_templates') {
+                loadUrl = '? #steps_div_' + id;
+              }
+              // reload the step list
+              $('#steps_div_' + id).load(loadUrl, function() {
                 relativeMoment();
               });
             }
@@ -118,22 +136,22 @@
     const StepC = new Step();
 
     // CREATE
-    $(document).on('keypress blur', '#stepinput', function (e) {
+    $(document).on('keypress blur', '.stepinput', function(e) {
       // Enter is ascii code 13
       if (e.which === 13 || e.type === 'focusout') {
-        StepC.create();
+        StepC.create($(this));
       }
     });
 
     // STEP IS DONE
-    $(document).on('click', 'input[type=checkbox]', function() {
-      StepC.finish($(this).data('stepid'));
+    $(document).on('click', 'input[type=checkbox].stepbox', function() {
+      StepC.finish($(this));
     });
 
 
     // DESTROY
     $(document).on('click', '.stepDestroy', function() {
-      StepC.destroy($(this).data('stepid'));
+      StepC.destroy($(this));
     });
 
     // END STEPS
@@ -145,16 +163,16 @@
 
     // CREATE
     // listen keypress, add link when it's enter or on blur
-    $(document).on('keypress blur', '#linkinput', function (e) {
+    $(document).on('keypress blur', '.linkinput', function(e) {
       // Enter is ascii code 13
       if (e.which === 13 || e.type === 'focusout') {
-        LinkC.create();
+        LinkC.create($(this));
       }
     });
 
     // AUTOCOMPLETE
     let cache = {};
-    $( '#linkinput' ).autocomplete({
+    $( '.linkinput' ).autocomplete({
       source: function(request, response) {
         let term = request.term;
         if (term in cache) {
@@ -170,7 +188,7 @@
 
     // DESTROY
     $(document).on('click', '.linkDestroy', function() {
-      LinkC.destroy($(this).data('linkid'));
+      LinkC.destroy($(this));
     });
 
     // END LINKS

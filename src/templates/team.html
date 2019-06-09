@@ -169,5 +169,9 @@
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"></div>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
-<script src='app/js/team.min.js?v={{ v }}'></script>
+{% if App.Config.configArr.debug %}
+  <script src='app/js/src/team.js?v={{ v }}'></script>
+{% else %}
+  <script src='app/js/team.min.js?v={{ v }}'></script>
+{% endif %}
 {% endblock body %}

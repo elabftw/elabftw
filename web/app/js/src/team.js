@@ -66,6 +66,15 @@ $(document).ready(function() {
         });
       }
     },
+    // on mouse enter add shadow and show title
+    eventMouseover: function(calEvent) {
+      $(this).css('box-shadow', '5px 4px 4px #474747');
+      $(this).attr('title', calEvent.title);
+    },
+    // remove the box shadow when mouse leaves
+    eventMouseout: function(calEvent) {
+      $(this).css('box-shadow', 'unset');
+    },
     // a drop means we change start date
     eventDrop: function(calEvent) {
       $.post('app/controllers/SchedulerController.php', {

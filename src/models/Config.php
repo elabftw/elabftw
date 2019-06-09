@@ -208,6 +208,19 @@ class Config
             ('open_team', NULL),
             ('privacy_policy', NULL),
             ('announcement', NULL),
+            ('saml_nameidencrypted', 0),
+            ('saml_authnrequestssigned', 0),
+            ('saml_logoutrequestsigned', 0),
+            ('saml_logoutresponsesigned', 0),
+            ('saml_signmetadata', 0),
+            ('saml_wantmessagessigned', 0),
+            ('saml_wantassertionsencrypted', 0),
+            ('saml_wantassertionssigned', 0),
+            ('saml_wantnameid', 1),
+            ('saml_wantnameidencrypted', 0),
+            ('saml_wantxmlvalidation', 1),
+            ('saml_relaxdestinationvalidation', 0),
+            ('saml_lowercaseurlencoding', 0),
             ('deletable_xp', 1);";
 
         $req = $this->Db->prepare($sql);

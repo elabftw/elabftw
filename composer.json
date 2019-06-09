@@ -34,6 +34,7 @@
     "codeception/codeception": "3.0.*",
     "pyrech/composer-changelogs": "1.6.*",
     "fzaninotto/faker": "^1.8",
+    "phpunit/phpunit": "8.1.*",
     "friendsofphp/php-cs-fixer": "^2.15"
   },
   "autoload": {

@@ -407,4 +407,42 @@ class Tools
         $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
         return \str_replace('app/controllers', '', $url);
     }
+
+    /**
+     * Build an SQL string for searching something
+     *
+     * @param string $query the searched string
+     * @param string $andor behavior of the space character
+     * @param string $column the column to search into
+     * @param string $table on which table to do the search
+     * @return string
+     */
+    public static function getSearchSql(string $query, string $andor = 'and', string $column = '', string $table = ''): string
+    {
+        $sql = ' AND ';
+        // search character is the separator for and/or
+        $qArr = \explode(' ', $query);
+        $sql .= '(';
+        foreach ($qArr as $key => $value) {
+            // add the andor after the first
+            if ($key !== 0) {
+                $sql .= $andor;
+            }
+            if ($column === '') {
+                // do quicksearch
+                if ($table === 'experiments') {
+                    // add elabid to the search columns
+                    $sql .= "(title LIKE '%$value%' OR date LIKE '%$value%' OR body LIKE '%$value%' OR elabid LIKE '%$value%')";
+                } else {
+                    // quicksearch from database
+                    $sql .= "(title LIKE '%$value%' OR date LIKE '%$value%' OR body LIKE '%$value%')";
+                }
+            } else {
+                // from search page
+                $sql .= $table . '.' . $column . " LIKE '%$value%'";
+            }
+        }
+        $sql .= ')';
+        return $sql;
+    }
 }

@@ -60,9 +60,6 @@ abstract class AbstractEntity
     /** @var string $ratingFilter inserted in sql */
     public $ratingFilter = '';
 
-    /** @var string $teamFilter inserted in sql */
-    public $teamFilter = '';
-
     /** @var string $visibilityFilter inserted in sql */
     public $visibilityFilter = '';
 
@@ -290,6 +287,7 @@ abstract class AbstractEntity
             $this->bookableFilter . ' ' .
             $this->categoryFilter . ' ' .
             $this->queryFilter . ' ' .
+            $this->ratingFilter . ' ' .
             $this->visibilityFilter . ' ' .
             ' GROUP BY id ' . ' ' .
             $this->tagFilter . ' ' .

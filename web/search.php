@@ -41,34 +41,29 @@ $teamGroupsArr = $TeamGroups->readAll();
 
 $usersArr = $App->Users->readAllFromTeam();
 
-// TITLE
-$title = '';
-$titleWithSpace = false;
-if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
-    // check if there is a space in the query
-    if (\strrpos($title, ' ') !== false) {
-        $titleArr = \explode(' ', $title);
-        $titleWithSpace = true;
-    }
-}
-
-// BODY
-$body = '';
-$bodyWithSpace = false;
-if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
-    // check if there is a space in the query
-    if (\strrpos($body, ' ') !== false) {
-        $bodyArr = \explode(' ', $body);
-        $bodyWithSpace = true;
-    }
-}
-
 // ANDOR
 $andor = ' AND ';
 if ($Request->query->has('andor') && $Request->query->get('andor') === 'or') {
     $andor = ' OR ';
+}
+
+// WHERE do we search?
+if ($Request->query->get('type') === 'experiments') {
+    $Entity = $Experiments;
+} else {
+    $Entity = $Database;
+}
+
+// TITLE
+if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
+    $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
+    $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type);
+}
+
+// BODY
+if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
+    $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
+    $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type);
 }
 
 // TAGS
@@ -118,12 +113,6 @@ echo $App->render('search.html', $renderArr);
  */
 if ($Request->query->count() > 0) {
 
-    // TABLE
-    $table = 'items';
-    if ($Request->query->get('type') === 'experiments') {
-        $table = 'experiments';
-    }
-
     // STATUS
     $status = '';
     if (Tools::checkId((int) $Request->query->get('status')) !== false) {
@@ -138,82 +127,34 @@ if ($Request->query->count() > 0) {
     }
 
     // PREPARE SQL query
-    $sqlUserid = '';
-    $sqlDate = '';
-    $sqlTitle = '';
-    $sqlBody = '';
-    $sqlTag = '';
-    $sqlStatus = '';
-    $sqlRating = '';
-    $sqlVisibility = '';
-
-    // Title search
-    if ($titleWithSpace) {
-        $sqlTitle = ' AND (';
-        foreach ($titleArr as $key => $value) {
-            if ($key !== 0) {
-                $sqlTitle .= $andor;
-            }
-            $sqlTitle .= $table . ".title LIKE '%$value%'";
-        }
-        $sqlTitle .= ')';
-    } elseif (!empty($title)) {
-        $sqlTitle = ' AND ' . $table . ".title LIKE '%$title%'";
-    }
-
-    // Body search
-    if ($bodyWithSpace) {
-        $sqlBody = ' AND (';
-        foreach ($bodyArr as $key => $value) {
-            if ($key != 0) {
-                $sqlBody .= $andor;
-            }
-            $sqlBody .= "$table.body LIKE '%$value%'";
-        }
-        $sqlBody .= ')';
-    } elseif (!empty($body)) {
-        $sqlBody = " AND $table.body LIKE '%$body%'";
-    }
-
-    // Tag search
-    if (!empty($selectedTagsArr)) {
-        $having = 'HAVING ';
-        foreach ($selectedTagsArr as $tag) {
-            $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
-            $having .= "tags LIKE '%$tag%' AND ";
-        }
-        $sqlTag .= rtrim($having, ' AND');
-    }
-
-    // Status search
-    if (!empty($status)) {
-        $sqlStatus = " AND $table.category = '$status'";
-    }
-
-    // Rating search
-    if (!empty($rating)) {
-        $sqlRating = " AND $table.rating LIKE '$rating'";
-    }
-
-    // Visibility search
-    if (!empty($vis)) {
-        $sqlVisibility = " AND $table.visibility = '$vis'";
-    }
-
-    // Date search
-    if (!empty($from) && !empty($to)) {
-        $sqlDate = " AND $table.date BETWEEN '$from' AND '$to'";
-    } elseif (!empty($from) && empty($to)) {
-        $sqlDate = " AND $table.date BETWEEN '$from' AND '99991212'";
-    } elseif (empty($from) && !empty($to)) {
-        $sqlDate = " AND $table.date BETWEEN '00000101' AND '$to'";
-    }
 
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
+        // Tag search
+        if (!empty($selectedTagsArr)) {
+            $having = 'HAVING ';
+            foreach ($selectedTagsArr as $tag) {
+                $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
+                $having .= "tags LIKE '%$tag%' AND ";
+            }
+            $Entity->tagFilter .= rtrim($having, ' AND');
+        }
+
+        // Visibility search
+        if (!empty($vis)) {
+            $Entity->visibilityFilter = " AND " . $Entity->type . ".visibility = '$vis'";
+        }
+
+        // Date search
+        if (!empty($from) && !empty($to)) {
+            $Entity->dateFilter = " AND " . $Entity->type . ".date BETWEEN '$from' AND '$to'";
+        } elseif (!empty($from) && empty($to)) {
+            $Entity->dateFilter = " AND " . $Entity->type . ".date BETWEEN '$from' AND '99991212'";
+        } elseif (empty($from) && !empty($to)) {
+            $Entity->dateFilter = " AND " . $Entity->type . ".date BETWEEN '00000101' AND '$to'";
+        }
+
         if ($Request->query->get('type') === 'experiments') {
-            // EXPERIMENTS SEARCH
-            $Entity = new Experiments($App->Users);
 
             // USERID FILTER
             if ($Request->query->has('owner')) {
@@ -222,23 +163,23 @@ if ($Request->query->count() > 0) {
                 } elseif (empty($Request->query->get('owner'))) {
                     $owner = $App->Users->userData['userid'];
                 }
-                $sqlUserid = ' AND experiments.userid = ' . $owner;
+                $Entity->useridFilter = ' AND experiments.userid = ' . $owner;
                 // all the team is 0 as userid
                 if ($Request->query->get('owner') === '0') {
-                    $sqlUserid = '';
+                    $Entity->useridFilter = '';
                 }
             }
 
-            // STATUS
-            $Entity->categoryFilter = $sqlStatus;
-            // VISIBILITY FILTER
-            $Entity->visibilityFilter = $sqlVisibility;
-        } else {
-            // DATABASE SEARCH
-            $Entity = new Database($App->Users);
+            // Status search
+            if (!empty($status)) {
+                $Entity->categoryFilter = " AND " . $Entity->type . ".category = '$status'";
+            }
 
-            // RATING
-            $Entity->ratingFilter = $sqlRating;
+        } else {
+            // Rating search
+            if (!empty($rating)) {
+                $Entity->ratingFilter = " AND " . $Entity->type . ".rating LIKE '$rating'";
+            }
 
             // FILTER ON DATABASE ITEMS TYPES
             if (Tools::checkId((int) $Request->query->get('type')) !== false) {
@@ -246,13 +187,7 @@ if ($Request->query->count() > 0) {
             }
         }
 
-        // common filters for XP and DB
-        $Entity->bodyFilter = $sqlBody;
-        $Entity->dateFilter = $sqlDate;
-        $Entity->tagFilter = $sqlTag;
-        $Entity->titleFilter = $sqlTitle;
-        $Entity->useridFilter = $sqlUserid;
-
+        // READ the results
         $itemsArr = $Entity->read();
 
         // RENDER THE SECOND PART OF THE PAGE

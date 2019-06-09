@@ -158,14 +158,12 @@ class DatabaseController extends AbstractEntityController
             $getTags = true;
         }
         // QUERY FILTER
-        if ($this->App->Request->query->get('q') != '') {
+        if (!empty($this->App->Request->query->get('q'))) {
             $query = filter_var($this->App->Request->query->get('q'), FILTER_SANITIZE_STRING);
-            $this->Entity->queryFilter = "AND (
-                title LIKE '%$query%' OR
-                date LIKE '%$query%' OR
-                body LIKE '%$query%')";
+            $this->Entity->queryFilter = Tools::getSearchSql($query);
             $searchType = 'query';
         }
+
         // ORDER
         $order = '';
 

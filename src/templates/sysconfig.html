@@ -453,6 +453,85 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <label for='saml-lastname'>What attribute to look for the lastname:</label>
               <input class='form-control col-md-4' type='text' id='saml-lastname' name='saml_lastname' value='{{ App.Config.configArr.saml_lastname }}' />
 
+              <h4 class='mt-2'>Security settings</h4>
+              <label for='saml-nameidencrypted'>Encrypt the nameID of the samlp:logoutRequest sent by this SP (nameIdEncrypted)</label>
+              <select class='form-control col-md-4' id='saml-nameidencrypted' name='saml_nameidencrypted'>
+                  <option value='1'{{ App.Config.configArr.saml_nameidencrypted == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_nameidencrypted == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-authnrequestssigned'>Sign the samlp:AuthnRequest messages sent (authnRequestsSigned)</label>
+              <select class='form-control col-md-4' id='saml-authnrequestssigned' name='saml_authnrequestssigned'>
+                  <option value='1'{{ App.Config.configArr.saml_authnrequestssigned == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_authnrequestssigned == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-logoutrequestsigned'>Sign the samlp:logoutRequest messages sent (logoutRequestSigned)</label>
+              <select class='form-control col-md-4' id='saml-logoutrequestsigned' name='saml_logoutrequestsigned'>
+                  <option value='1'{{ App.Config.configArr.saml_logoutrequestsigned == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_logoutrequestsigned == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-logoutresponsesigned'>Sign the samlp:logoutResponse messages sent (logoutresponsesigned)</label>
+              <select class='form-control col-md-4' id='saml-logoutresponsesigned' name='saml_logoutresponsesigned'>
+                  <option value='1'{{ App.Config.configArr.saml_logoutresponsesigned == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_logoutresponsesigned == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-signmetadata'>Sign the metadata (signMetadata)</label>
+              <select class='form-control col-md-4' id='saml-signmetadata' name='saml_signmetadata'>
+                  <option value='1'{{ App.Config.configArr.saml_signmetadata == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_signmetadata == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-wantmessagessigned'>Require the samlp:Response to be signed (wantMessagesSigned)</label>
+              <select class='form-control col-md-4' id='saml-wantmessagessigned' name='saml_wantmessagessigned'>
+                  <option value='1'{{ App.Config.configArr.saml_wantmessagessigned == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_wantmessagessigned == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-wantassertionsencrypted'>Require the saml:Assertion to be encrypted (wantAssertionsEncrypted)</label>
+              <select class='form-control col-md-4' id='saml-wantassertionsencrypted' name='saml_wantassertionsencrypted'>
+                  <option value='1'{{ App.Config.configArr.saml_wantassertionsencrypted == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_wantassertionsencrypted == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-wantassertionssigned'>Require the saml:Assertion to be signed (wantAssertionsSigned)</label>
+              <select class='form-control col-md-4' id='saml-wantassertionssigned' name='saml_wantassertionssigned'>
+                  <option value='1'{{ App.Config.configArr.saml_wantassertionssigned == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_wantassertionssigned == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-wantnameid'>Require the NameID element on the SAMLResponse received (wantNameId)</label>
+              <select class='form-control col-md-4' id='saml-wantnameid' name='saml_wantnameid'>
+                  <option value='1'{{ App.Config.configArr.saml_wantnameid == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_wantnameid == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-wantnameidencrypted'>Require the NameID element received to be encrypted (wantNameIdEncrypted)</label>
+              <select class='form-control col-md-4' id='saml-wantnameidencrypted' name='saml_wantnameidencrypted'>
+                  <option value='1'{{ App.Config.configArr.saml_wantnameidencrypted == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_wantnameidencrypted == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-wantxmlvalidation'>Validate all received xmls (strict mode must be activated) (wantXMLValidation)</label>
+              <select class='form-control col-md-4' id='saml-wantxmlvalidation' name='saml_wantxmlvalidation'>
+                  <option value='1'{{ App.Config.configArr.saml_wantxmlvalidation == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_wantxmlvalidation == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-relaxdestinationvalidation'>SAMLResponse with an empty value as its Destination will not be rejected for this fact. (relaxDestinationValidation)</label>
+              <select class='form-control col-md-4' id='saml-relaxdestinationvalidation' name='saml_relaxdestinationvalidation'>
+                  <option value='1'{{ App.Config.configArr.saml_relaxdestinationvalidation == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_relaxdestinationvalidation == '0' ? ' selected' }}>No</option>
+              </select>
+
+              <label for='saml-lowercaseurlencoding'>ADFS compatibility on signature verification (lowercaseUrlEncoding)</label>
+              <select class='form-control col-md-4' id='saml-lowercaseurlencoding' name='saml_lowercaseurlencoding'>
+                  <option value='1'{{ App.Config.configArr.saml_lowercaseurlencoding == '1' ? ' selected' }}>Yes</option>
+                  <option value='0'{{ App.Config.configArr.saml_lowercaseurlencoding == '0' ? ' selected' }}>No</option>
+              </select>
+
               <div class='submitButtonDiv'>
                   <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
               </div>

@@ -72,7 +72,7 @@ $(document).ready(function() {
       $(this).attr('title', calEvent.title);
     },
     // remove the box shadow when mouse leaves
-    eventMouseout: function(calEvent) {
+    eventMouseout: function() {
       $(this).css('box-shadow', 'unset');
     },
     // a drop means we change start date

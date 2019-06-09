@@ -166,7 +166,7 @@ class Saml
                 // 'certFingerprintAlgorithm' => 'sha1',
             ),
             // Security settings
-            'security' => array (
+            'security' => array(
 
                 /** signatures and encryptions offered */
 

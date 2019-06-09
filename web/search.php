@@ -142,16 +142,16 @@ if ($Request->query->count() > 0) {
 
         // Visibility search
         if (!empty($vis)) {
-            $Entity->visibilityFilter = " AND " . $Entity->type . ".visibility = '$vis'";
+            $Entity->visibilityFilter = ' AND ' . $Entity->type . ".visibility = '$vis'";
         }
 
         // Date search
         if (!empty($from) && !empty($to)) {
-            $Entity->dateFilter = " AND " . $Entity->type . ".date BETWEEN '$from' AND '$to'";
+            $Entity->dateFilter = ' AND ' . $Entity->type . ".date BETWEEN '$from' AND '$to'";
         } elseif (!empty($from) && empty($to)) {
-            $Entity->dateFilter = " AND " . $Entity->type . ".date BETWEEN '$from' AND '99991212'";
+            $Entity->dateFilter = ' AND ' . $Entity->type . ".date BETWEEN '$from' AND '99991212'";
         } elseif (empty($from) && !empty($to)) {
-            $Entity->dateFilter = " AND " . $Entity->type . ".date BETWEEN '00000101' AND '$to'";
+            $Entity->dateFilter = ' AND ' . $Entity->type . ".date BETWEEN '00000101' AND '$to'";
         }
 
         if ($Request->query->get('type') === 'experiments') {
@@ -172,13 +172,12 @@ if ($Request->query->count() > 0) {
 
             // Status search
             if (!empty($status)) {
-                $Entity->categoryFilter = " AND " . $Entity->type . ".category = '$status'";
+                $Entity->categoryFilter = ' AND ' . $Entity->type . ".category = '$status'";
             }
-
         } else {
             // Rating search
             if (!empty($rating)) {
-                $Entity->ratingFilter = " AND " . $Entity->type . ".rating LIKE '$rating'";
+                $Entity->ratingFilter = ' AND ' . $Entity->type . ".rating LIKE '$rating'";
             }
 
             // FILTER ON DATABASE ITEMS TYPES

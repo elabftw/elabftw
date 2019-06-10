@@ -272,7 +272,7 @@ msgstr "사용자"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:109
 msgid "Types of items"
-msgstr "항목 종류"
+msgstr "아이템 종류"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:113
 msgid "Experiments template"
@@ -280,11 +280,11 @@ msgstr "문서 양식"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:142
 msgid "Users can delete experiments:"
-msgstr "사용자는 다음 문서를 삭제할 수 있습니다:"
+msgstr "사용자가 팀의 문서를 삭제할 수 있습니다:"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:184
 msgid "Name of the link in the top menu:"
-msgstr "상단 메뉴의 링크 제목"
+msgstr "상단 메뉴에 추가하는 링크 제목"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:193
 msgid "Address where this link should point:"
@@ -292,7 +292,7 @@ msgstr "링크가 가리키는 주소"
 
 #: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:267
 msgid "Has an active account?"
-msgstr "활성황된 계정이 있나요?"
+msgstr "활성화된 계정이 있나요?"
 
 #: src/models/Status.php:245
 msgid "Remove all experiments with this status before deleting this status."
@@ -304,7 +304,7 @@ msgstr "기본 상태"
 
 #: src/models/ItemsTypes.php:218
 msgid "Remove all database items with this type before deleting this type."
-msgstr "삭제하기 전에 관련된 모든 데이터베이스 항목을 삭제하기"
+msgstr "삭제하기 전에 관련된 모든 데이터베이스 아이템을 삭제하기"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:840
 msgid "This is the default text when someone creates an experiment."
@@ -312,11 +312,11 @@ msgstr "문서를 생성할때 적용되는 기본 문구"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:958
 msgid "You should make a backup of your database before importing thousands of items!"
-msgstr "많은 항목을 읽어 오기 전에 데이터베이스 백업을 해두세요"
+msgstr "많은 아이템을 읽어 오기 전에 데이터베이스 백업을 해두세요"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:875
 msgid "1. Select a type of item to import to:"
-msgstr "읽어 오려는 항목의 종류 선택"
+msgstr "읽어 오려는 아이템 종류 선택"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:941
 msgid "Import CSV"
@@ -485,7 +485,7 @@ msgstr "멤버"
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:570
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:171
 msgid "Items"
-msgstr "항목"
+msgstr "아이템"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:574
 msgid "Created"
@@ -507,7 +507,7 @@ msgstr "외부 시점 인증 서비스 암호"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:701
 msgid "Users need validation by admin after registration:"
-msgstr "등록후 승인 과정이 필요한 사용자"
+msgstr "사용자 등록후 승인을 거쳐야만 사용"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:719
 msgid "Set to yes for added security."
@@ -551,7 +551,7 @@ msgstr "SMTP 사용자 암호"
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:241
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
-msgstr "팀 관리자는 항목과 상태를 수정할 수 있습니다 (%sAdmin Panel%s)."
+msgstr "팀 관리자는 아이템과 상태를 수정할 수 있습니다 (%sAdmin Panel%s)."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:253
 msgid "Custom shortcuts are available (%sControl Panel%s)."
@@ -563,7 +563,7 @@ msgstr "클릭으로 문서를 복사할 수 있습니다."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:265
 msgid "Click a tag to list all items with this tag."
-msgstr "태그를 클릭하면 태그된 항목들을 확인하실 수 있습니다."
+msgstr "태그를 클릭하면 태그된 아이템들을 확인하실 수 있습니다."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:271
 msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
@@ -618,12 +618,12 @@ msgstr "사용자 정보 수정"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:118
 msgid "Items per page:"
-msgstr "페이지당 항목 수"
+msgstr "페이지당 아이템 수"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:619
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:71
 msgid "Create new"
-msgstr "새 항목 생성"
+msgstr "새 아이템 생성"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:79
 msgid "Language"
@@ -691,7 +691,7 @@ msgstr "본인만"
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:471
 msgid "Linked items"
-msgstr "링크된 항목"
+msgstr "링크된 아이템"
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:519
 msgid "Add a link"
@@ -793,7 +793,7 @@ msgstr "업로드 하려는 파일을 여기에 드롭하세요"
 
 #: src/models/Revisions.php:161
 msgid "You cannot restore a revision of a locked item!"
-msgstr "잠금 설정된 항목은 이전 문서로 변경할 수 없습니다. "
+msgstr "잠금 설정된 아이템은 이전 문서로 변경할 수 없습니다. "
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:585
 msgid "Molecule drawer"
@@ -815,7 +815,7 @@ msgstr "시점 인증된 pdf 다운로드"
 #: web/app/controllers/ImportController.php:51
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
-msgstr[0] "항목을 모두 읽어왔습니다."
+msgstr[0] "아이템을 모두 읽어왔습니다."
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:69
 msgid "Installed version:"
@@ -876,7 +876,7 @@ msgstr "공백표시는 다음 규칙을 의미: "
 #: web/app/controllers/TodolistController.php:63
 #: web/app/controllers/TodolistController.php:72
 msgid "Item deleted successfully"
-msgstr "항목이 성공적으로 삭제되었습니다"
+msgstr "아이템이 성공적으로 삭제되었습니다"
 
 #: web/app/controllers/EntityAjaxController.php:179
 msgid "File deleted successfully"
@@ -972,7 +972,7 @@ msgstr "삭제"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:648
 msgid "Add a new type of item"
-msgstr "새로운 항목 종류 추가"
+msgstr "새로운 아이템 종류 추가"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:673
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:748
@@ -985,7 +985,7 @@ msgstr "%sscheduler%s 확인"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:694
 msgid "Database Items Types"
-msgstr "데이터베이스 항목 종류"
+msgstr "데이터베이스 아이템 종류"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:756
 msgid "Edit the template"
@@ -1061,7 +1061,7 @@ msgstr "일정"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:83
 msgid "No bookable items."
-msgstr "예약가능한 항목이 없습니다."
+msgstr "예약가능한 아이템이 없습니다."
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:110
 msgid "Select an equipment"
@@ -1069,7 +1069,7 @@ msgstr "장비 선택"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:90
 msgid "Change item"
-msgstr "항목 변경"
+msgstr "아이템 변경"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:113
 msgid "Display"
@@ -1152,7 +1152,7 @@ msgstr "사용자 그룹 관리"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:291
 msgid "Create a group"
-msgstr "그룹 변경"
+msgstr "그룹 생성"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:307
 msgid "Add this user"
@@ -1315,7 +1315,7 @@ msgstr "관련자료 보기"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:297
 msgid "Timestamp Experiment"
-msgstr "시점 인증 문서"
+msgstr "문서 시점 인증"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:392
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:526
@@ -1491,7 +1491,7 @@ msgstr "토큰값 해독"
 
 #: /tmp/elabftw-twig-cache/cb/cbc03ef98da9e02f2236b8ab0177052a46cf25705fbde6c7965113370ebb0ea1.php:278
 msgid "Insert in text at cursor position"
-msgstr "커서 위치에 텍스트 삽입"
+msgstr "커서 위치에 그림 삽입"
 
 #: src/services/Email.php:227
 msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account: "
@@ -1523,7 +1523,7 @@ msgstr "Import to your profile"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:165
 msgid "Anonymous visitors can see database items:"
-msgstr "익명 방문객이 다음 데이터베이스 항목을 볼 수 있습니다:"
+msgstr "익명 방문객이 팀의 데이터베이스 항목을 볼 수 있습니다:"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:263
 msgid "PDF configuration"
@@ -1608,7 +1608,7 @@ msgstr "타임존"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:628
 msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel."
-msgstr "팀이 글로벌 시점 인증 계정을 사용할 수 있는 설정할 수 있습니다. <em>no</em> 로 설정된 경우 팀 관리자는 관리자 패널에 로그인 정보를 추가해야 합니다."
+msgstr "팀이 글로벌 시점 인증 계정을 사용할 수 있도록 설정할 수 있습니다. <em>no</em> 로 설정된 경우 팀 관리자는 관리자 패널에 로그인 정보를 추가해야 합니다."
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:407
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:328

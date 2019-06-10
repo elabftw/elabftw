@@ -11,11 +11,6 @@
     <div class='col-md-2'>
     {% if not App.Session.get('anon') %}
         <div class='dropright'>
-<style>
-#dropdownMenu1{ background-color: white;color: #495057;border: 1px solid #ced4da}
-li.dropdown-item > a { color:black;}
-li.dropdown-item:hover{ color:#29AEB9;}
-</style>
             <button class='btn dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>{{ 'Create new'|trans }} <span class='caret'></span></button>
         <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
             {% if Entity.type == 'experiments' %}

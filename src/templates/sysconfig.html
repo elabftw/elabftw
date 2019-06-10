@@ -165,7 +165,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <!-- TAB 2 TEAMS -->
 <div class='divhandle' id='tab2div'>
-    <div id='teamsDiv form-group'>
+    <div id='teamsDiv' class='form-group'>
         <!-- CREATE TEAM -->
         <div class='box'>
             <h3>{{ 'Add a New Team'|trans }}</h3>
@@ -640,8 +640,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
             </textarea>
             <div class='submitButtonDiv'>
-                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
-                <button class='button button-delete' type="submit" name="clear_policy" class='button'>{{ 'Clear'|trans }}</button>
+                <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
+                <button class='button button-delete' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
             </div>
         </form>
     </div>

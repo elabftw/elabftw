@@ -251,6 +251,7 @@ class ExperimentsController extends AbstractEntityController
             'itemsArr' => $itemsArr,
             'offset' => $offset,
             'query' => $query,
+            'limit' => $limit,
             'searchType' => $searchType,
             'tag' => $tag,
             'templatesArr' => $templatesArr,

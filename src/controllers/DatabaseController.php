@@ -224,6 +224,7 @@ class DatabaseController extends AbstractEntityController
             'Request' => $this->App->Request,
             'categoryArr' => $this->categoryArr,
             'itemsArr' => $itemsArr,
+            'limit' => $limit,
             'offset' => $offset,
             'query' => $query,
             'searchType' => $searchType,

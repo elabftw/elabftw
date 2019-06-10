@@ -93,8 +93,11 @@ abstract class AbstractEntity
     /** @var string $offset offset for sql */
     public $offset = '';
 
-    /** @var bool isReadOnly if we can read but not write to it */
+    /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
+
+    /** @var int $itemsReadNb the total number of items read from sql query */
+    public $itemsReadNb;
 
     /**
      * Constructor
@@ -298,12 +301,23 @@ abstract class AbstractEntity
         $req->execute();
 
         $itemsArr = $req->fetchAll();
+        // store the total number of items read from db
+        $this->itemsReadNb = count($itemsArr);
+
+        // loop the array and only add the ones we can read to return to template
+        $finalArr = array();
+        foreach ($itemsArr as $item) {
+            $permissions = $this->getPermissions($item);
+            if ($permissions['read']) {
+                $finalArr[] = $item;
+            }
+        }
 
         // reduce the dimension of the array if we have only one item (idFilter set)
         if (count($itemsArr) === 1 && !empty($this->idFilter)) {
             return $itemsArr[0];
         }
-        return $itemsArr;
+        return $finalArr;
     }
 
     /**
@@ -400,13 +414,15 @@ abstract class AbstractEntity
     }
 
     /**
-     * Set a limit for sql read
+     * Set a limit for sql read. The limit is two times the wanted number of
+     * displayed results so we can remove the ones without read access
      *
      * @param int $num number of items to ignore
      * @return void
      */
     public function setLimit(int $num): void
     {
+        $num *= 2;
         $this->limit = 'LIMIT ' . $num;
     }
 

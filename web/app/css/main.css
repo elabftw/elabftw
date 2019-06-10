@@ -710,40 +710,8 @@ input[type='checkbox'] {
 }
 
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
-.select-order,
-.select-filter-status,
-.select-filter-cat,
-.select-sort {
-    float: left;
-    border-right: 0;
-    margin: 0;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.select-create {
-    float: left;
-    margin-left: 0;
-}
-
-.select-sort {
-    float: left;
-    margin-left: 0;
-    border-right: 0;
-    margin-right: 0;
-    border-radius: 0;
-}
-
-.submit-order,
-.submit-filter {
-    float: left;
-    border-right: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.submit-reset {
-    float: left;
+form#filter-order-sort select {
+    margin-left: 2px;
 }
 
 /* elabftw colors for buttons */

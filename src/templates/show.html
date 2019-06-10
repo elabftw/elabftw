@@ -52,50 +52,45 @@
     <!-- we hide this menu for small devices -->
 <div class='col-md-10 hidden-xs'>
 
-    <!-- FILTERS -->
-<form id='filter-order-sort' class='form-inline align_right'>
-<div class='form-group'>
-    <input type='hidden' name='tag' value='{{ tag }}' />
-    <input type='hidden' name='q' value='{{ query }}' />
+  <!-- FILTERS -->
+  <form id='filter-order-sort' class='autosubmit form-inline align_right'>
+    <div class='form-group'>
+      <input type='hidden' name='tag' value='{{ tag }}' />
+      <input type='hidden' name='q' value='{{ query }}' />
 
-    <!-- CATEGORY -->
-<select name='cat' style='-moz-appearance:none' class='form-control select-filter-status'>
-    <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
-    {% for category in categoryArr %}
-        <option value='{{ category.category_id }}' {{ App.Request.query.get('cat') == category.category_id ? 'selected'}}>
-        {{ category.category }}</option>
-    {% endfor %}
+      <!-- CATEGORY -->
+      <select name='cat' class='form-control select-filter-status'>
+          <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
+          {% for category in categoryArr %}
+              <option value='{{ category.category_id }}' {{ App.Request.query.get('cat') == category.category_id ? 'selected'}}>
+              {{ category.category }}</option>
+          {% endfor %}
 
-</select>
-<input type='hidden' name='mode' value='show' />
-<button class='btn btn-elab submit-filter'>{{ 'Filter'|trans }}</button>
+      </select>
+      <input type='hidden' name='mode' value='show' />
 
-<!-- ORDER -->
-<select name='order' style='-moz-appearance:none' class='form-control select-order'>
-    <option value=''>{{ 'Order by'|trans }}</option>
-    <option value='cat' {{ App.Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
-    <option value='id' {{ App.Request.query.get('order') == 'id' ? 'selected' }}>{{ 'Id'|trans }}</option>
-    <option value='date' {{ App.Request.query.get('order') == 'date' ? 'selected' }}>{{ 'Date'|trans }}</option>
-    {% if Entity.type == 'database' %}
-        <option value='rating' {{ App.Request.query.get('order') == 'rating' ? 'selected' }}>{{ 'Rating'|trans }}</option>
-    {% else %}
-        <option value='comment' {{ App.Request.query.get('order') == 'comment' ? 'selected' }}>{{ 'Comment'|trans }}</option>
-    {% endif %}
-    <option value='title' {{ App.Request.query.get('order') == 'title' ? 'selected' }}>{{ 'Title'|trans }}</option>
-</select>
+      <!-- ORDER -->
+      <select name='order' class='form-control select-order'>
+          <option value=''>{{ 'Order by'|trans }}</option>
+          <option value='cat' {{ App.Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
+          <option value='id' {{ App.Request.query.get('order') == 'id' ? 'selected' }}>{{ 'Id'|trans }}</option>
+          <option value='date' {{ App.Request.query.get('order') == 'date' ? 'selected' }}>{{ 'Date'|trans }}</option>
+          {% if Entity.type == 'database' %}
+              <option value='rating' {{ App.Request.query.get('order') == 'rating' ? 'selected' }}>{{ 'Rating'|trans }}</option>
+          {% else %}
+              <option value='comment' {{ App.Request.query.get('order') == 'comment' ? 'selected' }}>{{ 'Comment'|trans }}</option>
+          {% endif %}
+          <option value='title' {{ App.Request.query.get('order') == 'title' ? 'selected' }}>{{ 'Title'|trans }}</option>
+      </select>
 
-<!-- SORT -->
-<select name='sort' style='-moz-appearance:none' class='form-control select-sort'>
-    <option value=''>{{ 'Sort'|trans }}</option>
-    <option value='desc' {{ App.Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
-    <option value='asc' {{ App.Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
-</select>
-<button class='btn btn-elab submit-order'>{{ 'Order'|trans }}</button>
-<button type='reset' class='btn btn-danger submit-reset'>
-    {{ 'Reset'|trans }}
-</button>
-</div>
-</form>
+      <!-- SORT -->
+      <select name='sort' class='form-control select-sort'>
+          <option value=''>{{ 'Sort'|trans }}</option>
+          <option value='desc' {{ App.Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
+          <option value='asc' {{ App.Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
+      </select>
+    </div>
+  </form>
 
 </div>
 </div>
@@ -111,15 +106,17 @@
     {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
 {% else %}
     <p class='smallgray' style='display:inline'>
+      {% if searchPage %}
         {{ count }}
         {% trans %}
             result shown
         {% plural count %}
             results shown
         {% endtrans %}
-        <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
-        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> -
-            <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
+      {% endif %}
+      <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
+      <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> -
+        <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
     </p>
 
     <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
@@ -153,80 +150,77 @@
         <button id='deleteChecked' class='button button-delete'>{{ 'Delete'|trans }}</button>
     </p>
     <div class='row display-flex'>
-    {% for item in itemsArr %}
-        {% set permissions = Entity.getPermissions(item) %}
-        {% if permissions.read %}
-            {# dim the experiment a bit if it's not yours #}
-            {% set opacity = '1' %}
-            {% set owner = '' %}
-            {% if (Entity.Users.userData.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
-                {% set opacity = '0.7' %}
-                {% set owner = item.fullname %}
-            {% endif %}
-            {% if Entity.Users.userData.single_column_layout %}
-                <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-            {% else %}
-                <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
-            {% endif %}
-            <section class='item' id='parent_{{ item.id }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
+    {% for item in itemsArr|slice(0, limit) %}
+      {# dim the experiment a bit if it's not yours #}
+      {% set opacity = '1' %}
+      {% set owner = '' %}
+      {% if (Entity.Users.userData.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
+        {% set opacity = '0.7' %}
+        {% set owner = item.fullname %}
+      {% endif %}
+      {% if Entity.Users.userData.single_column_layout %}
+        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+      {% else %}
+        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
+      {% endif %}
+      <section class='item' id='parent_{{ item.id }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
 
-                <p class='title'>
-                {% if item.locked %}
-                    <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
-                {% endif %}
+          <p class='title'>
+          {% if item.locked %}
+              <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+          {% endif %}
 
-                <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
-                </p>
-                {% if item.next_step|length > 0 %}
-                    {% set stepsArr = item.next_step|split('|') %}
-                    {% set next = stepsArr|first %}
-                    <p style='padding-left:20px'>
-                    {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
-                    </p>
-                {% endif %}
+          <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+          </p>
+          {% if item.next_step|length > 0 %}
+              {% set stepsArr = item.next_step|split('|') %}
+              {% set next = stepsArr|first %}
+              <p style='padding-left:20px'>
+              {{ 'Next step'|trans }}: <span style='color:black'>{{ next|raw }}</span>
+              </p>
+          {% endif %}
 
-                <div data-type='{{ Entity.type }}' id='bodyToggleImg_{{ item.id }}' class='bodyToggleImg clickable'>
-                    <i class='align_right fas fa-plus-circle mr-1' title='Show more'></i>
-                </div>
-                <p style='padding-left:20px; margin-bottom: 5px'>
-                    <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' style='width:15px;vertical-align:-3px;' />
-                {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>
-                {% endif %}
-                <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
-                <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
-                {% if item.timestamped %}
-                    <i class='far fa-calendar-check'></i>
-                {% endif %}
+          <div data-type='{{ Entity.type }}' id='bodyToggleImg_{{ item.id }}' class='bodyToggleImg clickable'>
+              <i class='align_right fas fa-plus-circle mr-1' title='Show more'></i>
+          </div>
+          <p style='padding-left:20px; margin-bottom: 5px'>
+              <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' style='width:15px;vertical-align:-3px;' />
+          {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+          <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>
+          {% endif %}
+          <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
+          <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
+          {% if item.timestamped %}
+              <i class='far fa-calendar-check'></i>
+          {% endif %}
 
-                {# show attached if there is a file attached #}
-                {% if item.has_attachment %}
-                    <i class='fas fa-paperclip'></i>
-                {% endif %}
-                {% if item.has_comment %}
-                    <i class='fas fa-comments'></i>
-                {% endif %}
+          {# show attached if there is a file attached #}
+          {% if item.has_attachment %}
+              <i class='fas fa-paperclip'></i>
+          {% endif %}
+          {% if item.has_comment %}
+              <i class='fas fa-comments'></i>
+          {% endif %}
 
-                {% if Entity.type == 'items' and item.rating > 0 %}
-                    {{ item.rating|stars|raw }}
-                {% endif %}
+          {% if Entity.type == 'items' and item.rating > 0 %}
+              {{ item.rating|stars|raw }}
+          {% endif %}
 
-                {{ owner|raw }}
+          {{ owner|raw }}
 
-                {% set tagsArr = Entity.getTags(item.id) %}
-                {% if tagsArr|length > 0 %}
-                <span class='tags'><i class='fas fa-tags mr-1'></i>
-                    {% for tag in tagsArr %}
-                    <a class='tag' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
-                    {% endfor %}
-                {% endif %}
+          {% set tagsArr = Entity.getTags(item.id) %}
+          {% if tagsArr|length > 0 %}
+          <span class='tags'><i class='fas fa-tags mr-1'></i>
+              {% for tag in tagsArr %}
+              <a class='tag' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+              {% endfor %}
+          {% endif %}
 
 
-                </p>
-                <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-            </section>
-            </div>
-        {% endif %}
+          </p>
+          <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+      </section>
+      </div>
     {% endfor %}
     </div>
 
@@ -235,17 +229,28 @@
             {% if offset != 0 %}
                 <button class='button button-neutral previousPage'>{{ 'Previous page'|trans }}</button>
             {% endif %}
-            {% if count >= Entity.Users.userData.limit_nb %}
+            {% if limit < Entity.itemsReadNb %}
                 <button class='button nextPage'>{{ 'Next page'|trans }}</button>
             {% endif %}
         </div>
     {% endif %}
 
+  <!-- LIMIT -->
+  <form id='filter-order-sort' class='autosubmit form-inline align_right'>
+    <span class='smallgray'><label for='select-limit'>{{ 'Results per page'|trans }}</label></span>
+    <select name='limit' id='select-limit' class='form-control'>
+      <option selected value='{{ limit }}'>{{ limit }}</option>
+      <option value='{{ limit + 10 }}'>{{ limit + 10 }}</option>
+      <option value='{{ limit + 20 }}'>{{ limit + 20 }}</option>
+      <option value='{{ limit + 30 }}'>{{ limit + 30 }}</option>
+    </select>
+  </form>
+
 {% endif %}
 
 <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
 <div id='info'
-    data-limit='{{ Entity.Users.userData.limit_nb }}'
+    data-limit='{{ limit }}'
     data-offset='{{ offset }}'
     data-confirm="{{ 'The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'|trans }}">
 </div>

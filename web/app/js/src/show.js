@@ -17,14 +17,9 @@
       window.location.href = 'experiments.php?create=true';
     });
 
-    // the reset button
-    $('.submit-reset').on('click', function() {
-      window.location.href = '?mode=show';
-    });
-
     // validate the form upon change. fix #451
-    $('.form-control').on('change', function() {
-      $('#filter-order-sort').submit();
+    $('.autosubmit').on('change', function() {
+      $(this).submit();
     });
 
     // bodyToggleImg is the little +/- image

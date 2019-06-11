@@ -26,6 +26,10 @@ There is also GitHub notifying me of new vulnerabilities it finds in the depende
 
 The code itself is checked by various static analyzers to try and detect bugs sooner. And best practices are used to prevent SQL injection (with prepared statements), XSS (with a Content-Security-Policy header), and other nasty things.
 
+If you scan the live demo for good practices and security headers, you'll find that eLabFTW scores very very high:
+
+[![observatory score a+](https://i.imgur.com/2qI796u.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
+
 ## Running an elabftw instance securely
 
 Great you've installed elabftw. But you're a little bit paranoid because you're working on some top secret project and you don't want anyone to be able to look at it.

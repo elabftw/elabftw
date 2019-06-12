@@ -154,15 +154,23 @@
 
       <div class='col-xs-12 col-sm-6 col-md-4 col-lg-4' id='doodle_controls'>
         <p>
-        <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
-        <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
+          <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
+          <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
         </p>
+
         <p>
-        <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
-        <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' />
+          <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
+          <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' />
         </p>
-        <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
-        <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+
+        <p>
+          <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}
+        </p>
+
+        <p>
+          <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
+          <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+        <p>
       </div>
     </div>
   </div>

@@ -107,7 +107,13 @@
       path.lineTo(x, y);
       path.closePath();
 
-      context.strokeStyle = $('#doodleStrokeStyle').val();
+      if ($('#doodleEraser').is(':checked')) {
+        context.globalCompositeOperation = "destination-out";
+        context.strokeStyle = "rgba(0,0,0,1)";
+      } else {
+        context.globalCompositeOperation = "source-over";
+        context.strokeStyle = $('#doodleStrokeStyle').val();
+      }
       context.lineJoin = 'round';
       context.lineWidth = $('#doodleStrokeWidth').val();
 

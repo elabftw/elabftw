@@ -27,7 +27,7 @@
 
     $(document).on('click', '.saveCanvas', function() {
       const image = ($('#doodleCanvas')[0]).toDataURL();
-      const type = $(this).data('type');
+      let type = $(this).data('type');
       const id = $(this).data('id');
       const realName = prompt('Enter name of the file');
       if (realName == null) {

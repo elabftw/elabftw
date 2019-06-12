@@ -300,7 +300,7 @@
         context.canvas.height = this.height * 2;
         // add image to canvas
         context.drawImage(img, this.width / 2, this.height / 2);
-      }
+      };
     });
     // STAR RATING
     const StarC = new Star();

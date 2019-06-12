@@ -91,11 +91,17 @@
                 id='filecomment_{{ upload.id }}'>{{ upload.comment}}</p>
             {% endif %}
 
-            {# INSERT IN TEXT in edit mode for images #}
+            <!-- INSERT IN TEXT in edit mode for images -->
             {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-            <div class='inserter clickable' data-link='{{ upload.long_name }}'>
-                <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Insert in text at cursor position'|trans }}</p>
-            </div>
+              <div class='inserter clickable' data-link='{{ upload.long_name }}'>
+                  <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Insert in text at cursor position'|trans }}</p>
+              </div>
+            {% endif %}
+            <!-- Annotate image -->
+            {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif)$/i' %}
+              <div class='clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
+                  <i class='fas fa-paint-brush mr-1'></i><p class='d-inline'>{{ 'Annotate this image'|trans }}</p>
+              </div>
             {% endif %}
 
             {# SAVE AS IMAGE #}
@@ -107,23 +113,23 @@
 
         </div>
 
-                    {% if mode == 'edit' %}
+                  {% if mode == 'edit' %}
                     <div class='clickable replaceUpload' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}'>
-                        <i class='fas fa-sync-alt mr-1'></i><p class='d-inline'>{{ 'Upload a new version of this file'|trans }}</p>
+                      <i class='fas fa-sync-alt mr-1'></i><p class='d-inline'>{{ 'Upload a new version of this file'|trans }}</p>
                     </div>
                     <!-- replace upload form -->
                     <div class='replaceUploadForm' style='display:none'>
-                        <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
-                            <input type='hidden' name='replace' />
-                            <input type='hidden' name='upload_id' value='{{ upload.id }}' />
-                            <input type='hidden' name='id' value='{{ upload.item_id }}' />
-                            <input type='hidden' name='type' value='{{ upload.type }}' />
-                            {{ App.Csrf.getHiddenInput|raw }}
-                            <input type='file' style='display:inline' name='file' />
-                            <button type='submit' class='button'>OK</button>
-                        </form>
+                      <form enctype='multipart/form-data' action='app/controllers/EntityController.php' method='POST'>
+                        <input type='hidden' name='replace' />
+                        <input type='hidden' name='upload_id' value='{{ upload.id }}' />
+                        <input type='hidden' name='id' value='{{ upload.item_id }}' />
+                        <input type='hidden' name='type' value='{{ upload.type }}' />
+                        {{ App.Csrf.getHiddenInput|raw }}
+                        <input type='file' style='display:inline' name='file' />
+                        <button type='submit' class='button'>OK</button>
+                      </form>
                     </div>
-                    {% endif %}
+                  {% endif %}
                 </div>
             </div>
         {% endfor %}

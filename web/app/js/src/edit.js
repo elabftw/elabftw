@@ -279,7 +279,7 @@
     });
 
     // DATEPICKER
-    $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
+    $('#datepicker').datepicker({dateFormat: 'yymmdd'});
     // If the title is 'Untitled', clear it on focus
     $('#title_input').focus(function(){
       if ($(this).val() === $('#info').data('untitled')) {
@@ -287,6 +287,21 @@
       }
     });
 
+    // ANNOTATE IMAGE
+    $(document).on('click', '.annotateImg',  function() {
+      $('.canvasDiv').show();
+      var context = document.getElementById('doodleCanvas').getContext('2d');
+      var img = new Image();
+      // set src attribute to image path
+      img.src = 'app/download.php?f=' + $(this).data('path');
+      img.onload = function(){
+        // make canvas bigger than image
+        context.canvas.width = this.width * 2;
+        context.canvas.height = this.height * 2;
+        // add image to canvas
+        context.drawImage(img, this.width / 2, this.height / 2);
+      }
+    });
     // STAR RATING
     const StarC = new Star();
     $('.star').click(function() {

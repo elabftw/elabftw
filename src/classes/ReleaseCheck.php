@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\ReleaseCheck
- *
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -22,7 +20,7 @@ use GuzzleHttp\Exception\RequestException;
 class ReleaseCheck
 {
     /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.3.2';
+    public const INSTALLED_VERSION = '3.3.3';
 
     /** @var string $URL this file contains the latest version information */
     private const URL = 'https://get.elabftw.net/updates.ini';

@@ -310,7 +310,7 @@ class Tools
             'id_ID' => 'id',
             'it_IT' => 'it',
             'ko_KR' => 'kr',
-            'nl_BR' => 'nl',
+            'nl_BE' => 'nl',
             'pl_PL' => 'pl',
             'pt_BR' => 'pt-br',
             'pt_PT' => 'pt',

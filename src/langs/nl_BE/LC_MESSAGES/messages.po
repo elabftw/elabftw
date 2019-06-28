@@ -318,7 +318,7 @@ msgstr "U hoeft een backup te maken van uw databank alvorens duizenden items te 
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:875
 msgid "1. Select a type of item to import to:"
-msgstr "1. Selecteer het type van item om te importeren:"
+msgstr "1. Selecteer het type item om te importeren:"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:941
 msgid "Import CSV"
@@ -565,7 +565,7 @@ msgstr "Je kan experimenten dupliceren in één muisklik."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:265
 msgid "Click a tag to list all items with this tag."
-msgstr "Selecteer een tag om alle items met deze tag te zien."
+msgstr "Klik op een label om alle items met dit label te zien."
 
 #: /tmp/elabftw-twig-cache/34/34a517d1a6cae52a86fd7852043432a0d956f476f99b280bc7c740e78c0d6284.php:271
 msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
@@ -661,7 +661,7 @@ msgstr "Dit verwijderen?"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:264
 msgid "Tag cloud"
-msgstr "Tag cloud"
+msgstr "Label cloud"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:208
 msgid "Statistics"
@@ -679,12 +679,12 @@ msgstr "Filter op status"
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:685
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:366
 msgid "Tags"
-msgstr "Tags"
+msgstr "Labels"
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:131
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:739
 msgid "Add a tag"
-msgstr "Voeg een tag toe"
+msgstr "Voeg een label toe"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:143
 #: src/models/TeamGroups.php:121
@@ -804,7 +804,7 @@ msgstr "Molecule tekenmodule"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:90
 msgid "With the tag"
-msgstr "Met de Tag"
+msgstr "Met het label"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:641
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:215
@@ -900,7 +900,7 @@ msgstr "Vergrendel/Ontgrendel item"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:305
 msgid "Timestamp this experiment?"
-msgstr "Voeg Tijdszegel aan dit experiment toe?"
+msgstr "Voeg tijdszegel aan dit experiment toe?"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:311
 msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
@@ -1299,7 +1299,7 @@ msgstr "Genereer een API Sleutel"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:277
 msgid "Not enough tags to make a tagcloud"
-msgstr "Onvoldoende Tags om een tagcloud te maken"
+msgstr "Onvoldoende labels om een label-cloud te maken"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:184
 msgid "Duplicate"
@@ -1664,7 +1664,7 @@ msgstr "Importeer"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:121
 msgid "Tag manager"
-msgstr "Tag manager"
+msgstr "Label manager"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:956
 msgid "Import a .elabftw.zip archive."
@@ -1672,7 +1672,7 @@ msgstr "Importeer een elabftw.zip archief."
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1064
 msgid "Manage tags of the team"
-msgstr "Beheer Tags gebruikt door het team"
+msgstr "Beheer door het team gebruikte labels"
 
 #: /tmp/elabftw-twig-cache/aa/aa6be9d0c43409c0952569d6ada537970e116ab111d226ca2a7341809efcd983.php:271
 msgid "Select status"
@@ -1697,235 +1697,235 @@ msgstr "Selecteer een team"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:170
 msgid "Privacy policy"
-msgstr ""
+msgstr "Privacybeleid"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:207
 msgid "Generate report"
-msgstr ""
+msgstr "Genereer rapport"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:221
 msgid "Language:"
-msgstr ""
+msgstr "Taal:"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:259
 msgid "The canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org"
-msgstr ""
+msgstr "Het canonische adres van de eLabFTW installatie. Als dit veld leeg is, probeert eLabFTW dit zelf in te schatten, maar in sommige gevallen is dit niet correct en dient u zelf het veld in te vullen. Voorbeeld: https://elabftw.voorbeeld.org"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:297
 msgid "This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible."
-msgstr ""
+msgstr "Dit laat gebruikers zonder een account toe om aan te melden bij een team en de experimenten met publieke zichtbaarheid te bekijken. Beheerders van elke team kunnen kiezen of database items ook zichtbaar worden gemaakt."
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:302
 msgid "Switch this instance in open science mode:"
-msgstr ""
+msgstr "Wijzig deze instantie naar de open wetenschap modus:"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:320
 msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
-msgstr ""
+msgstr "Dit laat zoekmachines toe om deze website te doorzoeken. Bezoekers worden automatisch aangemeld in het geselecteerde team."
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:325
 msgid "Select which team will be open to the world in open science mode:"
-msgstr ""
+msgstr "Selecteer welk team publiek toegankelijk is via de open wetenschap modus:"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:350
 msgid "This has no effect if open science mode is disabled."
-msgstr ""
+msgstr "Dit heeft geen effect als de open wetenschap modus uitgeschakeld is."
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:770
 msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
-msgstr ""
+msgstr "Zonder een geldige methode om e-mails te versturen, zullen gebruikers hun wachtwoord niet kunnen resetten. Het is aanbevolen om een specifiek %ssmtp2go.com%s account aan te maken en de informatie hier in te vullen."
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:789
 msgid "SMTP (recommended)"
-msgstr ""
+msgstr "SMTP (aanbevolen)"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:795
 msgid "Local MTA"
-msgstr ""
+msgstr "Lokale MTA"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1347
 msgid "Adjust your privacy policy notice"
-msgstr ""
+msgstr "Wijzig de privacybeleid melding"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:1355
 msgid "Note: the text below is a template and must be edited and saved."
-msgstr ""
+msgstr "Opmerking: de onderstaande tekst is een template en moet gewijzigd en opgeslagen worden."
 
 #: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:39
 msgid "Search users"
-msgstr ""
+msgstr "Zoek gebruikers"
 
 #: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:104
 msgid "User ID"
-msgstr ""
+msgstr "Gebruikers ID"
 
 #: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:324
 msgid "Delete user"
-msgstr ""
+msgstr "Verwijder gebruiker"
 
 #: /tmp/elabftw-twig-cache/7f/7f99b558b2f0ae92de0d5ce1dcc68d5908078e219af6ba5d69ddbfda0a8d369c.php:342
 msgid "No user found!"
-msgstr ""
+msgstr "Geen gebruiker gevonden!"
 
 #: /tmp/elabftw-twig-cache/bc/bc07181abdd177acda9ee877a56d3c54bd5aeaabff6207122546337df24b04f8.php:150
 msgid "Select an identity provider"
-msgstr ""
+msgstr "Selecteer een identiteitsprovider"
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:632
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:709
 msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
-msgstr ""
+msgstr "Het geselecteerde item(s) en alle geassocieerde gegevens zullen permanent verwijderd worden. Dit kan niet ongedaan gemaakt worden. Bent u zeker?"
 
 #: /tmp/elabftw-twig-cache/fd/fd9192a9256d8b3bda47a6a9fed71dc4bea20d72404d2372359732b6d0073fd3.php:636
 msgid "Delete this tag?"
-msgstr ""
+msgstr "Dit label verwijderen?"
 
 #: /tmp/elabftw-twig-cache/da/da71ebe5ccb02133d4fab5816ef6be10902aa4165688f0feec80c6482154fc21.php:81
 msgid "by"
-msgstr ""
+msgstr "door"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:77
 msgid "Experiment was timestamped by %s on %s at %s"
-msgstr ""
+msgstr "Experiment werd van een tijdszegel voorzien door %s op %s om %s"
 
 #: /tmp/elabftw-twig-cache/c6/c66684ae1317131f0425a39a7c0d3a9f27e301d3c5a1f3420dab70e54f31b897.php:243
 msgid "Book item"
-msgstr ""
+msgstr "Reserveer item"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:192
 msgid "Use single column layout"
-msgstr ""
+msgstr "Gebruik een lay-out met één kolom"
 
 #: /tmp/elabftw-twig-cache/ac/ac48176f317976effeebde63c7754ad7d5a4aefc2ddc2a08ac983f29b8b50049.php:487
 msgid "Enter your password to edit your profile."
-msgstr ""
+msgstr "Voer uw wachtwoord in om uw profiel te bewerken."
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:51
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:67
 msgid "API keys"
-msgstr ""
+msgstr "API sleutels"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:71
 msgid "Existing keys"
-msgstr ""
+msgstr "Bestaande sleutels"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:83
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:173
 msgid "Permissions"
-msgstr ""
+msgstr "Machtigingen"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:87
 msgid "Creation date"
-msgstr ""
+msgstr "Aanmaakdatum"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:126
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:182
 msgid "Read/Write"
-msgstr ""
+msgstr "Lezen/Schrijven"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:126
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:178
 msgid "Read Only"
-msgstr ""
+msgstr "Alleen Lezen"
 
 #: /tmp/elabftw-twig-cache/74/74fa49ed9fd491b0052fa133ebb4496abba9e93518a78aaa56e5fb77ccef2ad6.php:158
 msgid "Create new key"
-msgstr ""
+msgstr "Genereer een nieuwe sleutel"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:868
 msgid "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv WITH COMMA (,) AS SEPARATOR. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."
-msgstr ""
+msgstr "Importeer een .csv (Excel werkblad) bestand in de databank. Eerst dient u uw .xls/.xlsx bestand in Excel of Libreoffice te openen en op te slaan als een .csv met KOMMA (,) ALS SCHEIDINGSTEKEN. BELANGRIJK: één kolom MOET de naam 'title' hebben. Best maakt u eerst een klein importbestand met 3 lijnen om te kijken of alles werkt, alvorens een groot bestand te importeren."
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:900
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1009
 msgid "2. Select a visibility:"
-msgstr ""
+msgstr "2. Selecteer de zichtbaarheid:"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:934
 msgid "3. Select a CSV file to import:"
-msgstr ""
+msgstr "3. Selecteer een CSV-bestand om te importeren:"
 
 #: /tmp/elabftw-twig-cache/b2/b2cf10f5b492f7aaef40298451074606e4390197c29a2ea485bc86ced5199687.php:1043
 msgid "3. Select a ZIP file to import:"
-msgstr ""
+msgstr "3. Selecteer een ZIP-bestand om te importeren:"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:157
 msgid "You belong to the %s team."
-msgstr ""
+msgstr "U behoort tot het %s team."
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:417
 msgid "No templates from other members of the team to display!"
-msgstr ""
+msgstr "Geen templates van andere gebruikers van het team weer te geven!"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:430
 msgid "Send an email to all team members"
-msgstr ""
+msgstr "Zend een e-mail naar alle teamleden."
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:441
 msgid "Subject"
-msgstr ""
+msgstr "Onderwerp"
 
 #: /tmp/elabftw-twig-cache/f2/f2b1fd7dda070e6f946d44edeff50945d4bc7cd9769c734c60fcc5a387025f98.php:446
 msgid "Content"
-msgstr ""
+msgstr "Inhoud"
 
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:229
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: web/app/controllers/TeamController.php:39
 msgid "Email sent to %d users"
-msgstr ""
+msgstr "E-mail verzonden naar %d gebruikers"
 
 #: web/app/controllers/RegisterController.php:27
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Registratie is uitgeschakeld."
 
 #: web/app/controllers/ProfileController.php:40
 msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"
-msgstr ""
+msgstr "Dit is de enige moment waarop uw sleutel wordt getoond! Zorg ervoor dat u uw sleutel ergens veilig noteert, aangezien u deze later nooit meer kan zien: %s"
 
 #: web/app/controllers/ResetPasswordController.php:38
 msgid "Email provided is invalid."
-msgstr ""
+msgstr "Het ingevoerde e-mailadres is ongeldig."
 
 #: web/app/controllers/ResetPasswordController.php:92
 msgid "Wrong key for resetting password"
-msgstr ""
+msgstr "Foutieve sleutel voor het resetten van een wachtwoord"
 
 #: src/services/Email.php:259
 msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: "
-msgstr ""
+msgstr "Hallo. Uw account op eLabFTW werd gevalideerd door een beheerder. Gebruik deze link om aan te melden: "
 
 #: src/controllers/ExperimentsController.php:97
 #: src/controllers/DatabaseController.php:86
 msgid "This item is locked. You cannot edit it!"
-msgstr ""
+msgstr "Dit item is vergrendeld. Je kan dit niet bewerken!"
 
 #: src/models/Uploads.php:351 src/models/Comments.php:88 src/models/Tags.php:53
 #: src/models/TeamGroups.php:53 src/models/Todolist.php:96
 msgid "Input is too short! (minimum: %d)"
-msgstr ""
+msgstr "Invoer is te kort! (minimum: %d)"
 
 #: src/models/TeamGroups.php:118
 msgid "Public"
-msgstr ""
+msgstr "Publiek"
 
 #: src/models/TeamGroups.php:119
 msgid "Everyone with an account"
-msgstr ""
+msgstr "Iedereen met een account"
 
 #: src/models/TeamGroups.php:120
 msgid "Only the team"
-msgstr ""
+msgstr "Enkel het team"
 
 #: src/models/AbstractEntity.php:322
 msgid "Cannot update a locked entity!"
-msgstr ""
+msgstr "Kan vergrendeld item niet updaten"
 
 #: src/models/Experiments.php:322
 msgid "This experiment was locked by %s. You don't have the rights to unlock this."
-msgstr ""
+msgstr "Dit experiment werd vergrendeld door %s. U heeft geen machtiging om dit te ontgrendelen."

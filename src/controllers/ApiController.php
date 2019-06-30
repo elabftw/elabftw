@@ -149,7 +149,12 @@ class ApiController implements ControllerInterface
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads)
-        $this->endpoint = array_shift($args);
+        $endpoint = array_shift($args);
+        if ($endpoint === null) {
+            throw new ImproperActionException('Could not find endpoint!');
+        }
+
+        $this->endpoint = $endpoint;
     }
 
     /**

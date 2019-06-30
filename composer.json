@@ -16,7 +16,6 @@
     "swiftmailer/swiftmailer":"6.2.*",
     "onelogin/php-saml": "3.1.*",
     "guzzlehttp/guzzle": "6.3.*",
-    "michelf/php-markdown": "1.8.*",
     "symfony/http-foundation": "4.3.*",
     "twig/twig": "2.11.*",
     "twig/extensions": "1.5.*",
@@ -27,7 +26,8 @@
     "league/csv": "^9.2",
     "mpdf/qrcode": "^1.0",
     "symfony/console": "^4.3",
-    "symfony/process": "^4.3"
+    "symfony/process": "^4.3",
+    "league/commonmark": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

@@ -160,7 +160,7 @@ class Tools
     public static function md2html(string $md): string
     {
         $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42));
-        return $converter->convertToHtml($md);
+        return \trim($converter->convertToHtml($md), "\n");
     }
 
     /**

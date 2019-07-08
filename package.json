@@ -19,7 +19,7 @@
     "jquery": "3.4.*",
     "jquery-jeditable": "2.0.*",
     "jquery-ui-dist": "1.12.*",
-    "marked": "0.6.*",
+    "marked": "0.7.*",
     "mathjax": "2.7.5",
     "moment": "2.24.*",
     "popper.js": "1.15.*",

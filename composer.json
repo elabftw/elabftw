@@ -14,7 +14,7 @@
     "defuse/php-encryption": "2.2.*",
     "mpdf/mpdf": "8.0.*",
     "swiftmailer/swiftmailer":"6.2.*",
-    "onelogin/php-saml": "3.1.*",
+    "onelogin/php-saml": "3.2.*",
     "guzzlehttp/guzzle": "6.3.*",
     "symfony/http-foundation": "4.3.*",
     "twig/twig": "2.11.*",

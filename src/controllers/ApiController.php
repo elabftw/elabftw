@@ -236,6 +236,10 @@ class ApiController implements ControllerInterface
         $this->Entity->canOrExplode('read');
         // add the uploaded files
         $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
+        // add the linked items
+        $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
+        // add the steps
+        $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
 
         return new JsonResponse($this->Entity->entityData);
     }

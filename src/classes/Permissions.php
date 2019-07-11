@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Determine read and write access for a user and an entity
@@ -161,6 +162,12 @@ class Permissions
             if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['visibility'])) {
                 return array('read' => true, 'write' => $write);
             }
+        }
+
+        // if we have the elabid in the URL, allow read access to all
+        $Request = Request::createFromGlobals();
+        if ($this->item['elabid'] === $Request->query->get('elabid')) {
+            return array('read' => true, 'write' => $write);
         }
 
         return array('read' => false, 'write' => $write);

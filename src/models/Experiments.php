@@ -240,6 +240,23 @@ class Experiments extends AbstractEntity implements CreateInterface
     }
 
     /**
+     * Get the team from the elabid
+     *
+     * @param string $elabid
+     * @return int
+     */
+    public function getTeamFromElabid(string $elabid): int
+    {
+        $sql = 'SELECT team FROM experiments WHERE elabid = :elabid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        return (int) $req->fetchColumn();
+    }
+
+    /**
      * Select what will be the status for the experiment
      *
      * @return int The status ID

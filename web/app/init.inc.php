@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Exception;
 use Monolog\Logger;
@@ -74,12 +75,25 @@ try {
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
 
     // autologin as anon if it's allowed by sysadmin
-    if ($App->Config->configArr['open_science']) {
+    // don't do it if we have elabid in url
+    if ($App->Config->configArr['open_science'] && !$App->Request->query->has('elabid')) {
         // only autologin on selected pages and if we are not authenticated with an account
         $autoAnon = array('experiments.php', 'database.php', 'search.php');
         if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
             $App->Users->Auth->loginAsAnon((int) $App->Config->configArr['open_team'] ?? 1);
         }
+    }
+
+    // autologin if there is elabid for an experiment in view mode
+    if ($App->Request->query->has('elabid')
+        && \basename($Request->getScriptName()) === 'experiments.php'
+        && $Request->query->get('mode') === 'view'
+        && !$App->Request->getSession()->has('auth')) {
+
+        // now we need to know in which team we autologin the user
+        $Experiments = new Experiments(new Users(), (int) $App->Request->query->get('id'));
+        $team = $Experiments->getTeamFromElabid($App->Request->query->get('elabid'));
+        $App->Users->Auth->loginAsAnon($team);
     }
 
     if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {

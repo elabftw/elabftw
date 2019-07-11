@@ -35,7 +35,7 @@
     "grunt-contrib-uglify-es": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "1.1.*",
     "grunt-shell": "3.0.*",
-    "lodash": "~4.17.5",
+    "lodash": ">=4.17.13",
     "snyk": "1.*",
     "stylelint": "^10.0.0",
     "stylelint-config-recommended": "^2.1.0",

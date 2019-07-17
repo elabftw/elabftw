@@ -59,6 +59,13 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, Tools::checkId(42));
     }
 
+    public function testMd2html()
+    {
+        $md = '[a link](https://www.elabftw.net) **in bold** _in italic_';
+        $html = '<p><a href="https://www.elabftw.net">a link</a> <strong>in bold</strong> <em>in italic</em></p>';
+        $this->assertEquals($html, Tools::md2html($md));
+    }
+
     public function testError()
     {
         $this->assertEquals(Tools::error(), 'An error occurred!');

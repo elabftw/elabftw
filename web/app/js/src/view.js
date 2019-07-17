@@ -62,6 +62,17 @@
       });
     });
 
+    // SHARE
+    $(document).on('click', '.shareItem', function() {
+      $.post('app/controllers/EntityAjaxController.php', {
+        getShareLink: true,
+        id: $(this).data('id'),
+        type: type
+      }).done(function(data) {
+        $('#shareLinkInput').val(data.msg).toggle().focus().select();
+      });
+    });
+
 
     // COMMENTS
     var Comments = {

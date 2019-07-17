@@ -18,7 +18,7 @@
             {% for user in usersArr %}
             <li class='list-group-item'>
               <ul class='list-inline'>
-                <p>Team: {{ user.teamname|raw }}</p>
+                <p>Team: {{ user.teamname|raw }} | Last login: {{ user.last_login ?? 'never' }}</p>
                 <form method='post' action='app/controllers/UsersController.php'>
                   <div class='form-group'>
                     <input type='hidden' value='true' name='usersUpdate' />

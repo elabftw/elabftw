@@ -14,6 +14,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use InvalidArgumentException;
+use League\CommonMark\CommonMarkConverter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -158,7 +159,8 @@ class Tools
      */
     public static function md2html(string $md): string
     {
-        return \Michelf\MarkdownExtra::defaultTransform($md);
+        $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42));
+        return \trim($converter->convertToHtml($md), "\n");
     }
 
     /**
@@ -310,6 +312,7 @@ class Tools
             'id_ID' => 'id',
             'it_IT' => 'it',
             'ko_KR' => 'kr',
+            'nl_BE' => 'nl',
             'pl_PL' => 'pl',
             'pt_BR' => 'pt-br',
             'pt_PT' => 'pt',
@@ -337,6 +340,7 @@ class Tools
             'id_ID' => 'Indonesian',
             'it_IT' => 'Italian',
             'ko_KR' => 'Korean',
+            'nl_BE' => 'Dutch',
             'pl_PL' => 'Polish',
             'pt_BR' => 'Portuguese (Brazilian)',
             'pt_PT' => 'Portuguese',

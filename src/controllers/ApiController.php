@@ -149,7 +149,12 @@ class ApiController implements ControllerInterface
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads)
-        $this->endpoint = array_shift($args);
+        $endpoint = array_shift($args);
+        if ($endpoint === null) {
+            throw new ImproperActionException('Could not find endpoint!');
+        }
+
+        $this->endpoint = $endpoint;
     }
 
     /**
@@ -231,6 +236,10 @@ class ApiController implements ControllerInterface
         $this->Entity->canOrExplode('read');
         // add the uploaded files
         $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
+        // add the linked items
+        $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
+        // add the steps
+        $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
 
         return new JsonResponse($this->Entity->entityData);
     }

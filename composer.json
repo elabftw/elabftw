@@ -14,9 +14,8 @@
     "defuse/php-encryption": "2.2.*",
     "mpdf/mpdf": "8.0.*",
     "swiftmailer/swiftmailer":"6.2.*",
-    "onelogin/php-saml": "3.1.*",
+    "onelogin/php-saml": "3.2.*",
     "guzzlehttp/guzzle": "6.3.*",
-    "michelf/php-markdown": "1.8.*",
     "symfony/http-foundation": "4.3.*",
     "twig/twig": "2.11.*",
     "twig/extensions": "1.5.*",
@@ -27,14 +26,14 @@
     "league/csv": "^9.2",
     "mpdf/qrcode": "^1.0",
     "symfony/console": "^4.3",
-    "symfony/process": "^4.3"
+    "symfony/process": "^4.3",
+    "league/commonmark": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "codeception/codeception": "3.0.*",
     "pyrech/composer-changelogs": "1.6.*",
     "fzaninotto/faker": "^1.8",
-    "phpunit/phpunit": "8.1.*",
     "friendsofphp/php-cs-fixer": "^2.15"
   },
   "autoload": {

@@ -145,6 +145,19 @@ try {
         ));
     }
 
+    // SHARE
+    if ($Request->request->has('getShareLink')) {
+        if (!$Entity instanceof Experiments) {
+            throw new IllegalActionException('Can only share experiments.');
+        }
+        $Entity->canOrExplode('read');
+        $link = Tools::getUrl($Request) . '/experiments.php?mode=view&id=' . $Entity->id . '&elabid=' . $Entity->entityData['elabid'];
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $link,
+        ));
+    }
+
     // UPDATE FILE COMMENT
     if ($Request->request->has('updateFileComment')) {
         $Entity->canOrExplode('write');

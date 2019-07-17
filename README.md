@@ -65,7 +65,7 @@ Free support is available through [GitHub issues](https://github.com/elabftw/ela
 
 You can also join the [chat room on Gitter](https://gitter.im/elabftw/elabftw).
 
-Pro support, hosting or commercial license is available from [Deltablot](https://www.deltablot.com/elabftw).
+Pro support, hosting or commercial license are available from [Deltablot](https://www.deltablot.com/elabftw).
 
 [Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
 

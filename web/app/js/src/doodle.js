@@ -11,22 +11,25 @@
   'use strict';
 
   $(document).ready(function() {
+    // store the clicks
+    let clickX = [];
+    let clickY = [];
+    // bool to store the state of painting
+    let isPainting;
+    const context = document.getElementById('doodleCanvas').getContext('2d');
+
     $('.canvasDiv').hide();
-    $(document).on('click', '.toggleCanvas', function() {
-      $('.canvasDiv').toggle();
-    });
     $(document).on('click', '.clearCanvas', function() {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
       clickX = [];
       clickY = [];
-      clickDrag = [];
     });
 
     $(document).on('click', '.saveCanvas', function() {
-      var image = ($('#doodleCanvas')[0]).toDataURL();
-      var type = $(this).data('type');
-      var id = $(this).data('id');
-      var realName = prompt('Enter name of the file');
+      const image = ($('#doodleCanvas')[0]).toDataURL();
+      let type = $(this).data('type');
+      const id = $(this).data('id');
+      const realName = prompt('Enter name of the file');
       if (realName == null) {
         return;
       }
@@ -48,57 +51,73 @@
       });
     });
 
-
-
-    // code from http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
-    var clickX = [];
-    var clickY = [];
-    var clickDrag = [];
-    var paint;
-    var context = document.getElementById('doodleCanvas').getContext('2d');
-
-    $('#doodleCanvas').mousedown(function(e){
-      paint = true;
-      addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
-      redraw();
-    });
-    $('#doodleCanvas').mousemove(function(e){
-      if (paint) {
-        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-        redraw();
+    $('#doodleCanvas').mousedown(function(e) {
+      // if ctrl key is pressed, we ask for text to insert
+      if (e.ctrlKey) {
+        var text = prompt('Text to insert:');
+        if (text === null) {
+          return;
+        }
+        addText(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, text);
+      } else {
+        isPainting = true;
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, false);
       }
     });
-    $('#doodleCanvas').mouseup(function(){
-      paint = false;
-    });
-    $('#doodleCanvas').mouseleave(function(){
-      paint = false;
+
+    $('#doodleCanvas').mousemove(function(e) {
+      if (isPainting) {
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+      }
     });
 
-    function addClick(x, y, dragging)
-    {
+    $('#doodleCanvas').mouseup(function() {
+      isPainting = false;
+    });
+
+    $('#doodleCanvas').mouseleave(function() {
+      isPainting = false;
+    });
+
+    function addText(x, y, text) {
+      context.font = '18px Arial';
+      context.fillStyle = $('#doodleStrokeStyle').val();
+      context.fillText(text, x, y);
+    }
+
+    function addClick(x, y, dragging) {
       clickX.push(x);
       clickY.push(y);
-      clickDrag.push(dragging);
+      draw(dragging);
     }
-    function redraw() {
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-      context.strokeStyle = '#29AEB9';
-      context.lineJoin = 'round';
-      context.lineWidth = 5;
+    function draw(dragging) {
+      // get last items in arrays
+      let x = clickX[clickX.length - 1];
+      let y = clickY[clickY.length - 1];
 
-      for (var i=0; i < clickX.length; i++) {
-        context.beginPath();
-        if (clickDrag[i] && i){
-          context.moveTo(clickX[i-1], clickY[i-1]);
-        } else {
-          context.moveTo(clickX[i]-1, clickY[i]);
-        }
-        context.lineTo(clickX[i], clickY[i]);
-        context.closePath();
-        context.stroke();
+      let path = new Path2D();
+
+      if (dragging) {
+        path.moveTo(clickX[clickX.length - 2], clickY[clickY.length - 2]);
+      } else {
+        // if it's just a point click, draw from close location
+        path.moveTo(x - 1, y);
       }
+      path.lineTo(x, y);
+      path.closePath();
+
+      if ($('#doodleEraser').is(':checked')) {
+        context.globalCompositeOperation = 'destination-out';
+        context.strokeStyle = 'rgba(0,0,0,1)';
+      } else {
+        context.globalCompositeOperation = 'source-over';
+        context.strokeStyle = $('#doodleStrokeStyle').val();
+      }
+      context.lineJoin = 'round';
+      context.lineWidth = $('#doodleStrokeWidth').val();
+
+      context.stroke(path);
     }
   });
 }());

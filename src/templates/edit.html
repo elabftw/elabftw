@@ -143,24 +143,48 @@
 {{ include('uploads.html') }}
 
 <!-- DOODLE -->
-<section class='box'>
-    <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
-    <button class='button show-hide' data-type='doodle'>+</button>
-    <div class='canvasDiv'>
-        <canvas class='doodle' id='doodleCanvas' width='700px' height='600px'></canvas>
-        <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
-        <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+<section class='box' id='doodle-anchor'>
+  <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
+  <button class='button show-hide' data-type='doodle'>+</button>
+  <div class='canvasDiv'>
+    <div class='row'>
+      <div>
+        <canvas class='doodle' id='doodleCanvas' width='600px' height='600px'></canvas>
+      </div>
+
+      <div class='col-xs-12 col-sm-6 col-md-4 col-lg-4' id='doodle_controls'>
+        <p>
+          <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
+          <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
+        </p>
+
+        <p>
+          <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
+          <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' />
+        </p>
+
+        <p>
+          <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}
+        </p>
+
+        <p>
+          <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
+          <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+        <p>
+      </div>
     </div>
+  </div>
 </section>
-<script src='app/js/doodle.min.js?v={{ v }}'></script>
 
 <!-- CHEM EDITOR -->
 {% if Entity.Users.userData.chem_editor %}
     <div class='box chemdoodle'>
         <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
         <button class='button show-hide' data-type='chem'>+</button>
-        <div class='text-center' style='display:none' id='chem_editor'>
-            <script src='app/js/chemdoodle-canvas.min.js?v={{ v }}'></script>
+            <div class='text-center' style='display:none' id='chem_editor'>
+                <script src='app/js/chemdoodle-canvas.min.js?v={{ v }}'></script>
+            </div>
+          </div>
         </div>
     </div>
 {% endif %}
@@ -187,10 +211,12 @@
 {% if App.Config.configArr.debug %}
   <script src='app/js/src/edit.js?v={{ v }}'></script>
   <script src='app/js/src/tags.js'></script>
+  <script src='app/js/src/doodle.js?v={{ v }}'></script>
   <script src='app/js/src/steps-links.js?v={{ v }}'></script>
 {% else %}
   <script src='app/js/edit.min.js?v={{ v }}'></script>
   <script src='app/js/tags.min.js'></script>
+  <script src='app/js/doodle.min.js?v={{ v }}'></script>
   <script src='app/js/steps-links.min.js?v={{ v }}'></script>
 {% endif %}
 

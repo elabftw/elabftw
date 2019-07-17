@@ -290,6 +290,7 @@
     // ANNOTATE IMAGE
     $(document).on('click', '.annotateImg',  function() {
       $('.canvasDiv').show();
+      $(document).scrollTop($('#doodle-anchor').offset().top);
       var context = document.getElementById('doodleCanvas').getContext('2d');
       var img = new Image();
       // set src attribute to image path

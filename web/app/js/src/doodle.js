@@ -108,10 +108,10 @@
       path.closePath();
 
       if ($('#doodleEraser').is(':checked')) {
-        context.globalCompositeOperation = "destination-out";
-        context.strokeStyle = "rgba(0,0,0,1)";
+        context.globalCompositeOperation = 'destination-out';
+        context.strokeStyle = 'rgba(0,0,0,1)';
       } else {
-        context.globalCompositeOperation = "source-over";
+        context.globalCompositeOperation = 'source-over';
         context.strokeStyle = $('#doodleStrokeStyle').val();
       }
       context.lineJoin = 'round';

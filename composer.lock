@@ -512,16 +512,16 @@
         },
         {
             "name": "maennchen/zipstream-php",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maennchen/ZipStream-PHP.git",
-                "reference": "272cab6f9b7a7e80248ec59a8d114ca197458623"
+                "reference": "6373eefe0b3274d7b702d81f2c99aa977ff97dc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/272cab6f9b7a7e80248ec59a8d114ca197458623",
-                "reference": "272cab6f9b7a7e80248ec59a8d114ca197458623",
+                "url": "https://api.github.com/repos/maennchen/ZipStream-PHP/zipball/6373eefe0b3274d7b702d81f2c99aa977ff97dc2",
+                "reference": "6373eefe0b3274d7b702d81f2c99aa977ff97dc2",
                 "shasum": ""
             },
             "require": {
@@ -569,7 +569,7 @@
                 "stream",
                 "zip"
             ],
-            "time": "2019-04-30T17:14:47+00:00"
+            "time": "2019-07-17T11:01:58+00:00"
         },
         {
             "name": "monolog/monolog",

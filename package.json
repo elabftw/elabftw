@@ -23,12 +23,12 @@
     "mathjax": "2.7.5",
     "moment": "2.24.*",
     "popper.js": "1.15.*",
-    "prismjs": "1.16.*",
+    "prismjs": "1.17.*",
     "tinymce": "5.0.*"
   },
   "devDependencies": {
     "apidoc": "0.17.*",
-    "eslint": "^6.0.1",
+    "eslint": "^6.1.0",
     "expose-loader": "0.7.*",
     "grunt": "1.0.*",
     "grunt-contrib-cssmin": "3.0.*",
@@ -40,7 +40,7 @@
     "stylelint": "^10.0.0",
     "stylelint-config-recommended": "^2.1.0",
     "stylelint-config-standard": "^18.2.0",
-    "webpack": "4.35.*",
+    "webpack": "4.36.*",
     "webpack-cli": "3.3.*"
   },
   "scripts": {

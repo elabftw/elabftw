@@ -233,7 +233,6 @@
                 <button class='button nextPage'>{{ 'Next page'|trans }}</button>
             {% endif %}
         </div>
-    {% endif %}
 
   <!-- LIMIT -->
   <form id='filter-order-sort' class='autosubmit form-inline align_right'>
@@ -245,6 +244,7 @@
       <option value='{{ limit + 30 }}'>{{ limit + 30 }}</option>
     </select>
   </form>
+  {% endif %}
 
 {% endif %}
 

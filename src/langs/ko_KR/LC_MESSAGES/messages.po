@@ -9,7 +9,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: Nicolas CARPi <spam@yopmail.com>\n"
 "Language-Team: \n"
 
 #: /tmp/elabftw-twig-cache/a8/a873a2ce4f11a5a8c1599dd3667523de63dee02142c1e4e2b2a327d8c69ec383.php:286
@@ -1439,7 +1439,7 @@ msgstr "목록으로 돌아가기"
 
 #: /tmp/elabftw-twig-cache/6d/6d2afab9b4d0b4439d996ad5b74f6ea46c3241a01947f8a9de06a70a4c47f44e.php:72
 msgid "Experiment of %s"
-msgstr "%s 개의 문서가 있습니다"
+msgstr "%s 이 작성한 문서입니다"
 
 #: /tmp/elabftw-twig-cache/58/58d7e6d55ad438d4eab72fb9e1900bf5a2571d236e283033e49569c0a70d436b.php:126
 msgid "Manage templates"

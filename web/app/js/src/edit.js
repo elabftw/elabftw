@@ -360,8 +360,11 @@
         delimiter: '#',
         // get the source from json with get request
         source: function (query, process) {
-          let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
-          $.getJSON(url, function(data) {
+          const url = 'app/controllers/EntityAjaxController.php';
+          $.getJSON(url, {
+            mention: 1,
+            term: query,
+          }).done(function(data) {
             process(data);
           });
         }

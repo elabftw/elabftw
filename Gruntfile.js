@@ -87,6 +87,7 @@ module.exports = function(grunt) {
               'node_modules/bootstrap/dist/css/bootstrap.css',
               'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
               'node_modules/jquery-ui-dist/jquery-ui.css',
+              'web/app/css/autocomplete.css',
               'web/app/css/main.css'],
 
           'web/app/css/pdf.min.css': 'web/app/css/pdf.css',

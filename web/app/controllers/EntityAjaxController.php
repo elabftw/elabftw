@@ -75,7 +75,7 @@ try {
     }
 
     // GET LINK LIST
-    if ($Request->query->has('term')) {
+    if ($Request->query->has('term') && !$Request->query->has('mention')) {
         // we don't care about the entity type as getLinkList() is available in AbstractEntity
         $Entity = new Experiments($App->Users);
         $Response->setData($Entity->getLinkList($Request->query->get('term')));

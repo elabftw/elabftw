@@ -21,9 +21,11 @@
     <a class='elab-tooltip' href='app/download.php?f={{ timestampInfo.token.0.long_name }}&name=token.asn1&forceDownload=true'>
         <span>{{ 'Download token'|trans }}</span><i class='fas fa-download'></i>
     </a>
+    <!-- TEMP DISABLE BECAUSE NOT WORKING ATM
     <a href='#' class='elab-tooltip'><span>{{ 'Decode token'|trans }}</span><i class='fas fa-info-circle decodeAsn1' data-token='{{ timestampInfo.token.0.long_name }}' data-id='{{ Entity.entityData.id }}'></i>
     </a>
     <div style='color:black;overflow:auto' id='decodedDiv'></div>
+    !-->
 </div>
 {% endif %}
 

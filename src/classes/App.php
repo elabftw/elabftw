@@ -14,7 +14,9 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
+use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +27,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
  */
 class App
 {
+    use UploadTrait;
+
     /** @var Request $Request the request */
     public $Request;
 
@@ -200,6 +204,12 @@ class App
         $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
         $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
+
+        // custom test to check for a file
+        $test = new \Twig\TwigTest('readable', function ($path) {
+            return \is_readable($this->getUploadsPath() . $path);
+        });
+        $TwigEnvironment->addTest($test);
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($dateFilter);

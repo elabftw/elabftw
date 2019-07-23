@@ -289,6 +289,12 @@ class Uploads implements CrudInterface
         if (\in_array($ext, Extensions::SPREADSHEET, true)) {
             return 'fa-file-excel';
         }
+        if (\in_array($ext, Extensions::IMAGE, true)) {
+            return 'fa-file-image';
+        }
+        if ($ext === 'pdf') {
+            return 'fa-file-pdf';
+        }
         if (\in_array($ext, Extensions::PRESENTATION, true)) {
             return 'fa-file-powerpoint';
         }

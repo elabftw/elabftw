@@ -839,6 +839,11 @@ form#filter-order-sort select {
     overflow-wrap: break-word;
 }
 
+.clickable.title_view:hover {
+    transition: color 0.8s ease;
+    color: #29aeb9;
+}
+
 .date {
     color: #5d5d5d;
     padding: 0 5px;

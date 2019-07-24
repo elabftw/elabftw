@@ -465,7 +465,7 @@ class Tools
         }
         // now find the place where to include our limit
         $place = count($limits);
-        foreach($limits as $key => $limit) {
+        foreach ($limits as $key => $limit) {
             if ($input < $limit) {
                 $place = $key;
                 break;

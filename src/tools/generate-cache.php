@@ -13,7 +13,7 @@ $tmpDir = '/tmp/elabftw-twig-cache/';
 $loader = new \Twig\Loader\FilesystemLoader($tplDir);
 
 // force auto-reload to always have the latest version of the template
-$Twig = new Twig\Environment($loader, array(
+$TwigEnvironment = new Twig\Environment($loader, array(
     'cache' => $tmpDir,
     'auto_reload' => true,
 ));
@@ -26,20 +26,27 @@ $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars'
 $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
 $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
 $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
+$limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\Tools::getLimitOptions');
 
-$Twig->addFilter($msgFilter);
-$Twig->addFilter($dateFilter);
-$Twig->addFilter($mdFilter);
-$Twig->addFilter($starsFilter);
-$Twig->addFilter($bytesFilter);
-$Twig->addFilter($extFilter);
-$Twig->addFilter($filesizeFilter);
-$Twig->addExtension(new \Twig_Extensions_Extension_I18n());
+// custom test to check for a file
+$test = new \Twig\TwigTest('readable', function (string $path) {
+    return \is_readable($this->getUploadsPath() . $path);
+});
+$TwigEnvironment->addTest($test);
+$TwigEnvironment->addFilter($msgFilter);
+$TwigEnvironment->addFilter($dateFilter);
+$TwigEnvironment->addFilter($mdFilter);
+$TwigEnvironment->addFilter($starsFilter);
+$TwigEnvironment->addFilter($bytesFilter);
+$TwigEnvironment->addFilter($extFilter);
+$TwigEnvironment->addFilter($filesizeFilter);
+$TwigEnvironment->addFunction($limitOptions);
+$TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // iterate over all the templates
 foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($tplDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
     // force compilation
     if ($file->isFile()) {
-        $Twig->loadTemplate(str_replace($tplDir . '/', '', $file));
+        $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file));
     }
 }

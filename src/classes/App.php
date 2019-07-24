@@ -205,7 +205,6 @@ class App
         $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
         $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\Tools::getLimitOptions');
 
-
         // custom test to check for a file
         $test = new \Twig\TwigTest('readable', function (string $path) {
             return \is_readable($this->getUploadsPath() . $path);

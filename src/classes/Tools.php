@@ -215,9 +215,9 @@ class Tools
      */
     public static function formatBytes(int $bytes): string
     {
-         $sizes = array('B','KiB','MiB','GiB','TiB');
-         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
-         return sprintf("%.2f", $bytes / pow(1024, $factor)) . ' ' . @$sizes[$factor];
+        $sizes = array('B','KiB','MiB','GiB','TiB');
+        $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+        return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . @$sizes[$factor];
     }
 
     /**

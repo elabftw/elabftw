@@ -14,7 +14,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
-use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;

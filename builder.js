@@ -51,7 +51,7 @@ module.exports = {
   },
   plugins: [
     // only load the moment locales that we are interested in
-    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|pl|pt|pt-br|ru|sk|sl|zh-cn)$/)
+    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/)
   ],
   resolve: {
     alias: {

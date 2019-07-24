@@ -17,6 +17,6 @@ function relativeMoment() {
 
 $(document).ready(function() {
   // i18n for moment.js
-  //moment.locale($('#info').data('locale'));
+  moment.locale($('#info').data('locale'));
   relativeMoment();
 });

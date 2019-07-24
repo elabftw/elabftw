@@ -27,7 +27,10 @@
     "tinymce": "5.0.*"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "apidoc": "0.17.*",
+    "babel-loader": "^8.0.6",
     "eslint": "^6.1.0",
     "expose-loader": "0.7.*",
     "grunt": "1.0.*",

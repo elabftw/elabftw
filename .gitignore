@@ -10,6 +10,7 @@ cache
 config.php*
 *.min.css
 *.min.js
+*.js.map
 *.bundle.js
 node_modules/*
 web/test.php

@@ -65,6 +65,16 @@ module.exports = {
   },
   module: {
     rules:[
+      // transpile things with babel so javascript works with Edge
+      {
+        test: /\.m?js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      },
       // expose jquery and moment globally
       {
         test: require.resolve('jquery'),

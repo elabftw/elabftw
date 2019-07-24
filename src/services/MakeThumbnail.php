@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Exception;
 use Gmagick;
@@ -90,7 +91,8 @@ final class MakeThumbnail
         }
 
         // use gmagick preferentially
-        if (\extension_loaded('gmagick')) {
+        // FIXME at the moment there is a bug with only png files on thumbnail generation, so use GD for png
+        if (\extension_loaded('gmagick') && Tools::getExt($this->filePath) !== 'png') {
             $this->useGmagick();
 
         // if we don't have gmagick, try with gd

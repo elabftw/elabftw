@@ -207,7 +207,7 @@ class App
 
 
         // custom test to check for a file
-        $test = new \Twig\TwigTest('readable', function ($path) {
+        $test = new \Twig\TwigTest('readable', function (string $path) {
             return \is_readable($this->getUploadsPath() . $path);
         });
         $TwigEnvironment->addTest($test);

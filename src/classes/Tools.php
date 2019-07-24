@@ -215,21 +215,9 @@ class Tools
      */
     public static function formatBytes(int $bytes): string
     {
-        // nice display of filesize
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        }
-
-        if ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KiB';
-        } elseif ($bytes < 1073741824) {
-            return round($bytes / 1048576, 2) . ' MiB';
-        } elseif ($bytes < 1099511627776) {
-            return round($bytes / 1073741824, 2) . ' GiB';
-        } elseif ($bytes < 1125899906842624) {
-            return round($bytes / 1099511627776, 2) . ' TiB';
-        }
-        return 'That is a very big file you have there my friend.';
+         $sizes = array('B','KiB','MiB','GiB','TiB');
+         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+         return sprintf("%.2f", $bytes / pow(1024, $factor)) . ' ' . @$sizes[$factor];
     }
 
     /**
@@ -471,7 +459,7 @@ class Tools
                 break;
             }
         }
-        array_splice($limits, $place, 0, $input);
+        array_splice($limits, $place, 0, array($input));
         return $limits;
     }
 }

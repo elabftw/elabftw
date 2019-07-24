@@ -9,7 +9,8 @@
   'use strict';
   $(document).ready(function() {
     let type = $('#info').data('type');
-    let confirmText = $('#info').data('confirm');
+    let confirmStep = $('#info').data('confirmstep');
+    let confirmLink = $('#info').data('confirmlink');
 
     class Link {
 
@@ -40,7 +41,7 @@
       destroy(elem) {
         let id = elem.data('id');
         let linkId = elem.data('linkid');
-        if (confirm(confirmText)) {
+        if (confirm(confirmLink)) {
           $.post('app/controllers/EntityAjaxController.php', {
             destroyLink: true,
             id: id,
@@ -108,7 +109,7 @@
         // the id of the exp/item/tpl
         let id = elem.data('id');
         let stepId = elem.data('stepid');
-        if (confirm(confirmText)) {
+        if (confirm(confirmStep)) {
           $.post('app/controllers/EntityAjaxController.php', {
             destroyStep: true,
             id: id,

@@ -203,6 +203,8 @@ class App
         $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
         $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
+        $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\Tools::getLimitOptions');
+
 
         // custom test to check for a file
         $test = new \Twig\TwigTest('readable', function ($path) {
@@ -217,6 +219,7 @@ class App
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
         $TwigEnvironment->addFilter($filesizeFilter);
+        $TwigEnvironment->addFunction($limitOptions);
 
         // i18n for twig
         $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());

@@ -187,7 +187,12 @@ if ($Request->query->count() > 0) {
         }
 
         // READ the results
-        $itemsArr = $Entity->read();
+        $inTeam = true;
+        // look outside the team if we're filtering for organization
+        if ($vis === 'organization') {
+            $inTeam = false;
+        }
+        $itemsArr = $Entity->read(false, $inTeam);
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)

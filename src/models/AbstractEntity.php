@@ -192,10 +192,11 @@ abstract class AbstractEntity
      * Here be dragons!
      *
      * @param bool $getTags if true, might take a very long time, false in show mode
+     * @param bool $inTeam, set to false to disable team filtering
      *
      * @return array
      */
-    public function read(bool $getTags = true): array
+    public function read(bool $getTags = true, bool $inTeam = true): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
@@ -240,7 +241,6 @@ abstract class AbstractEntity
                     experiments_comments.item_id FROM experiments_comments GROUP BY experiments_comments.item_id
                 ) AS experiments_comments
                 ON (experiments_comments.item_id = experiments.id)';
-            $where = 'WHERE experiments.team = :team';
 
             $sql = $select . ' ';
             if ($getTags) {
@@ -254,8 +254,7 @@ abstract class AbstractEntity
             }
             $sql .= $statusJoin . ' ' .
             $uploadsJoin . ' ' .
-            $commentsJoin . ' ' .
-            $where;
+            $commentsJoin;
         } elseif ($this instanceof Database) {
             $sql = "SELECT DISTINCT items.*, items_types.name AS category,
                 items_types.color,
@@ -267,7 +266,6 @@ abstract class AbstractEntity
             $from = 'FROM items
                 LEFT JOIN items_types ON (items.category = items_types.id)
                 LEFT JOIN users ON (users.userid = items.userid)';
-            $where = 'WHERE items.team = :team';
 
             $sql .= ' ';
             if ($getTags) {
@@ -277,9 +275,14 @@ abstract class AbstractEntity
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }
-            $sql .= $where;
         } else {
             throw new IllegalActionException('Nope.');
+        }
+
+        if ($this->id === null && $inTeam === true) {
+            $sql .= ' WHERE ' . $this->type . '.team = :team';
+        } else {
+            $sql .= ' WHERE 1=1';
         }
 
         $sql .= $this->idFilter . ' ' .

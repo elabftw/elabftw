@@ -19,7 +19,7 @@ $I->seeInDatabase('tags', array('tag' => 'New tag'));
 $I->wantTo('Delete a tag from the tag manager');
 $I->amOnPage('admin.php?tab=8');
 $I->see('Manage tags of the team');
-$I->click('#tag_manager > p:nth-child(1) > svg:nth-child(2) > path:nth-child(2)');
+$I->click('#tag_manager > p:nth-child(1) > svg:nth-child(2)');
 $I->acceptPopup();
 $I->waitForJS('return jQuery.active == 0', 10);
 $I->dontSeeInDatabase('tags', array('tag' => 'New tag'));

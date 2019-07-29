@@ -135,7 +135,7 @@ if ($Request->query->count() > 0) {
             $having = 'HAVING ';
             foreach ($selectedTagsArr as $tag) {
                 $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
-                $having .= "tags LIKE '%$tag%' AND ";
+                $having .= " (tags LIKE '%|$tag|%' OR tags LIKE '$tag' OR tags LIKE '$tag|%' OR tags LIKE '%|$tag') AND ";
             }
             $Entity->tagFilter .= rtrim($having, ' AND');
         }
@@ -192,7 +192,7 @@ if ($Request->query->count() > 0) {
         if ($vis === 'organization') {
             $inTeam = false;
         }
-        $itemsArr = $Entity->read(false, $inTeam);
+        $itemsArr = $Entity->read(true, $inTeam);
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)

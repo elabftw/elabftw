@@ -153,7 +153,7 @@ class ExperimentsController extends AbstractEntityController
             $having = 'HAVING ';
             foreach ($this->App->Request->query->get('tags') as $tag) {
                 $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
-                $having .= "tags LIKE '%$tag%' AND ";
+                $having .= " (tags LIKE '%|$tag|%' OR tags LIKE '$tag' OR tags LIKE '$tag|%' OR tags LIKE '%|$tag') AND ";
             }
             $this->Entity->tagFilter = rtrim($having, ' AND');
             $searchType = 'tag';

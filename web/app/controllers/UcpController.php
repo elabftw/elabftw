@@ -58,7 +58,7 @@ try {
         $tpl_body = Tools::checkBody($Request->request->get('new_tpl_body'));
 
         $Templates = new Templates($App->Users);
-        $Templates->create($tpl_name, $tpl_body);
+        $Templates->createNew($tpl_name, $tpl_body);
     }
 
     // EDIT TEMPLATES

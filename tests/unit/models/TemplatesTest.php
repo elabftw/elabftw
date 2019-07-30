@@ -16,9 +16,9 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->Templates= new Templates(new Users(1));
     }
 
-    public function testCreate()
+    public function testCreateNew()
     {
-        $this->Templates->create('Test tpl', 'pwet', 1);
+        $this->Templates->createNew('Test tpl', 'pwet', 1);
     }
 
     public function testRead()

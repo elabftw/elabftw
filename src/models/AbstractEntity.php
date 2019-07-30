@@ -122,6 +122,14 @@ abstract class AbstractEntity
     }
 
     /**
+     * Create an empty entry
+     *
+     * @param int $tpl a template/category
+     * @return int the new id
+     */
+    abstract public function create(int $tpl): int;
+
+    /**
      * Duplicate an item
      *
      * @return int the new item id

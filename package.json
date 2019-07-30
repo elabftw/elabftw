@@ -8,9 +8,9 @@
   "dependencies": {
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
-    "@fortawesome/free-brands-svg-icons": "5.9.*",
-    "@fortawesome/free-regular-svg-icons": "5.9.*",
-    "@fortawesome/free-solid-svg-icons": "5.9.*",
+    "@fortawesome/free-brands-svg-icons": "5.10.*",
+    "@fortawesome/free-regular-svg-icons": "5.10.*",
+    "@fortawesome/free-solid-svg-icons": "5.10.*",
     "bootstrap": "~4.3.*",
     "bootstrap-markdown-fa5": "2.10.*",
     "dropzone": "5.5.*",

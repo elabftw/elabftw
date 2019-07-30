@@ -24,9 +24,9 @@ trait TwigTrait
      *
      * @param Config $config
      *
-     * @return \Twig_Environment
+     * @return \Twig\Environment
      */
-    protected function getTwig(Config $config): \Twig_Environment
+    protected function getTwig(Config $config): \Twig\Environment
     {
         $elabRoot = \dirname(__DIR__, 2);
         $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");

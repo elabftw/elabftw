@@ -217,7 +217,7 @@ class Tools
     {
         $sizes = array('B','KiB','MiB','GiB','TiB');
         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
-        return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . @$sizes[$factor];
+        return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . $sizes[$factor];
     }
 
     /**

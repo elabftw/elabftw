@@ -55,12 +55,14 @@ if ($Request->query->get('type') === 'experiments') {
 }
 
 // TITLE
+$title = '';
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
     $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
     $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type);
 }
 
 // BODY
+$body = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
     $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
     $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type);

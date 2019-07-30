@@ -491,7 +491,7 @@ class MakeTimestamp extends AbstractMake
         }
 
         try {
-            $output = $this->runProcess(array(
+            $this->runProcess(array(
                 'openssl',
                 'ts',
                 '-verify',

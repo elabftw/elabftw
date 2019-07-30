@@ -38,11 +38,17 @@ class ApiController implements ControllerInterface
     /** @var array $allowedMethods allowed HTTP methods */
     private $allowedMethods = array('GET', 'POST');
 
+    /** @var bool $canWrite can we do POST methods? */
+    private $canWrite = false;
+
     /** @var int|null $id the id at the end of the url */
     private $id;
 
     /** @var string $endpoint experiments, items or uploads */
     private $endpoint;
+
+    /** @var int $userid the authenticated user */
+    private $userid;
 
     /**
      * Constructor
@@ -76,25 +82,9 @@ class ApiController implements ControllerInterface
             return new Response('No access token provided!', 401, array('WWW-Authenticate' => 'Bearer'));
         }
 
-        // verify the key and load user info
-        $Users = new Users();
-        $ApiKeys = new ApiKeys($Users);
-        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
-        $Users->setId((int) $keyArr['userid']);
-        $canWrite = (bool) $keyArr['canWrite'];
-
         // GET UPLOAD
         if ($this->endpoint === 'uploads') {
-            return $this->getUpload((int) $Users->userData['userid']);
-        }
-
-        // load Entity
-        if ($this->endpoint === 'experiments') {
-            $this->Entity = new Experiments($Users, $this->id);
-        } elseif ($this->endpoint === 'items') {
-            $this->Entity = new Database($Users, $this->id);
-        } else {
-            throw new ImproperActionException('Bad endpoint!');
+            return $this->getUpload();
         }
 
         // GET ENTITY
@@ -105,7 +95,7 @@ class ApiController implements ControllerInterface
         // POST request
 
         // POST means write access for the access token
-        if (!$canWrite) {
+        if (!$this->canWrite) {
             return new Response('Cannot use readonly key with POST method!', 403);
         }
         // FILE UPLOAD
@@ -150,11 +140,25 @@ class ApiController implements ControllerInterface
 
         // assign the endpoint (experiments, items, uploads)
         $endpoint = array_shift($args);
-        if ($endpoint === null) {
-            throw new ImproperActionException('Could not find endpoint!');
-        }
 
         $this->endpoint = $endpoint;
+        // verify the key and load user info
+        $Users = new Users();
+        $ApiKeys = new ApiKeys($Users);
+        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
+        $Users->setId((int) $keyArr['userid']);
+        $this->userid = (int) $keyArr['userid'];
+        $this->canWrite = (bool) $keyArr['canWrite'];
+
+        // load Entity
+        // if endpoint is uploads we don't actually care about the entity type
+        if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads') {
+            $this->Entity = new Experiments($Users, $this->id);
+        } elseif ($this->endpoint === 'items') {
+            $this->Entity = new Database($Users, $this->id);
+        } else {
+            throw new ImproperActionException('Bad endpoint!');
+        }
     }
 
     /**
@@ -259,10 +263,9 @@ class ApiController implements ControllerInterface
     /**
      * Get the file corresponding to the ID
      *
-     * @param int $userid
      * @return Response
      */
-    private function getUpload(int $userid): Response
+    private function getUpload(): Response
     {
         if ($this->id === null) {
             return new Response('You need to specify an ID!', 400);
@@ -272,7 +275,7 @@ class ApiController implements ControllerInterface
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
-        if ((int) $uploadData['userid'] !== $userid) {
+        if ((int) $uploadData['userid'] !== $this->userid) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = \dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];

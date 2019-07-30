@@ -8,14 +8,14 @@
 (function() {
   'use strict';
 
-  // ARCHIVE USER
-  $(document).on('click', '.archiveUser', function(e) {
+  // ARCHIVE USER TOGGLE
+  $(document).on('click', '.toggleArchiveUser', function(e) {
     // don't trigger the form
     e.preventDefault();
     // show alert
-    if (confirm('Are you sure you want to archive this user?')) {
+    if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
       $.post('app/controllers/UsersAjaxController.php', {
-        usersArchive: true,
+        toggleArchiveUser: true,
         userid: $(this).data('userid')
       }).done(function(json) {
         notif(json);

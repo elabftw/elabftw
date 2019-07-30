@@ -53,8 +53,8 @@ try {
         $targetUser->validate();
     }
 
-    // ARCHIVE USER
-    if ($Request->request->has('usersArchive')) {
+    // ARCHIVE USER TOGGLE
+    if ($Request->request->has('toggleArchiveUser')) {
 
         // you need to be at least admin to archive a user
         if (!$Session->get('is_admin')) {
@@ -66,7 +66,12 @@ try {
             throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
         }
 
-        $targetUser->archive();
+        $targetUser->toggleArchive();
+
+        // if we are archiving a user, also lock all experiments
+        if ($targetUser->userData['archived'] === '0') {
+            $targetUser->lockExperiments();
+        }
     }
 
 

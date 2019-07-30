@@ -105,9 +105,9 @@
                     <!-- ARCHIVE USER -->
                     <li class='list-inline-item'>
                       {% if user.archived %}
-                        <p>{{ 'User is archived'|trans }}</p>
+                        <button class='button toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Unarchive user'|trans }}</button>
                       {% else %}
-                        <button class='button button-delete archiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                        <button class='button button-delete toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
                       {% endif %}
                     </li>
 

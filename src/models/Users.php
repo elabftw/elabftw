@@ -704,19 +704,27 @@ class Users
     }
 
     /**
-     * Archive a user
+     * Archive/Unarchive a user
      *
      * @return void
      */
-    public function archive(): void
+    public function toggleArchive(): void
     {
-        $sql = 'UPDATE users SET archived = 1, token = null WHERE userid = :userid';
+        $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+    }
 
+    /**
+     * Lock all the experiments owned by user
+     *
+     * @return void
+     */
+    public function lockExperiments(): void
+    {
         $sql = 'UPDATE experiments
             SET locked = :locked, lockedby = :userid, lockedwhen = CURRENT_TIMESTAMP WHERE userid = :userid';
         $req = $this->Db->prepare($sql);

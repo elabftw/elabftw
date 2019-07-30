@@ -1,13 +1,18 @@
 #!/bin/bash
 # https://www.elabftw.net
 
+# call this from inside the docker dev container
 # generate the .po file for french lang
 # it can then be imported in poeditor for the other languages
-# first generate the cache files of twig templates
-# $ php src/tools/generate-cache.php
+
+set -eu
+
+apk add --update gettext
+# first generate all the cache files of twig templates
+./bin/console dev:gencache
 
 # add it to the list
-find /tmp/elabftw-twig-cache -name '*.php' >> /tmp/list
+find cache/twig -name '*.php' >> /tmp/list
 
 # add normal php files to the list too
 find web/app -name '*.php' >> /tmp/list

@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class App
 {
     use UploadTrait;
+    use TwigTrait;
 
     /** @var Request $Request the request */
     public $Request;
@@ -48,9 +49,6 @@ class App
 
     /** @var Db $Db SQL Database */
     public $Db;
-
-    /** @var \Twig_Environment $Twig instance of Twig */
-    public $Twig;
 
     /** @var string $pageTitle the title for the current page */
     public $pageTitle = 'Lab manager';
@@ -94,7 +92,6 @@ class App
         $this->Db = Db::getConnection();
         $this->Session = $session;
         $this->Csrf = $csrf;
-        $this->Twig = $this->getTwig();
 
         $this->ok = $this->Session->getFlashBag()->get('ok');
         $this->ko = $this->Session->getFlashBag()->get('ko');
@@ -164,73 +161,6 @@ class App
      */
     public function render(string $template, array $variables): string
     {
-        return $this->Twig->render($template, array_merge(array('App' => $this), $variables));
-    }
-
-    /**
-     * Prepare the Twig object
-     *
-     * @return \Twig_Environment
-     */
-    private function getTwig(): \Twig_Environment
-    {
-        $elabRoot = \dirname(__DIR__, 2);
-        $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
-        $cache = "$elabRoot/cache/twig";
-        if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
-            throw new FilesystemErrorException("Unable to create the cache directory ($cache)");
-        }
-
-        $options = array('cache' => $cache);
-
-        // Twig debug mode will allow to use dump() and force autoreload
-        // so it will not use the cache
-        if ($this->Config->configArr['debug']) {
-            $options['debug'] = true;
-        }
-
-        $TwigEnvironment = new \Twig\Environment($loader, $options);
-
-        // custom twig filters
-        //
-        // WARNING: MIRROR MODIFS TO SRC/TOOLS/GENERATE-CACHE.PHP!!
-        //
-        $filterOptions = array('is_safe' => array('html'));
-        $msgFilter = new \Twig\TwigFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
-        $dateFilter = new \Twig\TwigFilter('kdate', '\Elabftw\Elabftw\Tools::formatDate', $filterOptions);
-        $mdFilter = new \Twig\TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-        $starsFilter = new \Twig\TwigFilter('stars', '\Elabftw\Elabftw\Tools::showStars', $filterOptions);
-        $bytesFilter = new \Twig\TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
-        $extFilter = new \Twig\TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $filesizeFilter = new \Twig\TwigFilter('filesize', '\filesize', $filterOptions);
-        $limitOptions = new \Twig\TwigFunction('limitOptions', '\Elabftw\Elabftw\Tools::getLimitOptions');
-
-        // custom test to check for a file
-        $test = new \Twig\TwigTest('readable', function (string $path) {
-            return \is_readable($this->getUploadsPath() . $path);
-        });
-        $TwigEnvironment->addTest($test);
-
-        $TwigEnvironment->addFilter($msgFilter);
-        $TwigEnvironment->addFilter($dateFilter);
-        $TwigEnvironment->addFilter($mdFilter);
-        $TwigEnvironment->addFilter($starsFilter);
-        $TwigEnvironment->addFilter($bytesFilter);
-        $TwigEnvironment->addFilter($extFilter);
-        $TwigEnvironment->addFilter($filesizeFilter);
-        $TwigEnvironment->addFunction($limitOptions);
-
-        // i18n for twig
-        $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
-
-        // add the version as a global var so we can have it for the ?v=x.x.x for js files
-        $ReleaseCheck = new ReleaseCheck($this->Config);
-        $TwigEnvironment->addGlobal('v', $ReleaseCheck::INSTALLED_VERSION);
-
-        if ($this->Config->configArr['debug']) {
-            $TwigEnvironment->addExtension(new \Twig\Extension\DebugExtension());
-        }
-
-        return $TwigEnvironment;
+        return $this->getTwig($this->Config)->render($template, array_merge(array('App' => $this), $variables));
     }
 }

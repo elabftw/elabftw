@@ -20,16 +20,10 @@
 
 # Description
 
-- Tired of that shared excel file for your antibodies or plasmids?
+**eLabFTW** is an electronic lab notebook manager for research teams.
 
-- Want to be able to search in your past experiments as easily as you would do it on google?
-
-- Want an electronic lab notebook that lets you timestamp legally your experiments?
-
-Then you are at the right place!
-
-**eLabFTW** is an electronic lab notebook manager for research teams. It features a database where any kind of objects (such as antibodies, plasmids, cell lines, boxes, _etc_.) can be stored.
-It can be accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe.
+It lets you store and organize your research experiments easily. It also features a database where any kind of objects (such as antibodies, plasmids, cell lines, boxes, _etc_.) can be stored.
+It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe.
 
 Click the image below to see it in bigger size:
 [![Demo gif](https://i.imgur.com/pH6Qvwf.gif)](https://gfycat.com/WillingIncompleteAstarte)

@@ -316,9 +316,16 @@ class Auth
     {
         $token = \hash('sha256', \bin2hex(\random_bytes(16)));
 
-        // create cookie
-        // name, value, expire, path, domain, secure, httponly
-        \setcookie('token', $token, time() + 2592000, '/', '', true, true);
+        // create cookie for login
+        $cookieOptions = array(
+            'expires' => time() + 2592000,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        );
+        \setcookie('token', $token, $cookieOptions);
 
         // Update the token in SQL
         $sql = 'UPDATE users SET token = :token WHERE userid = :userid';

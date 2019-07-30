@@ -305,6 +305,9 @@
     });
     // STAR RATING
     const StarC = new Star();
+    $('.rating-cancel').click(function() {
+      StarC.update(0);
+    });
     $('.star').click(function() {
       StarC.update($(this).data('rating').current[0].innerText);
     });

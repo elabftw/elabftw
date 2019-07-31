@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Gmagick;
 
@@ -63,8 +64,12 @@ final class MakeThumbnail
     {
         $this->filePath = $filePath;
         // get mime type of the file
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $this->mime = finfo_file($finfo, $this->filePath);
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($this->filePath);
+        if ($mime === false) {
+            throw new ImproperActionException('Cannot detect the file type for thumbnail!');
+        }
+        $this->mime = $mime;
         $this->thumbPath = $this->filePath . '_th.jpg';
     }
 

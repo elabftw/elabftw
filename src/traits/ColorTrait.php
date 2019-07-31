@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 /**
  * For cleaning up the color (status and items types)
  */
@@ -23,6 +25,10 @@ trait ColorTrait
      */
     private function checkColor($color): string
     {
-        return filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
+        $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
+        if ($color === false || \mb_strlen($color) !== 6) {
+            throw new ImproperActionException('Bad color');
+        }
+        return $color;
     }
 }

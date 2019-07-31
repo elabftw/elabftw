@@ -1,0 +1,3 @@
+parameters:
+  bootstrap: %currentWorkingDirectory%/config.php
+

@@ -55,7 +55,7 @@
     "jslint": "eslint web/app/js/src",
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --using-cache=no",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
-    "phpstan": "phpstan analyse --memory-limit 2G -l 7 src",
+    "phpstan": "phpstan analyse --memory-limit 2G -l 7 -c src/tools/phpstan.neon src",
     "psalm": "psalm -c=src/tools/psalm.xml",
     "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",

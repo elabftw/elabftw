@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca273aa6a09cf5c6671fb5f5b5515e5e",
+    "content-hash": "add930905c35448f0d02a0c10b655217",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -5603,16 +5603,16 @@
         "php": ">=7.3.7",
         "ext-ctype": "*",
         "ext-curl": "*",
+        "ext-fileinfo": "*",
         "ext-filter": "*",
         "ext-gettext": "*",
         "ext-hash": "*",
+        "ext-json": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "ext-gd": "*",
         "ext-pdo": "*",
-        "ext-zip": "*",
-        "ext-fileinfo": "*",
-        "ext-json": "*"
+        "ext-zip": "*"
     },
     "platform-dev": []
 }

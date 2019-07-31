@@ -246,7 +246,7 @@ class Tools
     {
         // Get file extension
         $ext = \filter_var(\pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
-        if ($ext !== null && $ext !== "") {
+        if ($ext !== null && $ext !== '') {
             return $ext;
         }
 

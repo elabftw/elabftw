@@ -265,7 +265,7 @@ class Uploads implements CrudInterface
 
         $sql = 'UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
+        $req->bindValue(':id', $request->request->get('upload_id'), PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');

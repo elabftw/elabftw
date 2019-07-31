@@ -149,12 +149,11 @@ class Comments implements CrudInterface
      */
     private function prepare(string $comment): string
     {
-        $comment = \nl2br(\filter_var($comment, FILTER_SANITIZE_STRING));
-        // check length
-        if (\mb_strlen($comment) < 2) {
+        $comment = filter_var($comment, FILTER_SANITIZE_STRING);
+        if ($comment === false || \mb_strlen($comment) < 2) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
-        return $comment;
+        return \nl2br($comment);
     }
 
     /**

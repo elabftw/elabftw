@@ -282,7 +282,7 @@ class MakePdf extends AbstractMake
                     $html .= '<br>' . $upload['hash_algorithm'] . ' : ' . $upload['hash'];
                 }
                 // if this is an image file, add the thumbnail picture
-                $ext = filter_var(Tools::getExt($upload['real_name']), FILTER_SANITIZE_STRING);
+                $ext = Tools::getExt($upload['real_name']);
                 $filePath = \dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
                 // if it's a TIF file, we can't add it like that to the pdf, but we can add the thumbnail
                 if (\preg_match('/(tiff|tif)$/i', $ext)) {

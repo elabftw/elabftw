@@ -39,7 +39,7 @@ class ImportCsv extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
-        $this->delimiter = filter_var($request->request->get('delimiter'), FILTER_SANITIZE_STRING);
+        $this->delimiter = $request->request->filter('delimiter', null, FILTER_SANITIZE_STRING);
     }
 
     /**

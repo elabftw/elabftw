@@ -221,6 +221,10 @@ class Tags implements CrudInterface
         // array holding all the tags we want to see disappear
         $tagsToDelete = array_slice($tags, 1);
 
+        if ($tagsToDelete === false) {
+            return 0;
+        }
+
         foreach ($tagsToDelete as $tag) {
             $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
             $req = $this->Db->prepare($sql);
@@ -328,7 +332,11 @@ class Tags implements CrudInterface
      */
     private function checkTag(string $tag): string
     {
-        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), filter_var($tag, FILTER_SANITIZE_STRING)));
+        $tag = filter_var($tag, FILTER_SANITIZE_STRING);
+        if ($tag === false) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
+        }
+        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), $tag));
         // empty tags are disallowed
         if ($tag === '') {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));

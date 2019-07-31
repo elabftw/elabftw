@@ -245,10 +245,9 @@ class Tools
     public static function getExt(string $filename): string
     {
         // Get file extension
-        $path_info = pathinfo($filename);
-        // if no extension
-        if (!empty($path_info['extension'])) {
-            return $path_info['extension'];
+        $ext = \filter_var(\pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
+        if ($ext !== null && $ext !== "") {
+            return $ext;
         }
 
         return 'unknown';

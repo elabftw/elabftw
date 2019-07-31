@@ -21,7 +21,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $new = $this->Status->create('', 'fffccc', 1);
+        $new = $this->Status->create('', '#fffccc', 1);
         $this->assertTrue((bool) Tools::checkId($new));
     }
 
@@ -33,8 +33,8 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Status->update($this->Status->create('Yep', 'fffaaa', 1), 'New name', 'fffccc', 0, 1);
-        $this->Status->update($this->Status->create('Yep2', 'fffaaa', 1), 'New name', 'fffccc', 1, 0);
+        $this->Status->update($this->Status->create('Yep', '#fffaaa', 1), 'New name', '#fffccc', 0, 1);
+        $this->Status->update($this->Status->create('Yep2', '#fffaaa', 1), 'New name', '#fffccc', 1, 0);
     }
 
     public function testReadColor()

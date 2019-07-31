@@ -160,8 +160,10 @@ class DatabaseController extends AbstractEntityController
         // QUERY FILTER
         if (!empty($this->App->Request->query->get('q'))) {
             $query = filter_var($this->App->Request->query->get('q'), FILTER_SANITIZE_STRING);
-            $this->Entity->queryFilter = Tools::getSearchSql($query);
-            $searchType = 'query';
+            if ($query !== false) {
+                $this->Entity->queryFilter = Tools::getSearchSql($query);
+                $searchType = 'query';
+            }
         }
 
         // ORDER

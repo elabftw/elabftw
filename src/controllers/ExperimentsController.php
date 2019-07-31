@@ -161,7 +161,7 @@ class ExperimentsController extends AbstractEntityController
         }
         // QUERY FILTER
         if (!empty($this->App->Request->query->get('q'))) {
-            $query = filter_var($this->App->Request->query->get('q'), FILTER_SANITIZE_STRING);
+            $query = $this->App->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
             $this->Entity->queryFilter = Tools::getSearchSql($query, 'and', '', 'experiments');
             $searchType = 'query';
         }

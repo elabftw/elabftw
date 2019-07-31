@@ -100,6 +100,9 @@ class ApiKeys implements CrudInterface
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         $keysArr = $req->fetchAll();
+        if ($keysArr === false) {
+            $keysArr = array();
+        }
 
         foreach ($keysArr as $key) {
             if (\password_verify($apiKey, $key['hash'])) {

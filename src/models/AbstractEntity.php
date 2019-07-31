@@ -312,6 +312,9 @@ abstract class AbstractEntity
         $req->execute();
 
         $itemsArr = $req->fetchAll();
+        if ($itemsArr === false) {
+            $itemsArr = array();
+        }
         // store the total number of items read from db
         $this->itemsReadNb = count($itemsArr);
 

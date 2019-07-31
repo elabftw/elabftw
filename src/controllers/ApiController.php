@@ -140,6 +140,9 @@ class ApiController implements ControllerInterface
 
         // assign the endpoint (experiments, items, uploads)
         $endpoint = array_shift($args);
+        if ($endpoint === null) {
+            throw new ImproperActionException('Bad endpoint!');
+        }
 
         $this->endpoint = $endpoint;
         // verify the key and load user info

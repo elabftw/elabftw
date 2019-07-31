@@ -214,16 +214,15 @@ class Tags implements CrudInterface
         // ok we have several tags that are the same in the same team
         // we want to update the reference mentionning them for the original tag id
         $tags = $req->fetchAll();
+        if ($tags === false) {
+            return 0;
+        }
         // the first tag we find is the one we keep
         $targetTagId = $tags[0]['id'];
 
         // skip the first tag because we want to keep it
         // array holding all the tags we want to see disappear
         $tagsToDelete = array_slice($tags, 1);
-
-        if ($tagsToDelete === false) {
-            return 0;
-        }
 
         foreach ($tagsToDelete as $tag) {
             $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';

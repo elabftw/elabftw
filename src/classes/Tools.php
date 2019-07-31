@@ -102,10 +102,10 @@ class Tools
      */
     public static function checkTitle(string $input): string
     {
-        if (empty($input)) {
+        $title = filter_var($input, FILTER_SANITIZE_STRING);
+        if (empty($title)) {
             return _('Untitled');
         }
-        $title = filter_var($input, FILTER_SANITIZE_STRING);
         // remove linebreak to avoid problem in javascript link list generation on editXP
         return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
     }
@@ -246,7 +246,7 @@ class Tools
     {
         // Get file extension
         $ext = \filter_var(\pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
-        if ($ext !== null && $ext !== '') {
+        if ($ext !== null && $ext !== '' && $ext !== false) {
             return $ext;
         }
 

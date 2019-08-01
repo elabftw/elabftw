@@ -114,7 +114,7 @@ class MakeController implements ControllerInterface
                 'Content-Type' => 'application/pdf',
                 'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
                 'Cache-Control' => 'no-store',
-                'Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT',
+                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
             )
         );
     }

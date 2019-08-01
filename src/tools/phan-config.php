@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -11,7 +11,7 @@
  * Config file for phan
  */
 
-return [
+return array(
     'target_php_version' => '7.3',
 
     // A list of directories that should be parsed for class and
@@ -21,7 +21,7 @@ return [
     //
     // Thus, both first-party and third-party code being used by
     // your application should be included in this list.
-    'directory_list' => [
+    'directory_list' => array(
         'src',
         'web',
         'vendor/defuse/php-encryption',
@@ -39,7 +39,7 @@ return [
         'vendor/symfony/console',
         'vendor/symfony/process',
         'vendor/league/commonmark',
-    ],
+    ),
 
     // A directory list that defines files that will be excluded
     // from static analysis, but whose class and method
@@ -52,19 +52,19 @@ return [
     //       party code, directories containing that code
     //       should be added to the `directory_list` as
     //       to `exclude_analysis_directory_list`.
-    'exclude_analysis_directory_list' => [
+    'exclude_analysis_directory_list' => array(
         'vendor/',
         'uploads/',
         'cache',
         'node_modules',
-    ],
+    ),
 
     // A list of plugin files to execute.
     // See https://github.com/phan/phan/tree/master/.phan/plugins for even more.
     // (Pass these in as relative paths.
     // Base names without extensions such as 'AlwaysReturnPlugin'
     // can be used to refer to a plugin that is bundled with Phan)
-    'plugins' => [
+    'plugins' => array(
         // checks if a function, closure or method unconditionally returns.
         // can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
         'AlwaysReturnPlugin',
@@ -75,8 +75,8 @@ return [
         'DuplicateArrayKeyPlugin',
         'PregRegexCheckerPlugin',
         'PrintfCheckerPlugin',
-    ],
-    'suppress_issue_types' => [
+    ),
+    'suppress_issue_types' => array(
         'PhanUndeclaredGlobalVariable',
         'PhanUndeclaredMethod',
         'PhanUndeclaredClassMethod',
@@ -88,5 +88,5 @@ return [
         'PhanUndeclaredConstant',
         'PhanUndeclaredExtendedClass',
         'PhanUndeclaredTypeThrowsType',
-    ],
-];
+    ),
+);

@@ -20,7 +20,7 @@ use GuzzleHttp\Exception\RequestException;
 class ReleaseCheck
 {
     /** @var string INSTALLED_VERSION the current version of elabftw */
-    public const INSTALLED_VERSION = '3.3.6';
+    public const INSTALLED_VERSION = '3.4.0';
 
     /** @var string $URL this file contains the latest version information */
     private const URL = 'https://get.elabftw.net/updates.ini';
@@ -133,7 +133,7 @@ class ReleaseCheck
      * @throws \GuzzleHttp\Exception\RequestException
      * @return \Psr\Http\Message\ResponseInterface
      */
-    private function get($url): \Psr\Http\Message\ResponseInterface
+    private function get(string $url): \Psr\Http\Message\ResponseInterface
     {
         $client = new \GuzzleHttp\Client();
 

@@ -59,7 +59,7 @@ class Auth
     public function checkPasswordLength(string $password): bool
     {
         if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            throw new ImproperActionException(sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH));
+            throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;
     }

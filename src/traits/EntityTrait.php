@@ -47,6 +47,6 @@ trait EntityTrait
         }
         $this->id = $id;
         // prevent reusing of old data from previous id
-        unset($this->entityData);
+        $this->entityData = array();
     }
 }

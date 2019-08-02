@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
@@ -19,7 +18,6 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
-use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -75,9 +73,10 @@ class App
      *
      * @param Request $request
      */
-    public function __construct(Request $request, Config $config, Logger $log, Csrf $csrf) {
+    public function __construct(Request $request, Session $session, Config $config, Logger $log, Csrf $csrf)
+    {
         $this->Request = $request;
-        $this->Session = $this->Request->getSession();
+        $this->Session = $session;
         $this->ok = $this->Session->getFlashBag()->get('ok');
         $this->ko = $this->Session->getFlashBag()->get('ko');
         $this->warning = $this->Session->getFlashBag()->get('warning');

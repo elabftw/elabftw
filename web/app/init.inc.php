@@ -52,7 +52,7 @@ try {
     textdomain($domain);
     // END i18n
 
-    $App = new App($Request, new Config(), new Logger('elabftw'), new Csrf($Request));
+    $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
@@ -133,7 +133,6 @@ try {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
-
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

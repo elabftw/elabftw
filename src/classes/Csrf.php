@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Prevent CSRF attacks
@@ -25,7 +25,7 @@ class Csrf
     /** @var Request $Request the request object */
     private $Request;
 
-    /** @var SessionInterface $Session the session object */
+    /** @var Session $Session the session object */
     private $Session;
 
     /**
@@ -33,10 +33,10 @@ class Csrf
      *
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, Session $session)
     {
         $this->Request = $request;
-        $this->Session = $this->Request->getSession();
+        $this->Session = $session;
         if (!$this->Session->has('csrf')) {
             $this->Session->set('csrf', $this->generate());
         }

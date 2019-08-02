@@ -75,69 +75,24 @@ class App
      *
      * @param Request $request
      */
-    public function __construct(Request $request, Session $session) {
+    public function __construct(Request $request, Config $config, Logger $log, Csrf $csrf) {
         $this->Request = $request;
-        $this->Session = $session;
-        $this->Session->start();
-        $this->Request->setSession($this->Session);
+        $this->Session = $this->Request->getSession();
         $this->ok = $this->Session->getFlashBag()->get('ok');
         $this->ko = $this->Session->getFlashBag()->get('ko');
         $this->warning = $this->Session->getFlashBag()->get('warning');
 
-        $this->boot();
-    }
-
-    /**
-     * Start the app with a session, load the config.php file and update if necessary
-     *
-     * @return void
-     */
-    private function boot(): void
-    {
-        $this->loadConfigDotPhp();
-
-        // new Config will make the first SQL request
-        // PDO will throw an exception if the SQL structure is not imported yet
-        // so we redirect to the install folder
-        try {
-            $this->Config = new Config();
-        } catch (PDOException $e) {
-            $url = Tools::getUrlFromRequest($this->Request) . '/install/index.php';
-            header('Location: ' . $url);
-            throw new ImproperActionException('Redirecting to install folder');
-        }
-
-        $this->Log = new Logger('elabftw');
+        $this->Config = $config;
+        $this->Log = $log;
         $this->Log->pushHandler(new ErrorLogHandler());
-        $this->Users = new Users(null, new Config());
+        $this->Csrf = $csrf;
 
+        $this->Users = new Users(null, $this->Config);
         $this->Db = Db::getConnection();
-        $this->Csrf = new Csrf($this->Session, $this->Request);
-
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
         $Update = new Update($this->Config, new Sql());
         $Update->checkSchema();
     }
-
-    /**
-     * Load the config.php file that contains vital info to connect to DB
-     *
-     * @return void
-     */
-    private function loadConfigDotPhp(): void
-    {
-        $configFilePath = \dirname(__DIR__, 2) . '/config.php';
-        // redirect to install page if the config file is not here
-        if (!is_readable($configFilePath)) {
-            $url = Tools::getUrlFromRequest($this->Request) . '/install/index.php';
-            // not pretty but gets the job done
-            $url = str_replace('app/', '', $url);
-            header('Location: ' . $url);
-            throw new ImproperActionException('Redirecting to install folder');
-        }
-        require_once $configFilePath;
-    }
-
 
     /**
      * Get the page generation time (called in the footer)

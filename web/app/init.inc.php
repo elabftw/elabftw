@@ -26,9 +26,33 @@ use Symfony\Component\HttpFoundation\Session\Session;
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $Request = Request::createFromGlobals();
+$Session = new Session();
+$Session->start();
+$Request->setSession($Session);
 
 try {
-    $App = new App($Request, new Session());
+    // CONFIG.PHP
+    $configFilePath = \dirname(__DIR__, 2) . '/config.php';
+    // redirect to install page if the config file is not here
+    if (!is_readable($configFilePath)) {
+        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
+        // not pretty but gets the job done
+        $url = str_replace('app/', '', $url);
+        header('Location: ' . $url);
+        throw new ImproperActionException('Redirecting to install folder');
+    }
+    require_once $configFilePath;
+    // END CONFIG.PHP
+
+    // CONFIGURE GETTEXT
+    $domain = 'messages';
+    putenv("LC_ALL=$locale");
+    setlocale(LC_ALL, $locale);
+    bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
+    textdomain($domain);
+    // END i18n
+
+    $App = new App($Request, new Config(), new Logger('elabftw'), new Csrf($Request));
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
@@ -110,13 +134,6 @@ try {
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
 
-    // CONFIGURE GETTEXT
-    $domain = 'messages';
-    putenv("LC_ALL=$locale");
-    setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
-    textdomain($domain);
-    // END i18n
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

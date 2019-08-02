@@ -22,25 +22,24 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Csrf
 {
-    /** @var SessionInterface $Session the session object */
-    private $Session;
-
     /** @var Request $Request the request object */
     private $Request;
 
+    /** @var SessionInterface $Session the session object */
+    private $Session;
+
     /**
-     * We need the Session object
+     * Constructor
      *
-     * @param SessionInterface $session
      * @param Request $request
      */
-    public function __construct(SessionInterface $session, Request $request)
+    public function __construct(Request $request)
     {
-        $this->Session = $session;
+        $this->Request = $request;
+        $this->Session = $this->Request->getSession();
         if (!$this->Session->has('csrf')) {
             $this->Session->set('csrf', $this->generate());
         }
-        $this->Request = $request;
     }
 
     /**

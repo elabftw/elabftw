@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
@@ -18,6 +19,7 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -71,32 +73,71 @@ class App
     /**
      * Constructor
      *
-     * @param Session $session
      * @param Request $request
-     * @param Config $config
-     * @param Logger $log
      */
-    public function __construct(
-        Session $session,
-        Request $request,
-        Config $config,
-        Logger $log,
-        Csrf $csrf
-    ) {
+    public function __construct(Request $request, Session $session) {
         $this->Request = $request;
-        $this->Config = $config;
-        $this->Log = $log;
+        $this->Session = $session;
+        $this->Session->start();
+        $this->Request->setSession($this->Session);
+        $this->ok = $this->Session->getFlashBag()->get('ok');
+        $this->ko = $this->Session->getFlashBag()->get('ko');
+        $this->warning = $this->Session->getFlashBag()->get('warning');
+
+        $this->boot();
+    }
+
+    /**
+     * Start the app with a session, load the config.php file and update if necessary
+     *
+     * @return void
+     */
+    private function boot(): void
+    {
+        $this->loadConfigDotPhp();
+
+        // new Config will make the first SQL request
+        // PDO will throw an exception if the SQL structure is not imported yet
+        // so we redirect to the install folder
+        try {
+            $this->Config = new Config();
+        } catch (PDOException $e) {
+            $url = Tools::getUrlFromRequest($this->Request) . '/install/index.php';
+            header('Location: ' . $url);
+            throw new ImproperActionException('Redirecting to install folder');
+        }
+
+        $this->Log = new Logger('elabftw');
         $this->Log->pushHandler(new ErrorLogHandler());
         $this->Users = new Users(null, new Config());
 
         $this->Db = Db::getConnection();
-        $this->Session = $session;
-        $this->Csrf = $csrf;
+        $this->Csrf = new Csrf($this->Session, $this->Request);
 
-        $this->ok = $this->Session->getFlashBag()->get('ok');
-        $this->ko = $this->Session->getFlashBag()->get('ko');
-        $this->warning = $this->Session->getFlashBag()->get('warning');
+        // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
+        $Update = new Update($this->Config, new Sql());
+        $Update->checkSchema();
     }
+
+    /**
+     * Load the config.php file that contains vital info to connect to DB
+     *
+     * @return void
+     */
+    private function loadConfigDotPhp(): void
+    {
+        $configFilePath = \dirname(__DIR__, 2) . '/config.php';
+        // redirect to install page if the config file is not here
+        if (!is_readable($configFilePath)) {
+            $url = Tools::getUrlFromRequest($this->Request) . '/install/index.php';
+            // not pretty but gets the job done
+            $url = str_replace('app/', '', $url);
+            header('Location: ' . $url);
+            throw new ImproperActionException('Redirecting to install folder');
+        }
+        require_once $configFilePath;
+    }
+
 
     /**
      * Get the page generation time (called in the footer)

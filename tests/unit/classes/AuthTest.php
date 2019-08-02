@@ -31,13 +31,6 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->Auth->checkCredentials('phpunit@yopmail.com', 'wrong password'));
     }
 
-    public function testCheckPasswordLength()
-    {
-        $this->assertTrue($this->Auth->checkPasswordLength('longpassword'));
-        $this->expectException(ImproperActionException::class);
-        $this->Auth->checkPasswordLength('short');
-    }
-
     public function testLogin()
     {
         $this->assertTrue($this->Auth->login('phpunit@yopmail.com', 'phpunitftw'));

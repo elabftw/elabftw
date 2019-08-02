@@ -39,8 +39,23 @@ try {
     // TAB 2 : ACCOUNT
     if ($Request->request->has('currpass')) {
         $tab = '2';
+        // check that we got the good password
+        if (!$Auth->checkCredentials($App->Users->userData['email'], $Request->request->get('currpass'))) {
+            throw new ImproperActionException(_('Please input your current password!'));
+        }
         $App->Users->updateAccount($Request->request->all());
     }
+
+    // TAB 2 : CHANGE PASSWORD
+    if (!empty($Request->request->get('newpass'))) {
+        // check the confirm password
+        if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
+            throw new ImproperActionException(_('The passwords do not match!'));
+        }
+
+        $App->Users->updatePassword($Request->request->get('newpass'));
+    }
+
     // END TAB 2
 
     // TAB 3 : EXPERIMENTS TEMPLATES

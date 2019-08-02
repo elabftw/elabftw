@@ -87,7 +87,7 @@ class App
         $this->Config = $config;
         $this->Log = $log;
         $this->Log->pushHandler(new ErrorLogHandler());
-        $this->Users = new Users(null, new Auth($request, $session), new Config());
+        $this->Users = new Users(null, new Config());
 
         $this->Db = Db::getConnection();
         $this->Session = $session;

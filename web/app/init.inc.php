@@ -73,6 +73,7 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
+    $Auth = new Auth($Request, $Session);
 
     // autologin as anon if it's allowed by sysadmin
     // don't do it if we have elabid in url
@@ -80,7 +81,7 @@ try {
         // only autologin on selected pages and if we are not authenticated with an account
         $autoAnon = array('experiments.php', 'database.php', 'search.php');
         if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
-            $App->Users->Auth->loginAsAnon((int) $App->Config->configArr['open_team'] ?? 1);
+            $Auth->loginAsAnon((int) $App->Config->configArr['open_team'] ?? 1);
         }
     }
 
@@ -93,10 +94,10 @@ try {
         // now we need to know in which team we autologin the user
         $Experiments = new Experiments(new Users(), (int) $App->Request->query->get('id'));
         $team = $Experiments->getTeamFromElabid($App->Request->query->get('elabid'));
-        $App->Users->Auth->loginAsAnon($team);
+        $Auth->loginAsAnon($team);
     }
 
-    if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {
+    if ($Auth->needAuth() && !$Auth->tryAuth()) {
         // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
@@ -118,7 +119,7 @@ try {
 
     // load the Users with a userid if we are auth
     if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users((int) $Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
+        $App->loadUser(new Users((int) $Request->getSession()->get('userid'), $App->Config));
     }
 
     // ANONYMOUS

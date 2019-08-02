@@ -10,12 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Auth;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Checker;
 use Elabftw\Services\Email;
 use PDO;
 
@@ -24,9 +24,6 @@ use PDO;
  */
 class Users
 {
-    /** @var Auth $Auth instance of Auth */
-    public $Auth;
-
     /** @var Config $Config instance of Config */
     public $Config;
 
@@ -43,19 +40,15 @@ class Users
      * Constructor
      *
      * @param int|null $userid
-     * @param Auth|null $auth
      * @param Config|null $config
      */
-    public function __construct(?int $userid = null, ?Auth $auth = null, ?Config $config = null)
+    public function __construct(?int $userid = null, ?Config $config = null)
     {
         $this->Db = Db::getConnection();
         if ($userid !== null) {
             $this->setId($userid);
         }
 
-        if ($auth instanceof Auth) {
-            $this->Auth = $auth;
-        }
         if ($config instanceof Config) {
             $this->Config = $config;
         }
@@ -92,7 +85,7 @@ class Users
         }
 
         if ($password) {
-            $this->Auth->checkPasswordLength($password);
+            Checker::checkPasswordLength($password);
         }
 
         $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
@@ -360,11 +353,6 @@ class Users
             throw new IllegalActionException('The id parameter is not valid!');
         }
 
-        // a non sysadmin cannot put someone sysadmin
-        if ($usergroup == 1 && $this->Auth->Session->get('is_sysadmin') != 1) {
-            throw new ImproperActionException(_('Only a sysadmin can put someone sysadmin.'));
-        }
-
         if (\mb_strlen($params['password']) > 1) {
             $this->updatePassword($params['password']);
         }
@@ -585,19 +573,6 @@ class Users
      */
     public function updateAccount(array $params): void
     {
-        // check that we got the good password
-        if (!$this->Auth->checkCredentials($this->userData['email'], $params['currpass'])) {
-            throw new ImproperActionException(_('Please input your current password!'));
-        }
-        // PASSWORD CHANGE
-        if (!empty($params['newpass'])) {
-            if ($params['newpass'] != $params['cnewpass']) {
-                throw new ImproperActionException(_('The passwords do not match!'));
-            }
-
-            $this->updatePassword($params['newpass']);
-        }
-
         $params['firstname'] = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
         $params['lastname'] = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
         $params['email'] = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
@@ -649,7 +624,7 @@ class Users
      */
     public function updatePassword(string $password): void
     {
-        $this->Auth->checkPasswordLength($password);
+        Checker::checkPasswordLength($password);
 
         $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
         $passwordHash = \hash('sha512', $salt . $password);

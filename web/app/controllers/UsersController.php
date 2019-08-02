@@ -48,6 +48,11 @@ try {
         if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
             throw new IllegalActionException('User tried to edit user from other team.');
         }
+        // a non sysadmin cannot put someone sysadmin
+        if ($Request->request->get('usergroup') === '1' && $App->Session->get('is_sysadmin') != 1) {
+            throw new ImproperActionException(_('Only a sysadmin can put someone sysadmin.'));
+        }
+
         $targetUser->update($Request->request->all());
     }
 

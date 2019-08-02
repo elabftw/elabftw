@@ -21,9 +21,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Auth
 {
-    /** the minimum password length */
-    public const MIN_PASSWORD_LENGTH = 8;
-
     /** @var SessionInterface $Session the current session */
     public $Session;
 
@@ -50,21 +47,6 @@ class Auth
     }
 
     /**
-     * Check the number of character of a password
-     *
-     * @param string $password The password to check
-     * @throws ImproperActionException
-     * @return bool
-     */
-    public function checkPasswordLength(string $password): bool
-    {
-        if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
-        }
-        return true;
-    }
-
-    /**
      * Test email and password in the database
      *
      * @param string $email
@@ -75,7 +57,7 @@ class Auth
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
-        $sql = 'SELECT * FROM users WHERE email = :email AND password = :passwordHash
+        $sql = 'SELECT userid FROM users WHERE email = :email AND password = :passwordHash
             AND validated = 1 AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);

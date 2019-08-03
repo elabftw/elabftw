@@ -53,6 +53,20 @@ class Check
     }
 
     /**
+     * Check id and throw exception if it's wrong
+     *
+     * @param int $id
+     * @return int
+     */
+    public static function idOrExplode(int $id): int
+    {
+        if (self::id($id) === false) {
+            throw new IllegalActionException('The id parameter is not valid!');
+        }
+        return $id;
+    }
+
+    /**
      * Get only the relevant part of the color: remove the #
      *
      * @param string $color #121212

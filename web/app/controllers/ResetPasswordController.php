@@ -83,7 +83,7 @@ try {
     // second part, update the password
     if ($Request->request->has('password') &&
         $Request->request->get('password') === $Request->request->get('cpassword')) {
-        $App->Users->setId((int) $Request->request->get('userid'));
+        $App->Users->populate((int) $Request->request->get('userid'));
 
         // Validate key
         if ($App->Users->userData['email'] != Crypto::decrypt($Request->request->get('key'), Key::loadFromAsciiSafeString(\SECRET_KEY))) {

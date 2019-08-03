@@ -149,7 +149,7 @@ class ApiController implements ControllerInterface
         $Users = new Users();
         $ApiKeys = new ApiKeys($Users);
         $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
-        $Users->setId((int) $keyArr['userid']);
+        $Users->populate((int) $keyArr['userid']);
         $this->userid = (int) $keyArr['userid'];
         $this->canWrite = (bool) $keyArr['canWrite'];
 

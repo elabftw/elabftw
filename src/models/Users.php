@@ -43,21 +43,18 @@ class Users
     {
         $this->Db = Db::getConnection();
         if ($userid !== null) {
-            $this->setId($userid);
+            $this->populate($userid);
         }
     }
 
     /**
-     * Assign an id and populate userData
+     * Populate userData property
      *
      * @param int $userid
      */
-    public function setId(int $userid): void
+    public function populate(int $userid): void
     {
-        if (Check::id($userid) === false) {
-            throw new ImproperActionException('Bad userid');
-        }
-
+        Check::idOrExplode($userid);
         $this->userData = $this->read($userid);
     }
 
@@ -101,9 +98,6 @@ class Users
         // will new user be validated?
         $validated = $this->getValidated($Config, $group);
 
-        // get the lang set by sysadmin and use that for new user
-        $lang = $Config->configArr['lang'];
-
         $sql = 'INSERT INTO users (
             `email`,
             `password`,
@@ -137,7 +131,7 @@ class Users
         $req->bindParam(':register_date', $registerDate);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $group);
-        $req->bindParam(':lang', $lang);
+        $req->bindValue(':lang', $Config->configArr['lang']);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -214,7 +208,7 @@ class Users
         if ($res === false) {
             throw new ImproperActionException(_('Email not found in database!'));
         }
-        $this->setId((int) $res);
+        $this->populate((int) $res);
     }
 
     /**

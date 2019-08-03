@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Services\Filter;
 use PDO;
 
 /**
@@ -50,7 +50,7 @@ class Database extends AbstractEntity implements CreateInterface
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $itemsTypes->read(),
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
@@ -92,7 +92,7 @@ class Database extends AbstractEntity implements CreateInterface
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $this->entityData['title'],
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
             'category' => $this->entityData['category_id'],

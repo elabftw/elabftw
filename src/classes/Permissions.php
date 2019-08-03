@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -51,7 +52,7 @@ class Permissions
         }
 
         // if we are in same team and visibility is not a group or user, we can read/write fo' shizzle ma nizzle
-        if ($this->item['team'] === $this->Users->userData['team'] && (Tools::checkId((int) $this->item['visibility']) === false && $this->item['visibility'] !== 'user')) {
+        if ($this->item['team'] === $this->Users->userData['team'] && (Check::id((int) $this->item['visibility']) === false && $this->item['visibility'] !== 'user')) {
             $ret = array('read' => true, 'write' => true);
             // anon don't get to write anything
             if (isset($this->Users->userData['anon'])) {
@@ -88,7 +89,7 @@ class Permissions
         }
 
         // if the vis. setting is a team group, check we are in the group
-        if (Tools::checkId((int) $this->item['visibility']) !== false) {
+        if (Check::id((int) $this->item['visibility']) !== false) {
             $TeamGroups = new TeamGroups($this->Users);
             if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['visibility'])) {
                 return array('read' => true, 'write' => true);
@@ -157,7 +158,7 @@ class Permissions
         }
 
         // if the vis. setting is a team group, check we are in the group
-        if (Tools::checkId((int) $this->item['visibility']) !== false) {
+        if (Check::id((int) $this->item['visibility']) !== false) {
             $TeamGroups = new TeamGroups($this->Users);
             if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['visibility'])) {
                 return array('read' => true, 'write' => $write);

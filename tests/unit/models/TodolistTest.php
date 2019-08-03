@@ -2,7 +2,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
+use Elabftw\Services\Check;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +15,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $body = 'write more tests';
-        $this->assertTrue((bool) Tools::checkId($this->Todolist->create($body)));
+        $this->assertTrue((bool) Check::id($this->Todolist->create($body)));
     }
 
     public function testReadAll()

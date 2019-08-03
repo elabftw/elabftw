@@ -16,6 +16,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
+use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -70,7 +71,7 @@ try {
         }
 
         $tpl_name = $Request->request->filter('new_tpl_name', null, FILTER_SANITIZE_STRING);
-        $tpl_body = Tools::checkBody($Request->request->get('new_tpl_body'));
+        $tpl_body = Filter::body($Request->request->get('new_tpl_body'));
 
         $Templates = new Templates($App->Users);
         $Templates->createNew($tpl_name, $tpl_body);

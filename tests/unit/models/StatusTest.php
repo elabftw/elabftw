@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
+use Elabftw\Services\Check;
 use Elabftw\Exceptions\ImproperActionException;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
@@ -22,7 +22,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testCreate()
     {
         $new = $this->Status->create('', '#fffccc', 1);
-        $this->assertTrue((bool) Tools::checkId($new));
+        $this->assertTrue((bool) Check::id($new));
     }
 
     public function testReadAll()

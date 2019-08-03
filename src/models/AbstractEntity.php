@@ -12,10 +12,11 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
 use Elabftw\Services\Email;
 use Elabftw\Traits\EntityTrait;
 use PDO;
@@ -380,9 +381,9 @@ abstract class AbstractEntity
         $Revisions = new Revisions($this);
         $Revisions->create($body);
 
-        $title = Tools::checkTitle($title);
-        $date = Tools::kdate($date);
-        $body = Tools::checkBody($body);
+        $title = Filter::title($title);
+        $date = Filter::kdate($date);
+        $body = Filter::body($body);
 
         if ($this instanceof Experiments) {
             $sql = 'UPDATE experiments SET
@@ -469,7 +470,7 @@ abstract class AbstractEntity
      */
     public function updateVisibility(string $visibility): void
     {
-        Tools::checkVisibility($visibility);
+        Check::visibility($visibility);
         $this->canOrExplode('write');
 
         $sql = 'UPDATE ' . $this->type . ' SET visibility = :visibility WHERE id = :id';
@@ -490,7 +491,7 @@ abstract class AbstractEntity
     public function getVisibility(): string
     {
         $TeamGroups = new TeamGroups($this->Users);
-        if (Tools::checkId((int) $this->entityData['visibility']) !== false) {
+        if (Check::id((int) $this->entityData['visibility']) !== false) {
             return $TeamGroups->readName((int) $this->entityData['visibility']);
         }
         return ucfirst($this->entityData['visibility']);

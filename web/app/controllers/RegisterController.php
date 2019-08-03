@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Check;
 use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,7 +36,7 @@ try {
     // CSRF
     $App->Csrf->validate();
 
-    if ((Tools::checkId((int) $Request->request->get('team')) === false) ||
+    if ((Check::id((int) $Request->request->get('team')) === false) ||
         !$Request->request->get('firstname') ||
         !$Request->request->get('lastname') ||
         !$Request->request->get('email') ||

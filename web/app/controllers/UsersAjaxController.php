@@ -42,7 +42,7 @@ try {
         }
 
         // we need Config to send email. TODO make better constructors so we don't have to worry about that
-        $targetUser = new Users((int) $Request->request->get('userid'), $App->Config);
+        $targetUser = new Users((int) $Request->request->get('userid'));
 
         // check we validate user of our team
         if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {

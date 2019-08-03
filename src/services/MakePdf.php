@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Elabftw\Services\Filter;
 use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -378,7 +379,7 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-        $date = new \DateTime($this->Entity->entityData['date'] ?? Tools::kdate());
+        $date = new \DateTime($this->Entity->entityData['date'] ?? Filter::kdate());
 
         // add a CJK font for the body if we want CJK fonts
         $cjkStyle = '';

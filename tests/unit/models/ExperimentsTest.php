@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
+use Elabftw\Services\Check;
 use Elabftw\Exceptions\IllegalActionException;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
@@ -23,7 +23,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testCreateAndDestroy()
     {
         $new = $this->Experiments->create(0);
-        $this->assertTrue((bool) Tools::checkId($new));
+        $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         $this->Experiments->toggleLock();
@@ -31,7 +31,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Templates = new Templates($this->Users);
         $this->Templates->createNew('my template', 'is so cool', 1);
         $new = $this->Experiments->create(1);
-        $this->assertTrue((bool) Tools::checkId($new));
+        $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
     }

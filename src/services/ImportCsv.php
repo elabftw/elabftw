@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
+use Elabftw\Services\Filter;
 use function League\Csv\delimiter_detect;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,7 +60,7 @@ class ImportCsv extends AbstractImport
             VALUES(:team, :title, :date, :body, :userid, :category, :visibility)';
         $req = $this->Db->prepare($sql);
 
-        $date = Tools::kdate();
+        $date = Filter::kdate();
 
         // now loop the rows and do the import
         foreach ($csv as $row) {

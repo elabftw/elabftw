@@ -18,6 +18,7 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
+use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -80,7 +81,7 @@ try {
 
     // UNREFERENCE TAG
     if ($Request->request->has('unreferenceTag')) {
-        if (Tools::checkId((int) $Request->request->get('tag_id')) === false) {
+        if (Check::id((int) $Request->request->get('tag_id')) === false) {
             throw new IllegalActionException('Bad id value');
         }
         $Tags->unreference((int) $Request->request->get('tag_id'));
@@ -88,7 +89,7 @@ try {
 
     // DELETE TAG
     if ($Request->request->has('destroyTag') && $App->Session->get('is_admin')) {
-        if (Tools::checkId((int) $Request->request->get('tag_id')) === false) {
+        if (Check::id((int) $Request->request->get('tag_id')) === false) {
             throw new IllegalActionException('Bad id value');
         }
         $Tags->destroy((int) $Request->request->get('tag_id'));

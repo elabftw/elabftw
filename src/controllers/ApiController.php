@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -19,6 +18,7 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,7 +133,7 @@ class ApiController implements ControllerInterface
 
         // assign the id if there is one
         $id = null;
-        if (Tools::checkId((int) end($args)) !== false) {
+        if (Check::id((int) end($args)) !== false) {
             $id = (int) end($args);
         }
         $this->id = $id;

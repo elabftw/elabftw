@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Revisions;
+use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -41,7 +42,7 @@ try {
     $Revisions = new Revisions($Entity);
 
     if ($Request->query->get('action') === 'restore') {
-        $revId = Tools::checkId((int) $Request->query->get('rev_id'));
+        $revId = Check::id((int) $Request->query->get('rev_id'));
         if ($revId === false) {
             throw new IllegalActionException('The id parameter is not valid!');
         }

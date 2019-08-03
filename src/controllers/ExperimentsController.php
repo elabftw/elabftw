@@ -18,6 +18,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
+use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -144,7 +145,7 @@ class ExperimentsController extends AbstractEntityController
         $getTags = false;
 
         // CATEGORY FILTER
-        if (Tools::checkId((int) $this->App->Request->query->get('cat')) !== false) {
+        if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
             $this->Entity->categoryFilter = ' AND status.id = ' . $this->App->Request->query->get('cat');
             $searchType = 'filter';
         }
@@ -206,12 +207,12 @@ class ExperimentsController extends AbstractEntityController
 
         // PAGINATION
         $limit = (int) $this->Entity->Users->userData['limit_nb'] ?? 15;
-        if ($this->App->Request->query->has('limit') && Tools::checkId((int) $this->App->Request->query->get('limit')) !== false) {
+        if ($this->App->Request->query->has('limit') && Check::id((int) $this->App->Request->query->get('limit')) !== false) {
             $limit = (int) $this->App->Request->query->get('limit');
         }
 
         $offset = 0;
-        if ($this->App->Request->query->has('offset') && Tools::checkId((int) $this->App->Request->query->get('offset')) !== false) {
+        if ($this->App->Request->query->has('offset') && Check::id((int) $this->App->Request->query->get('offset')) !== false) {
             $offset = (int) $this->App->Request->query->get('offset');
         }
 
@@ -231,7 +232,7 @@ class ExperimentsController extends AbstractEntityController
             $this->Entity->visibilityFilter = "AND experiments.visibility = 'public'";
             $itemsArr = $this->Entity->read($getTags);
         // related filter
-        } elseif (Tools::checkId((int) $this->App->Request->query->get('related')) !== false) {
+        } elseif (Check::id((int) $this->App->Request->query->get('related')) !== false) {
             $searchType = 'related';
             $itemsArr = $this->Entity->readRelated((int) $this->App->Request->query->get('related'));
         } else {

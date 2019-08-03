@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\CsvTrait;
 
 /**
@@ -44,7 +44,7 @@ class MakeCsv extends AbstractMake
      */
     public function getFileName(): string
     {
-        return Tools::kdate() . '-export.elabftw.csv';
+        return Filter::kdate() . '-export.elabftw.csv';
     }
 
     /**

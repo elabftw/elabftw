@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Todolist;
+use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -49,7 +50,7 @@ try {
         $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
         $id_arr = explode('_', $Request->request->get('id'));
         $id = (int) $id_arr[1];
-        if (Tools::checkId($id) === false) {
+        if (Check::id($id) === false) {
             throw new IllegalActionException('The id parameter is invalid');
         }
         $Todolist->update($id, $body);

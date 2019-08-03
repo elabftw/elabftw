@@ -15,8 +15,9 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Checker;
+use Elabftw\Services\Check;
 use Elabftw\Services\Email;
+use Elabftw\Services\Filter;
 use PDO;
 
 /**
@@ -24,9 +25,6 @@ use PDO;
  */
 class Users
 {
-    /** @var Config $Config instance of Config */
-    public $Config;
-
     /** @var bool $needValidation flag to check if we need validation or not */
     public $needValidation = false;
 
@@ -40,17 +38,12 @@ class Users
      * Constructor
      *
      * @param int|null $userid
-     * @param Config|null $config
      */
-    public function __construct(?int $userid = null, ?Config $config = null)
+    public function __construct(?int $userid = null)
     {
         $this->Db = Db::getConnection();
         if ($userid !== null) {
             $this->setId($userid);
-        }
-
-        if ($config instanceof Config) {
-            $this->Config = $config;
         }
     }
 
@@ -61,9 +54,10 @@ class Users
      */
     public function setId(int $userid): void
     {
-        if (Tools::checkId($userid) === false) {
+        if (Check::id($userid) === false) {
             throw new ImproperActionException('Bad userid');
         }
+
         $this->userData = $this->read($userid);
     }
 
@@ -85,7 +79,7 @@ class Users
         }
 
         if ($password) {
-            Checker::checkPasswordLength($password);
+            Check::passwordLength($password);
         }
 
         $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
@@ -102,8 +96,13 @@ class Users
         // get the group for the new user
         $group = $this->getGroup($team);
 
+        $Config = new Config();
+
         // will new user be validated?
-        $validated = $this->getValidated($group);
+        $validated = $this->getValidated($Config, $group);
+
+        // get the lang set by sysadmin and use that for new user
+        $lang = $Config->configArr['lang'];
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -138,14 +137,14 @@ class Users
         $req->bindParam(':register_date', $registerDate);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $group);
-        $req->bindValue(':lang', $this->Config->configArr['lang']);
+        $req->bindParam(':lang', $lang);
 
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
         if ($validated == '0') {
-            $Email = new Email($this->Config, $this);
+            $Email = new Email($Config, $this);
             $Email->alertAdmin($team);
             // set a flag to show correct message to user
             $this->needValidation = true;
@@ -321,10 +320,10 @@ class Users
      */
     public function update(array $params): void
     {
-        $firstname = filter_var($params['firstname'], FILTER_SANITIZE_STRING);
-        $lastname = filter_var($params['lastname'], FILTER_SANITIZE_STRING);
+        $firstname = Filter::sanitize($params['firstname']);
+        $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
-        $team = Tools::checkId((int) $params['team']);
+        $team = Check::id((int) $params['team']);
         if ($this->hasExperiments((int) $this->userData['userid']) && $team !== (int) $this->userData['team']) {
             throw new ImproperActionException('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
         }
@@ -343,15 +342,12 @@ class Users
             throw new ImproperActionException('Email is already used by non archived user!');
         }
 
+        $validated = 0;
         if ($params['validated'] == 1) {
             $validated = 1;
-        } else {
-            $validated = 0;
         }
-        $usergroup = Tools::checkId((int) $params['usergroup']);
-        if ($usergroup === false) {
-            throw new IllegalActionException('The id parameter is not valid!');
-        }
+
+        $usergroup = Check::id((int) $params['usergroup']);
 
         if (\mb_strlen($params['password']) > 1) {
             $this->updatePassword($params['password']);
@@ -505,7 +501,7 @@ class Users
         // DEFAULT VIS
         $new_default_vis = null;
         if (isset($params['default_vis'])) {
-            $new_default_vis = Tools::checkVisibility($params['default_vis']);
+            $new_default_vis = Check::visibility($params['default_vis']);
         }
 
         // Signature pdf
@@ -625,7 +621,7 @@ class Users
      */
     public function updatePassword(string $password): void
     {
-        Checker::checkPasswordLength($password);
+        Check::passwordLength($password);
 
         $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
         $passwordHash = \hash('sha512', $salt . $password);
@@ -656,7 +652,7 @@ class Users
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
         // send an email to the user
-        $Email = new Email($this->Config, $this);
+        $Email = new Email(new Config(), $this);
         $Email->alertUserIsValidated($this->userData['email']);
     }
 
@@ -741,13 +737,14 @@ class Users
     /**
      * Get what will be the value of the validated column in users table
      *
+     * @param Config $config
      * @param int $group
      * @return int
      */
-    private function getValidated(int $group): int
+    private function getValidated(Config $config, int $group): int
     {
         // validation is required for normal user
-        if ($this->Config->configArr['admin_validate'] === '1' && $group === 4) {
+        if ($config->configArr['admin_validate'] === '1' && $group === 4) {
             return 0; // so new user will need validation
         }
         return 1;

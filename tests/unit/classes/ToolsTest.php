@@ -1,29 +1,16 @@
 <?php declare(strict_types=1);
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
 namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
-    public function testKdate()
-    {
-        $this->assertEquals('19690721', Tools::kdate('19690721'));
-        $this->assertEquals(date('Ymd'), Tools::kdate('3902348923'));
-        $this->assertEquals(date('Ymd'), Tools::kdate('Sun is shining'));
-    }
-
-    public function testCheckTitle()
-    {
-        $this->assertEquals('My super title', Tools::checkTitle('My super title'));
-        $this->assertEquals('Yep ', Tools::checkTitle("Yep\n"));
-        $this->assertEquals('Untitled', Tools::checkTitle(''));
-    }
-
-    public function testCheckBody()
-    {
-        $this->assertEquals('my body', Tools::checkBody('my body'));
-        $this->assertEquals('my body', Tools::checkBody('my body<script></script>'));
-    }
-
     public function testFormatBytes()
     {
         $this->assertEquals('0.98 KiB', Tools::formatBytes(1000));
@@ -46,16 +33,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('gif', Tools::getExt('myfile.gif'));
         $this->assertEquals('gif', Tools::getExt('/path/to/myfile.gif'));
         $this->assertEquals('unknown', Tools::getExt('/path/to/myfilegif'));
-    }
-
-    public function testCheckId()
-    {
-        $this->expectException(\TypeError::class);
-        $this->assertFalse(Tools::checkId('yep'));
-        $this->assertFalse(Tools::checkId(-42));
-        $this->assertFalse(Tools::checkId(0));
-        $this->assertFalse(Tools::checkId(3.1415926535));
-        $this->assertEquals(42, Tools::checkId(42));
     }
 
     public function testMd2html()

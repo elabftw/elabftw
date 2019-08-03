@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 
 /**
  * For things that are used by experiments, database, status, item types, templates, …
@@ -42,7 +42,7 @@ trait EntityTrait
      */
     public function setId(int $id): void
     {
-        if (Tools::checkId($id) === false) {
+        if (Check::id($id) === false) {
             throw new IllegalActionException('The id parameter is not valid!');
         }
         $this->id = $id;

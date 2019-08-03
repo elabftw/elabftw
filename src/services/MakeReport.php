@@ -15,6 +15,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\CsvTrait;
 
 /**
@@ -49,7 +50,7 @@ class MakeReport extends AbstractMake
      */
     public function getFileName(): string
     {
-        return Tools::kdate() . '-report.elabftw.csv';
+        return Filter::kdate() . '-report.elabftw.csv';
     }
 
     /**

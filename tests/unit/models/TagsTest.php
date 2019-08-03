@@ -9,7 +9,7 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
+use Elabftw\Services\Check;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,12 +23,12 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->Tags->create('my tag');
         $id = $this->Experiments->Tags->create('new tag');
-        $this->assertTrue((bool) Tools::checkId($id));
+        $this->assertTrue((bool) Check::id($id));
 
         $Database = new Database($this->Users, 1);
         $Tags = new Tags($Database);
         $id =$Tags->create('tag2222');
-        $this->assertTrue((bool) Tools::checkId($id));
+        $this->assertTrue((bool) Check::id($id));
     }
 
     public function testReadAll()

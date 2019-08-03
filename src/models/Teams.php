@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Services\Filter;
 use PDO;
 
 /**
@@ -96,7 +97,7 @@ class Teams implements CrudInterface
      */
     public function create(string $name): int
     {
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $name = Filter::sanitize($name);
 
         // add to the teams table
         $sql = 'INSERT INTO teams (name, link_name, link_href) VALUES (:name, :link_name, :link_href)';
@@ -211,12 +212,12 @@ class Teams implements CrudInterface
 
         $linkName = 'Documentation';
         if (isset($post['link_name'])) {
-            $linkName = filter_var($post['link_name'], FILTER_SANITIZE_STRING);
+            $linkName = Filter::sanitize($post['link_name']);
         }
 
         $linkHref = 'https://doc.elabftw.net';
         if (isset($post['link_href'])) {
-            $linkHref = filter_var($post['link_href'], FILTER_SANITIZE_STRING);
+            $linkHref = Filter::sanitize($post['link_href']);
         }
 
         $sql = 'UPDATE teams SET
@@ -255,8 +256,8 @@ class Teams implements CrudInterface
      */
     public function updateName(int $id, string $name, string $orgid = ''): void
     {
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $orgid = filter_var($orgid, FILTER_SANITIZE_STRING);
+        $name = Filter::sanitize($name);
+        $orgid = Filter::sanitize($orgid);
 
         $sql = 'UPDATE teams
             SET name = :name,

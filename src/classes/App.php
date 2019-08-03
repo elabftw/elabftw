@@ -86,7 +86,7 @@ class App
         $this->Log->pushHandler(new ErrorLogHandler());
         $this->Csrf = $csrf;
 
-        $this->Users = new Users(null, $this->Config);
+        $this->Users = new Users();
         $this->Db = Db::getConnection();
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
         $Update = new Update($this->Config, new Sql());

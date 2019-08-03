@@ -270,11 +270,13 @@ class MakeTimestamp extends AbstractMake
             $hash = self::HASH_ALGORITHM;
         }
 
-        return array('stamplogin' => $login,
-                    'stamppassword' => $password,
-                    'stampprovider' => $provider,
-                    'stampcert' => $cert,
-                    'hash' => $hash, );
+        return array(
+            'stamplogin' => $login,
+            'stamppassword' => $password,
+            'stampprovider' => $provider,
+            'stampcert' => $cert,
+            'hash' => $hash,
+            );
     }
 
     /**

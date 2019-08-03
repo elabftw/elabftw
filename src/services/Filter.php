@@ -27,13 +27,27 @@ class Filter
     private const MAX_BODY_SIZE = 4120000;
 
     /**
+     * Return 0 or 1 if input is on. Used for UCP.
+     *
+     * @param string $input
+     * @return int
+     */
+    public static function onToBinary(string $input): int
+    {
+        if ($input === 'on') {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
      * Return the current date as YYYYMMDD format if no input
      * return input if it is a valid date
      *
      * @param string|null $input 20160521
      * @return string
      */
-    public static function kdate($input = null): string
+    public static function kdate(?string $input = null): string
     {
         if ($input !== null
             && \mb_strlen($input) == '8') {

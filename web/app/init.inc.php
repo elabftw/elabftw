@@ -132,7 +132,6 @@ try {
     bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
-
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

@@ -394,10 +394,7 @@ class Users
         }
 
         // LAYOUT
-        $new_layout = 0;
-        if (isset($params['single_column_layout']) && $params['single_column_layout'] === 'on') {
-            $new_layout = 1;
-        }
+        $new_layout = Filter::onToBinary($params['single_column_layout'] ?? '');
 
         // KEYBOARD SHORTCUTS
         // only take first letter
@@ -419,29 +416,13 @@ class Users
         }
 
         // SHOW TEAM
-        $new_show_team = 0;
-        if (isset($params['show_team']) && $params['show_team'] === 'on') {
-            $new_show_team = 1;
-        }
-
+        $new_show_team = Filter::onToBinary($params['show_team'] ?? '');
         // CLOSE WARNING
-        $new_close_warning = 0;
-        if (isset($params['close_warning']) && $params['close_warning'] === 'on') {
-            $new_close_warning = 1;
-        }
-
+        $new_close_warning = Filter::onToBinary($params['close_warning'] ?? '');
         // CJK FONTS
-        $new_cjk_fonts = 0;
-        if (isset($params['cjk_fonts']) && $params['cjk_fonts'] === 'on') {
-            $new_cjk_fonts = 1;
-        }
-
+        $new_cjk_fonts = Filter::onToBinary($params['cjk_fonts'] ?? '');
         // PDF/A
-        $new_pdfa = 0;
-        if (isset($params['pdfa']) && $params['pdfa'] === 'on') {
-            $new_pdfa = 1;
-        }
-
+        $new_pdfa = Filter::onToBinary($params['pdfa'] ?? '');
         // PDF format
         $new_pdf_format = 'A4';
         $formatsArr = array('A4', 'LETTER', 'ROYAL');
@@ -450,23 +431,11 @@ class Users
         }
 
         // USE MARKDOWN
-        $new_use_markdown = 0;
-        if (isset($params['use_markdown']) && $params['use_markdown'] === 'on') {
-            $new_use_markdown = 1;
-        }
-
+        $new_use_markdown = Filter::onToBinary($params['use_markdown'] ?? '');
         // INCLUDE FILES IN PDF
-        $new_inc_files_pdf = 0;
-        if (isset($params['inc_files_pdf']) && $params['inc_files_pdf'] === 'on') {
-            $new_inc_files_pdf = 1;
-        }
-
+        $new_inc_files_pdf = Filter::onToBinary($params['inc_files_pdf'] ?? '');
         // CHEM EDITOR
-        $new_chem_editor = 0;
-        if (isset($params['chem_editor']) && $params['chem_editor'] === 'on') {
-            $new_chem_editor = 1;
-        }
-
+        $new_chem_editor = Filter::onToBinary($params['chem_editor'] ?? '');
         // LANG
         $new_lang = 'en_GB';
         if (isset($params['lang']) && array_key_exists($params['lang'], Tools::getLangsArr())) {
@@ -474,22 +443,11 @@ class Users
         }
 
         // ALLOW EDIT
-        $new_allow_edit = 0;
-        if (isset($params['allow_edit']) && $params['allow_edit'] === 'on') {
-            $new_allow_edit = 1;
-        }
-
+        $new_allow_edit = Filter::onToBinary($params['allow_edit'] ?? '');
         // ALLOW GROUP EDIT
-        $new_allow_group_edit = 0;
-        if (isset($params['allow_group_edit']) && $params['allow_group_edit'] === 'on') {
-            $new_allow_group_edit = 1;
-        }
-
+        $new_allow_group_edit = Filter::onToBinary($params['allow_group_edit'] ?? '');
         // DEFAULT VIS
-        $new_default_vis = null;
-        if (isset($params['default_vis'])) {
-            $new_default_vis = Check::visibility($params['default_vis']);
-        }
+        $new_default_vis = Check::visibility($params['default_vis'] ?? 'team');
 
         // Signature pdf
         // only use cookie here because it's temporary code

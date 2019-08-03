@@ -66,6 +66,11 @@ class Update
         return self::REQUIRED_SCHEMA;
     }
 
+    /**
+     * Check if the Db structure needs updating
+     *
+     * @return void
+     */
     public function checkSchema(): void
     {
         $currentSchema = (int) $this->Config->configArr['schema'];

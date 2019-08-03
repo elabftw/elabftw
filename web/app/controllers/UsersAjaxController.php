@@ -85,9 +85,6 @@ try {
 
         // load data on the user to delete
         $targetUser = new Users((int) $Request->request->get('userid'));
-        if (empty($targetUser)) {
-            throw new IllegalActionException('User tried to delete inexisting user.');
-        }
 
         // need to be sysadmin to delete user from other team
         if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {

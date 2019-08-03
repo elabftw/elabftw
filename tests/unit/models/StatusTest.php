@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Services\Check;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Check;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {

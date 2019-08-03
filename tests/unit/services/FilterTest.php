@@ -9,8 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\ImproperActionException;
-
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
     public function testKdate()

@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Services\Check;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Check;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {

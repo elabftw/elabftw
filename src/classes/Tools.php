@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
@@ -124,7 +122,7 @@ class Tools
      */
     public static function formatBytes(int $bytes): string
     {
-        $sizes = array('B','KiB','MiB','GiB','TiB');
+        $sizes = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
         return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . $sizes[$factor];
     }

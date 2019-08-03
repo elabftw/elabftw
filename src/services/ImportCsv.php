@@ -13,7 +13,6 @@ namespace Elabftw\Services;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
-use Elabftw\Services\Filter;
 use function League\Csv\delimiter_detect;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Request;

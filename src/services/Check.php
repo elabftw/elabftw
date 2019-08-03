@@ -47,7 +47,8 @@ class Check
         $filter_options = array(
             'options' => array(
                 'min_range' => 1,
-            ), );
+            ),
+        );
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
     }
 
@@ -87,5 +88,4 @@ class Check
 
         return $visibility;
     }
-
 }

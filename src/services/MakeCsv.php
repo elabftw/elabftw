@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\CsvTrait;
 
 /**

@@ -15,9 +15,9 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
-use Elabftw\Services\Check;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Check;
 use PDO;
 
 /**

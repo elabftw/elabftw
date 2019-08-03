@@ -15,7 +15,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use Elabftw\Services\Filter;
 use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -16,8 +16,8 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use Elabftw\Services\Email;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 

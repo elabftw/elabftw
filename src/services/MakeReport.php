@@ -15,7 +15,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\CsvTrait;
 
 /**

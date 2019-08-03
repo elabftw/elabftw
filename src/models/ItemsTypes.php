@@ -13,9 +13,9 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Traits\EntityTrait;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\EntityTrait;
 use PDO;
 
 /**

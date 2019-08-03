@@ -100,5 +100,4 @@ class Filter
         }
         return $body;
     }
-
 }

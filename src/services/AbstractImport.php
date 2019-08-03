@@ -13,7 +13,6 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 

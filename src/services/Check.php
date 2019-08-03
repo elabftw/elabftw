@@ -40,7 +40,7 @@ class Check
      * Check ID is valid (pos int)
      *
      * @param int $id
-     * @return int|false $id if pos int
+     * @return int|false
      */
     public static function id(int $id)
     {
@@ -72,13 +72,35 @@ class Check
      * @param string $color #121212
      * @return string
      */
-    public static function color($color): string
+    public static function color(string $color): string
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
         if ($color === false || \mb_strlen($color) !== 6) {
             throw new ImproperActionException('Bad color');
         }
         return $color;
+    }
+
+    /**
+     * Check the limit value
+     *
+     * @param int $limit
+     * @return int
+     */
+    public static function limit(int $limit): int
+    {
+        $filterOptions = array(
+            'options' => array(
+                'default' => 15,
+                'min_range' => 1,
+                'max_range' => 500,
+            ),
+        );
+        $limit = filter_var($limit, FILTER_VALIDATE_INT, $filterOptions);
+        if ($limit === false) {
+            return 15;
+        }
+        return $limit;
     }
 
     /**

@@ -204,9 +204,9 @@ class DatabaseController extends AbstractEntityController
         }
 
         // PAGINATION
-        $limit = (int) $this->App->Users->userData['limit_nb'];
-        if ($this->App->Request->query->has('limit') && Check::id((int) $this->App->Request->query->get('limit')) !== false) {
-            $limit = (int) $this->App->Request->query->get('limit');
+        $limit = (int) $this->App->Users->userData['limit_nb'] ?? 15;
+        if ($this->App->Request->query->has('limit')) {
+            $limit = Check::limit((int) $this->App->Request->query->get('limit'));
         }
 
         $offset = 0;

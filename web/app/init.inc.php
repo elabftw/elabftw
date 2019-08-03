@@ -44,14 +44,6 @@ try {
     require_once $configFilePath;
     // END CONFIG.PHP
 
-    // CONFIGURE GETTEXT
-    $domain = 'messages';
-    putenv("LC_ALL=$locale");
-    setlocale(LC_ALL, $locale);
-    bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
-    textdomain($domain);
-    // END i18n
-
     $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
@@ -133,6 +125,14 @@ try {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
+    // CONFIGURE GETTEXT
+    $domain = 'messages';
+    putenv("LC_ALL=$locale");
+    setlocale(LC_ALL, $locale);
+    bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
+    textdomain($domain);
+    // END i18n
+
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

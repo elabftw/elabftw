@@ -378,14 +378,7 @@ class Users
     public function updatePreferences(array $params): void
     {
         // LIMIT
-        $filter_options = array(
-            'options' => array(
-                'default' => 15,
-                'min_range' => 1,
-                'max_range' => 500,
-            ),
-        );
-        $new_limit = filter_var($params['limit'], FILTER_VALIDATE_INT, $filter_options);
+        $new_limit = Check::limit((int) $params['limit']);
 
         // ORDER BY
         $new_orderby = null;

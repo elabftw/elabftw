@@ -35,6 +35,9 @@ class ApiController implements ControllerInterface
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
+    /** @var Users $Users the authenticated user */
+    private $Users;
+
     /** @var array $allowedMethods allowed HTTP methods */
     private $allowedMethods = array('GET', 'POST');
 
@@ -46,9 +49,6 @@ class ApiController implements ControllerInterface
 
     /** @var string $endpoint experiments, items or uploads */
     private $endpoint;
-
-    /** @var int $userid the authenticated user */
-    private $userid;
 
     /**
      * Constructor
@@ -139,18 +139,14 @@ class ApiController implements ControllerInterface
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads)
-        $endpoint = array_shift($args);
-        if ($endpoint === null) {
-            throw new ImproperActionException('Bad endpoint!');
-        }
+        $this->endpoint = array_shift($args) ?? '';
 
-        $this->endpoint = $endpoint;
         // verify the key and load user info
         $Users = new Users();
         $ApiKeys = new ApiKeys($Users);
         $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
         $Users->populate((int) $keyArr['userid']);
-        $this->userid = (int) $keyArr['userid'];
+        $this->Users = $Users;
         $this->canWrite = (bool) $keyArr['canWrite'];
 
         // load Entity
@@ -273,12 +269,12 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             return new Response('You need to specify an ID!', 400);
         }
-        $Uploads = new Uploads();
+        $Uploads = new Uploads(new Experiments($this->Users));
         $uploadData = $Uploads->readFromId($this->id);
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
-        if ((int) $uploadData['userid'] !== $this->userid) {
+        if ((int) $uploadData['userid'] !== $this->Users->userData['userid']) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = \dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];

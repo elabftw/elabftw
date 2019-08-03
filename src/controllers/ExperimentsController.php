@@ -228,7 +228,7 @@ class ExperimentsController extends AbstractEntityController
 
         // READ ALL ITEMS
 
-        if ($this->App->Request->getSession()->get('anon')) {
+        if ($this->App->Session->get('anon')) {
             $this->Entity->visibilityFilter = "AND experiments.visibility = 'public'";
             $itemsArr = $this->Entity->read($getTags);
         // related filter

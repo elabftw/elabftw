@@ -116,6 +116,7 @@ abstract class AbstractEntity
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
+        $this->itemsReadNb = 0;
 
         if ($id !== null) {
             $this->setId($id);
@@ -529,7 +530,7 @@ abstract class AbstractEntity
     {
         if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
-            if (empty($this->entityData)) {
+            if (!isset($this->entityData)) {
                 return array('read' => false, 'write' => false);
             }
         }

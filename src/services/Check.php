@@ -95,12 +95,9 @@ class Check
                 'min_range' => 1,
                 'max_range' => 500,
             ),
+            FILTER_NULL_ON_FAILURE,
         );
-        $limit = filter_var($limit, FILTER_VALIDATE_INT, $filterOptions);
-        if ($limit === false) {
-            return 15;
-        }
-        return $limit;
+        return filter_var($limit, FILTER_VALIDATE_INT, $filterOptions) ?? 15;
     }
 
     /**

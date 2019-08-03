@@ -152,8 +152,7 @@ try {
     }
 
     $message = "The 'uploads' folder was created successfully.";
-    echo Tools::displayMessage($message, 'ok', false);
-    ?>
+    echo Tools::displayMessage($message, 'ok', false); ?>
 
     <h3>Configuration</h3>
 
@@ -226,8 +225,8 @@ try {
     <script src='../app/js/install.min.js'></script>
 <?php
 } catch (ImproperActionException | FilesystemErrorException | Exception $e) {
-        echo Tools::displayMessage($e->getMessage(), 'ko', false);
-        echo '</section></section>';
-    } finally {
-        echo '</body></html>';
-    }
+          echo Tools::displayMessage($e->getMessage(), 'ko', false);
+          echo '</section></section>';
+      } finally {
+          echo '</body></html>';
+      }

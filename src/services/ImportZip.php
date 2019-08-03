@@ -34,10 +34,10 @@ class ImportZip extends AbstractImport
     private $Entity;
 
     /** @var string $tmpPath the folder where we extract the zip */
-    private $tmpPath;
+    private $tmpPath = '';
 
     /** @var array $json an array with the data we want to import */
-    private $json;
+    private $json = array();
 
     /** @var string $type experiments or items */
     private $type = 'items';

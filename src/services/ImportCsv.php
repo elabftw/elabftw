@@ -113,7 +113,7 @@ class ImportCsv extends AbstractImport
         // reverse sort the array by value to get the delimiter with highest probability
         arsort($delimitersCount, SORT_NUMERIC);
         // get the first element
-        $delimiter = key($delimitersCount);
+        $delimiter = (string) key($delimitersCount);
         if ($delimiter !== $this->delimiter) {
             throw new ImproperActionException(sprintf('It looks like the delimiter is different from «%1$s». Make sure to use «%1$s» as delimiter!', $this->delimiter));
         }

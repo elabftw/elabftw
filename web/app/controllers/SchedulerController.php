@@ -54,7 +54,7 @@ try {
 
     // UPDATE START
     if ($Request->request->has('updateStart')) {
-        $Scheduler->setId((int) $Request->request->get('id'));
+        $Scheduler->Database->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] === $App->Session->get('userid')) {
             $Scheduler->updateStart($Request->request->get('start'), $Request->request->get('end'));
@@ -62,7 +62,7 @@ try {
     }
     // UPDATE END
     if ($Request->request->has('updateEnd')) {
-        $Scheduler->setId((int) $Request->request->get('id'));
+        $Scheduler->Database->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] === $App->Session->get('userid')) {
             $Scheduler->updateEnd($Request->request->get('end'));
@@ -70,7 +70,7 @@ try {
     }
     // DESTROY
     if ($Request->request->has('destroy')) {
-        $Scheduler->setId((int) $Request->request->get('id'));
+        $Scheduler->Database->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] === $Session->get('userid')) {
             $Scheduler->destroy();

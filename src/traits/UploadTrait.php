@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
+use PDO;
 
 /**
  * For things related to file storage
@@ -52,5 +54,31 @@ trait UploadTrait
             throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
         }
         return $folder . '/' . $hash;
+    }
+
+    /**
+     * Get the total size on disk of uploaded files for a user
+     *
+     * @param int $userid
+     * @return int
+     */
+    protected function getDiskUsage(int $userid): int
+    {
+        $sql = 'SELECT userid, long_name FROM uploads WHERE userid = :userid ORDER BY userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $uploads = $req->fetchAll();
+        if ($uploads === false) {
+            return 0;
+        }
+        $diskUsage = 0;
+        foreach ($uploads as $upload) {
+            $diskUsage += \filesize($this->getUploadsPath() . $upload['long_name']);
+        }
+        return $diskUsage;
     }
 }

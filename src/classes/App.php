@@ -14,6 +14,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
@@ -111,6 +112,16 @@ class App
     public function getMemoryUsage(): int
     {
         return memory_get_usage();
+    }
+
+    /**
+     * Get the mininum password length for injecting in templates
+     *
+     * @return int
+     */
+    public function getMinPasswordLength(): int
+    {
+        return Check::MIN_PASSWORD_LENGTH;
     }
 
     /**

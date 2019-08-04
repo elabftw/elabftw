@@ -67,7 +67,6 @@ class UsersHelper
         return 4;
     }
 
-
     /**
      * Do we have users in the DB ?
      *

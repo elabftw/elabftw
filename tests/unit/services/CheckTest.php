@@ -9,8 +9,8 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -50,5 +50,4 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->expectException(IllegalActionException::class);
         Check::visibility('pwet');
     }
-
 }

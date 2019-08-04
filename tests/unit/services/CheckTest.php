@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\IllegalActionException;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,4 +30,25 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(Check::id(3.1415926535));
         $this->assertEquals(42, Check::id(42));
     }
+
+    public function testIdOrExplode()
+    {
+        $this->expectException(IllegalActionException::class);
+        Check::idOrExplode(-1337);
+    }
+
+    public function testColor()
+    {
+        $this->assertEquals('AABBCC', Check::color('#AABBCC'));
+        $this->expectException(ImproperActionException::class);
+        Check::color('pwet');
+    }
+
+    public function testVisibility()
+    {
+        $this->assertEquals('team', Check::visibility('team'));
+        $this->expectException(IllegalActionException::class);
+        Check::visibility('pwet');
+    }
+
 }

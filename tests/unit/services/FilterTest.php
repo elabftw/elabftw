@@ -9,6 +9,8 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
     public function testKdate()
@@ -16,6 +18,11 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('19690721', Filter::kdate('19690721'));
         $this->assertEquals(date('Ymd'), Filter::kdate('3902348923'));
         $this->assertEquals(date('Ymd'), Filter::kdate('Sun is shining'));
+    }
+
+    public function testSanitize()
+    {
+        $this->assertEquals('', Filter::sanitize('<img></img>'));
     }
 
     public function testTitle()
@@ -29,5 +36,8 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('my body', Filter::body('my body'));
         $this->assertEquals('my body', Filter::body('my body<script></script>'));
+        $this->expectException(ImproperActionException::class);
+        $body = \str_repeat('a', 4120001);
+        Filter::body($body);
     }
 }

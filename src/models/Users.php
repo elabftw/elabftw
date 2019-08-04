@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\UsersHelper;
 use PDO;
 
 /**
@@ -90,13 +91,14 @@ class Users
         // Registration date is stored in epoch
         $registerDate = \time();
 
-        // get the group for the new user
-        $group = $this->getGroup($team);
-
         $Config = new Config();
+        $UsersHelper = new UsersHelper();
+
+        // get the group for the new user
+        $group = $UsersHelper->getGroup($team);
 
         // will new user be validated?
-        $validated = $this->getValidated($Config, $group);
+        $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -677,78 +679,5 @@ class Users
             $Experiments = new Experiments($this, (int) $exp['id']);
             $Experiments->destroy();
         }
-    }
-
-    /**
-     * Get what will be the value of the validated column in users table
-     *
-     * @param Config $config
-     * @param int $group
-     * @return int
-     */
-    private function getValidated(Config $config, int $group): int
-    {
-        // validation is required for normal user
-        if ($config->configArr['admin_validate'] === '1' && $group === 4) {
-            return 0; // so new user will need validation
-        }
-        return 1;
-    }
-
-    /**
-     * Return the group int that will be assigned to a new user in a team
-     * 1 = sysadmin if it's the first user ever
-     * 2 = admin for first user in a team
-     * 4 = normal user
-     *
-     * @param int $team
-     * @return int
-     */
-    private function getGroup(int $team): int
-    {
-        if ($this->isFirstUser()) {
-            return 1;
-        }
-
-        if ($this->isFirstUserInTeam($team)) {
-            return 2;
-        }
-        return 4;
-    }
-
-    /**
-     * Do we have users in the DB ?
-     *
-     * @return bool
-     */
-    private function isFirstUser(): bool
-    {
-        $sql = 'SELECT COUNT(*) AS usernb FROM users';
-        $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $test = $req->fetch();
-
-        return $test['usernb'] === '0';
-    }
-
-    /**
-     * Are we the first user to register in a team ?
-     *
-     * @param int $team
-     * @return bool
-     */
-    private function isFirstUserInTeam(int $team): bool
-    {
-        $sql = 'SELECT COUNT(*) AS usernb FROM users WHERE team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-        $test = $req->fetch();
-
-        return $test['usernb'] === '0';
     }
 }

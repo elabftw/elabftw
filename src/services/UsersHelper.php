@@ -28,6 +28,25 @@ class UsersHelper
     }
 
     /**
+     * Check if a user owns experiments
+     * This is used to prevent changing the team of a user with experiments
+     *
+     * @param int $userid the user to check
+     * @return bool
+     */
+    public function hasExperiments(int $userid): bool
+    {
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        return (bool) $req->fetchColumn();
+    }
+
+    /**
      * Return the group int that will be assigned to a new user in a team
      * 1 = sysadmin if it's the first user ever
      * 2 = admin for first user in a team

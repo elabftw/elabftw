@@ -320,7 +320,8 @@ class Users
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
         $team = Check::id((int) $params['team']);
-        if ($this->hasExperiments((int) $this->userData['userid']) && $team !== (int) $this->userData['team']) {
+        $UsersHelper = new UsersHelper();
+        if ($UsersHelper->hasExperiments((int) $this->userData['userid']) && $team !== (int) $this->userData['team']) {
             throw new ImproperActionException('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
         }
 
@@ -601,25 +602,6 @@ class Users
         // send an email to the user
         $Email = new Email(new Config(), $this);
         $Email->alertUserIsValidated($this->userData['email']);
-    }
-
-    /**
-     * Check if a user owns experiments
-     * This is used to prevent changing the team of a user with experiments
-     *
-     * @param int $userid the user to check
-     * @return bool
-     */
-    public function hasExperiments(int $userid): bool
-    {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
-
-        return (bool) $req->fetchColumn();
     }
 
     /**

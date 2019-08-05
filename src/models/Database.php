@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Services\Filter;
 use PDO;
@@ -99,6 +100,9 @@ class Database extends AbstractEntity implements CreateInterface
         ));
         $newId = $this->Db->lastInsertId();
 
+        if ($this->id === null) {
+            throw new IllegalActionException('Try to duplicate without an id.');
+        }
         $this->Links->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);

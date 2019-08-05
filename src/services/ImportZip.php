@@ -53,6 +53,7 @@ class ImportZip extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
+        $this->Entity = new Database($users);
     }
 
     /**
@@ -174,7 +175,7 @@ class ImportZip extends AbstractImport
         if ($this->type === 'experiments') {
             $this->Entity = new Experiments($this->Users, $newItemId);
         } else {
-            $this->Entity = new Database($this->Users, $newItemId);
+            $this->Entity->setId($newItemId);
         }
 
         if (\mb_strlen($item['tags'] ?? '') > 1) {

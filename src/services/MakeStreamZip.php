@@ -83,7 +83,7 @@ class MakeStreamZip extends AbstractMake
      */
     public function getFileName(): string
     {
-        return 'elabftw-export.zip';
+        return 'export.elabftw.zip';
     }
 
     /**

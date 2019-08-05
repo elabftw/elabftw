@@ -21,9 +21,6 @@ use Elabftw\Services\Check;
  */
 trait EntityTrait
 {
-    /** @var Users $Users our user */
-    public $Users;
-
     /** @var int|null $id Id of the entity */
     public $id;
 

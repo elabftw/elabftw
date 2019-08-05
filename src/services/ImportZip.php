@@ -93,10 +93,11 @@ class ImportZip extends AbstractImport
      *
      * @return void
      */
-    protected function openFile(): void
+    private function openFile(): void
     {
         $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
+        $Zip->open($this->UploadedFile->getPathname());
+        $Zip->extractTo($this->tmpPath);
     }
 
     /**

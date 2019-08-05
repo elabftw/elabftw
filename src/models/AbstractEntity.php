@@ -43,6 +43,9 @@ abstract class AbstractEntity
     /** @var Uploads $Uploads instance of Uploads */
     public $Uploads;
 
+    /** @var Users $Users our user */
+    public $Users;
+
     /** @var string $type experiments or items */
     public $type = '';
 

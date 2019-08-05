@@ -89,7 +89,7 @@ final class Db
      * @param string $sql The SQL query
      * @return \PDOStatement
      */
-    public function prepare($sql): \PDOStatement
+    public function prepare(string $sql): \PDOStatement
     {
         $this->nq++;
         return $this->connection->prepare($sql);
@@ -101,7 +101,7 @@ final class Db
      * @param string $sql The SQL query
      * @return \PDOStatement
      */
-    public function q($sql): \PDOStatement
+    public function q(string $sql): \PDOStatement
     {
         $res = $this->connection->query($sql);
         if ($res === false) {

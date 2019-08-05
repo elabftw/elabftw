@@ -390,11 +390,11 @@
         <option selected disabled>-------</option>
         <option disabled>Import in database</option>
         {% for itemsType in itemsTypesArr %}
-          <option value='{{ itemsType.category_id }}' name='type'>{{ itemsType.category }}</option>
+          <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
         {% endfor %}
         <option disabled>Import in experiments</option>
         {% for user in allTeamUsersArr %}
-          <option value='{{ user.userid }}' name='type'>{{ user.fullname|raw }}</option>
+          <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
         {% endfor %}
       </select>
 

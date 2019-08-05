@@ -26,6 +26,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ExperimentsController extends AbstractEntityController
 {
+    /** @var Experiments $Entity instance of Experiments */
+    protected $Entity;
+
     /**
      * Constructor
      *

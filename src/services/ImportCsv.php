@@ -95,7 +95,7 @@ class ImportCsv extends AbstractImport
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
-            $body .= '<p><strong>' . $subheader . ':</strong> ' . $content . '</p>';
+            $body .= '<p><strong>' . (string) $subheader . ':</strong> ' . $content . '</p>';
         }
 
         return $body;

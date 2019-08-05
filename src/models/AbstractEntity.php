@@ -212,7 +212,7 @@ abstract class AbstractEntity
     public function read(bool $getTags = true, bool $inTeam = true): array
     {
         if ($this->id !== null) {
-            $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
+            $this->idFilter = ' AND ' . $this->type . '.id = ' . (string) $this->id;
         }
 
         $uploadsJoin = 'LEFT JOIN (
@@ -442,7 +442,7 @@ abstract class AbstractEntity
     public function setLimit(int $num): void
     {
         $num *= 2;
-        $this->limit = 'LIMIT ' . $num;
+        $this->limit = 'LIMIT ' . (string) $num;
     }
 
     /**
@@ -453,7 +453,7 @@ abstract class AbstractEntity
      */
     public function setOffset(int $num): void
     {
-        $this->offset = 'OFFSET ' . $num;
+        $this->offset = 'OFFSET ' . (string) $num;
     }
 
     /**

@@ -123,7 +123,7 @@ class Update
 
         // new style with SQL files instead of functions
         while ($currentSchema < self::REQUIRED_SCHEMA) {
-            $this->Sql->execFile('schema' . (++$currentSchema) . '.sql');
+            $this->Sql->execFile('schema' . (string) (++$currentSchema) . '.sql');
         }
 
         // remove cached twig templates (for non docker users)

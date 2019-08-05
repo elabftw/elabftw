@@ -64,7 +64,7 @@ abstract class AbstractEntityController implements ControllerInterface
         // CREATE
         if ($this->App->Request->query->has('create')) {
             $id = $this->Entity->create((int) $this->App->Request->query->get('tpl'));
-            return new RedirectResponse('?mode=edit&id=' . $id);
+            return new RedirectResponse('?mode=edit&id=' . (string) $id);
         }
 
         // UPDATE RATING

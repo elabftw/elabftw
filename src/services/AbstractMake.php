@@ -91,6 +91,6 @@ abstract class AbstractMake
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
 
-        return $url . '?mode=view&id=' . $this->Entity->id;
+        return $url . '?mode=view&id=' . (string) $this->Entity->id;
     }
 }

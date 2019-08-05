@@ -242,9 +242,9 @@ class Tools
         $html = '<ul>';
         foreach ($arr as $key => $val) {
             if (is_array($val)) {
-                $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
+                $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
             } else {
-                $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
+                $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
             }
         }
         $html .= '</ul>';
@@ -287,7 +287,7 @@ class Tools
      */
     public static function getUrlFromRequest(Request $Request): string
     {
-        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . $Request->getPort() . $Request->getBasePath();
+        $url = $Request->getScheme() . '://' . $Request->getHost() . ':' . (string) $Request->getPort() . $Request->getBasePath();
         return \str_replace('app/controllers', '', $url);
     }
 

@@ -12,7 +12,6 @@ namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 
 /**

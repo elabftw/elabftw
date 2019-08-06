@@ -49,19 +49,19 @@ class MakeTimestamp extends AbstractMake
     private $pdfPath = '';
 
     /** @var string $pdfRealName name of the pdf (elabid-timestamped.pdf) */
-    private $pdfRealName;
+    private $pdfRealName = '';
 
     /** @var string $pdfLongName a hash */
     private $pdfLongName = '';
 
     /** @var array $stampParams config (url, login, password, cert) */
-    private $stampParams;
+    private $stampParams = array();
 
     /** @var array $trash things that get deleted with destruct method */
     private $trash = array();
 
     /** @var string $requestfilePath where we store the request file */
-    private $requestfilePath;
+    private $requestfilePath = '';
 
     /** @var string $responsefilePath where we store the asn1 token */
     private $responsefilePath = '';
@@ -270,11 +270,13 @@ class MakeTimestamp extends AbstractMake
             $hash = self::HASH_ALGORITHM;
         }
 
-        return array('stamplogin' => $login,
-                    'stamppassword' => $password,
-                    'stampprovider' => $provider,
-                    'stampcert' => $cert,
-                    'hash' => $hash, );
+        return array(
+            'stamplogin' => $login,
+            'stamppassword' => $password,
+            'stampprovider' => $provider,
+            'stampcert' => $cert,
+            'hash' => $hash,
+            );
     }
 
     /**

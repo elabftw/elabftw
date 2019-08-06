@@ -17,6 +17,7 @@ interface CleanerInterface
 {
     /**
      * Cleanup
+     * @psalm-suppress MissingReturnType
      */
     public function cleanup();
 }

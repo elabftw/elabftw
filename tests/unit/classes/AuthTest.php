@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -29,13 +28,6 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->Auth->checkCredentials('phpunit@yopmail.com', 'phpunitftw'));
         $this->assertFalse($this->Auth->checkCredentials('phpunit@yopmail.com', 'wrong password'));
-    }
-
-    public function testCheckPasswordLength()
-    {
-        $this->assertTrue($this->Auth->checkPasswordLength('longpassword'));
-        $this->expectException(ImproperActionException::class);
-        $this->Auth->checkPasswordLength('short');
     }
 
     public function testLogin()

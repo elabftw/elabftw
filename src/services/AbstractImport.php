@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -49,7 +48,7 @@ abstract class AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
         $this->target = (int) $request->request->get('target');
-        $this->visibility = Tools::checkVisibility($request->request->get('visibility'));
+        $this->visibility = Check::visibility($request->request->get('visibility'));
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
@@ -66,9 +65,16 @@ abstract class AbstractImport
      */
     protected function checkMimeType(): bool
     {
-        $mimes = array(null, 'application/vnd.ms-excel', 'text/plain',
-            'text/csv', 'text/tsv',
-            'application/zip', 'application/force-download', 'application/x-zip-compressed', );
+        $mimes = array(
+            null,
+            'application/vnd.ms-excel',
+            'text/plain',
+            'text/csv',
+            'text/tsv',
+            'application/zip',
+            'application/force-download',
+            'application/x-zip-compressed',
+        );
 
         if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
             return true;

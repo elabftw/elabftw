@@ -12,11 +12,12 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Check;
 use Elabftw\Services\Email;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 
@@ -41,6 +42,9 @@ abstract class AbstractEntity
 
     /** @var Uploads $Uploads instance of Uploads */
     public $Uploads;
+
+    /** @var Users $Users our user */
+    public $Users;
 
     /** @var string $type experiments or items */
     public $type = '';
@@ -115,6 +119,7 @@ abstract class AbstractEntity
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
+        $this->itemsReadNb = 0;
 
         if ($id !== null) {
             $this->setId($id);
@@ -207,7 +212,7 @@ abstract class AbstractEntity
     public function read(bool $getTags = true, bool $inTeam = true): array
     {
         if ($this->id !== null) {
-            $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
+            $this->idFilter = ' AND ' . $this->type . '.id = ' . (string) $this->id;
         }
 
         $uploadsJoin = 'LEFT JOIN (
@@ -380,9 +385,9 @@ abstract class AbstractEntity
         $Revisions = new Revisions($this);
         $Revisions->create($body);
 
-        $title = Tools::checkTitle($title);
-        $date = Tools::kdate($date);
-        $body = Tools::checkBody($body);
+        $title = Filter::title($title);
+        $date = Filter::kdate($date);
+        $body = Filter::body($body);
 
         if ($this instanceof Experiments) {
             $sql = 'UPDATE experiments SET
@@ -437,7 +442,7 @@ abstract class AbstractEntity
     public function setLimit(int $num): void
     {
         $num *= 2;
-        $this->limit = 'LIMIT ' . $num;
+        $this->limit = 'LIMIT ' . (string) $num;
     }
 
     /**
@@ -448,7 +453,7 @@ abstract class AbstractEntity
      */
     public function setOffset(int $num): void
     {
-        $this->offset = 'OFFSET ' . $num;
+        $this->offset = 'OFFSET ' . (string) $num;
     }
 
     /**
@@ -469,7 +474,7 @@ abstract class AbstractEntity
      */
     public function updateVisibility(string $visibility): void
     {
-        Tools::checkVisibility($visibility);
+        Check::visibility($visibility);
         $this->canOrExplode('write');
 
         $sql = 'UPDATE ' . $this->type . ' SET visibility = :visibility WHERE id = :id';
@@ -490,7 +495,7 @@ abstract class AbstractEntity
     public function getVisibility(): string
     {
         $TeamGroups = new TeamGroups($this->Users);
-        if (Tools::checkId((int) $this->entityData['visibility']) !== false) {
+        if (Check::id((int) $this->entityData['visibility']) !== false) {
             return $TeamGroups->readName((int) $this->entityData['visibility']);
         }
         return ucfirst($this->entityData['visibility']);
@@ -528,7 +533,7 @@ abstract class AbstractEntity
     {
         if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
-            if (empty($this->entityData)) {
+            if (!isset($this->entityData)) {
                 return array('read' => false, 'write' => false);
             }
         }
@@ -614,7 +619,8 @@ abstract class AbstractEntity
         $itemsArr = $this->getDbList($term);
         foreach ($itemsArr as $item) {
             $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
-                $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>', );
+                $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',
+            );
         }
 
         // complete the list with experiments
@@ -622,7 +628,8 @@ abstract class AbstractEntity
         $experimentsArr = $this->getExpList($term);
         foreach ($experimentsArr as $item) {
             $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
-                $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>', );
+                $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
+            );
         }
 
         return $mentionArr;

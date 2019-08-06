@@ -9,7 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
+use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
 
 class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,7 +23,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
     public function testCreateAndDestroy()
     {
         $new = $this->Database->create(1);
-        $this->assertTrue((bool) Tools::checkId($new));
+        $this->assertTrue((bool) Check::id($new));
         $this->Database->setId($new);
         $this->Database->destroy();
     }
@@ -40,7 +41,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
         $this->Database->canOrExplode('read');
         $this->assertTrue(is_array($this->Database->entityData));
         $this->assertEquals('Untitled', $this->Database->entityData['title']);
-        $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
+        $this->assertEquals(Filter::kdate(), $this->Database->entityData['date']);
     }
 
     public function testUpdate()
@@ -59,7 +60,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
     {
         $this->Database->setId(1);
         $this->Database->canOrExplode('read');
-        $this->assertTrue((bool) Tools::checkId($this->Database->duplicate(1)));
+        $this->assertTrue((bool) Check::id($this->Database->duplicate(1)));
     }
 
     public function testToggleLock()

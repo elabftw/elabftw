@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
@@ -60,7 +59,7 @@ class ImportCsv extends AbstractImport
             VALUES(:team, :title, :date, :body, :userid, :category, :visibility)';
         $req = $this->Db->prepare($sql);
 
-        $date = Tools::kdate();
+        $date = Filter::kdate();
 
         // now loop the rows and do the import
         foreach ($csv as $row) {
@@ -96,7 +95,7 @@ class ImportCsv extends AbstractImport
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
-            $body .= '<p><strong>' . $subheader . ':</strong> ' . $content . '</p>';
+            $body .= '<p><strong>' . (string) $subheader . ':</strong> ' . $content . '</p>';
         }
 
         return $body;
@@ -114,7 +113,7 @@ class ImportCsv extends AbstractImport
         // reverse sort the array by value to get the delimiter with highest probability
         arsort($delimitersCount, SORT_NUMERIC);
         // get the first element
-        $delimiter = key($delimitersCount);
+        $delimiter = (string) key($delimitersCount);
         if ($delimiter !== $this->delimiter) {
             throw new ImproperActionException(sprintf('It looks like the delimiter is different from «%1$s». Make sure to use «%1$s» as delimiter!', $this->delimiter));
         }

@@ -85,7 +85,7 @@ class DatabaseCleaner implements CleanerInterface
         $req->execute();
         $res = $req->fetchAll();
         if (!empty($res)) {
-            echo 'Found ' . \count($res) . ' rows to delete in ' . $table . "\n";
+            echo 'Found ' . (string) \count($res) . ' rows to delete in ' . $table . "\n";
             $this->deleteFrom($table, $res);
         }
     }

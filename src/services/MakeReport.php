@@ -10,36 +10,37 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Traits\CsvTrait;
+use Elabftw\Traits\UploadTrait;
 
 /**
  * Create a report of usage for all users
  */
-class MakeReport extends AbstractMake
+class MakeReport
 {
     use CsvTrait;
+    use UploadTrait;
+
+    /** @var Db $Db the mysql connection */
+    protected $Db;
 
     /** @var Teams $Teams instance of Teams */
     private $Teams;
-
-    /** @var Uploads $Uploads instance of Uploads */
-    private $Uploads;
 
     /**
      * Constructor
      *
      * @param Teams $teams
-     * @param Uploads $uploads
      */
-    public function __construct(Teams $teams, Uploads $uploads)
+    public function __construct(Teams $teams)
     {
         $this->Teams = $teams;
-        $this->Uploads = $uploads;
+        $this->Db = Db::getConnection();
     }
 
     /**
@@ -49,7 +50,7 @@ class MakeReport extends AbstractMake
      */
     public function getFileName(): string
     {
-        return Tools::kdate() . '-report.elabftw.csv';
+        return Filter::kdate() . '-report.elabftw.csv';
     }
 
     /**
@@ -86,7 +87,7 @@ class MakeReport extends AbstractMake
         $allUsers = $this->Teams->Users->readFromQuery('');
         foreach ($allUsers as $key => $user) {
             // get disk usage for all uploaded files
-            $diskUsage = $this->Uploads->getDiskUsage((int) $user['userid']);
+            $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
             $Entity->setUseridFilter();

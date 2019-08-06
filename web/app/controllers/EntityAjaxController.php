@@ -17,6 +17,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
+use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -164,7 +165,7 @@ try {
         $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
         $id_arr = \explode('_', $Request->request->get('comment_id'));
         $comment_id = (int) $id_arr[1];
-        if (Tools::checkId($comment_id) === false) {
+        if (Check::id($comment_id) === false) {
             throw new IllegalActionException('The id parameter is invalid');
         }
 

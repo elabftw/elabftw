@@ -147,7 +147,7 @@
           name: name,
           color: color,
           isTimestampable: isTimestampable,
-          isDefault: isDefault
+          isDefault: isDefault ? 1 : 0,
         }).done(function(json) {
           notif(json);
         });

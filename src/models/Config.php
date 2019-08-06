@@ -14,10 +14,10 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\Update;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Check;
 use PDO;
 
 /**
@@ -100,10 +100,10 @@ class Config
             $post['url'] = filter_var($post['url'], FILTER_SANITIZE_URL);
         }
 
-        if (isset($post['login_tries']) && Tools::checkId((int) $post['login_tries']) === false) {
+        if (isset($post['login_tries']) && Check::id((int) $post['login_tries']) === false) {
             throw new IllegalActionException('Bad value for number of login attempts!');
         }
-        if (isset($post['ban_time']) && Tools::checkId((int) $post['ban_time']) === false) {
+        if (isset($post['ban_time']) && Check::id((int) $post['ban_time']) === false) {
             throw new IllegalActionException('Bad value for number of login attempts!');
         }
 

@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Services\Filter;
 use PDO;
 
 /**
@@ -66,7 +67,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $title,
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $body,
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
@@ -177,14 +178,18 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req->execute(array(
             'team' => $this->Users->userData['team'],
             'title' => $title,
-            'date' => Tools::kdate(),
+            'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $this->entityData['visibility'],
-            'userid' => $this->Users->userData['userid'], ));
+            'userid' => $this->Users->userData['userid'],
+        ));
         $newId = $this->Db->lastInsertId();
 
+        if ($this->id === null) {
+            throw new IllegalActionException('Try to duplicate without an id.');
+        }
         $this->Links->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
@@ -297,7 +302,7 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     private function generateElabid(): string
     {
-        $date = Tools::kdate();
+        $date = Filter::kdate();
         return $date . '-' . \sha1(\bin2hex(\random_bytes(16)));
     }
 }

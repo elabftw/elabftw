@@ -38,11 +38,13 @@ try {
     // columns
     $stats['cols'] = array(
         array(
-        'type' => 'string',
-        'label' => 'Status', ),
+            'type' => 'string',
+            'label' => 'Status',
+        ),
         array(
-        'type' => 'number',
-        'label' => 'Experiments number', ),
+            'type' => 'number',
+            'label' => 'Experiments number',
+        ),
     );
     // rows
     foreach ($UserStats->percentArr as $name => $percent) {

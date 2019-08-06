@@ -39,7 +39,7 @@ try {
         $SamlAuth->login($returnUrl);
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {
-            $App->Users->Auth->loginAsAnon((int) $Request->request->get('team_id'));
+            $Auth->loginAsAnon((int) $Request->request->get('team_id'));
             if ($Request->cookies->has('redirect')) {
                 $location = $Request->cookies->get('redirect');
             } else {
@@ -71,7 +71,7 @@ try {
             $Session->set('failed_attempt', $n);
         }
         // the actual login
-        if ($App->Users->Auth->login($Request->request->get('email'), $Request->request->get('password'), $rememberme)) {
+        if ($Auth->login($Request->request->get('email'), $Request->request->get('password'), $rememberme)) {
             if ($Request->cookies->has('redirect')) {
                 $location = $Request->cookies->get('redirect');
             } else {

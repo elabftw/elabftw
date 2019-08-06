@@ -18,7 +18,7 @@ $I->wait(2);
 $folder = $_SERVER['HOME'].'/Downloads/';
 $files = scandir($folder);
 foreach ($files as $file) {
-    if (preg_match('/^elabftw-export/', $file)) {
+    if (preg_match('/^export.elabftw/', $file)) {
         $I->seeFileIsZip($folder . $file);
     }
 }

@@ -16,6 +16,8 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
 
 /**
  * The search page
@@ -77,19 +79,19 @@ if ($Request->query->has('tags') && !empty($Request->query->get('tags'))) {
 // VISIBILITY
 $vis = '';
 if ($Request->query->has('vis') && !empty($Request->query->get('vis'))) {
-    $vis = Tools::checkVisibility($Request->query->get('vis'));
+    $vis = Check::visibility($Request->query->get('vis'));
 }
 
 // FROM
 $from = '';
 if ($Request->query->has('from') && !empty($Request->query->get('from'))) {
-    $from = Tools::kdate($Request->query->get('from'));
+    $from = Filter::kdate($Request->query->get('from'));
 }
 
 // TO
 $to = '';
 if ($Request->query->has('to') && !empty($Request->query->get('to'))) {
-    $to = Tools::kdate($Request->query->get('to'));
+    $to = Filter::kdate($Request->query->get('to'));
 }
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
@@ -117,7 +119,7 @@ if ($Request->query->count() > 0) {
 
     // STATUS
     $status = '';
-    if (Tools::checkId((int) $Request->query->get('status')) !== false) {
+    if (Check::id((int) $Request->query->get('status')) !== false) {
         $status = $Request->query->get('status');
     }
 
@@ -160,7 +162,7 @@ if ($Request->query->count() > 0) {
 
             // USERID FILTER
             if ($Request->query->has('owner')) {
-                if (Tools::checkId((int) $Request->query->get('owner')) !== false) {
+                if (Check::id((int) $Request->query->get('owner')) !== false) {
                     $owner = $Request->query->get('owner');
                 } elseif (empty($Request->query->get('owner'))) {
                     $owner = $App->Users->userData['userid'];
@@ -183,7 +185,7 @@ if ($Request->query->count() > 0) {
             }
 
             // FILTER ON DATABASE ITEMS TYPES
-            if (Tools::checkId((int) $Request->query->get('type')) !== false) {
+            if (Check::id((int) $Request->query->get('type')) !== false) {
                 $Entity->categoryFilter = 'AND items_types.id = ' . $Request->query->get('type');
             }
         }

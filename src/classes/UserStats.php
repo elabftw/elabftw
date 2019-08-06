@@ -95,7 +95,7 @@ class UserStats
     {
         foreach ($this->statusArr as $key => $value) {
             $value = str_replace("'", "\'", html_entity_decode($value, ENT_QUOTES));
-            $this->percentArr[$value] = round(((int) $this->countArr[$key] / $this->count) * 100);
+            $this->percentArr[$value] = round(((float) $this->countArr[$key] / (float) $this->count) * 100.0);
         }
     }
 }

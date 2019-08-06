@@ -169,7 +169,7 @@ final class MakeThumbnail
         $height = imagesy($sourceImage);
 
         // find the "desired height" of this thumbnail, relative to the desired width
-        $desiredHeight = (int) floor($height * (self::WIDTH / $width));
+        $desiredHeight = (int) floor((float) $height * ((float) self::WIDTH / (float) $width));
 
         // create a new, "virtual" image
         $virtualImage = imagecreatetruecolor(self::WIDTH, $desiredHeight);

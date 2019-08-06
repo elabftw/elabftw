@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -19,6 +18,7 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +35,9 @@ class ApiController implements ControllerInterface
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
 
+    /** @var Users $Users the authenticated user */
+    private $Users;
+
     /** @var array $allowedMethods allowed HTTP methods */
     private $allowedMethods = array('GET', 'POST');
 
@@ -46,9 +49,6 @@ class ApiController implements ControllerInterface
 
     /** @var string $endpoint experiments, items or uploads */
     private $endpoint;
-
-    /** @var int $userid the authenticated user */
-    private $userid;
 
     /**
      * Constructor
@@ -133,24 +133,20 @@ class ApiController implements ControllerInterface
 
         // assign the id if there is one
         $id = null;
-        if (Tools::checkId((int) end($args)) !== false) {
+        if (Check::id((int) end($args)) !== false) {
             $id = (int) end($args);
         }
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads)
-        $endpoint = array_shift($args);
-        if ($endpoint === null) {
-            throw new ImproperActionException('Bad endpoint!');
-        }
+        $this->endpoint = array_shift($args) ?? '';
 
-        $this->endpoint = $endpoint;
         // verify the key and load user info
         $Users = new Users();
         $ApiKeys = new ApiKeys($Users);
         $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
-        $Users->setId((int) $keyArr['userid']);
-        $this->userid = (int) $keyArr['userid'];
+        $Users->populate((int) $keyArr['userid']);
+        $this->Users = $Users;
         $this->canWrite = (bool) $keyArr['canWrite'];
 
         // load Entity
@@ -273,12 +269,12 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             return new Response('You need to specify an ID!', 400);
         }
-        $Uploads = new Uploads();
+        $Uploads = new Uploads(new Experiments($this->Users));
         $uploadData = $Uploads->readFromId($this->id);
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
-        if ((int) $uploadData['userid'] !== $this->userid) {
+        if ((int) $uploadData['userid'] !== $this->Users->userData['userid']) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = \dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];

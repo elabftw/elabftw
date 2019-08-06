@@ -5,6 +5,10 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     autoloader="config.php"
+    strictBinaryOperands="true"
+    checkForThrowsInGlobalScope="true"
+    ignoreInternalFunctionFalseReturn="true"
+    ignoreInternalFunctionNullReturn="false"
 >
     <projectFiles>
         <directory name="src" />

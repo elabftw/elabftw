@@ -32,6 +32,7 @@ class CacheGenerator
         foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($tplDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
             // force compilation
             if ($file->isFile()) {
+                /** @psalm-suppress InternalMethod */
                 $TwigEnvironment->loadTemplate(str_replace($tplDir . '/', '', $file));
             }
         }

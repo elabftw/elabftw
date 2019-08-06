@@ -15,6 +15,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,7 +34,7 @@ try {
     // check URL parameters
     if (!$Request->query->has('key') ||
         !$Request->query->has('deadline') ||
-        Tools::checkId((int) $Request->query->get('userid')) === false) {
+        Check::id((int) $Request->query->get('userid')) === false) {
         throw new IllegalActionException('Bad parameters in url.');
     }
 

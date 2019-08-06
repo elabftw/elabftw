@@ -100,6 +100,6 @@ class TagCloud
      */
     private function getClassFromRatio(int $ratio): string
     {
-        return 'cloud-' . round($ratio, -1);
+        return 'cloud-' . (string) round($ratio, -1);
     }
 }

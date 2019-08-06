@@ -47,7 +47,8 @@ try {
     $template = 'register.html';
     $renderArr = array(
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
-        'teamsArr' => $teamsArr, );
+        'teamsArr' => $teamsArr,
+    );
 } catch (ImproperActionException $e) {
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());

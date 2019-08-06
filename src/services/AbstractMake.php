@@ -26,7 +26,7 @@ abstract class AbstractMake
     use UploadTrait;
 
     /** @var string $filePath the full path of the file */
-    public $filePath;
+    public $filePath = '';
 
     /** @var AbstractEntity $Entity instance of Experiments or Database */
     protected $Entity;
@@ -91,6 +91,6 @@ abstract class AbstractMake
         $Request = Request::createFromGlobals();
         $url = Tools::getUrl($Request) . '/' . $this->Entity->page . '.php';
 
-        return $url . '?mode=view&id=' . $this->Entity->id;
+        return $url . '?mode=view&id=' . (string) $this->Entity->id;
     }
 }

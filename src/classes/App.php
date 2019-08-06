@@ -14,6 +14,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
@@ -71,31 +72,26 @@ class App
     /**
      * Constructor
      *
-     * @param Session $session
      * @param Request $request
-     * @param Config $config
-     * @param Logger $log
      */
-    public function __construct(
-        Session $session,
-        Request $request,
-        Config $config,
-        Logger $log,
-        Csrf $csrf
-    ) {
+    public function __construct(Request $request, Session $session, Config $config, Logger $log, Csrf $csrf)
+    {
         $this->Request = $request;
-        $this->Config = $config;
-        $this->Log = $log;
-        $this->Log->pushHandler(new ErrorLogHandler());
-        $this->Users = new Users(null, new Auth($request, $session), new Config());
-
-        $this->Db = Db::getConnection();
         $this->Session = $session;
-        $this->Csrf = $csrf;
-
         $this->ok = $this->Session->getFlashBag()->get('ok');
         $this->ko = $this->Session->getFlashBag()->get('ko');
         $this->warning = $this->Session->getFlashBag()->get('warning');
+
+        $this->Config = $config;
+        $this->Log = $log;
+        $this->Log->pushHandler(new ErrorLogHandler());
+        $this->Csrf = $csrf;
+
+        $this->Users = new Users();
+        $this->Db = Db::getConnection();
+        // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
+        $Update = new Update($this->Config, new Sql());
+        $Update->checkSchema();
     }
 
     /**
@@ -116,6 +112,16 @@ class App
     public function getMemoryUsage(): int
     {
         return memory_get_usage();
+    }
+
+    /**
+     * Get the mininum password length for injecting in templates
+     *
+     * @return int
+     */
+    public function getMinPasswordLength(): int
+    {
+        return Check::MIN_PASSWORD_LENGTH;
     }
 
     /**

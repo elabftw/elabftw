@@ -81,8 +81,8 @@ class MakePdf extends AbstractMake
      */
     public function getFileName(): string
     {
-        return $this->Entity->entityData['date'] . ' - ' .
-            preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) . '.pdf';
+        $title = preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) ?? 'file';
+        return $this->Entity->entityData['date'] . ' - ' . $title . '.pdf';
     }
 
     /**
@@ -378,7 +378,7 @@ class MakePdf extends AbstractMake
      */
     private function buildHeader(): string
     {
-        $date = new \DateTime($this->Entity->entityData['date'] ?? Tools::kdate());
+        $date = new \DateTime($this->Entity->entityData['date'] ?? Filter::kdate());
 
         // add a CJK font for the body if we want CJK fonts
         $cjkStyle = '';

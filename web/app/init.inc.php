@@ -15,7 +15,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Exception;
 use Monolog\Logger;
-use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -26,17 +25,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
  */
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 
+$Request = Request::createFromGlobals();
+$Session = new Session();
+$Session->start();
+$Request->setSession($Session);
+
 try {
-    // CREATE REQUEST OBJECT
-    $Request = Request::createFromGlobals();
-
-    // CREATE SESSION
-    $Session = new Session();
-    $Session->start();
-    // and attach it to Request
-    $Request->setSession($Session);
-
-    // LOAD CONFIG.PHP
+    // CONFIG.PHP
     $configFilePath = \dirname(__DIR__, 2) . '/config.php';
     // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
@@ -47,23 +42,9 @@ try {
         throw new ImproperActionException('Redirecting to install folder');
     }
     require_once $configFilePath;
-    // END LOAD CONFIG.PHP
+    // END CONFIG.PHP
 
-    // INIT APP OBJECT
-    // new Config will make the first SQL request
-    // PDO will throw an exception if the SQL structure is not imported yet
-    // so we redirect to the install folder
-    try {
-        $App = new App($Session, $Request, new Config(), new Logger('elabftw'), new Csrf($Session, $Request));
-    } catch (PDOException $e) {
-        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
-        header('Location: ' . $url);
-        throw new ImproperActionException('Redirecting to install folder');
-    }
-
-    // UPDATE SQL SCHEMA if necessary
-    $Update = new Update($App->Config, new Sql());
-    $Update->checkSchema();
+    $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
@@ -73,37 +54,38 @@ try {
     //    \____\___|_|  |_.__/ \___|_|   \__,_|___/   //
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
+    $Auth = new Auth($App->Request, $App->Session);
 
     // autologin as anon if it's allowed by sysadmin
     // don't do it if we have elabid in url
     if ($App->Config->configArr['open_science'] && !$App->Request->query->has('elabid')) {
         // only autologin on selected pages and if we are not authenticated with an account
         $autoAnon = array('experiments.php', 'database.php', 'search.php');
-        if (\in_array(\basename($Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
-            $App->Users->Auth->loginAsAnon((int) $App->Config->configArr['open_team'] ?? 1);
+        if (\in_array(\basename($App->Request->getScriptName()), $autoAnon, true) && !$App->Request->getSession()->has('auth')) {
+            $Auth->loginAsAnon((int) $App->Config->configArr['open_team'] ?? 1);
         }
     }
 
     // autologin if there is elabid for an experiment in view mode
     if ($App->Request->query->has('elabid')
-        && \basename($Request->getScriptName()) === 'experiments.php'
-        && $Request->query->get('mode') === 'view'
+        && \basename($App->Request->getScriptName()) === 'experiments.php'
+        && $App->Request->query->get('mode') === 'view'
         && !$App->Request->getSession()->has('auth')) {
 
         // now we need to know in which team we autologin the user
         $Experiments = new Experiments(new Users(), (int) $App->Request->query->get('id'));
         $team = $Experiments->getTeamFromElabid($App->Request->query->get('elabid'));
-        $App->Users->Auth->loginAsAnon($team);
+        $Auth->loginAsAnon($team);
     }
 
-    if ($App->Users->Auth->needAuth() && !$App->Users->Auth->tryAuth()) {
+    if ($Auth->needAuth() && !$Auth->tryAuth()) {
         // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
-        if (!stripos($Request->getRequestUri(), 'controllers')) {
-            \setcookie('redirect', $Request->getRequestUri(), time() + 300, '/', '', true, true);
+        if (!stripos($App->Request->getRequestUri(), 'controllers')) {
+            \setcookie('redirect', $App->Request->getRequestUri(), time() + 300, '/', '', true, true);
         }
 
         // used by ajax requests to detect a timed out session
@@ -118,7 +100,7 @@ try {
 
     // load the Users with a userid if we are auth
     if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users((int) $Request->getSession()->get('userid'), $App->Users->Auth, $App->Config));
+        $App->loadUser(new Users((int) $App->Request->getSession()->get('userid')));
     }
 
     // ANONYMOUS
@@ -135,7 +117,7 @@ try {
     }
 
     // GET THE LANG
-    if ($Request->getSession()->has('auth')) {
+    if ($App->Request->getSession()->has('auth')) {
         // generate full Users object with current userid
         // set lang based on user pref
         $locale = $App->Users->userData['lang'] . '.utf8';
@@ -143,7 +125,6 @@ try {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
-
     // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");

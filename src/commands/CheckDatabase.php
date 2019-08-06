@@ -58,8 +58,8 @@ class CheckDatabase extends Command
         $output->writeln(array(
             'Database check',
             '==============',
-            'Current version: ' . $current,
-            'Required version: ' . $required,
+            'Current version: ' . (string) $current,
+            'Required version: ' . (string) $required,
         ));
         if ($current === $required) {
             $output->writeln('No upgrade required.');

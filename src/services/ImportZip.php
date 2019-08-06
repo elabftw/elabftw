@@ -34,10 +34,10 @@ class ImportZip extends AbstractImport
     private $Entity;
 
     /** @var string $tmpPath the folder where we extract the zip */
-    private $tmpPath;
+    private $tmpPath = '';
 
     /** @var array $json an array with the data we want to import */
-    private $json;
+    private $json = array();
 
     /** @var string $type experiments or items */
     private $type = 'items';
@@ -53,6 +53,7 @@ class ImportZip extends AbstractImport
     public function __construct(Users $users, Request $request)
     {
         parent::__construct($users, $request);
+        $this->Entity = new Database($users);
     }
 
     /**
@@ -93,10 +94,11 @@ class ImportZip extends AbstractImport
      *
      * @return void
      */
-    protected function openFile(): void
+    private function openFile(): void
     {
         $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname()) && $Zip->extractTo($this->tmpPath);
+        $Zip->open($this->UploadedFile->getPathname());
+        $Zip->extractTo($this->tmpPath);
     }
 
     /**
@@ -173,7 +175,7 @@ class ImportZip extends AbstractImport
         if ($this->type === 'experiments') {
             $this->Entity = new Experiments($this->Users, $newItemId);
         } else {
-            $this->Entity = new Database($this->Users, $newItemId);
+            $this->Entity->setId($newItemId);
         }
 
         if (\mb_strlen($item['tags'] ?? '') > 1) {
@@ -207,7 +209,7 @@ class ImportZip extends AbstractImport
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', $item['title']);
+                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', $item['title']) ?? 'file';
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .

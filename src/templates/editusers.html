@@ -78,13 +78,13 @@
                     <!-- RESET PASSWORD -->
                     <li class='list-inline-item'>
                       <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                        <span class='smallgray'>({{ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) }} {{ 'characters minimum'|trans }})</span>
+                        <span class='smallgray'>({{ App.getMinPasswordLength }} {{ 'characters minimum'|trans }})</span>
                       </label>
                       <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
                       <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
                       <input type='text' style='display:none'>
                       <input type='password' style='display:none'>
-                      {% set pattern = '.{' ~ constant('MIN_PASSWORD_LENGTH', App.Users.Auth) ~ ',}' %}
+                      {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
                       <input autocomplete='new-password' class='form-control custom-control-inline' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
                     </li>
 

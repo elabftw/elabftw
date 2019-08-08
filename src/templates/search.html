@@ -21,7 +21,7 @@
             <!-- END SEARCH IN -->
 
             <!-- SEARCH WITH TAG -->
-            <div class='col-md-3'>
+            <div class='col-md-6'>
                 <label for='tags-select'>{{ 'With the tag'|trans }}</label>
                 <select multiple name='tags[]' id='tags-select' class='custom-select'>
                     {% for tag in tagsArr %}
@@ -32,7 +32,7 @@
             <!-- END SEARCH WITH TAG -->
 
             <!-- VISIBILITY SEARCH -->
-            <div class='col-md-6'>
+            <div class='col-md-3'>
                 <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
                 <select id='visibility' name='vis' class='custom-select'>
                     <option value=''>{{ 'Select visibility'|trans }}</option>

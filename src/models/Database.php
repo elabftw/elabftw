@@ -87,6 +87,8 @@ class Database extends AbstractEntity implements CreateInterface
      */
     public function duplicate(): int
     {
+        $this->canOrExplode('read');
+
         $sql = 'INSERT INTO items(team, title, date, body, userid, category)
             VALUES(:team, :title, :date, :body, :userid, :category)';
         $req = $this->Db->prepare($sql);
@@ -117,6 +119,8 @@ class Database extends AbstractEntity implements CreateInterface
      */
     public function destroy(): void
     {
+        $this->canOrExplode('write');
+
         // delete the database item
         $sql = 'DELETE FROM items WHERE id = :id';
         $req = $this->Db->prepare($sql);

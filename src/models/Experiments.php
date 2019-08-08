@@ -140,6 +140,8 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function updateTimestamp(string $responseTime, string $responsefilePath): void
     {
+        $this->canOrExplode('write');
+
         $sql = 'UPDATE experiments SET
             locked = 1,
             lockedby = :userid,
@@ -168,6 +170,8 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function duplicate(): int
     {
+        $this->canOrExplode('read');
+
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';

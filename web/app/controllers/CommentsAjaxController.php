@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Exception;
@@ -73,7 +74,7 @@ try {
     if ($Request->request->has('destroy')) {
         $Entity->Comments->destroy((int) $Request->request->get('id'));
     }
-} catch (ImproperActionException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

@@ -153,7 +153,7 @@ class ExperimentsController extends AbstractEntityController
             $searchType = 'filter';
         }
         // TAG FILTER
-        if (!empty($this->App->Request->query->get('tags'))) {
+        if (!empty($this->App->Request->query->get('tags')[0])) {
             $having = 'HAVING ';
             foreach ($this->App->Request->query->get('tags') as $tag) {
                 $tag = \filter_var($tag, FILTER_SANITIZE_STRING);

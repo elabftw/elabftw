@@ -148,7 +148,7 @@ class DatabaseController extends AbstractEntityController
             $searchType = 'category';
         }
         // TAG FILTER
-        if (!empty($this->App->Request->query->get('tags'))) {
+        if (!empty($this->App->Request->query->get('tags')[0])) {
             $having = 'HAVING ';
             foreach ($this->App->Request->query->get('tags') as $tag) {
                 $tag = \filter_var($tag, FILTER_SANITIZE_STRING);

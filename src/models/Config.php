@@ -158,7 +158,7 @@ class Config
      *
      * @return void
      */
-    public function populate(): void
+    private function populate(): void
     {
         $Update = new Update($this, new Sql());
         $schema = $Update->getRequiredSchema();

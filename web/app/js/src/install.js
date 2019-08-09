@@ -30,9 +30,4 @@ $(document).ready(function() {
       }
     });
   });
-
-  // reload page button
-  $('.click2reload').click(function() {
-    document.location.reload();
-  });
 });

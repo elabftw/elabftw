@@ -1,7 +1,5 @@
 <?php declare(strict_types=1);
 /**
- * install/test.php
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -18,6 +16,8 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use PDO;
+
+require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 try {
     // Check if there is already a config file

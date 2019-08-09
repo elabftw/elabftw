@@ -96,8 +96,8 @@ try {
     </head>
 
     <body>
-    <section id="container" class='container'>
-    <section id='real_container'>
+    <div id="container" class='container'>
+    <div id='real_container'>
     <center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
     <h2>Welcome to the install of eLabFTW</h2>
 
@@ -211,16 +211,14 @@ try {
         <button type="submit" name="Submit" class='button'>INSTALL eLabFTW</button>
     </div>
 
-    <p>If the config.php file is in place, <button class='button click2reload'>reload this page</button></p>
-    <p>You will be redirected to the registration page, where you can get your admin account :)</p>
+    <p>Once the <code>config.php</code> file is in place, <a href='../register.php'>register an account</a>.</p>
 
     </section>
 
     </form>
 
-    </section>
-
-    </section>
+    </div>
+    </div>
 
     <script src='../app/js/install.min.js'></script>
 <?php

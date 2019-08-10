@@ -89,6 +89,15 @@
           <option value='desc' {{ App.Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
           <option value='asc' {{ App.Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
       </select>
+
+      <!-- LIMIT -->
+      <select autocomplete='off' name='limit' id='select-limit' class='form-control'>
+        <option value=''>{{ 'Results per page'|trans }}</option>
+        {% for option in limitOptions(limit) %}
+        <option {{ option == limit ? 'selected' }} value='{{ option }}'>{{ option }}</option>
+        {% endfor %}
+      </select>
+
     </div>
   </form>
 
@@ -233,16 +242,6 @@
                 <button class='button nextPage'>{{ 'Next page'|trans }}</button>
             {% endif %}
         </div>
-
-  <!-- LIMIT -->
-  <form id='filter-order-sort' class='autosubmit form-inline align_right'>
-    <span class='smallgray'><label for='select-limit'>{{ 'Results per page'|trans }}</label></span>
-    <select autocomplete='off' name='limit' id='select-limit' class='form-control'>
-      {% for option in limitOptions(limit) %}
-        <option {{ option == limit ? 'selected' }} value='{{ option }}'>{{ option }}</option>
-      {% endfor %}
-    </select>
-  </form>
   {% endif %}
 
 {% endif %}

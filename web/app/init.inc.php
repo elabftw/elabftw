@@ -44,8 +44,17 @@ try {
     require_once $configFilePath;
     // END CONFIG.PHP
 
-    $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
-
+    // INIT APP OBJECT
+    // new Config will make the first SQL request
+    // PDO will throw an exception if the SQL structure is not imported yet
+    // so we redirect to the install folder
+    try {
+        $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
+    } catch (Exception $e) {
+        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
+        header('Location: ' . $url);
+        throw new ImproperActionException('Redirecting to install folder');
+    }
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
     //    / ___|___ _ __| |__   ___ _ __ _   _ ___    //

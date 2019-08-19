@@ -31,7 +31,7 @@
     "@babel/preset-env": "^7.5.5",
     "apidoc": "0.17.*",
     "babel-loader": "^8.0.6",
-    "eslint": "^6.1.0",
+    "eslint": "^6.2.0",
     "expose-loader": "0.7.*",
     "grunt": "1.0.*",
     "grunt-contrib-cssmin": "3.0.*",

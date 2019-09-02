@@ -7076,9 +7076,9 @@ tiny-lr@^1.1.1:
     qs "^6.4.0"
 
 tinymce@5.0.*:
-  version "5.0.13"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.13.tgz#fdccfce5fa77f23e9a221d22b6f766ab70eb0118"
-  integrity sha512-/wRN2yhl0I18agp23ut6zwLWAXmj8l1GcX7iOjCpaabGXa6nydxxElzhXn6p4558MCzLaYxibv4qu2aVamgONA==
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.15.tgz#315e6a416f40789e326ca95520397dce35b91ca8"
+  integrity sha512-00O5NcEGVP5aZ9wCN2JLnsVmSzdinvdd65O0IVPbxX0JCu83T4BQUX6Frowjn/Xe9ipLPrubNxY1RNmCI0ff7w==
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

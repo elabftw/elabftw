@@ -24,7 +24,7 @@
     "symfony/http-foundation": "4.3.*",
     "twig/twig": "2.11.*",
     "twig/extensions": "1.5.*",
-    "monolog/monolog": "1.24.*",
+    "monolog/monolog": "2.0.*",
     "maennchen/zipstream-php": "^1.0.0",
     "league/csv": "^9.2",
     "mpdf/qrcode": "^1.0",
@@ -34,7 +34,7 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "3.0.*",
+    "codeception/codeception": "3.1.*",
     "pyrech/composer-changelogs": "1.6.*",
     "fzaninotto/faker": "^1.8",
     "friendsofphp/php-cs-fixer": "^2.15"

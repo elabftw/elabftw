@@ -68,6 +68,7 @@ try {
 
     $template = 'team.html';
     $renderArr = array(
+        'Entity' => $Templates,
         'TagCloud' => $TagCloud,
         'Scheduler' => $Scheduler,
         'itemsArr' => $itemsArr,

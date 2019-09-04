@@ -136,6 +136,9 @@
 
             <div class='txt' id='e{{ template.id }}'>{{ template.body|raw }}</div>
 
+          {% set stepsArr = Entity.Steps.readFromId(template.id) %}
+          {% set linksArr = Entity.Links.readFromId(template.id) %}
+          {% include('steps-links-view.html') %}
         </div>
         {% endfor %}
     {% else %}

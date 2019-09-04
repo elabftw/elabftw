@@ -890,7 +890,7 @@ form#filter-order-sort select {
 }
 
 /* TAGS */
-a.tag {
+.tag {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
     line-height: 300%;
     border-radius: 5px;

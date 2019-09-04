@@ -300,19 +300,17 @@
         <label>{{ 'Tags'|trans }}</label>
         <div class='tags'>
           <span id='tags_div_{{ template.id }}'>
-              <!--  build the tag array -->
-              {% if template.tags|length > 0 %}
-                  {% set tagsIdArr = template.tags_id|split(',') %}
-                  {% set tagsValueArr = template.tags|split('|') %}
-                  {% for key, tag in tagsValueArr %}
-                      {# the key allows to get the id stored in tagsIdArr #}
-                      <span class='tag m-1'>
-                          <a class='tag tag-delete tagUnreferenceForTemplate clickable' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
-                              {{ tag|raw }}
-                          </a>
-                      </span>
-                  {% endfor %}
-              {% endif %}
+            <!--  build the tag array -->
+            {% if template.tags|length > 0 %}
+              {% set tagsIdArr = template.tags_id|split(',') %}
+              {% set tagsValueArr = template.tags|split('|') %}
+              {% for key, tag in tagsValueArr %}
+                {# the key allows to get the id stored in tagsIdArr #}
+                <a class='tag m-1 tag-delete tagUnreferenceForTemplate clickable' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+                    {{ tag|raw }}
+                </a>
+              {% endfor %}
+            {% endif %}
           </span>
           <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
         </div>

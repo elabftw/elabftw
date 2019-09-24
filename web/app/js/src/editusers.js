@@ -20,7 +20,7 @@
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          window.location.replace('admin.php?tab=3');
+          window.location.replace('?tab=3');
         }
       });
     }

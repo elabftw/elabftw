@@ -318,7 +318,7 @@
       editor_selector: 'mceditable',
       browser_spellcheck: true,
       skin_url: 'app/css/tinymce',
-      plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr',
+      plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
       pagebreak_separator: '<pagebreak>',
       toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
       removed_menuitems: 'newdocument, image',
@@ -343,6 +343,21 @@
         {text: 'R', value: 'r'},
         {text: 'Ruby', value: 'ruby'}
       ],
+      language: $('#info').data('lang'),
+      mentions: {
+        // use # for autocompletion
+        delimiter: '#',
+        // get the source from json with get request
+        source: function (query, process) {
+          const url = 'app/controllers/EntityAjaxController.php';
+          $.getJSON(url, {
+            mention: 1,
+            term: query,
+          }).done(function(data) {
+            process(data);
+          });
+        }
+      },
       // save button :
       save_onsavecallback: function() {
         quickSave(type, id);
@@ -358,21 +373,6 @@
           typingTimer = setTimeout(doneTyping, doneTypingInterval);
         });
       },
-      mentions: {
-        // use # for autocompletion
-        delimiter: '#',
-        // get the source from json with get request
-        source: function (query, process) {
-          const url = 'app/controllers/EntityAjaxController.php';
-          $.getJSON(url, {
-            mention: 1,
-            term: query,
-          }).done(function(data) {
-            process(data);
-          });
-        }
-      },
-      language: $('#info').data('lang'),
       style_formats_merge: true,
       style_formats: [
         {
@@ -390,7 +390,9 @@
             'margin': '0 0 10px 10px'
           }
         }
-      ]
+      ],
+      // this will GET templates from current user
+      templates: 'app/controllers/GetUserTemplates.php'
     });
   });
 }());

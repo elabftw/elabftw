@@ -24,3 +24,4 @@ import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/template';
 import 'tinymce/themes/silver/theme';
+import 'tinymce/themes/mobile/theme';

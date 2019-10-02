@@ -358,6 +358,7 @@
           });
         }
       },
+      mobile: { theme: 'mobile' },
       // save button :
       save_onsavecallback: function() {
         quickSave(type, id);

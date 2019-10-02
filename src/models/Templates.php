@@ -118,6 +118,12 @@ class Templates extends AbstractEntity
         $Tags = new Tags($this);
         $Tags->copyTags($newId);
 
+        // copy links and steps too
+        $Links = new Links($this);
+        $Steps = new Steps($this);
+        $Links->duplicate((int) $template['id'], $newId, true);
+        $Steps->duplicate((int) $template['id'], $newId, true);
+
         return $newId;
     }
 
@@ -130,7 +136,7 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = 'SELECT name, body, userid FROM experiments_templates WHERE id = :id AND team = :team';
+        $sql = 'SELECT id, name, body, userid FROM experiments_templates WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

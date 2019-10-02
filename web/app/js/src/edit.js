@@ -358,7 +358,11 @@
           });
         }
       },
-      mobile: { theme: 'mobile' },
+      mobile: {
+        theme: 'mobile',
+        plugins: [ 'save', 'lists', 'link' ],
+        toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ]
+      },
       // save button :
       save_onsavecallback: function() {
         quickSave(type, id);

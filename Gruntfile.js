@@ -96,6 +96,7 @@ module.exports = function(grunt) {
           'web/app/css/tinymce/skin.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.css',
           'web/app/css/tinymce/content.min.css': 'node_modules/tinymce/skins/ui/oxide/content.css',
           'web/app/css/tinymce/content.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/content.mobile.css',
+          'web/app/css/tinymce/skin.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.mobile.css',
         }
       }
     },

@@ -118,7 +118,10 @@
         <div class='subdivhandle box' id='subtab_{{ template.id }}div'>
 
             <h3>{{ template.name|raw }} ({{ template.fullname|raw }})
-                <button class='button import-tpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
+                <button class='button importTpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
+                <a href='experiments.php?create=true&tpl={{ template.id }}'>
+                  <button class='button'>{{ 'Create experiment from template'|trans }}</button>
+                </a>
             </h3>
             <!-- TAGS -->
             <i class='fas fa-tags'></i>

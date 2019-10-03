@@ -97,6 +97,17 @@ class Filter
     }
 
     /**
+     * Remove all non word characters. Used for files saved on the filesystem (pdf, zip, ...)
+     *
+     * @param string $input what to sanitize
+     * @return string the clean string
+     */
+    public static function forFilesystem(string $input): string
+    {
+        return \mb_ereg_replace('/[\w\s]/', '_', $input) ?? 'file';
+    }
+
+    /**
      * Sanitize body with a white list of allowed html tags.
      *
      * @param string $input Body to sanitize

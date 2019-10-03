@@ -81,7 +81,7 @@ class MakePdf extends AbstractMake
      */
     public function getFileName(): string
     {
-        $title = preg_replace('/[^A-Za-z0-9 ]/', '_', $this->Entity->entityData['title']) ?? 'file';
+        $title = Filter::forFilesystem($this->Entity->entityData['title']);
         return $this->Entity->entityData['date'] . ' - ' . $title . '.pdf';
     }
 

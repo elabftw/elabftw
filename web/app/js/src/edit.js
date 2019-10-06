@@ -318,7 +318,7 @@
       editor_selector: 'mceditable',
       browser_spellcheck: true,
       skin_url: 'app/css/tinymce',
-      plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
+      plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
       pagebreak_separator: '<pagebreak>',
       toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
       removed_menuitems: 'newdocument, image',

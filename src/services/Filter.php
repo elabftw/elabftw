@@ -104,7 +104,7 @@ class Filter
      */
     public static function forFilesystem(string $input): string
     {
-        return \mb_ereg_replace('/[\w\s]/', '_', $input) ?? 'file';
+        return \mb_ereg_replace('/[\w\s]/', '_', str_replace('/', '', $input)) ?? 'file';
     }
 
     /**

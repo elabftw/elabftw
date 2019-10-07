@@ -34,10 +34,7 @@ class Filter
      */
     public static function onToBinary(string $input): int
     {
-        if ($input === 'on') {
-            return 1;
-        }
-        return 0;
+        return $input === 'on' ? 1 : 0;
     }
 
     /**
@@ -98,13 +95,20 @@ class Filter
 
     /**
      * Remove all non word characters. Used for files saved on the filesystem (pdf, zip, ...)
+     * This code is from https://developer.wordpress.org/reference/functions/sanitize_file_name/
      *
      * @param string $input what to sanitize
      * @return string the clean string
      */
     public static function forFilesystem(string $input): string
     {
-        return \mb_ereg_replace('/[\w\s]/', '_', str_replace('/', '', $input)) ?? 'file';
+        $specialChars = array('?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', chr(0));
+        $input = htmlspecialchars_decode($input, ENT_QUOTES);
+        $input = preg_replace("#\x{00a0}#siu", ' ', $input);
+        $input = str_replace($specialChars, '', $input);
+        $input = str_replace(array('%20', '+'), '-', $input);
+        $input = preg_replace('/[\r\n\t -]+/', '-', $input);
+        return trim($input, '.-_');
     }
 
     /**

@@ -27,7 +27,7 @@
     "tinymce": "5.0.*"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.6.3",
     "@babel/preset-env": "^7.5.5",
     "apidoc": "0.17.*",
     "babel-loader": "^8.0.6",

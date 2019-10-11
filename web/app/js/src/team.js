@@ -109,7 +109,8 @@ $(document).on('click', '#change-item', function() {
   insertParamAndReload('item', '');
 });
 
-$(document).on('click', '.import-tpl', function() {
+// IMPORT TPL
+$(document).on('click', '.importTpl', function() {
   $.post('app/controllers/AjaxController.php', {
     importTpl: true,
     id: $(this).data('id')
@@ -117,6 +118,7 @@ $(document).on('click', '.import-tpl', function() {
     notif(json);
   });
 });
+
 function schedulerCreate(start, end) {
   var title = prompt('Comment:');
   if (title) {

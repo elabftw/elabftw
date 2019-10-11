@@ -7,6 +7,7 @@
  */
 import 'tinymce/tinymce';
 import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
 import 'tinymce/plugins/codesample';
@@ -24,3 +25,4 @@ import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/template';
 import 'tinymce/themes/silver/theme';
+import 'tinymce/themes/mobile/theme';

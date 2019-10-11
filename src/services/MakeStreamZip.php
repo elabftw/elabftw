@@ -34,9 +34,6 @@ class MakeStreamZip extends AbstractMake
     /** @var array $trash files to be deleted by destructor */
     private $trash = array();
 
-    /** @var string $cleanTitle a formatted title */
-    private $cleanTitle = '';
-
     /** @var string $folder name of folder */
     private $folder = '';
 
@@ -106,20 +103,6 @@ class MakeStreamZip extends AbstractMake
     }
 
     /**
-     * Make a title without special char for folder inside .zip
-     *
-     * @return void
-     */
-    private function setCleanTitle(): void
-    {
-        $this->cleanTitle = preg_replace(
-            '/[^A-Za-z0-9 ]/',
-            '_',
-            htmlspecialchars_decode($this->Entity->entityData['title'], ENT_QUOTES)
-        ) ?? 'export';
-    }
-
-    /**
      * Add the .asn1 token and the timestamped pdf to the zip archive
      *
      * @param int $id The id of current item we are zipping
@@ -157,9 +140,9 @@ class MakeStreamZip extends AbstractMake
     private function nameFolder(): void
     {
         if ($this->Entity instanceof Experiments) {
-            $this->folder = $this->Entity->entityData['date'] . ' - ' . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         } elseif ($this->Entity instanceof Database) {
-            $this->folder = $this->Entity->entityData['category'] . ' - ' . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
     }
 
@@ -222,7 +205,6 @@ class MakeStreamZip extends AbstractMake
     {
         $this->Entity->setId($id);
         $permissions = $this->Entity->getPermissions();
-        $this->setCleanTitle();
         if ($permissions['read']) {
             $uploadedFilesArr = $this->Entity->Uploads->readAll();
             $entityArr = $this->Entity->entityData;

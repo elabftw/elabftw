@@ -273,6 +273,9 @@ abstract class AbstractEntity
                 items_types.color,
                 items_types.id AS category_id,
                 items_types.bookable,
+                items_comments.recent_comment,
+                (items_comments.recent_comment IS NOT NULL) AS has_comment,
+                SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
                 uploads.up_item_id, uploads.has_attachment,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
@@ -280,11 +283,26 @@ abstract class AbstractEntity
                 LEFT JOIN items_types ON (items.category = items_types.id)
                 LEFT JOIN users ON (users.userid = items.userid)';
 
+            $stepsJoin = 'LEFT JOIN (
+                SELECT items_steps.item_id AS steps_item_id,
+                items_steps.body AS next_step,
+                items_steps.finished AS finished
+                FROM items_steps)
+                AS stepst ON (
+                items.id = steps_item_id
+                AND stepst.finished = 0)';
+
+            $commentsJoin = 'LEFT JOIN (
+                SELECT MAX(items_comments.datetime) AS recent_comment,
+                    items_comments.item_id FROM items_comments GROUP BY items_comments.item_id
+                ) AS items_comments
+                ON (items_comments.item_id = items.id)';
+
             $sql .= ' ';
             if ($getTags) {
                 $sql .= $tagsSelect . ' ';
             }
-            $sql .= $from . ' ' . $uploadsJoin . ' ';
+            $sql .= $from . ' ' . $uploadsJoin . ' ' . $stepsJoin . ' ' . $commentsJoin . ' ';
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }

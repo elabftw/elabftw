@@ -56,10 +56,13 @@
             <ul class='list-group'>
                 {% for link in linksArr %}
                 <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                        {{ link.title|raw }}</a>
+                  {{ link.title|raw }}</a>
                   <a class='linkDestroy' data-linkid='{{ link.linkid }}' data-id='{{ Entity_id }}'>
-                        <i class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
-                    </a>
+                    <i title='{{ 'Delete'|trans }}' class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
+                  </a>
+                  <a class='linkImport' data-linkid='{{ link.itemid }}'>
+                    <i title='{{ 'Import'|trans }}' class='fas fa-lg fa-file-import fa-pull-right clickable'></i>
+                  </a>
                 </li>
                 {% endfor %}
             </ul>

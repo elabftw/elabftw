@@ -209,11 +209,11 @@ class ImportZip extends AbstractImport
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = preg_replace('/[^A-Za-z0-9]/', '_', $item['title']) ?? 'file';
+                $titlePath = preg_replace('/[^A-Za-z0-9 ]/', '_', $item['title']) ?? 'file';
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .
-                            $item['date'] . '-' . $titlePath . '/' . $file['real_name'];
+                            $item['date'] . ' - ' . $titlePath . '/' . $file['real_name'];
                     } else {
                         $filePath = $this->tmpPath . '/' .
                             $item['category'] . ' - ' . $titlePath . '/' . $file['real_name'];

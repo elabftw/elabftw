@@ -24,7 +24,7 @@
                 {% set tagsValueArr = Entity.entityData.tags|split('|') %}
                 {% for tag in tagsValueArr %}
                     <span class='tag m-1 clickable'>
-                        <a class='tag tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}'>
+                        <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}'>
                             {{ tag|raw }}
                         </a>
                     </span>
@@ -170,7 +170,7 @@
         </p>
 
         <p>
-          <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}
+          <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}</label>
         </p>
 
         <p>

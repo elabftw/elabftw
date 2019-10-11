@@ -18,3 +18,4 @@ tests/_output/*
 tests/_support/_generated*
 uploads
 /vendor/
+web/app/css/tinymce/fonts/*.woff

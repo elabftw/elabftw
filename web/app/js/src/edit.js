@@ -220,7 +220,16 @@
 
     // user finished typing, save work
     function doneTyping() {
+      if (isOverCharLimit()) {
+        alert('Too many characters!!! Cannot save properly!!!');
+        return;
+      }
       quickSave(type, id);
+    }
+
+    function isOverCharLimit() {
+      const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
+      return text.length > 1000000;
     }
 
     // SWITCH EDITOR

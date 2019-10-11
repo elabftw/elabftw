@@ -4127,7 +4127,7 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
-jsoneditor@7.0.5:
+jsoneditor@7.0.*:
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-7.0.5.tgz#c27c36a2832e87bc5b339fb1f2081f8b22cfcfbd"
   integrity sha512-r0rCi15++vMV83VLe92t8LNbAsA+5CF3DvbcQvdHNBeZSF2YJI5Nza4tHWJ12s30y4+tlMLqEldObkBz7R4ytQ==

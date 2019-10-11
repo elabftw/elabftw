@@ -216,33 +216,22 @@
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
 
+<!-- Loading the JSONEditor lib -->
+<link href="app/css/jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
+<script src='app/js/jsoneditor.min.js?v={{ v }}'></script>
+
 {% if App.Config.configArr.debug %}
   <script src='app/js/src/edit.js?v={{ v }}'></script>
   <script src='app/js/src/tags.js'></script>
   <script src='app/js/src/doodle.js?v={{ v }}'></script>
   <script src='app/js/src/steps-links.js?v={{ v }}'></script>
-
-  <!-- Loading the JSONEditor lib -->
-  <!-- when using the mode "code", it's important to specify charset utf-8 -->
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-
-  <link href="app/css/jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
-  <script src='app/js/jsoneditor.min.js?v={{ v }}'></script>
   <script src='app/js/src/jsoneditor-elabftw-loader.js?v={{ v }}'></script>
 {% else %}
   <script src='app/js/edit.min.js?v={{ v }}'></script>
   <script src='app/js/tags.min.js'></script>
   <script src='app/js/doodle.min.js?v={{ v }}'></script>
   <script src='app/js/steps-links.min.js?v={{ v }}'></script>
-
-  <!-- Loading the JSONEditor lib -->
-  <!-- when using the mode "code", it's important to specify charset utf-8 -->
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-
-  <link href="app/css/jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
-  <script src='app/js/jsoneditor.min.js?v={{ v }}'></script>
   <script src='app/js/jsoneditor-elabftw-loader.js?v={{ v }}'></script>
-
 {% endif %}
 
 {% endblock body %}

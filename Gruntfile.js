@@ -68,8 +68,8 @@ module.exports = function(grunt) {
               'node_modules/marked/lib/marked.js',
               'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',
               'node_modules/bootstrap-markdown-fa5/locale/*' ],
-          'web/app/js/jsoneditor.min.js':'node_modules/jsoneditor/dist/jsoneditor.min.js',
-          'web/app/js/jsoneditor-elabftw-loader.min.js':'web/app/js/src/jsoneditor-elabftw-loader.js'
+          'web/app/js/jsoneditor.min.js':'node_modules/jsoneditor/dist/jsoneditor.js',
+          'web/app/js/jsoneditor-loader.min.js':'web/app/js/src/jsoneditor-loader.js'
         }
       }
     },
@@ -99,7 +99,7 @@ module.exports = function(grunt) {
           'web/app/css/tinymce/content.min.css': 'node_modules/tinymce/skins/ui/oxide/content.css',
           'web/app/css/tinymce/content.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/content.mobile.css',
           'web/app/css/tinymce/skin.mobile.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.mobile.css',
-          'web/app/css/jsoneditor/jsoneditor.min.css': 'node_modules/jsoneditor/dist/jsoneditor.min.css'
+          'web/app/css/jsoneditor/jsoneditor.min.css': 'node_modules/jsoneditor/dist/jsoneditor.css'
         }
       }
     },

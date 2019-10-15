@@ -362,7 +362,6 @@ class ApiController implements ControllerInterface
         return new JsonResponse($this->Category->readAll());
     }
 
-
     /**
      * @api {post} /experiments Create experiment
      * @apiName CreateExperiment

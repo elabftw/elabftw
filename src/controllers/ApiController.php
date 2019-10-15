@@ -269,12 +269,9 @@ class ApiController implements ControllerInterface
      * @apiName GetUpload
      * @apiGroup Entity
      * @apiSuccess {Binary} the file
-     * TODO TODO
-     * @apiSuccessExample {Json} Success-Response:
+     * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     *     {
-     *       "id": "42"
-     *     }
+     *     [BINARY DATA]
      */
 
     /**
@@ -292,7 +289,7 @@ class ApiController implements ControllerInterface
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
-        if ((int) $uploadData['userid'] !== $this->Users->userData['userid']) {
+        if ((int) $uploadData['userid'] !== (int) $this->Users->userData['userid']) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = \dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
@@ -303,7 +300,7 @@ class ApiController implements ControllerInterface
      * @api {get} /items_types Get the list of id of available items_types
      * @apiName GetItemsTypes
      * @apiGroup Category
-     * @apiSuccess {String[]}
+     * @apiSuccess {String[]} list of items_types for the team
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
@@ -332,7 +329,7 @@ class ApiController implements ControllerInterface
      * @api {get} /status Get the list of status for current team
      * @apiName GetStatus
      * @apiGroup Category
-     * @apiSuccess {String[]}
+     * @apiSuccess {String[]} list of status for the team
      * @apiSuccessExample {Json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {

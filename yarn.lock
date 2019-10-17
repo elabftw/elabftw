@@ -6896,10 +6896,10 @@ tiny-lr@^1.1.1:
     object-assign "^4.1.0"
     qs "^6.4.0"
 
-tinymce@5.0.*:
-  version "5.0.16"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.0.16.tgz#7cd34f1016d86fa281652ba02ca5026621dd7590"
-  integrity sha512-qXymNZmAR5fSp5Lp3mVMtHxpiTMvba7TV6wGFcyJP5eUGIhsPw+XkezjvWCFs7lrW+ti0YBBblJNzxG5/8ZtFg==
+tinymce@5.1.*:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.1.0.tgz#34eff28ada9b93305a0d08860cf82d2edff269ca"
+  integrity sha512-zprr8gLHNCxxT4ebgwwIg1erhxQs1GUb3YHgNlRAuGRButDsrn35e1HW9YtMli/AnuY+ECcqyqhEI/wUNMYEFw==
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"

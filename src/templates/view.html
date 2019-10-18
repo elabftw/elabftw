@@ -99,12 +99,14 @@
       </a>
   {% endif %}
 
-  {% if not App.Session.has('anon') %}
-  <a class='elab-tooltip' href='#'>
-      <span>{{ 'Share'|trans }}</span>
-      <i class='fas fa-share-alt clickable shareItem' data-id='{{ Entity.id }}'></i>
-  </a>
-  <input type='text' id='shareLinkInput' value='' style='display:none' />
+  {% if Entity.type == 'experiments' %}
+    {% if not App.Session.has('anon') %}
+    <a class='elab-tooltip' href='#'>
+        <span>{{ 'Share'|trans }}</span>
+        <i class='fas fa-share-alt clickable shareItem' data-id='{{ Entity.id }}'></i>
+    </a>
+    <input type='text' id='shareLinkInput' value='' style='display:none' />
+    {% endif %}
   {% endif %}
 
   <!-- show timestamp button if not timestamped already -->

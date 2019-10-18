@@ -24,6 +24,8 @@ module.exports = {
       'bootstrap/js/src/collapse.js',
       'bootstrap/js/src/dropdown.js',
       './web/app/js/src/fontawesome.es.js',
+      './web/app/js/src/mathjax-config.js',
+      'mathjax',
       'prismjs',
       // see list in edit.js tinymce codesample plugin settings
       'prismjs/components/prism-bash.js',

@@ -16,6 +16,8 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Status;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -31,6 +33,9 @@ class ApiController implements ControllerInterface
 {
     /** @var Request $Request instance of Request */
     private $Request;
+
+    /** @var AbstractCategory $Category instance of ItemsTypes or Status*/
+    private $Category;
 
     /** @var AbstractEntity $Entity instance of Entity */
     private $Entity;
@@ -87,9 +92,14 @@ class ApiController implements ControllerInterface
             return $this->getUpload();
         }
 
-        // GET ENTITY
+        // GET ENTITY/CATEGORY
         if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
-            return $this->getEntity($this->id);
+            if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
+                return $this->getEntity($this->id);
+            }
+            if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
+                return $this->getCategory();
+            }
         }
 
         // POST request
@@ -118,7 +128,10 @@ class ApiController implements ControllerInterface
             return $this->createLink();
         }
 
-        // CREATE AN EXPERIMENT
+        // CREATE AN EXPERIMENT/ITEM
+        if ($this->Entity instanceof Database) {
+            return $this->createItem();
+        }
         return $this->createExperiment();
     }
 
@@ -138,7 +151,7 @@ class ApiController implements ControllerInterface
         }
         $this->id = $id;
 
-        // assign the endpoint (experiments, items, uploads)
+        // assign the endpoint (experiments, items, uploads, items_types, status)
         $this->endpoint = array_shift($args) ?? '';
 
         // verify the key and load user info
@@ -155,6 +168,10 @@ class ApiController implements ControllerInterface
             $this->Entity = new Experiments($Users, $this->id);
         } elseif ($this->endpoint === 'items') {
             $this->Entity = new Database($Users, $this->id);
+        } elseif ($this->endpoint === 'items_types') {
+            $this->Category = new ItemsTypes($Users);
+        } elseif ($this->endpoint === 'status') {
+            $this->Category = new Status($Users);
         } else {
             throw new ImproperActionException('Bad endpoint!');
         }
@@ -248,15 +265,13 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * @api {post} /experiments Create experiment
-     * @apiName CreateExperiment
+     * @api {get} /uploads/:id Get an upload
+     * @apiName GetUpload
      * @apiGroup Entity
-     * @apiSuccess {String} Id Id of the new experiment
-     * @apiSuccessExample {Json} Success-Response:
+     * @apiSuccess {Binary} the file
+     * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     *     {
-     *       "id": "42"
-     *     }
+     *     [BINARY DATA]
      */
 
     /**
@@ -274,11 +289,77 @@ class ApiController implements ControllerInterface
         // check user owns the file
         // we could also check if user has read access to the item
         // but for now let's just restrict downloading file via API to owned files
-        if ((int) $uploadData['userid'] !== $this->Users->userData['userid']) {
+        if ((int) $uploadData['userid'] !== (int) $this->Users->userData['userid']) {
             return new Response('You do not have permission to access this resource.', 403);
         }
         $filePath = \dirname(__DIR__, 2) . '/uploads/' . $uploadData['long_name'];
         return new BinaryFileResponse($filePath);
+    }
+
+    /**
+     * @api {get} /items_types Get the list of id of available items_types
+     * @apiName GetItemsTypes
+     * @apiGroup Category
+     * @apiSuccess {String[]} list of items_types for the team
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *         [
+     *           {
+     *             "category_id": "1",
+     *             "category": "Project",
+     *             "color": "32a100",
+     *             "bookable": "0",
+     *             "template": "Some text",
+     *             "ordering": "1"
+     *           },
+     *           {
+     *             "category_id": "2",
+     *             "category": "Microscope",
+     *             "color": "2000eb",
+     *             "bookable": "1",
+     *             "template": "Template text",
+     *             "ordering": "2"
+     *           }
+     *         ]
+     *     }
+     */
+
+    /**
+     * @api {get} /status Get the list of status for current team
+     * @apiName GetStatus
+     * @apiGroup Category
+     * @apiSuccess {String[]} list of status for the team
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *         [
+     *           {
+     *             "category_id": "1",
+     *             "category": "Running",
+     *             "color": "3360ff",
+     *             "is_timestampable": "1",
+     *             "is_default": "1"
+     *           },
+     *           {
+     *             "category_id": "2",
+     *             "category": "Success",
+     *             "color": "54aa08",
+     *             "is_timestampable": "1",
+     *             "is_default": "0"
+     *             }
+     *         ]
+     *     }
+     */
+
+    /**
+     * Get items_types or status list for current team
+     *
+     * @return Response
+     */
+    private function getCategory(): Response
+    {
+        return new JsonResponse($this->Category->readAll());
     }
 
     /**
@@ -304,6 +385,39 @@ class ApiController implements ControllerInterface
             return new Response('Creating database items is not supported.', 400);
         }
         $id = $this->Entity->create(0);
+        return new JsonResponse(array('id' => $id));
+    }
+
+    /**
+     * @api {post} /items/:id Create a database item
+     * @apiName CreateItem
+     * @apiGroup Entity
+     * @apiSuccess {String} Id Id of the new item type (category)
+     * @apiSuccessExample {Json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "id": "42"
+     *     }
+     */
+
+    /**
+     * Create a database item
+     *
+     * @return Response
+     */
+    private function createItem(): Response
+    {
+        // check that the id we have is a valid item type from our team
+        $ItemsTypes = new ItemsTypes($this->Users);
+        $itemsTypesArr = $ItemsTypes->readAll();
+        foreach ($itemsTypesArr as $itemsTypes) {
+            $validIds[] = $itemsTypes['category_id'];
+        }
+        if (!\in_array((string) $this->id, $validIds, true)) {
+            return new Response('Cannot create an item with an item type id not in your team!', 403);
+        }
+
+        $id = $this->Entity->create($this->id);
         return new JsonResponse(array('id' => $id));
     }
 

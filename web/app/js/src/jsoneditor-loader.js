@@ -1,23 +1,31 @@
 // create the editor
 const container = document.getElementById("jsoneditor")
-const options = {}
+
+const options = {onChangeJSON:function(json){
+    $('.jsonSaver').removeAttr('disabled', 0).text("Save");
+}}
+
 const editor = new JSONEditor(container, options)
 
-// set json
-const initialJson = {
-    "Template Data For Experiments":
-    {
-      "Title":"Title",
-      "ExpName":"ExpName"
-    },
-    "Array": [1, 2, 3],
-    "Boolean": true,
-    "Null": null,
-    "Number": 123,
-    "Test ": {"a": "b", "c": "d"},
-    "String": "Hello World"
-}
-editor.set(initialJson)
+$(document).on('click', '.jsonLoader', function(){
+  $.get("app/download.php", {f:$(this).data('link')}).done(function(data){
+    editor.set(JSON.parse(data));
+  });
+  currentFileType = $(this).data('type');
+  currentFileUploadID = $(this).data('id');
+  currentFileItemID = $(this).data('uploadid');
+});
 
-// get json
-const updatedJson = editor.get()
+$(document).on('click', '.jsonSaver', function(){
+  $.post('app/controllers/EntityAjaxController.php', {
+    updateJsonFile: true,
+    id:currentFileUploadID,
+    upload_id: currentFileItemID,
+    type: currentFileType,
+    content: JSON.stringify(editor.get())
+  }).done(function(data){
+    if(data.msg==="JSON file updated successfully"){
+      $('.jsonSaver').attr('disabled', 1).text("Saved");
+    }
+  });
+});

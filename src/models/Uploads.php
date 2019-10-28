@@ -142,6 +142,21 @@ class Uploads implements CrudInterface
     }
 
     /**
+     * Save modified JSON file in JSON Editor
+     *
+     * @param string $id id of the uploaded item
+     * @param string $content content of the new json object
+     * @return void
+    */
+    public function updateJsonFile(string $id, string $content): void
+    {
+      $this->Entity->canOrExplode('write');
+      $upload = $this->readFromId((int) $id);
+      $fullPath = $this->getUploadsPath() . $upload['long_name'];
+      file_put_contents($fullPath, $content);
+    }
+
+    /**
      * Read info from an upload ID
      *
      * @param int $id id of the uploaded item

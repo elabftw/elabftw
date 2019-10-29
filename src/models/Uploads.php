@@ -148,10 +148,10 @@ class Uploads implements CrudInterface
      * @param string $content content of the new json object
      * @return void
     */
-    public function updateJsonFile(string $id, string $content): void
+    public function updateJsonFile(int $id, string $content): void
     {
       $this->Entity->canOrExplode('write');
-      $upload = $this->readFromId((int) $id);
+      $upload = $this->readFromId($id);
       $fullPath = $this->getUploadsPath() . $upload['long_name'];
       file_put_contents($fullPath, $content);
     }

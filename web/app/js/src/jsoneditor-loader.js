@@ -2,7 +2,7 @@
 const container = document.getElementById("jsoneditor")
 
 const options = {onChangeJSON:function(json){
-    $('.jsonSaver').removeAttr('disabled', 0).text("Save");
+    $('.jsonSaver').removeAttr('disabled', 0).text("Save").css('cursor','pointer');
 }}
 
 const editor = new JSONEditor(container, options)
@@ -25,7 +25,7 @@ $(document).on('click', '.jsonSaver', function(){
     content: JSON.stringify(editor.get())
   }).done(function(data){
     if(data.msg==="JSON file updated successfully"){
-      $('.jsonSaver').attr('disabled', 1).text("Saved");
+      $('.jsonSaver').attr('disabled', 1).text("Saved").css('cursor','default');
     }
   });
 });

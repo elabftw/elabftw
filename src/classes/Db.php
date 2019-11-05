@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Db
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -45,8 +43,13 @@ final class Db
         // only return a named array
         $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
 
+        // be backward compatible
+        if (!defined('DB_PORT')) {
+            define('DB_PORT', '3306');
+        }
+
         $this->connection = new PDO(
-            'mysql:host=' . \DB_HOST . ';dbname=' .
+            'mysql:host=' . \DB_HOST . ';port=' . \DB_PORT . ';dbname=' .
             \DB_NAME,
             \DB_USER,
             \DB_PASSWORD,

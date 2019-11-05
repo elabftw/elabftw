@@ -24,7 +24,7 @@
     "moment": "2.24.*",
     "popper.js": "1.16.*",
     "prismjs": "1.17.*",
-    "tinymce": "5.0.*",
+    "tinymce": "5.1.*",
     "jsoneditor":"7.0.*"
   },
   "devDependencies": {

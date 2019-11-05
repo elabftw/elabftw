@@ -40,6 +40,13 @@ try {
         // Get data from user
         $App->Users->populateFromEmail($email);
 
+        // If you are not validated, the password reset form won't work
+        // this is because often users don't understand that their account needs to be
+        // validated and just reset their password twenty times
+        if ($App->Users->userData['validated'] === '0') {
+            throw new ImproperActionException('Your account is not validated. An admin of your team needs to validate it!');
+        }
+
         // Get IP
         if ($Request->server->has('HTTP_CLIENT_IP')) {
             $ip = $Request->server->get('HTTP_CLIENT_IP');

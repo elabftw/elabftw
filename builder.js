@@ -26,8 +26,8 @@ module.exports = {
       './web/app/js/src/fontawesome.es.js',
       // mathjax config must be loaded before mathjax lib
       './web/app/js/src/mathjax-config.js',
-      // we only load the tex to svg code
-      'mathjax/es5/tex-svg.js',
+      // load tex with all the extensions
+      'mathjax/es5/tex-svg-full.js',
       'prismjs',
       // see list in edit.js tinymce codesample plugin settings
       'prismjs/components/prism-bash.js',

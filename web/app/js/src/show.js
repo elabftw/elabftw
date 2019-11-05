@@ -46,7 +46,7 @@
         // display div
         $('#bodyToggle_' + id).toggle();
         // ask mathjax to reparse the page
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+        MathJax.typeset();
       });
     });
 

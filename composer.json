@@ -20,7 +20,7 @@
     "mpdf/mpdf": "8.0.*",
     "swiftmailer/swiftmailer":"6.2.*",
     "onelogin/php-saml": "3.3.*",
-    "guzzlehttp/guzzle": "6.3.*",
+    "guzzlehttp/guzzle": "6.4.*",
     "symfony/http-foundation": "4.3.*",
     "twig/twig": "2.12.*",
     "twig/extensions": "1.5.*",
@@ -35,7 +35,7 @@
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "codeception/codeception": "3.1.*",
-    "pyrech/composer-changelogs": "1.6.*",
+    "pyrech/composer-changelogs": "1.7.*",
     "fzaninotto/faker": "^1.8",
     "friendsofphp/php-cs-fixer": "^2.15"
   },

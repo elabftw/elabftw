@@ -1,0 +1,2122 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.4\n"
+"Project-Id-Version: elabftw\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nicolas CARPi <spam@yopmail.com>\n"
+"Language-Team: \n"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:152
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:175
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:281
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:152
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:175
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:315
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:340
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:363
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:416
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:435
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:671
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:762
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1390
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1522
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:281
+msgid "Yes"
+msgstr "はい"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:158
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:181
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:287
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:158
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:181
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:321
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:346
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:369
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:422
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:441
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:677
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:768
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1394
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1528
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:287
+msgid "No"
+msgstr "いいえ"
+
+#: cache/twig/e7/e74bf00682001910f9ded21ed47dc4f79bf7869ea1a2db5342ac04c5bd0ff38e.php:115
+#: cache/twig/e7/e74bf00682001910f9ded21ed47dc4f79bf7869ea1a2db5342ac04c5bd0ff38e.php:127
+#: src/models/Users.php:595
+msgid "The passwords do not match!"
+msgstr "パスワードが一致しません！"
+
+#: web/app/controllers/LoginController.php:56
+#: web/app/controllers/RegisterController.php:43
+msgid "A mandatory field is missing!"
+msgstr "必須項目が記載されていません！"
+
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:139
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:95
+msgid "Password"
+msgstr "パスワード"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:123
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:157
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:567
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:123
+msgid "Firstname"
+msgstr "名"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:139
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:172
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:578
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:139
+msgid "Lastname"
+msgstr "姓"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:155
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:74
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:124
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:165
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:531
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:155
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:87
+msgid "Email"
+msgstr "Eメール"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:168
+#: cache/twig/f7/f7cad6a6fc41300c5760424b1780d00d9d3b2afeeebba38d19a5a97dfbbd3df5.php:101
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:115
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:197
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:616
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:78
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:53
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:115
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:339
+#: src/models/AbstractEntity.php:614
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "実験"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:123
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:60
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:123
+msgid "Database"
+msgstr "データベース"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:96
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:171
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:87
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:135
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:96
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:455
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:139
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:171
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:135
+msgid "Team"
+msgstr "チーム"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:169
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:228
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:173
+msgid "Date"
+msgstr "日付"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:175
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:253
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:296
+msgid "Title"
+msgstr "タイトル"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:146
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:188
+msgid "Visibility"
+msgstr "表示"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:108
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:124
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:108
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:226
+msgid "Status"
+msgid_plural "Status"
+msgstr[0] "ステータス"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:170
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:954
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:252
+msgid "Edit"
+msgstr "編集"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:524
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:592
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:688
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:767
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:854
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:296
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:640
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:666
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:524
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:592
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:688
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:767
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:854
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:232
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:452
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:524
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:576
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:736
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:806
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:966
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1345
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1401
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1534
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1586
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:500
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:709
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:851
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:296
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:470
+msgid "Save"
+msgstr "保存"
+
+#: web/app/controllers/EntityAjaxController.php:32
+#: web/app/controllers/EntityAjaxController.php:210
+#: web/app/controllers/TodolistController.php:29
+#: web/app/controllers/TodolistController.php:41
+#: web/app/controllers/CommentsAjaxController.php:31
+#: web/app/controllers/CommentsAjaxController.php:54
+#: web/app/controllers/CommentsAjaxController.php:67
+#: web/app/controllers/SchedulerController.php:32
+#: web/app/controllers/UsersController.php:54
+#: web/app/controllers/UsersAjaxController.php:29
+#: web/app/controllers/ItemsTypesAjaxController.php:30
+#: web/app/controllers/StatusController.php:31
+#: web/app/controllers/SortableAjaxController.php:32
+#: web/app/controllers/SysconfigController.php:87
+#: web/app/controllers/AdminController.php:50
+#: web/app/controllers/TeamGroupsController.php:31
+#: web/app/controllers/IdpsController.php:67
+#: web/app/controllers/TagsController.php:33
+#: web/app/controllers/UcpController.php:87
+#: web/app/controllers/AjaxController.php:33
+#: web/app/controllers/RevisionsController.php:50
+#: web/app/controllers/SysconfigAjaxController.php:31
+#: web/app/controllers/ExperimentsAjaxController.php:32
+#: src/controllers/AbstractEntityController.php:77
+msgid "Saved"
+msgstr "保存済み"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:642
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:638
+msgid "Saving"
+msgstr "保存中"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:374
+msgid "Save and go back"
+msgstr "保存して戻る"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:233
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:906
+msgid "Action"
+msgstr "アクション"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:237
+msgid "Shortcut"
+msgstr "ショートカット"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:299
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:299
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:242
+msgid "Create"
+msgstr "作成"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:262
+msgid "Submit"
+msgstr "提出"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:272
+msgid "TODO list"
+msgstr "ToDoリスト"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:498
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:551
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:658
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:716
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:189
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:498
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:551
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:658
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:716
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1364
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:827
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:894
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:983
+msgid "Name"
+msgstr "名前"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:193
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:596
+msgid "Phone"
+msgstr "電話"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:197
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:606
+msgid "Mobile"
+msgstr "携帯電話"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:201
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:628
+msgid "Website"
+msgstr "ウェブサイト"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:205
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:618
+msgid "Skype"
+msgstr "Skype"
+
+#: src/services/Email.php:154
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] 新規ユーザー登録"
+
+#: web/app/controllers/ResetPasswordController.php:80
+msgid "Email sent. Check your INBOX."
+msgstr "Eメールを送信しました。受信箱を確認ください。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:58
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:58
+msgid "There are users waiting for validation of their account:"
+msgstr "アカウント認証を待っているユーザーがいます:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:104
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:104
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:153
+msgid "Users"
+msgstr "ユーザー"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:112
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:112
+msgid "Types of items"
+msgstr "アイテムの種類"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:116
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:116
+msgid "Experiments template"
+msgstr "実験テンプレート"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:145
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:145
+msgid "Users can delete experiments:"
+msgstr "ユーザーが実験を削除できる："
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:187
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:187
+msgid "Name of the link in the top menu:"
+msgstr "トップメニューのリンク名:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:196
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:196
+msgid "Address where this link should point:"
+msgstr "このリンクが指すアドレス:"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:271
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:271
+msgid "Has an active account?"
+msgstr "アクティブなアカウントを持っていますか？"
+
+#: src/models/Status.php:209
+msgid "Remove all experiments with this status before deleting this status."
+msgstr "このステータスを削除する前に，このステータスの全ての実験を削除してください。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:586
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:586
+msgid "Default status"
+msgstr "デフォルトのステータス"
+
+#: src/models/ItemsTypes.php:201
+msgid "Remove all database items with this type before deleting this type."
+msgstr "このタイプを削除する前に，このタイプを含んだ全てのデータベースのアイテムを削除してください。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:843
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:843
+msgid "This is the default text when someone creates an experiment."
+msgstr "誰かが実験を作った時に，これがデフォルトのテキストになります。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:976
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:976
+msgid "You should make a backup of your database before importing thousands of items!"
+msgstr "何千のアイテムをインポートする前に，データベースのバックアップを作成する必要があります！"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:878
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:878
+msgid "1. Select a type of item to import to:"
+msgstr "1.インポートするアイテムのタイプを選択ください:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:959
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:959
+msgid "Import CSV"
+msgstr "CSVのインポート"
+
+#: src/models/Users.php:365
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "システム管理者のみがシステム管理者に配置できる。"
+
+#: cache/twig/e7/e74bf00682001910f9ded21ed47dc4f79bf7869ea1a2db5342ac04c5bd0ff38e.php:100
+msgid "Type it again"
+msgstr "もう一度入力してください"
+
+#: cache/twig/e7/e74bf00682001910f9ded21ed47dc4f79bf7869ea1a2db5342ac04c5bd0ff38e.php:131
+msgid "Save new password"
+msgstr "新しいパスワードを保存"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:551
+#: src/classes/Tools.php:106 src/models/Experiments.php:53
+#: src/models/Database.php:52
+msgid "Untitled"
+msgstr "無題"
+
+#: web/app/controllers/ExperimentsAjaxController.php:60
+msgid "You don't have the rights to delete this experiment."
+msgstr "あなたには，この実験を削除する権限がありません。"
+
+#: src/models/AbstractEntity.php:152
+msgid "You don't have the rights to lock/unlock this."
+msgstr "あなたには，これをロック/ロック解除する権限がありません。"
+
+#: web/app/controllers/LoginController.php:86 src/classes/Auth.php:211
+msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
+msgstr "ログインに失敗しました。パスワードをタイプミスしたか，あなたのアカウントはまだアクティベートされていないかのどちらかです。"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:112
+msgid "Login"
+msgstr "ログイン"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:81
+msgid "Sign in to your account"
+msgstr "あなたのアカウントにサインイン"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:118
+msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr "アカウントを持っていいない？今すぐ%s登録%s してください！<br>パスワードを紛失した？%sリセット%sしましょう!"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:126
+msgid "Enter your email address"
+msgstr "Eメールアドレスを入力してください"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:130
+msgid "Send new password"
+msgstr "新しいパスワードを送信"
+
+#: cache/twig/f7/f7cad6a6fc41300c5760424b1780d00d9d3b2afeeebba38d19a5a97dfbbd3df5.php:92
+msgid "experiments done since"
+msgstr "以前に行われた実験"
+
+#: src/models/Users.php:91 src/models/Users.php:606
+msgid "Someone is already using that email address!"
+msgstr "誰かがそのEメールアドレスを既に使っています"
+
+#: web/app/controllers/RegisterController.php:58
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "登録成功しました　<br>eLabFTWにようこそ (ﾉ´▽`)"
+
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:54
+msgid "go back to login page"
+msgstr "ログインページに戻る"
+
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:62
+msgid "Create your account"
+msgstr "あなたのアカウントを作成"
+
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:215
+msgid "create"
+msgstr "作成"
+
+#: web/app/controllers/ResetPasswordController.php:76
+msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
+msgstr "こんにちは。誰か（おそらくあなた）がIPアドレス：%s を持っていて，ユーザー %s がeLabFTWでの新しいパスワードを要求しています。このリンクに従って，あなたのパスワードをリセットしてください： %s"
+
+#: src/models/Users.php:223
+msgid "Email not found in database!"
+msgstr "Eメールがデータベースに見つかりません！"
+
+#: cache/twig/9d/9dbe664bf54afe769981e4785cc585bc8e87a87937c9477e6a2334379ce6e2fd.php:96
+msgid "Restore"
+msgstr "戻す"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:51
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:147
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:51
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:147
+msgid "Search"
+msgstr "検索"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:180
+msgid "Search only in experiments owned by:"
+msgstr "所有する実験のみ検索"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:185
+msgid "Yourself"
+msgstr "あなた自身"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:48
+msgid "Search in"
+msgstr "検索"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:230
+msgid "Where date is between"
+msgstr "日付の区間"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:238
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:326
+msgid "and"
+msgstr "と"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:255
+msgid "And title contains"
+msgstr "タイトルを含む"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:309
+msgid "And body contains"
+msgstr "本文を含む"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:268
+msgid "And status is"
+msgstr "ステータスは"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:342
+msgid "And rating is"
+msgstr "評価は"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:351
+msgid "Unrated"
+msgstr "未評価"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:385
+msgid "Launch search"
+msgstr "検索開始"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:297
+msgid "Sorry. I couldn't find anything :("
+msgstr "ごめんない。何も見つけられませんでした m(-_-)m"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:145
+msgid "Server"
+msgstr "サーバー"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:157
+msgid "Timestamp"
+msgstr "タイムスタンプ"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:161
+msgid "Security"
+msgstr "セキュリティ"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:164
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:183
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:193
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:610
+msgid "Members"
+msgstr "メンバー"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:174
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:203
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:624
+msgid "Items"
+msgstr "アイテム"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:628
+msgid "Created"
+msgstr "作成済み"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:664
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "チームは次の認証を使用してタイムスタンプをつけられます:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:236
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:236
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:713
+msgid "Login for external timestamping service:"
+msgstr "外部タイムスタンプサービスにログイン:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:249
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:249
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:721
+msgid "Password for external timestamping service:"
+msgstr "外部タイムスタンプサービスのパスワード:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:755
+msgid "Users need validation by admin after registration:"
+msgstr "ユーザーは登録後に管理者によって承認される必要があります:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:773
+msgid "Set to yes for added security."
+msgstr "セキュリティ追加のために「はい」に設定する:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:778
+msgid "Number of allowed login attempts:"
+msgstr "ログインを試すのに許可された回数:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:786
+msgid "3 might be too few. See for yourself :)"
+msgstr "3は少なすぎるかもしれない。自分自身を考えてみてください :)"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:800
+msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
+msgstr "ユーザーを特定するために，ユーザーのmd5+ IPを使用します。 IPアドレスのみに基づいて行うと，確実に問題が発生するためです。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:878
+msgid "Address of the SMTP server:"
+msgstr "SMTPサーバーのアドレス:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:905
+msgid "Probably TLS"
+msgstr "多分TLS"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:910
+msgid "SMTP Port:"
+msgstr "SMTPポート:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:918
+msgid "Default is 587."
+msgstr "デフォルトは587"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:923
+msgid "SMTP username:"
+msgstr "SMTPのユーザー名:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:931
+msgid "SMTP password"
+msgstr "SMTPのパスワード"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:245
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:245
+msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
+msgstr "チームの管理者は，利用可能なステータスとアイテムのタイプを編集できます。（％s管理者パネル％s）"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:257
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:257
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "カスタムショートカットが利用できます。（％sコントロールパネル％s）"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:263
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:263
+msgid "You can duplicate experiments in one click."
+msgstr "ワンクリックで実験を複製できます。"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:269
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:269
+msgid "Click a tag to list all items with this tag."
+msgstr "タグをクリックして，このタグを持つすべてのアイテムをリストします。"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:275
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:275
+msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
+msgstr "一度タイムスタンプが付けられると，実験はロック解除または変更できなくなります。コメントのみを追加できます。"
+
+#: web/app/controllers/UcpController.php:54
+msgid "The template name must be 3 characters long."
+msgstr "テンプレート名は，3文字でなければなりません。"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:75
+msgid "Account"
+msgstr "アカウント"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:71
+msgid "Preferences"
+msgstr "環境設定"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:70
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:79
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:87
+msgid "Templates"
+msgstr "テンプレート"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:522
+msgid "Modify your personal informations"
+msgstr "個人情報を変更する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:560
+msgid "Modify your identity"
+msgstr "あなたの識別情報を変更する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:541
+msgid "Modify your password"
+msgstr "パスワードを変更する"
+
+#: cache/twig/e7/e74bf00682001910f9ded21ed47dc4f79bf7869ea1a2db5342ac04c5bd0ff38e.php:85
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:545
+msgid "New password"
+msgstr "新しいパスワード"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:550
+msgid "Confirm new password"
+msgstr "新しいパスワードを確認"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:590
+msgid "Modify your contact information"
+msgstr "連絡先を変更する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:640
+msgid "Update profile"
+msgstr "プロフィールを更新"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:142
+msgid "Items per page:"
+msgstr "ページごとのアイタム："
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:658
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:68
+msgid "Create new"
+msgstr "新規作成"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:99
+msgid "Language"
+msgstr "言語"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:563
+msgid "Last modified by"
+msgstr "最終更新者"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:548
+msgid "Unique eLabID:"
+msgstr "独自のeLabID："
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:588
+msgid "Comments"
+msgstr "コメント"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:659
+msgid "Add a comment"
+msgstr "コメントを追加"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:440
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:1100
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:1123
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:92
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:621
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:714
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:440
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:1100
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:1123
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1424
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:951
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:1015
+msgid "Delete this?"
+msgstr "これを削除しますか？"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:267
+msgid "Tag cloud"
+msgstr "タグクラウド"
+
+#: cache/twig/f7/f7cad6a6fc41300c5760424b1780d00d9d3b2afeeebba38d19a5a97dfbbd3df5.php:85
+msgid "Statistics"
+msgstr "統計"
+
+#: cache/twig/f7/f7cad6a6fc41300c5760424b1780d00d9d3b2afeeebba38d19a5a97dfbbd3df5.php:79
+msgid "No statistics available yet."
+msgstr "統計はまだありません。"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:179
+msgid "Filter status"
+msgstr "フィルターの状態"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:369
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:741
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:84
+msgid "Tags"
+msgstr "タグ"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:795
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:148
+msgid "Add a tag"
+msgstr "タグを追加する"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:145
+#: src/models/TeamGroups.php:121
+msgid "Only me"
+msgstr "私のみ"
+
+#: cache/twig/14/141a6b1fa2be3f9894c37fde72a3fadc97e0d99b05280b41551aa4b28dda674f.php:149
+msgid "Linked items"
+msgstr "リンクされたアイテム"
+
+#: cache/twig/14/141a6b1fa2be3f9894c37fde72a3fadc97e0d99b05280b41551aa4b28dda674f.php:202
+msgid "Add a link"
+msgstr "リンクを追加"
+
+#: cache/twig/14/141a6b1fa2be3f9894c37fde72a3fadc97e0d99b05280b41551aa4b28dda674f.php:209
+msgid "from the database"
+msgstr "データベースから"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:188
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:188
+msgid "Howdy,"
+msgstr "やあ，"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:196
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:245
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:196
+msgid "Settings"
+msgstr "設定"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:212
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:291
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:212
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:291
+msgid "Logout"
+msgstr "ログアウト"
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:65
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:65
+msgid "Sysadmin panel"
+msgstr "システム管理者パネル"
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:76
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:76
+msgid "Admin panel"
+msgstr "管理者パネル"
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:100
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:100
+msgid "Powered by"
+msgstr "搭載"
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:105
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:105
+msgid "Page generated in"
+msgstr "生成されたページ"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:233
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:233
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr "実験テンプレートを使用できます。（％sコントロールパネル％s）"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:251
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:251
+msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
+msgstr "エディターでCtrl Shift Dを押すと，カーソルの下に日付が表示されます。"
+
+#: cache/twig/f7/f7cad6a6fc41300c5760424b1780d00d9d3b2afeeebba38d19a5a97dfbbd3df5.php:66
+msgid "Go to user control panel"
+msgstr "ユーザーコントロールパネルに移動"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:149
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:189
+msgid "Teams"
+msgstr "チーム"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:210
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:210
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:687
+msgid "URL for external timestamping service:"
+msgstr "外部タイムスタンプサービスのURL："
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:224
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:224
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:700
+msgid "Chain of certificates of the external timestamping service:"
+msgstr "外部タイムスタンプサービスの証明書のチェーン："
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:244
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:244
+msgid "This should be the login associated with your timestamping service provider"
+msgstr "これは、タイムスタンプサービス提供者に関連付けられたログインである必要があります"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:271
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:271
+msgid "Your timestamping service provider password"
+msgstr "タイムスタンプサービス提供者のパスワード"
+
+#: src/models/AbstractEntity.php:176
+msgid "You cannot unlock or edit in any way a timestamped experiment."
+msgstr "タイムスタンプ付きの実験は，どうやってもロック解除または編集することができません"
+
+#: src/exceptions/InvalidCsrfTokenException.php:29
+msgid "Your session expired. Please retry."
+msgstr "セッションの有効期限が切れました。再試行してください。"
+
+#: web/app/controllers/RegisterController.php:56
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "登録が成功しました:) <br>アカウントは管理者によって認証される必要があります。<br>完了したらメールが届きます。"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:48
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "添付ファイル"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:412
+msgid "Attach a file"
+msgstr "ファイルを添付する"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:515
+msgid "Drop files here to upload"
+msgstr "ここにファイルをドロップしてアップロードします"
+
+#: src/models/Revisions.php:121
+msgid "You cannot restore a revision of a locked item!"
+msgstr "ロックされたアイテムの訂正を戻すことはできません！"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:486
+msgid "Molecule drawer"
+msgstr "Molecule drawer"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:92
+msgid "With the tag"
+msgstr "タグ付き"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:218
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:218
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:695
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "これは、％sRFC 3161％s準拠のタイムスタンプ要求に使用されるURLである必要があります。"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:85
+msgid "Download timestamped pdf"
+msgstr "タイムスタンプ付きPDFをダウンロード"
+
+#: web/app/controllers/ImportController.php:50
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "アイテムが正常にインポートされました。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:72
+msgid "Installed version:"
+msgstr "インストール済みバージョン："
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:363
+msgid "Miscellaneous"
+msgstr "その他"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:1069
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:1069
+msgid "Import ZIP"
+msgstr "ZIPをインポート"
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:109
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:109
+msgid "seconds"
+msgstr "秒"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:163
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:163
+msgid "An admin account will always be able to delete experiments."
+msgstr "管理者アカウントは常に実験を削除できます。"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:221
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:221
+msgid "There is a manual available %shere%s."
+msgstr "％sこちら％sに利用可能なマニュアルがあります。"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:210
+msgid "Order by"
+msgstr "注文する"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:261
+msgid "Sort"
+msgstr "ソート"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:94
+msgid "Download token"
+msgstr "トークンをダウンロード"
+
+#: src/services/MakeTimestamp.php:249
+msgid "Please configure Timestamping in the admin panel."
+msgstr "管理者パネルでタイムスタンプを設定してください。"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:106
+msgid "Remember me"
+msgstr "私を覚えてますか"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:192
+msgid "All the team"
+msgstr "すべてのチーム"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:319
+msgid "Space means"
+msgstr "スペースは"
+
+#: web/app/controllers/TodolistController.php:63
+#: web/app/controllers/TodolistController.php:72
+msgid "Item deleted successfully"
+msgstr "アイテムを削除しました"
+
+#: web/app/controllers/EntityAjaxController.php:228
+msgid "File deleted successfully"
+msgstr "ファイルは正常に削除されました"
+
+#: web/app/controllers/ResetPasswordController.php:97
+msgid "Invalid link. Reset links are only valid for one hour."
+msgstr "無効なリンク。リセットリンクは1時間のみ有効です。"
+
+#: web/app/controllers/ResetPasswordController.php:103
+msgid "New password inserted. You can now login."
+msgstr "新しいパスワードが入力されました。これでログインできます。"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:264
+msgid "Lock/Unlock item"
+msgstr "ロック/ロック解除　アイテム"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:327
+msgid "Timestamp this experiment?"
+msgstr "この実験にタイムスタンプを付けますか？"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:333
+msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
+msgstr "一旦実験にタイムスタンプが付けられると，編集できなくなります！これを実行してもよろしいですか？"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:976
+msgid "Send a test email"
+msgstr "テストメールを送信する"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:456
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:985
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1011
+msgid "Send"
+msgstr "送信"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:114
+msgid "No templates found"
+msgstr "テンプレートが見つかりません"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:179
+msgid "Filter by type"
+msgstr "タイプでフィルター"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:163
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:216
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:232
+msgid "Category"
+msgstr "カテゴリー"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:237
+msgid "Rating"
+msgstr "評価"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:205
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:267
+msgid "DESC"
+msgstr "降順"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:199
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:273
+msgid "ASC"
+msgstr "昇順"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:491
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:491
+msgid "Add a New Status"
+msgstr "新しいステータスを追加"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:506
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:561
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:666
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:731
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:506
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:561
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:666
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:731
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:447
+msgid "Color"
+msgstr "色"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:533
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:533
+msgid "Edit an Existing Status"
+msgstr "既存のステータスを編集する"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:599
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:775
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:599
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:775
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:590
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:428
+msgid "Delete"
+msgstr "削除"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:651
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:651
+msgid "Add a new type of item"
+msgstr "新しいタイプのアイテムを追加する"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:676
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:751
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:676
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:751
+msgid "Bookable"
+msgstr "予約可能"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:678
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:678
+msgid "in the %sscheduler%s"
+msgstr "％sscheduler％sで"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:697
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:697
+msgid "Database Items Types"
+msgstr "データベースのアイテムのタイプ"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:759
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:759
+msgid "Edit the template"
+msgstr "テンプレートを編集する"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:518
+msgid "Add a New Team"
+msgstr "新しいチームを追加する"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:532
+msgid "Edit Existing Teams"
+msgstr "既存のチームを編集"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:994
+msgid "Send a Mass Email"
+msgstr "一斉送信メールを送る"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:999
+msgid "Email Subject"
+msgstr "メールの件名"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1005
+msgid "Email Body"
+msgstr "メールの本文"
+
+#: src/models/Users.php:590
+msgid "Please input your current password!"
+msgstr "現在のパスワードを入力してください！"
+
+#: src/classes/Tools.php:281
+msgid "This section is out of your reach!"
+msgstr "このセクションはあなたの手の届かないところにあります！"
+
+#: src/classes/Tools.php:283
+msgid "An error occurred!"
+msgstr "エラーが発生しました！"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:218
+msgid "Stick"
+msgstr "スティック"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:171
+msgid "Style"
+msgstr "スタイル"
+
+#: src/classes/Auth.php:62
+msgid "Password must contain at least %s characters."
+msgstr "パスワードには少なくとも％s字が含まれている必要があります。"
+
+#: src/models/Comments.php:208
+msgid "[eLabFTW] New comment posted"
+msgstr "[eLabFTW]新しいコメントが投稿されました"
+
+#: src/services/Email.php:83
+msgid "[eLabFTW] Test email"
+msgstr "[eLabFTW]テストメール"
+
+#: src/models/ItemsTypes.php:97
+msgid "Nothing to show with this id"
+msgstr "このIDで表示するものはありません"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:69
+msgid "Note: You need cookies enabled to log in."
+msgstr "注：ログインするにはCookieを有効にする必要があります。"
+
+#: cache/twig/9d/9dbe664bf54afe769981e4785cc585bc8e87a87937c9477e6a2334379ce6e2fd.php:72
+msgid "Go back"
+msgstr "戻る"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:62
+msgid "Scheduler"
+msgstr "スケジューラー"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:86
+msgid "No bookable items."
+msgstr "予約可能なアイテムはありません。"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:113
+msgid "Select an equipment"
+msgstr "設備を選択してください"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:93
+msgid "Change item"
+msgstr "アイテムを変更"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:137
+msgid "Display"
+msgstr "表示"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:223
+msgid "Keyboard Shortcuts"
+msgstr "キーボードショートカット"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:317
+msgid "Experiments Templates"
+msgstr "実験テンプレート"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:686
+msgid "Import from File"
+msgstr "ファイルからインポート"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:698
+msgid "Name of the Template"
+msgstr "テンプレートの名前"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:332
+msgid "or"
+msgstr "または"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:76
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:76
+msgid "Validate"
+msgstr "確認"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:100
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:100
+msgid "Groups"
+msgstr "グループ"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:134
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:134
+msgid "Configure your Team"
+msgstr "チームを構成する"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:205
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:205
+msgid "Override general timestamping config"
+msgstr "一般的なタイムスタンプ設定を上書きする"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:63
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:63
+msgid "Edit Users"
+msgstr "ユーザーを編集"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:205
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:481
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:160
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:205
+msgid "Group"
+msgstr "グループ"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:241
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:241
+msgid "Reset user password"
+msgstr "ユーザーパスワードをリセット"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:247
+#: cache/twig/e7/e74bf00682001910f9ded21ed47dc4f79bf7869ea1a2db5342ac04c5bd0ff38e.php:58
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:247
+msgid "characters minimum"
+msgstr "最小文字数"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:839
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:839
+msgid "Common Experiment Template"
+msgstr "一般的な実験テンプレート"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:865
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:865
+msgid "Import a CSV File"
+msgstr "CSVファイルをインポートする"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:968
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:968
+msgid "Import a ZIP File"
+msgstr "ZIPファイルをインポートする"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:983
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:983
+msgid "1. Select where to import:"
+msgstr "1.インポートする場所を選択します:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:287
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:287
+msgid "Manage Groups of Users"
+msgstr "ユーザーのグループを管理する"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:294
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:294
+msgid "Create a group"
+msgstr "グループを作成する"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:310
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:310
+msgid "Add this user"
+msgstr "このユーザーを追加"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:334
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:334
+msgid "to this group"
+msgstr "このグループに"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:358
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:358
+#: cache/twig/1f/1fe93fbcae9644bcb78f215cc2a128f66151ddece12fd50b6a5f90afe15042be.php:50
+#: cache/twig/78/78e0fc8d7cea1e6a4a95d395f2840d62e605591878fb121d21a597b206fc194a.php:50
+msgid "Add"
+msgstr "追加"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:368
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:368
+msgid "Remove this user"
+msgstr "このユーザーを削除"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:392
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:392
+msgid "from this group"
+msgstr "このグループから"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:416
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:416
+msgid "Remove"
+msgstr "削除する"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:426
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:426
+msgid "Existing groups"
+msgstr "既存のグループ"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:100
+msgid "Latest version:"
+msgstr "最新バージョン："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:184
+msgid "Usage Statistics"
+msgstr "統計の使用"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:295
+msgid "Address of the Proxy:"
+msgstr "プロキシのアドレス："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:467
+msgid "Operating System"
+msgstr "オペレーティング・システム"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:473
+msgid "PHP Version"
+msgstr "PHPバージョン"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:479
+msgid "Largest integer supported"
+msgstr "サポートされる最大の整数"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:485
+msgid "PHP configuration directory"
+msgstr "PHP設定ディレクトリ"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:657
+msgid "Timestamping Configuration"
+msgstr "タイムスタンプ設定"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:747
+msgid "Security Settings"
+msgstr "セキュリティ設定"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:791
+msgid "Time of the ban after failed login attempts (in minutes):"
+msgstr "ログインしようとして失敗した後の禁止時間（分）："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:817
+msgid "E-mail Settings"
+msgstr "メール設定"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:829
+msgid "Send e-mails via:"
+msgstr "次を介して電子メールを送信します:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:837
+msgid "Select mailing method..."
+msgstr "送付方法を選択..."
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:856
+msgid "Sender address:"
+msgstr "送信者のアドレス："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:867
+msgid "Path to sendmail:"
+msgstr "sendmailへのパス："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:887
+msgid "SMTP encryption:"
+msgstr "SMTP暗号化："
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:190
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:200
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:190
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:200
+msgid "My Profile"
+msgstr "マイ・プロフィール"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:208
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:208
+msgid "Help"
+msgstr "ヘルプ"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:239
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:239
+msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
+msgstr "＃を入力してテキスト内にリンクを作成できるのとオートコンプリートメニューが実験/アイテムのリストを生成します。"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:122
+msgid "And visibility is:"
+msgstr "表示:"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:127
+msgid "Select visibility"
+msgstr "表示を選択"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:446
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:133
+msgid "Organization"
+msgstr "組織"
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:120
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:120
+msgid "Memory usage:"
+msgstr "メモリ使用量："
+
+#: cache/twig/6f/6f50c1e1a0c65a3485c81508b9369a25f3791fc574d8f6f2e80b100f9a55201d.php:128
+#: cache/twig/10/10c49bbeeb6fb6106dbc1187148a349984f97b791bd262d773f14254d8712a4d.php:128
+msgid "bytes"
+msgstr "バイト"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:59
+msgid "Number of login attempt left before being banned for %s minutes: %s"
+msgstr "％s分間禁止されるまでに残されたログイン試行回数：％s"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:143
+msgid "Login through your institution"
+msgstr "施設経由でログインする"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:1002
+msgid "Generate an API Key"
+msgstr "APIキーを生成する"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:280
+msgid "Not enough tags to make a tagcloud"
+msgstr "タグクラウドを作成するのに十分なタグがありません"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:185
+msgid "Duplicate"
+msgstr "複製する"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:204
+msgid "Make a PDF"
+msgstr "PDFを作成する"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:217
+msgid "Make a ZIP"
+msgstr "ZIPを作成する"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:231
+msgid "Show related"
+msgstr "関連した表示"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:319
+msgid "Timestamp Experiment"
+msgstr "タイムスタンプした実験"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:417
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:509
+msgid "Next step"
+msgstr "次のステップ"
+
+#: cache/twig/14/141a6b1fa2be3f9894c37fde72a3fadc97e0d99b05280b41551aa4b28dda674f.php:134
+msgid "Add a step"
+msgstr "ステップを追加する"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:426
+msgid "Draw something"
+msgstr "何かを描画する"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:236
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1590
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:462
+msgid "Clear"
+msgstr "クリア"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:232
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:232
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:708
+msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"
+msgstr "これは，タイムスタンプに署名するために外部タイムスタンプ提供者によって認証されたチェーンを指すべきです。eLabFTWのインストールディレクトリに対する％sローカルパス。 \"uploads\"フォルダにそれを追加する必要があります。ファイルは％sPEMエンコード（ASCII）％s形式である必要があります！"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:256
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:256
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:944
+msgid "A password is already set."
+msgstr "パスワードはすでに設定されています。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:260
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:260
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:948
+msgid "%sClear it%s or change it below:"
+msgstr "％sそれをクリアするか，以下で変更します："
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:516
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:576
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:516
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:576
+msgid "Allow timestamp"
+msgstr "タイムスタンプを許可"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:615
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:803
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:615
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:803
+msgid "Modify ordering"
+msgstr "順序を変更する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:150
+msgid "Order by:"
+msgstr "オーダー："
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:157
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:193
+msgid "Use default"
+msgstr "デフォルトを使用する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:181
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:245
+msgid "Comment"
+msgstr "コメント"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:186
+msgid "Sort:"
+msgstr "ソート："
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:227
+msgid "Only lowercase letters are allowed."
+msgstr "小文字のみが使えます"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:407
+msgid "Disable the rich text editor and write Markdown directly"
+msgstr "リッチテキストエディターを無効にし，直接Markdownで書く"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:436
+msgid "Default visibility for new experiments"
+msgstr "新しい実験のデフォルト表示"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:464
+msgid "User"
+msgstr "ユーザー"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:840
+msgid "Template content"
+msgstr "テンプレートの内容"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:111
+msgid "%s - A new version is available! %sUpdate elabftw%sRead changelog%s"
+msgstr "％s-新しいバージョンが利用可能です！ ％selabftwをアップデート％s変更ログ％sを読む"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:125
+msgid "Please finalize install: %slink to documentation%s."
+msgstr "インストールを完了してください：％sドキュメントへのリンク％s。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:169
+msgid "SAML"
+msgstr "SAML"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:603
+msgid "Archive"
+msgstr "アーカイブ"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:303
+msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
+msgstr "ファイアウォール/プロキシの後ろにいる場合は，ここにアドレスを入力します。例：http://proxy.example.com:3128"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:409
+msgid "Enable local account creation:"
+msgstr "ローカルアカウントの作成を有効にする："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:428
+msgid "Show local login form:"
+msgstr "ローカルログインフォームを表示："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:446
+msgid "You can still show the local login form by appending ?letmein to the login page URL."
+msgstr "追加によってローカルログインフォームを引き続き表示できます。ログインページのURLに?letmein。"
+
+#: cache/twig/30/308749ef3b952f99dd8e33413a5c8e84d156a0270e67cd6519270c30739f87b8.php:67
+msgid "Back to listing"
+msgstr "リストに戻る"
+
+#: cache/twig/30/308749ef3b952f99dd8e33413a5c8e84d156a0270e67cd6519270c30739f87b8.php:76
+msgid "Experiment of %s"
+msgstr "％sの実験"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:123
+msgid "Manage templates"
+msgstr "テンプレートを管理する"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:304
+msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
+msgstr "eLabFTWへようこそ。 [新規作成]ボタンを使用して開始してください！"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:326
+msgid "Select all"
+msgstr "すべて選択"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:330
+msgid "Clear selection"
+msgstr "選択のクリアー"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:334
+msgid "Invert selection"
+msgstr "選択を逆にする"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:340
+msgid "With selected:"
+msgstr "選択した場合："
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:353
+msgid "Change status"
+msgstr "ステータスを変更する"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:359
+msgid "Change item type"
+msgstr "アイテムのタイプを変更する"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:420
+msgid "Make Zip"
+msgstr "Zipを作成"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:424
+msgid "Make Csv"
+msgstr "Csvを作成"
+
+#: web/app/controllers/EntityAjaxController.php:224
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "本文内のこのファイルへの参照を必ず削除してください！"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:100
+msgid "Decode token"
+msgstr "トークンを平文に直す"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:297
+msgid "Insert in text at cursor position"
+msgstr "カーソル位置にテキストを挿入"
+
+#: src/services/Email.php:160
+msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account: "
+msgstr "こんにちは。 elabftwに登録された新規ユーザーさん。アカウトを確認するために，管理パネルに移動します: "
+
+#: src/models/Comments.php:215
+msgid "Hi. %s left a comment on your experiment. Have a look: %s"
+msgstr "こんにちは。 ％sがあなたの実験にコメントを残しました。ご覧ください：％s"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:287
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:287
+msgid "Anonymous"
+msgstr "匿名"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:317
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:317
+msgid "Archive user"
+msgstr "アーカイブユーザー"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:199
+msgid "Login as anonymous visitor"
+msgstr "匿名の訪問者としてログイン"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:362
+msgid "Import to your profile"
+msgstr "プロフィールにインポート"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:168
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:168
+msgid "Anonymous visitors can see database items:"
+msgstr "匿名の訪問者がデータベースのアイテムを見ることができます："
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:287
+msgid "PDF configuration"
+msgstr "PDFの設定"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:293
+msgid "Select paper format for PDF"
+msgstr "PDFの用紙形式を選択する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:330
+msgid "Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)"
+msgstr "PDF / A準拠のPDFを生成します（フォントを埋め込み、ファイルを大きくします）"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:341
+msgid "Add attached files summary to the pdf"
+msgstr "添付ファイルの概要をPDFに追加します"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:374
+msgid "Show experiments from the team on the Experiments page"
+msgstr "実験ページにチームの実験を表示する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:385
+msgid "Display a warning before closing an edit window/tab"
+msgstr "編集ウィンドウ/タブを閉じる前に警告を表示する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:396
+msgid "Display the molecule drawer in edit mode"
+msgstr "編集モードでmolecule drawerを表示する"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:333
+msgid "Allow anonymous visitors to login and see Public experiments:"
+msgstr "匿名の訪問者にログインと公開された実験を見ることを許可："
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:319
+msgid "result shown"
+msgid_plural "results shown"
+msgstr[0] "示された結果"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:392
+msgid "Change visibility"
+msgstr "表示を変更する"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:651
+msgid "Previous page"
+msgstr "前のページ"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:660
+msgid "Next page"
+msgstr "次のページ"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:358
+msgid "Upload a new version of this file"
+msgstr "このファイルの新しいバージョンをアップロードします"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:186
+msgid "Cartoon (proteins only)"
+msgstr "漫画（タンパク質のみ）"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:194
+msgid "Cross"
+msgstr "クロス"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:202
+msgid "Line"
+msgstr "ライン"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:210
+msgid "Sphere"
+msgstr "球体"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:282
+msgid "Installation URL:"
+msgstr "インストールURL："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:491
+msgid "Maximum file size for uploaded files"
+msgstr "アップロードされたファイルの最大ファイルサイズ"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:500
+msgid "Timezone"
+msgstr "タイムゾーン"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:682
+msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login information in the admin panel."
+msgstr "チームがグローバルタイムスタンプアカウントを使用できるかどうかを制御できます。 <em> no </ em>に設定した場合、チーム管理者は管理パネルにログイン情報を追加する必要があります。"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:66
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:461
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:345
+msgid "Information"
+msgstr "情報"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:692
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:395
+msgid "revision available"
+msgid_plural "revisions available"
+msgstr[0] "改訂版が入手可能"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:484
+#: cache/twig/14/141a6b1fa2be3f9894c37fde72a3fadc97e0d99b05280b41551aa4b28dda674f.php:103
+msgid "completed"
+msgstr "完了"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:606
+msgid "commented"
+msgstr "コメントした"
+
+#: cache/twig/1f/1fe93fbcae9644bcb78f215cc2a128f66151ddece12fd50b6a5f90afe15042be.php:40
+#: cache/twig/78/78e0fc8d7cea1e6a4a95d395f2840d62e605591878fb121d21a597b206fc194a.php:40
+msgid "Close"
+msgstr "閉じる"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:204
+#: cache/twig/1f/1fe93fbcae9644bcb78f215cc2a128f66151ddece12fd50b6a5f90afe15042be.php:44
+#: cache/twig/78/78e0fc8d7cea1e6a4a95d395f2840d62e605591878fb121d21a597b206fc194a.php:44
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:204
+msgid "Todolist"
+msgstr "ToDoリスト"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:319
+msgid "Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)"
+msgstr "PDF生成で中国語，日本語，および韓国語のフォントを有効にします（警告：PDF / Aを無効にしない限り，ファイルサイズが大幅に増加します）"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:418
+msgid "Allow members of the team to edit your experiments"
+msgstr "チームのメンバーにあなたの実験の編集を許可します"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:653
+msgid "Experiment Templates"
+msgstr "実験テンプレート"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:120
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:120
+msgid "Import"
+msgstr "インポート"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:124
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:124
+msgid "Tag manager"
+msgstr "タグマネージャー"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:974
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:974
+msgid "Import a .elabftw.zip archive."
+msgstr ".elabftw.zipアーカイブをインポートします。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:1082
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:1082
+msgid "Manage tags of the team"
+msgstr "チームのタグを管理する"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:273
+msgid "Select status"
+msgstr "ステータスを選択"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:347
+msgid "Select number of stars"
+msgstr "スターの数を選択"
+
+#: cache/twig/81/818a97e21f5e0a1d254d4d2bbc28f2a118977af0e35a7713a6de9a07866a7f5e.php:378
+msgid "Tip: you can use '%' as wildcard"
+msgstr "ヒント：「％」をワイルドカードとして使用できます"
+
+#: cache/twig/e4/e48f235618710c67b88cacf6483e889fb4d01d2a2ede729d1450f20c941d7551.php:227
+#: cache/twig/aa/aab098049efc1e80a751790aa58194ebecb3c07af0982fa6b63a5c24b642dc3b.php:227
+msgid "You can use a TODOlist by pressing '%s'."
+msgstr "'％s'を押すと，ToDoリストを使用できます。"
+
+#: cache/twig/95/95594064aa57b7906962dfc74cf6421e0464f7965058cd41edc182a8872516c2.php:92
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:213
+msgid "Select a team"
+msgstr "チームを選択してください"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:173
+msgid "Privacy policy"
+msgstr "プライバシーポリシー"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:210
+msgid "Generate report"
+msgstr "レポートを生成する"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:252
+msgid "Language:"
+msgstr "言語："
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:290
+msgid "The canonical address of the eLabFTW installation. If this value is empty, eLabFTW will try to guess it, but in some instances, it might not be correct so you should fill this setting. Example: https://elabftw.example.org"
+msgstr "eLabFTWインストールの正規のアドレス。この値が空の場合，eLabFTWはそれを推測しようとしますが，場合によっては正しくない可能性があるため，この設定を入力する必要があります。例：https://elabftw.example.org"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:351
+msgid "This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible."
+msgstr "これにより，アカウントのないユーザーがチームにログインし，公開された実験を見ることができます。各チームの管理者は，データベースのアイテムを表示するかどうかを選択できます。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:356
+msgid "Switch this instance in open science mode:"
+msgstr "オープンサイエンスモードでこのインスタンスを切り替えます。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:374
+msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
+msgstr "これにより，検索エンジンがサイトをクロールできます。訪問者は特定されたチームに自動的にログインします。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:379
+msgid "Select which team will be open to the world in open science mode:"
+msgstr "オープンサイエンスモードで世界に公開するチームを選択します:"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:404
+msgid "This has no effect if open science mode is disabled."
+msgstr "オープンサイエンスモードが無効になっている場合，これは効果がありません。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:824
+msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
+msgstr "電子メールを送信する有効な方法がないと，ユーザーはパスワードをリセットできません。特定の％ssmtp2go.com％sのアカウントを作成し，ここに情報を追加することをお勧めします。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:843
+msgid "SMTP (recommended)"
+msgstr "SMTP（推奨）"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:849
+msgid "Local MTA"
+msgstr "ローカルMTA"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1558
+msgid "Adjust your privacy policy notice"
+msgstr "プライバシーポリシーの通知を調整する"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:1566
+msgid "Note: the text below is a template and must be edited and saved."
+msgstr "注：以下のテキストはテンプレートであり，編集して保存する必要があります。"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:41
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:41
+msgid "Search users"
+msgstr "ユーザーを検索"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:108
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:108
+msgid "User ID"
+msgstr "ユーザーID"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:330
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:330
+msgid "Delete user"
+msgstr "ユーザーを削除"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:348
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:348
+msgid "No user found!"
+msgstr "ユーザーが見つかりません！"
+
+#: cache/twig/50/50382e02aad02d1c6160c62220422e54e8ca213d22008419ca8adf9fff3ef7a0.php:153
+msgid "Select an identity provider"
+msgstr "IDプロバイダーを選択してください"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:718
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:535
+msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
+msgstr "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:1017
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:539
+msgid "Delete this tag?"
+msgstr "このタグを削除しますか？"
+
+#: cache/twig/9d/9dbe664bf54afe769981e4785cc585bc8e87a87937c9477e6a2334379ce6e2fd.php:84
+msgid "by"
+msgstr "by"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:77
+msgid "Experiment was timestamped by %s on %s at %s"
+msgstr "実験は％sの％sに％sによってタイムスタンプされました"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:244
+msgid "Book item"
+msgstr "予約アイテム"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:216
+msgid "Use single column layout"
+msgstr "シングルコラムレイアウトを使用する"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:526
+msgid "Enter your password to edit your profile."
+msgstr "パスワードを入力してプロファイルを編集します。"
+
+#: cache/twig/f7/f7cad6a6fc41300c5760424b1780d00d9d3b2afeeebba38d19a5a97dfbbd3df5.php:54
+msgid "Info"
+msgstr "情報"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:83
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:882
+msgid "API keys"
+msgstr "APIキー"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:886
+msgid "Existing keys"
+msgstr "既存のキー"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:898
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:988
+msgid "Permissions"
+msgstr "許可"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:902
+msgid "Creation date"
+msgstr "作成日"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:941
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:997
+msgid "Read/Write"
+msgstr "読み/書き"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:941
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:993
+msgid "Read Only"
+msgstr "読み取り専用"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:973
+msgid "Create new key"
+msgstr "新しいキーを作成"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:903
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:1027
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:903
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:1027
+msgid "2. Select a visibility:"
+msgstr "2.表示を選択:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:1061
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:1061
+msgid "3. Select a ZIP file to import:"
+msgstr "3.インポートするZIPファイルを選択:"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:160
+msgid "You belong to the %s team."
+msgstr "あなたは％sチームに所属しています。"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:420
+msgid "No templates from other members of the team to display!"
+msgstr "表示するチームの他のメンバーのテンプレートはありません！"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:433
+msgid "Send an email to all team members"
+msgstr "すべてのチームメンバーにメールを送信する"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:444
+msgid "Subject"
+msgstr "件名"
+
+#: cache/twig/8e/8edbc689ebef9fad18b7269e8d3bc931e1b5c118795ac50db891c3f69a2bfc57.php:449
+msgid "Content"
+msgstr "内容"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:222
+msgid "Id"
+msgstr "Id"
+
+#: web/app/controllers/TeamController.php:39
+msgid "Email sent to %d users"
+msgstr "％d人のユーザーに送信されたメール"
+
+#: web/app/controllers/RegisterController.php:27
+msgid "Registration is disabled."
+msgstr "登録は無効です。"
+
+#: web/app/controllers/UcpController.php:84
+msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"
+msgstr "キーが表示されるのはこの時だけです！再度表示できないので，安全な場所にコピーしてください：％s"
+
+#: web/app/controllers/ResetPasswordController.php:37
+msgid "Email provided is invalid."
+msgstr "提供されたEメールは無効です。"
+
+#: web/app/controllers/ResetPasswordController.php:90
+msgid "Wrong key for resetting password"
+msgstr "パスワードをリセットするための間違ったキー"
+
+#: src/services/Email.php:192
+msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: "
+msgstr "こんにちは。 eLabFTWのあなたのアカウントは，管理者によって確認されました。このリンクに従ってログインしてください: "
+
+#: src/controllers/DatabaseController.php:94
+#: src/controllers/ExperimentsController.php:97
+msgid "This item is locked. You cannot edit it!"
+msgstr "このアイテムはロックされています。編集できません！"
+
+#: src/models/Tags.php:334 src/models/Comments.php:155
+#: src/models/Todolist.php:96 src/models/Uploads.php:232
+#: src/models/TeamGroups.php:53
+msgid "Input is too short! (minimum: %d)"
+msgstr "入力が短すぎます！ （最小：％d）"
+
+#: src/models/TeamGroups.php:118
+msgid "Public"
+msgstr "パブリック"
+
+#: src/models/TeamGroups.php:119
+msgid "Everyone with an account"
+msgstr "アカウントを持っている全員"
+
+#: src/models/TeamGroups.php:120
+msgid "Only the team"
+msgstr "チームのみ"
+
+#: src/models/AbstractEntity.php:365
+msgid "Cannot update a locked entity!"
+msgstr "ロックされたものはアップデートできません！"
+
+#: src/models/AbstractEntity.php:170
+msgid "This experiment was locked by %s. You don't have the rights to unlock this."
+msgstr "この実験は％sによってロックされました。あなたには，これを解除する権限がありません。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:871
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:871
+msgid "Import a .csv (Excel spreadsheet) file into the database. First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv. IMPORTANT: one of the column MUST be named 'title'. You should make a tiny import of 3 lines to see if everything works before importing a big file."
+msgstr "データベースに.csv（Excelスプレッドシート）ファイルをインポートします。まず，ExcelまたはLibreofficeで.xls / .xlsxファイルを開き，.csvとして保存する必要があります。重要：列の1つに「title」という名前を付ける必要があります。大きなファイルをインポートする前に，すべてが機能するかどうかを確認するために，3行の小さなインポートを行うとよいです。"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:933
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:933
+msgid "3. Select a delimiter:"
+msgstr "3.区切り文字(delimiter)を選択:"
+
+#: cache/twig/0a/0ad9e1262f9c853264885f4a73a0916db6904eed69da07ec575a02bcc30416f8.php:952
+#: cache/twig/3a/3a540f294417e8a9c585bf8be83cc0b11a0128f1e545039f6d0b95491144ff12.php:952
+msgid "4. Select a CSV file to import:"
+msgstr "4.インポートするCSVファイルを選択:"
+
+#: cache/twig/66/6629313d53730bc816c5a318da40fc2ae2a6974289afd7845578fe8dbec9be15.php:309
+#: cache/twig/a6/a6af4d889619324d40e11af86767e6ac79850937ef97e540e7fe9563e1105f92.php:309
+msgid "Unarchive user"
+msgstr "ユーザーのアーカイブ解除"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:319
+msgid "Annotate this image"
+msgstr "この画像に注釈を付けます"
+
+#: cache/twig/6f/6f2968a0438239d16d1fef5f26d681f81d6c00ff29762f5a6edfec296a3303d8.php:336
+msgid "Save as image"
+msgstr "画像として保存"
+
+#: cache/twig/0e/0ec34fa5c2de6b8f2ddbdd3dbfe1c996b3248e42c9ad68c2e416ea64422d2563.php:299
+msgid "Share"
+msgstr "シェア"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:217
+msgid "Announcement"
+msgstr "アナウンス"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:222
+msgid "The following text will be displayed to all users on all pages while it's active."
+msgstr "次のテキストは，アクティブな間，すべてのページのすべてのユーザーに表示されます。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:308
+msgid "Admins can always delete experiments:"
+msgstr "管理者はいつでも実験を削除できます。"
+
+#: cache/twig/43/43f5d6b8648eb26b7eaf7630c629c6d1d8fcc50f507d69d1b8ab9d2bd35a9791.php:326
+msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
+msgstr "これを«no»に設定すると，すべてのユーザーの実験を削除する機能が完全に無くなります。"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:129
+msgid "Help translate eLabFTW!"
+msgstr "eLabFTWの翻訳にご協力ください！"
+
+#: cache/twig/05/05086c048dc4b8e25f057d30aa6142dad576cad6f58225002103ad3d8738c8a3.php:429
+msgid "Only allow members of your team group to edit your experiments"
+msgstr "チームグループのメンバーにのみ，あなたの実験の編集を許可する"
+
+#: cache/twig/14/141a6b1fa2be3f9894c37fde72a3fadc97e0d99b05280b41551aa4b28dda674f.php:59
+msgid "Steps"
+msgstr "ステップ"
+
+#: cache/twig/36/367a5485cf40c9255e47e79c87a000596a0c9a680e56cd777f78809c23d5e336.php:671
+msgid "Results per page"
+msgstr "ページ毎の結果"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:439
+msgid "Stroke width"
+msgstr "ストローク幅"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:455
+msgid "Eraser"
+msgstr "消しゴム"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:543
+msgid "Delete this step?"
+msgstr "このステップを削除しますか？"
+
+#: cache/twig/eb/ebd7968dfc9a57d30092dbb09fcc316c43f68422d88aa5ad3b036b5a72548c74.php:547
+msgid "Delete this link?"
+msgstr "このリンクを削除しますか？"

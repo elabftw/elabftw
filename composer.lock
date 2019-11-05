@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ab4058dc2e0e0f58ec590e6a8aff16f",
+    "content-hash": "fc42a0a1a75d0ed7ed00d3dd14f62b85",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -4001,21 +4001,21 @@
         },
         {
             "name": "pyrech/composer-changelogs",
-            "version": "v1.6.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pyrech/composer-changelogs.git",
-                "reference": "0871e60c77a2ed6771e6191300809ded4f51e775"
+                "reference": "bd708afc62b0855fde6c7c731edbd45cbe33f20e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/0871e60c77a2ed6771e6191300809ded4f51e775",
-                "reference": "0871e60c77a2ed6771e6191300809ded4f51e775",
+                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/bd708afc62b0855fde6c7c731edbd45cbe33f20e",
+                "reference": "bd708afc62b0855fde6c7c731edbd45cbe33f20e",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0|^1.1",
-                "php": ">=5.4.0"
+                "composer-plugin-api": "^1.0 || ^1.1",
+                "php": ">=7.1.0"
             },
             "require-dev": {
                 "composer/composer": "~1.0.0-alpha10@dev",
@@ -4025,10 +4025,10 @@
             },
             "type": "composer-plugin",
             "extra": {
-                "class": "Pyrech\\ComposerChangelogs\\ChangelogsPlugin",
                 "branch-alias": {
                     "dev-master": "1.5.x-dev"
-                }
+                },
+                "class": "Pyrech\\ComposerChangelogs\\ChangelogsPlugin"
             },
             "autoload": {
                 "psr-4": {
@@ -4052,7 +4052,7 @@
                 "plugin",
                 "update"
             ],
-            "time": "2017-12-11T14:49:29+00:00"
+            "time": "2019-10-21T15:22:05+00:00"
         },
         {
             "name": "roave/security-advisories",

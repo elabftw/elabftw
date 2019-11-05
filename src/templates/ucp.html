@@ -201,16 +201,16 @@
         <div class='col-md-6'>
           <h4>{{ 'Modify your personal informations'|trans }}</h4>
           <label for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
-          <input class='form-control' id='currpass' name='currpass' type='password' pattern='.{8,}' required />
+          <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='off' pattern='.{8,}' required />
           <label for='email'>{{ 'Email'|trans }}</label>
           <input class='form-control' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
         </div>
         <div class='col-md-6'>
           <h4>{{ 'Modify your password'|trans }}</h4>
           <label for='newpass'>{{ 'New password'|trans }}</label>
-          <input class='form-control' id='newpass' name="newpass" type="password" pattern=".{8,}" />
+          <input class='form-control' id='newpass' autocomplete='new-password' name="newpass" type="password" pattern=".{8,}" />
           <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-          <input class='form-control' id='cnewpass' name="cnewpass" type="password" pattern=".{8,}" />
+          <input class='form-control' id='cnewpass' autocomplete='new-password' name="cnewpass" type="password" pattern=".{8,}" />
         </div>
       </div>
 

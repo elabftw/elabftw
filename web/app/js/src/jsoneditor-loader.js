@@ -5,6 +5,7 @@ const options = {onChangeJSON:function(){
   $('.jsonSaver').removeAttr('disabled', 0).text('Save').css('cursor','pointer');
 }};
 
+var JSONEditor;
 const editor = new JSONEditor(container, options);
 $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
 $('.jsonEditorDiv').hide();
@@ -12,7 +13,7 @@ $('.jsonEditorDiv').hide();
 var currentFileType;
 var currentFileUploadID;
 var currentFileItemID;
-var JSONEditor;
+
 $(document).on('click', '.jsonLoader', function(){
   $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
     editor.set(JSON.parse(data));

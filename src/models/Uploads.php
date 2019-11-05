@@ -158,7 +158,7 @@ class Uploads implements CrudInterface
       }
       catch (ImproperActionException $e){
         if($e->getMessage()==="Nothing to show with this id"){
-          throw new ImproperActionException('File has been deleted.');
+          throw new ImproperActionException('File has been deleted. Cannot save.');
         }
       }
     }

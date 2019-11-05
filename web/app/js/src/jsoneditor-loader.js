@@ -1,15 +1,22 @@
 // create the editor
-const container = document.getElementById("jsoneditor")
+const container = document.getElementById('jsoneditor');
 
-const options = {onChangeJSON:function(json){
-    $('.jsonSaver').removeAttr('disabled', 0).text("Save").css('cursor','pointer');
-}}
+const options = {onChangeJSON:function(){
+  $('.jsonSaver').removeAttr('disabled', 0).text('Save').css('cursor','pointer');
+}};
 
-const editor = new JSONEditor(container, options)
+const editor = new JSONEditor(container, options);
+$('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
+$('.jsonEditorDiv').hide();
 
+var currentFileType;
+var currentFileUploadID;
+var currentFileItemID;
+var JSONEditor;
 $(document).on('click', '.jsonLoader', function(){
-  $.get("app/download.php", {f:$(this).data('link')}).done(function(data){
+  $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
     editor.set(JSON.parse(data));
+    $('.jsonEditorDiv').show();
   });
   currentFileType = $(this).data('type');
   currentFileUploadID = $(this).data('id');
@@ -25,8 +32,8 @@ $(document).on('click', '.jsonSaver', function(){
     content: JSON.stringify(editor.get())
   }).done(function(data){
     notif(data);
-    if(data.msg==="JSON file updated successfully"){
-      $('.jsonSaver').attr('disabled', 1).text("Saved").css('cursor','default');
+    if(data.msg==='JSON file updated successfully'){
+      $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
     }
   });
 });

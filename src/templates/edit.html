@@ -145,9 +145,12 @@
 <!-- JSON EDITOR -->
 <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-    <div id="jsoneditor"></div>
-    <div class='submitButtonDiv'>
-      <button type='submit' style='cursor:default;' disabled name='save-json-button' class='button jsonSaver'>{{ 'Saved'|trans }}</button>
+    <i class='fas fa-eye clickable align_right togglableNext' title='Toggle visibility'></i>
+    <div class='jsonEditorDiv'>
+      <div id="jsoneditor"></div>
+      <div class='submitButtonDiv'>
+        <button type='submit' class='button jsonSaver'>{{ 'Saved'|trans }}</button>
+      </div>
     </div>
 </section>
 

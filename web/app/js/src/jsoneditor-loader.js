@@ -24,6 +24,7 @@ $(document).on('click', '.jsonSaver', function(){
     type: currentFileType,
     content: JSON.stringify(editor.get())
   }).done(function(data){
+    notif(data);
     if(data.msg==="JSON file updated successfully"){
       $('.jsonSaver').attr('disabled', 1).text("Saved").css('cursor','default');
     }

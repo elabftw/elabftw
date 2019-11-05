@@ -150,10 +150,17 @@ class Uploads implements CrudInterface
     */
     public function updateJsonFile(int $id, string $content): void
     {
-      $this->Entity->canOrExplode('write');
-      $upload = $this->readFromId($id);
-      $fullPath = $this->getUploadsPath() . $upload['long_name'];
-      file_put_contents($fullPath, $content);
+      try{
+        $this->Entity->canOrExplode('write');
+        $upload = $this->readFromId($id);
+        $fullPath = $this->getUploadsPath() . $upload['long_name'];
+        file_put_contents($fullPath, $content);
+      }
+      catch (ImproperActionException $e){
+        if($e->getMessage()==="Nothing to show with this id"){
+          throw new ImproperActionException('File has been deleted.');
+        }
+      }
     }
 
     /**

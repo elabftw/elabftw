@@ -6,17 +6,15 @@
  * @package elabftw
  */
 window.MathJax = {
-  extensions: ['tex2jax.js'],
-  jax: ['input/TeX', 'output/HTML-CSS'],
-  tex2jax: {
+  tex: {
     inlineMath: [ ['$','$'], ['\\(','\\)'] ],
     displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
-    processEscapes: true
+    processEscapes: true,
+    packages: ['base', 'ams', 'autoload']
   },
-  'HTML-CSS': {
-    fonts: ['TeX']
-  },
-  TeX: {
-    extensions: ['autoload-all.js']
+  startup: {
+    ready: () => {
+      MathJax.startup.defaultReady();
+    }
   }
 };

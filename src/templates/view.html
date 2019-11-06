@@ -8,10 +8,6 @@
 <script src='app/js/moment.bundle.js?v={{ v }}'></script>
 <script src='app/js/relative-moment.min.js?v={{ v }}'></script>
 
-<!-- mathjax lib -->
-<script src='app/js/src/mathjax-config.js'></script>
-<script src='app/js/mathjax/MathJax.js'></script>
-
 {% if Entity.entityData.timestamped %}
 <div class='alert alert-success'><i class='fas fa-info-circle'></i>
     {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestampInfo.timestamper.fullname, Entity.entityData.timestampedwhen|date('Y-m-d'), Entity.entityData.timestampedwhen|date('H:i:s'))|raw }}

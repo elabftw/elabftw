@@ -52,11 +52,17 @@ try {
     $itemsArr = $Database->read();
     $itemData = null;
 
+    $allItems = true;
     $selectedItem = null;
     if ($Request->query->get('item')) {
-        $Scheduler->Database->setId((int) $Request->query->get('item'));
-        $selectedItem = $Request->query->get('item');
-        // itemData is to display the name/category of the selected item
+        if ($Request->query->get('item') === 'all'
+            || !$Request->query->has('item')) {
+        } else {
+            $Scheduler->Database->setId((int) $Request->query->get('item'));
+            $selectedItem = $Request->query->get('item');
+            $allItems = false;
+            // itemData is to display the name/category of the selected item
+        }
         $itemData = $Scheduler->Database->read();
         if (empty($itemData)) {
             throw new ImproperActionException(_('Nothing to show with this id'));
@@ -71,6 +77,7 @@ try {
         'Entity' => $Templates,
         'TagCloud' => $TagCloud,
         'Scheduler' => $Scheduler,
+        'allItems' => $allItems,
         'itemsArr' => $itemsArr,
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,

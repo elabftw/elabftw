@@ -64,13 +64,41 @@ class Scheduler
     }
 
     /**
+     * Return an array with events for all items of the team
+     *
+     * @return array
+     */
+    public function readAllFromTeam(): array
+    {
+        // the title of the event is title + Firstname Lastname of the user who booked it
+        $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
+            CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
+            items.title AS item_title
+            FROM team_events
+            LEFT JOIN items ON team_events.item = items.id
+            LEFT JOIN users AS u ON team_events.userid = u.userid
+            WHERE team_events.team = :team";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
      * Return an array with events for this item
      *
      * @return array
      */
     public function read(): array
     {
-        // the title of the event is Firstname + Lastname of the user who booked it
+        // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title
             FROM team_events

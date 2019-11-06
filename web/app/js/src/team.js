@@ -7,6 +7,15 @@
  */
 
 $(document).ready(function() {
+  var read = 'one';
+  var editable = true;
+  var selectable = true;
+  if ($('#info').data('all')) {
+    read = 'all';
+    editable = false;
+    selectable = false;
+  }
+
   // SCHEDULER
   $('#scheduler').fullCalendar({
     header: {
@@ -18,10 +27,10 @@ $(document).ready(function() {
     locale: $('#info').data('lang'),
     defaultView: 'agendaWeek',
     // allow selection of range
-    selectable: true,
+    selectable: selectable,
     // draw an event while selecting
     selectHelper: true,
-    editable: true,
+    editable: editable,
     // allow "more" link when too many events
     eventLimit: true,
     // load the events as JSON
@@ -30,7 +39,7 @@ $(document).ready(function() {
         url: 'app/controllers/SchedulerController.php',
         type: 'POST',
         data: {
-          read: true,
+          read: read,
           item: $('#info').data('item')
         },
         error: function() {
@@ -46,14 +55,17 @@ $(document).ready(function() {
     minTime: '06:00:00',
     eventBackgroundColor: 'rgb(41,174,185)',
     dayClick: function(start, end) {
+      if (!editable) { return; }
       schedulerCreate(start.format(), end.format());
     },
     // selection
     select: function(start, end) {
+      if (!editable) { return; }
       schedulerCreate(start.format(), end.format());
     },
     // delete by clicking it
     eventClick: function(calEvent) {
+      if (!editable) { return; }
       if (confirm('Delete this event?')) {
         $.post('app/controllers/SchedulerController.php', {
           destroy: true,
@@ -77,6 +89,7 @@ $(document).ready(function() {
     },
     // a drop means we change start date
     eventDrop: function(calEvent) {
+      if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
         updateStart: true,
         start: calEvent.start.format(),
@@ -88,6 +101,7 @@ $(document).ready(function() {
     },
     // a resize means we change end date
     eventResize: function(calEvent) {
+      if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
         updateEnd: true,
         end: calEvent.end.format(),
@@ -106,7 +120,7 @@ $(document).ready(function() {
 
 // change item link
 $(document).on('click', '#change-item', function() {
-  insertParamAndReload('item', '');
+  insertParamAndReload('item', 'all');
 });
 
 // IMPORT TPL

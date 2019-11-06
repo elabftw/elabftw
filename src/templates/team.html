@@ -17,30 +17,37 @@
 <div class='divhandle' id='tab1div'>
     {% if itemsArr|length == 0 %}
         {{ 'No bookable items.'|trans|msg('warning', false) }}
-    {% elseif itemData is not null %}
-        <a href='#' id='change-item'>{{ 'Change item'|trans }}</a>
-        <h4><span style='color:#{{ itemData.color }}'>{{ itemData.category }}</span> - {{ itemData.title }}</h4>
-        <div id='scheduler'></div>
     {% else %}
-    <div class='row'>
-        <div class='col-md-2'>
+        <div class='row'>
+          <div class='col-md-2'>
             <div class='dropdown'>
-            <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
-                {{ 'Select an equipment'|trans }}
-            <span class='caret'></span>
-            </button>
-            <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
-                {% for item in itemsArr %}
-                <a data-value='{{ item.title }}' href='team.php?item={{ item.id }}'>
-                    <li class='dropdown-item'>
-                        <span style='color:#{{ item.color }} '>{{ item.category }}</span> - {{ item.title }}
-                    </li>
+              <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>
+                {% if allItems %}
+                  {{ 'Select an equipment'|trans }}
+                {% else %}
+                  <span style='color:#{{ itemData.color }}'>{{ itemData.category }}</span> - {{ itemData.title }}
+                {% endif %}
+                <span class='caret'></span>
+              </button>
+              <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
+                <a data-value='{{ 'All bookable items'|trans }}' href='team.php?item=all'>
+                  <li class='dropdown-item'>
+                    {{ 'All bookable items'|trans }}
+                  </li>
                 </a>
+                {% for item in itemsArr %}
+                  <a data-value='{{ item.title }}' href='team.php?item={{ item.id }}'>
+                    <li class='dropdown-item'>
+                      <span style='color:#{{ item.color }} '>{{ item.category }}</span> - {{ item.title }}
+                    </li>
+                  </a>
                 {% endfor %}
-            </ul>
+              </ul>
             </div>
+          </div>
         </div>
-    </div>
+        <br>
+        <div id='scheduler'></div>
     {% endif %}
 </div>
 
@@ -173,7 +180,8 @@
 
 <div id='info'
     data-lang="{{ lang }}"
-    data-item="{{ selectedItem }}"></div>
+    data-item="{{ selectedItem }}"
+    data-all="{{ allItems }}"></div>
 <script src='app/js/tabs.min.js?v={{ v }}'></script>
 {% if App.Config.configArr.debug %}
   <script src='app/js/src/team.js?v={{ v }}'></script>

@@ -46,10 +46,19 @@ try {
         );
     }
 
+    // READ ALL FROM TEAM
+    if ($Request->request->get('all') === '1') {
+        $Response->setData($Scheduler->readAllFromTeam());
+    }
+
     // READ
     if ($Request->request->has('read')) {
-        $Database->setId((int) $Request->request->get('item'));
-        $Response->setData($Scheduler->read());
+        if ($Request->request->get('read') === 'all') {
+            $Response->setData($Scheduler->readAllFromTeam());
+        } else {
+            $Database->setId((int) $Request->request->get('item'));
+            $Response->setData($Scheduler->read());
+        }
     }
 
     // UPDATE START

@@ -62,6 +62,10 @@ Pro support, hosting or commercial license are available from [Deltablot](https:
 
 [Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
 
+Or use GitHub to follow releases:
+
+![release watch](https://i.imgur.com/CZ54KaH.gif)
+
 # Funding
 
 This project is sponsored by [Institut Curie](https://science.curie.fr/).

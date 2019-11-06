@@ -10,7 +10,7 @@ window.MathJax = {
     inlineMath: [ ['$','$'], ['\\(','\\)'] ],
     displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
     processEscapes: true,
-    packages: ['base', 'autoload']
+    packages: ['base', 'ams', 'autoload']
   },
   startup: {
     ready: () => {

@@ -40,13 +40,16 @@ $(document).on('click', '.jsonSaver', function(){
   formData.append('upload_id', currentFileItemID);
   formData.append('id', currentFileUploadID);
   formData.append('type', 'experiments');
-  formData.append('csrf', $('meta[name ="csrf-token"]').attr('content'));
   formData.append('file', blob);
 
-  var request = new XMLHttpRequest();
-  request.open('POST', 'app/controllers/EntityController.php');
-  request.onload = function () {
-    $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
-  };
-  request.send(formData);
+  $.ajax({
+    url: 'app/controllers/EntityController.php',
+    data: formData,
+    processData: false,
+    contentType: false,
+    type: 'POST',
+    success:function(){
+      $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
+    }
+  });
 });

@@ -234,16 +234,7 @@ try {
             'msg' => _('File deleted successfully') . $msg,
         ));
     }
-
-    // UPDATE JSON FILE
-    if($Request->request->has('updateJsonFile')){
-      $Entity->Uploads->updateJsonFile((int) $Request->request->get('upload_id'), $Request->request->get('content'));
-
-      $Response->setData(array(
-          'res' => true,
-          'msg' => _('JSON file updated successfully'),
-      ));
-    }
+    
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     $Response->setData(array(
         'res' => false,

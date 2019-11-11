@@ -29,15 +29,15 @@ key.filter = function(event){
 
 $(document).on('click', '.jsonLoader', function(){
 
-    $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
-      try{
+  $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
+    try{
       editor.set(JSON.parse(data));
       $('.jsonEditorDiv').show();
     }
     catch(e){
       // If it is just a parsing error, then we let the user edit the file.
-      if(e.message.includes("JSON.parse")){
-        editor.setMode("text");
+      if(e.message.includes('JSON.parse')){
+        editor.setMode('text');
         editor.updateText(data);
         $('.jsonEditorDiv').show();
       }
@@ -45,9 +45,9 @@ $(document).on('click', '.jsonLoader', function(){
         notif({'msg':'JSON Editor: ' + e.message});
       }
     }
-    });
-    currentFileUploadID = $(this).data('id');
-    currentFileItemID = $(this).data('uploadid');
+  });
+  currentFileUploadID = $(this).data('id');
+  currentFileItemID = $(this).data('uploadid');
 });
 
 $(document).on('click', '.jsonSaver', function(){

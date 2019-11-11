@@ -1,14 +1,17 @@
 // create the editor
 const container = document.getElementById('jsoneditor');
 
-const options = {onChangeJSON:function(){
+function enableSaveButton(){
   $('.jsonSaver').removeAttr('disabled', 0).text('Save').css('cursor','pointer');
-},
-modes:['tree','code','view','form'],
-onModeChange:function(newMode){
-  if(newMode==='code'){$('#jsoneditor').height('800px');}
-  else{$('#jsoneditor').removeAttr('style');}
 }
+
+const options = {onChangeJSON:enableSaveButton,
+  onChangeText:enableSaveButton,
+  modes:['tree','code','view','form'],
+  onModeChange:function(newMode){
+    if(newMode==='code' || newMode==='text'){$('#jsoneditor').height('800px');}
+    else{$('#jsoneditor').removeAttr('style');}
+  }
 };
 
 var JSONEditor;
@@ -25,12 +28,26 @@ key.filter = function(event){
 };
 
 $(document).on('click', '.jsonLoader', function(){
-  $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
-    editor.set(JSON.parse(data));
-    $('.jsonEditorDiv').show();
-  });
-  currentFileUploadID = $(this).data('id');
-  currentFileItemID = $(this).data('uploadid');
+
+    $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
+      try{
+      editor.set(JSON.parse(data));
+      $('.jsonEditorDiv').show();
+    }
+    catch(e){
+      // If it is just a parsing error, then we let the user edit the file.
+      if(e.message.includes("JSON.parse")){
+        editor.setMode("text");
+        editor.updateText(data);
+        $('.jsonEditorDiv').show();
+      }
+      else{
+        notif({'msg':'JSON Editor: ' + e.message});
+      }
+    }
+    });
+    currentFileUploadID = $(this).data('id');
+    currentFileItemID = $(this).data('uploadid');
 });
 
 $(document).on('click', '.jsonSaver', function(){

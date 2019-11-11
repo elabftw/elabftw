@@ -130,6 +130,7 @@ final class MakeThumbnail
         } catch (Exception $e) {
             return;
         }
+
         // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
         $image->thumbnailimage(self::WIDTH, 0);
         // create the physical thumbnail image to its destination (85% quality)

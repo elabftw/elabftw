@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
+use Gmagick;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -72,10 +73,39 @@ class Uploads implements CrudInterface
         // Try to move the file to its final place
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
 
+        // rotate the image if we can find the orientation in the exif data
+        $exifData = exif_read_data($fullPath);
+        if ($exifData !== false) {
+            $image = new Gmagick($fullPath);
+            $image->rotateimage('#000', $this->getRotationAngle($exifData));
+            $image->write($fullPath);
+        }
         // final sql
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
+    }
+
+    /**
+     * Get the rotation angle from exif data
+     *
+     * @param array $exifData
+     * @return int
+     */
+    private function getRotationAngle(array $exifData): int
+    {
+        switch ($exifData['Orientation']) {
+        case 1:
+            return 0;
+        case 3:
+            return 180;
+        case 6:
+            return 90;
+        case 8:
+            return -90;
+        default:
+            return 0;
+        }
     }
 
     /**

@@ -5,7 +5,7 @@ const options = {onChangeJSON:function(){
   $('.jsonSaver').removeAttr('disabled', 0).text('Save').css('cursor','pointer');
 },
 modes:['tree','code','view','form'],
-onModeChange:function(newMode, oldMode){
+onModeChange:function(newMode){
   if(newMode==='code'){$('#jsoneditor').height('800px');}
   else{$('#jsoneditor').removeAttr('style');}
 }

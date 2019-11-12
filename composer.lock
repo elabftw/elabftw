@@ -379,16 +379,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "d927c05e9a391688b1e59a606c97465a90531789"
+                "reference": "d74654d85954e3b9451d67faaebacd210fc70252"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/d927c05e9a391688b1e59a606c97465a90531789",
-                "reference": "d927c05e9a391688b1e59a606c97465a90531789",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/d74654d85954e3b9451d67faaebacd210fc70252",
+                "reference": "d74654d85954e3b9451d67faaebacd210fc70252",
                 "shasum": ""
             },
             "require": {
@@ -446,7 +446,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2019-10-31T13:30:15+00:00"
+            "time": "2019-11-11T22:23:29+00:00"
         },
         {
             "name": "league/csv",

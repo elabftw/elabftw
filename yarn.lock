@@ -1145,7 +1145,7 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
-apidoc-core@~0.8.2:
+apidoc-core@~0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/apidoc-core/-/apidoc-core-0.8.3.tgz#d9d63545829df250d2cca049683a87e775364b96"
   integrity sha1-2dY1RYKd8lDSzKBJaDqH53U2S5Y=
@@ -1157,17 +1157,17 @@ apidoc-core@~0.8.2:
     lodash "~4.17.4"
     semver "~5.3.0"
 
-apidoc@0.17.*:
-  version "0.17.7"
-  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.17.7.tgz#a49090cbd8b3aa457bd054f00e0037e975fd3ee7"
-  integrity sha512-9Wf4bRPwCuWOIOxR42dDnsXnFw+rhJg5VrMQK+KmNxJwyIh30UqX6gvjjXSG6YO74MqE87F18bbQXUENK9dPGg==
+apidoc@0.18.*:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.18.0.tgz#304a7da0a87de456268abad112ddb70df5814563"
+  integrity sha512-6gDuxCizXYzFap5JVEdXsATvVsx0Q2waZO39AHhFxFdikvfQ37U8GKASgJugTJNltWjnyUj2YasquUZw19Wmeg==
   dependencies:
-    apidoc-core "~0.8.2"
-    commander "^2.19.0"
-    fs-extra "^7.0.0"
-    lodash "^4.17.10"
-    markdown-it "^8.3.1"
-    winston "^3.0.0"
+    apidoc-core "~0.8.3"
+    commander "^2.20.0"
+    fs-extra "^8.1.0"
+    lodash "^4.17.15"
+    markdown-it "^10.0.0"
+    winston "^3.2.1"
 
 aproba@^1.0.3, aproba@^1.1.1:
   version "1.2.0"
@@ -1938,7 +1938,7 @@ commander@*:
   resolved "https://registry.yarnpkg.com/commander/-/commander-4.0.1.tgz#b67622721785993182e807f4883633e6401ba53c"
   integrity sha512-IPF4ouhCP+qdlcmCedhxX4xiGBPyigb8v5NeUp+0LyhwLgxMqyp3S0vl7TAPfS/hiP7FC3caI/PB9lTmP8r1NA==
 
-commander@^2.19.0, commander@^2.20.0:
+commander@^2.20.0:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
   integrity sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
@@ -2484,12 +2484,12 @@ enhanced-resolve@^4.1.0:
     memory-fs "^0.5.0"
     tapable "^1.0.0"
 
-entities@^1.1.1, entities@~1.1.1:
+entities@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.2.tgz#bdfa735299664dfafd34529ed4f8522a275fea56"
   integrity sha512-f2LZMYl1Fzu7YSBKg+RoROelpOaNrcGmE9AZubeDfrCEia483oW4MI4VyFd5VNHIgQ/7qm1I0wUHK1eJnn2y2w==
 
-entities@^2.0.0:
+entities@^2.0.0, entities@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.0.0.tgz#68d6084cab1b079767540d80e56a39b423e4abf4"
   integrity sha512-D9f7V0JSRwIxlRI2mjMqufDrRDnx8p+eEOz7aUM9SuvF8gsBzra0/6tbjl1m8eQHrZlYj6PxqE00hZ1SAIKPLw==
@@ -3038,12 +3038,12 @@ fs-extra@^3.0.1:
     jsonfile "^3.0.0"
     universalify "^0.1.0"
 
-fs-extra@^7.0.0:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
-  integrity sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==
+fs-extra@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-8.1.0.tgz#49d43c45a88cd9677668cb7be1b46efdb8d2e1c0"
+  integrity sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==
   dependencies:
-    graceful-fs "^4.1.2"
+    graceful-fs "^4.2.0"
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
@@ -3347,7 +3347,7 @@ got@^6.7.1:
     unzip-response "^2.0.1"
     url-parse-lax "^1.0.0"
 
-graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
+graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
   integrity sha512-a30VEBm4PEdx1dRB7MFK7BejejvCvBronbLjht+sHuGYj8PHs7M/5Z+rt5lw551vZ7yfTCj4Vuyy3mSJytDWRQ==
@@ -4575,13 +4575,13 @@ markdown-escapes@^1.0.0:
   resolved "https://registry.yarnpkg.com/markdown-escapes/-/markdown-escapes-1.0.3.tgz#6155e10416efaafab665d466ce598216375195f5"
   integrity sha512-XUi5HJhhV5R74k8/0H2oCbCiYf/u4cO/rX8tnGkRvrqhsr5BRNU6Mg0yt/8UIx1iIS8220BNJsDb7XnILhLepw==
 
-markdown-it@^8.3.1:
-  version "8.4.2"
-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-8.4.2.tgz#386f98998dc15a37722aa7722084f4020bdd9b54"
-  integrity sha512-GcRz3AWTqSUphY3vsUqQSFMbgR38a4Lh3GWlHRh/7MRwz8mcu9n2IO7HOh+bXHrR9kOPDl5RNCaEsrneb+xhHQ==
+markdown-it@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-10.0.0.tgz#abfc64f141b1722d663402044e43927f1f50a8dc"
+  integrity sha512-YWOP1j7UbDNz+TumYP1kpwnP0aEa711cJjrAQrzd0UXlbJfc5aAq0F/PZHjiioqDC1NKgvIMX+o+9Bk7yuM2dg==
   dependencies:
     argparse "^1.0.7"
-    entities "~1.1.1"
+    entities "~2.0.0"
     linkify-it "^2.0.0"
     mdurl "^1.0.1"
     uc.micro "^1.0.5"
@@ -7833,7 +7833,7 @@ winston-transport@^4.3.0:
     readable-stream "^2.3.6"
     triple-beam "^1.2.0"
 
-winston@^3.0.0:
+winston@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/winston/-/winston-3.2.1.tgz#63061377976c73584028be2490a1846055f77f07"
   integrity sha512-zU6vgnS9dAWCEKg/QYigd6cgMVVNwyTzKs81XZtTFuRwJOcDdBg7AU0mXVyNbs7O5RH2zdv+BdNZUlx7mXPuOw==

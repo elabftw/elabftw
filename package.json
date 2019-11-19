@@ -29,7 +29,7 @@
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
-    "apidoc": "0.17.*",
+    "apidoc": "0.18.*",
     "babel-loader": "^8.0.6",
     "eslint": "^6.3.0",
     "expose-loader": "0.7.*",
@@ -40,7 +40,7 @@
     "grunt-shell": "3.0.*",
     "lodash": ">=4.17.13",
     "snyk": "1.*",
-    "stylelint": "^11.0.0",
+    "stylelint": "^12.0.0",
     "stylelint-config-recommended": "^3.0.0",
     "stylelint-config-standard": "^19.0.0",
     "webpack": "^4.39.0",

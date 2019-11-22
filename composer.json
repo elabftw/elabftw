@@ -21,7 +21,7 @@
     "swiftmailer/swiftmailer":"6.2.*",
     "onelogin/php-saml": "3.3.*",
     "guzzlehttp/guzzle": "6.4.*",
-    "symfony/http-foundation": "4.3.*",
+    "symfony/http-foundation": "5.0.*",
     "twig/twig": "2.12.*",
     "twig/extensions": "1.5.*",
     "monolog/monolog": "2.0.*",

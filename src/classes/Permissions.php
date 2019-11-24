@@ -113,14 +113,15 @@ class Permissions
         }
 
         // it's not our experiment
+        // get the owner data
+        $Owner = new Users((int) $this->item['userid']);
+
         // check if we're admin because admin can read/write all experiments of the team
-        if ($this->Users->userData['is_admin'] && $this->item['team'] === $this->Users->userData['team']) {
+        if ($this->Users->userData['is_admin'] && $Owner->userData['team'] === $this->Users->userData['team']) {
             return array('read' => true, 'write' => true);
         }
 
         // if we don't own the experiment (and we are not admin), we need to check if owner allowed edits
-        // get the owner data
-        $Owner = new Users((int) $this->item['userid']);
         // owner allows edit and is in same team and we are not anon
         if ($Owner->userData['allow_edit'] &&
             $this->item['team'] === $this->Users->userData['team']

@@ -341,9 +341,8 @@ class Teams implements CrudInterface
         $sql = 'SELECT
         (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
         (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments
-            WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts';
+        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) WHERE users.team = :team) AS totxp,
+        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) WHERE users.team = :team AND experiments.timestamped = 1) AS totxpts';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();

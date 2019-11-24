@@ -37,7 +37,6 @@ class DatabaseCleaner implements CleanerInterface
     public function cleanup()
     {
         $this->findOrphans('experiments_templates', 'teams', 'team');
-        $this->findOrphans('experiments', 'teams', 'team');
         $this->findOrphans('experiments', 'users', 'userid', 'userid');
         $this->findOrphans('experiments_comments', 'experiments', 'item_id');
         $this->findOrphans('experiments_comments', 'users', 'userid', 'userid');

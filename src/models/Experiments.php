@@ -61,11 +61,10 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, visibility, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :visibility, :userid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
-            'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Filter::kdate(),
             'body' => $body,
@@ -176,11 +175,10 @@ class Experiments extends AbstractEntity implements CreateInterface
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, elabid, visibility, userid)
-            VALUES(:team, :title, :date, :body, :category, :elabid, :visibility, :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, visibility, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :visibility, :userid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
-            'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
@@ -256,7 +254,9 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function getTeamFromElabid(string $elabid): int
     {
-        $sql = 'SELECT team FROM experiments WHERE elabid = :elabid';
+        $sql = 'SELECT users.team FROM `experiments`
+            LEFT JOIN users ON (experiments.userid = users.userid)
+            WHERE experiments.elabid = :elabid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
         if ($req->execute() !== true) {

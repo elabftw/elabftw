@@ -81,7 +81,6 @@ CREATE TABLE `config` (
 
 CREATE TABLE `experiments` (
   `id` int(10) UNSIGNED NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
@@ -101,8 +100,6 @@ CREATE TABLE `experiments` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments`:
---   `team`
---       `teams` -> `id`
 --   `userid`
 --       `users` -> `userid`
 --
@@ -618,7 +615,6 @@ ALTER TABLE `config`
 --
 ALTER TABLE `experiments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_experiments_teams_id` (`team`),
   ADD KEY `fk_experiments_users_userid` (`userid`);
 
 --
@@ -915,7 +911,6 @@ ALTER TABLE `api_keys`
 -- Constraints for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD CONSTRAINT `fk_experiments_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --

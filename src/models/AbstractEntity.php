@@ -205,11 +205,10 @@ abstract class AbstractEntity
      * Here be dragons!
      *
      * @param bool $getTags if true, might take a very long time, false in show mode
-     * @param bool $inTeam, set to false to disable team filtering
      *
      * @return array
      */
-    public function read(bool $getTags = true, bool $inTeam = true): array
+    public function read(bool $getTags = true): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . (string) $this->id;
@@ -310,11 +309,7 @@ abstract class AbstractEntity
             throw new IllegalActionException('Nope.');
         }
 
-        if ($this->id === null && $inTeam === true) {
-            $sql .= ' WHERE ' . $this->type . '.team = :team';
-        } else {
-            $sql .= ' WHERE 1=1';
-        }
+        $sql .= ' WHERE 1=1';
 
         $sql .= $this->idFilter . ' ' .
             $this->useridFilter . ' ' .

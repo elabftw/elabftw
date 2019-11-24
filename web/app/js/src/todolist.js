@@ -62,7 +62,6 @@
         destroy: true,
         id: id
       }).done(function(json) {
-        notif(json);
         if (json.res) {
           // hide item
           $('#todoItem_' + id).css('background', '#29AEB9');
@@ -75,7 +74,6 @@
       $.post(this.controller, {
         destroyAll: true
       }).done(function(json) {
-        notif(json);
         if (json.res) {
           // hide all items
           $('#todoItems-list').children().toggle('blind');

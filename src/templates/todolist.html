@@ -1,5 +1,5 @@
 <div id='todoList'>
-    <i class='fas fa-times clickable align_right todoToggle' title="{{ 'Close'|trans }}"></i>
+    <i class='fas fa-times fa-2x clickable align_right todoToggle' title="{{ 'Close'|trans }}"></i>
     <h2>{{ 'Todolist'|trans }}</h2>
     <form id="todo-form">
         <input id="todo" type="text" />
@@ -13,7 +13,9 @@
             <span id='todoItem_{{ todoItem['id'] }}' class='todoitem editable'>{{ todoItem.body }}</span></li>
         {% endfor %}
     </ul>
-    <a href="#" style='float:left' class='todoDestroyAll'>Clear All</a>
+    {% if App.todoItems %}
+      <a href="#" class='todoDestroyAll button alert-danger'>Clear All</a>
+    {% endif %}
 </div>
 
 <div id='todoSc' data-toggle='{{ App.Users.userData.sc_todo }}'></div>

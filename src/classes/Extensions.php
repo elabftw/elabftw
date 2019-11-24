@@ -61,7 +61,6 @@ final class Extensions
         'cif',
         'cube',
         'gro',
-        'json',
         'mcif',
         'mmtf',
         'mol2',

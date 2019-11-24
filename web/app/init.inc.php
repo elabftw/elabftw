@@ -15,6 +15,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Exception;
 use Monolog\Logger;
+use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -50,7 +51,7 @@ try {
     // so we redirect to the install folder
     try {
         $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
-    } catch (Exception $e) {
+    } catch (PDOException $e) {
         $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
         header('Location: ' . $url);
         throw new ImproperActionException('Redirecting to install folder');

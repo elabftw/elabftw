@@ -1,6 +1,4 @@
 /**
- * show.js - for the ?mode=show
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -79,6 +77,13 @@
       } else {
         $(this).parent().parent().css('background-color', '');
       }
+    });
+
+    // EXPAND ALL
+    $('#expandAll').click(function() {
+      $('.bodyToggleImg').each(function() {
+        $(this).click();
+      });
     });
 
     // SELECT ALL

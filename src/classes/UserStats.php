@@ -51,8 +51,20 @@ class UserStats
         $this->Users = $users;
         $this->count = $count;
         $this->Db = Db::getConnection();
-        $this->countStatus();
-        $this->makePercent();
+    }
+
+    /**
+     * Create the statistics
+     *
+     * @return void
+     */
+    public function makeStats(): void
+    {
+        // only work if there is something to work on
+        if ($this->count > 0) {
+            $this->countStatus();
+            $this->makePercent();
+        }
     }
 
     /**

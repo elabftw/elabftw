@@ -13,8 +13,8 @@
 
 <!-- STATUS STAT -->
 <section class='box'>
-    {% if count == 0 %} {# fix division by zero #}
-        {{ 'No statistics available yet.'|trans }}
+    {% if count == 0 %}
+      {{ 'No statistics available yet.'|trans }}
     {% else %}
     <i class='fas fa-chart-pie fa-lg mr-1'></i><h5 class='d-inline'>{{ 'Statistics'|trans }}</h5>
         <hr>

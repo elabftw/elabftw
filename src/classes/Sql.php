@@ -48,7 +48,7 @@ class Sql
         // loop through each line
         foreach ($lines as $line) {
             // Skip it if it's a comment or blank line
-            if ($line === '' || strpos($line, '--') === 0) {
+            if ($line === "\n" || $line === '' || strpos($line, '--') === 0) {
                 continue;
             }
 

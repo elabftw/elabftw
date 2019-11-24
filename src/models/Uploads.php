@@ -74,11 +74,14 @@ class Uploads implements CrudInterface
         $this->moveFile($request->files->get('file')->getPathname(), $fullPath);
 
         // rotate the image if we can find the orientation in the exif data
-        $exifData = exif_read_data($fullPath);
-        if ($exifData !== false) {
-            $image = new Gmagick($fullPath);
-            $image->rotateimage('#000', $this->getRotationAngle($exifData));
-            $image->write($fullPath);
+        // maybe php-exif extension isn't loaded
+        if (function_exists('exif_read_data')) {
+            $exifData = exif_read_data($fullPath);
+            if ($exifData !== false) {
+                $image = new Gmagick($fullPath);
+                $image->rotateimage('#000', $this->getRotationAngle($exifData));
+                $image->write($fullPath);
+            }
         }
         // final sql
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));

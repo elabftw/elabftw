@@ -90,28 +90,6 @@ class Uploads implements CrudInterface
     }
 
     /**
-     * Get the rotation angle from exif data
-     *
-     * @param array $exifData
-     * @return int
-     */
-    private function getRotationAngle(array $exifData): int
-    {
-        switch ($exifData['Orientation']) {
-        case 1:
-            return 0;
-        case 3:
-            return 180;
-        case 6:
-            return 90;
-        case 8:
-            return -90;
-        default:
-            return 0;
-        }
-    }
-
-    /**
      * Called from ImportZip class
      *
      * @param string $filePath absolute path to the file
@@ -361,6 +339,28 @@ class Uploads implements CrudInterface
 
         foreach ($uploadArr as $upload) {
             $this->destroy((int) $upload['id']);
+        }
+    }
+
+    /**
+     * Get the rotation angle from exif data
+     *
+     * @param array $exifData
+     * @return int
+     */
+    private function getRotationAngle(array $exifData): int
+    {
+        switch ($exifData['Orientation']) {
+        case 1:
+            return 0;
+        case 3:
+            return 180;
+        case 6:
+            return 90;
+        case 8:
+            return -90;
+        default:
+            return 0;
         }
     }
 

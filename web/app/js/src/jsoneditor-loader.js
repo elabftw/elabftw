@@ -18,7 +18,8 @@ var JSONEditor;
 const editor = new JSONEditor(container, options);
 $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
 $('.jsonEditorDiv').hide();
-$('.jsoneditor-search').find('input').css('padding', '1px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
+$('.jsonEditorDiv').css('margin-top', '5px'); //Added some margin to allow the + icon to be separated from the editor
+$('.jsoneditor-search').find('input').css('padding', '0px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
 
 
 var currentFileUploadID;

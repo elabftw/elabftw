@@ -141,14 +141,12 @@
             {% endfor %}
         </select>
 
-        {% if Entity.type == 'experiments' %}
         <select autocomplete='off' id='visChecked'>
-            <option selected disabled>{{ 'Change visibility'|trans }}</option>
-            {% for key, value in visibilityArr %}
-                <option value='{{ key }}'>{{ value }}</option>
-            {% endfor %}
+          <option selected disabled>{{ 'Change visibility'|trans }}</option>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value }}</option>
+          {% endfor %}
         </select>
-        {% endif %}
 
     {% endif %}
         <button data-what = 'zip' class='button csvzip'>{{ 'Make Zip'|trans }}</button>

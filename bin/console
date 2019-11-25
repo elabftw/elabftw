@@ -22,5 +22,6 @@ $Application->add(new UpdateDatabase());
 $Application->add(new UpdateTo3());
 $Application->add(new SnapFingers());
 $Application->add(new GenCache());
+$Application->add(new PopulateDatabase());
 
 $Application->run();

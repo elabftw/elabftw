@@ -72,8 +72,7 @@ $(document).on('click', '.jsonSaver', function(){
       });
       notif(json);
     });
-  }
-  else{
+  } else {
     var formData = new FormData();
     var blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
     formData.append('replace', true);

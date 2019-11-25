@@ -21,7 +21,6 @@ $('.jsonEditorDiv').hide();
 $('.jsonEditorDiv').css('margin-top', '5px'); //Added some margin to allow the + icon to be separated from the editor
 $('.jsoneditor-search').find('input').css('padding', '0px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
 
-
 var currentFileUploadID;
 var currentFileItemID;
 
@@ -53,22 +52,45 @@ $(document).on('click', '.jsonLoader', function(){
 });
 
 $(document).on('click', '.jsonSaver', function(){
-  var formData = new FormData();
-  var blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
-  formData.append('replace', true);
-  formData.append('upload_id', currentFileItemID);
-  formData.append('id', currentFileUploadID);
-  formData.append('type', 'experiments');
-  formData.append('file', blob);
-
-  $.ajax({
-    url: 'app/controllers/EntityController.php',
-    data: formData,
-    processData: false,
-    contentType: false,
-    type: 'POST',
-    success:function(){
-      $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
+  if(typeof currentFileUploadID === 'undefined'){
+    const realName = prompt('Enter name of the file');
+    if (realName == null) {
+      return;
     }
-  });
+    id = $('#main_form').find('input[name="id"]').attr('value');
+    $.post('app/controllers/EntityAjaxController.php', {
+      addFromString: true,
+      type: 'experiments',
+      id: id,
+      realName: realName,
+      fileType: 'json',
+      string: JSON.stringify(editor.get())
+    }).done(function(json) {
+      $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
+      $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv', function() {
+        makeEditableFileComment();
+      });
+      notif(json);
+    });
+  }
+  else{
+    var formData = new FormData();
+    var blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
+    formData.append('replace', true);
+    formData.append('upload_id', currentFileItemID);
+    formData.append('id', currentFileUploadID);
+    formData.append('type', 'experiments');
+    formData.append('file', blob);
+
+    $.ajax({
+      url: 'app/controllers/EntityController.php',
+      data: formData,
+      processData: false,
+      contentType: false,
+      type: 'POST',
+      success:function(){
+        $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
+      }
+    });
+  }
 });

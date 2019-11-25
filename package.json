@@ -25,7 +25,7 @@
     "popper.js": "1.16.*",
     "prismjs": "1.17.*",
     "tinymce": "5.1.*",
-    "jsoneditor":"7.0.*"
+    "jsoneditor":"7.2.*"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

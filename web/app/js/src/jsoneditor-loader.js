@@ -7,7 +7,7 @@ function enableSaveButton(){
 
 const options = {onChangeJSON:enableSaveButton,
   onChangeText:enableSaveButton,
-  modes:['tree','code','view','form'],
+  modes:['tree','code','view','form','text'],
   onModeChange:function(newMode){
     if(newMode==='code' || newMode==='text'){$('#jsoneditor').height('800px');}
     else{$('#jsoneditor').removeAttr('style');}
@@ -18,6 +18,8 @@ var JSONEditor;
 const editor = new JSONEditor(container, options);
 $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
 $('.jsonEditorDiv').hide();
+$('.jsoneditor-search').find('input').css('padding', '1px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
+
 
 var currentFileUploadID;
 var currentFileItemID;
@@ -28,7 +30,6 @@ key.filter = function(event){
 };
 
 $(document).on('click', '.jsonLoader', function(){
-
   $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
     try{
       editor.set(JSON.parse(data));

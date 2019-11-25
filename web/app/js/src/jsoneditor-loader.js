@@ -57,7 +57,7 @@ $(document).on('click', '.jsonSaver', function(){
     if (realName == null) {
       return;
     }
-    id = $('#main_form').find('input[name="id"]').attr('value');
+    var id = $('#main_form').find('input[name="id"]').attr('value');
     $.post('app/controllers/EntityAjaxController.php', {
       addFromString: true,
       type: 'experiments',

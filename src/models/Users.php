@@ -66,10 +66,11 @@ class Users
      * @param int $team
      * @param string $firstname
      * @param string $lastname
-     * @param string $password
-     * @return void
+     * @param string|null $password
+     * @param int|null $group
+     * @return int the new userid
      */
-    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): void
+    public function create(string $email, int $team, string $firstname = '', string $lastname = '', ?string $password = null, ?int $group = null): int
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
@@ -95,7 +96,9 @@ class Users
         $UsersHelper = new UsersHelper();
 
         // get the group for the new user
-        $group = $UsersHelper->getGroup($team);
+        if ($group === null) {
+            $group = $UsersHelper->getGroup($team);
+        }
 
         // will new user be validated?
         $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
@@ -138,6 +141,7 @@ class Users
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+        $userid = $this->Db->lastInsertId();
 
         if ($validated == '0') {
             $Email = new Email($Config, $this);
@@ -145,6 +149,8 @@ class Users
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
+
+        return $userid;
     }
 
     /**

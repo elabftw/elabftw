@@ -14,6 +14,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Services\Check;
+use Elabftw\Models\Users;
 use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -21,17 +22,18 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 // default location to redirect to
-$location = '../../login.php';
+// user can also be created from admin page
+if ($Request->request->get('frompage') === 'admin.php') {
+    $location = '../../admin.php?tab=3';
+}
+if ($Request->request->get('frompage') === 'sysconfig.php') {
+    $location = '../../sysconfig.php?tab=3';
+}
 
 try {
     // check for disabled local register
     if ($App->Config->configArr['local_register'] === '0') {
         throw new ImproperActionException(_('Registration is disabled.'));
-    }
-
-    // Stop bot registration by checking if the (invisible to humans) bot input is filled
-    if (!empty($Request->request->get('bot'))) {
-        throw new IllegalActionException('The bot field was filled on register page. Possible automated registration attempt.');
     }
 
     // CSRF
@@ -46,21 +48,16 @@ try {
     }
 
     // Create user
-    $App->Users->create(
+    $userid = $App->Users->create(
         $Request->request->get('email'),
         (int) $Request->request->get('team'),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
-        $Request->request->get('password') ?? '',
+        null,
+        (int) $Request->request->get('usergroup'),
     );
 
-    if ($App->Users->needValidation) {
-        $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.'));
-    } else {
-        $Session->getFlashBag()->add('ok', _('Registration successful :)<br>Welcome to eLabFTW o/'));
-    }
-    // store the email here so we can put it in the login field
-    $Session->set('email', $Request->request->get('email'));
+    $Session->getFlashBag()->add('ok', _('Account successfully created'));
 
     // log user creation
     $App->Log->info('New user created');
@@ -72,16 +69,13 @@ try {
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-    $location = '../../register.php';
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-    $location = '../../register.php';
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array('Exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-    $location = '../../register.php';
 } finally {
     $Response = new RedirectResponse($location);
     $Response->send();

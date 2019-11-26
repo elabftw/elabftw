@@ -23,6 +23,7 @@ module.exports = {
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
       'bootstrap/js/src/dropdown.js',
+      'bootstrap/js/src/modal.js',
       './web/app/js/src/fontawesome.es.js',
       // mathjax config must be loaded before mathjax lib
       './web/app/js/src/mathjax-config.js',

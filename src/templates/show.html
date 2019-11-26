@@ -1,6 +1,27 @@
 {% extends 'base.html' %}
 
 {% block body %}
+<!-- Modal for create new database -->
+<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='createModalLabel'>{{ 'Select type'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {% for category in categoryArr %}
+          <button style='color:#{{ category.color }}; border: 1px #ccc solid; margin-bottom: 5px' class='btn d-block'>
+            <a style='color:#{{ category.color }}' href='?create=true&tpl={{ category.category_id }}'>{{ category.category }}</a>
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end modal -->
 
 {% if not searchPage %}
 <div class='row'>
@@ -61,22 +82,22 @@
   {% if not App.Session.get('anon') %}
   <div class='col-md-2'>
     <div class='btn-group align_right'>
-      <a href='{{ Entity.type == 'experiments' ? '?create=true' : '#' }}'><button type='button' class='btn btn-elab'>{{ 'Create new'|trans }}</button></a>
-      <button type='button' class='btn btn-elab dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        <span class='sr-only'>Toggle Dropdown</span>
-      </button>
-      <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
-        {% if Entity.type == 'experiments' %}
+      <div class='btn-group dropleft' role='group'>
+        <button type='button' class='btn btn-elab dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+          <span class='sr-only'>Toggle create new menu</span>
+        </button>
+        <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
+          {% if Entity.type == 'experiments' %}
             <a href='?create=true'><li class='dropdown-item'>
-                {% trans %}
-                Experiment
-                {% plural 1 %}
-                Experiments
-                {% endtrans %}
+              {% trans %}
+              Experiment
+              {% plural 1 %}
+              Experiments
+              {% endtrans %}
             </li></a>
-            <div class="dropdown-divider"></div>
+            <div class='dropdown-divider'></div>
             {% if templatesArr|length > 0 %}
-            <h6 class="dropdown-header">{{ 'Templates'|trans }}</h6>
+            <h6 class='dropdown-header'>{{ 'Templates'|trans }}</h6>
                 {% for tpl in templatesArr %}
                     <a href='?create=true&tpl={{ tpl.id }}'>
                     <li class='dropdown-item'>
@@ -84,20 +105,22 @@
                     </li></a>
                 {% endfor %}
             {% else %}
-            <h6 class="dropdown-header">{{ 'No templates found'|trans }}</h6>
+            <h6 class='dropdown-header'>{{ 'No templates found'|trans }}</h6>
             {% endif %}
-            <div class="dropdown-divider"></div>
+            <div class='dropdown-divider'></div>
                 <a href='ucp.php?tab=3'>
                     <li class='dropdown-item'>{{ 'Manage templates'|trans }}</li>
                 </a>
-        {% else %}
-            {% for category in categoryArr %}
-                <a href='?create=true&tpl={{ category.category_id }}'>
-                    <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
-                </a>
-            {% endfor %}
-        {% endif %}
-      </ul>
+          {% else %}
+              {% for category in categoryArr %}
+                  <a href='?create=true&tpl={{ category.category_id }}'>
+                      <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
+                  </a>
+              {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+      <button type='button' class='btn btn-elab createNew'>{{ 'Create'|trans }}</button>
     </div>
   </div>
 {% endif %}

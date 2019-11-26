@@ -79,6 +79,19 @@
       }
     });
 
+    // CLICK THE CREATE NEW BUTTON
+    // done with javascript because if it's a link the css is not clean
+    // and there is a gap with the separator
+    // also this allows different behavior for exp/items
+    $('.createNew').click(function() {
+      const path = window.location.pathname;
+      if (path.split('/').pop() === 'experiments.php') {
+        insertParamAndReload('create', 1);
+      } else {
+        $('#createModal').modal('toggle');
+      }
+    });
+
     // EXPAND ALL
     $('#expandAll').click(function() {
       $('.bodyToggleImg').each(function() {

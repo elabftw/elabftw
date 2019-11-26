@@ -123,8 +123,6 @@ select {
 }
 
 #dropdownMenu1 {
-    background-color: white;
-    color: #495057;
     border: 1px solid #ced4da;
 }
 
@@ -485,7 +483,13 @@ section.item {
     cursor: pointer;
 }
 
-.button:hover {
+.almost-button {
+    color: white;
+    background-color: #29aeb9;
+}
+
+.button:hover,
+.almost-button:hover {
     background-color: #1f8591;
 }
 

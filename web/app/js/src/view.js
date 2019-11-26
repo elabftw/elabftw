@@ -137,31 +137,22 @@
 
     // TIMESTAMP
     $(document).on('click', '#confirmTimestamp', function() {
-      $('#confirmTimestampDiv').dialog({
-        resizable: false,
-        height: 'auto',
-        width: 400,
-        modal: true,
-        buttons: {
-          'Timestamp it': function() {
-            $('#confirmTimestampDiv').text($(this).data('wait'));
-            $.post('app/controllers/ExperimentsAjaxController.php', {
-              timestamp: true,
-              id: id
-            }).done(function(json) {
-              notif(json);
-              if (json.res) {
-                window.location.replace('experiments.php?mode=view&id=' + id);
-              }
-            });
-          },
-          Cancel: function() {
-            $(this).dialog('close');
+      $('#timestampModal').modal('toggle');
+      $('#goForTimestamp').on('click', function() {
+        $(this).prop('disabled', true);
+        $.post('app/controllers/ExperimentsAjaxController.php', {
+          timestamp: true,
+          id: id
+        }).done(function(json) {
+          if (json.res) {
+            window.location.replace('experiments.php?mode=view&id=' + id);
+          } else {
+            $('.modal-body').css('color', 'red');
+            $('.modal-body').html(json.msg);
           }
-        }
+        });
       });
     });
-    $('#confirmTimestampDiv').hide();
 
     // ACTIVATE FANCYBOX
     // doesn't work if the src js is loaded

@@ -14,7 +14,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Services\Check;
-use Elabftw\Models\Users;
 use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\RedirectResponse;

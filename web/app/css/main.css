@@ -483,13 +483,7 @@ section.item {
     cursor: pointer;
 }
 
-.almost-button {
-    color: white;
-    background-color: #29aeb9;
-}
-
-.button:hover,
-.almost-button:hover {
+.button:hover {
     background-color: #1f8591;
 }
 
@@ -736,7 +730,6 @@ form#filter-order-sort select {
     color: #fff;
     background-color: #29aeb9;
     border-color: #01929e;
-    margin-right: 10px;
 }
 
 .btn-elab.active,

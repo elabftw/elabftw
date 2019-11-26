@@ -58,12 +58,13 @@
   </div>
 
   <!-- RIGHT MENU: CREATE NEW -->
-  <div class='col-md-2'>
   {% if not App.Session.get('anon') %}
-    <div class='dropleft align_right'>
-      <button class='btn almost-button'
-        type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true'
-        aria-expanded='true'>{{ 'Create new'|trans }}</button>
+  <div class='col-md-2'>
+    <div class='btn-group align_right'>
+      <a href='{{ Entity.type == 'experiments' ? '?create=true' : '#' }}'><button type='button' class='btn btn-elab'>{{ 'Create new'|trans }}</button></a>
+      <button type='button' class='btn btn-elab dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        <span class='sr-only'>Toggle Dropdown</span>
+      </button>
       <ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>
         {% if Entity.type == 'experiments' %}
             <a href='?create=true'><li class='dropdown-item'>
@@ -98,8 +99,8 @@
         {% endif %}
       </ul>
     </div>
-  {% endif %}
   </div>
+{% endif %}
 </div>
 <hr>
 

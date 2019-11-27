@@ -5,8 +5,7 @@ function enableSaveButton(){
   $('.jsonSaver').removeAttr('disabled', 0).text('Save').css('cursor','pointer');
 }
 
-const options = {onChangeJSON:enableSaveButton,
-  onChangeText:enableSaveButton,
+const options = {onChange:enableSaveButton,
   modes:['tree','code','view','form','text'],
   onModeChange:function(newMode){
     if(newMode==='code' || newMode==='text'){$('#jsoneditor').height('800px');}

@@ -122,8 +122,8 @@ try {
     }
 
     // UPDATE VISIBILITY
-    if ($Request->request->has('updateVisibility')) {
-        $Entity->updateVisibility($Request->request->get('visibility'));
+    if ($Request->request->has('updatePermissions')) {
+        $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
 

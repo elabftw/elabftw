@@ -451,12 +451,9 @@ class Users
             $new_lang = $params['lang'];
         }
 
-        // ALLOW EDIT
-        $new_allow_edit = Filter::onToBinary($params['allow_edit'] ?? '');
-        // ALLOW GROUP EDIT
-        $new_allow_group_edit = Filter::onToBinary($params['allow_group_edit'] ?? '');
-        // DEFAULT VIS
-        $new_default_vis = Check::visibility($params['default_vis'] ?? 'team');
+        // DEFAULT READ/WRITE
+        $new_default_read = Check::visibility($params['default_read'] ?? 'team');
+        $new_default_write = Check::visibility($params['default_write'] ?? 'team');
 
         // Signature pdf
         // only use cookie here because it's temporary code
@@ -478,14 +475,13 @@ class Users
             close_warning = :new_close_warning,
             chem_editor = :new_chem_editor,
             lang = :new_lang,
-            default_vis = :new_default_vis,
+            default_read = :new_default_read,
+            default_write = :new_default_write,
             single_column_layout = :new_layout,
             cjk_fonts = :new_cjk_fonts,
             pdfa = :new_pdfa,
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
-            allow_edit = :new_allow_edit,
-            allow_group_edit = :new_allow_group_edit,
             inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
@@ -500,14 +496,13 @@ class Users
         $req->bindParam(':new_close_warning', $new_close_warning);
         $req->bindParam(':new_chem_editor', $new_chem_editor);
         $req->bindParam(':new_lang', $new_lang);
-        $req->bindParam(':new_default_vis', $new_default_vis);
+        $req->bindParam(':new_default_read', $new_default_read);
+        $req->bindParam(':new_default_write', $new_default_write);
         $req->bindParam(':new_layout', $new_layout);
         $req->bindParam(':new_cjk_fonts', $new_cjk_fonts);
         $req->bindParam(':new_pdfa', $new_pdfa);
         $req->bindParam(':new_pdf_format', $new_pdf_format);
         $req->bindParam(':new_use_markdown', $new_use_markdown);
-        $req->bindParam(':new_allow_edit', $new_allow_edit);
-        $req->bindParam(':new_allow_group_edit', $new_allow_group_edit);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 

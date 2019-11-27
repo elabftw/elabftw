@@ -147,33 +147,43 @@
           {{ App.Users.userData.use_markdown == '1' ? " checked='checked'" }}
         />
         <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
-        <br>
-        <input id='allow_edit' type='checkbox' name='allow_edit'
-          {{ App.Users.userData.allow_edit == '1' ? " checked='checked'" }}
-        />
-        <label for='allow_edit'>{{ 'Allow members of the team to edit your experiments'|trans }}</label>
-        <br>
-        <input id='allow_group_edit' type='checkbox' name='allow_group_edit'
-          {{ App.Users.userData.allow_group_edit == '1' ? " checked='checked'" }}
-        />
-        <label for='allow_group_edit'>{{ 'Only allow members of your team group to edit your experiments'|trans }}</label>
         </p>
 
         <p>
-        <label for='default_vis'>{{ 'Default visibility for new experiments'|trans }}</label>
-        <select id='default_vis' name='default_vis'>
+        <label for='default-read-select'>{{ 'Default visibility for new experiments'|trans }}</label>
+        <select id='default-read-select' name='default_read'>
             <option value='organization'
-              {{ App.Users.userData.default_vis == 'organization' ? " selected='selected'" }}
+              {{ App.Users.userData.default_read == 'organization' ? " selected='selected'" }}
             >{{ 'Organization'|trans }}</option>
             <option value='team'
-              {{ App.Users.userData.default_vis == 'team' ? " selected='selected'" }}
+              {{ App.Users.userData.default_read == 'team' ? " selected='selected'" }}
             >{{ 'Team'|trans }}</option>
             <option value='user'
-              {{ App.Users.userData.default_vis == 'user' ? " selected='selected'" }}
+              {{ App.Users.userData.default_read == 'user' ? " selected='selected'" }}
             >{{ 'User'|trans }}</option>
             {% for teamGroup in teamGroupsArr %}
                 <option value='{{ teamGroup.id }}'
-                  {{ teamGroup.id == App.Users.userData.default_vis ? " selected='selected'" }}
+                  {{ teamGroup.id == App.Users.userData.default_read ? " selected='selected'" }}
+                >{{ 'Group'|trans }} - {{ teamGroup.name }}
+                </option>
+            {% endfor %}
+        </select>
+        </p>
+        <p>
+        <label for='default-write-select'>{{ 'Default write permission for new experiments'|trans }}</label>
+        <select id='default-write-select' name='default_write'>
+            <option value='organization'
+              {{ App.Users.userData.default_write == 'organization' ? " selected='selected'" }}
+            >{{ 'Organization'|trans }}</option>
+            <option value='team'
+              {{ App.Users.userData.default_write == 'team' ? " selected='selected'" }}
+            >{{ 'Team'|trans }}</option>
+            <option value='user'
+              {{ App.Users.userData.default_write == 'user' ? " selected='selected'" }}
+            >{{ 'User'|trans }}</option>
+            {% for teamGroup in teamGroupsArr %}
+                <option value='{{ teamGroup.id }}'
+                  {{ teamGroup.id == App.Users.userData.default_write ? " selected='selected'" }}
                 >{{ 'Group'|trans }} - {{ teamGroup.name }}
                 </option>
             {% endfor %}

@@ -121,4 +121,24 @@ class Check
 
         return $visibility;
     }
+
+    /**
+     * Check if we have a correct value for read/write
+     *
+     * @param string $rw
+     * @return string
+     */
+    public static function rw(string $rw): string
+    {
+        $validArr = array(
+            'read',
+            'write',
+        );
+
+        if (!\in_array($rw, $validArr, true)) {
+            throw new IllegalActionException('The read/write parameter is wrong.');
+        }
+
+        return $rw;
+    }
 }

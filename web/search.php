@@ -146,7 +146,7 @@ if ($Request->query->count() > 0) {
 
         // Visibility search
         if (!empty($vis)) {
-            $Entity->visibilityFilter = ' AND ' . $Entity->type . ".visibility = '$vis'";
+            $Entity->visibilityFilter = ' AND ' . $Entity->type . ".canread = '$vis'";
         }
 
         // Date search

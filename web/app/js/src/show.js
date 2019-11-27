@@ -187,7 +187,8 @@
       // loop on it and update the status/item type
       $.each(checked, function(index, value) {
         ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
-          updateVisibility : true,
+          updatePermissions : true,
+          rw: 'read',
           id : value,
           visibility : $('#visChecked').val(),
           type : $('#type').data('type')

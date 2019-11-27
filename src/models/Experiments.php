@@ -55,14 +55,18 @@ class Experiments extends AbstractEntity implements CreateInterface
             $body = $Templates->readCommonBody();
         }
 
-        $visibility = 'team';
-        if ($this->Users->userData['default_vis'] !== null) {
-            $visibility = $this->Users->userData['default_vis'];
+        $canread = 'team';
+        $canwrite = 'team';
+        if ($this->Users->userData['default_read'] !== null) {
+            $canread = $this->Users->userData['default_read'];
+        }
+        if ($this->Users->userData['default_write'] !== null) {
+            $canwrite = $this->Users->userData['default_write'];
         }
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, visibility, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :visibility, :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, :userid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'title' => $title,
@@ -70,7 +74,8 @@ class Experiments extends AbstractEntity implements CreateInterface
             'body' => $body,
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
-            'visibility' => $visibility,
+            'canread' => $canread,
+            'canwrite' => $canwrite,
             'userid' => $this->Users->userData['userid'],
         ));
         $newId = $this->Db->lastInsertId();
@@ -175,8 +180,8 @@ class Experiments extends AbstractEntity implements CreateInterface
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, visibility, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :visibility, :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, :userid)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'title' => $title,
@@ -184,7 +189,8 @@ class Experiments extends AbstractEntity implements CreateInterface
             'body' => $this->entityData['body'],
             'category' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
-            'visibility' => $this->entityData['visibility'],
+            'canread' => $this->entityData['canread'],
+            'canwrite' => $this->entityData['canwrite'],
             'userid' => $this->Users->userData['userid'],
         ));
         $newId = $this->Db->lastInsertId();

@@ -33,8 +33,8 @@ abstract class AbstractImport
     /** @var int $target the item type category or userid where we do the import */
     protected $target;
 
-    /** @var string $visibility visibility for the imported items */
-    protected $visibility;
+    /** @var string $canread read permission for the imported items */
+    protected $canread;
 
     /**
      * Constructor
@@ -48,7 +48,7 @@ abstract class AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
         $this->target = (int) $request->request->get('target');
-        $this->visibility = Check::visibility($request->request->get('visibility'));
+        $this->canread = Check::visibility($request->request->get('visibility'));
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());

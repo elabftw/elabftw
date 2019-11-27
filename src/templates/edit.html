@@ -50,14 +50,26 @@
                     <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
                 </div>
 
-                <!-- VISIBILITY -->
+                <!-- CAN READ -->
                 <div class='col-md-3'>
                     <i class='fas fa-eye' title='Visibility'></i>
-                    <label for='visibility_select'>{{ 'Visibility'|trans }}</label>
-                    <select id='visibility_select'>
+                    <label for='canread_select'>{{ 'Visibility'|trans }}</label>
+                    <select id='canread_select' class='permissionSelect' data-rw='read'>
                         {% for key, value in visibilityArr %}
                             <option value='{{ key }}'
-                            {{ Entity.entityData.visibility == key ? ' selected' }}
+                            {{ Entity.entityData.canread == key ? ' selected' }}
+                            >{{ value|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- CAN WRITE -->
+                <div class='col-md-3'>
+                    <i class='fas fa-pencil-alt' title='Can write'></i>
+                    <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
+                    <select id='canwrite_select' class='permissionSelect' data-rw='write'>
+                        {% for key, value in visibilityArr %}
+                            <option value='{{ key }}'
+                            {{ Entity.entityData.canwrite == key ? ' selected' }}
                             >{{ value|trans }}</option>
                         {% endfor %}
                     </select>

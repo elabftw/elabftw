@@ -56,6 +56,8 @@ body::before {
 }
 
 #real_container {
+    max-width: 1625px;
+    margin: auto;
     padding: 0 5%;
 }
 

@@ -276,7 +276,10 @@
 
       if ($(this).data('type') === 'doodle') {
         elem = $('.canvasDiv');
-      } else {
+      }
+      else if ($(this).data('type') === 'jsoneditor') {
+        elem = $('.jsonEditorDiv');
+      }  else {
         elem = $('#chem_editor');
       }
       if (elem.is(':hidden')) {

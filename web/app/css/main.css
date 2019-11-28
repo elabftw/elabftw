@@ -1131,3 +1131,8 @@ input[type='color'] {
     border: 1px solid #c0c0c0;
     border-radius: 5px;
 }
+
+.user-badge:hover {
+    background-color: #ffc1b7;
+    transition-duration: 500ms;
+}

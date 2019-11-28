@@ -82,7 +82,7 @@ class TeamGroups implements CrudInterface
             return $fullGroups;
         }
 
-        $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS fullname
+        $sql = "SELECT DISTINCT users.userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users CROSS JOIN users2team_groups
             ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
         $req = $this->Db->prepare($sql);

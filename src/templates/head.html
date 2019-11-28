@@ -65,22 +65,42 @@
             <input class='form-control' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
             {% endif %}
         </form>
-    </div>
+        <div class='nav-item dropdown'>
+          <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>{{ 'Menu'|trans }}</a>
+          <div class='dropdown-menu' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>Logged in as {{ App.Users.userData.firstname|default('Anonymous')|raw }}</h6>
+            {% if App.Session.has('auth') %}
+              <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs'></i> {{ 'Settings'|trans }}</a>
+              <a class='dropdown-item' href='profile.php'><i class='fas fa-user'></i> {{ 'My Profile'|trans }}</a>
+              <a class='dropdown-item todoToggle' href='#'><i class='fas fa-list'></i> {{ 'Todolist'|trans }}</a>
+            {% endif %}
+            <a class='dropdown-item helpToggle' href='#'><i class='fas fa-question-circle'></i> {{ 'Help'|trans }}</a>
+            <div class='dropdown-divider'></div>
+            <a class='dropdown-item' href='app/logout.php'><i class='fas fa-sign-out-alt'></i> {{ 'Logout'|trans }}</a>
+          </div>
+        </div>
+     </div>
     {% endif %}
 </nav>
 
 <div id='real_container'>
-    {% if App.Session.has('auth') %}
-    <div class="user-nav">
-        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>{{ 'My Profile'|trans }}</span> {{ App.Users.userData.firstname|raw }}</a><br>
-        <a class="elab-tooltip" href='ucp.php'><span>{{ 'Settings'|trans }}</span><i class='fas fa-cogs'></i></a> |
-        <a class="elab-tooltip" href='profile.php'><span>{{ 'My Profile'|trans }}</span><i class='fas fa-user'></i></a> |
-        <a class="elab-tooltip todoToggle" href='#'><span>{{ 'Todolist'|trans }}</span><i class='fas fa-list'></i></a> |
-        <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>{{ 'Help'|trans }}</span><i class='fas fa-question-circle'></i></strong></a> |
-        <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><i class='fas fa-sign-out-alt'></i></a>
+
+<noscript><!-- show warning if javascript is disabled -->
+    <div class='alert alert-danger'>
+        <p class='font-weight-bold'>Javascript is disabled. Please enable Javascript to view eLabFTW in all its glory.</p>
     </div>
-    <div id='help_container' class='card m2 help-container'>
-        <a href='#' class='close helpClose'>&times;</a>
+</noscript>
+
+<!-- Modal for help -->
+<div class='modal fade' id='helpModal' tabindex='-1' role='dialog' aria-labelledby='helpModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='helpModalLabel'>{{ 'Help'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <ul>
             <li class='tip'>
                 {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://doc.elabftw.net/manual.html'>", "</a>")|raw }}
@@ -113,19 +133,13 @@
                 {{ 'Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'|trans }}
             </li>
         </ul>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
     </div>
-    {% elseif App.Session.has('anon') %}
-    <div class="user-nav">
-        {{ 'Anonymous'|trans }}
-        <a class="elab-tooltip" href='app/logout.php'><span>{{ 'Logout'|trans }}</span><i class='fas fa-sign-out-alt'></i></a>
-    </div>
-    {% endif %}
-
-<noscript><!-- show warning if javascript is disabled -->
-    <div class='alert alert-danger'>
-        <p class='font-weight-bold'>Javascript is disabled. Please enable Javascript to view eLabFTW in all its glory.</p>
-    </div>
-</noscript>
+  </div>
+</div>
 <!-- TITLE -->
 <h2>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
 

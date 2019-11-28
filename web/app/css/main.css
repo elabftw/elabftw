@@ -58,6 +58,7 @@ body::before {
 #real_container {
     max-width: 1625px;
     margin: auto;
+    margin-top: 20px;
     padding: 0 5%;
 }
 
@@ -310,11 +311,6 @@ menu ul li {
 menu ul li.selected {
     border-bottom: 5px #29aeb9 solid;
     padding-bottom: 0;
-}
-
-/* USER MENU (settings, help, logout) */
-.user-nav {
-    text-align: right;
 }
 
 /* ALERT */

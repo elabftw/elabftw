@@ -23,13 +23,9 @@ $(document).ready(function() {
   });
   $('.togglableHidden').hide();
 
-  // HELP CONTAINER
-  $('#help_container').hide();
-  $('#help').click(function() {
-    $('#help_container').toggle();
-  });
-  $(document).on('click', '.helpClose', function() {
-    $('#help_container').hide();
+  // HELP MODAL
+  $(document).on('click', '.helpToggle', function() {
+    $('#helpModal').modal('toggle');
   });
 
   // MAKE THE FILE COMMENT FIELD EDITABLE

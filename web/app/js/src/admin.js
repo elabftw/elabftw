@@ -74,9 +74,9 @@
 
     // AUTOCOMPLETE
     let cache = {};
-    $(document).on('focus', '.addUserToGroup', function(e) {
+    $(document).on('focus', '.addUserToGroup', function() {
       if (!$(this).data('autocomplete')) {
-        $(this).autocomplete({             //   call it
+        $(this).autocomplete({
           source: function(request, response) {
             let term = request.term;
             if (term in cache) {

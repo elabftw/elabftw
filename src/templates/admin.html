@@ -102,17 +102,13 @@
     <button type='submit' id='teamGroupCreateBtn' class='button'>{{ 'Create'|trans }}</button>
     <!-- END CREATE GROUP -->
 
-    <div id='team_groups_div'>
+    <div>
       <div>
         <hr>
         <section>
           <!-- ADD USER TO GROUP -->
           <label for='teamGroupUserAdd'>{{ 'Add this user'|trans }}</label>
-          <select class='form-control col-md-4' id='teamGroupUserAdd'>
-            {% for user in allTeamUsersArr %}
-              <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
-            {% endfor %}
-          </select>
+          <input class='form-control col-md-4 userinput' type='text' />
 
           <label for='teamGroupGroupAdd'>{{ 'to this group'|trans }}</label>
           <select class='form-control col-md-4' id='teamGroupGroupAdd'>
@@ -149,20 +145,20 @@
 
       <!-- SHOW EXISTING GROUPS -->
       <hr>
-      <h3>{{ 'Existing groups'|trans }}</h3>
-      {% for teamGroup in teamGroupsArr %}
-        <div class='box'>
-          <a href='#'>
-            <i class='fas fa-trash-alt clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
-          </a>
-          <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
-          <ul class='group-list'>
+      <div id='team_groups_div'>
+        <h3>{{ 'Existing groups'|trans }}</h3>
+        {% for teamGroup in teamGroupsArr %}
+          <div class='box'>
+            <a href='#'>
+              <i class='fas fa-trash-alt clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
+            </a>
+            <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
             {% for user in teamGroup.users %}
-              <li>{{ user.fullname|raw }}</li>
+            <span class='user-badge clickable userRmFromGroup'>{{ user.fullname|raw }}</span>
             {% endfor %}
-          </ul>
-        </div>
-      {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>

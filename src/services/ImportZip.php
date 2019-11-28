@@ -147,11 +147,13 @@ class ImportZip extends AbstractImport
             VALUES(:team, :title, :date, :body, :userid, :category, :canread)';
 
         if ($this->type === 'experiments') {
-            $sql = 'INSERT into experiments(team, title, date, body, userid, canread, category, elabid)
-                VALUES(:team, :title, :date, :body, :userid, :canread, :category, :elabid)';
+            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
+                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        if ($this->type !== 'experiments') {
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);

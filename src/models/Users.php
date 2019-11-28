@@ -197,6 +197,22 @@ class Users
     }
 
     /**
+     * Get users matching a search term for consumption in autocomplete
+     *
+     * @param string $term
+     * @return array
+     */
+    public function lookFor(string $term): array
+    {
+        $usersArr = $this->readFromQuery($term);
+        $res = array();
+        foreach ($usersArr as $user) {
+            $res[] = $user['userid'] . ' - ' . $user['fullname'] . ' (' . $user['team_name'] . ')';
+        }
+        return $res;
+    }
+
+    /**
      * Select by email
      *
      * @param string $email
@@ -233,14 +249,15 @@ class Users
             $whereTeam = 'users.team = ' . $this->userData['team'] . ' AND ';
         }
 
-        $sql = 'SELECT users.userid,
+        $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.team, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
-            teams.name as teamname
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            teams.name as team_name
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
-            WHERE ' . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC';
+            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
         if ($req->execute() !== true) {
@@ -267,7 +284,7 @@ class Users
             $valSql = ' users.validated = :validated AND ';
         }
         $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
-            teams.name AS teamname
+            teams.name AS team_name
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
             WHERE " . $valSql . ' users.team = :team';

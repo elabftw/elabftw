@@ -51,7 +51,7 @@
         var user;
         var group;
         if (action === 'add') {
-          user = $('#teamGroupUserAdd').val();
+          user = parseInt($('.userinput').val(), 10);
           group = $('#teamGroupGroupAdd').val();
         } else {
           user = $('#teamGroupUserRm').val();
@@ -80,6 +80,23 @@
     };
 
     // TEAM GROUP
+
+    // AUTOCOMPLETE
+    let cache = {};
+    $('.userinput').autocomplete({
+      source: function(request, response) {
+        let term = request.term;
+        if (term in cache) {
+          response(cache[term]);
+          return;
+        }
+        $.getJSON('app/controllers/AdminAjaxController.php', request, function(data) {
+          cache[term] = data;
+          response(data);
+        });
+      }
+    });
+
     $(document).on('click', '#teamGroupCreateBtn', function() {
       TeamGroups.create();
     });

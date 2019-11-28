@@ -71,9 +71,8 @@ class TeamGroups implements CrudInterface
     {
         $fullGroups = array();
 
-        $sql = 'SELECT id, name FROM team_groups WHERE team = :team';
+        $sql = 'SELECT id, name FROM team_groups';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

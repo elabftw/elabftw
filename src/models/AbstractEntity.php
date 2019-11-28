@@ -289,7 +289,6 @@ abstract class AbstractEntity
                 LEFT JOIN items_types ON (items.category = items_types.id)
                 LEFT JOIN users ON (users.userid = items.userid)';
 
-            $usersJoin = 'LEFT JOIN users ON (items.userid = users.userid)';
             $stepsJoin = 'LEFT JOIN (
                 SELECT items_steps.item_id AS steps_item_id,
                 items_steps.body AS next_step,

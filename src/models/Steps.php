@@ -60,6 +60,32 @@ class Steps implements CrudInterface
     }
 
     /**
+     * Import a step from a complete step array
+     * Used when importing from zip archive (json)
+     *
+     * @param array $step
+     * @return void
+     */
+    public function import(array $step): void
+    {
+        $this->Entity->canOrExplode('write');
+
+        $body = str_replace('|', ' ', $step['body']);
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering, finished, finished_time)
+            VALUES(:item_id, :body, :ordering, :finished, :finished_time)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':ordering', $step['ordering']);
+        $req->bindParam(':finished', $step['finished']);
+        $req->bindParam(':finished_time', $step['finished_time']);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
      * Toggle the finished column of a step
      *
      * @param int $stepid

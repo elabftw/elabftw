@@ -181,8 +181,27 @@ class ImportZip extends AbstractImport
             $this->Entity->setId($newItemId);
         }
 
+        // add tags
         if (\mb_strlen($item['tags'] ?? '') > 1) {
             $this->tagsDbInsert($item['tags']);
+        }
+        // add links
+        if (!empty($item['links'])) {
+            // don't import the links as as because the id might be different from the one we had before
+            // so add the link in the body
+            $header = '<h3>Linked items:</h3><ul>';
+            $end = '</ul>';
+            $linkText = '';
+            foreach($item['links'] as $link) {
+                $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
+            }
+            $this->Entity->update($item['title'], $item['date'], $item['body'] . $header . $linkText . $end);
+        }
+        // add steps
+        if (!empty($item['steps'])) {
+            foreach($item['steps'] as $step) {
+                $this->Entity->Steps->import($step);
+            }
         }
     }
 

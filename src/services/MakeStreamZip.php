@@ -210,6 +210,10 @@ class MakeStreamZip extends AbstractMake
             $entityArr = $this->Entity->entityData;
             // save the uploads in entityArr for the json file
             $entityArr['uploads'] = $uploadedFilesArr;
+            // add links
+            $entityArr['links'] = $this->Entity->Links->readAll();
+            // add steps
+            $entityArr['steps'] = $this->Entity->Steps->readAll();
 
             $this->nameFolder();
             $this->addTimestampFiles($id);

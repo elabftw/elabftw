@@ -199,7 +199,7 @@
 
     // AUTOCOMPLETE
     let cache = {};
-    $( '.linkinput' ).autocomplete({
+    $('.linkinput').autocomplete({
       source: function(request, response) {
         let term = request.term;
         if (term in cache) {

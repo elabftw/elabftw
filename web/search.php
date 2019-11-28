@@ -146,7 +146,7 @@ if ($Request->query->count() > 0) {
 
         // Visibility search
         if (!empty($vis)) {
-            $Entity->visibilityFilter = ' AND ' . $Entity->type . ".visibility = '$vis'";
+            $Entity->visibilityFilter = ' AND ' . $Entity->type . ".canread = '$vis'";
         }
 
         // Date search
@@ -191,12 +191,7 @@ if ($Request->query->count() > 0) {
         }
 
         // READ the results
-        $inTeam = true;
-        // look outside the team if we're filtering for organization
-        if ($vis === 'organization') {
-            $inTeam = false;
-        }
-        $itemsArr = $Entity->read(true, $inTeam);
+        $itemsArr = $Entity->read(true);
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)

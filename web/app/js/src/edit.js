@@ -179,14 +179,16 @@
     });
 
 
-    // VISIBILITY SELECT
-    $(document).on('change', '#visibility_select', function() {
-      const visibility = $(this).val();
+    // CAN READ/WRITE SELECT
+    $(document).on('change', '.permissionSelect', function() {
+      const value = $(this).val();
+      const rw = $(this).data('rw');
       $.post('app/controllers/EntityAjaxController.php', {
-        updateVisibility: true,
+        updatePermissions: true,
+        rw: rw,
         id: id,
         type: type,
-        visibility: visibility
+        value: value,
       }).done(function(json) {
         notif(json);
       });

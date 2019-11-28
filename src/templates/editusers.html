@@ -18,7 +18,7 @@
             {% for user in usersArr %}
             <li class='list-group-item'>
               <ul class='list-inline'>
-                <p>Team: {{ user.teamname|raw }} | Last login: {{ user.last_login ?? 'never' }}</p>
+                <p>Team: {{ user.team_name|raw }} | Last login: {{ user.last_login ?? 'never' }}</p>
                 <form method='post' action='app/controllers/UsersController.php'>
                   <div class='form-group'>
                     <input type='hidden' value='true' name='usersUpdate' />
@@ -126,4 +126,64 @@
     {% endif %}
     </div>
 {% endif %}
+
+{% if App.Config.configArr.local_register %}
+  <form class='box' method='post' autocomplete='off' action='app/controllers/CreateUserController.php'>
+    <h3>{{ 'Add account'|trans }}</h3>
+    <div class='form-group'>
+      {{ App.Csrf.getHiddenInput|raw }}
+      <input type='hidden' name='team' value='{{ App.Users.userData.team }}' />
+      <input type='hidden' name='frompage' value='{{ App.Request.getScriptName|split('/')|last }}' />
+      <div class='row'>
+
+        <!-- TEAM -->
+        <div class='col-md-2'>
+          <label for='create-user-team'>{{ 'Team'|trans }}</label>
+          <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
+            {% for team in teamsArr %}
+              <option value='{{ team.id }}' {{ App.Users.userData.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- EMAIL -->
+        <div class='col-md-2'>
+          <label for='email'>{{ 'Email'|trans }}</label>
+          <input name='email' class='form-control' type='email' id='email' required />
+        </div>
+
+        <!-- FIRSTNAME -->
+        <div class='col-md-2'>
+          <label for='firstname'>{{ 'Firstname'|trans }}</label>
+          <input name='firstname' class='form-control' type='text' id='firstname' required />
+        </div>
+
+        <!-- LASTNAME -->
+        <div class='col-md-2'>
+          <label for='lastname'>{{ 'Lastname'|trans }}</label>
+          <input name='lastname' class='form-control' type='text' id='lastname' required />
+        </div>
+
+        <!-- GROUP -->
+        <div class='col-md-2'>
+          <label for='create-user-group'>{{ 'Group'|trans }}</label>
+          <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
+            {% if App.Session.get('is_sysadmin') %}
+              <option value='1'>Sysadmins</option>
+            {% endif %}
+            <option value='2'>Admins</option>
+            <option value='3'>Admins + Lock power</option>
+            <option value='4' selected='selected'>Users</option>
+          </select>
+        </div>
+
+        <!-- SUBMIT -->
+        <div class='col-md-2'>
+          <input type='submit' name='submit' style='margin-top: 26px' class='button' value='{{ 'create'|trans }}' />
+        </div>
+      </div>
+    </div>
+  </form>
+{% endif %}
+
 <script src='app/js/editusers.min.js?v={{ v }}'></script>

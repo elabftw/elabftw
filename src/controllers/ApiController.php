@@ -231,6 +231,7 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} tags Tags separated by '|'
      * @apiSuccess {String} tags_id Id of the tags separated by ','
      * @apiSuccess {Number} team Id of the team
+     * @apiSuccess {String} team_name Name of the team
      * @apiSuccess {Number} timestamped 0 if not timestamped, 1 if timestamped
      * @apiSuccess {Number} timestampedby User id of the timestamper
      * @apiSuccess {DateTime} timestampedwhen Date and time of the timestamp
@@ -239,7 +240,8 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} up_item_id Id of the uploaded items
      * @apiSuccess {String[]} uploads Array of uploaded files
      * @apiSuccess {Number} userid User id of the owner
-     * @apiSuccess {String} visibility Visibility of the experiment
+     * @apiSuccess {String} canread Read permission of the experiment
+     * @apiSuccess {String} canwrite Write permission of the experiment
      *
      */
 

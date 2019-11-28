@@ -70,7 +70,7 @@ class MakeReport
             'usergroup',
             'archived',
             'last_login',
-            'teamname',
+            'team_name',
             'diskusage_in_bytes',
             'diskusage_formatted',
             'exp_total',

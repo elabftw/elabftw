@@ -1,7 +1,5 @@
 <?php
 /**
- * \Elabftw\Elabftw\Update
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
@@ -32,7 +30,7 @@ use PDO;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    private const REQUIRED_SCHEMA = 51;
+    private const REQUIRED_SCHEMA = 52;
 
     /** @var Config $Config instance of Config */
     public $Config;

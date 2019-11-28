@@ -47,16 +47,7 @@
           });
         }
       },
-      update: function(action) {
-        var user;
-        var group;
-        if (action === 'add') {
-          user = $('#teamGroupUserAdd').val();
-          group = $('#teamGroupGroupAdd').val();
-        } else {
-          user = $('#teamGroupUserRm').val();
-          group = $('#teamGroupGroupRm').val();
-        }
+      update: function(action, user, group) {
         $.post(this.controller, {
           teamGroupUpdate: true,
           action: action,
@@ -80,20 +71,46 @@
     };
 
     // TEAM GROUP
+
+    // AUTOCOMPLETE
+    let cache = {};
+    $(document).on('focus', '.addUserToGroup', function() {
+      if (!$(this).data('autocomplete')) {
+        $(this).autocomplete({
+          source: function(request, response) {
+            let term = request.term;
+            if (term in cache) {
+              response(cache[term]);
+              return;
+            }
+            $.getJSON('app/controllers/AdminAjaxController.php', request, function(data) {
+              cache[term] = data;
+              response(data);
+            });
+          }
+        });
+      }
+    });
+
     $(document).on('click', '#teamGroupCreateBtn', function() {
       TeamGroups.create();
     });
-
-    $(document).on('click', '#teamGroupGroupAddBtn', function() {
-      TeamGroups.update('add');
-    });
-
-    $(document).on('click', '#teamGroupGroupRmBtn', function() {
-      TeamGroups.update('rm');
-    });
-
     $(document).on('click', '.teamGroupDelete', function() {
       TeamGroups.destroy($(this).data('id'));
+    });
+
+    $(document).on('keypress blur', '.addUserToGroup', function(e) {
+      // Enter is ascii code 13
+      if (e.which === 13 || e.type === 'focusout') {
+        let user = parseInt($(this).val(), 10);
+        let group = $(this).data('group');
+        TeamGroups.update('add', user, group);
+      }
+    });
+    $(document).on('click', '.rmUserFromGroup', function() {
+      let user = $(this).data('user');
+      let group = $(this).data('group');
+      TeamGroups.update('rm', user, group);
     });
 
     // VALIDATE USERS

@@ -66,10 +66,11 @@ class Users
      * @param int $team
      * @param string $firstname
      * @param string $lastname
-     * @param string $password
-     * @return void
+     * @param string|null $password
+     * @param int|null $group
+     * @return int the new userid
      */
-    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = ''): void
+    public function create(string $email, int $team, string $firstname = '', string $lastname = '', ?string $password = null, ?int $group = null): int
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
@@ -95,7 +96,9 @@ class Users
         $UsersHelper = new UsersHelper();
 
         // get the group for the new user
-        $group = $UsersHelper->getGroup($team);
+        if ($group === null) {
+            $group = $UsersHelper->getGroup($team);
+        }
 
         // will new user be validated?
         $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
@@ -138,6 +141,7 @@ class Users
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+        $userid = $this->Db->lastInsertId();
 
         if ($validated == '0') {
             $Email = new Email($Config, $this);
@@ -145,6 +149,8 @@ class Users
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
+
+        return $userid;
     }
 
     /**
@@ -191,6 +197,22 @@ class Users
     }
 
     /**
+     * Get users matching a search term for consumption in autocomplete
+     *
+     * @param string $term
+     * @return array
+     */
+    public function lookFor(string $term): array
+    {
+        $usersArr = $this->readFromQuery($term);
+        $res = array();
+        foreach ($usersArr as $user) {
+            $res[] = $user['userid'] . ' - ' . $user['fullname'] . ' (' . $user['team_name'] . ')';
+        }
+        return $res;
+    }
+
+    /**
      * Select by email
      *
      * @param string $email
@@ -227,13 +249,14 @@ class Users
             $whereTeam = 'users.team = ' . $this->userData['team'] . ' AND ';
         }
 
-        $sql = 'SELECT users.userid,
+        $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.team, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
-            teams.name as teamname
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            teams.name as team_name
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
-            WHERE ' . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
+            WHERE " . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
             ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
@@ -261,7 +284,7 @@ class Users
             $valSql = ' users.validated = :validated AND ';
         }
         $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
-            teams.name AS teamname
+            teams.name AS team_name
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
             WHERE " . $valSql . ' users.team = :team';
@@ -445,12 +468,9 @@ class Users
             $new_lang = $params['lang'];
         }
 
-        // ALLOW EDIT
-        $new_allow_edit = Filter::onToBinary($params['allow_edit'] ?? '');
-        // ALLOW GROUP EDIT
-        $new_allow_group_edit = Filter::onToBinary($params['allow_group_edit'] ?? '');
-        // DEFAULT VIS
-        $new_default_vis = Check::visibility($params['default_vis'] ?? 'team');
+        // DEFAULT READ/WRITE
+        $new_default_read = Check::visibility($params['default_read'] ?? 'team');
+        $new_default_write = Check::visibility($params['default_write'] ?? 'team');
 
         // Signature pdf
         // only use cookie here because it's temporary code
@@ -472,14 +492,13 @@ class Users
             close_warning = :new_close_warning,
             chem_editor = :new_chem_editor,
             lang = :new_lang,
-            default_vis = :new_default_vis,
+            default_read = :new_default_read,
+            default_write = :new_default_write,
             single_column_layout = :new_layout,
             cjk_fonts = :new_cjk_fonts,
             pdfa = :new_pdfa,
             pdf_format = :new_pdf_format,
             use_markdown = :new_use_markdown,
-            allow_edit = :new_allow_edit,
-            allow_group_edit = :new_allow_group_edit,
             inc_files_pdf = :new_inc_files_pdf
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
@@ -494,14 +513,13 @@ class Users
         $req->bindParam(':new_close_warning', $new_close_warning);
         $req->bindParam(':new_chem_editor', $new_chem_editor);
         $req->bindParam(':new_lang', $new_lang);
-        $req->bindParam(':new_default_vis', $new_default_vis);
+        $req->bindParam(':new_default_read', $new_default_read);
+        $req->bindParam(':new_default_write', $new_default_write);
         $req->bindParam(':new_layout', $new_layout);
         $req->bindParam(':new_cjk_fonts', $new_cjk_fonts);
         $req->bindParam(':new_pdfa', $new_pdfa);
         $req->bindParam(':new_pdf_format', $new_pdf_format);
         $req->bindParam(':new_use_markdown', $new_use_markdown);
-        $req->bindParam(':new_allow_edit', $new_allow_edit);
-        $req->bindParam(':new_allow_group_edit', $new_allow_group_edit);
         $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
 

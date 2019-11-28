@@ -81,7 +81,6 @@ CREATE TABLE `config` (
 
 CREATE TABLE `experiments` (
   `id` int(10) UNSIGNED NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
@@ -95,14 +94,13 @@ CREATE TABLE `experiments` (
   `timestampedby` int(11) DEFAULT NULL,
   `timestamptoken` text,
   `timestampedwhen` timestamp NULL DEFAULT NULL,
-  `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `canread` varchar(255) NOT NULL DEFAULT 'team',
+  `canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments`:
---   `team`
---       `teams` -> `id`
 --   `userid`
 --       `users` -> `userid`
 --
@@ -277,7 +275,8 @@ CREATE TABLE `items` (
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `lockedwhen` timestamp NULL DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
-  `visibility` varchar(255) NOT NULL DEFAULT 'team',
+  `canread` varchar(255) NOT NULL DEFAULT 'team',
+  `canwrite` varchar(255) NOT NULL DEFAULT 'team',
   `available` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -550,7 +549,8 @@ CREATE TABLE `users` (
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `api_key` varchar(255) DEFAULT NULL,
-  `default_vis` varchar(255) DEFAULT 'team',
+  `default_read` varchar(255) NULL DEFAULT 'team',
+  `default_write` varchar(255) NULL DEFAULT 'team',
   `single_column_layout` tinyint(1) NOT NULL DEFAULT '0',
   `cjk_fonts` tinyint(1) NOT NULL DEFAULT '0',
   `orderby` varchar(255) DEFAULT NULL,
@@ -560,8 +560,6 @@ CREATE TABLE `users` (
   `archived` tinyint(1) NOT NULL DEFAULT '0',
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
-  `allow_edit` tinyint(1) NOT NULL DEFAULT '0',
-  `allow_group_edit` tinyint(1) NOT NULL DEFAULT '0',
   `last_login` DATETIME NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -618,7 +616,6 @@ ALTER TABLE `config`
 --
 ALTER TABLE `experiments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_experiments_teams_id` (`team`),
   ADD KEY `fk_experiments_users_userid` (`userid`);
 
 --
@@ -915,7 +912,6 @@ ALTER TABLE `api_keys`
 -- Constraints for table `experiments`
 --
 ALTER TABLE `experiments`
-  ADD CONSTRAINT `fk_experiments_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --

@@ -143,19 +143,21 @@ class ImportZip extends AbstractImport
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, visibility)
-            VALUES(:team, :title, :date, :body, :userid, :category, :visibility)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread)
+            VALUES(:team, :title, :date, :body, :userid, :category, :canread)';
 
         if ($this->type === 'experiments') {
-            $sql = 'INSERT into experiments(team, title, date, body, userid, visibility, category, elabid)
-                VALUES(:team, :title, :date, :body, :userid, :visibility, :category, :elabid)';
+            $sql = 'INSERT into experiments(title, date, body, userid, canread, category, elabid)
+                VALUES(:title, :date, :body, :userid, :canread, :category, :elabid)';
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        if ($this->type !== 'experiments') {
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindParam(':body', $item['body']);
-        $req->bindValue(':visibility', $this->visibility);
+        $req->bindValue(':canread', $this->canread);
         if ($this->type === 'items') {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->target, PDO::PARAM_INT);
@@ -178,8 +180,27 @@ class ImportZip extends AbstractImport
             $this->Entity->setId($newItemId);
         }
 
+        // add tags
         if (\mb_strlen($item['tags'] ?? '') > 1) {
             $this->tagsDbInsert($item['tags']);
+        }
+        // add links
+        if (!empty($item['links'])) {
+            // don't import the links as as because the id might be different from the one we had before
+            // so add the link in the body
+            $header = '<h3>Linked items:</h3><ul>';
+            $end = '</ul>';
+            $linkText = '';
+            foreach ($item['links'] as $link) {
+                $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
+            }
+            $this->Entity->update($item['title'], $item['date'], $item['body'] . $header . $linkText . $end);
+        }
+        // add steps
+        if (!empty($item['steps'])) {
+            foreach ($item['steps'] as $step) {
+                $this->Entity->Steps->import($step);
+            }
         }
     }
 
@@ -209,7 +230,7 @@ class ImportZip extends AbstractImport
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = preg_replace('/[^A-Za-z0-9 ]/', '_', $item['title']) ?? 'file';
+                $titlePath = Filter::forFilesystem($item['title']) ?? 'file';
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .

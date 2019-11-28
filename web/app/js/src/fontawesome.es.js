@@ -72,6 +72,7 @@ import {
   faTrashAlt,
   faUpload,
   faUser,
+  faUserCircle,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -134,6 +135,7 @@ library.add(
   faTrashAlt,
   faUpload,
   faUser,
+  faUserCircle,
   faUsers
 );
 

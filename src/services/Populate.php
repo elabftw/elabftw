@@ -57,7 +57,8 @@ class Populate
 
             // change the visibility
             if ($Faker->optional(0.9)->randomDigit === null) {
-                $Entity->updateVisibility($Faker->randomElement(array('organization', 'public', 'user')));
+                $Entity->updatePermissions('read', $Faker->randomElement(array('organization', 'public', 'user')));
+                $Entity->updatePermissions('write', $Faker->randomElement(array('organization', 'public', 'user')));
             }
 
             // change the category (status/item type)

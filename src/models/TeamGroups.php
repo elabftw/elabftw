@@ -71,9 +71,8 @@ class TeamGroups implements CrudInterface
     {
         $fullGroups = array();
 
-        $sql = 'SELECT id, name FROM team_groups WHERE team = :team';
+        $sql = 'SELECT id, name FROM team_groups';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
@@ -83,7 +82,7 @@ class TeamGroups implements CrudInterface
             return $fullGroups;
         }
 
-        $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS fullname
+        $sql = "SELECT DISTINCT users.userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users CROSS JOIN users2team_groups
             ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
         $req = $this->Db->prepare($sql);
@@ -223,11 +222,11 @@ class TeamGroups implements CrudInterface
      */
     public function destroy(int $id): void
     {
-        $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id AND team = :team";
+        // TODO add fk to do that
+        $sql = "UPDATE experiments SET canread = 'team' WHERE canread = :id";
         $req = $this->Db->prepare($sql);
         // note: setting PDO::PARAM_INT here will throw error because it can also be string value!
         $req->bindParam(':id', $id);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

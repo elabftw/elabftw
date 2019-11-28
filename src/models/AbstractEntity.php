@@ -205,11 +205,10 @@ abstract class AbstractEntity
      * Here be dragons!
      *
      * @param bool $getTags if true, might take a very long time, false in show mode
-     * @param bool $inTeam, set to false to disable team filtering
      *
      * @return array
      */
-    public function read(bool $getTags = true, bool $inTeam = true): array
+    public function read(bool $getTags = true): array
     {
         if ($this->id !== null) {
             $this->idFilter = ' AND ' . $this->type . '.id = ' . (string) $this->id;
@@ -226,6 +225,8 @@ abstract class AbstractEntity
 
         $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
         $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
+        $teamsJoin = 'LEFT JOIN teams ON (teams.id = users.team)';
+
 
         if ($this instanceof Experiments) {
             $select = 'SELECT DISTINCT ' . $this->type . ".*,
@@ -234,7 +235,9 @@ abstract class AbstractEntity
                 experiments_comments.recent_comment,
                 (experiments_comments.recent_comment IS NOT NULL) AS has_comment,
                 SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+                users.team,
+                teams.name AS team_name";
 
             $from = 'FROM experiments';
 
@@ -265,6 +268,7 @@ abstract class AbstractEntity
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }
+            $sql .= $teamsJoin . ' ';
             $sql .= $statusJoin . ' ' .
             $uploadsJoin . ' ' .
             $commentsJoin;
@@ -277,7 +281,9 @@ abstract class AbstractEntity
                 (items_comments.recent_comment IS NOT NULL) AS has_comment,
                 SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
                 uploads.up_item_id, uploads.has_attachment,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+                users.team,
+                teams.name AS team_name";
 
             $from = 'FROM items
                 LEFT JOIN items_types ON (items.category = items_types.id)
@@ -306,15 +312,12 @@ abstract class AbstractEntity
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }
+            $sql .= $teamsJoin . ' ';
         } else {
             throw new IllegalActionException('Nope.');
         }
 
-        if ($this->id === null && $inTeam === true) {
-            $sql .= ' WHERE ' . $this->type . '.team = :team';
-        } else {
-            $sql .= ' WHERE 1=1';
-        }
+        $sql .= ' WHERE 1=1';
 
         $sql .= $this->idFilter . ' ' .
             $this->useridFilter . ' ' .
@@ -429,7 +432,7 @@ abstract class AbstractEntity
         if ($this instanceof Database) {
             // if we are the admin doing an edit on a visibility = user item, we don't want to change the userid
             // first get the visibility
-            $sql = 'SELECT userid, visibility FROM items WHERE id = :id';
+            $sql = 'SELECT userid, canread FROM items WHERE id = :id';
             $req2 = $this->Db->prepare($sql);
             $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
             if ($req2->execute() !== true) {
@@ -438,7 +441,7 @@ abstract class AbstractEntity
             $item = $req2->fetch();
 
             $newUserid = $this->Users->userData['userid'];
-            if ($item['visibility'] === 'user') {
+            if ($item['canread'] === 'user') {
                 $newUserid = $item['userid'];
             }
             $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
@@ -485,19 +488,26 @@ abstract class AbstractEntity
     }
 
     /**
-     * Update the visibility for an entity
+     * Update read or write permissions for an entity
      *
-     * @param string $visibility
+     * @param string $rw read or write
+     * @param string $value
      * @return void
      */
-    public function updateVisibility(string $visibility): void
+    public function updatePermissions(string $rw, string $value): void
     {
-        Check::visibility($visibility);
         $this->canOrExplode('write');
+        Check::visibility($value);
+        Check::rw($rw);
+        if ($rw === 'read') {
+            $column = 'canread';
+        } else {
+            $column = 'canwrite';
+        }
 
-        $sql = 'UPDATE ' . $this->type . ' SET visibility = :visibility WHERE id = :id';
+        $sql = 'UPDATE ' . $this->type . ' SET ' . $column . ' = :value WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':visibility', $visibility);
+        $req->bindParam(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         if ($req->execute() !== true) {
@@ -513,10 +523,10 @@ abstract class AbstractEntity
     public function getVisibility(): string
     {
         $TeamGroups = new TeamGroups($this->Users);
-        if (Check::id((int) $this->entityData['visibility']) !== false) {
-            return $TeamGroups->readName((int) $this->entityData['visibility']);
+        if (Check::id((int) $this->entityData['canread']) !== false) {
+            return $TeamGroups->readName((int) $this->entityData['canread']);
         }
-        return ucfirst($this->entityData['visibility']);
+        return ucfirst($this->entityData['canread']);
     }
 
     /**
@@ -562,17 +572,14 @@ abstract class AbstractEntity
 
         $Permissions = new Permissions($this->Users, $item);
 
-        if ($this instanceof Experiments) {
-            return $Permissions->forExperiments();
+        if ($this instanceof Experiments || $this instanceof Database) {
+            return $Permissions->forExpItem();
         }
 
         if ($this instanceof Templates) {
             return $Permissions->forTemplates();
         }
 
-        if ($this instanceof Database) {
-            return $Permissions->forDatabase();
-        }
         return array('read' => false, 'write' => false);
     }
 

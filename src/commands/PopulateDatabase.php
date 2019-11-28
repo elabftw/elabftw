@@ -124,8 +124,8 @@ class PopulateDatabase extends Command
         $Users = new Users();
         $Teams = new Teams($Users);
         $Teams->create('Alpha team');
-        $Teams->create('Bravo team');
-        $Teams->create('Charlie\'s angels');
+        $Teams->create('Bravo squad');
+        $Teams->create('Tango');
 
         // Alpha team
         // toto is the sysadmin and admin of team α

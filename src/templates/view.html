@@ -2,6 +2,31 @@
 
 {% block body %}
 
+<!-- Modal for timestamping -->
+<div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='timestampModalLabel'>{{ 'Timestamp Experiment'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+        <p>
+          <span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>
+          {{ 'Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?'|trans }}
+        </p>
+      </div>
+      <div class='timestamp-error'></div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' id='goForTimestamp' class='btn btn-elab'>{{ 'Timestamp'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% include('view-edit.html') %}
 
 <!-- add moment lib -->
@@ -107,16 +132,10 @@
 
   <!-- show timestamp button if not timestamped already -->
   {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('anon') %}
-      <a class='elab-tooltip' href='#'>
-          <span>{{ 'Timestamp Experiment'|trans }}</span>
-          <i class='far fa-calendar-check' id='confirmTimestamp'></i>
-      </a>
-      <div id='confirmTimestampDiv' style='display:none;' data-wait='{{ 'Please wait…' }}' title='{{ 'Timestamp this experiment?'|trans }}'>
-          <p>
-              <span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>
-              {{ 'Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?'|trans }}
-          </p>
-      </div>
+    <a class='elab-tooltip' href='#'>
+      <span>{{ 'Timestamp Experiment'|trans }}</span>
+      <i class='far fa-calendar-check' id='confirmTimestamp'></i>
+    </a>
   {% endif %}
 
   </span><!-- end view-action-button -->

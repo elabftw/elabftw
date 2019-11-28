@@ -56,6 +56,9 @@ body::before {
 }
 
 #real_container {
+    max-width: 1625px;
+    margin: auto;
+    margin-top: 20px;
     padding: 0 5%;
 }
 
@@ -123,8 +126,6 @@ select {
 }
 
 #dropdownMenu1 {
-    background-color: white;
-    color: #495057;
     border: 1px solid #ced4da;
 }
 
@@ -267,7 +268,8 @@ li.tip {
 }
 
 /* blue on hover */
-.nav-link:hover {
+.nav-link:hover,
+.nav-link svg:hover {
     color: #29aeb9 !important;
     transition-duration: 500ms;
 }
@@ -310,11 +312,6 @@ menu ul li {
 menu ul li.selected {
     border-bottom: 5px #29aeb9 solid;
     padding-bottom: 0;
-}
-
-/* USER MENU (settings, help, logout) */
-.user-nav {
-    text-align: right;
 }
 
 /* ALERT */
@@ -732,7 +729,6 @@ form#filter-order-sort select {
     color: #fff;
     background-color: #29aeb9;
     border-color: #01929e;
-    margin-right: 10px;
 }
 
 .btn-elab.active,
@@ -1126,4 +1122,17 @@ figure.image figcaption {
 
 input[type='color'] {
     padding: 5px 10px;
+}
+
+.user-badge {
+    padding: 5px;
+    margin-right: 5px;
+    font-size: 110%;
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+}
+
+.user-badge:hover {
+    background-color: #ffc1b7;
+    transition-duration: 500ms;
 }

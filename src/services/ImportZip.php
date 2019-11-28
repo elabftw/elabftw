@@ -15,7 +15,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use Elabftw\Services\Filter;
 use FilesystemIterator;
 use PDO;
 use RecursiveDirectoryIterator;
@@ -192,14 +191,14 @@ class ImportZip extends AbstractImport
             $header = '<h3>Linked items:</h3><ul>';
             $end = '</ul>';
             $linkText = '';
-            foreach($item['links'] as $link) {
+            foreach ($item['links'] as $link) {
                 $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
             }
             $this->Entity->update($item['title'], $item['date'], $item['body'] . $header . $linkText . $end);
         }
         // add steps
         if (!empty($item['steps'])) {
-            foreach($item['steps'] as $step) {
+            foreach ($item['steps'] as $step) {
                 $this->Entity->Steps->import($step);
             }
         }

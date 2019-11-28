@@ -256,8 +256,8 @@ class Users
             teams.name as team_name
             FROM users
             LEFT JOIN teams ON (users.team = teams.id)
-            WHERE " . $whereTeam . " (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
+            WHERE " . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
         if ($req->execute() !== true) {

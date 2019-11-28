@@ -13,12 +13,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
-use Elabftw\Models\Database;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
-use Elabftw\Models\Templates;
-use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -52,7 +46,6 @@ try {
         // we don't care about the entity type as getLinkList() is available in AbstractEntity
         $Response->setData($App->Users->lookFor($Request->query->get('term')));
     }
-
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     $Response->setData(array(
         'res' => false,

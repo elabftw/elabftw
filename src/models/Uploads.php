@@ -123,7 +123,7 @@ class Uploads implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $allowedFileTypes = array('png', 'mol');
+        $allowedFileTypes = array('png', 'mol', 'json');
         if (!\in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }

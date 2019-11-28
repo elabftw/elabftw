@@ -142,6 +142,18 @@
 
 {{ include('uploads.html') }}
 
+<!-- JSON EDITOR -->
+<section class='box' id='json-editor'>
+    <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
+    <button class='button show-hide' data-type='jsoneditor'>+</button><br/>
+    <div class='jsonEditorDiv'>
+      <div id="jsoneditor"></div>
+      <div class='submitButtonDiv'>
+        <button type='submit' class='button jsonSaver'>{{ 'Saved'|trans }}</button>
+      </div>
+    </div>
+</section>
+
 <!-- DOODLE -->
 <section class='box' id='doodle-anchor'>
   <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
@@ -210,16 +222,22 @@
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
 
+<!-- Loading the JSONEditor lib -->
+<link href="app/css/jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
+<script src='app/js/jsoneditor.min.js?v={{ v }}'></script>
+
 {% if App.Config.configArr.debug %}
   <script src='app/js/src/edit.js?v={{ v }}'></script>
   <script src='app/js/src/tags.js'></script>
   <script src='app/js/src/doodle.js?v={{ v }}'></script>
   <script src='app/js/src/steps-links.js?v={{ v }}'></script>
+  <script src='app/js/src/jsoneditor-loader.js?v={{ v }}'></script>
 {% else %}
   <script src='app/js/edit.min.js?v={{ v }}'></script>
   <script src='app/js/tags.min.js'></script>
   <script src='app/js/doodle.min.js?v={{ v }}'></script>
   <script src='app/js/steps-links.min.js?v={{ v }}'></script>
+  <script src='app/js/jsoneditor-loader.js?v={{ v }}'></script>
 {% endif %}
 
 {% endblock body %}

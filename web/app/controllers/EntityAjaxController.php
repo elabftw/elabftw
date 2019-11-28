@@ -234,6 +234,7 @@ try {
             'msg' => _('File deleted successfully') . $msg,
         ));
     }
+    
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     $Response->setData(array(
         'res' => false,

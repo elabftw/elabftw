@@ -37,17 +37,13 @@ $(document).ready(function() {
     makeEditableComment($(this));
   });
 
-  // MAKE TODOITEMS EDITABLE
-  $('.todoitem.editable').each(function() {
-    makeEditableTodoitem($(this));
-  });
-
   // SORTABLE ELEMENTS
   // need an axis and a table via data attribute
   $('.sortable').sortable({
     // limit to horizontal dragging
     axis : $(this).data('axis'),
     helper : 'clone',
+    handle : '.sortableHandle',
     // we don't want the Create new pill to be sortable
     cancel: 'nonSortable',
     // do ajax request to update db with new order
@@ -149,24 +145,6 @@ function quickSave(type, id) { // eslint-disable-line no-unused-vars
       return;
     }
     notif(json);
-  });
-}
-
-// EDIT todoitem
-function makeEditableTodoitem(element) {
-  $(element).editable(function(value) {
-    $.post('app/controllers/TodolistController.php', {
-      update: true,
-      body: value,
-      id: $(this).attr('id')
-    });
-
-    return(value);
-  }, {
-    tooltip : 'Click to edit',
-    indicator : 'Saving...',
-    onblur: 'submit',
-    style : 'display:inline'
   });
 }
 

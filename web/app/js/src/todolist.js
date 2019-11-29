@@ -19,6 +19,23 @@
   $(document).on('click', '.todoToggle', function() {
     $('#todoList').toggle();
   });
+  $(document).on('mouseenter', '.todoItem', function() {
+    console.log('focused');
+    $(this).editable(function(value) {
+      $.post('app/controllers/TodolistController.php', {
+        update: true,
+        body: value,
+        id: $(this).data('id'),
+      });
+
+      return(value);
+    }, {
+      tooltip : 'Click to edit',
+      indicator : 'Saving...',
+      onblur: 'submit',
+      style : 'display:inline'
+    });
+  });
 
 
   var Todolist = {
@@ -27,27 +44,14 @@
     create: function(e) {
       e.preventDefault();
       var body = $('#todo').val();
-      var currentdate = new Date();
-      var datetime = currentdate.getFullYear() + '-' +
-                (currentdate.getMonth()+1)  + '-' +
-                currentdate.getDate() + ' ' +
-                currentdate.getHours() + ':' +
-                currentdate.getMinutes() + ':' +
-                currentdate.getSeconds();
       if (body !== '') {
         $.post(this.controller, {
           create: true,
           body: body
         }).done(function(json) {
           if (json.res) {
-            // add the todoitem
-            $('#todoItems-list').prepend('<li class="todoItem" id="todoItem_' +
-                            json.id + '"><i class="fas fa-trash-alt align_right destroyTodoItem" data-id="' +
-                            json.id+ '"></i><span style="font-size:60%;display:block;">' +
-                            datetime + '</span><span id="todoItemBody_' + json.id + '" class="editable">' + body +
-                            '</li>');
-            // make it editable right away
-            makeEditableTodoitem($('#todoItemBody_' + json.id));
+            // reload the todolist
+            $('#todoItems-list').load('? #todoItems-list');
             // and clear the input
             $('#todo').val('');
           } else {

@@ -48,8 +48,7 @@ try {
     // UPDATE
     if ($Request->request->has('update')) {
         $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
-        $id_arr = explode('_', $Request->request->get('id'));
-        $id = (int) $id_arr[1];
+        $id = (int) $Request->request->get('id');
         if (Check::id($id) === false) {
             throw new IllegalActionException('The id parameter is invalid');
         }

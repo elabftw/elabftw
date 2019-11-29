@@ -29,7 +29,6 @@ module.exports = {
         'key': 'readonly',
         'makeEditableComment': 'readonly',
         'makeEditableFileComment': 'readonly',
-        'makeEditableTodoitem': 'readonly',
         'MathJax': 'readonly',
         'moment': 'readonly',
         'notif': 'readonly',

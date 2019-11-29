@@ -1028,7 +1028,7 @@ input#todo {
 }
 
 /* fix the padding for sortable list */
-#todoItems-list.ui-sortable {
+#todoItems-list {
     padding-left: 0;
 }
 

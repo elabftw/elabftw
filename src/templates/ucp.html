@@ -278,7 +278,7 @@
     <ul class='nav nav-pills sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
         <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
-            <li class='sortable subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
+        <li class='subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
         {% endfor %}
     </ul>
     <hr>

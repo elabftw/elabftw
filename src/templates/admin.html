@@ -160,7 +160,7 @@
   <div class='box'>
     <h3>{{ 'Edit an Existing Status'|trans }}</h3>
     <hr>
-    <ul class='list-group'>
+    <ul class='list-group draggable sortable' data-axis='y' data-table='status'>
       {% for status in statusArr %}
         <li id='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
@@ -172,20 +172,8 @@
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button statusSave'>{{ 'Save'|trans }}</button></li>
 
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
+            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
           </ul>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-
-  <div class='box'>
-    <h3>{{ 'Modify ordering'|trans }}</h3>
-    <hr>
-
-    <ul class='draggable list-group sortable sortable-status' data-axis='y' data-table='status'>
-      {% for status in statusArr %}
-        <li class='list-group-item' id='statusOrder_{{ status.category_id }}'><i class='fas fa-sort'></i>
-          <span style='color:#{{ status.color }}'>{{ status.category }}</span>
         </li>
       {% endfor %}
     </ul>
@@ -226,7 +214,7 @@
   <div class='box'>
     <h3>{{ 'Database Items Types'|trans }}</h3>
     <hr>
-    <ul class='list-group form-group'>
+    <ul class='list-group form-group draggable sortable' data-axis='y' data-table='items_types'>
       {% for itemType in itemsTypesArr %}
         <li id='itemstypes_{{ itemType.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
@@ -255,20 +243,8 @@
             <li class='list-inline-item itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
               <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
             </li>
+            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
           </ul>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-
-  <div class='box'>
-    <h3>{{ 'Modify ordering'|trans }}</h3>
-    <hr>
-
-    <ul class='draggable list-group sortable sortable-itemstypes' data-axis='y' data-table='items_types'>
-      {% for itemType in itemsTypesArr %}
-        <li class='list-group-item' id='itemstypesOrder_{{ itemType.category_id }}'><i class='fas fa-sort'></i>
-          <span style='color:#{{ itemType.color }}'>{{ itemType.category }}</span>
         </li>
       {% endfor %}
     </ul>

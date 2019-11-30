@@ -80,18 +80,6 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'web/app/css/elabftw.min.css': [
-              'web/app/css/tagcloud.css',
-              'web/app/css/jquery.rating.css',
-              'node_modules/prismjs/themes/prism.css',
-              'node_modules/dropzone/dist/dropzone.css',
-              'node_modules/fullcalendar/dist/fullcalendar.css',
-              'node_modules/bootstrap/dist/css/bootstrap.css',
-              'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
-              'node_modules/jquery-ui-dist/jquery-ui.css',
-              'web/app/css/autocomplete.css',
-              'web/app/css/main.css'],
-
           'web/app/css/pdf.min.css': 'web/app/css/pdf.css',
 
           'web/app/css/bootstrap-markdown.min.css': 'node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css',

@@ -1,0 +1,16 @@
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+.cloud-0 {
+    font-size: 10px;
+}
+@for $i from 10 through 100 {
+    .cloud-#{$i} {
+        font-size: #{$i / 20}em;
+    }
+}

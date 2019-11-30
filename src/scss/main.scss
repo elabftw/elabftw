@@ -5,19 +5,27 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/prismjs/themes/prism.css';
+@import '../../node_modules/dropzone/dist/dropzone.css';
+@import '../../node_modules/fullcalendar/dist/fullcalendar.css';
+@import '../../node_modules/bootstrap/dist/css/bootstrap.css';
+@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css';
+@import '../../node_modules/jquery-ui-dist/jquery-ui.css';
+@import 'tagcloud';
+@import 'jquery-rating';
+@import 'autocomplete';
 
-/**
- * 343434 => very dark gray (main nav bg)
- * 797979 => gray main text color
- * f2f2f2 => very light gray
- * dcdddc = > borders gray
- * 29aeb9 => elab blue
- * 1F8591 => dark blue
- * C4F9FF => light blue
- * dd1e00 => dark red
- * ffc1b7 => light red
- * 54aa08 => green
- */
+$darkgray: #343434;
+$maingray: #797979;
+$lightgray: #f2f2f2;
+$bordersgray: #dcdddc;
+$elabblue: #29aeb9;
+$darkblue: #1F8591;
+$lightblue: #C4F9FF;
+$darkred: #dd1e00;
+$lightred: #ffc1b7;
+$green: #54aa08;
 
 /* Font is Lato */
 @font-face {
@@ -64,7 +72,7 @@ body::before {
 
 /* paragraphs */
 p {
-    color: #797979;
+    color: $maingray;
 }
 
 section.item p {
@@ -74,13 +82,13 @@ section.item p {
 /* LINKS */
 a,
 .link-like {
-    color: #29aeb9;
+    color: $elabblue;
     text-decoration: none;
 }
 
 a:hover,
 .link-like:hover {
-    color: #29aeb9;
+    color: $elabblue;
     text-decoration: none;
 }
 
@@ -107,9 +115,9 @@ input,
 select,
 textarea {
     padding: 7px;
-    color: #797979;
+    color: $maingray;
     border-radius: 4px;
-    border: 1px #e3e3e3 solid;
+    border: 1px solid #e3e3e3;
 }
 
 select {
@@ -131,7 +139,7 @@ select {
 
 .form-control:focus,
 #dropdownMenu1:focus {
-    border-color: #29aeb9;
+    border-color: $elabblue;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
 }
 
@@ -140,7 +148,7 @@ li.dropdown-item > a {
 }
 
 li.dropdown-item:hover a {
-    color: #29aeb9;
+    color: $elabblue;
 }
 
 /* GENERAL */
@@ -155,7 +163,7 @@ img {
 
 hr {
     margin: 10px 0 20px 0;
-    color: #dcdddc;
+    color: $bordersgray;
 }
 
 /* BLOCKQUOTE */
@@ -179,13 +187,13 @@ blockquote::before {
 /* TITLES */
 h2 {
     font-weight: normal;
-    color: #797979;
+    color: $maingray;
     font-size: 30px;
     margin-top: 0;
 }
 
 h3 {
-    color: #797979;
+    color: $maingray;
     font-size: 150%;
     margin: 0 auto 10px auto;
 }
@@ -193,16 +201,16 @@ h3 {
 h4 {
     font-size: 150%;
     font-weight: normal;
-    color: #797979;
+    color: $maingray;
 }
 
 h5 {
-    color: #797979;
+    color: $maingray;
     font-size: 130%;
 }
 
 label {
-    color: #797979;
+    color: $maingray;
     font-size: 120%;
     font-weight: normal;
 }
@@ -213,12 +221,12 @@ label {
 .tip::before {
     content: "☺ ";
     font-size: 120%;
-    color: #29aeb9;
+    color: $elabblue;
 }
 
 .tip::before a,
 .tip::before a:hover {
-    color: #343434;
+    color: $darkgray;
 }
 
 .help-container {
@@ -233,14 +241,14 @@ li.tip {
 
 #help {
     cursor: pointer;
-    color: #797979;
+    color: $maingray;
 }
 
 /* END HELP CONTAINER /*
 
 /* BEGIN NAV */
 .navbar {
-    background-color: #343434;
+    background-color: $darkgray;
     padding: 0 5%;
     border-radius: 0;
     border: 0;
@@ -270,13 +278,13 @@ li.tip {
 /* blue on hover */
 .nav-link:hover,
 .nav-link svg:hover {
-    color: #29aeb9 !important;
+    color: $elabblue !important;
     transition-duration: 500ms;
 }
 
 /* selected nav entry */
 .nav-link.active {
-    border-bottom: 6px #29aeb9 solid;
+    border-bottom: 6px $elabblue solid;
 }
 
 /* search bar in head.php ; nav */
@@ -298,19 +306,19 @@ menu {
 
 menu ul {
     padding: 0;
-    border-bottom: 1px solid #dcdddc;
+    border-bottom: 1px solid $bordersgray;
 }
 
 menu ul li {
     display: inline;
     margin-right: 2%;
     text-transform: uppercase;
-    color: #797979;
+    color: $maingray;
     cursor: pointer;
 }
 
 menu ul li.selected {
-    border-bottom: 5px #29aeb9 solid;
+    border-bottom: 5px solid $elabblue;
     padding-bottom: 0;
 }
 
@@ -321,18 +329,18 @@ menu ul li.selected {
 
 .alert a,
 .alert a:hover {
-    color: #343434;
+    color: $darkgray;
 }
 
 .alert-success {
-    background-color: #c4f9ff;
+    background-color: $lightblue;
     color: #36b1c0;
     border-color: #36b1c0;
 }
 
 .alert-danger {
     color: #e6614c;
-    background-color: #ffc1b7;
+    background-color: $lightred;
     border-color: #e6614c;
 }
 
@@ -374,7 +382,7 @@ a.elab-tooltip:hover span {
     display: inline;
     position: absolute;
     color: white;
-    background: #343434;
+    background: $darkgray;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -391,7 +399,7 @@ a.elab-tooltip span::after {
     position: absolute;
     pointer-events: none;
     border: 4px solid transparent;
-    border-bottom-color: #343434;
+    border-bottom-color: $darkgray;
     margin-left: -4px;
 }
 
@@ -424,7 +432,7 @@ a.elab-tooltip-top:hover span {
     display: inline;
     position: absolute;
     color: white;
-    background: #343434;
+    background: $darkgray;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -441,7 +449,7 @@ a.elab-tooltip-top span::after {
     width: 0;
     position: absolute;
     pointer-events: none;
-    border-top-color: #343434;
+    border-top-color: $darkgray;
     border-width: 4px;
     margin-left: -4px;
 }
@@ -458,12 +466,12 @@ section.item {
 }
 
 .badgetab:hover {
-    background-color: #f2f2f2;
+    background-color: $lightgray;
     color: black;
 }
 
 .badgetabactive {
-    background-color: #f2f2f2;
+    background-color: $lightgray;
     color: black;
 }
 
@@ -476,18 +484,18 @@ section.item {
     color: white;
     font-size: 11px;
     text-transform: uppercase;
-    background-color: #29aeb9;
+    background-color: $elabblue;
     margin: 0 5px;
     letter-spacing: 1px;
     cursor: pointer;
 }
 
 .button:hover {
-    background-color: #1f8591;
+    background-color: $darkblue;
 }
 
 .button:disabled {
-    background-color: #dcdddc;
+    background-color: $bordersgray;
 }
 
 .submitButtonDiv {
@@ -545,7 +553,7 @@ section.item {
     display: inline-block;
     transform: rotate(35deg);
     line-height: 80%;
-    background: #29aeb9;
+    background: $elabblue;
     color: #fff;
     font-size: 10px;
     padding: 4px;
@@ -568,7 +576,7 @@ github issue #52 */
 summary::before {
     content: "► ";
     font-size: 120%;
-    color: #29aeb9;
+    color: $elabblue;
 }
 
 /* fix for big images uploaded in the text */
@@ -584,7 +592,7 @@ section.item div.txt {
 /* prettier tables in mceditable area */
 div.txt table,
 div.txt table td {
-    border: 1px solid #797979;
+    border: 1px solid $maingray;
 }
 
 table td {
@@ -596,8 +604,8 @@ table td input {
 }
 
 table th {
-    background-color: #dcdddc;
-    color: #797979;
+    background-color: $bordersgray;
+    color: $maingray;
     text-transform: uppercase;
     font-size: 90%;
     padding: 5px 15px;
@@ -610,7 +618,7 @@ tr:nth-child(even) {
 }
 
 tr:nth-child(odd) {
-    background-color: #f2f2f2;
+    background-color: $lightgray;
 }
 
 /* SEARCH.PHP */
@@ -650,19 +658,19 @@ tr:nth-child(odd) {
 }
 
 .overlay-ok {
-    background-color: #29aeb9;
+    background-color: $elabblue;
 }
 
 .overlay-ko,
 .overlay-ko p {
-    background-color: #ffc1b7;
+    background-color: $lightred;
     color: #000;
 }
 
 /* ITEMS */
 .item {
     min-width: 100%;
-    border: 1px solid #dcdddc;
+    border: 1px solid $bordersgray;
     border-radius: 5px;
     margin: 5px auto;
     padding: 5px 10px 0 5px;
@@ -670,11 +678,11 @@ tr:nth-child(odd) {
 }
 
 .item a p:hover {
-    color: #29aeb9;
+    color: $elabblue;
 }
 
 .box {
-    border: 1px solid #dcdddc;
+    border: 1px solid $bordersgray;
     margin-top: 10px;
     border-radius: 5px;
     padding: 20px;
@@ -699,7 +707,7 @@ input[type='checkbox'] {
 
 /* EXPERIMENT STEPS */
 .finished {
-    color: #54aa08;
+    color: $green;
 }
 
 .col-md-6 label {
@@ -727,7 +735,7 @@ form#filter-order-sort select {
 /* elabftw colors for buttons */
 .btn-elab {
     color: #fff;
-    background-color: #29aeb9;
+    background-color: $elabblue;
     border-color: #01929e;
 }
 
@@ -821,7 +829,7 @@ form#filter-order-sort select {
 }
 
 .title a:hover {
-    color: #29aeb9 !important;
+    color: $elabblue !important;
     transition-duration: 500ms;
 }
 
@@ -832,7 +840,7 @@ form#filter-order-sort select {
 
 .clickable.title_view:hover {
     transition: color 0.8s ease;
-    color: #29aeb9;
+    color: $elabblue;
 }
 
 .date {
@@ -848,8 +856,8 @@ form#filter-order-sort select {
 
 /* ucp.php */
 #currpass {
-    background-color: #c4f9ff;
-    border: 1px solid #29aeb9;
+    background-color: $lightblue;
+    border: 1px solid $elabblue;
 }
 
 .txt {
@@ -871,7 +879,7 @@ form#filter-order-sort select {
 /* elabid */
 .elabid {
     text-align: right;
-    color: #797979;
+    color: $maingray;
     font-size: 11px;
 }
 
@@ -886,17 +894,17 @@ form#filter-order-sort select {
     line-height: 300%;
     border-radius: 5px;
     border: 1px solid #ccc;
-    color: #797979;
+    color: $maingray;
     padding: 0 5px;
 }
 
 a.tag:hover {
-    color: #29aeb9 !important;
+    color: $elabblue !important;
 }
 
 a.tag-delete:hover {
     transition: color 0.8s ease;
-    color: #dd1e00 !important;
+    color: $darkred !important;
 }
 
 .tags a:hover {
@@ -905,39 +913,35 @@ a.tag-delete:hover {
 
 /* FOOTER */
 footer {
-    border-top: solid 1px #dcdddc;
+    border-top: solid 1px $bordersgray;
     font-size: 11px;
     margin: 60px 0 5px 0;
     padding: 10px 0 0 0;
-}
 
-footer div,
-footer div a,
-footer p,
-footer p a {
-    color: #797979;
-    font-size: 11px;
-}
+    a {
+        color: $maingray;
+        font-size: 11px;
+        &:hover {
+            color: $elabblue;
+        }
+    }
 
-.footer-left {
-    text-transform: uppercase;
-    text-align: left;
-    float: left;
-}
+    .footer-left {
+        text-transform: uppercase;
+        text-align: left;
+        float: left;
+        a {
+            border-right: 1px #ccc solid;
+            padding: 0 5px;
+        }
+    }
 
-.footer-left a {
-    border-right: 1px #ccc solid;
-    padding: 0 5px;
-}
+    .footer-right {
+        text-align: right;
+        float: right;
+        margin: 0 0 20px 0;
+    }
 
-.footer-right {
-    text-align: right;
-    float: right;
-    margin: 0 0 20px 0;
-}
-
-footer div a:hover {
-    color: #29aeb9;
 }
 
 /* print only the main div */
@@ -984,7 +988,7 @@ footer div a:hover {
 #todoList {
     text-align: center;
     overflow: hidden;
-    background: #343434;
+    background: $darkgray;
     display: none;
     position: fixed;
     top: 0;
@@ -995,40 +999,23 @@ footer div a:hover {
     padding: 20px;
     overflow-y: scroll;
     z-index: 9001;
-}
 
-#todoList ul li {
-    list-style-type: none;
-    font-size: 18px;
-    cursor: move;
-    background-color: #efefef;
-    margin-bottom: 5px;
-    padding: 10px;
-    text-align: left;
-}
+    li {
+        list-style-type: none;
+        font-size: 18px;
+        background-color: #efefef;
+        margin-bottom: 5px;
+        padding: 10px;
+        text-align: left;
+    }
 
-#todoList ul li a,
-#todoList ul li a:link {
-    float: right;
-    font-size: 60%;
-    display: none;
-    text-decoration: none;
-}
-
-#todoList ul li:hover a:link {
-    display: inline;
-}
-
-input#todo {
-    margin-bottom: 10px;
-}
-
-.button-add-todolist {
-    line-height: 150%;
+    #todo {
+        margin-bottom: 10px;
+    }
 }
 
 /* fix the padding for sortable list */
-#todoItems-list {
+#todoItems-list.ui-sortable {
     padding-left: 0;
 }
 
@@ -1050,13 +1037,13 @@ input#todo {
 }
 
 .dropzone:hover {
-    border: 1px solid #29aeb9;
+    border: 1px solid $elabblue;
     border-radius: 5px;
 }
 
 /* doodle canvas */
 .doodle {
-    border: 1px solid #dcdddc;
+    border: 1px solid $bordersgray;
     border-radius: 5px;
     display: block;
     margin: 10px 0 10px 0;
@@ -1069,7 +1056,7 @@ input#todo {
 /* trash icon is red on hover */
 svg.fa-trash-alt:hover {
     transition: color 0.8s ease;
-    color: #dd1e00;
+    color: $darkred;
 }
 
 .bodyToggle {
@@ -1087,11 +1074,11 @@ svg.fa-trash-alt:hover {
 
 /* font awesome icons color */
 .svg-inline--fa {
-    color: #797979;
+    color: $maingray;
 }
 
 .pseudo-link:hover {
-    color: #29aeb9;
+    color: $elabblue;
 }
 
 /* caption for tinymce */
@@ -1133,6 +1120,6 @@ input[type='color'] {
 }
 
 .user-badge:hover {
-    background-color: #ffc1b7;
+    background-color: $lightred;
     transition-duration: 500ms;
 }

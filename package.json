@@ -19,13 +19,14 @@
     "jquery": "3.4.*",
     "jquery-jeditable": "2.0.*",
     "jquery-ui-dist": "1.12.*",
+    "jsoneditor": "7.2.*",
     "marked": "0.7.*",
     "mathjax": "3.0.*",
     "moment": "2.24.*",
     "popper.js": "1.16.*",
     "prismjs": "1.17.*",
-    "tinymce": "5.1.*",
-    "jsoneditor":"7.2.*"
+    "sass": "^1.23.7",
+    "tinymce": "5.1.*"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -50,9 +51,9 @@
   "scripts": {
     "apidoc": "apidoc -o _apidoc -i src/controllers",
     "build": "webpack-cli --config builder.js",
-    "buildall": "grunt && yarn build",
+    "buildall": "grunt && yarn build && sass --style compressed src/scss/main.scss:web/app/css/elabftw.min.css",
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
-    "csslint": "stylelint web/app/css/main.css",
+    "watchcss": "sass --watch src/scss/main.scss:web/app/css/elabftw.min.css",
     "jslint": "eslint web/app/js/src",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --using-cache=no",

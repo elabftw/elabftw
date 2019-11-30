@@ -20,7 +20,6 @@
     $('#todoList').toggle();
   });
   $(document).on('mouseenter', '.todoItem', function() {
-    console.log('focused');
     $(this).editable(function(value) {
       $.post('app/controllers/TodolistController.php', {
         update: true,

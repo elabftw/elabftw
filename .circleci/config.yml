@@ -68,9 +68,6 @@ jobs:
       - run: sudo mysql -uroot phpunit < tests/_data/phpunit.sql
       # Tests
       - run:
-          name: Run CSS linter
-          command: yarn run csslint
-      - run:
           name: Run Javascript linter
           command: yarn run jslint
       - run:

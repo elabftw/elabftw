@@ -4319,10 +4319,10 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
-jsoneditor@7.2.*:
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-7.2.1.tgz#a4510f71cc49b1d6c204fbbd73fbea57339fc7c9"
-  integrity sha512-CyijVJj5wgq/X+whWKCCWGt+Rx0hrL/SPoRYI4DkbL/I27oNEfmOAt+b23Gq4tmkmwtxWbt4A38svnswheIYdg==
+jsoneditor@7.4.*:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-7.4.0.tgz#bc87e9f11a61592d1a6b1fa285fc5dd24ce5fbe1"
+  integrity sha512-Be0BkVhNoyHVOckyAkKc5MyoIIxSOzHneAGgS/VdKukK+CRRDO8WccYtO67cjeoahndtMHft4rjBl9p3r5tu0g==
   dependencies:
     ace-builds "^1.4.7"
     ajv "^6.10.2"

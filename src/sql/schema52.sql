@@ -10,5 +10,6 @@ START TRANSACTION;
     ALTER TABLE `users` ADD `default_write` VARCHAR(255) NULL DEFAULT 'team';
     ALTER TABLE `users` DROP `allow_edit`;
     ALTER TABLE `users` DROP `allow_group_edit`;
+    ALTER TABLE `team_events` ADD `experiment` int(10) UNSIGNED DEFAULT NULL;
     UPDATE config SET conf_value = 52 WHERE conf_name = 'schema';
 COMMIT;

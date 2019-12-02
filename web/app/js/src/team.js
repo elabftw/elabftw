@@ -63,10 +63,13 @@ $(document).ready(function() {
       if (!editable) { return; }
       schedulerCreate(start.format(), end.format());
     },
-    // delete by clicking it
+    // on click activate modal window
     eventClick: function(calEvent) {
       if (!editable) { return; }
-      if (confirm('Delete this event?')) {
+      $('#rmBind').hide();
+      $('#eventModal').modal('toggle');
+      // delete button in modal
+      $('#deleteEvent').on('click', function() {
         $.post('app/controllers/SchedulerController.php', {
           destroy: true,
           id: calEvent.id
@@ -74,13 +77,48 @@ $(document).ready(function() {
           notif(json);
           if (json.res) {
             $('#scheduler').fullCalendar('removeEvents', calEvent.id);
+            $('#eventModal').modal('toggle');
           }
         });
+      });
+      // fill the bound div
+      $('#eventTitle').text(calEvent.title);
+      if (calEvent.experiment != null) {
+        $('#eventBound').text('Event is bound to an experiment.');
+        $('#rmBind').show();
       }
+      // bind an experiment to the event
+      $('#goBind').on('click', function() {
+        $.post('app/controllers/SchedulerController.php', {
+          bind: true,
+          id: calEvent.id,
+          expid: parseInt($('#bindinput').val(), 10),
+        }).done(function(json) {
+          notif(json);
+          if (json.res) {
+            $('#bindinput').val('');
+            $('#eventModal').modal('toggle');
+            window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+          }
+        });
+      });
+      // remove the binding
+      $('#rmBind').on('click', function() {
+        $.post('app/controllers/SchedulerController.php', {
+          unbind: true,
+          id: calEvent.id,
+        }).done(function(json) {
+          $('#eventModal').modal('toggle');
+          notif(json);
+          window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+        });
+      });
     },
     // on mouse enter add shadow and show title
     eventMouseover: function(calEvent) {
-      $(this).css('box-shadow', '5px 4px 4px #474747');
+      if (editable) {
+        $(this).css('box-shadow', '5px 4px 4px #474747');
+      }
       $(this).attr('title', calEvent.title);
     },
     // remove the box shadow when mouse leaves
@@ -116,11 +154,22 @@ $(document).ready(function() {
     }
 
   });
-});
+  // BIND AUTOCOMPLETE
+  let cache = {};
+  $('#bindinput').autocomplete({
+    source: function(request, response) {
+      let term = request.term;
+      if (term in cache) {
+        response(cache[term]);
+        return;
+      }
+      $.getJSON('app/controllers/EntityAjaxController.php?source=experiments', request, function(data) {
+        cache[term] = data;
+        response(data);
+      });
+    }
+  });
 
-// change item link
-$(document).on('click', '#change-item', function() {
-  insertParamAndReload('item', 'all');
 });
 
 // IMPORT TPL

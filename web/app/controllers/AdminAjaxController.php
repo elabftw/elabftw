@@ -43,7 +43,6 @@ try {
 
     // GET USER LIST
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
-        // we don't care about the entity type as getLinkList() is available in AbstractEntity
         $Response->setData($App->Users->lookFor($Request->query->get('term')));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {

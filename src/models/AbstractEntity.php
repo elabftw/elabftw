@@ -283,7 +283,8 @@ abstract class AbstractEntity
                 uploads.up_item_id, uploads.has_attachment,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname,
                 users.team,
-                teams.name AS team_name";
+                teams.name AS team_name,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id";
 
             $from = 'FROM items
                 LEFT JOIN items_types ON (items.category = items_types.id)
@@ -298,6 +299,8 @@ abstract class AbstractEntity
                 items.id = steps_item_id
                 AND stepst.finished = 0)';
 
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = items.id)';
+
             $commentsJoin = 'LEFT JOIN (
                 SELECT MAX(items_comments.datetime) AS recent_comment,
                     items_comments.item_id FROM items_comments GROUP BY items_comments.item_id
@@ -308,7 +311,7 @@ abstract class AbstractEntity
             if ($getTags) {
                 $sql .= $tagsSelect . ' ';
             }
-            $sql .= $from . ' ' . $uploadsJoin . ' ' . $stepsJoin . ' ' . $commentsJoin . ' ';
+            $sql .= $from . ' ' . $uploadsJoin . ' ' . $stepsJoin . ' ' . $eventsJoin . ' ' . $commentsJoin . ' ';
             if ($getTags) {
                 $sql .= $tagsJoin . ' ';
             }
@@ -592,7 +595,8 @@ abstract class AbstractEntity
     public function getExpList(string $term): array
     {
         $Experiments = new Experiments($this->Users);
-        $Experiments->titleFilter = " AND title LIKE '%$term%'";
+        $term = filter_var($term, FILTER_SANITIZE_STRING);
+        $Experiments->titleFilter = " AND experiments.title LIKE '%$term%'";
 
         return $Experiments->read(false);
     }
@@ -606,26 +610,32 @@ abstract class AbstractEntity
     public function getDbList(string $term): array
     {
         $Database = new Database($this->Users);
-        $Database->titleFilter = " AND title LIKE '%$term%'";
+        $term = filter_var($term, FILTER_SANITIZE_STRING);
+        $Database->titleFilter = " AND items.title LIKE '%$term%'";
 
         return $Database->read(false);
     }
 
     /**
-     * Get an array formatted for the Link list on experiments
+     * Get an array formatted for the autocomplete input (link and bind)
      *
      * @param string $term the query
+     * @param string $source experiments or items
      * @return array
      */
-    public function getLinkList(string $term): array
+    public function getAutocomplete(string $term, string $source): array
     {
+        if ($source === 'experiments') {
+            $items = $this->getExpList($term);
+        } elseif ($source === 'items') {
+            $items = $this->getDbList($term);
+        } else {
+            throw new \InvalidArgumentException;
+        }
         $linksArr = array();
-        $itemsArr = $this->getDbList($term);
-
-        foreach ($itemsArr as $item) {
+        foreach ($items as $item) {
             $linksArr[] = $item['id'] . ' - ' . $item['category'] . ' - ' . substr($item['title'], 0, 60);
         }
-
         return $linksArr;
     }
 

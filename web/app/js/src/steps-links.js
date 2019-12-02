@@ -206,7 +206,7 @@
           response(cache[term]);
           return;
         }
-        $.getJSON('app/controllers/EntityAjaxController.php', request, function(data) {
+        $.getJSON('app/controllers/EntityAjaxController.php?source=items', request, function(data) {
           cache[term] = data;
           response(data);
         });

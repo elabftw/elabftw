@@ -445,7 +445,8 @@ CREATE TABLE `team_events` (
   `start` varchar(255) NOT NULL,
   `end` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  `experiment` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

@@ -18,12 +18,14 @@
 {% if linksArr %}
   <div class='mt-2'>
     <ul class='list-group'>
-        {% for link in linksArr %}
+      {% for link in linksArr %}
         <li class='list-group-item'>
-            <i class='fas fa-link mr-1'></i>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                {{ link.title|raw }}</a>
+          <i class='fas fa-link mr-1'></i>
+          {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+          {{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+              {{ link.title|raw }}</a>
         </li>
-        {% endfor %}
+      {% endfor %}
     </ul>
   </div>
 {% endif %}

@@ -159,6 +159,11 @@
       {{ Entity.entityData.title|raw }}
   </div>
 
+  <!-- SHOW EVENTS -->
+  {% if Entity.entityData.events_id %}<i class='far fa-calendar-alt'></i>
+    {{ '%s%d%sSee bookings%s'|trans|format("<a href='team.php?item=", Entity.entityData.id, "'>", "</a>")|raw }}
+  {% endif %}
+
   <!-- SHOW NEXT STEP -->
   {% set next_step = Entity.entityData.next_step %}
   {% if next_step|length > 0 %}
@@ -190,7 +195,7 @@
 
   {% if Entity.type == 'items' %}
       <!-- SHOW USER -->
-      {{ 'Last modified by'|trans }} {{ Entity.entityData.fullname|raw }}
+      <p>{{ 'Last modified by'|trans }} {{ Entity.entityData.fullname|raw }}</p>
   {% endif %}
 
 

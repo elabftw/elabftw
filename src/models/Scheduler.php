@@ -42,9 +42,9 @@ class Scheduler
      * @param string $start 2016-07-22T13:37:00
      * @param string $end 2016-07-22T19:42:00
      * @param string $title the comment entered by user
-     * @return void
+     * @return int the new id
      */
-    public function create(string $start, string $end, string $title): void
+    public function create(string $start, string $end, string $title): int
     {
         $title = filter_var($title, FILTER_SANITIZE_STRING);
 
@@ -61,6 +61,8 @@ class Scheduler
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
+
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -100,8 +102,9 @@ class Scheduler
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.*,
-            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title
+            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title
             FROM team_events
+            LEFT JOIN experiments ON (experiments.id = team_events.experiment)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.team = :team AND team_events.item = :item";
         $req = $this->Db->prepare($sql);
@@ -176,12 +179,61 @@ class Scheduler
     }
 
     /**
+     * Bind an experiment to a calendar event
+     *
+     * @param int $expid id of the experiment
+     * @return void
+     */
+    public function bind(int $expid): void
+    {
+        $sql = 'UPDATE team_events SET experiment = :experiment WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':experiment', $expid, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
+     * Unbind an experiment from a calendar event
+     *
+     * @return void
+     */
+    public function unbind(): void
+    {
+        $sql = 'UPDATE team_events SET experiment = NULL WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
      * Remove an event
      *
      * @return void
      */
     public function destroy(): void
     {
+        // check permission before deleting
+        $event = $this->readFromId();
+        // if the user is not the same, check if we are admin
+        if ($event['userid'] !== $this->Database->Users->userData['userid']) {
+            // admin and sysadmin will have usergroup of 1 or 2
+            if ((int) $this->Database->Users->userData['usergroup'] <= 2) {
+                // check user is in our team
+                $Booker = new Users((int) $event['userid']);
+                if ($Booker->userData['team'] !== $this->Database->Users->userData['team']) {
+                    throw new ImproperActionException(Tools::error(true));
+                }
+            }
+        }
         $sql = 'DELETE FROM team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

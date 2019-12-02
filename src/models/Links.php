@@ -72,6 +72,7 @@ class Links implements CrudInterface
             ' . $this->Entity->type . '_links.id AS linkid,
             items.title,
             items_types.name,
+            items_types.bookable,
             items_types.color
             FROM ' . $this->Entity->type . '_links
             LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)

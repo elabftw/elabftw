@@ -47,5 +47,6 @@ class SnapFingers extends Command
             '*Snap*',
             'Perfectly balanced. As all things should be.',
         ));
+        return 0;
     }
 }

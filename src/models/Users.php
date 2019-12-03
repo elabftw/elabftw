@@ -66,11 +66,11 @@ class Users
      * @param int $team
      * @param string $firstname
      * @param string $lastname
-     * @param string|null $password
+     * @param string $password
      * @param int|null $group
      * @return int the new userid
      */
-    public function create(string $email, int $team, string $firstname = '', string $lastname = '', ?string $password = null, ?int $group = null): int
+    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null): int
     {
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {

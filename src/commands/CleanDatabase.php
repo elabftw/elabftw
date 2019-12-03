@@ -41,5 +41,6 @@ class CleanDatabase extends Command
         ));
         $Cleaner = new DatabaseCleaner();
         $Cleaner->cleanup();
+        return 0;
     }
 }

@@ -38,6 +38,7 @@ class UpdateDatabase extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @psalm-suppress PossiblyNullReference */
         $command = $this->getApplication()->find('db:check');
 
         $arguments = array(
@@ -58,5 +59,6 @@ class UpdateDatabase extends Command
             $Update->runUpdateScript();
             $output->writeln('All done.');
         }
+        return 0;
     }
 }

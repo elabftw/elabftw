@@ -44,6 +44,7 @@ class UpdateTo3 extends Command
         $Sql->execFile('prepare30.sql');
         $output->writeln('Database ready to be cleaned. Now running db:clean command...');
 
+        /** @psalm-suppress PossiblyNullReference */
         $command = $this->getApplication()->find('db:clean');
 
         $arguments = array(
@@ -54,6 +55,7 @@ class UpdateTo3 extends Command
         $returnCode = $command->run($cmdInput, $output);
         if ($returnCode === 0) {
             $output->writeln('Now ready to update to latest version. Running db:update command...');
+            /** @psalm-suppress PossiblyNullReference */
             $command = $this->getApplication()->find('db:update');
 
             $arguments = array(
@@ -63,5 +65,6 @@ class UpdateTo3 extends Command
             $cmdInput = new ArrayInput($arguments);
             $command->run($cmdInput, $output);
         }
+        return 0;
     }
 }

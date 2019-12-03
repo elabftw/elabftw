@@ -61,7 +61,7 @@ class PopulateDatabase extends Command
 
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('Aborting!');
-            return;
+            return 1;
         }
 
         // all users have the same password to make switching accounts easier
@@ -161,5 +161,6 @@ class PopulateDatabase extends Command
         $Users->create('bbbbb@yopmail.com', 3, $Faker->firstName, $Faker->lastName, $password);
 
         $output->writeln('All done.');
+        return 0;
     }
 }

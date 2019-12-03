@@ -36,13 +36,16 @@ class ApiController implements ControllerInterface
     /** @var Request $Request instance of Request */
     private $Request;
 
-    /** @var AbstractCategory $Category instance of ItemsTypes or Status*/
+    /** @var AbstractCategory $Category instance of ItemsTypes or Status
+     * @psalm-suppress PropertyNotSetInConstructor */
     private $Category;
 
-    /** @var AbstractEntity $Entity instance of Entity */
+    /** @var AbstractEntity $Entity instance of Entity
+     * @psalm-suppress PropertyNotSetInConstructor */
     private $Entity;
 
-    /** @var Scheduler $Scheduler instance of Scheduler */
+    /** @var Scheduler $Scheduler instance of Scheduler
+     * @psalm-suppress PropertyNotSetInConstructor */
     private $Scheduler;
 
     /** @var Users $Users the authenticated user */
@@ -78,13 +81,6 @@ class ApiController implements ControllerInterface
      */
     public function getResponse(): Response
     {
-        // Check the HTTP method is allowed
-        if (!\in_array($this->Request->server->get('REQUEST_METHOD'), $this->allowedMethods, true)) {
-            // send error 405 for Method Not Allowed, with Allow header as per spec:
-            // https://tools.ietf.org/html/rfc7231#section-7.4.1
-            return new Response('Invalid HTTP request method!', 405, array('Allow' => \implode(', ', $this->allowedMethods)));
-        }
-
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:
@@ -92,13 +88,13 @@ class ApiController implements ControllerInterface
             return new Response('No access token provided!', 401, array('WWW-Authenticate' => 'Bearer'));
         }
 
-        // GET UPLOAD
-        if ($this->endpoint === 'uploads') {
-            return $this->getUpload();
-        }
-
         // GET ENTITY/CATEGORY
         if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
+            // GET UPLOAD
+            if ($this->endpoint === 'uploads') {
+                return $this->getUpload();
+            }
+
             if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
                 return $this->getEntity();
             }
@@ -141,7 +137,7 @@ class ApiController implements ControllerInterface
                 return $this->createLink();
             }
 
-            if ($this->Scheduler instanceof Scheduler) {
+            if ($this->endpoint === 'events') {
                 return $this->createEvent();
             }
 
@@ -154,10 +150,12 @@ class ApiController implements ControllerInterface
 
         // DELETE requests
         if ($this->Request->server->get('REQUEST_METHOD') === 'DELETE') {
-            if ($this->Scheduler instanceof Scheduler) {
-                return $this->destroyEvent();
-            }
+            return $this->destroyEvent();
         }
+
+        // send error 405 for Method Not Allowed, with Allow header as per spec:
+        // https://tools.ietf.org/html/rfc7231#section-7.4.1
+        return new Response('Invalid HTTP request method!', 405, array('Allow' => \implode(', ', $this->allowedMethods)));
     }
 
     /**
@@ -496,6 +494,9 @@ class ApiController implements ControllerInterface
             return new Response('Cannot create an item with an item type id not in your team!', 403);
         }
 
+        if ($this->id === null) {
+            return new Response('Invalid id', 400);
+        }
         $id = $this->Entity->create($this->id);
         return new JsonResponse(array('id' => $id));
     }

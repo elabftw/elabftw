@@ -44,5 +44,6 @@ class GenCache extends Command
         $output->writeln(array(
             'Success. All the templates are now cached by Twig.',
         ));
+        return 0;
     }
 }

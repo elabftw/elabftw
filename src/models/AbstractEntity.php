@@ -209,8 +209,13 @@ abstract class AbstractEntity
             AS uploads
             ON (uploads.up_item_id = ' . $this->type . ".id AND uploads.type = '" . $this->type . "')";
 
-        $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-        $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
+
+        $tagsSelect = '';
+        $tagsJoin = '';
+        if ($getTags) {
+            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+            $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
+        }
         $teamsJoin = 'LEFT JOIN teams ON (teams.id = users.team)';
 
 
@@ -244,20 +249,18 @@ abstract class AbstractEntity
                 ) AS experiments_comments
                 ON (experiments_comments.item_id = experiments.id)';
 
-            $sql = $select . ' ';
-            if ($getTags) {
-                $sql .= $tagsSelect . ' ';
-            }
-            $sql .= $from . ' ' .
-            $usersJoin . ' ' .
-            $stepsJoin . ' ';
-            if ($getTags) {
-                $sql .= $tagsJoin . ' ';
-            }
-            $sql .= $teamsJoin . ' ';
-            $sql .= $statusJoin . ' ' .
-            $uploadsJoin . ' ' .
-            $commentsJoin;
+            $sql = implode(' ', array(
+                $select,
+                $tagsSelect,
+                $from,
+                $usersJoin,
+                $stepsJoin,
+                $tagsJoin,
+                $teamsJoin,
+                $statusJoin,
+                $uploadsJoin,
+                $commentsJoin,
+            ));
         } elseif ($this instanceof Database) {
             $sql = "SELECT DISTINCT items.*, items_types.name AS category,
                 items_types.color,
@@ -294,14 +297,16 @@ abstract class AbstractEntity
                 ON (items_comments.item_id = items.id)';
 
             $sql .= ' ';
-            if ($getTags) {
-                $sql .= $tagsSelect . ' ';
-            }
-            $sql .= $from . ' ' . $uploadsJoin . ' ' . $stepsJoin . ' ' . $eventsJoin . ' ' . $commentsJoin . ' ';
-            if ($getTags) {
-                $sql .= $tagsJoin . ' ';
-            }
-            $sql .= $teamsJoin . ' ';
+            $sql .= implode(' ', array(
+                $tagsSelect,
+                $from,
+                $uploadsJoin,
+                $stepsJoin,
+                $eventsJoin,
+                $commentsJoin,
+                $tagsJoin,
+                $teamsJoin,
+            ));
         } else {
             throw new IllegalActionException('Nope.');
         }

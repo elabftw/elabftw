@@ -34,8 +34,6 @@
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
-            // make the comment zone editable (fix issue #54)
-            makeEditableFileComment();
             displayMolFiles(); // eslint-disable-line no-undef
           });
         }

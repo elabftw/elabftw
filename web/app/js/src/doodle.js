@@ -44,9 +44,7 @@
         if (type === 'items') {
           type = 'database';
         }
-        $('#filesdiv').load(type + '.php?mode=edit&id=' + id + ' #filesdiv', function() {
-          makeEditableFileComment();
-        });
+        $('#filesdiv').load(type + '.php?mode=edit&id=' + id + ' #filesdiv');
         notif(json);
       });
     });

@@ -90,7 +90,6 @@
           notif(json);
           if (json.res) {
             $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
-              makeEditableComment($('#comment_' + json.id));
               relativeMoment();
             });
           } else {
@@ -126,6 +125,33 @@
 
     $(document).on('click', '#commentsCreateButton', function() {
       Comments.create($(this).data('expid'));
+    });
+
+    $(document).on('mouseenter', '.comment', function() {
+      $(this).editable('app/controllers/CommentsAjaxController.php', {
+        name: 'update',
+        type : 'textarea',
+        submitdata: {
+          type: $(this).data('type')
+        },
+        width: '80%',
+        height: '200',
+        tooltip : 'Click to edit',
+        indicator : $(this).data('indicator'),
+        submit : $(this).data('submit'),
+        cancel : $(this).data('cancel'),
+        style : 'display:inline',
+        submitcssclass : 'button mt-2',
+        cancelcssclass : 'button button-delete mt-2',
+        callback : function(data) {
+          let json = JSON.parse(data);
+          notif(json);
+          // show result in comment box
+          if (json.res) {
+            $(this).html(json.update);
+          }
+        }
+      });
     });
 
     // DESTROY COMMENTS

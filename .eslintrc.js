@@ -27,8 +27,6 @@ module.exports = {
         'google': 'readonly',
         'insertParamAndReload': 'readonly',
         'key': 'readonly',
-        'makeEditableComment': 'readonly',
-        'makeEditableFileComment': 'readonly',
         'MathJax': 'readonly',
         'moment': 'readonly',
         'notif': 'readonly',

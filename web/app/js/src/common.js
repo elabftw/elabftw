@@ -9,7 +9,7 @@
  * @package elabftw
  */
 
-// add a csrf header to all ajax requests based on the meta tag
+// add a csrf header to all ajax requests in a meta tag
 $.ajaxSetup({
   headers: {
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -26,15 +26,6 @@ $(document).ready(function() {
   // HELP MODAL
   $(document).on('click', '.helpToggle', function() {
     $('#helpModal').modal('toggle');
-  });
-
-  // MAKE THE FILE COMMENT FIELD EDITABLE
-  $('.file-comment.editable').each(function() {
-    makeEditableFileComment();
-  });
-  // MAKE THE COMMENT FIELD EDITABLE
-  $('.comment.editable').each(function() {
-    makeEditableComment($(this));
   });
 
   // SORTABLE ELEMENTS
@@ -145,70 +136,6 @@ function quickSave(type, id) { // eslint-disable-line no-unused-vars
       return;
     }
     notif(json);
-  });
-}
-
-// EDIT COMMENT ON experiment/database
-function makeEditableComment(element) {
-  $(element).editable('app/controllers/CommentsAjaxController.php', {
-    name: 'update',
-    type : 'textarea',
-    submitdata: {
-      type: $(element).data('type')
-    },
-    width: '80%',
-    height: '200',
-    tooltip : 'Click to edit',
-    indicator : $(element).data('indicator'),
-    submit : $(element).data('submit'),
-    cancel : $(element).data('cancel'),
-    style : 'display:inline',
-    submitcssclass : 'button mt-2',
-    cancelcssclass : 'button button-delete mt-2',
-    callback : function(data) {
-      let json = JSON.parse(data);
-      notif(json);
-      // show result in comment box
-      if (json.res) {
-        $(element).html(json.update);
-      }
-      $('.comment.editable').each(function() {
-        makeEditableComment($(this));
-      });
-    }
-  });
-}
-
-// EDIT COMMENT ON UPLOAD
-function makeEditableFileComment() {
-  $('.editable').editable(function(value) {
-    $.post('app/controllers/EntityAjaxController.php', {
-      updateFileComment : true,
-      type: $(this).data('type'),
-      comment : value,
-      comment_id : $(this).attr('id'),
-      id: $(this).data('itemid')
-    }).done(function(json) {
-      notif(json);
-    });
-
-    return(value);
-  }, {
-    tooltip : 'File comment',
-    placeholder: 'File comment',
-    indicator : 'Saving...',
-    name : 'fileComment',
-    onedit: function() {
-      if ($(this).text() === 'Click to add a comment') {
-        $(this).text('');
-      }
-    },
-    submit : 'Save',
-    onblur : 'ignore',
-    cancel : 'Cancel',
-    submitcssclass : 'button',
-    cancelcssclass : 'button button-delete',
-    style : 'display:inline'
   });
 }
 

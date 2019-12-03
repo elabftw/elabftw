@@ -66,9 +66,7 @@ $(document).on('click', '.jsonSaver', function(){
       string: JSON.stringify(editor.get())
     }).done(function(json) {
       $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
-      $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv', function() {
-        makeEditableFileComment();
-      });
+      $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv');
       notif(json);
     });
   } else {

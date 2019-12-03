@@ -18,6 +18,39 @@
       $(this).next('.replaceUploadForm').toggle();
     });
 
+    // make file comments editable
+    $(document).on('mouseenter', '.file-comment', function() {
+      $('.editable').editable(function(value) {
+        $.post('app/controllers/EntityAjaxController.php', {
+          updateFileComment : true,
+          type: $(this).data('type'),
+          comment : value,
+          comment_id : $(this).attr('id'),
+          id: $(this).data('itemid')
+        }).done(function(json) {
+          notif(json);
+        });
+
+        return(value);
+      }, {
+        tooltip : 'File comment',
+        placeholder: 'File comment',
+        indicator : 'Saving...',
+        name : 'fileComment',
+        onedit: function() {
+          if ($(this).text() === 'Click to add a comment') {
+            $(this).text('');
+          }
+        },
+        submit : 'Save',
+        onblur : 'ignore',
+        cancel : 'Cancel',
+        submitcssclass : 'button',
+        cancelcssclass : 'button button-delete',
+        style : 'display:inline'
+      });
+    });
+
     // Export mol in png
     $(document).on('click', '.saveAsImage', function() {
       let molCanvasId = $(this).parent().siblings().find('canvas').attr('id');
@@ -32,7 +65,6 @@
         notif(json);
         if (json.res) {
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
-            makeEditableFileComment();
             displayMolFiles(); // eslint-disable-line no-undef
           });
         }
@@ -52,7 +84,6 @@
           notif(json);
           if (json.res) {
             $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv', function() {
-              makeEditableFileComment();
               displayMolFiles(); // eslint-disable-line no-undef
             });
           }

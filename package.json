@@ -31,7 +31,7 @@
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
-    "apidoc": "0.18.*",
+    "apidoc": "0.19.*",
     "babel-loader": "^8.0.6",
     "eslint": "^6.7.2",
     "expose-loader": "0.7.*",

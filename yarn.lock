@@ -1219,10 +1219,10 @@ apidoc-core@~0.8.3:
     lodash "~4.17.4"
     semver "~5.3.0"
 
-apidoc@0.18.*:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.18.0.tgz#304a7da0a87de456268abad112ddb70df5814563"
-  integrity sha512-6gDuxCizXYzFap5JVEdXsATvVsx0Q2waZO39AHhFxFdikvfQ37U8GKASgJugTJNltWjnyUj2YasquUZw19Wmeg==
+apidoc@0.19.*:
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.19.0.tgz#e7a498f63c44443e8e67a9ce47363758cc7b2c47"
+  integrity sha512-gnmyvcR3M6J80G3OQzmKQLq0SaZ3uA6wuXPWJO2qoHn83jb9dcoyQ0zqmuL4gmfA3P6g9SPshwcPLdAwclHzHA==
   dependencies:
     apidoc-core "~0.8.3"
     commander "^2.20.0"

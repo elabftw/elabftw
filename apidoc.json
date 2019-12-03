@@ -1,5 +1,8 @@
 {
   "name": "eLabFTW API",
   "version": "1.0.0",
-  "description": "Documentation for elab's API"
+  "description": "Documentation for elab's API",
+  "template": {
+    "withCompare": false
+  }
 }

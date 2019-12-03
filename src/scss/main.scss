@@ -223,27 +223,9 @@ label {
     color: $elabblue;
 }
 
-.tip::before a,
-.tip::before a:hover {
-    color: $darkgray;
-}
-
-.help-container {
-    display: none;
-    padding: 5px;
-    margin: 15px 0;
-}
-
 li.tip {
     list-style: none;
 }
-
-#help {
-    cursor: pointer;
-    color: $maingray;
-}
-
-/* END HELP CONTAINER /*
 
 /* BEGIN NAV */
 .navbar {
@@ -620,24 +602,6 @@ tr:nth-child(odd) {
     background-color: $lightgray;
 }
 
-/* SEARCH.PHP */
-.searchform {
-    margin-bottom: 20px;
-}
-
-.searchform #title,
-.searchform #body {
-    width: 100%;
-}
-
-.searchform p {
-    font-size: 115%;
-}
-
-.searchform input {
-    background-color: #fff;
-}
-
 /* OVERLAY */
 .overlay {
     display: flex;
@@ -686,10 +650,6 @@ tr:nth-child(odd) {
     border-radius: 5px;
     padding: 20px;
     overflow: auto;
-}
-
-.tooltip-box {
-    overflow: visible;
 }
 
 .box section {
@@ -843,7 +803,7 @@ form#filter-order-sort select {
 }
 
 .date {
-    color: #5d5d5d;
+    color: $maingray;
     padding: 0 5px;
 }
 

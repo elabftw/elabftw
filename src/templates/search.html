@@ -7,7 +7,7 @@
             <!-- SEARCH IN-->
             <div class='col-md-3'>
                 <label for='searchin'>{{ 'Search in'|trans }}</label>
-                <select name='type' id='searchin' class='custom-select'>
+                <select name='type' id='searchin' class='form-control'>
                     <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
                     <option disabled>----------------</option>
                     <option value='database' {{ Request.query.get('type') == 'database' ? 'selected' }}>{{ 'Database'|trans }}</option>
@@ -34,7 +34,7 @@
             <!-- VISIBILITY SEARCH -->
             <div class='col-md-3'>
                 <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
-                <select id='visibility' name='vis' class='custom-select'>
+                <select id='visibility' name='vis' class='form-control'>
                     <option value=''>{{ 'Select visibility'|trans }}</option>
                     <option value='organization' {{ Request.query.get('vis') == 'organization' ? 'selected' }}>{{ 'Organization'|trans }}</option>
                     <option value='team' {{ Request.query.get('vis') == 'team' ? 'selected' }}>{{ 'Team'|trans }}</option>
@@ -52,7 +52,7 @@
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
                 <label for'searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
-                <select id='searchonly' name='owner' class='custom-select mb-3'>
+                <select id='searchonly' name='owner' class='form-control mb-3'>
                     <option value=''>{{ 'Yourself'|trans }}</option>
                     <!-- add an option to search in the whole team (owner = 0) -->
                     <option value='0' {{ Request.query.get('owner') == '0' ? 'selected' }}>{{ 'All the team'|trans }}</option>
@@ -87,14 +87,14 @@
             <!-- TITLE -->
             <div class='col-md-6'>
                 <label for='title'>{{ 'And title contains'|trans }}</label>
-                <input id='title' name='title' type='text' value='{{ title }}'/>
+                <input id='title' class='form-control' name='title' type='text' value='{{ title }}'/>
             </div>
             <!-- END TITLE -->
 
             <!-- STATUS -->
             <div class='col-md-4'>
                 <label for='status'>{{ 'And status is'|trans }}</label>
-                <select id='status' name='status' class='custom-select'>
+                <select id='status' name='status' class='form-control'>
                     <option value=''>{{ 'Select status'|trans }}</option>
                     {% for status in statusArr %}
                         <option value='{{ status.category_id }}' {{ Request.query.get('status') == status.category_id ? 'selected' }}>
@@ -112,11 +112,11 @@
             <!-- BODY -->
             <div class='col-md-6'>
                 <label for='body'>{{ 'And body contains'|trans }}</label>
-                <input id='body' name='body' type='text' value='{{ body }}'/>
+                <input id='body' class='form-control' name='body' type='text' value='{{ body }}'/>
 
                 <!-- AND / OR -->
                 <label for='andor'>{{ 'Space means'|trans }}</label>
-                <select class='mt-2 custom-select-sm' id='andor' name='andor'>
+                <select class='mt-2 custom-control-sm' id='andor' name='andor'>
                     <option value='and' {{ Request.query.get('andor') == 'and' ? 'selected' }}>{{ 'and'|trans }}</option>
                     <option value='or' {{ Request.query.get('andor') == 'or' ? 'selected' }}>{{ 'or'|trans }}</option>
                 </select>
@@ -126,7 +126,7 @@
             <!-- RATING -->
             <div class='col-md-4'>
                 <label for='rating'>{{ 'And rating is'|trans }}</label>
-                <select id='rating' name='rating' class='custom-select'>
+                <select id='rating' name='rating' class='form-control'>
                     <option value=''>{{ 'Select number of stars'|trans }}</option>
                     <option value='no'>{{ 'Unrated'|trans }}</option>
                     {% for i in range(1, 5) %}

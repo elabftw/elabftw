@@ -90,7 +90,7 @@ class MakeReport
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
-            $Entity->setUseridFilter();
+            $Entity->addFilter('experiments.userid', $user['userid']);
             $itemsArr = $Entity->read(false);
             $count = \count($itemsArr);
 

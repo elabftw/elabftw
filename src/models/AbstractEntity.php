@@ -52,20 +52,8 @@ abstract class AbstractEntity
     /** @var string $page will be defined in children classes */
     public $page = '';
 
-    /** @var string $idFilter inserted in sql */
-    public $idFilter = '';
-
-    /** @var string $useridFilter inserted in sql */
-    public $useridFilter = '';
-
-    /** @var string $bookableFilter inserted in sql */
-    public $bookableFilter = '';
-
-    /** @var string $ratingFilter inserted in sql */
-    public $ratingFilter = '';
-
-    /** @var string $visibilityFilter inserted in sql */
-    public $visibilityFilter = '';
+    /** @var array $filters an array of arrays with filters for sql query */
+    public $filters;
 
     /** @var string $titleFilter inserted in sql */
     public $titleFilter = '';
@@ -75,9 +63,6 @@ abstract class AbstractEntity
 
     /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
-
-    /** @var string $categoryFilter inserted in sql */
-    public $categoryFilter = '';
 
     /** @var string $tagFilter inserted in sql */
     public $tagFilter = '';
@@ -120,6 +105,7 @@ abstract class AbstractEntity
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->itemsReadNb = 0;
+        $this->filters = array();
 
         if ($id !== null) {
             $this->setId($id);
@@ -211,7 +197,7 @@ abstract class AbstractEntity
     public function read(bool $getTags = true): array
     {
         if ($this->id !== null) {
-            $this->idFilter = ' AND ' . $this->type . '.id = ' . (string) $this->id;
+            $this->addFilter($this->type . '.id', (string) $this->id);
         }
 
         $uploadsJoin = 'LEFT JOIN (
@@ -322,16 +308,11 @@ abstract class AbstractEntity
 
         $sql .= ' WHERE 1=1';
 
-        $sql .= $this->idFilter . ' ' .
-            $this->useridFilter . ' ' .
-            $this->titleFilter . ' ' .
+        $sql = $this->filterSql($sql);
+        $sql .= $this->titleFilter . ' ' .
             $this->dateFilter . ' ' .
             $this->bodyFilter . ' ' .
-            $this->bookableFilter . ' ' .
-            $this->categoryFilter . ' ' .
             $this->queryFilter . ' ' .
-            $this->ratingFilter . ' ' .
-            $this->visibilityFilter . ' ' .
             ' GROUP BY id ' . ' ' .
             $this->tagFilter . ' ' .
             'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
@@ -356,8 +337,8 @@ abstract class AbstractEntity
             }
         }
 
-        // reduce the dimension of the array if we have only one item (idFilter set)
-        if (count($itemsArr) === 1 && !empty($this->idFilter)) {
+        // reduce the dimension of the array if we have only one item
+        if (count($itemsArr) === 1 && !empty($this->id)) {
             return $itemsArr[0];
         }
         return $finalArr;
@@ -478,16 +459,6 @@ abstract class AbstractEntity
     public function setOffset(int $num): void
     {
         $this->offset = 'OFFSET ' . (string) $num;
-    }
-
-    /**
-     * Set the userid filter for read()
-     *
-     * @return void
-     */
-    public function setUseridFilter(): void
-    {
-        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userData['userid'];
     }
 
     /**
@@ -691,6 +662,20 @@ abstract class AbstractEntity
     }
 
     /**
+     * Add a filter to the query
+     *
+     * @param string $column the column on which to filter
+     * @param string $value the value to look for
+     * @return void
+     */
+    public function addFilter(string $column, string $value): void
+    {
+        $column = filter_var($column, FILTER_SANITIZE_STRING);
+        $value = filter_var($value, FILTER_SANITIZE_STRING);
+        $this->filters[] = array('column' => $column, 'value' => $value);
+    }
+
+    /**
      * Now that we have an id, load the data in entityData array
      *
      * @return void
@@ -703,5 +688,19 @@ abstract class AbstractEntity
 
         // load the entity in entityData array
         $this->entityData = $this->read();
+    }
+
+    /**
+     * Take the sql string as input and add any filters to it
+     *
+     * @param string $sql
+     * @return string
+     */
+    private function filterSql(string $sql): string
+    {
+        foreach ($this->filters as $filter) {
+            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
+        }
+        return $sql;
     }
 }

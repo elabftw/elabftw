@@ -144,7 +144,7 @@ class DatabaseController extends AbstractEntityController
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->categoryFilter = 'AND items_types.id = ' . $this->App->Request->query->get('cat');
+            $this->Entity->addFilter('items_types.id', $this->App->Request->query->get('cat'));
             $searchType = 'category';
         }
         // TAG FILTER

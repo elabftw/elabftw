@@ -27,7 +27,7 @@ $Response->prepare($Request);
 try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
-    $Entity->setUseridFilter();
+    $Entity->addFilter('experiments.userid', $App->Users->userData['userid']);
     $itemsArr = $Entity->read(false);
     $count = \count($itemsArr);
 

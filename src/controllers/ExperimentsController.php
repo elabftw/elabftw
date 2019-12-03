@@ -149,7 +149,7 @@ class ExperimentsController extends AbstractEntityController
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
-            $this->Entity->categoryFilter = ' AND status.id = ' . $this->App->Request->query->get('cat');
+            $this->Entity->addFilter('status.id', $this->App->Request->query->get('cat'));
             $searchType = 'filter';
         }
         // TAG FILTER
@@ -232,7 +232,7 @@ class ExperimentsController extends AbstractEntityController
         // READ ALL ITEMS
 
         if ($this->App->Session->get('anon')) {
-            $this->Entity->visibilityFilter = "AND experiments.canread = 'public'";
+            $this->Entity->addFilter($this->Entity->type . '.canread', 'public');
             $itemsArr = $this->Entity->read($getTags);
         // related filter
         } elseif (Check::id((int) $this->App->Request->query->get('related')) !== false) {
@@ -241,7 +241,7 @@ class ExperimentsController extends AbstractEntityController
         } else {
             // filter by user only if we are not making a search
             if (!$this->Entity->Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {
-                $this->Entity->setUseridFilter();
+                $this->Entity->addFilter('experiments.userid', $this->App->Users->userData['userid']);
             }
 
             $itemsArr = $this->Entity->read($getTags);

@@ -44,7 +44,7 @@ try {
 
     $Database = new Database($App->Users);
     // we only want the bookable type of items
-    $Database->bookableFilter = ' AND bookable = 1';
+    $Database->addFilter('bookable', '1');
     $Scheduler = new Scheduler($Database);
 
     $TagCloud = new TagCloud((int) $App->Users->userData['team']);

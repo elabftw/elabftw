@@ -295,7 +295,7 @@ class ApiController implements ControllerInterface
 
     private function getBookable(): Response
     {
-        $this->Entity->bookableFilter = ' AND bookable = 1';
+        $this->Entity->addFilter('bookable', '1');
         return $this->getEntity();
     }
 

@@ -94,6 +94,13 @@
 
     // EXPAND ALL
     $('#expandAll').click(function() {
+      if ($(this).data('status') === 'closed') {
+        $(this).data('status', 'opened');
+        $(this).text($(this).data('collapse'));
+      } else {
+        $(this).data('status', 'closed');
+        $(this).text($(this).data('expand'));
+      }
       $('.bodyToggleImg').each(function() {
         $(this).click();
       });

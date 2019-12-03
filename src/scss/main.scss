@@ -62,8 +62,9 @@ body::before {
     font-weight: 500;
 }
 
-#real_container {
-    max-width: 1625px;
+/* holds the main content */
+.real-container {
+    max-width: 1636px;
     margin: auto;
     margin-top: 20px;
     padding: 0 5%;

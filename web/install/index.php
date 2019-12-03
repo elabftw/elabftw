@@ -97,7 +97,7 @@ try {
 
     <body>
     <div id="container" class='container'>
-    <div id='real_container'>
+    <div class='real-container'>
     <center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
     <h2>Welcome to the install of eLabFTW</h2>
 

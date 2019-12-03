@@ -308,7 +308,9 @@ abstract class AbstractEntity
 
         $sql .= ' WHERE 1=1';
 
-        $sql = $this->filterSql($sql);
+        foreach ($this->filters as $filter) {
+            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
+        }
         $sql .= $this->titleFilter . ' ' .
             $this->dateFilter . ' ' .
             $this->bodyFilter . ' ' .
@@ -688,19 +690,5 @@ abstract class AbstractEntity
 
         // load the entity in entityData array
         $this->entityData = $this->read();
-    }
-
-    /**
-     * Take the sql string as input and add any filters to it
-     *
-     * @param string $sql
-     * @return string
-     */
-    private function filterSql(string $sql): string
-    {
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
-        return $sql;
     }
 }

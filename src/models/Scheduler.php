@@ -135,7 +135,12 @@ class Scheduler
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
 
-        return $req->fetch();
+        $res = $req->fetch();
+        if ($res === false) {
+            throw new DatabaseErrorException('No data associated with that id');
+        }
+
+        return $res;
     }
 
     /**

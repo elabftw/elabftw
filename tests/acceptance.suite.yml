@@ -7,6 +7,7 @@
 # @package elabftw
 ##
 class_name: AcceptanceTester
+bootstrap: _bootstrap.php
 modules:
     enabled:
         - WebDriver:

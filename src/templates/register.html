@@ -6,7 +6,7 @@
 </a>
 
 <!-- Modal for privacy policy -->
-<div class='modal fade' id='singleModal' tabindex='-1' role='dialog' aria-labelledby='policyModalLabel' aria-hidden='true'>
+<div class='modal fade' id='policyModal' tabindex='-1' role='dialog' aria-labelledby='policyModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -83,7 +83,7 @@
           <div class='form-group form-check'>
             <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
             <label class='form-check-label' for='privacy-policy'>
-                {{ 'I agree with the %sPrivacy Policy%s'|format("<span class='modalToggle clickable link-like'>", "</span>")|trans|raw }}
+                {{ 'I agree with the %sPrivacy Policy%s'|format("<span class='modalToggle clickable link-like' data-modal='policyModal'>", "</span>")|trans|raw }}
             </label>
           </div>
         </div>

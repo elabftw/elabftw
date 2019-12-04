@@ -13,8 +13,7 @@
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <p>
-          <span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>
+        <p><i class='fas fa-exclamation-triangle'></i>
           {{ 'Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?'|trans }}
         </p>
       </div>
@@ -131,7 +130,7 @@
   {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('anon') %}
     <a class='elab-tooltip' href='#'>
       <span>{{ 'Timestamp Experiment'|trans }}</span>
-      <i class='far fa-calendar-check' id='confirmTimestamp'></i>
+      <i class='far fa-calendar-check modalToggle' data-modal='timestampModal'></i>
     </a>
   {% endif %}
 

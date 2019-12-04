@@ -161,21 +161,18 @@
     relativeMoment();
 
     // TIMESTAMP
-    $(document).on('click', '#confirmTimestamp', function() {
-      $('#timestampModal').modal('toggle');
-      $('#goForTimestamp').on('click', function() {
-        $(this).prop('disabled', true);
-        $.post('app/controllers/ExperimentsAjaxController.php', {
-          timestamp: true,
-          id: id
-        }).done(function(json) {
-          if (json.res) {
-            window.location.replace('experiments.php?mode=view&id=' + id);
-          } else {
-            $('.modal-body').css('color', 'red');
-            $('.modal-body').html(json.msg);
-          }
-        });
+    $(document).on('click', '#goForTimestamp', function() {
+      $(this).prop('disabled', true);
+      $.post('app/controllers/ExperimentsAjaxController.php', {
+        timestamp: true,
+        id: id
+      }).done(function(json) {
+        if (json.res) {
+          window.location.replace('experiments.php?mode=view&id=' + id);
+        } else {
+          $('.modal-body').css('color', 'red');
+          $('.modal-body').html(json.msg);
+        }
       });
     });
 

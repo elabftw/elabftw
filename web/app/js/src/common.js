@@ -23,13 +23,9 @@ $(document).ready(function() {
   });
   $('.togglableHidden').hide();
 
-  // HELP MODAL
-  $('.helpToggle').on('click', function() {
-    $('#helpModal').modal('toggle');
-  });
-  // Toggle single modal on page
+  // Toggle modal
   $('.modalToggle').on('click', function() {
-    $('#singleModal').modal('toggle');
+    $('#' + $(this).data('modal')).modal('toggle');
   });
 
   // SORTABLE ELEMENTS

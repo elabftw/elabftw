@@ -10,7 +10,7 @@
 {% endif %}
 
 <!-- Modal for reset password -->
-<div class='modal fade' id='singleModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel' aria-hidden='true'>
+<div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-dialog-centered' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -45,7 +45,7 @@
         <label for='email'>{{ 'Email'|trans }}</label>
         <input class='form-control mb-4' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
         <label for='password'>{{ 'Password'|trans }}</label>
-        <a href='#' class='align_right underlined resetPassword modalToggle'>{{ 'Forgot password?'|trans }}</a>
+        <a href='#' class='align_right underlined resetPassword modalToggle' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
         <input class='form-control' id='password' name='password' type='password' required />
         <!-- Remember me checkbox -->
         <div class='form-check mt-2'>

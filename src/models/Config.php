@@ -226,6 +226,7 @@ class Config
             ('saml_wantxmlvalidation', 1),
             ('saml_relaxdestinationvalidation', 0),
             ('saml_lowercaseurlencoding', 0),
+            ('email_domain', NULL),
             ('deletable_xp', 1);";
 
         $req = $this->Db->prepare($sql);

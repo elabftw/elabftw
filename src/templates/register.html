@@ -38,14 +38,17 @@
 
         <!-- EMAIL -->
         <div class='row'>
-            <div class='col-md-4'>
-            </div>
-            <div class='form-group col-md-4'>
-                <label for='email'>{{ 'Email'|trans }}</label>
-                <input name='email' class='form-control' type='email' id='email' required />
-            </div>
-            <div class='col-md-4'>
-            </div>
+          <div class='col-md-4'></div>
+          <div class='form-group col-md-4'>
+            <label for='email'>{{ 'Email'|trans }}</label>
+            <input name='email' class='form-control' type='email' id='email' required />
+            {% if App.Config.configArr.email_domain %}
+              <p class='smallgray'>
+                {{ 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain) }}
+              </p>
+            {% endif %}
+          </div>
+          <div class='col-md-4'></div>
         </div>
 
         <!-- PASSWORD -->

@@ -21,7 +21,7 @@
     });
 
     // bodyToggleImg is the little +/- image
-    $('.bodyToggleImg').click(function() {
+    $('.bodyToggleImg').on('click', function() {
       // transform the + in - and vice versa
       $(this).children().toggleClass('fa-minus-circle').toggleClass('fa-plus-circle');
 
@@ -50,11 +50,11 @@
 
     // PAGINATION
     // previous page
-    $(document).on('click', '.previousPage', function() {
+    $('.pageButtons').on('click', '.previousPage', function() {
       insertParamAndReload('offset', $('#info').data('offset') - $('#info').data('limit'));
     });
     // next page
-    $(document).on('click', '.nextPage', function() {
+    $('.pageButtons').on('click', '.nextPage', function() {
       insertParamAndReload('offset', $('#info').data('offset') + $('#info').data('limit'));
     });
     // END PAGINATION
@@ -83,7 +83,7 @@
     // done with javascript because if it's a link the css is not clean
     // and there is a gap with the separator
     // also this allows different behavior for exp/items
-    $('.createNew').click(function() {
+    $('.createNew').on('click', function() {
       const path = window.location.pathname;
       if (path.split('/').pop() === 'experiments.php') {
         insertParamAndReload('create', 1);
@@ -93,7 +93,7 @@
     });
 
     // EXPAND ALL
-    $('#expandAll').click(function() {
+    $('#expandAll').on('click', function() {
       if ($(this).data('status') === 'closed') {
         $(this).data('status', 'opened');
         $(this).text($(this).data('collapse'));
@@ -102,12 +102,12 @@
         $(this).text($(this).data('expand'));
       }
       $('.bodyToggleImg').each(function() {
-        $(this).click();
+        $(this).trigger('click');
       });
     });
 
     // SELECT ALL
-    $('#selectAllBoxes').click(function() {
+    $('#selectAllBoxes').on('click', function() {
       $('input[type=checkbox]').prop('checked', true);
       $('input[type=checkbox]').parent().parent().css('background-color', bgColor);
       $('#advancedSelectOptions').show();
@@ -119,7 +119,7 @@
     });
 
     // UNSELECT ALL
-    $('#unselectAllBoxes').click(function() {
+    $('#unselectAllBoxes').on('click', function() {
       $('input:checkbox').prop('checked', false);
       $('input[type=checkbox]').parent().parent().css('background-color', '');
       // hide menu
@@ -128,7 +128,7 @@
     });
 
     // INVERT SELECTION
-    $('#invertSelection').click(function() {
+    $('#invertSelection').on('click', function() {
       $('input[type=checkbox]').each(function () {
         this.checked = !this.checked;
         if ($(this).prop('checked')) {
@@ -143,7 +143,7 @@
     $('#withSelected').hide();
     // no need to show the unselect/invert links if no one is selected
     $('#advancedSelectOptions').hide();
-    $('input[type=checkbox]').click(function() {
+    $('input[type=checkbox]').on('click', function() {
       $('#advancedSelectOptions').show();
       $('#withSelected').show();
     });

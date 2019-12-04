@@ -8,7 +8,7 @@ $(document).ready(function() {
   });
 
   // sql test button
-  $('#test_sql_button').click(function() {
+  $('#test_sql_button').on('click', function() {
     var mysql_host = $('#db_host').val();
     var mysql_name = $('#db_name').val();
     var mysql_user = $('#db_user').val();

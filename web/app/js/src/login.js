@@ -10,10 +10,9 @@
 (function() {
   'use strict';
 
-  $(document).ready(function(){
-    $('.toggle_container').hide();
-    $('a.trigger').click(function(){
-      $('.toggle_container').slideToggle('slow');
+  $(document).ready(function() {
+    $('a.trigger').on('click', function() {
+      $('.resetPasswordDiv').slideToggle('slow');
     });
   });
 }());

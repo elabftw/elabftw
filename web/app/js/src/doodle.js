@@ -18,14 +18,13 @@
     let isPainting;
     const context = document.getElementById('doodleCanvas').getContext('2d');
 
-    $('.canvasDiv').hide();
-    $(document).on('click', '.clearCanvas', function() {
+    $('#doodle-anchor').on('click', '.clearCanvas', function() {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
       clickX = [];
       clickY = [];
     });
 
-    $(document).on('click', '.saveCanvas', function() {
+    $('#doodle-anchor').on('click', '.saveCanvas', function() {
       const image = ($('#doodleCanvas')[0]).toDataURL();
       let type = $(this).data('type');
       const id = $(this).data('id');

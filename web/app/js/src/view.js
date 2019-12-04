@@ -118,7 +118,6 @@
     };
 
     // CREATE COMMENTS
-    $('#commentsCreateButtonDiv').hide();
     $(document).on('focus', '#commentsCreateArea', function() {
       $('#commentsCreateButtonDiv').show();
     });

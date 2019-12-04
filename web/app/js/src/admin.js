@@ -284,7 +284,7 @@
     });
 
     // COMMON TEMPLATE
-    $('#commonTplTemplate').closest('div').find('.button').click(function() {
+    $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
       var template = tinymce.get('commonTplTemplate').getContent();
       $.post('app/controllers/AjaxController.php', {
         commonTplUpdate: template

@@ -168,14 +168,11 @@
       }
     }
 
-
-
     // DESTROY ENTITY
     const EntityC = new Entity();
     $(document).on('click', '.entityDestroy', function() {
       EntityC.destroy();
     });
-
 
     // CAN READ/WRITE SELECT
     $(document).on('change', '.permissionSelect', function() {
@@ -317,10 +314,10 @@
     });
     // STAR RATING
     const StarC = new Star();
-    $('.rating-cancel').click(function() {
+    $('.rating-cancel').on('click', function() {
       StarC.update(0);
     });
-    $('.star').click(function() {
+    $('.star').on('click', function() {
       StarC.update($(this).data('rating').current[0].innerText);
     });
 

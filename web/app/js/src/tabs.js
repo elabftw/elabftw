@@ -21,7 +21,7 @@ $('.divhandle').hide();
 $(initdiv).show();
 $(inittab).addClass('selected');
 
-$('.tabhandle' ).click(function(event) {
+$('.tabhandle' ).on('click', function(event) {
   var tabhandle = '#' + event.target.id;
   var divhandle = '#' + event.target.id + 'div';
   $('.divhandle').hide();
@@ -40,7 +40,7 @@ $('.subdivhandle').hide();
 $(initdiv).show();
 $(inittab).addClass('selected');
 
-$('.subtabhandle' ).click(function(event) {
+$('.subtabhandle' ).on('click', function(event) {
   var tabhandle = '#' + event.target.id;
   var divhandle = '#' + event.target.id + 'div';
   $('.subdivhandle').hide();

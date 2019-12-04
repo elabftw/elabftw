@@ -55,7 +55,8 @@ try {
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');
     }
-    $Entity->updateOrdering($App->Users, $Request->request->all());
+    $OrderingParams = new OrderingParams($Request->request->get('table'), $Request->request->get('ordering'));
+    $Entity->updateOrdering($OrderingParams);
 } catch (ImproperActionException $e) {
     $Response->setData(array(
         'res' => false,

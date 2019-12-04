@@ -32,12 +32,13 @@ class RevisionsCleaner implements CleanerInterface
     /**
      * Do the purge
      *
-     * @return void
+     * @return int
      */
-    public function cleanup()
+    public function cleanup(): int
     {
         $this->removeRows('experiments');
         $this->removeRows('items');
+        return 0;
     }
 
     /**

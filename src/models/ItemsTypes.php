@@ -26,7 +26,7 @@ class ItemsTypes extends AbstractCategory
     use EntityTrait;
 
     /** @var Users $Users our user */
-    private $Users;
+    protected $Users;
 
     /**
      * Constructor

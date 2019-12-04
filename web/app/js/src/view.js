@@ -22,7 +22,7 @@
     });
 
     // TOGGLE LOCK
-    $(document).on('click', '#lock', function() {
+    $('#lock').on('click', function() {
       $.post('app/controllers/EntityAjaxController.php', {
         lock: true,
         type: type,
@@ -52,7 +52,7 @@
     });
 
     // DUPLICATE
-    $(document).on('click', '.duplicateItem', function() {
+    $('.duplicateItem').on('click', function() {
       $.post('app/controllers/EntityAjaxController.php', {
         duplicate: true,
         id: $(this).data('id'),
@@ -63,7 +63,7 @@
     });
 
     // SHARE
-    $(document).on('click', '.shareItem', function() {
+    $('.shareItem').on('click', function() {
       $.post('app/controllers/EntityAjaxController.php', {
         getShareLink: true,
         id: $(this).data('id'),

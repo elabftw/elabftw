@@ -17,16 +17,20 @@
     <form method='post' id='login' class='form-group' action='app/controllers/LoginController.php' autocomplete='off'>
       <h2>{{ 'Sign in to your account'|trans }}</h2>
       <br>
-      <div class='login-area'>
+      <div class='col-md-4 mx-auto text-left form-group'>
         <label for='email'>{{ 'Email'|trans }}</label>
-        <input class='login-area-input form-control mb-5' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
+        <input class='form-control mb-5' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
         <label for='password'>{{ 'Password'|trans }}</label>
-        <input class='login-area-input form-control' id='password' name='password' type='password' required /><br>
+        <input class='form-control' id='password' name='password' type='password' required /><br>
         <!-- form key -->
         {{ App.Csrf.getHiddenInput|raw }}
-        <input type='checkbox' checked name='rememberme' id='rememberme' />
-        <label for='rememberme'>{{ 'Remember me'|trans }}</label>
+        <!-- Remember me checkbox -->
+        <div class='form-check'>
+          <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />
+          <label for='rememberme' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+        </div>
       </div>
+      <!-- Login button -->
       <div id='loginButtonDiv'>
         <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
       </div>

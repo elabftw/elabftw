@@ -496,17 +496,18 @@ abstract class AbstractEntity
     }
 
     /**
-     * If int, get the name of the team group instead of a number
+     * Get a list of visibility/team groups to display
      *
+     * @param string $rw read or write
      * @return string
      */
-    public function getVisibility(): string
+    public function getCan(string $rw): string
     {
         $TeamGroups = new TeamGroups($this->Users);
-        if (Check::id((int) $this->entityData['canread']) !== false) {
-            return $TeamGroups->readName((int) $this->entityData['canread']);
+        if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
+            return $TeamGroups->readName((int) $this->entityData['can' . $rw]);
         }
-        return ucfirst($this->entityData['canread']);
+        return ucfirst($this->entityData['can' . $rw]);
     }
 
     /**

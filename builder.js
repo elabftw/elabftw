@@ -49,10 +49,9 @@ module.exports = {
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js'
     ],
-    tinymce: [
-      './web/app/js/src/tinymce.es.js'
-    ],
+    tinymce: './web/app/js/src/tinymce.es.js',
     moment: 'moment',
+    fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
   },
   plugins: [
     // only load the moment locales that we are interested in

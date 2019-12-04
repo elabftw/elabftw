@@ -57,6 +57,7 @@
                 <option value='comment' {{ App.Request.query.get('order') == 'comment' ? 'selected' }}>{{ 'Comment'|trans }}</option>
             {% endif %}
             <option value='title' {{ App.Request.query.get('order') == 'title' ? 'selected' }}>{{ 'Title'|trans }}</option>
+            <option value='user' {{ App.Request.query.get('order') == 'user' ? 'selected' }}>{{ 'User'|trans }}</option>
         </select>
 
         <!-- SORT -->

@@ -189,6 +189,8 @@ class ExperimentsController extends AbstractEntityController
             $this->Entity->order = 'experiments.' . $order;
         } elseif ($order === 'comment') {
             $this->Entity->order = 'experiments_comments.recent_comment';
+        } elseif ($order === 'user') {
+            $this->Entity->order = 'experiments.userid';
         }
 
         // SORT

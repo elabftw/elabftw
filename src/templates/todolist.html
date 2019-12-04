@@ -10,13 +10,13 @@
     {% for todoItem in App.todoItems %}
       <li id='todoItem_{{ todoItem.id }}'>
         <i class='fas fa-trash-alt clickable align_right destroyTodoItem' data-id='{{ todoItem.id }}'></i>
-        <span style='font-size:90%;display:block;'><i class='fas fa-sort sortableHandle'></i> {{ todoItem.creation_time }}</span>
+        <span style='font-size:90%;display:block;'><i class='fas fa-sort sortableHandle'></i> <span class='relative-moment' title='{{ todoItem.creation_time }}'></span></span>
         <span class='todoItem editable' data-id='{{ todoItem.id }}'>{{ todoItem.body }}</span>
       </li>
     {% endfor %}
   </ul>
   {% if App.todoItems %}
-    <a href="#" class='todoDestroyAll button alert-danger'>Clear All</a>
+  <a href="#" class='todoDestroyAll button alert-danger'>{{ 'Clear all'|trans }}</a>
   {% endif %}
   </div>
 </div>

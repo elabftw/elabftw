@@ -50,7 +50,9 @@
         }).done(function(json) {
           if (json.res) {
             // reload the todolist
-            $('#todoItems-list').load('? #todoItems-list');
+            $('#todoItems-list').load('? #todoItems-list>*', function() {
+              relativeMoment();
+            });
             // and clear the input
             $('#todo').val('');
           } else {

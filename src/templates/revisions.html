@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<!-- add moment lib for relative time -->
-<script src='app/js/moment.bundle.js?v={{ v }}'></script>
-<script src='app/js/relative-moment.min.js?v={{ v }}'></script>
 
 <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
     <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Go back'|trans }}

@@ -57,7 +57,6 @@ module.exports = function(grunt) {
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/edit.min.js': 'web/app/js/src/edit.js',
           'web/app/js/steps-links.min.js': 'web/app/js/src/steps-links.js',
-          'web/app/js/relative-moment.min.js': 'web/app/js/src/relative-moment.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
           'web/app/js/tags.min.js': 'web/app/js/src/tags.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',

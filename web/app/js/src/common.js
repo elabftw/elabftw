@@ -24,7 +24,7 @@ $(document).ready(function() {
   $('.togglableHidden').hide();
 
   // HELP MODAL
-  $(document).on('click', '.helpToggle', function() {
+  $('.helpToggle').on('click', function() {
     $('#helpModal').modal('toggle');
   });
 
@@ -50,6 +50,8 @@ $(document).ready(function() {
       });
     }
   });
+
+  relativeMoment();
 });
 
 // for editXP/DB, ctrl-shift-D will add the date
@@ -185,5 +187,13 @@ function displayMolFiles() { // eslint-disable-line no-unused-vars
       // load it
       viewer.loadMolecule(mol);
     });
+  });
+}
+
+// DISPLAY COMMENT TIME RELATIVE TO NOW
+function relativeMoment() {
+  moment.locale($('#info').data('locale'));
+  $.each($('.relative-moment'), function(i, el) {
+    el.textContent = moment(el.title, 'YYYY-MM-DD H:m:s').fromNow();
   });
 }

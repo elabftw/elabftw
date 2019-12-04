@@ -86,6 +86,7 @@ try {
         'idpsArr' => $idpsArr,
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal,
+        'hideTitle' => true,
     );
     $Response->setContent($App->render($template, $renderArr));
 } catch (ImproperActionException $e) {

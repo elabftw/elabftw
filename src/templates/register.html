@@ -1,116 +1,99 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<menu>
-    <a href='login.php'>
-        <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'go back to login page'|trans }}
-    </a>
-</menu>
+<a href='login.php'>
+  <i class='fas fa-chevron-circle-left link-like'></i> {{ 'go back to login page'|trans }}
+</a>
 
-<section>
-    <h2>{{ 'Create your account'|trans }}</h2>
-    <br><br>
+<!-- Modal for privacy policy -->
+<div class='modal fade' id='singleModal' tabindex='-1' role='dialog' aria-labelledby='policyModalLabel' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='policyModalLabel'>{{ 'Privacy policy'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {{ privacyPolicy|raw }}
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class='text-center'>
+    <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+    <h2 class='mb-2 mt-2'>{{ 'Create your account'|trans }}</h2>
     <!-- Register form -->
     {# min pass length minimum, no maximum #}
     {% set pattern = '.{' ~ App.getMinPasswordLength ~ ',}' %}
 
     <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
+      <input style='display:none' type='text' name='bot' value=''>
+      {{ App.Csrf.getHiddenInput|raw }}
 
-        <input style='display:none' type='text' name='bot' value=''>
-        {{ App.Csrf.getHiddenInput|raw }}
-
+      <div class='form-group mx-auto col-md-4'>
         <!-- TEAM -->
         <div class='row'>
-            <div class='col-md-4'>
-            </div>
-            <div class='form-group col-md-4'>
-                <label for='team'>{{ 'Team'|trans }}</label>
-                <select name='team' class='form-control' id='team' required>
-                    <option selected disabled>{{ 'Select a team'|trans }}</option>
-                    {% for team in teamsArr %}
-                        <option value='{{ team.id }}'>{{ team.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class='col-md-4'>
-            </div>
+          <label for='team'>{{ 'Team'|trans }}</label>
+          <select name='team' class='form-control' id='team' required>
+            <option selected disabled>{{ 'Select a team'|trans }}</option>
+            {% for team in teamsArr %}
+              <option value='{{ team.id }}'>{{ team.name }}</option>
+            {% endfor %}
+          </select>
         </div>
 
         <!-- EMAIL -->
         <div class='row'>
-          <div class='col-md-4'></div>
-          <div class='form-group col-md-4'>
-            <label for='email'>{{ 'Email'|trans }}</label>
-            <input name='email' class='form-control' type='email' id='email' required />
-            {% if App.Config.configArr.email_domain %}
-              <p class='smallgray'>
-                {{ 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain) }}
-              </p>
-            {% endif %}
-          </div>
-          <div class='col-md-4'></div>
+          <label for='email'>{{ 'Email'|trans }}</label>
+          <input name='email' class='form-control' type='email' id='email' required />
+          {% if App.Config.configArr.email_domain %}
+            <p class='smallgray'>
+              {{ 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain) }}
+            </p>
+          {% endif %}
         </div>
 
         <!-- PASSWORD -->
         <div class='row'>
-            <div class='col-md-4'>
-            </div>
-            <div class='form-group col-md-4'>
-                <label for='password'>{{ 'Password'|trans }}</label>
-                <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' required />
-            </div>
-            <div class='col-md-4'>
-            </div>
+          <label for='password'>{{ 'Password'|trans }}</label>
+          <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' required />
         </div>
 
         <!-- FIRSTNAME -->
         <div class='row'>
-            <div class='col-md-4'>
-            </div>
-            <div class='form-group col-md-4'>
-                <label for='firstname'>{{ 'Firstname'|trans }}</label>
-                <input name='firstname' class='form-control' type='text' id='firstname' required />
-            </div>
-            <div class='col-md-4'>
-            </div>
+          <label for='firstname'>{{ 'Firstname'|trans }}</label>
+          <input name='firstname' class='form-control' type='text' id='firstname' required />
         </div>
 
         <!-- LASTNAME -->
         <div class='row'>
-            <div class='col-md-4'>
-            </div>
-            <div class='form-group col-md-4'>
-                <label for='lastname'>{{ 'Lastname'|trans }}</label>
-                <input name='lastname' class='form-control' type='text' id='lastname' required />
-            </div>
-            <div class='col-md-4'>
-            </div>
+          <label for='lastname'>{{ 'Lastname'|trans }}</label>
+          <input name='lastname' class='form-control' type='text' id='lastname' required />
         </div>
 
         <!-- PRIVACY POLICY -->
         {% if App.Config.configArr.privacy_policy %}
         <div class='row'>
-            <div class='col-md-4'>
-            </div>
-            <div class='form-group form-check col-md-4 text-center'>
-                <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
-                <label class='form-check-label' for='privacy-policy'>
-                    {{ 'I agree with the %sPrivacy Policy%s'|format("<span class='privacyPolicyLink clickable link-like'>", "</span>")|trans|raw }}
-                </label>
-            </div>
-            <div style='display:none' class='box' id='privacyPolicy'>
-                {{ privacyPolicy|raw }}
-            </div>
-
-            <div class='col-md-4'>
-            </div>
+          <div class='form-group form-check'>
+            <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
+            <label class='form-check-label' for='privacy-policy'>
+                {{ 'I agree with the %sPrivacy Policy%s'|format("<span class='modalToggle clickable link-like'>", "</span>")|trans|raw }}
+            </label>
+          </div>
         </div>
         {% endif %}
 
         <!-- SUBMIT -->
         <div class='submitButtonDiv'>
-            <button type='submit' name='Submit' class='button'>{{ 'create'|trans }}</button>
+          <button type='submit' name='Submit' class='button'>{{ 'create'|trans }}</button>
         </div>
+      </div>
     </form>
 
 <!-- end register form -->

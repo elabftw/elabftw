@@ -143,7 +143,7 @@
   </div>
 </div>
 <!-- TITLE -->
-<h2>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
+<h2 {% if hideTitle %}style='display:none'{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
 
 <!-- INFO BOX (FLASH MESSAGES) -->
 {% for ok in App.ok %}

@@ -27,6 +27,10 @@ $(document).ready(function() {
   $('.helpToggle').on('click', function() {
     $('#helpModal').modal('toggle');
   });
+  // Toggle single modal on page
+  $('.modalToggle').on('click', function() {
+    $('#singleModal').modal('toggle');
+  });
 
   // SORTABLE ELEMENTS
   // need an axis and a table via data attribute

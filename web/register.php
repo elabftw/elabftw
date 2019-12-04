@@ -48,6 +48,7 @@ try {
     $renderArr = array(
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
         'teamsArr' => $teamsArr,
+        'hideTitle' => true,
     );
 } catch (ImproperActionException $e) {
     $template = 'error.html';

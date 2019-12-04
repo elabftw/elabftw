@@ -91,6 +91,10 @@ a:hover,
     text-decoration: none;
 }
 
+.underlined {
+    text-decoration: underline !important;
+}
+
 /* LISTS */
 .list-group-item {
     margin-bottom: 3px;
@@ -454,10 +458,10 @@ section.item {
     font-size: 110%;
 }
 
-#loginButtonDiv {
-    border-bottom: 1px solid #e3e3e3;
+.separator {
+    border-bottom: 1px solid $bordersgray;
     padding-bottom: 30px;
-    margin: 30px 0 20px 0;
+    margin: 20px 0 20px 0;
 }
 
 /* beta ribbon */
@@ -881,10 +885,6 @@ svg.fa-trash-alt:hover {
 /* font awesome icons color */
 .svg-inline--fa {
     color: $maingray;
-}
-
-.pseudo-link:hover {
-    color: $elabblue !important;
 }
 
 /* caption for tinymce */

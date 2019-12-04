@@ -9,21 +9,44 @@
         number_of_tries_left)|msg('ko') }}
 {% endif %}
 
-<menu style='color:#29AEB9'>{{ 'Note: You need cookies enabled to log in.'|trans }}</menu>
+<!-- Modal for reset password -->
+<div class='modal fade' id='singleModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel' aria-hidden='true'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='resetModalLabel'>{{ 'Reset your password'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+        <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+          <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+          <button class='button' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+        </form>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class='text-center'>
   {% if showLocal %}
+    <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
     <!-- Login form , the id is for an acceptance test -->
     <form method='post' id='login' class='form-group' action='app/controllers/LoginController.php' autocomplete='off'>
-      <h2>{{ 'Sign in to your account'|trans }}</h2>
+      <!-- form key -->
+      {{ App.Csrf.getHiddenInput|raw }}
+      <h2 class='mt-4'>{{ 'Login to your account'|trans }}</h2>
       <br>
       <div class='col-md-4 mx-auto text-left form-group'>
         <label for='email'>{{ 'Email'|trans }}</label>
         <input class='form-control mb-4' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
         <label for='password'>{{ 'Password'|trans }}</label>
+        <a href='#' class='align_right underlined resetPassword modalToggle'>{{ 'Forgot password?'|trans }}</a>
         <input class='form-control' id='password' name='password' type='password' required />
-        <!-- form key -->
-        {{ App.Csrf.getHiddenInput|raw }}
         <!-- Remember me checkbox -->
         <div class='form-check mt-2'>
           <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />
@@ -31,71 +54,56 @@
         </div>
       </div>
       <!-- Login button -->
-      <div id='loginButtonDiv'>
-        <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
-      </div>
+      <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
     </form>
-    <p>{{ "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"|trans|format(
+    <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
       "<a href='register.php'>",
-      "</a>",
-      "<a href='#' class='trigger'>",
       "</a>")|raw }}</p>
 
-    <div class='resetPasswordDiv togglableHidden'>
-      <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
-        <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
-        <button class='button' type="submit" name="Submit">{{ 'Send new password'|trans }}</button>
-      </form>
-    </div>
   {% endif %}
 
   {% if App.Config.configArr.saml_toggle %}
+    <div class='separator col-md-4 mx-auto'></div>
     <h2>{{ 'Login through your institution'|trans }}</h2>
     <br>
     <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
-    <div class='row'>
-        <div class='col-md-4'>
-        </div>
-        <div class='form-group col-md-4'>
-            <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
-            <select name='saml_login' class='form-control' id='idp_login_select'>
-                {% for idp in idpsArr %}
-                {% if idp.active %}
-                    <option value='{{ idp.id }}'>{{ idp.name }}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-            <button class='button mt-2' type='submit' name='submit'>Go</button>
-        </div>
-        <div class='col-md-4'>
-        </div>
-    </div>
-        {{ App.Csrf.getHiddenInput|raw }}
+      {{ App.Csrf.getHiddenInput|raw }}
+      <div class='form-group col-md-4 mx-auto'>
+        <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
+        <select name='saml_login' class='form-control' id='idp_login_select'>
+          {% for idp in idpsArr %}
+            {% if idp.active %}
+              <option value='{{ idp.id }}'>{{ idp.name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <button class='button mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+      </div>
     </form>
   {% endif %}
 
   {% if App.Config.configArr.anon_users %}
+    <div class='separator col-md-4 mx-auto'></div>
     <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
     <br>
     <form method='post' class='form-group' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
-      <div class='row'>
-        <div class='col-md-4'>
+      {{ App.Csrf.getHiddenInput|raw }}
+      <div class='form-group mx-auto col-md-4'>
+        <label for='anon_login_select'></label>
+        <div class='input-group mb-2'>
+          <div class='input-group-prepend'>
+            <div class='input-group-text'>{{ 'Select a team'|trans }}</div>
+          </div>
+          <select name='team_id' class='form-control' id='anon_login_select'>
+            {% for team in teamsArr %}
+              <option value='{{ team.id }}'>{{ team.name }}</option>
+            {% endfor %}
+          </select>
         </div>
-        <div class='form-group col-md-4'>
-            {{ App.Csrf.getHiddenInput|raw }}
-            <label for='anon_login_select'>{{ 'Select a team'|trans }}</label>
-            <select name='team_id' class='form-control' id='anon_login_select'>
-                {% for team in teamsArr %}
-                    <option value='{{ team.id }}'>{{ team.name }}</option>
-                {% endfor %}
-            </select>
-            <button class='button mt-2' type='submit' name='submit'>Go</button>
-        </div>
-        <div class='col-md-4'>
-        </div>
+        <button class='button mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
       </div>
     </form>
   {% endif %}
 </section>
-<script src='app/js/login.min.js?v={{ v }}'></script>
+<script src='app/js/src/login.js?v={{ v }}'></script>
 {% endblock body %}

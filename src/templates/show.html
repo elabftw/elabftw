@@ -215,7 +215,7 @@
           <p style='padding-left:20px; margin-bottom: 5px'>
               <input type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' style='width:15px;vertical-align:-3px;' />
           {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-          <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable pseudo-link'></i></a>
+          <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
           {% endif %}
           <span style='text-transform:uppercase;font-size:80%;color:#{{ item.color }}'>{{ item.category }}</span>
           <span class='date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
@@ -241,7 +241,7 @@
           {% if tagsArr|length > 0 %}
           <span class='tags'><i class='fas fa-tags mr-1'></i>
               {% for tag in tagsArr %}
-              <a class='tag pseudo-link' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+              <a class='tag link-like' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
               {% endfor %}
           {% endif %}
 

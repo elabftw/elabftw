@@ -34,8 +34,6 @@ module.exports = function(grunt) {
 
           'web/app/js/team.min.js': 'web/app/js/src/team.js',
 
-          'web/app/js/register.min.js': 'web/app/js/src/register.js',
-
           'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 
@@ -49,7 +47,6 @@ module.exports = function(grunt) {
           'web/app/js/tabs.min.js': 'web/app/js/src/tabs.js',
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
           'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
-          'web/app/js/login.min.js': 'web/app/js/src/login.js',
           'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/edit.min.js': 'web/app/js/src/edit.js',

@@ -24,6 +24,9 @@ abstract class AbstractCategory implements CrudInterface
     /** @var Db $Db SQL Database */
     protected $Db;
 
+    /** @var Users $Users Users instance */
+    protected $Users;
+
     /**
      * Get the color of an item type
      *

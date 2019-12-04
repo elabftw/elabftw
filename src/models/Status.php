@@ -22,9 +22,6 @@ use PDO;
  */
 class Status extends AbstractCategory
 {
-    /** @var Users $Users our user */
-    public $Users;
-
     /**
      * Constructor
      *

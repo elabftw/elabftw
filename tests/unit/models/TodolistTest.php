@@ -2,8 +2,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Services\Check;
 use Elabftw\Elabftw\OrderingParams;
+use Elabftw\Services\Check;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {

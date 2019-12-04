@@ -39,8 +39,7 @@ module.exports = function(grunt) {
           'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 
-          'web/app/js/dropzone.min.js': [
-              'node_modules/dropzone/dist/dropzone.js'],
+          'web/app/js/dropzone.min.js': 'node_modules/dropzone/dist/dropzone.js',
 
           'web/app/js/file-saver.min.js': 'node_modules/file-saver/src/FileSaver.js',
           'web/app/js/admin.min.js': 'web/app/js/src/admin.js',

@@ -278,6 +278,13 @@ menu ul li.selected {
     border-color: #e6614c;
 }
 
+.hover-danger:hover {
+    color: $darkred;
+    background-color: $lightred;
+    border-color: $darkred;
+    transition-duration: 500ms;
+}
+
 .alert-danger a.close {
     color: #e6614c;
 }

@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 
 {% block body %}
+{# tinymce or markdown? #}
+{% set editor = 'tiny' %}
+{% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
+  {% set editor = 'md' %}
+{% endif %}
+{% if App.Request.query.get('editor') == 'tiny' %}
+  {% set editor = 'tiny' %}
+{% endif %}
+
 
 {% include('view-edit.html') %}
 <!-- WYSIWYG editor -->
@@ -8,8 +17,64 @@
 <!-- upload files library -->
 <script src='app/js/dropzone.min.js?v={{ v }}'></script>
 
+<!-- Modal for edit permissions -->
+<div class='modal fade' id='singleModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='permModalLabel'>{{ 'Edit permissions'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <!-- CAN READ -->
+        <div class='form-group'>
+        <i class='fas fa-eye' title='Visibility'></i>
+        <label for='canread_select'>{{ 'Visibility'|trans }}</label>
+        <select id='canread_select' class='permissionSelect form-control' data-rw='read'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ Entity.entityData.canread == key ? ' selected' }}
+            >{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+        <!-- CAN WRITE -->
+        <i class='fas fa-pencil-alt' title='Can write'></i>
+        <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
+        <select id='canwrite_select' class='permissionSelect form-control' data-rw='write'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ Entity.entityData.canwrite == key ? ' selected' }}
+            >{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
-    <i class='fas fa-trash-alt fa-2x fa-pull-right clickable entityDestroy' title='Delete' /></i>
+  <div class='dropdown'>
+    <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
+    <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+      <!-- MANAGE PERMISSIONS -->
+      <a class='dropdown-item modalToggle' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+      <!-- SWITCH EDITOR -->
+      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt'></i> {{ 'Switch editor' }}</a>
+      <!-- REVISIONS -->
+      {% if revNum > 0 %}
+        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+      {% endif %}
+
+      <div class='dropdown-divider'></div>
+      <a class='dropdown-item entityDestroy hover-danger' href='#'><i class='fas fa-trash-alt' title='{{ 'Delete'|trans }}' /></i> {{ 'Delete'|trans }}</a>
+    </div>
+  </div>
 
     <!-- TAGS -->
     <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
@@ -47,31 +112,6 @@
                     <input name='date' id='datepicker' size='8' type='text' value='{{ Entity.entityData.date }}' />
                 </div>
 
-                <!-- CAN READ -->
-                <div class='col-md-3'>
-                    <i class='fas fa-eye' title='Visibility'></i>
-                    <label for='canread_select'>{{ 'Visibility'|trans }}</label>
-                    <select id='canread_select' class='permissionSelect' data-rw='read'>
-                        {% for key, value in visibilityArr %}
-                            <option value='{{ key }}'
-                            {{ Entity.entityData.canread == key ? ' selected' }}
-                            >{{ value|trans }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <!-- CAN WRITE -->
-                <div class='col-md-3'>
-                    <i class='fas fa-pencil-alt' title='Can write'></i>
-                    <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
-                    <select id='canwrite_select' class='permissionSelect' data-rw='write'>
-                        {% for key, value in visibilityArr %}
-                            <option value='{{ key }}'
-                            {{ Entity.entityData.canwrite == key ? ' selected' }}
-                            >{{ value|trans }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
                 <!-- CATEGORIES (status for exp and itemstypes for items) -->
                 <div class='col-md-3'>
                     <i class='fas fa-clipboard-check'></i>
@@ -104,16 +144,6 @@
             <input id='title_input' type='text' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
 
             <!-- BODY -->
-            {# tinymce or markdown? #}
-            {% set editor = 'tiny' %}
-            {% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
-              {% set editor = 'md' %}
-            {% endif %}
-            {% if App.Request.query.get('editor') == 'tiny' %}
-              {% set editor = 'tiny' %}
-            {% endif %}
-
-            <p class='align_right inline switchEditor' id='iHazEditor' data-editor='{{ editor }}'><a href='#'>{{ 'Switch editor' }}</a></p>
             {% if Entity.type == 'experiments' %}
             <h4>{% trans %}Experiment{% plural 1 %}Experiments{% endtrans %}</h4>
             {% else %}
@@ -131,14 +161,6 @@
                 <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>
             </div>
         </form>
-
-    <!-- REVISIONS -->
-    {% if revNum > 0 %}
-        <span class='align_right'><i class='fas fa-history mr-1'></i>
-            <a href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'>{{ revNum }}
-                {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
-        </span>
-    {% endif %}
 
     {% include('steps-links-edit.html') %}
 </section>

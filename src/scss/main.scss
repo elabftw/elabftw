@@ -5,16 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/prismjs/themes/prism';
-@import '../../node_modules/dropzone/dist/dropzone';
-@import '../../node_modules/fullcalendar/dist/fullcalendar';
-@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
-@import '../../node_modules/jquery-ui-dist/jquery-ui';
-@import 'tagcloud';
-@import 'jquery-rating';
-@import 'autocomplete';
-
 $darkgray: #343434;
 $maingray: #797979;
 $lightgray: #f2f2f2;
@@ -25,6 +15,18 @@ $lightblue: #C4F9FF;
 $darkred: #dd1e00;
 $lightred: #ffc1b7;
 $green: #54aa08;
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/prismjs/themes/prism';
+@import '../../node_modules/dropzone/dist/dropzone';
+@import '../../node_modules/fullcalendar/dist/fullcalendar';
+@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
+@import '../../node_modules/jquery-ui-dist/jquery-ui';
+@import 'autocomplete';
+@import 'jquery-rating';
+@import 'footer';
+@import 'tagcloud';
+@import 'todolist';
 
 /* Font is Lato */
 @font-face {
@@ -782,15 +784,14 @@ form#filter-order-sort select {
     word-wrap: break-word;
     word-break: break-all;
     hyphens: auto;
-}
 
-.title a {
-    color: #888;
-}
-
-.title a:hover {
-    color: $elabblue !important;
-    transition-duration: 500ms;
+    a {
+        color: $maingray;
+        &:hover {
+            color: $elabblue !important;
+            transition-duration: 500ms;
+        }
+    }
 }
 
 .title_view {
@@ -853,55 +854,15 @@ form#filter-order-sort select {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
     line-height: 300%;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid $maingray;
     color: $maingray;
-    padding: 0 5px;
+    padding: 2px 5px;
+
 }
 
-a.tag:hover {
-    color: $elabblue !important;
-}
-
-a.tag-delete:hover {
+.tag-delete:hover {
     transition: color 0.8s ease;
     color: $darkred !important;
-}
-
-.tags a:hover {
-    color: #5d5d5d;
-}
-
-/* FOOTER */
-footer {
-    border-top: solid 1px $bordersgray;
-    font-size: 11px;
-    margin: 60px 0 5px 0;
-    padding: 10px 0 0 0;
-
-    a {
-        color: $maingray;
-        font-size: 11px;
-        &:hover {
-            color: $elabblue;
-        }
-    }
-
-    .footer-left {
-        text-transform: uppercase;
-        text-align: left;
-        float: left;
-        a {
-            border-right: 1px #ccc solid;
-            padding: 0 5px;
-        }
-    }
-
-    .footer-right {
-        text-align: right;
-        float: right;
-        margin: 0 0 20px 0;
-    }
-
 }
 
 /* print only the main div */
@@ -943,52 +904,6 @@ footer {
     width: 100%;
     position: relative;
 }
-
-/* TODOLIST */
-#todoList {
-    text-align: center;
-    overflow: hidden;
-    background: $darkgray;
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 30%;
-    height: 100%;
-    min-width: 300px;
-    padding: 20px;
-    overflow-y: scroll;
-    z-index: 9001;
-
-    li {
-        list-style-type: none;
-        font-size: 18px;
-        background-color: #efefef;
-        margin-bottom: 5px;
-        padding: 10px;
-        text-align: left;
-    }
-
-    #todo {
-        margin-bottom: 10px;
-    }
-}
-
-/* fix the padding for sortable list */
-#todoItems-list.ui-sortable {
-    padding-left: 0;
-}
-
-/* fix add button too close to first item on small screen */
-#todoItems-list li:first-child {
-    margin-top: 5px;
-}
-
-.destroyTodoItem:hover {
-    color: #e6614c;
-}
-
-/* END TODOLIST */
 
 /* fix dropzone css */
 .dropzone {
@@ -1038,7 +953,7 @@ svg.fa-trash-alt:hover {
 }
 
 .pseudo-link:hover {
-    color: $elabblue;
+    color: $elabblue !important;
 }
 
 /* caption for tinymce */

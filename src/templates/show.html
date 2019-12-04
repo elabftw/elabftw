@@ -241,7 +241,7 @@
           {% if tagsArr|length > 0 %}
           <span class='tags'><i class='fas fa-tags mr-1'></i>
               {% for tag in tagsArr %}
-              <a class='tag' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+              <a class='tag pseudo-link' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
               {% endfor %}
           {% endif %}
 

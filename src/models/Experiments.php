@@ -111,7 +111,6 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
         while ($data = $req->fetch()) {
             $this->setId((int) $data['item_id']);
-            $this->canOrExplode('read');
             $itemsArr[] = $this->read();
         }
 

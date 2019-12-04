@@ -1,22 +1,22 @@
 {% if Entity.Users.userData.chem_editor %}
-<link rel='stylesheet' href='app/css/chemdoodle.css?v={{ v }}' type='text/css'>
-    <script src='app/js/chemdoodle.min.js?v={{ v }}'></script>
+  <link rel='stylesheet' href='app/css/chemdoodle.css?v={{ v }}' type='text/css'>
+  <script src='app/js/chemdoodle.min.js?v={{ v }}'></script>
 {% endif %}
 
 {% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
-    <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
-    <script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
+  <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
+  <script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 {% endif %}
 
 <!-- BACK TO LINK -->
 <a href='?mode=show'>
-    <i style='color:#29AEB9' class='fas fa-chevron-circle-left mr-1'></i>{{ 'Back to listing'|trans }}
+  <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'Back to listing'|trans }}
 </a>
 
 <!-- show message if we are not owner -->
 {% if Entity.entityData.userid != Entity.Users.userData.userid and Entity.type == 'experiments' %}
-    {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
+  {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
 {% endif %}
 {% if Entity.entityData.team != Entity.Users.userData.team and Entity.type == 'items' %}
-    {{ 'From team %s'|trans|format(Entity.entityData.team_name)|msg('ok', false) }}
+  {{ 'From team %s'|trans|format(Entity.entityData.team_name)|msg('ok', false) }}
 {% endif %}

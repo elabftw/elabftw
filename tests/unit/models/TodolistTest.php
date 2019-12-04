@@ -3,6 +3,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Services\Check;
+use Elabftw\Elabftw\OrderingParams;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,11 +34,9 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $body = 'write more tests';
         $this->Todolist->create($body);
         $this->Todolist->create($body);
-        $post = array(
-            'ordering' => array('todoItem_3', 'todoItem_2', 'todoItem_4'),
-            'table' => 'todolist',
-        );
-        $this->Todolist->updateOrdering($this->Users, $post);
+        $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4');
+        $OrderingParams = new OrderingParams('todolist', $ordering);
+        $this->Todolist->updateOrdering($OrderingParams);
     }
 
     public function testDestroy()

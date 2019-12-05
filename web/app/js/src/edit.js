@@ -406,7 +406,7 @@
         }
       ],
       // this will GET templates from current user
-      templates: 'app/controllers/GetUserTemplates.php'
+      templates: 'app/controllers/AjaxController.php?getUserTpl'
     });
   });
 }());

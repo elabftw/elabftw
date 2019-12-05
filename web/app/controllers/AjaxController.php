@@ -71,6 +71,19 @@ try {
         $uploads = $Entity->Uploads->readAll();
         $Response->setData($uploads);
     }
+
+    // GET USER TEMPLATES
+    if ($Request->query->has('getUserTpl')) {
+        $Templates = new Templates($App->Users);
+        $userTemplates = $Templates->readAll();
+        $res = array();
+
+        foreach ($userTemplates as $template) {
+            $res[] = array('title' => $template['name'], 'description' => '', 'content' => $template['body']);
+        }
+
+        $Response->setData($res);
+    }
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     $Response->setData(array(
         'res' => false,

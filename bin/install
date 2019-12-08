@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ * This is separate from bin/console as config.php cannot be required here (as it doesn't exist yet)
+ */
+namespace Elabftw\Commands;
+
+use Symfony\Component\Console\Application;
+
+require \dirname(__DIR__) . '/vendor/autoload.php';
+
+$Application = new Application();
+
+$Application->add(new Install());
+
+$Application->run();

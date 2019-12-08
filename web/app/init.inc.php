@@ -33,14 +33,10 @@ $Request->setSession($Session);
 
 try {
     // CONFIG.PHP
+    // Make sure config.php is readable
     $configFilePath = \dirname(__DIR__, 2) . '/config.php';
-    // redirect to install page if the config file is not here
     if (!is_readable($configFilePath)) {
-        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
-        // not pretty but gets the job done
-        $url = str_replace('app/', '', $url);
-        header('Location: ' . $url);
-        throw new ImproperActionException('Redirecting to install folder');
+        throw new ImproperActionException('The config file is missing! Did you run the installer?');
     }
     require_once $configFilePath;
     // END CONFIG.PHP
@@ -48,13 +44,10 @@ try {
     // INIT APP OBJECT
     // new Config will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
-    // so we redirect to the install folder
     try {
         $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
     } catch (PDOException $e) {
-        $url = Tools::getUrlFromRequest($Request) . '/install/index.php';
-        header('Location: ' . $url);
-        throw new ImproperActionException('Redirecting to install folder');
+        throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //

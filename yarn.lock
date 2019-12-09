@@ -4260,9 +4260,9 @@ jmespath@^0.15.0:
   integrity sha1-o/Iiqarp+Wb10nx5ZRDigJF2Qhc=
 
 jquery-jeditable@2.0.*:
-  version "2.0.13"
-  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.13.tgz#d85829aaea200c186dbc4775736b634f4cd218bb"
-  integrity sha512-rwHFJ7vrveoF4nxG9dpb6PizVmKUxnCbLHt8pSeEJENhf9gsdfyScVErgQplBjX4pEqt/pR+rSMK/b5IvuTEGA==
+  version "2.0.14"
+  resolved "https://registry.yarnpkg.com/jquery-jeditable/-/jquery-jeditable-2.0.14.tgz#4684f203aa3955f3a901664b51fa52d32415225f"
+  integrity sha512-YEug24bR1Jqh8d+ja3jNfWLbmX7SZq563A8cHAhykqFOpQZia2KLpM8dWqtzZ3+jlG6EvTLZ7qmJp0Bzt+r1Kw==
   dependencies:
     jquery ">=3.4.0"
 

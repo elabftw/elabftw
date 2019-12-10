@@ -211,7 +211,7 @@ class ExperimentsController extends AbstractEntityController
         }
 
         // PAGINATION
-        $limit = (int) $this->Entity->Users->userData['limit_nb'] ?? 15;
+        $limit = (int) ($this->Entity->Users->userData['limit_nb'] ?? 15);
         if ($this->App->Request->query->has('limit')) {
             $limit = Check::limit((int) $this->App->Request->query->get('limit'));
         }

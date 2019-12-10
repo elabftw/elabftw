@@ -11,11 +11,10 @@ namespace Elabftw\Commands;
 
 use Defuse\Crypto\Key;
 use Elabftw\Services\DatabaseInstaller;
-use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -50,12 +49,12 @@ class Install extends Command
 
         $output->writeln(array(
             '',
-            "      _          _     _____ _______        __",
+            '      _          _     _____ _______        __',
             "  ___| |    __ _| |__ |  ___|_   _\ \      / /",
             " / _ \ |   / _| | '_ \| |_    | |  \ \ /\ / / ",
             "|  __/ |__| (_| | |_) |  _|   | |   \ V  V /  ",
             " \___|_____\__,_|_.__/|_|     |_|    \_/\_/   ",
-            "                                              ",
+            '                                              ',
             '',
         ));
 

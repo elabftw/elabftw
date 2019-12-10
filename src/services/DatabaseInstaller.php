@@ -9,18 +9,9 @@
 
 namespace Elabftw\Services;
 
-use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Exceptions\FilesystemErrorException;
-use Elabftw\Exceptions\ImproperActionException;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Make sure the database is consistent with no leftover things

@@ -89,8 +89,8 @@ class Database extends AbstractEntity implements CreateInterface
     {
         $this->canOrExplode('read');
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category)
-            VALUES(:team, :title, :date, :body, :userid, :category)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, category)
+            VALUES(:team, :title, :date, :body, :userid, :canread, :canwrite, :category)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -98,6 +98,8 @@ class Database extends AbstractEntity implements CreateInterface
             'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userData['userid'],
+            'canread' => $this->entityData['canread'],
+            'canwrite' => $this->entityData['canwrite'],
             'category' => $this->entityData['category_id'],
         ));
         $newId = $this->Db->lastInsertId();

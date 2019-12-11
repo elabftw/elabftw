@@ -7,7 +7,7 @@ START TRANSACTION;
     ALTER TABLE `items` ADD `canwrite` VARCHAR(255) NOT NULL DEFAULT 'team';
     ALTER TABLE `items` CHANGE `visibility` `canread` VARCHAR(255) NOT NULL DEFAULT 'team';
     ALTER TABLE `users` CHANGE `default_vis` `default_read` VARCHAR(255) NULL DEFAULT 'team';
-    ALTER TABLE `users` ADD `default_write` VARCHAR(255) NULL DEFAULT 'team';
+    ALTER TABLE `users` ADD `default_write` VARCHAR(255) NULL DEFAULT 'user';
     ALTER TABLE `users` DROP `allow_edit`;
     ALTER TABLE `users` DROP `allow_group_edit`;
     ALTER TABLE `team_events` ADD `experiment` int(10) UNSIGNED DEFAULT NULL;

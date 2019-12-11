@@ -11,7 +11,7 @@
   'use strict';
 
   $(document).ready(function() {
-    displayMolFiles(); // eslint-disable-line no-undef
+    //displayMolFiles(); // eslint-disable-line no-undef
 
     // REPLACE UPLOAD toggle form
     $(document).on('click', '.replaceUpload', function() {
@@ -65,7 +65,7 @@
         notif(json);
         if (json.res) {
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
-            displayMolFiles(); // eslint-disable-line no-undef
+            //displayMolFiles(); // eslint-disable-line no-undef
           });
         }
       });
@@ -84,7 +84,7 @@
           notif(json);
           if (json.res) {
             $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv', function() {
-              displayMolFiles(); // eslint-disable-line no-undef
+              //displayMolFiles(); // eslint-disable-line no-undef
             });
           }
         });

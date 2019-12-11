@@ -1,47 +1,44 @@
-/**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
- * @copyright 2012 Nicolas CARPi
- * @see https://www.elabftw.net Official website
- * @license AGPL-3.0
- * @package elabftw
- */
-(function() {
-  'use strict';
+declare var tinymce: any;
+declare var Dropzone: any;
+declare var key: any;
+import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 
-  // UPLOAD FORM
-  // config for dropzone, id is camelCased.
-  Dropzone.options.elabftwDropzone = {
-    // i18n message to user
-    dictDefaultMessage: $('#info').data('upmsg'),
-    maxFilesize: $('#info').data('maxsize'), // MB
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    },
-    init: function() {
+// UPLOAD FORM
+// config for dropzone, id is camelCased.
+Dropzone.options.elabftwDropzone = {
+  // i18n message to user
+  dictDefaultMessage: $('#info').data('upmsg'),
+  maxFilesize: $('#info').data('maxsize'), // MB
+  headers: {
+    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+  },
+  init: function() {
 
-      // add additionnal parameters (id and type)
-      this.on('sending', function(file, xhr, formData) {
-        formData.append('upload', true);
-        formData.append('id', $('#info').data('id'));
-        formData.append('type', $('#info').data('type'));
-      });
+    // add additionnal parameters (id and type)
+    this.on('sending', function(file: string, xhr: string, formData: any) {
+      formData.append('upload', true);
+      formData.append('id', $('#info').data('id'));
+      formData.append('type', $('#info').data('type'));
+    });
 
-      // once it is done
-      this.on('complete', function(answer) {
-        // check the answer we get back from app/controllers/EntityController.php
-        const json = JSON.parse(answer.xhr.responseText);
-        notif(json);
-        // reload the #filesdiv once the file is uploaded
-        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
-            displayMolFiles(); // eslint-disable-line no-undef
-          });
-        }
-      });
-    }
-  };
-
-  $(document).ready(function() {
+    // once it is done
+    this.on('complete', function(answer: any) {
+      // check the answer we get back from app/controllers/EntityController.php
+      const json = JSON.parse(answer.xhr.responseText);
+      notif(json);
+      // reload the #filesdiv once the file is uploaded
+      if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+        $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
+          displayMolFiles();
+        });
+      }
+    });
+  }
+};
+let type = $('#info').data('type');
+let id = $('#info').data('id');
+// EDITOR
+$(document).ready(function() {
     // add the title in the page name (see #324)
     document.title = $('#title_input').val() + ' - eLabFTW';
 
@@ -55,7 +52,7 @@
 
     // KEYBOARD SHORTCUT
     key($('#shortcuts').data('submit'), function() {
-      document.forms.main_form.submit();
+      (<any>document.forms).main_form.submit();
     });
 
     ////////////////
@@ -77,8 +74,8 @@
         type : type,
         id : id,
         // we need this to get the updated content
-        title : document.getElementById('title_input').value,
-        date : document.getElementById('datepicker').value,
+        title : (<any>document.getElementById('title_input')).value,
+        date : (<any>document.getElementById('datepicker')).value,
         body : localStorage.getItem('body')
       }).done(function() {
         localStorage.clear();
@@ -97,13 +94,13 @@
 
     // GET MOL FILES
     function getListFromMolFiles() {
-      let mols = [];
+      let mols: any = [];
       $.get('app/controllers/AjaxController.php', {
         getFiles: true,
         type: type,
         id: id,
       }).done(function(uploadedFiles) {
-        uploadedFiles.forEach(function(upload) {
+        uploadedFiles.forEach(function(upload: any) {
           if (upload.real_name.split('.').pop() === 'mol') {
             mols.push([upload.real_name, upload.long_name]);
           }
@@ -113,7 +110,7 @@
           return;
         }
         let listHtml = '<ul class="text-left">';
-        mols.forEach(function(mol, index) {
+        mols.forEach(function(mol: any, index: any) {
           listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
         });
         $('.getMolButton').text('Refresh list');
@@ -153,12 +150,13 @@
     }
 
     class Star {
+      controller: string;
 
       constructor() {
         this.controller = 'database.php';
       }
 
-      update(rating) {
+      update(rating: any) {
         $.post(this.controller, {
           rating: rating,
           id: id
@@ -212,7 +210,7 @@
     });
 
     // AUTOSAVE
-    let typingTimer;                // timer identifier
+    let typingTimer: any;                // timer identifier
     const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
     // user finished typing, save work
@@ -241,7 +239,7 @@
 
     // DISPLAY MARKDOWN EDITOR
     if ($('#body_area').hasClass('markdown-textarea')) {
-      $('.markdown-textarea').markdown();
+      (<any>$('.markdown-textarea')).markdown();
     }
 
     // INSERT IMAGE AT CURSOR POSITION IN TEXT
@@ -252,7 +250,7 @@
       const editor = $('#iHazEditor').data('editor');
       if (editor === 'md') {
         const cursorPosition = $('#body_area').prop('selectionStart');
-        const content = $('#body_area').val();
+        const content = (<any>$('#body_area').val());
         const before = content.substring(0, cursorPosition);
         const after = content.substring(cursorPosition);
         const imgMdLink = '\n![image](' + url + ')\n';
@@ -288,7 +286,7 @@
     });
 
     // DATEPICKER
-    $('#datepicker').datepicker({dateFormat: 'yymmdd'});
+    (<any>$('#datepicker')).datepicker({dateFormat: 'yymmdd'});
     // If the title is 'Untitled', clear it on focus
     $('#title_input').focus(function(){
       if ($(this).val() === $('#info').data('untitled')) {
@@ -300,16 +298,16 @@
     $(document).on('click', '.annotateImg',  function() {
       $('.canvasDiv').show();
       $(document).scrollTop($('#doodle-anchor').offset().top);
-      var context = document.getElementById('doodleCanvas').getContext('2d');
+      var context: CanvasRenderingContext2D = (<any>document.getElementById('doodleCanvas')).getContext('2d');
       var img = new Image();
       // set src attribute to image path
       img.src = 'app/download.php?f=' + $(this).data('path');
       img.onload = function(){
         // make canvas bigger than image
-        context.canvas.width = this.width * 2;
-        context.canvas.height = this.height * 2;
+        context.canvas.width = (<HTMLImageElement>this).width * 2;
+        context.canvas.height = (<HTMLImageElement>this).height * 2;
         // add image to canvas
-        context.drawImage(img, this.width / 2, this.height / 2);
+        context.drawImage(img, (<HTMLImageElement>this).width / 2, (<HTMLImageElement>this).height / 2);
       };
     });
     // STAR RATING
@@ -321,92 +319,90 @@
       StarC.update($(this).data('rating').current[0].innerText);
     });
 
-    // EDITOR
-    tinymce.init({
-      mode: 'specific_textareas',
-      editor_selector: 'mceditable',
-      browser_spellcheck: true,
-      skin_url: 'app/css/tinymce',
-      plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
-      pagebreak_separator: '<pagebreak>',
-      toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
-      removed_menuitems: 'newdocument, image',
-      image_caption: true,
-      content_style: '.mce-content-body {font-size:10pt;}',
-      codesample_languages: [
-        {text: 'Bash', value: 'bash'},
-        {text: 'C', value: 'c'},
-        {text: 'C++', value: 'cpp'},
-        {text: 'CSS', value: 'css'},
-        {text: 'Fortran', value: 'fortran'},
-        {text: 'Go', value: 'go'},
-        {text: 'HTML/XML', value: 'markup'},
-        {text: 'Java', value: 'java'},
-        {text: 'JavaScript', value: 'javascript'},
-        {text: 'Julia', value: 'julia'},
-        {text: 'Latex', value: 'latex'},
-        {text: 'Makefile', value: 'makefile'},
-        {text: 'Matlab', value: 'matlab'},
-        {text: 'Perl', value: 'perl'},
-        {text: 'Python', value: 'python'},
-        {text: 'R', value: 'r'},
-        {text: 'Ruby', value: 'ruby'}
-      ],
-      language: $('#info').data('lang'),
-      mentions: {
-        // use # for autocompletion
-        delimiter: '#',
-        // get the source from json with get request
-        source: function (query, process) {
-          const url = 'app/controllers/EntityAjaxController.php';
-          $.getJSON(url, {
-            mention: 1,
-            term: query,
-          }).done(function(data) {
-            process(data);
-          });
-        }
-      },
-      mobile: {
-        theme: 'mobile',
-        plugins: [ 'save', 'lists', 'link' ],
-        toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ]
-      },
-      // save button :
-      save_onsavecallback: function() {
-        quickSave(type, id);
-      },
-      // keyboard shortcut to insert today's date at cursor in editor
-      setup: function(editor) {
-        editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
-        editor.on('keydown', function() {
-          clearTimeout(typingTimer);
+  tinymce.init({
+    mode: 'specific_textareas',
+    editor_selector: 'mceditable',
+    browser_spellcheck: true,
+    skin_url: 'app/css/tinymce',
+    plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
+    pagebreak_separator: '<pagebreak>',
+    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+    removed_menuitems: 'newdocument, image',
+    image_caption: true,
+    content_style: '.mce-content-body {font-size:10pt;}',
+    codesample_languages: [
+      {text: 'Bash', value: 'bash'},
+      {text: 'C', value: 'c'},
+      {text: 'C++', value: 'cpp'},
+      {text: 'CSS', value: 'css'},
+      {text: 'Fortran', value: 'fortran'},
+      {text: 'Go', value: 'go'},
+      {text: 'HTML/XML', value: 'markup'},
+      {text: 'Java', value: 'java'},
+      {text: 'JavaScript', value: 'javascript'},
+      {text: 'Julia', value: 'julia'},
+      {text: 'Latex', value: 'latex'},
+      {text: 'Makefile', value: 'makefile'},
+      {text: 'Matlab', value: 'matlab'},
+      {text: 'Perl', value: 'perl'},
+      {text: 'Python', value: 'python'},
+      {text: 'R', value: 'r'},
+      {text: 'Ruby', value: 'ruby'}
+    ],
+    language: $('#info').data('lang'),
+    mentions: {
+      // use # for autocompletion
+      delimiter: '#',
+      // get the source from json with get request
+      source: function (query: string, process: any) {
+        const url = 'app/controllers/EntityAjaxController.php';
+        $.getJSON(url, {
+          mention: 1,
+          term: query,
+        }).done(function(data) {
+          process(data);
         });
-        editor.on('keyup', function() {
-          clearTimeout(typingTimer);
-          typingTimer = setTimeout(doneTyping, doneTypingInterval);
-        });
-      },
-      style_formats_merge: true,
-      style_formats: [
-        {
-          title: 'Image Left',
-          selector: 'img',
-          styles: {
-            'float': 'left',
-            'margin': '0 10px 0 10px'
-          }
-        }, {
-          title: 'Image Right',
-          selector: 'img',
-          styles: {
-            'float': 'right',
-            'margin': '0 0 10px 10px'
-          }
+      }
+    },
+    mobile: {
+      theme: 'mobile',
+      plugins: [ 'save', 'lists', 'link' ],
+      toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ]
+    },
+    // save button :
+    save_onsavecallback: function() {
+      quickSave(type , id);
+    },
+    // keyboard shortcut to insert today's date at cursor in editor
+    setup: function(editor: any) {
+      editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+      editor.on('keydown', function() {
+        clearTimeout(typingTimer);
+      });
+      editor.on('keyup', function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+      });
+    },
+    style_formats_merge: true,
+    style_formats: [
+      {
+        title: 'Image Left',
+        selector: 'img',
+        styles: {
+          'float': 'left',
+          'margin': '0 10px 0 10px'
         }
-      ],
-      // this will GET templates from current user
-      templates: 'app/controllers/AjaxController.php?getUserTpl'
-    });
+      }, {
+        title: 'Image Right',
+        selector: 'img',
+        styles: {
+          'float': 'right',
+          'margin': '0 0 10px 10px'
+        }
+      }
+    ],
+    // this will GET templates from current user
+    templates: 'app/controllers/AjaxController.php?getUserTpl'
   });
-}());
+});

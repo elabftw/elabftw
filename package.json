@@ -31,6 +31,7 @@
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
+    "@types/jquery": "^3.3.31",
     "apidoc": "0.19.*",
     "babel-loader": "^8.0.6",
     "eslint": "^6.7.2",
@@ -42,9 +43,8 @@
     "grunt-shell": "3.0.*",
     "lodash": ">=4.17.13",
     "snyk": "1.*",
-    "stylelint": "^12.0.0",
-    "stylelint-config-recommended": "^3.0.0",
-    "stylelint-config-standard": "^19.0.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.3",
     "webpack": "^4.39.0",
     "webpack-cli": "3.3.*"
   },

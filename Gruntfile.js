@@ -15,18 +15,16 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'web/app/js/elabftw.min.js': [
-              'node_modules/jquery-jeditable/src/jquery.jeditable.js',
-              'web/app/js/vendor/keymaster.js',
-              'web/app/js/vendor/cornify.js',
-              'web/app/js/vendor/jquery.rating.js',
-              'web/app/js/vendor/3Dmol-nojquery.js',
-              'web/app/js/src/3Dmol-helpers.js',
-              'web/app/js/src/common.js'],
+          'web/app/js/vendor.min.js': [
+              'src/js/vendor/keymaster.js',
+              'src/js/vendor/cornify.js',
+              'src/js/vendor/jquery.rating.js',
+              'src/js/vendor/3Dmol-nojquery.js',
+          ],
 
           'web/app/js/chemdoodle.min.js': [
-              'web/app/js/vendor/chemdoodle/chemdoodle-unpacked.js',
-              'web/app/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],
+              'src/js/vendor/chemdoodle/chemdoodle-unpacked.js',
+              'src/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],
 
           'web/app/js/fullcalendar.min.js': [
               'node_modules/fullcalendar/dist/fullcalendar.js',
@@ -42,20 +40,16 @@ module.exports = function(grunt) {
           'web/app/js/file-saver.min.js': 'node_modules/file-saver/src/FileSaver.js',
           'web/app/js/admin.min.js': 'web/app/js/src/admin.js',
           'web/app/js/editusers.min.js': 'web/app/js/src/editusers.js',
-          'web/app/js/view.min.js': 'web/app/js/src/view.js',
           'web/app/js/install.min.js': 'web/app/js/src/install.js',
-          'web/app/js/tabs.min.js': 'web/app/js/src/tabs.js',
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
           'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
           'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
-          'web/app/js/edit.min.js': 'web/app/js/src/edit.js',
           'web/app/js/steps-links.min.js': 'web/app/js/src/steps-links.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
           'web/app/js/tags.min.js': 'web/app/js/src/tags.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',
           'web/app/js/profile.min.js': 'web/app/js/src/profile.js',
-          'web/app/js/uploads.min.js': 'web/app/js/src/uploads.js',
           'web/app/js/doodle.min.js': 'web/app/js/src/doodle.js',
           'web/app/js/bootstrap-markdown.min.js': [
               'node_modules/marked/lib/marked.js',

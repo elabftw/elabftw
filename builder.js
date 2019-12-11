@@ -17,6 +17,11 @@ const webpack = require('webpack');
 module.exports = {
   entry: {
     main: [
+      './src/ts/common.ts',
+      './src/ts/3Dmol.ts',
+      './src/ts/tabs.ts',
+    ],
+    vendor: [
       'jquery',
       'jquery-ui',
       'bootstrap/js/src/alert.js',
@@ -47,11 +52,17 @@ module.exports = {
       'prismjs/components/prism-perl.js',
       'prismjs/components/prism-python.js',
       'prismjs/components/prism-r.js',
-      'prismjs/components/prism-ruby.js'
+      'prismjs/components/prism-ruby.js',
     ],
     tinymce: './web/app/js/src/tinymce.es.js',
     moment: 'moment',
     fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
+    edit: './src/ts/edit.ts',
+    view: [
+      './src/ts/view.ts',
+      './src/ts/comments.ts',
+    ],
+    uploads: './src/ts/uploads.ts',
   },
   plugins: [
     // only load the moment locales that we are interested in
@@ -69,6 +80,13 @@ module.exports = {
   },
   module: {
     rules:[
+      // ts loader
+      {
+        test: /\.ts$/,
+        use: {
+          loader: 'ts-loader',
+        },
+      },
       // transpile things with babel so javascript works with Edge
       {
         test: /\.m?js$/,
@@ -84,13 +102,13 @@ module.exports = {
         test: require.resolve('jquery'),
         use: [
           { loader: 'expose-loader', options: 'jQuery' },
-          { loader: 'expose-loader', options: '$' }
+          { loader: 'expose-loader', options: '$' },
         ]
       },
       {
         test: require.resolve('moment'),
         use: [
-          { loader: 'expose-loader', options: 'moment' }
+          { loader: 'expose-loader', options: 'moment' },
         ]
       }
     ]

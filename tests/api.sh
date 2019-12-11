@@ -67,7 +67,7 @@ init_db
 
 # test no token sent (error 401)
 res=$(curl $curloptions -X GET ${endpoint}experiments/${expid})
-assert_return_code $res "401" "Test no token sent"
+assert_return_code $res "400" "Test no token sent"
 
 # test invalid token (error 400)
 res=$(curl $curloptions -H "Authorization: invalid" -X GET ${endpoint}experiments/${expid})
@@ -90,7 +90,7 @@ res=$(req GET "items/${itemid}")
 assert_return_code $res "200" "Get an item"
 
 # test invalid method (error 405)
-res=$(req DELETE "experiments/${expid}")
+res=$(req PUT "experiments/${expid}")
 assert_return_code $res "405" "Test invalid method"
 
 # file upload

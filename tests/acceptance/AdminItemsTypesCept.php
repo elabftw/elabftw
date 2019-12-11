@@ -24,8 +24,9 @@ $I->clearField('//*[@id="itemsTypesName_2"]'); // but clearField works…
 $I->click('//*[@id="itemsTypesName_2"]');
 // this is necessary to show the template and make the Save button work
 // even if it works without this in real life
-$I->click('/html/body/section/div/div[7]/div[2]/ul/li[2]/ul/li[4]/button');
+$I->click('#itemstypes_2 > ul:nth-child(1) > li:nth-child(4) > button:nth-child(1)');
 $I->pressKey('//*[@id="itemsTypesName_2"]', 'New item type edited');
-$I->click('/html/body/section/div/div[7]/div[2]/ul/li[2]/ul/li[5]/button');
+// click the save button
+$I->click('/html/body/div[1]/div/div[6]/div[2]/ul/li[2]/ul/li[5]/button');
 $I->waitForJS('return jQuery.active == 0', 10);
 $I->seeInDatabase('items_types', array('name' => 'New item type edited'));

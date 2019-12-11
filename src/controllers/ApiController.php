@@ -180,7 +180,7 @@ class ApiController implements ControllerInterface
         // verify the key and load user info
         $Users = new Users();
         $ApiKeys = new ApiKeys($Users);
-        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION'));
+        $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION') ?? '');
         $Users->populate((int) $keyArr['userid']);
         $this->Users = $Users;
         $this->canWrite = (bool) $keyArr['canWrite'];

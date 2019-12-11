@@ -7,7 +7,7 @@ getEnv() {
 writeConfigFile() {
     # write config file from env var
     config_path="/app/config.php"
-    secret_key=$(curl -L https://demo.elabftw.net/install/generateSecretKey.php)
+    secret_key=$(curl -sL "https://get.elabftw.net/?key")
     config="<?php
     define('DB_HOST', '${db_host}');
     define('DB_NAME', 'elabftw');

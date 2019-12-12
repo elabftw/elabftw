@@ -11,6 +11,7 @@
     "@fortawesome/free-brands-svg-icons": "5.11.*",
     "@fortawesome/free-regular-svg-icons": "5.11.*",
     "@fortawesome/free-solid-svg-icons": "5.11.*",
+    "@fullcalendar/bootstrap": "^4.3.0",
     "@fullcalendar/core": "^4.3.0",
     "@fullcalendar/daygrid": "^4.3.0",
     "@fullcalendar/interaction": "^4.3.0",

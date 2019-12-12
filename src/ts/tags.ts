@@ -6,6 +6,8 @@
  * @package elabftw
  */
 import { notif } from './misc';
+//import 'jquery-ui/ui/widgets/autocomplete';
+const autocomplete = require('jquery-ui/ui/widgets/autocomplete');
 
 $(document).ready(function() {
   const id = $('#info').data('id');

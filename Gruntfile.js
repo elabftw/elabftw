@@ -39,7 +39,6 @@ module.exports = function(grunt) {
           'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
           'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
-          'web/app/js/steps-links.min.js': 'web/app/js/src/steps-links.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',
           'web/app/js/profile.min.js': 'web/app/js/src/profile.js',

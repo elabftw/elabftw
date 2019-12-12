@@ -1,7 +1,16 @@
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 declare var tinymce: any;
 declare var Dropzone: any;
 declare var key: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
+import 'jquery-ui/ui/widgets/datepicker';
+//import { tinymce } from 'tinymce/tinymce';
 
 // UPLOAD FORM
 // config for dropzone, id is camelCased.
@@ -37,7 +46,7 @@ Dropzone.options.elabftwDropzone = {
 };
 let type = $('#info').data('type');
 let id = $('#info').data('id');
-// EDITOR
+
 $(document).ready(function() {
     // add the title in the page name (see #324)
     document.title = $('#title_input').val() + ' - eLabFTW';

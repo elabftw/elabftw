@@ -9,6 +9,7 @@ import { notif } from './misc';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
 import '@fullcalendar/core/locales/ca'
 import '@fullcalendar/core/locales/de'
 import '@fullcalendar/core/locales/en-gb'
@@ -43,12 +44,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // SCHEDULER
   let calendar = new Calendar(calendarEl, {
-    plugins: [ timeGridPlugin, interactionPlugin, listPlugin ],
+    plugins: [ timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     header: {
       left: 'prev,next today',
       center: 'title',
       right: 'timeGridWeek, listWeek',
     },
+    themeSystem: 'bootstrap',
     // i18n
     locale: $('#info').data('lang'),
     defaultView: 'timeGridWeek',

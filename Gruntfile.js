@@ -60,6 +60,16 @@ module.exports = function(grunt) {
       target: {
         files: {
           'web/app/css/pdf.min.css': 'web/app/css/pdf.css',
+          'web/app/css/vendor.min.css': [
+            'node_modules/prismjs/themes/prism.css',
+            'node_modules/dropzone/dist/dropzone.css',
+            'node_modules/@fullcalendar/core/main.css',
+            'node_modules/@fullcalendar/bootstrap/main.css',
+            'node_modules/@fullcalendar/list/main.css',
+            'node_modules/@fullcalendar/timegrid/main.css',
+            'node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css',
+            'node_modules/jquery-ui/themes/base/all.css',
+          ],
 
           'web/app/css/bootstrap-markdown.min.css': 'node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css',
           'web/app/css/tinymce/skin.min.css': 'node_modules/tinymce/skins/ui/oxide/skin.css',

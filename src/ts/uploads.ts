@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import '../../node_modules/jquery-jeditable/src/jquery.jeditable.js';
 import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { notif } from './misc';

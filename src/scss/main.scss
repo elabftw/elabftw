@@ -17,16 +17,6 @@ $lightred: #ffc1b7;
 $green: #54aa08;
 
 @import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/prismjs/themes/prism';
-@import '../../node_modules/dropzone/dist/dropzone';
-@import '../../node_modules/@fullcalendar/core/main';
-@import '../../node_modules/@fullcalendar/bootstrap/main';
-@import '../../node_modules/@fullcalendar/list/main';
-@import '../../node_modules/@fullcalendar/timegrid/main';
-@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
-//@import '../../node_modules/jquery-ui/themes/base/autocomplete.css';
-//@import '../../node_modules/jquery-ui/themes/base/sortable';
-@import '../../node_modules/jquery-ui/themes/base/all';
 @import 'autocomplete';
 @import 'header';
 @import 'jquery-rating';

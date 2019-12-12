@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<script src='app/js/moment.bundle.js?v={{ v }}'></script>
-
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
@@ -219,4 +217,5 @@
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"
     data-all="{{ allItems }}"></div>
+<script src='app/js/team.bundle.js'></script>
 {% endblock body %}

@@ -10,7 +10,12 @@ declare var Dropzone: any;
 declare var key: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
-//import { tinymce } from 'tinymce/tinymce';
+
+$.ajaxSetup({
+headers: {
+  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+}
+});
 
 // UPLOAD FORM
 // config for dropzone, id is camelCased.

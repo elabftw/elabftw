@@ -5,9 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import $ from 'jquery';
+import 'jquery-ui/ui/widgets/autocomplete';
 import { notif } from './misc';
-//import 'jquery-ui/ui/widgets/autocomplete';
-const autocomplete = require('jquery-ui/ui/widgets/autocomplete');
 
 $(document).ready(function() {
   const id = $('#info').data('id');

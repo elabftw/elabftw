@@ -6,9 +6,9 @@
  * @package elabftw
  */
 declare var tinymce: any;
+import $ from 'jquery';
+import 'jquery-ui/ui/widgets/autocomplete';
 import { notif, relativeMoment } from './misc';
-//import 'jquery-ui/ui/widgets/autocomplete';
-const autocomplete = require('jquery-ui/ui/widgets/autocomplete');
 
 $(document).ready(function() {
   // TODO this is a repeat of common.ts!

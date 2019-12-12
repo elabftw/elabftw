@@ -17,24 +17,25 @@ const webpack = require('webpack');
 module.exports = {
   entry: {
     main: [
-//      'jquery-ui/ui/widgets/autocomplete',
       './src/ts/common.ts',
       './src/ts/3Dmol.ts',
+      './src/ts/steps-links.ts',
       './src/ts/tabs.ts',
       './src/ts/tags.ts',
-      './src/ts/team.ts',
-      './src/ts/steps-links.ts',
       'bootstrap/js/src/alert.js',
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
       'bootstrap/js/src/dropdown.js',
       'bootstrap/js/src/modal.js',
       './web/app/js/src/fontawesome.es.js',
+      //'./web/app/js/src/tinymce.es.js',
       // mathjax config must be loaded before mathjax lib
       './web/app/js/src/mathjax-config.js',
       // load tex with all the extensions
       'mathjax/es5/tex-svg-full.js',
+      //'moment',
       'prismjs',
+      //'@fancyapps/fancybox/dist/jquery.fancybox.js',
       // see list in edit.js tinymce codesample plugin settings
       'prismjs/components/prism-bash.js',
       'prismjs/components/prism-c.js',
@@ -58,6 +59,7 @@ module.exports = {
     moment: 'moment',
     fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
     edit: './src/ts/edit.ts',
+    team: './src/ts/team.ts',
     view: [
       './src/ts/view.ts',
       './src/ts/comments.ts',
@@ -73,6 +75,31 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'web/app/js')
   },
+  /*
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      minSize: 30000,
+      maxSize: 0,
+      minChunks: 1,
+      maxAsyncRequests: 6,
+      maxInitialRequests: 4,
+      automaticNameDelimiter: '~',
+      automaticNameMaxLength: 30,
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    },
+  },
+  */
   module: {
     rules:[
       // ts loader

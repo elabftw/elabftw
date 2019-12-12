@@ -81,7 +81,4 @@ $(document).ready(function() {
       }
     });
   });
-
-  // ACTIVATE FANCYBOX
-  (<any>$('[data-fancybox]')).fancybox();
 });

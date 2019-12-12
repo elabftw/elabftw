@@ -2,7 +2,8 @@
   "compilerOptions": {
     "module": "es6",
     "esModuleInterop": true,
-    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "strict": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,

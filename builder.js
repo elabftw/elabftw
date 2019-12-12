@@ -20,10 +20,8 @@ module.exports = {
       './src/ts/common.ts',
       './src/ts/3Dmol.ts',
       './src/ts/tabs.ts',
-    ],
-    vendor: [
-      'jquery',
-      'jquery-ui',
+      './src/ts/tags.ts',
+      './src/ts/team.ts',
       'bootstrap/js/src/alert.js',
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
@@ -68,11 +66,13 @@ module.exports = {
     // only load the moment locales that we are interested in
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/)
   ],
+  /*
   resolve: {
     alias: {
       'jquery-ui': 'jquery-ui-dist/jquery-ui.js'
     }
   },
+  */
   mode: 'production',
   output: {
     filename: '[name].bundle.js',

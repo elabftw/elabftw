@@ -50,7 +50,18 @@ try {
         $Response->setData($Scheduler->readAllFromTeam());
     }
 
+    // GET EVENTS
+    if ($Request->query->has('start') && $Request->query->has('end')) {
+        // TODO only read from start to end
+        if (empty($Request->query->get('item'))) {
+            $Response->setData($Scheduler->readAllFromTeam());
+        } else {
+            $Database->setId((int) $Request->query->get('item'));
+            $Response->setData($Scheduler->read());
+        }
+    }
     // READ
+    /*
     if ($Request->request->has('read')) {
         if ($Request->request->get('read') === 'all') {
             $Response->setData($Scheduler->readAllFromTeam());
@@ -59,6 +70,7 @@ try {
             $Response->setData($Scheduler->read());
         }
     }
+     */
 
     // UPDATE START
     if ($Request->request->has('updateStart')) {

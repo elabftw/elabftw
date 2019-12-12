@@ -2,7 +2,6 @@
 
 {% block body %}
 <script src='app/js/moment.bundle.js?v={{ v }}'></script>
-<script src='app/js/fullcalendar.min.js?v={{ v }}'></script>
 
 <menu>
     <ul>
@@ -220,9 +219,4 @@
     data-lang="{{ lang }}"
     data-item="{{ selectedItem }}"
     data-all="{{ allItems }}"></div>
-{% if App.Config.configArr.debug %}
-  <script src='app/js/src/team.js?v={{ v }}'></script>
-{% else %}
-  <script src='app/js/team.min.js?v={{ v }}'></script>
-{% endif %}
 {% endblock body %}

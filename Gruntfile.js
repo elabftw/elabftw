@@ -26,12 +26,6 @@ module.exports = function(grunt) {
               'src/js/vendor/chemdoodle/chemdoodle-unpacked.js',
               'src/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],
 
-          'web/app/js/fullcalendar.min.js': [
-              'node_modules/fullcalendar/dist/fullcalendar.js',
-              'node_modules/fullcalendar/dist/locale-all.js'],
-
-          'web/app/js/team.min.js': 'web/app/js/src/team.js',
-
           'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 
@@ -47,7 +41,6 @@ module.exports = function(grunt) {
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/steps-links.min.js': 'web/app/js/src/steps-links.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
-          'web/app/js/tags.min.js': 'web/app/js/src/tags.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',
           'web/app/js/profile.min.js': 'web/app/js/src/profile.js',
           'web/app/js/doodle.min.js': 'web/app/js/src/doodle.js',

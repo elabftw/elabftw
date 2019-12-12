@@ -1,5 +1,12 @@
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 import $ from 'jquery';
-import 'jquery-ui-dist/jquery-ui';
+import 'jquery-ui/ui/widgets/sortable';
 import { relativeMoment, notif, displayMolFiles } from './misc';
 
 $.ajaxSetup({

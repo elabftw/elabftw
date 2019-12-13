@@ -12,9 +12,9 @@ import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSav
 import 'jquery-ui/ui/widgets/datepicker';
 
 $.ajaxSetup({
-headers: {
-  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-}
+  headers: {
+    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+  }
 });
 
 // UPLOAD FORM

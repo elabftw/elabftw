@@ -28,14 +28,11 @@ module.exports = {
       'bootstrap/js/src/dropdown.js',
       'bootstrap/js/src/modal.js',
       './web/app/js/src/fontawesome.es.js',
-      //'./web/app/js/src/tinymce.es.js',
       // mathjax config must be loaded before mathjax lib
       './web/app/js/src/mathjax-config.js',
       // load tex with all the extensions
       'mathjax/es5/tex-svg-full.js',
-      //'moment',
       'prismjs',
-      //'@fancyapps/fancybox/dist/jquery.fancybox.js',
       // see list in edit.js tinymce codesample plugin settings
       'prismjs/components/prism-bash.js',
       'prismjs/components/prism-c.js',
@@ -55,16 +52,19 @@ module.exports = {
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js',
     ],
-    tinymce: './web/app/js/src/tinymce.es.js',
-    moment: 'moment',
-    fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
+    admin: './src/ts/admin.ts',
+    changepass: './src/ts/change-pass.ts',
     edit: './src/ts/edit.ts',
+    editusers: './src/ts/editusers.ts',
+    fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
+    moment: 'moment',
     team: './src/ts/team.ts',
+    tinymce: './web/app/js/src/tinymce.es.js',
+    uploads: './src/ts/uploads.ts',
     view: [
       './src/ts/view.ts',
       './src/ts/comments.ts',
     ],
-    uploads: './src/ts/uploads.ts',
   },
   plugins: [
     // only load the moment locales that we are interested in

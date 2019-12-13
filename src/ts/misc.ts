@@ -58,24 +58,9 @@ export function displayMolFiles() { // eslint-disable-line no-unused-vars
 export function addDateOnCursor() { // eslint-disable-line no-unused-vars
   const todayDate = new Date();
   const today = todayDate.toISOString().split('T')[0];
-  /*
-  var year = todayDate.getFullYear();
-  // we use +1 on the month because january is 0
-  var month: number = todayDate.getMonth() + 1;
-  // we want to have two digits on the month
-  if (month < 10) {
-    month = '0' + month.padStart(2, 0);
-  }
-  var day = todayDate.getDate();
-  // we want to have two digits on the day
-  if (day < 10) {
-    day = '0' + day;
-  }
- */
-
-  //tinymce.activeEditor.execCommand('mceInsertContent', false, year + '-' + month + '-' + day + ' ');
   tinymce.activeEditor.execCommand('mceInsertContent', false, today + ' ');
 }
+
 // called when you click the save button of tinymce
 export function quickSave(type: string, id: string) { // eslint-disable-line no-unused-vars
   $.post('app/controllers/EntityAjaxController.php', {

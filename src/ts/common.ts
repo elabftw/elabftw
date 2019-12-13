@@ -9,13 +9,13 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
 import { relativeMoment, notif, displayMolFiles } from './misc';
 
-$.ajaxSetup({
-headers: {
-  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-}
-});
 
 $(document).ready(function() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
   // TOGGLABLE
   $(document).on('click', '.togglableNext', function() {
     $(this).next().toggle();

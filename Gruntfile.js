@@ -32,12 +32,9 @@ module.exports = function(grunt) {
           'web/app/js/dropzone.min.js': 'node_modules/dropzone/dist/dropzone.js',
 
           'web/app/js/file-saver.min.js': 'node_modules/file-saver/src/FileSaver.js',
-          'web/app/js/admin.min.js': 'web/app/js/src/admin.js',
-          'web/app/js/editusers.min.js': 'web/app/js/src/editusers.js',
           'web/app/js/install.min.js': 'web/app/js/src/install.js',
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
           'web/app/js/todolist.min.js': 'web/app/js/src/todolist.js',
-          'web/app/js/change-pass.min.js': 'web/app/js/src/change-pass.js',
           'web/app/js/show.min.js': 'web/app/js/src/show.js',
           'web/app/js/search.min.js': 'web/app/js/src/search.js',
           'web/app/js/ucp.min.js': 'web/app/js/src/ucp.js',

@@ -1,3 +1,10 @@
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 declare var ChemDoodle: any;
 declare var moment: any;
 declare var tinymce: any;

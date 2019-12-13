@@ -78,6 +78,9 @@ module.exports = function(grunt) {
       }
     },
     shell: {
+      tsc: {
+        command: 'tsc --build src/ts/tsconfig.json'
+      },
       // run yarn install
       yarninstall: {
         command: 'yarn install'
@@ -96,7 +99,7 @@ module.exports = function(grunt) {
 
   // before minifying js it is preferable to do 'yarn install' to update the dependencies
   grunt.registerTask('yarn', 'shell:yarninstall');
-  grunt.registerTask('default', ['yarn', 'uglify', 'cssmin', 'tinymce']);
+  grunt.registerTask('default', ['yarn', 'shell:tsc', 'uglify', 'cssmin', 'tinymce']);
   grunt.registerTask('css', 'cssmin');
   grunt.registerTask('tinymce', 'shell:tinymce');
 };

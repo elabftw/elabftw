@@ -29,9 +29,9 @@ $theme-colors: (
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
 @import 'autocomplete';
+@import 'footer';
 @import 'header';
 @import 'jquery-rating';
-@import 'footer';
 @import 'tagcloud';
 @import 'todolist';
 

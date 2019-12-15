@@ -651,12 +651,6 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </div>
 </div>
 
-{% if App.Config.configArr.debug %}
-    <script src='app/js/src/sysconfig.js?v={{ v }}'></script>
-{% else %}
-    <script src='app/js/sysconfig.min.js?v={{ v }}'></script>
-{% endif %}
-
-<!-- WYSIWYG editor -->
 <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
+<script src='app/js/sysconfig.bundle.js'></script>
 {% endblock body %}

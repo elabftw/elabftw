@@ -9,7 +9,6 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
 import { relativeMoment, notif, displayMolFiles } from './misc';
 
-
 $(document).ready(function() {
   $.ajaxSetup({
     headers: {

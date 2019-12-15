@@ -32,7 +32,6 @@ module.exports = function(grunt) {
           'web/app/js/dropzone.min.js': 'node_modules/dropzone/dist/dropzone.js',
 
           'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
-          'web/app/js/search.min.js': 'web/app/js/src/search.js',
           'web/app/js/doodle.min.js': 'web/app/js/src/doodle.js',
           'web/app/js/bootstrap-markdown.min.js': [
               'node_modules/marked/lib/marked.js',

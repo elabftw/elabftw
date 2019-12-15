@@ -57,6 +57,7 @@ module.exports = {
     editusers: './src/ts/editusers.ts',
     fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
     moment: 'moment',
+    profile: './src/ts/profile.ts',
     show: './src/ts/show.ts',
     team: './src/ts/team.ts',
     tinymce: './src/ts/tinymce.ts',

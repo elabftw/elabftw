@@ -10,14 +10,10 @@ declare var key: any;
 import { notif } from './misc';
 import JSONEditor from 'jsoneditor';
 
-function enableSaveButton(){
-  $('.jsonSaver').removeAttr('disabled').text('Save').css('cursor','pointer');
-}
-
 // editor div
 const container = document.getElementById('jsonEditorContainer');
 
-const options = {onChange:enableSaveButton,
+const options = {
   modes: ['tree','code','view','form','text'],
   onModeChange: function(newMode) {
     if (newMode==='code' || newMode==='text'){
@@ -30,32 +26,33 @@ const options = {onChange:enableSaveButton,
 
 const editor = new JSONEditor(container, options);
 
-$('.jsonSaver').attr('disabled', 1);
-$('.jsonEditorDiv').css('margin-top', '5px'); //Added some margin to allow the + icon to be separated from the editor
-$('.jsoneditor-search').find('input').css('padding', '0px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
+// temporary fix for elabftw css where all input have padding of 7px until css is fixed
+$('.jsoneditor-search').find('input').css('padding', '0px');
 
-var currentFileUploadID;
-var currentFileItemID;
-
+// fix the keymaster shortcut library interfering with the editor
 key.filter = function(event){
   var tagName = (event.target || event.srcElement).tagName;
   return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
 };
 
-$(document).on('click', '.jsonLoader', function(){
-  $.get('app/download.php', {f:$(this).data('link')}).done(function(data){
-    try{
+let currentFileUploadID: string;
+let currentFileItemID: string;
+
+// the loader action appears under .json uploaded files
+$(document).on('click', '.jsonLoader', function() {
+  $.get('app/download.php', {
+    f: $(this).data('link')
+  }).done(function(data){
+    try {
       editor.set(JSON.parse(data));
-      $('.jsonEditorDiv').show();
-    }
-    catch(e){
+      $('#jsonEditorDiv').show();
+    } catch(e){
       // If it is just a parsing error, then we let the user edit the file.
-      if(e.message.includes('JSON.parse')){
+      if (e.message.includes('JSON.parse')) {
         editor.setMode('text');
         editor.updateText(data);
-        $('.jsonEditorDiv').show();
-      }
-      else{
+        $('#jsonEditorDiv').show();
+      } else {
         notif({'msg':'JSON Editor: ' + e.message});
       }
     }
@@ -65,12 +62,13 @@ $(document).on('click', '.jsonLoader', function(){
 });
 
 $(document).on('click', '.jsonSaver', function(){
-  if(typeof currentFileUploadID === 'undefined'){
+  if (typeof currentFileUploadID === 'undefined') {
+    // we are creating a new file
     const realName = prompt('Enter name of the file');
     if (realName == null) {
       return;
     }
-    var id = $('#main_form').find('input[name="id"]').attr('value');
+    const id = $('#main_form').find('input[name="id"]').attr('value');
     $.post('app/controllers/EntityAjaxController.php', {
       addFromString: true,
       type: 'experiments',
@@ -79,13 +77,13 @@ $(document).on('click', '.jsonSaver', function(){
       fileType: 'json',
       string: JSON.stringify(editor.get())
     }).done(function(json) {
-      $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
       $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv');
       notif(json);
     });
   } else {
-    var formData = new FormData();
-    var blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
+    // we are editing an existing file
+    let formData = new FormData();
+    const blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
     formData.append('replace', 'true');
     formData.append('upload_id', currentFileItemID);
     formData.append('id', currentFileUploadID);
@@ -93,14 +91,13 @@ $(document).on('click', '.jsonSaver', function(){
     formData.append('file', blob);
 
     $.ajax({
-      // TODO this should call an ajax controller that returns json
-      url: 'app/controllers/EntityController.php',
+      url: 'app/controllers/EntityAjaxController.php',
       data: formData,
       processData: false,
       contentType: false,
       type: 'POST',
-      success:function(){
-        $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
+      success:function(json){
+        notif(json);
       }
     });
   }

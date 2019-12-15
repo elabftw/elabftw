@@ -11,6 +11,7 @@ $lightgray: #f2f2f2;
 $bordersgray: #dcdddc;
 $elabblue: #29aeb9;
 $darkblue: #1F8591;
+$dangerred: #e6614c;
 $lightblue: #C4F9FF;
 $darkred: #dd1e00;
 $lightred: #ffc1b7;
@@ -22,7 +23,8 @@ $green: #54aa08;
 /* override bootstrap theme */
 $theme-colors: (
     "primary": $elabblue,
-    "danger": $darkred,
+    "danger": $dangerred,
+    "neutral": $maingray,
 );
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
@@ -431,39 +433,17 @@ section.item {
     color: white;
     font-size: 11px;
     text-transform: uppercase;
-    background-color: $elabblue;
     margin: 0 5px;
     letter-spacing: 1px;
-    cursor: pointer;
 }
 
-.button:hover {
-    background-color: $darkblue;
-}
-
-.button:disabled {
-    background-color: $bordersgray;
+button:disabled {
+    cursor: not-allowed;
 }
 
 .submitButtonDiv {
     margin-top: 30px;
     text-align: center;
-}
-
-.button-delete {
-    background-color: #e6614c;
-}
-
-.button-delete:hover {
-    background-color: #c24f3d;
-}
-
-.button-neutral {
-    background-color: #989898;
-}
-
-.button-neutral:hover {
-    background-color: #727272;
 }
 
 /* make the +/- button rounder */

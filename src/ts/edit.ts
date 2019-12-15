@@ -98,7 +98,7 @@ $(document).ready(function() {
     if ((localStorage.getItem('id') == id) && (localStorage.getItem('type') == type)) {
       let bodyRecovery = $('<div></div>', {
         'class' : 'alert alert-warning',
-        html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button button-delete recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
+        html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
       });
       $('#main_section').before(bodyRecovery);
     }
@@ -303,10 +303,12 @@ $(document).ready(function() {
     $(document).on('click', '.plusMinusButton',  function() {
       if ($(this).html() === '+') {
         $(this).html('-');
-        $(this).addClass('button-neutral');
+        $(this).addClass('btn-neutral');
+        $(this).removeClass('btn-primary');
       } else {
         $(this).html('+');
-        $(this).removeClass('button-neutral');
+        $(this).removeClass('btn-neutral');
+        $(this).addClass('btn-primary');
       }
     });
 

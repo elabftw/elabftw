@@ -69,8 +69,8 @@ $(document).on('mouseenter', '.comment', function() {
     submit : $(this).data('submit'),
     cancel : $(this).data('cancel'),
     style : 'display:inline',
-    submitcssclass : 'button mt-2',
-    cancelcssclass : 'button button-delete mt-2',
+    submitcssclass : 'button btn btn-primary mt-2',
+    cancelcssclass : 'button btn btn-danger mt-2',
     callback : function(data: string) {
       let json = JSON.parse(data);
       notif(json);

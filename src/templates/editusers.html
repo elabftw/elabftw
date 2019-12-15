@@ -4,7 +4,7 @@
     <input type='text' autocomplete='off' class='form-control col-md-4 custom-control-inline' id='search-users' value='{{ App.Request.query.get('q') }}' name='q' />
     <!-- stay on correct tab -->
     <input type='hidden' value='3' name='tab' />
-    <input type='submit' class='button' value='{{ 'Search'|trans }}' />
+    <input type='submit' class='button btn btn-primary' value='{{ 'Search'|trans }}' />
   </div>
 </form>
 
@@ -99,21 +99,21 @@
 
                     <!-- SAVE -->
                     <li class='list-inline-item'>
-                      <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+                      <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
                     </li>
 
                     <!-- ARCHIVE USER -->
                     <li class='list-inline-item'>
                       {% if user.archived %}
-                        <button class='button toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Unarchive user'|trans }}</button>
+                        <button class='button btn btn-neutral toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Unarchive user'|trans }}</button>
                       {% else %}
-                        <button class='button button-delete toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
+                        <button class='button btn btn-danger toggleArchiveUser' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
                       {% endif %}
                     </li>
 
                     <!-- DESTROY USER -->
                     <li class='list-inline-item'>
-                      <button class='button button-delete destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                      <button class='button btn btn-danger destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
                    </li>
                 </form>
 
@@ -179,7 +179,7 @@
 
         <!-- SUBMIT -->
         <div class='col-md-2'>
-          <input type='submit' name='submit' style='margin-top: 26px' class='button' value='{{ 'create'|trans }}' />
+          <input type='submit' name='submit' style='margin-top: 26px' class='button btn btn-primary' value='{{ 'create'|trans }}' />
         </div>
       </div>
     </div>

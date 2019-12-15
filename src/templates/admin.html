@@ -8,7 +8,7 @@
     <ul>
     {% for user in unvalidatedUsersArr %}
       <li>
-        {{ user.fullname|raw }} ({{ user.email }}) <button class='button usersValidate' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button>
+        {{ user.fullname|raw }} ({{ user.email }}) <button class='button btn btn-primary usersValidate' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button>
       </li>
     {% endfor %}
     </ul>
@@ -56,7 +56,7 @@
       <label for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
       <input class='mb-4 form-control col-md-4' type='text' value='{{ App.teamConfigArr.link_href }}' name='link_href' id='link_href' />
 
-      <span class='m-0 button button-neutral togglableNext'>{{ 'Override general timestamping config'|trans }}</span>
+      <span class='m-0 button btn btn-neutral togglableNext'>{{ 'Override general timestamping config'|trans }}</span>
       <div class='togglableHidden mt-2'>
         <label for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
         <input class='form-control col-md-4' type='url' placeholder='http://zeitstempel.dfn.de/' value='{{ App.teamConfigArr.stampprovider }}' name='stampprovider' id='stampprovider' />
@@ -84,7 +84,7 @@
       </div>
 
       <div class='submitButtonDiv'>
-        <button type='submit' class='button'>Save</button>
+        <button type='submit' class='button btn btn-primary'>Save</button>
       </div>
     </form>
   </div>
@@ -99,7 +99,7 @@
     <!-- CREATE A GROUP -->
     <label for='teamGroupCreate'>{{ 'Create a group'|trans }}</label>
     <input class='form-control col-md-4 custom-control-inline' id='teamGroupCreate' type='text' />
-    <button type='submit' id='teamGroupCreateBtn' class='button'>{{ 'Create'|trans }}</button>
+    <button type='submit' id='teamGroupCreateBtn' class='button btn btn-primary'>{{ 'Create'|trans }}</button>
     <!-- END CREATE GROUP -->
 
     <!-- SHOW EXISTING GROUPS -->
@@ -152,7 +152,7 @@
       </div>
 
       <div class='col-auto mt-4'>
-        <button class='button' id='statusCreate'>{{ 'Save'|trans }}</button>
+        <button class='button btn btn-primary' id='statusCreate'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -169,9 +169,9 @@
             </li>
             <li class='list-inline-item'><input type='checkbox' id='statusTimestamp_{{ status.category_id }}' {{ status.is_timestampable ? " checked" }} /> <label for='statusTimestamp_{{ status.category_id }}'>{{ 'Allow timestamp'|trans }}</label></li>
             <li class='list-inline-item'><input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} /> <label for='statusDefault_{{ status.category_id }}'>{{ 'Default status'|trans }}</label></li>
-            <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button statusSave'>{{ 'Save'|trans }}</button></li>
+            <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button></li>
 
-            <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button button-delete statusDestroy' >{{ 'Delete'|trans }}</button></li>
+            <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-danger statusDestroy' >{{ 'Delete'|trans }}</button></li>
             <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
           </ul>
         </li>
@@ -206,7 +206,7 @@
 
     <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
     <div class='submitButtonDiv'>
-      <button id='itemsTypesCreate' class='button'>{{ 'Save'|trans }}</button>
+      <button id='itemsTypesCreate' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </div>
 
@@ -232,13 +232,13 @@
               <label for='itemsTypesBookable_{{ itemType.category_id }}'>{{ 'Bookable'|trans }}</label>
             </li>
             <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' class='button button-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
+              <button data-id='{{ itemType.category_id }}' class='button btn btn-neutral itemsTypesShowEditor'>{{ 'Edit the template'|trans }}</button>
             </li>
             <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' class='button itemsTypesUpdate'>{{ 'Save'|trans }}</button>
+              <button data-id='{{ itemType.category_id }}' class='button btn btn-primary itemsTypesUpdate'>{{ 'Save'|trans }}</button>
             </li>
             <li class='list-inline-item'>
-              <button data-id='{{ itemType.category_id }}' class='button button-delete itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
+              <button data-id='{{ itemType.category_id }}' class='button btn btn-danger itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
             </li>
             <li class='list-inline-item itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
               <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
@@ -260,7 +260,7 @@
       {{ commonTplBody|raw }}
     </textarea>
     <div class='submitButtonDiv'>
-      <button type='submit' class='button'>{{ 'Save'|trans }}</button>
+      <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </div>
 </div>
@@ -303,7 +303,7 @@
       <input id='csvuploader' name='file' type='file' accept='.csv' />
       <input name='type' type='hidden' value='csv' />
       <div class='submitButtonDiv'>
-        <button type='submit' class='button'>{{ 'Import CSV'|trans }}</button>
+        <button type='submit' class='button btn btn-primary'>{{ 'Import CSV'|trans }}</button>
       </div>
     </form>
   </div>
@@ -344,7 +344,7 @@
       <input name='type' type='hidden' value='zip' />
 
       <div class='submitButtonDiv'>
-        <button type='submit' class='button'>{{ 'Import ZIP'|trans }}</button>
+        <button type='submit' class='button btn btn-primary'>{{ 'Import ZIP'|trans }}</button>
       </div>
 
     </form>

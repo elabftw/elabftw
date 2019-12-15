@@ -153,7 +153,7 @@
             {% endif %}
 
             <div class='submitButtonDiv'>
-                <button type='submit' name='Submit' class='button'>{{ 'Save and go back'|trans }}</button>
+                <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save and go back'|trans }}</button>
             </div>
         </form>
 
@@ -171,11 +171,11 @@
 <!-- JSON EDITOR -->
 <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-    <button class='button plusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
+    <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
     <div id='jsonEditorDiv' class='collapse mt-2'>
       <div id='jsonEditorContainer'></div>
       <div class='submitButtonDiv'>
-        <button type='submit' class='button jsonSaver'>{{ 'Save'|trans }}</button>
+        <button type='submit' class='button btn btn-primary jsonSaver'>{{ 'Save'|trans }}</button>
       </div>
     </div>
 </section>
@@ -183,7 +183,7 @@
 <!-- DOODLE -->
 <section class='box' id='doodle-anchor'>
   <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
-  <button class='button plusMinusButton' data-toggle='collapse' data-target='#doodleDiv' aria-expanded='false' aria-controls='doodleDiv'>+</button>
+  <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#doodleDiv' aria-expanded='false' aria-controls='doodleDiv'>+</button>
   <div id='doodleDiv' class='collapse mt-2'>
     <div class='row'>
       <div>
@@ -206,8 +206,8 @@
         </p>
 
         <p>
-          <button class='button button-delete clearCanvas'>{{ 'Clear'|trans }}</button>
-          <button class='button saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+          <button class='button btn btn-danger clearCanvas'>{{ 'Clear'|trans }}</button>
+          <button class='button btn btn-primary saveCanvas' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
         <p>
       </div>
     </div>
@@ -218,7 +218,7 @@
 {% if Entity.Users.userData.chem_editor %}
     <div class='box chemdoodle'>
         <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
-        <button class='button plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
+        <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
             <div id='chemDiv' class='collapse mt-2 text-center'>
                 <script src='app/js/chemdoodle-canvas.min.js?v={{ v }}'></script>
             </div>

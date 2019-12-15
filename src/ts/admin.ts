@@ -311,8 +311,8 @@ $(document).ready(function() {
     name : 'teamGroupUpdateName',
     submit : 'Save',
     cancel : 'Cancel',
-    cancelcssclass : 'button button-delete',
-    submitcssclass : 'button',
+    cancelcssclass : 'button btn btn-danger',
+    submitcssclass : 'button btn btn-primary',
     style : 'display:inline'
 
   });

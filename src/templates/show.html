@@ -84,7 +84,7 @@
   <div class='col-md-2'>
     <div class='btn-group align_right'>
       <div class='btn-group dropleft' role='group'>
-        <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        <button type='button' class='btn btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
           <span class='sr-only'>Toggle create new menu</span>
         </button>
         <ul class='dropdown-menu' aria-label='Create new'>
@@ -175,9 +175,9 @@
         </select>
 
     {% endif %}
-        <button data-what = 'zip' class='button csvzip'>{{ 'Make Zip'|trans }}</button>
-        <button data-what='csv' class='button csvzip'>{{ 'Make Csv'|trans }}</button>
-        <button id='deleteChecked' class='button button-delete'>{{ 'Delete'|trans }}</button>
+        <button data-what = 'zip' class='button btn btn-primary csvzip'>{{ 'Make Zip'|trans }}</button>
+        <button data-what='csv' class='button btn btn-primary csvzip'>{{ 'Make Csv'|trans }}</button>
+        <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
     </p>
     <div class='row display-flex'>
     {% for item in itemsArr|slice(0, limit) %}
@@ -257,10 +257,10 @@
     {% if not searchPage %}
         <div class='text-center pageButtons'>
             {% if offset != 0 %}
-                <button class='button button-neutral previousPage'>{{ 'Previous page'|trans }}</button>
+                <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>
             {% endif %}
             {% if limit < Entity.itemsReadNb %}
-                <button class='button nextPage'>{{ 'Next page'|trans }}</button>
+                <button class='button btn btn-primary nextPage'>{{ 'Next page'|trans }}</button>
             {% endif %}
         </div>
   {% endif %}

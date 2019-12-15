@@ -50,8 +50,8 @@ $(document).ready(function() {
       submit : 'Save',
       onblur : 'ignore',
       cancel : 'Cancel',
-      submitcssclass : 'button',
-      cancelcssclass : 'button button-delete',
+      submitcssclass : 'button btn btn-primary',
+      cancelcssclass : 'button btn btn-danger',
       style : 'display:inline'
     });
   });

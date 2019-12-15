@@ -22,7 +22,7 @@
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
           <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
-          <button class='button' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+          <button class='button btn btn-primary' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
         </form>
       </div>
       <div class='modal-footer'>
@@ -54,7 +54,7 @@
         </div>
       </div>
       <!-- Login button -->
-      <button type="submit" class='button' name="Submit">{{ 'Login'|trans }}</button>
+      <button type="submit" class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
     <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
       "<a href='register.php'>",
@@ -77,7 +77,7 @@
             {% endif %}
           {% endfor %}
         </select>
-        <button class='button mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
       </div>
     </form>
   {% endif %}
@@ -100,7 +100,7 @@
             {% endfor %}
           </select>
         </div>
-        <button class='button mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
       </div>
     </form>
   {% endif %}

@@ -160,9 +160,9 @@
         <div class='subdivhandle box' id='subtab_{{ template.id }}div'>
 
             <h3>{{ template.name|raw }} ({{ template.fullname|raw }})
-                <button class='button importTpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
+                <button class='button btn btn-primary importTpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
                 <a href='experiments.php?create=true&tpl={{ template.id }}'>
-                  <button class='button'>{{ 'Create experiment from template'|trans }}</button>
+                  <button class='button btn btn-primary'>{{ 'Create experiment from template'|trans }}</button>
                 </a>
             </h3>
             <!-- TAGS -->
@@ -206,7 +206,7 @@
             <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' required /></textarea>
         </div>
         <div class='submitButtonDiv'>
-            <button type='submit' class='button'>{{ 'Send'|trans }}</button>
+            <button type='submit' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
         </div>
     </form>
 

@@ -189,7 +189,7 @@
     </section>
 
     <div class='text-center mt-3'>
-        <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+        <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
     </p>
@@ -260,7 +260,7 @@
         </div>
 
         <div class='submitButtonDiv'>
-            <button type='submit' name='Submit' class='button'>{{ 'Update profile'|trans }}</button>
+            <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Update profile'|trans }}</button>
         </div>
     </form>
 
@@ -294,7 +294,7 @@
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not App.Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
             <div class='text-center'>
-                <button type="submit" name="Submit" class='button'>{{ 'Save'|trans }}</button>
+                <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
             </div>
         </form>
     </div>
@@ -337,7 +337,7 @@
             <label for='e{{ template.id }}'>{{ 'Template content'|trans }}</label>
             <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
             <div class='text-center'>
-              <button type='submit' name='Submit' class='button'>{{ 'Save'|trans }}</button>
+              <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
             </div>
           </form>
           {% include('steps-links-edit.html') %}
@@ -385,7 +385,7 @@
           <option value='0'>{{ 'Read Only'|trans }}</option>
           <option value='1'>{{ 'Read/Write'|trans }}</option>
       </select>
-      <button class='button' type='submit'>{{ 'Generate an API Key'|trans }}</button>
+      <button class='button btn btn-primary' type='submit'>{{ 'Generate an API Key'|trans }}</button>
   </form>
   </div>
 </div>

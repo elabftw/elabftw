@@ -16,13 +16,23 @@ $darkred: #dd1e00;
 $lightred: #ffc1b7;
 $green: #54aa08;
 
+/* import this first to be able to modify bootstrap theme */
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+/* override bootstrap theme */
+$theme-colors: (
+    "primary": $elabblue,
+    "danger": $darkred,
+);
 @import '../../node_modules/bootstrap/scss/bootstrap';
+
 @import 'autocomplete';
 @import 'header';
 @import 'jquery-rating';
 @import 'footer';
 @import 'tagcloud';
 @import 'todolist';
+
 
 /* Font is Lato */
 @font-face {
@@ -630,23 +640,6 @@ input[type='checkbox'] {
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
 form#filter-order-sort select {
     margin-left: 2px;
-}
-
-/* elabftw colors for buttons */
-.btn-elab {
-    color: #fff;
-    background-color: $elabblue;
-    border-color: #01929e;
-}
-
-.btn-elab.active,
-.btn-elab.focus,
-.btn-elab:active,
-.btn-elab:focus,
-.btn-elab:hover {
-    color: #fff;
-    background-color: #01929e;
-    border-color: #017079;
 }
 
 /*

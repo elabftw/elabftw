@@ -78,11 +78,13 @@ module.exports = {
     // only load the moment locales that we are interested in
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/),
     // insert the paths of the bundles into the html template
+    // this creates a web/app/js/script-tags.html file that we can copy paste into the real html template in src/template/head.html
     new HtmlWebpackPlugin({
-      // TODO none of those options are working
-      base: 'app/js/',
-      chunks: 'vendors',
-      minify: false,
+      filename: 'scripts-tags.html',
+      template: 'src/js/scripts-tags.html',
+      inject: false,
+      // we only want the vendors chunks
+      excludeChunks: ['admin', 'changepass', 'edit', 'editusers', 'profile', 'search', 'show', 'team', 'tinymce', 'todolist', 'ucp', 'uploads', 'view'],
     }),
   ],
   mode: 'production',

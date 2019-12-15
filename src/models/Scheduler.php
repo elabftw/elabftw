@@ -77,9 +77,11 @@ class Scheduler
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
-            items.title AS item_title
+            items.title AS item_title,
+            CONCAT('#', items_types.color) AS color
             FROM team_events
             LEFT JOIN items ON team_events.item = items.id
+            LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.team = :team";
         $req = $this->Db->prepare($sql);
@@ -104,9 +106,12 @@ class Scheduler
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.*,
-            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title
+            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
+            CONCAT('#', items_types.color) AS color
             FROM team_events
+            LEFT JOIN items ON team_events.item = items.id
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
+            LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.team = :team AND team_events.item = :item";
         $req = $this->Db->prepare($sql);

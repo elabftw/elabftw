@@ -62,6 +62,7 @@ module.exports = {
     profile: './src/ts/profile.ts',
     search: './src/ts/search.ts',
     show: './src/ts/show.ts',
+    sysconfig: './src/ts/sysconfig.ts',
     team: './src/ts/team.ts',
     tinymce: './src/ts/tinymce.ts',
     todolist: './src/ts/todolist.ts',

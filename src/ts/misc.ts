@@ -8,6 +8,12 @@
 declare var ChemDoodle: any;
 declare var tinymce: any;
 
+interface ResponseMsg {
+  res: boolean,
+  msg: string,
+  color?: string,
+}
+
 const moment = require('moment');
 
 // DISPLAY COMMENT TIME RELATIVE TO NOW
@@ -19,10 +25,10 @@ export function relativeMoment(): void {
 }
 
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
-export function notif(json: any) {
-  const htmlText = '<p>' + json.msg + '</p>';
+export function notif(info: ResponseMsg) {
+  const htmlText = '<p>' + info.msg + '</p>';
   let result = 'ko';
-  if (json.res) {
+  if (info.res) {
     result = 'ok';
   }
   var overlay = document.createElement('div');

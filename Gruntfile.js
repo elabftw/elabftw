@@ -29,7 +29,6 @@ module.exports = function(grunt) {
           'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 
-          'web/app/js/sysconfig.min.js': 'web/app/js/src/sysconfig.js',
           'web/app/js/bootstrap-markdown.min.js': [
               'node_modules/marked/lib/marked.js',
               'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',

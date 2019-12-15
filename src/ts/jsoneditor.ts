@@ -53,7 +53,7 @@ $(document).on('click', '.jsonLoader', function() {
         editor.updateText(data);
         $('#jsonEditorDiv').show();
       } else {
-        notif({'msg':'JSON Editor: ' + e.message});
+        notif({'res': false, 'msg':'JSON Editor: ' + e.message});
       }
     }
   });

@@ -859,6 +859,13 @@ svg.fa-trash-alt:hover {
     color: $maingray;
 }
 
+/* in the fullcalendar toolabar they are used in a button so we want them white */
+.fc-toolbar {
+    .svg-inline--fa {
+        color: #fff;
+    }
+}
+
 /* caption for tinymce */
 figure.image {
     display: inline-block;

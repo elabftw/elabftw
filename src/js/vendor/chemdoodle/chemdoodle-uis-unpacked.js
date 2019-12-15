@@ -21118,7 +21118,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
             // id of the canvas to attach the viewer to
             var id = $(this).attr('id');
             // now get the file content and display it in the viewer
-            ChemDoodle.io.file.content($(this).data('molpath'), function(fileContent: string){
+            ChemDoodle.io.file.content($(this).data('molpath'), function(fileContent){
               var mol = ChemDoodle.readMOL(fileContent);
               var viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
               // config some stuff in the viewer

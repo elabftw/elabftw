@@ -61,6 +61,8 @@ module.exports = {
     show: './src/ts/show.ts',
     team: './src/ts/team.ts',
     tinymce: './src/ts/tinymce.ts',
+    todolist: './src/ts/todolist.ts',
+    ucp: './src/ts/ucp.ts',
     uploads: './src/ts/uploads.ts',
     view: [
       './src/ts/view.ts',

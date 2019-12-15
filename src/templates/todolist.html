@@ -22,8 +22,4 @@
 </div>
 
 <div id='todoSc' data-toggle='{{ App.Users.userData.sc_todo }}'></div>
-{% if App.Config.configArr.debug %}
-  <script src='app/js/src/todolist.js?v={{ v }}'></script>
-{% else %}
-  <script src='app/js/todolist.min.js?v={{ v }}'></script>
-{% endif %}
+<script src='app/js/todolist.bundle.js?v={{ v }}'></script>

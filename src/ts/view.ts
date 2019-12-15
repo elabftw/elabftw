@@ -1,4 +1,11 @@
-import '../../node_modules/jquery-jeditable/src/jquery.jeditable.js';
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+import 'jquery-jeditable/src/jquery.jeditable.js';
 import { notif } from './misc';
 declare var key: any;
 

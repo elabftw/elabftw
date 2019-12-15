@@ -8,7 +8,7 @@
 declare var tinymce: any;
 import { notif } from './misc';
 import $ from 'jquery';
-import '../../node_modules/jquery-jeditable/src/jquery.jeditable.js';
+import 'jquery-jeditable/src/jquery.jeditable.js';
 
 function tinyMceInitLight() {
   tinymce.init({

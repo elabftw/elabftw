@@ -1,15 +1,19 @@
 /**
- * todolist.js - for the todolist
- *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-(function() {
-  'use strict';
+declare var key: any;
+import { relativeMoment, notif } from './misc';
 
+$(document).ready(function() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
   // TODOLIST TOGGLE
   // use shortcut
   key($('#todoSc').data('toggle'), function() {
@@ -20,7 +24,7 @@
     $('#todoList').toggle();
   });
   $(document).on('mouseenter', '.todoItem', function() {
-    $(this).editable(function(value) {
+    (<any>$(this)).editable(function(value) {
       $.post('app/controllers/TodolistController.php', {
         update: true,
         body: value,
@@ -37,12 +41,12 @@
   });
 
 
-  var Todolist = {
+  let Todolist = {
     controller: 'app/controllers/TodolistController.php',
     // add a todo item
     create: function(e) {
       e.preventDefault();
-      var body = $('#todo').val();
+      let body = $('#todo').val();
       if (body !== '') {
         $.post(this.controller, {
           create: true,
@@ -97,4 +101,4 @@
   $(document).on('click', '.destroyTodoItem', function() {
     Todolist.destroy($(this).data('id'));
   });
-}());
+});

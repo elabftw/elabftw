@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log(info.event);
       if (!editable) { return; }
       $('#rmBind').hide();
-      (<any>$('#eventModal')).modal('toggle');
+      $('#eventModal').modal('toggle');
       // delete button in modal
       $('#deleteEvent').on('click', function() {
         $.post('app/controllers/SchedulerController.php', {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
           notif(json);
           if (json.res) {
             info.event.remove();
-            (<any>$('#eventModal')).modal('toggle');
+            $('#eventModal').modal('toggle');
           }
         });
       });
@@ -105,12 +105,12 @@ document.addEventListener('DOMContentLoaded', function() {
         $.post('app/controllers/SchedulerController.php', {
           bind: true,
           id: info.event.id,
-          expid: parseInt((<any>$('#bindinput').val()), 10),
+          expid: parseInt((<string>$('#bindinput').val()), 10),
         }).done(function(json) {
           notif(json);
           if (json.res) {
             $('#bindinput').val('');
-            (<any>$('#eventModal')).modal('toggle');
+            $('#eventModal').modal('toggle');
             window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
           }
         });
@@ -121,14 +121,14 @@ document.addEventListener('DOMContentLoaded', function() {
           unbind: true,
           id: info.event.id,
         }).done(function(json) {
-          (<any>$('#eventModal')).modal('toggle');
+          $('#eventModal').modal('toggle');
           notif(json);
           window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
         });
       });
       // BIND AUTOCOMPLETE
       let cache: any = {};
-      (<any>$('#bindinput')).autocomplete({
+      $('#bindinput').autocomplete({
         source: function(request: any, response: any) {
           let term = request.term;
           if (term in cache) {

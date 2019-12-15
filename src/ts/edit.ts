@@ -264,7 +264,7 @@ $(document).ready(function() {
       const editor = $('#iHazEditor').data('editor');
       if (editor === 'md') {
         const cursorPosition = $('#body_area').prop('selectionStart');
-        const content = (<any>$('#body_area').val());
+        const content = (<string>$('#body_area').val());
         const before = content.substring(0, cursorPosition);
         const after = content.substring(cursorPosition);
         const imgMdLink = '\n![image](' + url + ')\n';
@@ -300,7 +300,7 @@ $(document).ready(function() {
     });
 
     // DATEPICKER
-    (<any>$('#datepicker')).datepicker({dateFormat: 'yymmdd'});
+    $('#datepicker').datepicker({dateFormat: 'yymmdd'});
     // If the title is 'Untitled', clear it on focus
     $('#title_input').focus(function(){
       if ($(this).val() === $('#info').data('untitled')) {

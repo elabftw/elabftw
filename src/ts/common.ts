@@ -29,7 +29,7 @@ $(document).ready(function() {
 
   // SORTABLE ELEMENTS
   // need an axis and a table via data attribute
-  (<any>$('.sortable')).sortable({
+  $('.sortable').sortable({
     // limit to horizontal dragging
     axis : $(this).data('axis'),
     helper : 'clone',

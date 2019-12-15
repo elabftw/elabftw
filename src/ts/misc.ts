@@ -111,7 +111,7 @@ function transformToAssocArray(prmstr: string) {
 }
 
 // insert a get param in the url and reload the page
-export function insertParamAndReload(key: string, value: string) { // eslint-disable-line no-unused-vars
+export function insertParamAndReload(key: any, value: any) { // eslint-disable-line no-unused-vars
   key = escape(key); value = escape(value);
 
   var kvp = document.location.search.substr(1).split('&');

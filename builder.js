@@ -59,8 +59,6 @@ module.exports = {
       './src/ts/jsoneditor.ts',
     ],
     editusers: './src/ts/editusers.ts',
-    fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
-    moment: 'moment',
     profile: './src/ts/profile.ts',
     search: './src/ts/search.ts',
     show: './src/ts/show.ts',

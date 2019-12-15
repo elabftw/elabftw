@@ -222,7 +222,7 @@
             {% endif %}
 
             <textarea id='commentsCreateArea' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
-            <div id='commentsCreateButtonDiv' class='submitButtonDiv togglableHidden'>
+            <div id='commentsCreateButtonDiv' class='submitButtonDiv d-none'>
                 <button class='button' id='commentsCreateButton' data-expid='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
             </div>
         </div>

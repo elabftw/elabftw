@@ -15,20 +15,22 @@ function enableSaveButton(){
 }
 
 // editor div
-const container = document.getElementById('jsoneditor');
+const container = document.getElementById('jsonEditorContainer');
 
 const options = {onChange:enableSaveButton,
-  modes:['tree','code','view','form','text'],
-  onModeChange:function(newMode){
-    if(newMode==='code' || newMode==='text'){$('#jsoneditor').height('800px');}
-    else{$('#jsoneditor').removeAttr('style');}
+  modes: ['tree','code','view','form','text'],
+  onModeChange: function(newMode) {
+    if (newMode==='code' || newMode==='text'){
+      $('#jsoneditor').height('800px');
+    } else {
+      $('#jsoneditor').removeAttr('style');
+    }
   }
 };
 
 const editor = new JSONEditor(container, options);
 
-$('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
-//$('.jsonEditorDiv').hide();
+$('.jsonSaver').attr('disabled', 1);
 $('.jsonEditorDiv').css('margin-top', '5px'); //Added some margin to allow the + icon to be separated from the editor
 $('.jsoneditor-search').find('input').css('padding', '0px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
 

@@ -20,7 +20,6 @@ $(document).ready(function() {
   $(document).on('click', '.togglableNext', function() {
     $(this).next().toggle();
   });
-  $('.togglableHidden').hide();
 
   // Toggle modal
   $('.modalToggle').on('click', function() {

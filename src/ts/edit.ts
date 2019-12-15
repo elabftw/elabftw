@@ -300,25 +300,14 @@ $(document).ready(function() {
     });
 
     // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
-    $(document).on('click', '.show-hide',  function() {
-      let elem;
-
-      if ($(this).data('type') === 'doodle') {
-        elem = $('.canvasDiv');
-      }
-      else if ($(this).data('type') === 'jsoneditor') {
-        elem = $('.jsonEditorDiv');
-      }  else {
-        elem = $('#chem_editor');
-      }
-      if (elem.is(':hidden')) {
+    $(document).on('click', '.plusMinusButton',  function() {
+      if ($(this).html() === '+') {
         $(this).html('-');
         $(this).addClass('button-neutral');
       } else {
         $(this).html('+');
         $(this).removeClass('button-neutral');
       }
-      elem.toggle();
     });
 
     // DATEPICKER
@@ -332,7 +321,7 @@ $(document).ready(function() {
 
     // ANNOTATE IMAGE
     $(document).on('click', '.annotateImg',  function() {
-      $('.canvasDiv').show();
+      $('#doodleDiv').show();
       $(document).scrollTop($('#doodle-anchor').offset().top);
       var context: CanvasRenderingContext2D = (<HTMLCanvasElement>document.getElementById('doodleCanvas')).getContext('2d');
       var img = new Image();

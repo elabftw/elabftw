@@ -171,9 +171,9 @@
 <!-- JSON EDITOR -->
 <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-    <button class='button show-hide' data-type='jsoneditor'>+</button><br/>
-    <div class='jsonEditorDiv togglableHidden'>
-      <div id='jsoneditor'></div>
+    <button class='button plusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
+    <div id='jsonEditorDiv' class='collapse mt-2'>
+      <div id='jsonEditorContainer'></div>
       <div class='submitButtonDiv'>
         <button type='submit' class='button jsonSaver'>{{ 'Saved'|trans }}</button>
       </div>
@@ -183,8 +183,8 @@
 <!-- DOODLE -->
 <section class='box' id='doodle-anchor'>
   <i class='fas fa-paint-brush mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Draw something'|trans }}</h3>
-  <button class='button show-hide' data-type='doodle'>+</button>
-  <div class='canvasDiv togglableHidden'>
+  <button class='button plusMinusButton' data-toggle='collapse' data-target='#doodleDiv' aria-expanded='false' aria-controls='doodleDiv'>+</button>
+  <div id='doodleDiv' class='collapse mt-2'>
     <div class='row'>
       <div>
         <canvas class='doodle' id='doodleCanvas' width='600px' height='600px'></canvas>
@@ -218,8 +218,8 @@
 {% if Entity.Users.userData.chem_editor %}
     <div class='box chemdoodle'>
         <i class='fas fa-dna mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Molecule drawer'|trans }}</h3>
-        <button class='button show-hide' data-type='chem'>+</button>
-            <div class='text-center' style='display:none' id='chem_editor'>
+        <button class='button plusMinusButton' data-toggle='collapse' data-target='#chemDiv' aria-expanded='false' aria-controls='chemDiv'>+</button>
+            <div id='chemDiv' class='collapse mt-2 text-center'>
                 <script src='app/js/chemdoodle-canvas.min.js?v={{ v }}'></script>
             </div>
           </div>

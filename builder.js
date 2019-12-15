@@ -11,6 +11,7 @@
  * because I don't want any path clash with the web folder when
  * doing autocompletion.
  */
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -53,7 +54,10 @@ module.exports = {
     ],
     admin: './src/ts/admin.ts',
     changepass: './src/ts/change-pass.ts',
-    edit: './src/ts/edit.ts',
+    edit: [
+      './src/ts/edit.ts',
+      './src/ts/jsoneditor.ts',
+    ],
     editusers: './src/ts/editusers.ts',
     fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
     moment: 'moment',
@@ -72,14 +76,20 @@ module.exports = {
   },
   plugins: [
     // only load the moment locales that we are interested in
-    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/)
+    new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/),
+    // insert the paths of the bundles into the html template
+    new HtmlWebpackPlugin({
+      // TODO none of those options are working
+      base: 'app/js/',
+      chunks: 'vendors',
+      minify: false,
+    }),
   ],
   mode: 'production',
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'web/app/js')
   },
-  /*
   optimization: {
     splitChunks: {
       chunks: 'all',
@@ -89,7 +99,7 @@ module.exports = {
       maxAsyncRequests: 6,
       maxInitialRequests: 4,
       automaticNameDelimiter: '~',
-      automaticNameMaxLength: 30,
+      automaticNameMaxLength: 50,
       cacheGroups: {
         vendors: {
           test: /[\\/]node_modules[\\/]/,
@@ -103,7 +113,6 @@ module.exports = {
       }
     },
   },
-  */
   module: {
     rules:[
       // ts loader

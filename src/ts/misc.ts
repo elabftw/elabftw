@@ -6,8 +6,9 @@
  * @package elabftw
  */
 declare var ChemDoodle: any;
-declare var moment: any;
 declare var tinymce: any;
+
+const moment = require('moment');
 
 // DISPLAY COMMENT TIME RELATIVE TO NOW
 export function relativeMoment(): void {

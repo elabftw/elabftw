@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import 'tinymce/tinymce';
+import { tinymce } from 'tinymce/tinymce';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
@@ -26,3 +26,5 @@ import 'tinymce/plugins/table';
 import 'tinymce/plugins/template';
 import 'tinymce/themes/silver/theme';
 import 'tinymce/themes/mobile/theme';
+
+export default tinymce;

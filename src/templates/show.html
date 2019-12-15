@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block body %}
+
+{% if not searchPage %}
 <!-- Modal for create new database -->
 <div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
@@ -22,8 +24,6 @@
   </div>
 </div>
 <!-- end modal -->
-
-{% if not searchPage %}
 <div class='row'>
   <!-- LEFT MENU: FILTER/ORDER/SORT/LIMIT -->
   <!-- we hide this menu for small devices -->

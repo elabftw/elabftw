@@ -12,11 +12,6 @@
 
 
 {% include('view-edit.html') %}
-<!-- WYSIWYG editor -->
-<script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
-<!-- upload files library -->
-<script src='app/js/dropzone.min.js?v={{ v }}'></script>
-
 <!-- Modal for edit permissions -->
 <div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
@@ -177,8 +172,8 @@
 <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
     <button class='button show-hide' data-type='jsoneditor'>+</button><br/>
-    <div class='jsonEditorDiv'>
-      <div id="jsoneditor"></div>
+    <div class='jsonEditorDiv togglableHidden'>
+      <div id='jsoneditor'></div>
       <div class='submitButtonDiv'>
         <button type='submit' class='button jsonSaver'>{{ 'Saved'|trans }}</button>
       </div>
@@ -255,17 +250,8 @@
 
 <!-- Loading the JSONEditor lib -->
 <link href="app/css/jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
-<script src='app/js/jsoneditor.min.js?v={{ v }}'></script>
 
-{% if App.Config.configArr.debug %}
-  <script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
-  <script src='app/js/edit.bundle.js?v={{ v }}'></script>
-  <script src='app/js/src/doodle.js?v={{ v }}'></script>
-  <script src='app/js/src/jsoneditor-loader.js?v={{ v }}'></script>
-{% else %}
-  <script src='app/js/edit.bundle.js?v={{ v }}'></script>
-  <script src='app/js/doodle.min.js?v={{ v }}'></script>
-  <script src='app/js/jsoneditor-loader.js?v={{ v }}'></script>
-{% endif %}
-
+<script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
+<script src='app/js/edit.bundle.js?v={{ v }}'></script>
+<script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 {% endblock body %}

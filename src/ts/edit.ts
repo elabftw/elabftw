@@ -5,11 +5,33 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var tinymce: any;
-declare var Dropzone: any;
 declare var key: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
+const tinymce = require('tinymce/tinymce');
+require('tinymce/plugins/advlist');
+require('tinymce/plugins/autosave');
+require('tinymce/plugins/charmap');
+require('tinymce/plugins/code');
+require('tinymce/plugins/codesample');
+require('tinymce/plugins/fullscreen');
+require('tinymce/plugins/hr');
+require('tinymce/plugins/image');
+require('tinymce/plugins/imagetools');
+require('tinymce/plugins/insertdatetime');
+require('tinymce/plugins/link');
+require('tinymce/plugins/lists');
+require('tinymce/plugins/pagebreak');
+require('tinymce/plugins/paste');
+require('tinymce/plugins/save');
+require('tinymce/plugins/searchreplace');
+require('tinymce/plugins/table');
+require('tinymce/plugins/template');
+require('tinymce/themes/silver/theme');
+require('tinymce/themes/mobile/theme');
+
+import './doodle';
+const Dropzone= require('dropzone/dist/dropzone-amd-module');
 
 $.ajaxSetup({
   headers: {
@@ -312,7 +334,7 @@ $(document).ready(function() {
     $(document).on('click', '.annotateImg',  function() {
       $('.canvasDiv').show();
       $(document).scrollTop($('#doodle-anchor').offset().top);
-      var context: CanvasRenderingContext2D = (<any>document.getElementById('doodleCanvas')).getContext('2d');
+      var context: CanvasRenderingContext2D = (<HTMLCanvasElement>document.getElementById('doodleCanvas')).getContext('2d');
       var img = new Image();
       // set src attribute to image path
       img.src = 'app/download.php?f=' + $(this).data('path');

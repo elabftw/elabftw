@@ -5,23 +5,21 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var google: any;
+import { GoogleCharts } from 'google-charts';
 
 function drawChart() {
-  let json = $('#stats').data('stats');
-  let data = new google.visualization.DataTable(json);
-  let options = {
+  const json = $('#stats').data('stats');
+  const data = new GoogleCharts.api.visualization.DataTable(json);
+  const options = {
     title: $('#stats').data('title'),
     backgroundColor: '#fff',
     colors: $('#stats').data('colors')
   };
-  let chart = new google.visualization.PieChart(document.getElementById('pieChart'));
+  const chart = new GoogleCharts.api.visualization.PieChart(document.getElementById('pieChart'));
   chart.draw(data, options);
 }
 
 $(document).ready(function() {
   // GENERATE STATUS PIE CHART
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
-
+  GoogleCharts.load(drawChart);
 });

@@ -1,9 +1,21 @@
-// create the editor
-const container = document.getElementById('jsoneditor');
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+declare var key: any;
+
+import { notif } from './misc';
+import JSONEditor from 'jsoneditor';
 
 function enableSaveButton(){
-  $('.jsonSaver').removeAttr('disabled', 0).text('Save').css('cursor','pointer');
+  $('.jsonSaver').removeAttr('disabled').text('Save').css('cursor','pointer');
 }
+
+// editor div
+const container = document.getElementById('jsoneditor');
 
 const options = {onChange:enableSaveButton,
   modes:['tree','code','view','form','text'],
@@ -13,10 +25,10 @@ const options = {onChange:enableSaveButton,
   }
 };
 
-var JSONEditor;
 const editor = new JSONEditor(container, options);
+
 $('.jsonSaver').attr('disabled', 1).text('Saved').css('cursor','default');
-$('.jsonEditorDiv').hide();
+//$('.jsonEditorDiv').hide();
 $('.jsonEditorDiv').css('margin-top', '5px'); //Added some margin to allow the + icon to be separated from the editor
 $('.jsoneditor-search').find('input').css('padding', '0px'); //Added to fix the search bar CSS issue. There is a problem with the inherited padding value from elabsftw CSS files
 
@@ -72,13 +84,14 @@ $(document).on('click', '.jsonSaver', function(){
   } else {
     var formData = new FormData();
     var blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
-    formData.append('replace', true);
+    formData.append('replace', 'true');
     formData.append('upload_id', currentFileItemID);
     formData.append('id', currentFileUploadID);
     formData.append('type', 'experiments');
     formData.append('file', blob);
 
     $.ajax({
+      // TODO this should call an ajax controller that returns json
       url: 'app/controllers/EntityController.php',
       data: formData,
       processData: false,

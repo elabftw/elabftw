@@ -10,8 +10,8 @@ INSERT INTO `teams` (`name`, `deletable_xp`, `link_name`, `link_href`, `datetime
 ('Editme', 1, 'Documentation', 'https://doc.elabftw.net', '2016-07-28 19:23:15', NULL, NULL, NULL, NULL, 'sha256');
 
 
-INSERT INTO `users` (`userid`, `salt`, `password`, `team`, `usergroup`, `firstname`, `lastname`, `email`, `phone`, `cellphone`, `skype`, `website`, `register_date`, `token`, `limit_nb`, `sc_create`, `sc_edit`, `sc_submit`, `sc_todo`, `close_warning`, `chem_editor`, `validated`, `lang`) VALUES
-(1, 'f84cf883e2c79fd8beceacf17d0b6e9fe98083e49e5f3cf949e30efa14e08a08b9b1b1e1a2e26dfbb7efd6158ffc6f405ed4669626a784ae8d76a8ec7bcf3f1d', 'a3120de3fbce90abd63c2a8ec81ebfe4e00849c56a89e1d3d196290a4b88ed81e8829e79fe50ceae05f52d6422485d29dda2d88b4932dca7bfb8efb7cbdb3745', 1, 1, 'Php', 'UNIT', 'phpunit@yopmail.com', NULL, NULL, NULL, NULL, 1469733882, '8873f66dfae374a3cce82f91621689cf', 15, 'c', 'e', 's', 't', 0, 0, 1, 'en_GB');
+INSERT INTO `users` (`userid`, `salt`, `password`, `team`, `usergroup`, `firstname`, `lastname`, `email`, `phone`, `cellphone`, `skype`, `website`, `register_date`, `token`, `limit_nb`, `sc_create`, `sc_edit`, `sc_submit`, `sc_todo`, `chem_editor`, `validated`, `lang`) VALUES
+(1, 'f84cf883e2c79fd8beceacf17d0b6e9fe98083e49e5f3cf949e30efa14e08a08b9b1b1e1a2e26dfbb7efd6158ffc6f405ed4669626a784ae8d76a8ec7bcf3f1d', 'a3120de3fbce90abd63c2a8ec81ebfe4e00849c56a89e1d3d196290a4b88ed81e8829e79fe50ceae05f52d6422485d29dda2d88b4932dca7bfb8efb7cbdb3745', 1, 1, 'Php', 'UNIT', 'phpunit@yopmail.com', NULL, NULL, NULL, NULL, 1469733882, '8873f66dfae374a3cce82f91621689cf', 15, 'c', 'e', 's', 't', 0, 1, 'en_GB');
 
 --
 -- Dumping data for table `experiments`

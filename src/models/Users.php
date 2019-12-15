@@ -443,8 +443,6 @@ class Users
 
         // SHOW TEAM
         $new_show_team = Filter::onToBinary($params['show_team'] ?? '');
-        // CLOSE WARNING
-        $new_close_warning = Filter::onToBinary($params['close_warning'] ?? '');
         // CJK FONTS
         $new_cjk_fonts = Filter::onToBinary($params['cjk_fonts'] ?? '');
         // PDF/A
@@ -489,7 +487,6 @@ class Users
             sc_submit = :new_sc_submit,
             sc_todo = :new_sc_todo,
             show_team = :new_show_team,
-            close_warning = :new_close_warning,
             chem_editor = :new_chem_editor,
             lang = :new_lang,
             default_read = :new_default_read,
@@ -510,7 +507,6 @@ class Users
         $req->bindParam(':new_sc_submit', $new_sc_submit);
         $req->bindParam(':new_sc_todo', $new_sc_todo);
         $req->bindParam(':new_show_team', $new_show_team);
-        $req->bindParam(':new_close_warning', $new_close_warning);
         $req->bindParam(':new_chem_editor', $new_chem_editor);
         $req->bindParam(':new_lang', $new_lang);
         $req->bindParam(':new_default_read', $new_default_read);

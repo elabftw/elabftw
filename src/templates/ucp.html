@@ -129,11 +129,6 @@
         />
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
         <br>
-        <input id='close_warning' type='checkbox' name='close_warning'
-          {{ App.Users.userData.close_warning == '1' ? " checked='checked'" }}
-        />
-        <label for='close_warning'>{{ 'Display a warning before closing an edit window/tab'|trans }}</label>
-        <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
           {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
         />

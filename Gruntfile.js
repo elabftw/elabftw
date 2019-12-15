@@ -26,7 +26,6 @@ module.exports = function(grunt) {
               'src/js/vendor/chemdoodle/chemdoodle-unpacked.js',
               'src/js/vendor/chemdoodle/chemdoodle-uis-unpacked.js'],
 
-          'web/app/js/close-warning.min.js': 'web/app/js/src/close-warning.js',
           'web/app/js/chemdoodle-canvas.min.js': 'web/app/js/src/chemdoodle-canvas.js',
 
           'web/app/js/bootstrap-markdown.min.js': [

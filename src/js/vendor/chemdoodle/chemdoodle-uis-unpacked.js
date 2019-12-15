@@ -21112,7 +21112,28 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
         string: c.writeMOL(sketcher.molecules[0])
       }).done(function() {
         $('#filesdiv').load('?mode=edit&id=' + item + ' #filesdiv', function() {
-          displayMolFiles();
+          // FIXME this is copy pasted from the misc module
+          // loop all the mol files and display the molecule with ChemDoodle
+          $.each($('.molFile'), function() {
+            // id of the canvas to attach the viewer to
+            var id = $(this).attr('id');
+            // now get the file content and display it in the viewer
+            ChemDoodle.io.file.content($(this).data('molpath'), function(fileContent: string){
+              var mol = ChemDoodle.readMOL(fileContent);
+              var viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
+              // config some stuff in the viewer
+              viewer.specs.bonds_width_2D = 0.6;
+              viewer.specs.bonds_saturationWidth_2D = 0.18;
+              viewer.specs.bonds_hashSpacing_2D = 2.5;
+              viewer.specs.atoms_font_size_2D = 10;
+              viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
+              viewer.specs.atoms_displayTerminalCarbonLabels_2D = true;
+              // load it
+              viewer.loadMolecule(mol);
+            });
+          });
+          // instead of having it like this:
+          //displayMolFiles();
         });
       });
       // END ELABFTW CUSTOMIZATION

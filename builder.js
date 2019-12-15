@@ -27,7 +27,7 @@ module.exports = {
       'bootstrap/js/src/collapse.js',
       'bootstrap/js/src/dropdown.js',
       'bootstrap/js/src/modal.js',
-      './web/app/js/src/fontawesome.es.js',
+      './src/ts/fontawesome.ts',
       // mathjax config must be loaded before mathjax lib
       './web/app/js/src/mathjax-config.js',
       // load tex with all the extensions
@@ -59,7 +59,7 @@ module.exports = {
     fancybox: '@fancyapps/fancybox/dist/jquery.fancybox.js',
     moment: 'moment',
     team: './src/ts/team.ts',
-    tinymce: './web/app/js/src/tinymce.es.js',
+    tinymce: './src/ts/tinymce.ts',
     uploads: './src/ts/uploads.ts',
     view: [
       './src/ts/view.ts',

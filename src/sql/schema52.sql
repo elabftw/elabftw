@@ -10,6 +10,7 @@ START TRANSACTION;
     ALTER TABLE `users` ADD `default_write` VARCHAR(255) NULL DEFAULT 'user';
     ALTER TABLE `users` DROP `allow_edit`;
     ALTER TABLE `users` DROP `allow_group_edit`;
+    ALTER TABLE `users` DROP `close_warning`;
     ALTER TABLE `team_events` ADD `experiment` int(10) UNSIGNED DEFAULT NULL;
     INSERT INTO config (conf_name, conf_value) VALUES ('email_domain', NULL);
     UPDATE config SET conf_value = 52 WHERE conf_name = 'schema';

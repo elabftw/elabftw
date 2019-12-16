@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<script src='app/js/tinymce.bundle.js?v={{ v }}'></script>
-
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'>{{ 'Preferences'|trans }}</li>
@@ -390,6 +388,5 @@
 <div id='info' data-confirm="{{ 'Delete this?'|trans }}" data-confirmtag="{{ 'Delete this tag?'|trans }}" data-type='experiments_templates'></div>
 
 <!-- to export templates -->
-<!--script src='app/js/file-saver.min.js?v={{ v }}'></script-->
 <script src='app/js/ucp.bundle.js?v={{ v }}'></script>
 {% endblock body %}

@@ -64,7 +64,6 @@ module.exports = {
     show: './src/ts/show.ts',
     sysconfig: './src/ts/sysconfig.ts',
     team: './src/ts/team.ts',
-    tinymce: './src/ts/tinymce.ts',
     todolist: './src/ts/todolist.ts',
     ucp: './src/ts/ucp.ts',
     uploads: './src/ts/uploads.ts',
@@ -83,7 +82,7 @@ module.exports = {
       template: 'src/js/scripts-tags.html',
       inject: false,
       // we only want the vendors chunks
-      excludeChunks: ['admin', 'changepass', 'edit', 'editusers', 'profile', 'search', 'show', 'team', 'tinymce', 'todolist', 'ucp', 'uploads', 'view'],
+      excludeChunks: ['admin', 'changepass', 'edit', 'editusers', 'profile', 'search', 'show', 'sysconfig', 'team', 'todolist', 'ucp', 'uploads', 'view'],
     }),
   ],
   mode: 'production',

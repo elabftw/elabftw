@@ -5,10 +5,30 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var tinymce: any;
 import { notif } from './misc';
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
+const tinymce = require('tinymce/tinymce');
+require('tinymce/plugins/advlist');
+require('tinymce/plugins/autosave');
+require('tinymce/plugins/charmap');
+require('tinymce/plugins/code');
+require('tinymce/plugins/codesample');
+require('tinymce/plugins/fullscreen');
+require('tinymce/plugins/hr');
+require('tinymce/plugins/image');
+require('tinymce/plugins/imagetools');
+require('tinymce/plugins/insertdatetime');
+require('tinymce/plugins/link');
+require('tinymce/plugins/lists');
+require('tinymce/plugins/pagebreak');
+require('tinymce/plugins/paste');
+require('tinymce/plugins/save');
+require('tinymce/plugins/searchreplace');
+require('tinymce/plugins/table');
+require('tinymce/plugins/template');
+require('tinymce/themes/silver/theme');
+require('tinymce/themes/mobile/theme');
 
 function tinyMceInitLight() {
   tinymce.init({

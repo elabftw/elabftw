@@ -32,7 +32,6 @@ module.exports = function(grunt) {
               'node_modules/marked/lib/marked.js',
               'node_modules/bootstrap-markdown-fa5/js/bootstrap-markdown.js',
               'node_modules/bootstrap-markdown-fa5/locale/*' ],
-          'web/app/js/jsoneditor.min.js':'node_modules/jsoneditor/dist/jsoneditor.js',
         }
       }
     },

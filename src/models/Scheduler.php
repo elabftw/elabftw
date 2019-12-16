@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTime;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -153,16 +154,28 @@ class Scheduler
     /**
      * Update the start (and end) of an event (when you drag and drop it)
      *
-     * @param string $start 2016-07-22T13:37:00
-     * @param string $end 2016-07-22T13:37:00
+     * @param array $delta timedelta
      * @return void
      */
-    public function updateStart(string $start, string $end): void
+    public function updateStart(array $delta): void
     {
+        $event = $this->readFromId();
+        if (empty($event)) {
+            return;
+        }
+        $oldStart = new DateTime($event['start']);
+        $oldEnd = new DateTime($event['end']);
+        $seconds = '0';
+        if (\strlen($delta['milliseconds']) > 3) {
+            $seconds = \substr($delta['milliseconds'], 0, -3);
+        }
+        $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':start', $start);
-        $req->bindParam(':end', $end);
+        $req->bindValue(':start', $newStart->format('c'));
+        $req->bindValue(':end', $newEnd->format('c'));
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
@@ -174,14 +187,25 @@ class Scheduler
     /**
      * Update the end of an event (when you resize it)
      *
-     * @param string $end 2016-07-22T13:37:00
+     * @param array $delta timedelta
      * @return void
      */
-    public function updateEnd(string $end): void
+    public function updateEnd(array $delta): void
     {
+        $event = $this->readFromId();
+        if (empty($event)) {
+            return;
+        }
+        $oldEnd = new DateTime($event['end']);
+        $seconds = '0';
+        if (\strlen($delta['milliseconds']) > 3) {
+            $seconds = \substr($delta['milliseconds'], 0, -3);
+        }
+        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':end', $end);
+        $req->bindValue(':end', $newEnd->format('c'));
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 

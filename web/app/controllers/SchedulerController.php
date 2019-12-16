@@ -60,24 +60,13 @@ try {
             $Response->setData($Scheduler->read());
         }
     }
-    // READ
-    /*
-    if ($Request->request->has('read')) {
-        if ($Request->request->get('read') === 'all') {
-            $Response->setData($Scheduler->readAllFromTeam());
-        } else {
-            $Database->setId((int) $Request->request->get('item'));
-            $Response->setData($Scheduler->read());
-        }
-    }
-     */
 
     // UPDATE START
     if ($Request->request->has('updateStart')) {
         $Scheduler->setId((int) $Request->request->get('id'));
         $eventArr = $Scheduler->readFromId();
         if ($eventArr['userid'] === $App->Session->get('userid')) {
-            $Scheduler->updateStart($Request->request->get('start'), $Request->request->get('end'));
+            $Scheduler->updateStart($Request->request->get('delta'));
         }
     }
     // UPDATE END

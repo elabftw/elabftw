@@ -155,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
       $(info.el).css('box-shadow', 'unset');
     },
     // a drop means we change start date
-    // TODO
     eventDrop: function(info) {
       if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
@@ -167,7 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     },
     // a resize means we change end date
-    // TODO
     eventResize: function(info) {
       if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {

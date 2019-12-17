@@ -8,6 +8,7 @@ START TRANSACTION;
     ALTER TABLE `items` CHANGE `visibility` `canread` VARCHAR(255) NOT NULL DEFAULT 'team';
     ALTER TABLE `users` CHANGE `default_vis` `default_read` VARCHAR(255) NULL DEFAULT 'team';
     ALTER TABLE `users` ADD `default_write` VARCHAR(255) NULL DEFAULT 'user';
+    ALTER TABLE `users` ADD `display_size` VARCHAR(2) NOT NULL DEFAULT 'lg';
     ALTER TABLE `users` DROP `allow_edit`;
     ALTER TABLE `users` DROP `allow_group_edit`;
     ALTER TABLE `users` DROP `close_warning`;

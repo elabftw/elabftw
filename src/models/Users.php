@@ -406,6 +406,9 @@ class Users
         // LIMIT
         $new_limit = Check::limit((int) $params['limit']);
 
+        // DISPLAY SIZE
+        $new_display_size = Check::displaySize($params['display_size']);
+
         // ORDER BY
         $new_orderby = null;
         $whitelistOrderby = array(null, 'cat', 'date', 'title', 'comment');
@@ -480,6 +483,7 @@ class Users
 
         $sql = 'UPDATE users SET
             limit_nb = :new_limit,
+            display_size = :new_display_size,
             orderby = :new_orderby,
             sort = :new_sort,
             sc_create = :new_sc_create,
@@ -500,6 +504,7 @@ class Users
             WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_limit', $new_limit);
+        $req->bindParam(':new_display_size', $new_display_size);
         $req->bindParam(':new_orderby', $new_orderby);
         $req->bindParam(':new_sort', $new_sort);
         $req->bindParam(':new_sc_create', $new_sc_create);

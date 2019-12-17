@@ -81,10 +81,6 @@ p {
     color: $maingray;
 }
 
-section.item p {
-    margin-bottom: 0;
-}
-
 /* LINKS */
 a,
 .link-like {
@@ -405,7 +401,64 @@ a.elab-tooltip-top span::after {
 
 /* fix tooltip larger than parent div */
 section.item {
+    line-height: 200%;
     overflow: visible;
+    p {
+        margin-bottom: 0;
+    }
+}
+
+/* display_size stuff */
+
+.item-show-xs {
+    &:not(.item-show-last) {
+        border-bottom: none !important;
+    }
+}
+
+.item-info {
+    padding-left: 20px;
+}
+
+.item-next {
+    padding-left: 20px;
+    .item-next-step {
+        color: black;
+    }
+}
+
+.item-category {
+    text-transform: uppercase;
+    font-size:80%;
+}
+
+@mixin item-show-inline {
+    .title,
+    .item-next,
+    .item-info,
+    .item-date {
+        display: inline;
+    }
+    .item-next,
+    .item-info {
+        padding-left: 0;
+    }
+}
+
+.item-show-xs {
+    @include item-show-inline;
+    margin: 0 !important;
+    padding: 0 !important;
+    .title {
+        font-size: 100%;
+    }
+}
+
+.item-show-md {
+    @include item-show-inline;
+    .title {
+        font-size: 130%;
+    }
 }
 
 /* BADGE */
@@ -715,7 +768,7 @@ form#filter-order-sort select {
     color: $elabblue;
 }
 
-.date {
+.item-date {
     color: $maingray;
     padding: 0 5px;
 }
@@ -763,7 +816,6 @@ form#filter-order-sort select {
 /* TAGS */
 .tag {
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
-    line-height: 300%;
     border-radius: 5px;
     border: 1px solid $maingray;
     color: $maingray;

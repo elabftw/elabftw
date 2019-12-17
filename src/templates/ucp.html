@@ -34,6 +34,14 @@
       <hr>
       <label for='limit'>{{ 'Items per page:'|trans }}</label>
       <input id='limit' class='form-control col-md-2' type='text' size='2' maxlength='2' value='{{ App.Users.userData.limit_nb }}' name='limit'>
+
+      <label for='display_size'>{{ 'Display size:'|trans }}</label>
+      <select id='display_size' name='display_size' class='form-control col-md-3'>
+          <option value='lg' {{ App.Users.userData.display_size == 'lg' ? ' selected' }}>{{ 'Large (default)'|trans }}</option>
+          <option value='md' {{ App.Users.userData.display_size == 'md' ? ' selected' }}>{{ 'Medium'|trans }}</option>
+          <option value='xs' {{ App.Users.userData.display_size == 'xs' ? ' selected' }}>{{ 'Small'|trans }}</option>
+      </select>
+
       <label for='orderby'>{{ 'Order by:'|trans }}</label>
       <select id='orderby' name='orderby' class='form-control col-md-3'>
           <option value='default' {{ App.Users.userData.orderby == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
@@ -42,12 +50,14 @@
           <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
           <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
       </select>
+
       <label for='sort'>{{ 'Sort:'|trans }}</label>
       <select id='sort' name='sort' class='form-control col-md-3'>
         <option value='default' {{ App.Users.userData.sort == null ? ' selected' }}>{{ 'Use default'|trans }}</option>
         <option value='asc' {{ App.Users.userData.sort == 'asc' ? ' selected' }}>{{ 'ASC'|trans }}</option>
         <option value='desc' {{ App.Users.userData.sort == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
       </select>
+
       <input id='layout' class='mt-2' type='checkbox' name='single_column_layout'
           {{ App.Users.userData.single_column_layout == '1' ? " checked='checked'" }}
       />

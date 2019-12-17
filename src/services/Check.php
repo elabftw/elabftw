@@ -101,6 +101,24 @@ class Check
     }
 
     /**
+     * Check the display size user setting
+     *
+     * @param string $input
+     * @return string
+     */
+    public static function displaySize(string $input): string
+    {
+        switch ($input) {
+            case 'xs':
+                return 'xs';
+            case 'md':
+                return 'md';
+            default:
+                return 'lg';
+        }
+    }
+
+    /**
      * Check if we have a correct value for visibility
      *
      * @param string $visibility

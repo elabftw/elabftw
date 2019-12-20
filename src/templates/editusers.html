@@ -132,7 +132,10 @@
     <h3>{{ 'Add account'|trans }}</h3>
     <div class='form-group'>
       {{ App.Csrf.getHiddenInput|raw }}
-      <input type='hidden' name='team' value='{{ App.Users.userData.team }}' />
+      {# because the select will be disabled, the team won't be sent, so add it as hidden for admin page #}
+      {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+        <input type='hidden' name='team' value='{{ App.Users.userData.team }}' />
+      {% endif %}
       <input type='hidden' name='frompage' value='{{ App.Request.getScriptName|split('/')|last }}' />
       <div class='row'>
 

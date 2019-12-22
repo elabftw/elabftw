@@ -39,7 +39,7 @@ $(document).ready(function() {
     controller: 'app/controllers/SysconfigAjaxController.php',
     create: function() {
       (<HTMLButtonElement>document.getElementById('teamsCreateButton')).disabled = true;
-      var name = $('#teamsName').val();
+      const name = $('#teamsName').val();
       $.post(this.controller, {
         teamsCreate: true,
         teamsName: name
@@ -49,8 +49,8 @@ $(document).ready(function() {
     },
     update: function(id) {
       (<HTMLButtonElement>document.getElementById('teamsUpdateButton_' + id)).disabled = true;
-      var name = $('#teamName_' + id).val();
-      var orgid = $('#teamOrgid_' + id).val();
+      const name = $('#teamName_' + id).val();
+      const orgid = $('#teamOrgid_' + id).val();
       $.post(this.controller, {
         teamsUpdate: true,
         teamsUpdateId : id,
@@ -137,7 +137,7 @@ $(document).ready(function() {
 
   // TEST EMAIL
   $(document).on('click', '#testemailButton', function() {
-    var email = $('#testemailEmail').val();
+    const email = $('#testemailEmail').val();
     (<HTMLButtonElement>document.getElementById('testemailButton')).disabled = true;
     $('#testemailButton').text('Sending…');
     $.post('app/controllers/SysconfigAjaxController.php', {
@@ -160,9 +160,9 @@ $(document).ready(function() {
   });
 
   // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-  var input_list = document.getElementsByTagName('input');
-  for (var i=0; i < input_list.length; i++) {
-    var input = input_list[i];
+  const input_list = document.getElementsByTagName('input');
+  for (let i=0; i < input_list.length; i++) {
+    const input = input_list[i];
     input.disabled = false;
   }
   // honor already saved mail_method setting and hide unused options accordingly

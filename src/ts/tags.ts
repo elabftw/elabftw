@@ -27,7 +27,7 @@ $(document).ready(function() {
 
     saveForTemplate(tplId: any) {
       // get tag
-      let tag = $('#createTagInput_' + tplId).val();
+      const tag = $('#createTagInput_' + tplId).val();
       // POST request
       $.post(this.controller, {
         createTag: true,
@@ -138,11 +138,11 @@ $(document).ready(function() {
   });
 
   // AUTOCOMPLETE
-  let cache: any = {};
+  const cache: any = {};
   // # is for db or xp, . is for templates, should probably be homogeneized soon
   (<any>$('#createTagInput, .createTagInput')).autocomplete({
     source: function(request: any, response: any) {
-      let term  = request.term;
+      const term  = request.term;
       if (term in cache) {
         response(cache[term]);
         return;

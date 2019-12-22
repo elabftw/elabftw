@@ -9,21 +9,21 @@ import { getGetParameters } from './misc';
 
 document.addEventListener('DOMContentLoaded', function() {
   // get the tab=X parameter in the url
-  var params = getGetParameters();
-  var tab = parseInt(params.tab, 10);
+  const params = getGetParameters();
+  let tab = parseInt(params.tab, 10);
   if (tab % 1 !== 0) {
     tab = 1;
   }
-  var initdiv = '#tab' + tab + 'div';
-  var inittab = '#tab' + tab;
+  let initdiv = '#tab' + tab + 'div';
+  let inittab = '#tab' + tab;
   // init
   $('.divhandle').hide();
   $(initdiv).show();
   $(inittab).addClass('selected');
 
   $('.tabhandle' ).on('click', function(event) {
-    var tabhandle = '#' + event.target.id;
-    var divhandle = '#' + event.target.id + 'div';
+    const tabhandle = '#' + event.target.id;
+    const divhandle = '#' + event.target.id + 'div';
     $('.divhandle').hide();
     $(divhandle).show();
     $('.tabhandle').removeClass('selected');
@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
   $(inittab).addClass('selected');
 
   $('.subtabhandle' ).on('click', function(event) {
-    var tabhandle = '#' + event.target.id;
-    var divhandle = '#' + event.target.id + 'div';
+    const tabhandle = '#' + event.target.id;
+    const divhandle = '#' + event.target.id + 'div';
     $('.subdivhandle').hide();
     $(divhandle).show();
     $('.subtabhandle').removeClass('badgetabactive');

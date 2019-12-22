@@ -1,5 +1,5 @@
 import { notif } from './misc';
-var Comments = {
+const Comments = {
   controller: 'app/controllers/CommentsAjaxController.php',
   create: function() {
     (<any>document.getElementById('commentsCreateButton')).disabled = true;
@@ -72,7 +72,7 @@ $(document).on('mouseenter', '.comment', function() {
     submitcssclass : 'button btn btn-primary mt-2',
     cancelcssclass : 'button btn btn-danger mt-2',
     callback : function(data: string) {
-      let json = JSON.parse(data);
+      const json = JSON.parse(data);
       notif(json);
       // show result in comment box
       if (json.res) {

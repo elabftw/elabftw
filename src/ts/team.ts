@@ -32,7 +32,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 
 function schedulerCreate(start: string, end: string) {
-  var title = prompt('Comment:');
+  const title = prompt('Comment:');
   if (title) {
     // add it to SQL
     $.post('app/controllers/SchedulerController.php', {
@@ -145,10 +145,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
       // BIND AUTOCOMPLETE
-      let cache: any = {};
+      const cache: any = {};
       $('#bindinput').autocomplete({
         source: function(request: any, response: any) {
-          let term = request.term;
+          const term = request.term;
           if (term in cache) {
             response(cache[term]);
             return;

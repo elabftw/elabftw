@@ -560,6 +560,7 @@ CREATE TABLE `users` (
   `archived` tinyint(1) NOT NULL DEFAULT '0',
   `pdfa` tinyint(1) NOT NULL DEFAULT '1',
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
+  `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `last_login` DATETIME NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

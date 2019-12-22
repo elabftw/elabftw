@@ -7,6 +7,8 @@
  */
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { notif } from './misc';
+// not working
+//import { key } from '../js/vendor/keymaster.js';
 declare let key: any;
 
 $(document).ready(function() {

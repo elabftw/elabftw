@@ -31,7 +31,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 
-function schedulerCreate(start: string, end: string) {
+function schedulerCreate(start: string, end: string): void {
   const title = prompt('Comment:');
   if (title) {
     // add it to SQL
@@ -50,15 +50,13 @@ function schedulerCreate(start: string, end: string) {
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
-  let read = 'one';
   let editable = true;
   let selectable = true;
   if ($('#info').data('all')) {
-    read = 'all';
     editable = false;
     selectable = false;
   }
-  const calendarEl: HTMLElement = document.getElementById('scheduler')!;
+  const calendarEl: HTMLElement = document.getElementById('scheduler');
 
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
@@ -100,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
       $('#rmBind').hide();
       $('#eventModal').modal('toggle');
       // delete button in modal
-      $('#deleteEvent').on('click', function() {
+      $('#deleteEvent').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           destroy: true,
           id: info.event.id
@@ -119,11 +117,11 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#rmBind').show();
       }
       // bind an experiment to the event
-      $('#goBind').on('click', function() {
+      $('#goBind').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           bind: true,
           id: info.event.id,
-          expid: parseInt((<string>$('#bindinput').val()), 10),
+          expid: parseInt(($('#bindinput').val() as string), 10),
         }).done(function(json) {
           notif(json);
           if (json.res) {
@@ -134,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
       // remove the binding
-      $('#rmBind').on('click', function() {
+      $('#rmBind').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           unbind: true,
           id: info.event.id,
@@ -145,9 +143,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
       // BIND AUTOCOMPLETE
-      const cache: any = {};
+      const cache = {};
       $('#bindinput').autocomplete({
-        source: function(request: any, response: any) {
+        source: function(request: any, response: any): void {
           const term = request.term;
           if (term in cache) {
             response(cache[term]);
@@ -162,18 +160,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     },
     // on mouse enter add shadow and show title
-    eventMouseEnter: function(info) {
+    eventMouseEnter: function(info): void {
       if (editable) {
         $(info.el).css('box-shadow', '5px 4px 4px #474747');
       }
       $(info.el).attr('title', info.event.title);
     },
     // remove the box shadow when mouse leaves
-    eventMouseLeave: function(info) {
+    eventMouseLeave: function(info): void {
       $(info.el).css('box-shadow', 'unset');
     },
     // a drop means we change start date
-    eventDrop: function(info) {
+    eventDrop: function(info): void {
       if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
         updateStart: true,
@@ -184,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     },
     // a resize means we change end date
-    eventResize: function(info) {
+    eventResize: function(info): void {
       if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
         updateEnd: true,

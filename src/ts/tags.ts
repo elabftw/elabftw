@@ -25,7 +25,7 @@ $(document).ready(function() {
       this.controller = 'app/controllers/TagsController.php';
     }
 
-    saveForTemplate(tplId: any) {
+    saveForTemplate(tplId: number): void {
       // get tag
       const tag = $('#createTagInput_' + tplId).val();
       // POST request
@@ -42,7 +42,7 @@ $(document).ready(function() {
     }
 
     // REFERENCE A TAG
-    save() {
+    save(): void {
       // get tag
       const tag = <string>$('#createTagInput').val();
       // do nothing if input is empty
@@ -63,7 +63,7 @@ $(document).ready(function() {
     }
 
     // DEDUPLICATE
-    deduplicate(tag: string) {
+    deduplicate(tag: string): void {
       $.post(this.controller, {
         deduplicate: true,
         tag: tag
@@ -74,7 +74,7 @@ $(document).ready(function() {
     }
 
     // REMOVE THE TAG FROM AN ENTITY
-    unreference(tagId: number) {
+    unreference(tagId: number): void {
       if (confirm(confirmText)) {
         $.post(this.controller, {
           unreferenceTag: true,
@@ -88,7 +88,7 @@ $(document).ready(function() {
     }
 
     // REMOVE THE TAG FROM AN ENTITY
-    unreferenceForTemplate(tagId: number, tplId: number) {
+    unreferenceForTemplate(tagId: number, tplId: number): void {
       if (confirm(confirmText)) {
         $.post(this.controller, {
           unreferenceTag: true,
@@ -101,7 +101,7 @@ $(document).ready(function() {
       }
     }
     // REMOVE A TAG COMPLETELY (from admin panel/tag manager)
-    destroy(tagId: number) {
+    destroy(tagId: number): void {
       if (confirm('Delete this?')) {
         $.post(this.controller, {
           destroyTag: true,
@@ -138,9 +138,9 @@ $(document).ready(function() {
   });
 
   // AUTOCOMPLETE
-  const cache: any = {};
+  const cache = {};
   // # is for db or xp, . is for templates, should probably be homogeneized soon
-  (<any>$('#createTagInput, .createTagInput')).autocomplete({
+  ($('#createTagInput, .createTagInput') as any).autocomplete({
     source: function(request: any, response: any) {
       const term  = request.term;
       if (term in cache) {

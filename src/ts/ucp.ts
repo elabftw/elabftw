@@ -37,7 +37,7 @@ $(document).ready(function() {
   });
   const Templates = {
     controller: 'app/controllers/EntityAjaxController.php',
-    saveToFile: function(id, name) {
+    saveToFile: function(id, name): void {
       // we have the name of the template used for filename
       // and we have the id of the editor to get the content from
       // we don't use activeEditor because it requires a click inside the editing area
@@ -45,7 +45,7 @@ $(document).ready(function() {
       const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
       saveAs(blob, name + '.elabftw.tpl');
     },
-    destroy: function(id) {
+    destroy: function(id): void {
       if (confirm('Delete this ?')) {
         $.post(this.controller, {
           destroy: true,
@@ -74,13 +74,13 @@ $(document).ready(function() {
 
   // input to upload an elabftw.tpl file
   $('#import_tpl').hide().on('change', function() {
-    const title = (document.getElementById('import_tpl') as any).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
+    const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function(e): void {
       // switch for markdown mode
       if ($('#new_tpl_txt').hasClass('mceditable')) {
         tinymce.get('new_tpl_txt').setContent(e.target.result);
@@ -107,7 +107,7 @@ $(document).ready(function() {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query, process) {
+      source: function (query, process): void {
         const url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
         $.getJSON(url, function(data) {
           process(data);

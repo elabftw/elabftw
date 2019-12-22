@@ -97,5 +97,5 @@ $(document).ready(function() {
   });
 
   // ACTIVATE FANCYBOX
-  ($('[data-fancybox]') as any).fancybox();
+  $('[data-fancybox]').fancybox();
 });

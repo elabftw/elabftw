@@ -44,7 +44,7 @@ $(document).ready(function() {
   const Todolist = {
     controller: 'app/controllers/TodolistController.php',
     // add a todo item
-    create: function(e) {
+    create: function(e): void {
       e.preventDefault();
       const body = $('#todo').val();
       if (body !== '') {
@@ -66,7 +66,7 @@ $(document).ready(function() {
       }
     },
     // remove one todo item
-    destroy: function(id) {
+    destroy: function(id): void {
       $.post(this.controller, {
         destroy: true,
         id: id
@@ -79,7 +79,7 @@ $(document).ready(function() {
       });
     },
     // clear all the items
-    destroyAll: function() {
+    destroyAll: function(): void {
       $.post(this.controller, {
         destroyAll: true
       }).done(function(json) {

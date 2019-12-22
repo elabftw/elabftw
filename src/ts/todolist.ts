@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var key: any;
+declare let key: any;
 import { relativeMoment, notif } from './misc';
 
 $(document).ready(function() {
@@ -24,7 +24,7 @@ $(document).ready(function() {
     $('#todoList').toggle();
   });
   $(document).on('mouseenter', '.todoItem', function() {
-    (<any>$(this)).editable(function(value) {
+    ($(this) as any).editable(function(value) {
       $.post('app/controllers/TodolistController.php', {
         update: true,
         body: value,
@@ -41,12 +41,12 @@ $(document).ready(function() {
   });
 
 
-  let Todolist = {
+  const Todolist = {
     controller: 'app/controllers/TodolistController.php',
     // add a todo item
     create: function(e) {
       e.preventDefault();
-      let body = $('#todo').val();
+      const body = $('#todo').val();
       if (body !== '') {
         $.post(this.controller, {
           create: true,

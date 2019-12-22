@@ -25,7 +25,7 @@ $(document).ready(function() {
 
   // make file comments editable
   $(document).on('mouseenter', '.file-comment', function() {
-    (<any>$('.editable')).editable(function(value: string) {
+    ($('.editable') as any).editable(function(value: string) {
       $.post('app/controllers/EntityAjaxController.php', {
         updateFileComment : true,
         type: $(this).data('type'),
@@ -58,8 +58,8 @@ $(document).ready(function() {
 
   // Export mol in png
   $(document).on('click', '.saveAsImage', function() {
-    let molCanvasId = $(this).parent().siblings().find('canvas').attr('id');
-    let png = (<any>document.getElementById(molCanvasId)).toDataURL();
+    const molCanvasId = $(this).parent().siblings().find('canvas').attr('id');
+    const png = (document.getElementById(molCanvasId) as any).toDataURL();
     $.post('app/controllers/EntityAjaxController.php', {
       saveAsImage: true,
       realName: $(this).data('name'),
@@ -78,7 +78,7 @@ $(document).ready(function() {
 
   // DESTROY UPLOAD
   $(document).on('click', '.uploadsDestroy', function() {
-    var itemid = $(this).data('itemid');
+    const itemid = $(this).data('itemid');
     if (confirm($(this).data('msg'))) {
       $.post('app/controllers/EntityAjaxController.php', {
         uploadsDestroy: true,
@@ -97,5 +97,5 @@ $(document).ready(function() {
   });
 
   // ACTIVATE FANCYBOX
-  (<any>$('[data-fancybox]')).fancybox();
+  ($('[data-fancybox]') as any).fancybox();
 });

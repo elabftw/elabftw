@@ -10,40 +10,58 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-import '@fullcalendar/core/locales/ca'
-import '@fullcalendar/core/locales/de'
-import '@fullcalendar/core/locales/en-gb'
-import '@fullcalendar/core/locales/es'
-import '@fullcalendar/core/locales/fr'
-import '@fullcalendar/core/locales/it'
-import '@fullcalendar/core/locales/id'
-import '@fullcalendar/core/locales/ja'
+import '@fullcalendar/core/locales/ca';
+import '@fullcalendar/core/locales/de';
+import '@fullcalendar/core/locales/en-gb';
+import '@fullcalendar/core/locales/es';
+import '@fullcalendar/core/locales/fr';
+import '@fullcalendar/core/locales/it';
+import '@fullcalendar/core/locales/id';
+import '@fullcalendar/core/locales/ja';
 //import '@fullcalendar/core/locales/kr'
-import '@fullcalendar/core/locales/nl'
-import '@fullcalendar/core/locales/pl'
-import '@fullcalendar/core/locales/pt'
-import '@fullcalendar/core/locales/pt-br'
-import '@fullcalendar/core/locales/ru'
-import '@fullcalendar/core/locales/sk'
-import '@fullcalendar/core/locales/sl'
-import '@fullcalendar/core/locales/zh-cn'
+import '@fullcalendar/core/locales/nl';
+import '@fullcalendar/core/locales/pl';
+import '@fullcalendar/core/locales/pt';
+import '@fullcalendar/core/locales/pt-br';
+import '@fullcalendar/core/locales/ru';
+import '@fullcalendar/core/locales/sk';
+import '@fullcalendar/core/locales/sl';
+import '@fullcalendar/core/locales/zh-cn';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 
+function schedulerCreate(start: string, end: string) {
+  var title = prompt('Comment:');
+  if (title) {
+    // add it to SQL
+    $.post('app/controllers/SchedulerController.php', {
+      create: true,
+      start: start,
+      end: end,
+      title: title,
+      item: $('#info').data('item')
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+        window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+      }
+    });
+  }
+}
 document.addEventListener('DOMContentLoaded', function() {
-  var read = 'one';
-  var editable = true;
-  var selectable = true;
+  let read = 'one';
+  let editable = true;
+  let selectable = true;
   if ($('#info').data('all')) {
     read = 'all';
     editable = false;
     selectable = false;
   }
-  let calendarEl: HTMLElement = document.getElementById('scheduler')!;
+  const calendarEl: HTMLElement = document.getElementById('scheduler')!;
 
   // SCHEDULER
-  let calendar = new Calendar(calendarEl, {
+  const calendar = new Calendar(calendarEl, {
     plugins: [ timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     header: {
       left: 'prev,next today',
@@ -190,22 +208,3 @@ $(document).on('click', '.importTpl', function() {
     notif(json);
   });
 });
-
-function schedulerCreate(start: string, end: string) {
-  var title = prompt('Comment:');
-  if (title) {
-    // add it to SQL
-    $.post('app/controllers/SchedulerController.php', {
-      create: true,
-      start: start,
-      end: end,
-      title: title,
-      item: $('#info').data('item')
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
-      }
-    });
-  }
-}

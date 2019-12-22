@@ -35,7 +35,7 @@ $(document).ready(function() {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }
   });
-  let Templates = {
+  const Templates = {
     controller: 'app/controllers/EntityAjaxController.php',
     saveToFile: function(id, name) {
       // we have the name of the template used for filename
@@ -74,24 +74,24 @@ $(document).ready(function() {
 
   // input to upload an elabftw.tpl file
   $('#import_tpl').hide().on('change', function() {
-    const title = (<any>document.getElementById('import_tpl')).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
+    const title = (document.getElementById('import_tpl') as any).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function(e) {
       // switch for markdown mode
       if ($('#new_tpl_txt').hasClass('mceditable')) {
         tinymce.get('new_tpl_txt').setContent(e.target.result);
       } else {
-        $('#new_tpl_txt').text(<any>e.target.result);
+        $('#new_tpl_txt').text(e.target.result as string);
       }
       $('#new_tpl_name').val(title);
       $('#import_tpl').hide();
     };
 
-    reader.readAsText((<any>this).files[0]);
+    reader.readAsText((this as any).files[0]);
   });
 
   // TinyMCE
@@ -108,7 +108,7 @@ $(document).ready(function() {
       delimiter: '#',
       // get the source from json with get request
       source: function (query, process) {
-        let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
+        const url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
         $.getJSON(url, function(data) {
           process(data);
         });

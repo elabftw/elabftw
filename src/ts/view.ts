@@ -7,14 +7,14 @@
  */
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import { notif } from './misc';
-declare var key: any;
+declare let key: any;
 
 $(document).ready(function() {
   // add the title in the page name (see #324)
   document.title = $('.title_view').text() + ' - eLabFTW';
 
-  var type = $('#info').data('type');
-  var id = $('#info').data('id');
+  const type = $('#info').data('type');
+  const id = $('#info').data('id');
 
   // EDIT
   key($('#shortcuts').data('edit'), function() {

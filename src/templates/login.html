@@ -45,7 +45,8 @@
         <label for='email'>{{ 'Email'|trans }}</label>
         <input class='form-control mb-4' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
         <label for='password'>{{ 'Password'|trans }}</label>
-        <a href='#' class='align_right underlined resetPassword modalToggle' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
+        <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
+        <a href='#' class='align_right underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
         <input class='form-control' id='password' name='password' type='password' required />
         <!-- Remember me checkbox -->
         <div class='form-check mt-2'>

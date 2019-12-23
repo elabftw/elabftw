@@ -80,7 +80,14 @@ class MakeStreamZip extends AbstractMake
      */
     public function getFileName(): string
     {
-        return 'export.elabftw.zip';
+        $this->idArr = explode(' ', $this->idList);
+        if (count($this->idArr) == 1){
+            $this->Entity->setId((int) $this->idArr[0]);
+            $this->Entity->getPermissions();
+            return $this->getBaseFileName() . ".zip";
+        }else{
+            return 'export.elabftw.zip';
+        }
     }
 
     /**
@@ -139,12 +146,22 @@ class MakeStreamZip extends AbstractMake
      */
     private function nameFolder(): void
     {
-        if ($this->Entity instanceof Experiments) {
-            $this->folder = $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
-        } elseif ($this->Entity instanceof Database) {
-            $this->folder = $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
-        }
+        $this->folder = $this->getBaseFileName();
     }
+
+    /**
+     * Folder and zip file name begins with date for experiments
+     *
+     * @return void
+     */
+    private function getBaseFileName(): string
+    {
+        if ($this->Entity instanceof Experiments) {
+            return $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
+        } elseif ($this->Entity instanceof Database) {
+            return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
+        }
+    } 
 
     /**
      * Add attached files

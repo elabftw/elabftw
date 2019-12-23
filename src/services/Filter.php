@@ -94,21 +94,16 @@ class Filter
     }
 
     /**
-     * Remove all non word characters. Used for files saved on the filesystem (pdf, zip, ...)
-     * This code is from https://developer.wordpress.org/reference/functions/sanitize_file_name/
+     * Only allow alphabet characters and numbers
+     * This code is from https://stackoverflow.com/questions/4289905/php-escape-user-input-for-filename/4290182#4290182
      *
      * @param string $input what to sanitize
      * @return string the clean string
      */
     public static function forFilesystem(string $input): string
     {
-        $specialChars = array('?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', chr(0));
-        $input = htmlspecialchars_decode($input, ENT_QUOTES);
-        $input = preg_replace("#\x{00a0}#siu", ' ', $input);
-        $input = str_replace($specialChars, '', $input ?? '');
-        $input = str_replace(array('%20', '+'), '-', $input ?? '');
-        $input = preg_replace('/[\r\n\t -]+/', '-', $input);
-        return trim($input ?? 'file', '.-_');
+        $escaped = preg_replace('/[^A-Za-z0-9_\-]/', '_', $input);
+        return trim($escaped ?? 'file', '.-_');
     }
 
     /**

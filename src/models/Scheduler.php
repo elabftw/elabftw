@@ -71,9 +71,11 @@ class Scheduler
     /**
      * Return an array with events for all items of the team
      *
+     * @param string $start 2019-12-23T00:00:00 01:00
+     * @param string $end 2019-12-30T00:00:00 01:00
      * @return array
      */
-    public function readAllFromTeam(): array
+    public function readAllFromTeam(string $start, string $end): array
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.title, team_events.id, team_events.start, team_events.end, team_events.userid,
@@ -84,9 +86,12 @@ class Scheduler
             LEFT JOIN items ON team_events.item = items.id
             LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
-            WHERE team_events.team = :team";
+            WHERE team_events.team = :team
+            AND team_events.start > :start AND team_events.end < :end";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }
@@ -101,11 +106,14 @@ class Scheduler
     /**
      * Return an array with events for this item
      *
+     * @param string $start 2019-12-23T00:00:00 01:00
+     * @param string $end 2019-12-30T00:00:00 01:00
      * @return array
      */
-    public function read(): array
+    public function read(string $start, string $end): array
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
+        // the color is used by fullcalendar for the bg color of the event
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
             CONCAT('#', items_types.color) AS color
@@ -114,10 +122,13 @@ class Scheduler
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
             LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
-            WHERE team_events.team = :team AND team_events.item = :item";
+            WHERE team_events.team = :team AND team_events.item = :item
+            AND team_events.start > :start AND team_events.end < :end";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Database->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':item', $this->Database->id, PDO::PARAM_INT);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         if ($req->execute() !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

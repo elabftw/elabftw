@@ -26,13 +26,13 @@ class AuthTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckCredentials()
     {
-        $this->assertTrue($this->Auth->checkCredentials('phpunit@yopmail.com', 'phpunitftw'));
-        $this->assertFalse($this->Auth->checkCredentials('phpunit@yopmail.com', 'wrong password'));
+        $this->assertTrue($this->Auth->checkCredentials('toto@yopmail.com', 'phpunitftw'));
+        $this->assertFalse($this->Auth->checkCredentials('toto@yopmail.com', 'wrong password'));
     }
 
     public function testLogin()
     {
-        $this->assertTrue($this->Auth->login('phpunit@yopmail.com', 'phpunitftw'));
-        $this->assertFalse($this->Auth->login('phpunit@yopmail.com', '0'));
+        $this->assertTrue($this->Auth->login('toto@yopmail.com', 'phpunitftw'));
+        $this->assertFalse($this->Auth->login('toto@yopmail.com', '0'));
     }
 }

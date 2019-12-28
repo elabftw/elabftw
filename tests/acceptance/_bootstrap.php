@@ -18,7 +18,7 @@ function testLogin($I)
     }
     // logging in
     $I->amOnPage('/login.php');
-    $I->submitForm('#login', array('email' => 'phpunit@yopmail.com', 'password' => 'phpunitftw'));
+    $I->submitForm('#login', array('email' => 'toto@yopmail.com', 'password' => 'phpunitftw'));
     // saving snapshot
     $I->saveSessionSnapshot('login');
 }

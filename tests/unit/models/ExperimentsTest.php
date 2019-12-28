@@ -44,12 +44,13 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead()
     {
-        $this->Experiments->setId(1);
+        $new = $this->Experiments->create(0);
+        $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->read();
         $this->assertTrue(is_array($experiment));
-        $this->assertEquals('Experiment 1', $experiment['title']);
-        $this->assertEquals('20160729', $experiment['date']);
+        $this->assertEquals('Untitled', $experiment['title']);
+        //$this->assertEquals('20160729', $experiment['date']);
     }
 
     public function testReadRelated()

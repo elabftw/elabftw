@@ -27,6 +27,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_vis' => 'organization',
+            'display_size' => 'lg',
         );
         $this->Users->updatePreferences($prefsArr);
     }

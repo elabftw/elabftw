@@ -5,21 +5,21 @@
   "require": {
     "php": ">=7.3.7",
     "ext-ctype": "*",
-    "ext-curl":"*",
+    "ext-curl": "*",
     "ext-exif": "*",
     "ext-fileinfo": "*",
     "ext-filter": "*",
-    "ext-gettext":"*",
+    "ext-gettext": "*",
     "ext-hash": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "ext-openssl":"*",
-    "ext-gd":"*",
+    "ext-openssl": "*",
+    "ext-gd": "*",
     "ext-pdo": "*",
     "ext-zip": "*",
     "defuse/php-encryption": "2.2.*",
     "mpdf/mpdf": "8.0.*",
-    "swiftmailer/swiftmailer":"6.2.*",
+    "swiftmailer/swiftmailer": "6.2.*",
     "onelogin/php-saml": "3.4.*",
     "guzzlehttp/guzzle": "6.4.*",
     "symfony/http-foundation": "5.0.*",
@@ -36,21 +36,40 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "3.1.*",
+    "codeception/codeception": "^4.0",
     "pyrech/composer-changelogs": "1.7.*",
     "fzaninotto/faker": "^1.9",
-    "friendsofphp/php-cs-fixer": "^2.15"
+    "friendsofphp/php-cs-fixer": "^2.15",
+    "codeception/module-webdriver": "^1.0.0",
+    "codeception/module-db": "^1.0.0",
+    "codeception/module-asserts": "^1.0.0"
   },
   "autoload": {
     "psr-4": {
-      "Elabftw\\Controllers\\" : ["src/controllers"],
-      "Elabftw\\Elabftw\\" : ["src/classes"],
-      "Elabftw\\Commands\\" : ["src/commands"],
-      "Elabftw\\Exceptions\\" : ["src/exceptions"],
-      "Elabftw\\Interfaces\\" : ["src/interfaces"],
-      "Elabftw\\Models\\" : ["src/models"],
-      "Elabftw\\Services\\" : ["src/services"],
-      "Elabftw\\Traits\\" : ["src/traits"]
+      "Elabftw\\Controllers\\": [
+        "src/controllers"
+      ],
+      "Elabftw\\Elabftw\\": [
+        "src/classes"
+      ],
+      "Elabftw\\Commands\\": [
+        "src/commands"
+      ],
+      "Elabftw\\Exceptions\\": [
+        "src/exceptions"
+      ],
+      "Elabftw\\Interfaces\\": [
+        "src/interfaces"
+      ],
+      "Elabftw\\Models\\": [
+        "src/models"
+      ],
+      "Elabftw\\Services\\": [
+        "src/services"
+      ],
+      "Elabftw\\Traits\\": [
+        "src/traits"
+      ]
     }
   },
   "license": "AGPL-3.0-or-later"

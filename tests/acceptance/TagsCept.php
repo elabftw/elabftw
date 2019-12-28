@@ -12,7 +12,7 @@ testLogin($I);
 $I->amOnPage('experiments.php?mode=edit&id=1');
 $I->see('Tags');
 $I->fillField('//*[@id="createTagInput"]', 'New tag');
-$I->pressKey('//*[@id="createTagInput"]', WebDriverKeys::ENTER);
+$I->pressKey('//*[@id="createTagInput"]', \Facebook\WebDriver\WebDriverKeys::ENTER);
 $I->waitForJS('return jQuery.active == 0', 10);
 $I->seeInDatabase('tags', array('tag' => 'New tag'));
 

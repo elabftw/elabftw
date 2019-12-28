@@ -59,9 +59,9 @@ class PopulateDatabase extends Command
             \str_repeat('=', \mb_strlen($this->getDescription())),
         ));
 
+        $helper = $this->getHelper('question');
         // ask question before populating unless --yes is provided
         if (!$input->getOption('yes')) {
-            $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion("WARNING: this command will completely ERASE your current database!\nAre you sure you want to continue? (y/n)\n", false);
 
             if (!$helper->ask($input, $output, $question)) {

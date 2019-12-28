@@ -334,7 +334,8 @@ class ApiController implements ControllerInterface
     {
         // return all events if there is no id
         if ($this->id === null) {
-            return new JsonResponse($this->Scheduler->readAllFromTeam());
+            // TODO allow filtering of this through sent data
+            return new JsonResponse($this->Scheduler->readAllFromTeam('2018-12-23T00:00:00 01:00', '2119-12-23T00:00:00 01:00'));
         }
         $this->Scheduler->setId($this->id);
         return new JsonResponse($this->Scheduler->readFromId());

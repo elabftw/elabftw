@@ -26,8 +26,6 @@ class Install extends Command
     // the name of the command (the part after "bin/console")
     protected static $defaultName = 'start';
 
-    private $fs;
-
     protected function configure(): void
     {
         $this
@@ -41,7 +39,7 @@ class Install extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->fs = new Filesystem();
+        $fs = new Filesystem();
         $elabRoot = \dirname(__DIR__, 2);
         $configFilePath = $elabRoot . '/config.php';
         $cacheDir = $elabRoot . '/cache';
@@ -68,7 +66,7 @@ class Install extends Command
         $output->writeln('=> Preliminary checks starting');
 
         // check for config.php
-        if ($this->fs->exists($configFilePath)) {
+        if ($fs->exists($configFilePath)) {
             $output->writeln('<info>✓ A config file is already present. It will be used to initialize the database.</info>');
         } else {
             $output->writeln('<info>✓ No config file present. One will be created.</info>');
@@ -94,8 +92,8 @@ class Install extends Command
         $doc='https://doc.elabftw.net/faq.html#failed-creating-uploads-directory';
         try {
             $dirs = array($cacheDir, $uploadsDir);
-            $this->fs->mkdir($dirs);
-            $this->fs->chmod($dirs, 0777);
+            $fs->mkdir($dirs);
+            $fs->chmod($dirs, 0777);
         } catch (IOExceptionInterface $e) {
             $output->writeln('<error>ERROR: ' . $e->getMessage() . '</error>');
             $message = 'Documentation: ' . $doc;
@@ -103,7 +101,7 @@ class Install extends Command
             return 1;
         }
 
-        if (!$this->fs->exists($configFilePath)) {
+        if (!$fs->exists($configFilePath)) {
             $output->writeln('✓ All preliminary checks suceeded. Now asking information to produce the config.php file.');
             $output->writeln('<comment>The value between brackets is the default value entered if you just press enter.</comment>');
             // ask for authentication credentials
@@ -134,7 +132,7 @@ class Install extends Command
             define('DB_USER', '" . $config['dbUser'] . "');
             define('DB_PASSWORD', '" . $config['dbPass'] . "');
             define('SECRET_KEY', '" . $key->saveToAsciiSafeString() . "');";
-            $this->fs->dumpFile($configFilePath, $configContent);
+            $fs->dumpFile($configFilePath, $configContent);
             $output->writeln('✓ Config file is now in place.');
         }
 

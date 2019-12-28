@@ -26,7 +26,7 @@ sleep 10
 # install the database
 docker exec -it elabtmp bin/install start
 # populate the database
-docker exec -it elabtmp bin/console dev:populate -p phpunitftw -m phpunit@example.com -u phpunit -s phpunit
+docker exec -it elabtmp bin/console dev:populate -p phpunitftw -m phpunit@example.com -u phpunit -s phpunit -y
 # run tests
 docker exec -it elabtmp php vendor/bin/codecept run --skip functionnal
 # test API

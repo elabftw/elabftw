@@ -80,12 +80,11 @@ class MakeStreamZip extends AbstractMake
      */
     public function getFileName(): string
     {
-        $this->idArr = explode(' ', $this->idList);
-        if (count($this->idArr) == 1){
+        if (count($this->idArr) === 1){
             $this->Entity->setId((int) $this->idArr[0]);
-            $this->Entity->getPermissions();
+            $this->Entity->canOrExplode('read');
             return $this->getBaseFileName() . ".zip";
-        }else{
+        } else {
             return 'export.elabftw.zip';
         }
     }
@@ -152,7 +151,7 @@ class MakeStreamZip extends AbstractMake
     /**
      * Folder and zip file name begins with date for experiments
      *
-     * @return void
+     * @return string
      */
     private function getBaseFileName(): string
     {
@@ -160,8 +159,10 @@ class MakeStreamZip extends AbstractMake
             return $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         } elseif ($this->Entity instanceof Database) {
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
+        } else{
+            throw ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
         }
-    } 
+    }
 
     /**
      * Add attached files

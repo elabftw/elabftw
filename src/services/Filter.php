@@ -94,16 +94,35 @@ class Filter
     }
 
     /**
-     * Only allow alphabet characters and numbers
-     * This code is from https://stackoverflow.com/questions/4289905/php-escape-user-input-for-filename/4290182#4290182
+     * Remove all non word characters. Used for files saved on the filesystem (pdf, zip, ...)
+     * This code is from https://developer.wordpress.org/reference/functions/sanitize_file_name/
      *
      * @param string $input what to sanitize
      * @return string the clean string
      */
     public static function forFilesystem(string $input): string
     {
-        $escaped = preg_replace('/[^A-Za-z0-9_\-]/', '_', $input);
-        return trim($escaped ?? 'file', '.-_');
+        $specialChars = array
+        (
+            '?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', 
+            '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', chr(0), 
+            // Greek small letters
+            "\u{03B1}", "\u{03B2}", "\u{03B3}", "\u{03B4}", "\u{03B5}", "\u{03B6}", "\u{03B7}",
+            "\u{03B8}", "\u{03B9}", "\u{03BA}", "\u{03BB}", "\u{03BC}", "\u{03BD}", "\u{03BE}",
+            "\u{03BF}", "\u{03C0}", "\u{03C1}", "\u{03C3}", "\u{03C4}", "\u{03C5}", "\u{03C6}",
+            "\u{03C7}", "\u{03C8}", "\u{03C9}",
+            // Greek capital letters
+            "\u{0391}", "\u{0392}", "\u{0393}", "\u{0394}", "\u{0395}", "\u{0396}", "\u{0397}",
+            "\u{0398}", "\u{0399}", "\u{039A}", "\u{039B}", "\u{039C}", "\u{039D}", "\u{039E}",
+            "\u{039F}", "\u{03A0}", "\u{03A1}", "\u{03A3}", "\u{03A4}", "\u{03A5}", "\u{03A6}",
+            "\u{03A7}", "\u{03A8}", "\u{03A9}"
+        );
+        $input = htmlspecialchars_decode($input, ENT_QUOTES);
+        $input = preg_replace("#\x{00a0}#siu", ' ', $input);
+        $input = str_replace($specialChars, '', $input ?? '');
+        $input = str_replace(array('%20', '+'), '-', $input ?? '');
+        $input = preg_replace('/[\r\n\t -]+/', '-', $input);
+        return trim($input ?? 'file', '.-_');
     }
 
     /**

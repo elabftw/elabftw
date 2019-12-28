@@ -62,6 +62,9 @@ jobs:
           paths:
           - ./node_modules
           - ./vendor
+      - run: sudo mysql -uroot -e "create database phpunit;"
+      - run: sudo mysql -uroot -e "create user phpunit identified by 'phpunit';"
+      - run: sudo mysql -uroot -e "grant all privileges on phpunit.* to 'phpunit'@'%'"
       - run: php bin/install start
       - run: php bin/console dev:populate -p phpunitftw -m phpunit@example.com -u phpunit -s phpunit -y
       # Tests

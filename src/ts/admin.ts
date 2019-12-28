@@ -53,10 +53,10 @@ $(document).ready(function() {
   tinyMceInitLight();
 
   // TEAMGROUPS
-  var TeamGroups = {
+  const TeamGroups = {
     controller: 'app/controllers/TeamGroupsController.php',
     create: function() {
-      let name = <string>$('#teamGroupCreate').val();
+      const name = <string>$('#teamGroupCreate').val();
       if (name.length > 0) {
         $.post(this.controller, {
           teamGroupCreate: name
@@ -95,12 +95,12 @@ $(document).ready(function() {
   // TEAM GROUP
 
   // AUTOCOMPLETE
-  let cache = {};
+  const cache = {};
   $(document).on('focus', '.addUserToGroup', function() {
     if (!$(this).data('autocomplete')) {
       (<any>$(this)).autocomplete({
         source: function(request, response) {
-          let term = request.term;
+          const term = request.term;
           if (term in cache) {
             response(cache[term]);
             return;
@@ -124,14 +124,14 @@ $(document).ready(function() {
   $(document).on('keypress blur', '.addUserToGroup', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      let user = parseInt(<string>$(this).val(), 10);
-      let group = $(this).data('group');
+      const user = parseInt(<string>$(this).val(), 10);
+      const group = $(this).data('group');
       TeamGroups.update('add', user, group);
     }
   });
   $(document).on('click', '.rmUserFromGroup', function() {
-    let user = $(this).data('user');
-    let group = $(this).data('group');
+    const user = $(this).data('user');
+    const group = $(this).data('group');
     TeamGroups.update('rm', user, group);
   });
 
@@ -150,17 +150,17 @@ $(document).ready(function() {
   });
 
   // STATUS
-  var Status = {
+  const Status = {
     controller: 'app/controllers/StatusController.php',
     create: function() {
-      var name = $('#statusName').val();
+      const name = $('#statusName').val();
       if (name === '') {
         notif({'res': false, 'msg': 'Name cannot be empty'});
         $('#statusName').css('border-color', 'red');
         return false;
       }
-      var color = $('#statusColor').val();
-      var isTimestampable = +$('#statusTimestamp').is(':checked');
+      const color = $('#statusColor').val();
+      const isTimestampable = +$('#statusTimestamp').is(':checked');
 
       $.post(this.controller, {
         statusCreate: true,
@@ -175,10 +175,10 @@ $(document).ready(function() {
       });
     },
     update: function(id) {
-      var name = $('#statusName_' + id).val();
-      var color = $('#statusColor_' + id).val();
-      var isTimestampable = +$('#statusTimestamp_'+ id).is(':checked');
-      var isDefault = $('#statusDefault_' + id).is(':checked');
+      const name = $('#statusName_' + id).val();
+      const color = $('#statusColor_' + id).val();
+      const isTimestampable = +$('#statusTimestamp_'+ id).is(':checked');
+      const isDefault = $('#statusDefault_' + id).is(':checked');
 
       $.post(this.controller, {
         statusUpdate: true,
@@ -216,22 +216,22 @@ $(document).ready(function() {
   });
 
   // ITEMSTYPES
-  var ItemsTypes = {
+  const ItemsTypes = {
     controller: 'app/controllers/ItemsTypesAjaxController.php',
     create: function() {
-      var name = $('#itemsTypesName').val();
+      const name = $('#itemsTypesName').val();
       if (name === '') {
         notif({'res': false, 'msg': 'Name cannot be empty'});
         $('#itemsTypesName').css('border-color', 'red');
         return false;
       }
-      var color = $('#itemsTypesColor').val();
-      var checkbox = $('#itemsTypesBookable').is(':checked');
-      var bookable = 0;
+      const color = $('#itemsTypesColor').val();
+      const checkbox = $('#itemsTypesBookable').is(':checked');
+      let bookable = 0;
       if (checkbox) {
         bookable = 1;
       }
-      var template = tinymce.get('itemsTypesTemplate').getContent();
+      const template = tinymce.get('itemsTypesTemplate').getContent();
       $.post(this.controller, {
         itemsTypesCreate: true,
         name: name,
@@ -251,10 +251,10 @@ $(document).ready(function() {
       $('#itemsTypesEditor_' + id).toggle();
     },
     update: function(id) {
-      var name = $('#itemsTypesName_' + id).val();
-      var color = $('#itemsTypesColor_' + id).val();
-      var checkbox = $('#itemsTypesBookable_' + id).is(':checked');
-      var bookable = 0;
+      const name = $('#itemsTypesName_' + id).val();
+      const color = $('#itemsTypesColor_' + id).val();
+      const checkbox = $('#itemsTypesBookable_' + id).is(':checked');
+      let bookable = 0;
       if (checkbox) {
         bookable = 1;
       }
@@ -263,7 +263,7 @@ $(document).ready(function() {
       if ($('#itemsTypesTemplate_' + id).is(':hidden')) {
         this.showEditor(id);
       }
-      var template = tinymce.get('itemsTypesTemplate_' + id).getContent();
+      const template = tinymce.get('itemsTypesTemplate_' + id).getContent();
       $('#itemsTypesEditor_' + id).toggle();
 
       $.post(this.controller, {
@@ -307,7 +307,7 @@ $(document).ready(function() {
 
   // COMMON TEMPLATE
   $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
-    var template = tinymce.get('commonTplTemplate').getContent();
+    const template = tinymce.get('commonTplTemplate').getContent();
     $.post('app/controllers/AjaxController.php', {
       commonTplUpdate: template
     }).done(function(json) {
@@ -339,7 +339,7 @@ $(document).ready(function() {
 
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
-  var colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
+  const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
 
   (<any>$('.tag-editable')).editable(function(value) {

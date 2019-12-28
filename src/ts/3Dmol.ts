@@ -8,7 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var $3Dmol: any;
+declare let $3Dmol: any;
 // CARTOON (only working for protein structures!)
 $(document).on('click', '.3dmol-cartoon', function() {
   $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();

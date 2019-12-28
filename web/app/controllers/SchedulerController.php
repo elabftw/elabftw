@@ -52,12 +52,11 @@ try {
 
     // GET EVENTS
     if ($Request->query->has('start') && $Request->query->has('end')) {
-        // TODO only read from start to end
         if (empty($Request->query->get('item'))) {
-            $Response->setData($Scheduler->readAllFromTeam());
+            $Response->setData($Scheduler->readAllFromTeam($Request->query->get('start'), $Request->query->get('end')));
         } else {
             $Database->setId((int) $Request->query->get('item'));
-            $Response->setData($Scheduler->read());
+            $Response->setData($Scheduler->read($Request->query->get('start'), $Request->query->get('end')));
         }
     }
 

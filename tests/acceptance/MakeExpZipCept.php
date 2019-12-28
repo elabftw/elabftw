@@ -15,6 +15,7 @@ $I->wantTo('Test creating a zip archive from a database item');
 $I->amOnPage('/make.php?what=zip&id=1&type=items');
 $I->wait(2);
 
+/*
 $folder = $_SERVER['HOME'].'/Downloads/';
 $files = scandir($folder);
 foreach ($files as $file) {
@@ -22,3 +23,4 @@ foreach ($files as $file) {
         $I->seeFileIsZip($folder . $file);
     }
 }
+ */

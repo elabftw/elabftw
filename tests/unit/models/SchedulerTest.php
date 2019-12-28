@@ -17,6 +17,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Database = new Database($Users, 1);
         $this->Scheduler = new Scheduler($Database);
         $this->id = 1;
+        $this->delta = array(
+            'years' => '0',
+            'months' => '0',
+            'days' => '1',
+            'milliseconds' => '0',
+        );
     }
 
     public function testCreate()
@@ -27,13 +33,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testUpdateStart()
     {
         $this->Scheduler->setId($this->id);
-        $this->Scheduler->updateStart('2016-07-22T19:40:00', '2016-07-22T20:40:00');
+        $this->Scheduler->updateStart($this->delta);
     }
 
     public function testUpdateEnd()
     {
         $this->Scheduler->setId($this->id);
-        $this->Scheduler->updateEnd('2016-07-22T20:45:00');
+        $this->Scheduler->updateEnd($this->delta);
     }
 
     public function testDestroy()

@@ -15,7 +15,7 @@ $(document).ready(function(){
   });
 
   // scroll to anchor if there is a search
-  var getParams = getGetParameters();
+  const getParams = getGetParameters();
   if (getParams.type) {
     window.location.hash = '#anchor';
   }

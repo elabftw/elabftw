@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var key: any;
+declare let key: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
 const tinymce = require('tinymce/tinymce');
@@ -71,121 +71,121 @@ Dropzone.options.elabftwDropzone = {
     });
   }
 };
-let type = $('#info').data('type');
-let id = $('#info').data('id');
+const type = $('#info').data('type');
+const id = $('#info').data('id');
 
 $(document).ready(function() {
-    // add the title in the page name (see #324)
-    document.title = $('#title_input').val() + ' - eLabFTW';
+  // add the title in the page name (see #324)
+  document.title = $('#title_input').val() + ' - eLabFTW';
 
-    let type = $('#info').data('type');
-    let id = $('#info').data('id');
-    let confirmText = $('#info').data('confirm');
-    let location = 'experiments.php';
-    if (type != 'experiments') {
-      location = 'database.php';
-    }
+  const type = $('#info').data('type');
+  const id = $('#info').data('id');
+  const confirmText = $('#info').data('confirm');
+  let location = 'experiments.php';
+  if (type != 'experiments') {
+    location = 'database.php';
+  }
 
-    // KEYBOARD SHORTCUT
-    key($('#shortcuts').data('submit'), function() {
-      (<any>document.forms).main_form.submit();
+  // KEYBOARD SHORTCUT
+  key($('#shortcuts').data('submit'), function() {
+    (<any>document.forms).main_form.submit();
+  });
+
+  ////////////////
+  // DATA RECOVERY
+
+  // check if there is some local data with this id to recover
+  if ((localStorage.getItem('id') == id) && (localStorage.getItem('type') == type)) {
+    const bodyRecovery = $('<div></div>', {
+      'class' : 'alert alert-warning',
+      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
     });
+    $('#main_section').before(bodyRecovery);
+  }
 
-    ////////////////
-    // DATA RECOVERY
-
-    // check if there is some local data with this id to recover
-    if ((localStorage.getItem('id') == id) && (localStorage.getItem('type') == type)) {
-      let bodyRecovery = $('<div></div>', {
-        'class' : 'alert alert-warning',
-        html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body')
-      });
-      $('#main_section').before(bodyRecovery);
-    }
-
-    // RECOVER YES
-    $(document).on('click', '.recover-yes', function() {
-      $.post('app/controllers/EntityAjaxController.php', {
-        quickSave: true,
-        type : type,
-        id : id,
-        // we need this to get the updated content
-        title : (<any>document.getElementById('title_input')).value,
-        date : (<any>document.getElementById('datepicker')).value,
-        body : localStorage.getItem('body')
-      }).done(function() {
-        localStorage.clear();
-        document.location.reload(true);
-      });
-    });
-
-    // RECOVER NO
-    $(document).on('click', '.recover-no', function() {
+  // RECOVER YES
+  $(document).on('click', '.recover-yes', function() {
+    $.post('app/controllers/EntityAjaxController.php', {
+      quickSave: true,
+      type : type,
+      id : id,
+      // we need this to get the updated content
+      title : (<any>document.getElementById('title_input')).value,
+      date : (<any>document.getElementById('datepicker')).value,
+      body : localStorage.getItem('body')
+    }).done(function() {
       localStorage.clear();
-      document.location.reload();
+      document.location.reload(true);
     });
+  });
 
-    // END DATA RECOVERY
-    ////////////////////
+  // RECOVER NO
+  $(document).on('click', '.recover-no', function() {
+    localStorage.clear();
+    document.location.reload();
+  });
 
-    // GET MOL FILES
-    function getListFromMolFiles() {
-      let mols: any = [];
-      $.get('app/controllers/AjaxController.php', {
-        getFiles: true,
-        type: type,
-        id: id,
-      }).done(function(uploadedFiles) {
-        uploadedFiles.forEach(function(upload: any) {
-          if (upload.real_name.split('.').pop() === 'mol') {
-            mols.push([upload.real_name, upload.long_name]);
+  // END DATA RECOVERY
+  ////////////////////
+
+  // GET MOL FILES
+  function getListFromMolFiles() {
+    const mols: any = [];
+    $.get('app/controllers/AjaxController.php', {
+      getFiles: true,
+      type: type,
+      id: id,
+    }).done(function(uploadedFiles) {
+      uploadedFiles.forEach(function(upload: any) {
+        if (upload.real_name.split('.').pop() === 'mol') {
+          mols.push([upload.real_name, upload.long_name]);
+        }
+      });
+      if (mols.length === 0) {
+        notif({res: false, msg: 'No mol files found.'});
+        return;
+      }
+      let listHtml = '<ul class="text-left">';
+      mols.forEach(function(mol: any, index: any) {
+        listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
+      });
+      $('.getMolButton').text('Refresh list');
+      $('.getMolDiv').html(listHtml + '</ul>');
+    });
+  }
+
+  $(document).on('click', '.getMolButton', function() {
+    getListFromMolFiles();
+  });
+
+  // Load the content of a mol file from the list in the mol editor
+  $(document).on('click', '.loadableMolLink', function() {
+    $.get($(this).data('target')).done(function(molContent) {
+      $('#sketcher_open_text').val(molContent);
+    });
+  });
+  // END GET MOL FILES
+
+  class Entity {
+
+    destroy() {
+      if (confirm(confirmText)) {
+        const controller = 'app/controllers/EntityAjaxController.php';
+        $.post(controller, {
+          destroy: true,
+          id: id,
+          type: type
+        }).done(function(json) {
+          notif(json);
+          if (json.res) {
+            window.location.replace(location);
           }
         });
-        if (mols.length === 0) {
-          notif({res: false, msg: 'No mol files found.'});
-          return;
-        }
-        let listHtml = '<ul class="text-left">';
-        mols.forEach(function(mol: any, index: any) {
-          listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
-        });
-        $('.getMolButton').text('Refresh list');
-        $('.getMolDiv').html(listHtml + '</ul>');
-      });
-    }
-
-    $(document).on('click', '.getMolButton', function() {
-      getListFromMolFiles();
-    });
-
-    // Load the content of a mol file from the list in the mol editor
-    $(document).on('click', '.loadableMolLink', function() {
-      $.get($(this).data('target')).done(function(molContent) {
-        $('#sketcher_open_text').val(molContent);
-      });
-    });
-    // END GET MOL FILES
-
-    class Entity {
-
-      destroy() {
-        if (confirm(confirmText)) {
-          const controller = 'app/controllers/EntityAjaxController.php';
-          $.post(controller, {
-            destroy: true,
-            id: id,
-            type: type
-          }).done(function(json) {
-            notif(json);
-            if (json.res) {
-              window.location.replace(location);
-            }
-          });
-        }
       }
     }
+  }
 
-    class Star {
+  class Star {
       controller: string;
 
       constructor() {
@@ -200,151 +200,151 @@ $(document).ready(function() {
           notif(json);
         });
       }
+  }
+
+  // DESTROY ENTITY
+  const EntityC = new Entity();
+  $(document).on('click', '.entityDestroy', function() {
+    EntityC.destroy();
+  });
+
+  // CAN READ/WRITE SELECT
+  $(document).on('change', '.permissionSelect', function() {
+    const value = $(this).val();
+    const rw = $(this).data('rw');
+    $.post('app/controllers/EntityAjaxController.php', {
+      updatePermissions: true,
+      rw: rw,
+      id: id,
+      type: type,
+      value: value,
+    }).done(function(json) {
+      notif(json);
+    });
+  });
+
+  // STATUS SELECT
+  $(document).on('change', '#category_select', function() {
+    const categoryId = $(this).val();
+    $.post('app/controllers/EntityAjaxController.php', {
+      updateCategory: true,
+      id: id,
+      type: type,
+      categoryId : categoryId
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+        // change the color of the item border
+        // we first remove any status class
+        $('#main_section').css('border', null);
+        // and we add our new border color
+        // first : get what is the color of the new status
+        const css = '6px solid #' + json.color;
+        $('#main_section').css('border-left', css);
+      }
+    });
+  });
+
+  // AUTOSAVE
+  let typingTimer: any;                // timer identifier
+  const doneTypingInterval = 7000;  // time in ms between end of typing and save
+
+  // user finished typing, save work
+  function doneTyping() {
+    if (isOverCharLimit()) {
+      alert('Too many characters!!! Cannot save properly!!!');
+      return;
     }
+    quickSave(type, id);
+  }
 
-    // DESTROY ENTITY
-    const EntityC = new Entity();
-    $(document).on('click', '.entityDestroy', function() {
-      EntityC.destroy();
-    });
+  function isOverCharLimit() {
+    const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
+    return text.length > 1000000;
+  }
 
-    // CAN READ/WRITE SELECT
-    $(document).on('change', '.permissionSelect', function() {
-      const value = $(this).val();
-      const rw = $(this).data('rw');
-      $.post('app/controllers/EntityAjaxController.php', {
-        updatePermissions: true,
-        rw: rw,
-        id: id,
-        type: type,
-        value: value,
-      }).done(function(json) {
-        notif(json);
-      });
-    });
-
-    // STATUS SELECT
-    $(document).on('change', '#category_select', function() {
-      const categoryId = $(this).val();
-      $.post('app/controllers/EntityAjaxController.php', {
-        updateCategory: true,
-        id: id,
-        type: type,
-        categoryId : categoryId
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          // change the color of the item border
-          // we first remove any status class
-          $('#main_section').css('border', null);
-          // and we add our new border color
-          // first : get what is the color of the new status
-          const css = '6px solid #' + json.color;
-          $('#main_section').css('border-left', css);
-        }
-      });
-    });
-
-    // AUTOSAVE
-    let typingTimer: any;                // timer identifier
-    const doneTypingInterval = 7000;  // time in ms between end of typing and save
-
-    // user finished typing, save work
-    function doneTyping() {
-      if (isOverCharLimit()) {
-        alert('Too many characters!!! Cannot save properly!!!');
-        return;
-      }
-      quickSave(type, id);
+  // SWITCH EDITOR
+  $(document).on('click', '.switchEditor', function() {
+    const currentEditor = $(this).data('editor');
+    if (currentEditor === 'md') {
+      insertParamAndReload('editor', 'tiny');
+    } else {
+      insertParamAndReload('editor', 'md');
     }
+  });
 
-    function isOverCharLimit() {
-      const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
-      return text.length > 1000000;
+  // DISPLAY MARKDOWN EDITOR
+  if ($('#body_area').hasClass('markdown-textarea')) {
+    (<any>$('.markdown-textarea')).markdown();
+  }
+
+  // INSERT IMAGE AT CURSOR POSITION IN TEXT
+  $(document).on('click', '.inserter',  function() {
+    // link to the image
+    const url = 'app/download.php?f=' + $(this).data('link');
+    // switch for markdown or tinymce editor
+    const editor = $('#iHazEditor').data('editor');
+    if (editor === 'md') {
+      const cursorPosition = $('#body_area').prop('selectionStart');
+      const content = (<string>$('#body_area').val());
+      const before = content.substring(0, cursorPosition);
+      const after = content.substring(cursorPosition);
+      const imgMdLink = '\n![image](' + url + ')\n';
+      $('#body_area').val(before + imgMdLink + after);
+    } else if (editor === 'tiny') {
+      const imgHtmlLink = '<img src="' + url + '" />';
+      tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
+    } else {
+      alert('Error: could not find current editor!');
     }
+  });
 
-    // SWITCH EDITOR
-    $(document).on('click', '.switchEditor', function() {
-      let currentEditor = $(this).data('editor');
-      if (currentEditor === 'md') {
-        insertParamAndReload('editor', 'tiny');
-      } else {
-        insertParamAndReload('editor', 'md');
-      }
-    });
-
-    // DISPLAY MARKDOWN EDITOR
-    if ($('#body_area').hasClass('markdown-textarea')) {
-      (<any>$('.markdown-textarea')).markdown();
+  // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
+  $(document).on('click', '.plusMinusButton',  function() {
+    if ($(this).html() === '+') {
+      $(this).html('-');
+      $(this).addClass('btn-neutral');
+      $(this).removeClass('btn-primary');
+    } else {
+      $(this).html('+');
+      $(this).removeClass('btn-neutral');
+      $(this).addClass('btn-primary');
     }
+  });
 
-    // INSERT IMAGE AT CURSOR POSITION IN TEXT
-    $(document).on('click', '.inserter',  function() {
-      // link to the image
-      const url = 'app/download.php?f=' + $(this).data('link');
-      // switch for markdown or tinymce editor
-      const editor = $('#iHazEditor').data('editor');
-      if (editor === 'md') {
-        const cursorPosition = $('#body_area').prop('selectionStart');
-        const content = (<string>$('#body_area').val());
-        const before = content.substring(0, cursorPosition);
-        const after = content.substring(cursorPosition);
-        const imgMdLink = '\n![image](' + url + ')\n';
-        $('#body_area').val(before + imgMdLink + after);
-      } else if (editor === 'tiny') {
-        const imgHtmlLink = '<img src="' + url + '" />';
-        tinymce.activeEditor.execCommand('mceInsertContent', false, imgHtmlLink);
-      } else {
-        alert('Error: could not find current editor!');
-      }
-    });
+  // DATEPICKER
+  $('#datepicker').datepicker({dateFormat: 'yymmdd'});
+  // If the title is 'Untitled', clear it on focus
+  $('#title_input').focus(function(){
+    if ($(this).val() === $('#info').data('untitled')) {
+      $('#title_input').val('');
+    }
+  });
 
-    // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
-    $(document).on('click', '.plusMinusButton',  function() {
-      if ($(this).html() === '+') {
-        $(this).html('-');
-        $(this).addClass('btn-neutral');
-        $(this).removeClass('btn-primary');
-      } else {
-        $(this).html('+');
-        $(this).removeClass('btn-neutral');
-        $(this).addClass('btn-primary');
-      }
-    });
-
-    // DATEPICKER
-    $('#datepicker').datepicker({dateFormat: 'yymmdd'});
-    // If the title is 'Untitled', clear it on focus
-    $('#title_input').focus(function(){
-      if ($(this).val() === $('#info').data('untitled')) {
-        $('#title_input').val('');
-      }
-    });
-
-    // ANNOTATE IMAGE
-    $(document).on('click', '.annotateImg',  function() {
-      $('#doodleDiv').show();
-      $(document).scrollTop($('#doodle-anchor').offset().top);
-      var context: CanvasRenderingContext2D = (<HTMLCanvasElement>document.getElementById('doodleCanvas')).getContext('2d');
-      var img = new Image();
-      // set src attribute to image path
-      img.src = 'app/download.php?f=' + $(this).data('path');
-      img.onload = function(){
-        // make canvas bigger than image
-        context.canvas.width = (<HTMLImageElement>this).width * 2;
-        context.canvas.height = (<HTMLImageElement>this).height * 2;
-        // add image to canvas
-        context.drawImage(img, (<HTMLImageElement>this).width / 2, (<HTMLImageElement>this).height / 2);
-      };
-    });
-    // STAR RATING
-    const StarC = new Star();
-    $('.rating-cancel').on('click', function() {
-      StarC.update(0);
-    });
-    $('.star').on('click', function() {
-      StarC.update($(this).data('rating').current[0].innerText);
-    });
+  // ANNOTATE IMAGE
+  $(document).on('click', '.annotateImg',  function() {
+    $('#doodleDiv').show();
+    $(document).scrollTop($('#doodle-anchor').offset().top);
+    const context: CanvasRenderingContext2D = (<HTMLCanvasElement>document.getElementById('doodleCanvas')).getContext('2d');
+    const img = new Image();
+    // set src attribute to image path
+    img.src = 'app/download.php?f=' + $(this).data('path');
+    img.onload = function(){
+      // make canvas bigger than image
+      context.canvas.width = (<HTMLImageElement>this).width * 2;
+      context.canvas.height = (<HTMLImageElement>this).height * 2;
+      // add image to canvas
+      context.drawImage(img, (<HTMLImageElement>this).width / 2, (<HTMLImageElement>this).height / 2);
+    };
+  });
+  // STAR RATING
+  const StarC = new Star();
+  $('.rating-cancel').on('click', function() {
+    StarC.update(0);
+  });
+  $('.star').on('click', function() {
+    StarC.update($(this).data('rating').current[0].innerText);
+  });
 
   tinymce.init({
     mode: 'specific_textareas',

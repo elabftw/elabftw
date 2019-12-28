@@ -35,9 +35,9 @@ $(document).ready(function() {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }
   });
-  let Templates = {
+  const Templates = {
     controller: 'app/controllers/EntityAjaxController.php',
-    saveToFile: function(id, name) {
+    saveToFile: function(id, name): void {
       // we have the name of the template used for filename
       // and we have the id of the editor to get the content from
       // we don't use activeEditor because it requires a click inside the editing area
@@ -45,7 +45,7 @@ $(document).ready(function() {
       const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
       saveAs(blob, name + '.elabftw.tpl');
     },
-    destroy: function(id) {
+    destroy: function(id): void {
       if (confirm('Delete this ?')) {
         $.post(this.controller, {
           destroy: true,
@@ -74,24 +74,24 @@ $(document).ready(function() {
 
   // input to upload an elabftw.tpl file
   $('#import_tpl').hide().on('change', function() {
-    const title = (<any>document.getElementById('import_tpl')).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
+    const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
       return false;
     }
-    let reader = new FileReader();
-    reader.onload = function(e) {
+    const reader = new FileReader();
+    reader.onload = function(e): void {
       // switch for markdown mode
       if ($('#new_tpl_txt').hasClass('mceditable')) {
         tinymce.get('new_tpl_txt').setContent(e.target.result);
       } else {
-        $('#new_tpl_txt').text(<any>e.target.result);
+        $('#new_tpl_txt').text(e.target.result as string);
       }
       $('#new_tpl_name').val(title);
       $('#import_tpl').hide();
     };
 
-    reader.readAsText((<any>this).files[0]);
+    reader.readAsText((this as any).files[0]);
   });
 
   // TinyMCE
@@ -107,8 +107,8 @@ $(document).ready(function() {
       // use # for autocompletion
       delimiter: '#',
       // get the source from json with get request
-      source: function (query, process) {
-        let url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
+      source: function (query, process): void {
+        const url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
         $.getJSON(url, function(data) {
           process(data);
         });

@@ -5,8 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var key: any;
-declare var MathJax: any;
+declare let key: any;
+declare let MathJax: any;
 import { insertParamAndReload, notif } from './misc';
 import 'bootstrap/js/src/modal.js';
 
@@ -68,14 +68,14 @@ $(document).ready(function(){
 
   // THE CHECKBOXES
   function getCheckedBoxes() {
-    var checkedBoxes = [];
+    const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
       checkedBoxes.push($(this).data('id'));
     });
     return checkedBoxes;
   }
 
-  var bgColor = '#c4f9ff';
+  const bgColor = '#c4f9ff';
 
   // CHECK A BOX
   $('input[type=checkbox]').on('click', function() {
@@ -157,9 +157,9 @@ $(document).ready(function(){
 
   // UPDATE THE STATUS/ITEM TYPE OF SELECTED BOXES ON SELECT CHANGE
   $('#catChecked').on('change', function() {
-    var ajaxs = [];
+    const ajaxs = [];
     // get the item id of all checked boxes
-    var checked = getCheckedBoxes();
+    const checked = getCheckedBoxes();
     if (checked.length === 0) {
       const json = {
         'msg': 'Nothing selected!',
@@ -187,9 +187,9 @@ $(document).ready(function(){
 
   // UPDATE THE VISIBILTY OF AN EXPERIMENT ON SELECT CHANGE
   $('#visChecked').on('change', function() {
-    var ajaxs = [];
+    const ajaxs = [];
     // get the item id of all checked boxes
-    var checked = getCheckedBoxes();
+    const checked = getCheckedBoxes();
     if (checked.length === 0) {
       const json = {
         'msg': 'Nothing selected!',
@@ -219,7 +219,7 @@ $(document).ready(function(){
 
   // MAKE ZIP/CSV
   $('.csvzip').on('click', function() {
-    var checked = getCheckedBoxes();
+    const checked = getCheckedBoxes();
     if (checked.length === 0) {
       const json = {
         'msg': 'Nothing selected!',
@@ -232,15 +232,15 @@ $(document).ready(function(){
     $(this).attr('disabled', 'disabled');
     // also display a wait text
     $(this).html('Please wait…');
-    var type = $('#type').data('type');
-    var what = $(this).data('what');
+    const type = $('#type').data('type');
+    const what = $(this).data('what');
     window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+');
   });
 
   // THE DELETE BUTTON FOR CHECKED BOXES
   $('#deleteChecked').on('click', function() {
     // get the item id of all checked boxes
-    var checked = getCheckedBoxes();
+    const checked = getCheckedBoxes();
     if (checked.length === 0) {
       const json = {
         'msg': 'Nothing selected!',

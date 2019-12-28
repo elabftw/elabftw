@@ -5,13 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var ChemDoodle: any;
-declare var tinymce: any;
+declare let ChemDoodle: any;
+declare let tinymce: any;
 
 interface ResponseMsg {
-  res: boolean,
-  msg: string,
-  color?: string,
+  res: boolean;
+  msg: string;
+  color?: string;
 }
 
 const moment = require('moment');
@@ -31,7 +31,7 @@ export function notif(info: ResponseMsg) {
   if (info.res) {
     result = 'ok';
   }
-  var overlay = document.createElement('div');
+  const overlay = document.createElement('div');
   overlay.setAttribute('id','overlay');
   overlay.setAttribute('class', 'overlay ' + 'overlay-' + result);
   // show the overlay
@@ -51,11 +51,11 @@ export function displayMolFiles() { // eslint-disable-line no-unused-vars
   // loop all the mol files and display the molecule with ChemDoodle
   $.each($('.molFile'), function() {
     // id of the canvas to attach the viewer to
-    var id = $(this).attr('id');
+    const id = $(this).attr('id');
     // now get the file content and display it in the viewer
     ChemDoodle.io.file.content($(this).data('molpath'), function(fileContent: string){
-      var mol = ChemDoodle.readMOL(fileContent);
-      var viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
+      const mol = ChemDoodle.readMOL(fileContent);
+      const viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
       // config some stuff in the viewer
       viewer.specs.bonds_width_2D = 0.6;
       viewer.specs.bonds_saturationWidth_2D = 0.18;
@@ -102,16 +102,16 @@ export function quickSave(type: string, id: string) { // eslint-disable-line no-
 }
 /* parse the $_GET from the url */
 export function getGetParameters() { // eslint-disable-line no-unused-vars
-  var prmstr = window.location.search.substr(1);
+  const prmstr = window.location.search.substr(1);
   return prmstr !== null && prmstr !== '' ? transformToAssocArray(prmstr) : {};
 }
 
 /* put the $_GET in array */
 function transformToAssocArray(prmstr: string) {
-  var params: any = {};
-  var prmarr = prmstr.split('&');
-  for (var i = 0; i < prmarr.length; i++) {
-    var tmparr = prmarr[i].split('=');
+  const params: any = {};
+  const prmarr = prmstr.split('&');
+  for (let i = 0; i < prmarr.length; i++) {
+    const tmparr = prmarr[i].split('=');
     params[tmparr[0]] = tmparr[1];
   }
   return params;
@@ -121,8 +121,8 @@ function transformToAssocArray(prmstr: string) {
 export function insertParamAndReload(key: any, value: any) { // eslint-disable-line no-unused-vars
   key = escape(key); value = escape(value);
 
-  var kvp = document.location.search.substr(1).split('&');
-  var i = kvp.length; var x; while (i--) {
+  const kvp = document.location.search.substr(1).split('&');
+  let i = kvp.length; let x; while (i--) {
     x = kvp[i].split('=');
 
     if (x[0] === key) {

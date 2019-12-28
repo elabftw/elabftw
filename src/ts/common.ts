@@ -38,7 +38,7 @@ $(document).ready(function() {
     // do ajax request to update db with new order
     update: function() {
       // send the orders as an array
-      var ordering = (<any>$(this)).sortable('toArray');
+      const ordering = (<any>$(this)).sortable('toArray');
 
       $.post('app/controllers/SortableAjaxController.php', {
         table: $(this).data('table'),

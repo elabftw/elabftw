@@ -48,7 +48,7 @@ $(document).ready(function() {
   $('#doodleCanvas').mousedown(function(e) {
     // if ctrl key is pressed, we ask for text to insert
     if (e.ctrlKey) {
-      var text = prompt('Text to insert:');
+      const text = prompt('Text to insert:');
       if (text === null) {
         return;
       }
@@ -87,10 +87,10 @@ $(document).ready(function() {
 
   function draw(dragging) {
     // get last items in arrays
-    let x = clickX[clickX.length - 1];
-    let y = clickY[clickY.length - 1];
+    const x = clickX[clickX.length - 1];
+    const y = clickY[clickY.length - 1];
 
-    let path = new Path2D();
+    const path = new Path2D();
 
     if (dragging) {
       path.moveTo(clickX[clickX.length - 2], clickY[clickY.length - 2]);

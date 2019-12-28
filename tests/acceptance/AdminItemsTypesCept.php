@@ -20,13 +20,13 @@ $I->seeInDatabase('items_types', array('name' => 'New item type'));
 $I->wantTo('Edit the newly created item type');
 $I->amOnPage('admin.php?tab=5');
 // fillField doesn't work if input is not in form
-$I->clearField('//*[@id="itemsTypesName_2"]'); // but clearField works…
-$I->click('//*[@id="itemsTypesName_2"]');
+$I->clearField('//*[@id="itemsTypesName_1"]'); // but clearField works…
+$I->click('//*[@id="itemsTypesName_1"]');
 // this is necessary to show the template and make the Save button work
 // even if it works without this in real life
-$I->click('#itemstypes_2 > ul:nth-child(1) > li:nth-child(4) > button:nth-child(1)');
-$I->pressKey('//*[@id="itemsTypesName_2"]', 'New item type edited');
+$I->click('#itemstypes_1 > ul:nth-child(1) > li:nth-child(4) > button:nth-child(1)');
+$I->pressKey('//*[@id="itemsTypesName_1"]', 'New item type edited');
 // click the save button
-$I->click('/html/body/div[1]/div/div[6]/div[2]/ul/li[2]/ul/li[5]/button');
+$I->click('#itemstypes_1 > ul:nth-child(1) > li:nth-child(5) > button:nth-child(1)');
 $I->waitForJS('return jQuery.active == 0', 10);
 $I->seeInDatabase('items_types', array('name' => 'New item type edited'));

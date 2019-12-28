@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var tinymce: any;
+declare let tinymce: any;
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { notif, relativeMoment } from './misc';
@@ -17,20 +17,20 @@ $(document).ready(function() {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }
   });
-  let type = $('#info').data('type');
-  let confirmStep = $('#info').data('confirmstep');
-  let confirmLink = $('#info').data('confirmlink');
+  const type = $('#info').data('type');
+  const confirmStep = $('#info').data('confirmstep');
+  const confirmLink = $('#info').data('confirmlink');
 
   class Link {
 
     create(elem) {
-      let id = elem.data('id');
+      const id = elem.data('id');
       // get link
-      let link = elem.val();
+      const link = elem.val();
       // fix for user pressing enter with no input
       if (link.length > 0) {
         // parseint will get the id, and not the rest (in case there is number in title)
-        let linkId = parseInt(link, 10);
+        const linkId = parseInt(link, 10);
         if (!isNaN(linkId)) {
           $.post('app/controllers/EntityAjaxController.php', {
             createLink: true,
@@ -74,8 +74,8 @@ $(document).ready(function() {
     }
 
     destroy(elem) {
-      let id = elem.data('id');
-      let linkId = elem.data('linkid');
+      const id = elem.data('id');
+      const linkId = elem.data('linkid');
       if (confirm(confirmLink)) {
         $.post('app/controllers/EntityAjaxController.php', {
           destroyLink: true,
@@ -95,9 +95,9 @@ $(document).ready(function() {
   class Step {
 
     create(elem) {
-      let id = elem.data('id');
+      const id = elem.data('id');
       // get body
-      let body = elem.val();
+      const body = elem.val();
       // fix for user pressing enter with no input
       if (body.length > 0) {
         $.post('app/controllers/EntityAjaxController.php', {
@@ -122,8 +122,8 @@ $(document).ready(function() {
 
     finish(elem) {
       // the id of the exp/item/tpl
-      let id = elem.data('id');
-      let stepId = elem.data('stepid');
+      const id = elem.data('id');
+      const stepId = elem.data('stepid');
 
       $.post('app/controllers/EntityAjaxController.php', {
         finishStep: true,
@@ -142,8 +142,8 @@ $(document).ready(function() {
 
     destroy(elem) {
       // the id of the exp/item/tpl
-      let id = elem.data('id');
-      let stepId = elem.data('stepid');
+      const id = elem.data('id');
+      const stepId = elem.data('stepid');
       if (confirm(confirmStep)) {
         $.post('app/controllers/EntityAjaxController.php', {
           destroyStep: true,
@@ -207,10 +207,10 @@ $(document).ready(function() {
   });
 
   // AUTOCOMPLETE
-  let cache: any = {};
+  const cache: any = {};
   (<any>$('.linkinput')).autocomplete({
     source: function(request: any, response: any) {
-      let term = request.term;
+      const term = request.term;
       if (term in cache) {
         response(cache[term]);
         return;

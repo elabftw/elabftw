@@ -7,7 +7,7 @@ set -eu
 
 # kill chromedriver on exit
 cleanup() {
-    killall chromedriver
+    docker-compose -f tests/docker-compose.yml down
     sudo cp config.php.dev config.php
     sudo chown 100:101 config.php
 }
@@ -18,13 +18,17 @@ trap cleanup EXIT
 sudo cp config.php config.php.dev
 sudo cp tests/config-home.php config.php
 sudo chmod +r config.php
-# start chromedriver
-chromedriver --url-base=/wd/hub &
-# create a fresh phpunit database
-mysql -uroot -e 'DROP DATABASE IF EXISTS phpunit; CREATE DATABASE phpunit;'
-# import the structure of the tables
-mysql -uroot phpunit < src/sql/structure.sql
+# launch a fresh environment
+docker-compose -f tests/docker-compose.yml up -d
+# give some time for the mysql process to start
+echo "Waiting for MySQL to start..."
+sleep 10
+# install the database
+docker exec -it elabtmp bin/install start
+# populate the database
+docker exec -it elabtmp bin/console dev:populate -p phpunitftw -m phpunit@example.com -u phpunit -s phpunit -y
 # run tests
-php vendor/bin/codecept run --skip functionnal
+docker exec -it elabtmp php vendor/bin/codecept run --skip functionnal
 # test API
-bash tests/api.sh
+# TODO
+#bash tests/api.sh

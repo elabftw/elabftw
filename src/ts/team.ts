@@ -10,40 +10,56 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-import '@fullcalendar/core/locales/ca'
-import '@fullcalendar/core/locales/de'
-import '@fullcalendar/core/locales/en-gb'
-import '@fullcalendar/core/locales/es'
-import '@fullcalendar/core/locales/fr'
-import '@fullcalendar/core/locales/it'
-import '@fullcalendar/core/locales/id'
-import '@fullcalendar/core/locales/ja'
+import '@fullcalendar/core/locales/ca';
+import '@fullcalendar/core/locales/de';
+import '@fullcalendar/core/locales/en-gb';
+import '@fullcalendar/core/locales/es';
+import '@fullcalendar/core/locales/fr';
+import '@fullcalendar/core/locales/it';
+import '@fullcalendar/core/locales/id';
+import '@fullcalendar/core/locales/ja';
 //import '@fullcalendar/core/locales/kr'
-import '@fullcalendar/core/locales/nl'
-import '@fullcalendar/core/locales/pl'
-import '@fullcalendar/core/locales/pt'
-import '@fullcalendar/core/locales/pt-br'
-import '@fullcalendar/core/locales/ru'
-import '@fullcalendar/core/locales/sk'
-import '@fullcalendar/core/locales/sl'
-import '@fullcalendar/core/locales/zh-cn'
+import '@fullcalendar/core/locales/nl';
+import '@fullcalendar/core/locales/pl';
+import '@fullcalendar/core/locales/pt';
+import '@fullcalendar/core/locales/pt-br';
+import '@fullcalendar/core/locales/ru';
+import '@fullcalendar/core/locales/sk';
+import '@fullcalendar/core/locales/sl';
+import '@fullcalendar/core/locales/zh-cn';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 
+function schedulerCreate(start: string, end: string): void {
+  const title = prompt('Comment:');
+  if (title) {
+    // add it to SQL
+    $.post('app/controllers/SchedulerController.php', {
+      create: true,
+      start: start,
+      end: end,
+      title: title,
+      item: $('#info').data('item')
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+        window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+      }
+    });
+  }
+}
 document.addEventListener('DOMContentLoaded', function() {
-  var read = 'one';
-  var editable = true;
-  var selectable = true;
+  let editable = true;
+  let selectable = true;
   if ($('#info').data('all')) {
-    read = 'all';
     editable = false;
     selectable = false;
   }
-  let calendarEl: HTMLElement = document.getElementById('scheduler')!;
+  const calendarEl: HTMLElement = document.getElementById('scheduler');
 
   // SCHEDULER
-  let calendar = new Calendar(calendarEl, {
+  const calendar = new Calendar(calendarEl, {
     plugins: [ timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     header: {
       left: 'prev,next today',
@@ -82,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
       $('#rmBind').hide();
       $('#eventModal').modal('toggle');
       // delete button in modal
-      $('#deleteEvent').on('click', function() {
+      $('#deleteEvent').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           destroy: true,
           id: info.event.id
@@ -101,11 +117,11 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#rmBind').show();
       }
       // bind an experiment to the event
-      $('#goBind').on('click', function() {
+      $('#goBind').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           bind: true,
           id: info.event.id,
-          expid: parseInt((<string>$('#bindinput').val()), 10),
+          expid: parseInt(($('#bindinput').val() as string), 10),
         }).done(function(json) {
           notif(json);
           if (json.res) {
@@ -116,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
       // remove the binding
-      $('#rmBind').on('click', function() {
+      $('#rmBind').on('click', function(): void {
         $.post('app/controllers/SchedulerController.php', {
           unbind: true,
           id: info.event.id,
@@ -127,10 +143,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
       // BIND AUTOCOMPLETE
-      let cache: any = {};
+      const cache = {};
       $('#bindinput').autocomplete({
-        source: function(request: any, response: any) {
-          let term = request.term;
+        source: function(request: any, response: any): void {
+          const term = request.term;
           if (term in cache) {
             response(cache[term]);
             return;
@@ -144,18 +160,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     },
     // on mouse enter add shadow and show title
-    eventMouseEnter: function(info) {
+    eventMouseEnter: function(info): void {
       if (editable) {
         $(info.el).css('box-shadow', '5px 4px 4px #474747');
       }
       $(info.el).attr('title', info.event.title);
     },
     // remove the box shadow when mouse leaves
-    eventMouseLeave: function(info) {
+    eventMouseLeave: function(info): void {
       $(info.el).css('box-shadow', 'unset');
     },
     // a drop means we change start date
-    eventDrop: function(info) {
+    eventDrop: function(info): void {
       if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
         updateStart: true,
@@ -166,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     },
     // a resize means we change end date
-    eventResize: function(info) {
+    eventResize: function(info): void {
       if (!editable) { return; }
       $.post('app/controllers/SchedulerController.php', {
         updateEnd: true,
@@ -190,22 +206,3 @@ $(document).on('click', '.importTpl', function() {
     notif(json);
   });
 });
-
-function schedulerCreate(start: string, end: string) {
-  var title = prompt('Comment:');
-  if (title) {
-    // add it to SQL
-    $.post('app/controllers/SchedulerController.php', {
-      create: true,
-      start: start,
-      end: end,
-      title: title,
-      item: $('#info').data('item')
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
-      }
-    });
-  }
-}

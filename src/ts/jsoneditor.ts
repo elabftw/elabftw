@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare var key: any;
+declare let key: any;
 
 import { notif } from './misc';
 import JSONEditor from 'jsoneditor';
@@ -31,7 +31,7 @@ $('.jsoneditor-search').find('input').css('padding', '0px');
 
 // fix the keymaster shortcut library interfering with the editor
 key.filter = function(event){
-  var tagName = (event.target || event.srcElement).tagName;
+  const tagName = (event.target || event.srcElement).tagName;
   return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
 };
 
@@ -82,7 +82,7 @@ $(document).on('click', '.jsonSaver', function(){
     });
   } else {
     // we are editing an existing file
-    let formData = new FormData();
+    const formData = new FormData();
     const blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
     formData.append('replace', 'true');
     formData.append('upload_id', currentFileItemID);

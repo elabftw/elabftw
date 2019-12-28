@@ -46,7 +46,8 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Database->setId(1);
+        $new = $this->Database->create(1);
+        $this->Database->setId($new);
         $this->Database->update('Database item 1', '20160729', 'body', 1);
     }
 

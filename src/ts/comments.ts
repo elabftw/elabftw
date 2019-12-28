@@ -1,5 +1,12 @@
+/**
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 import { notif } from './misc';
-var Comments = {
+const Comments = {
   controller: 'app/controllers/CommentsAjaxController.php',
   create: function() {
     (<any>document.getElementById('commentsCreateButton')).disabled = true;
@@ -47,10 +54,6 @@ var Comments = {
 };
 
 // CREATE COMMENTS
-$(document).on('focus', '#commentsCreateArea', function() {
-  $('#commentsCreateButtonDiv').show();
-});
-
 $(document).on('click', '#commentsCreateButton', function() {
   Comments.create();
 });
@@ -72,7 +75,7 @@ $(document).on('mouseenter', '.comment', function() {
     submitcssclass : 'button btn btn-primary mt-2',
     cancelcssclass : 'button btn btn-danger mt-2',
     callback : function(data: string) {
-      let json = JSON.parse(data);
+      const json = JSON.parse(data);
       notif(json);
       // show result in comment box
       if (json.res) {

@@ -1,0 +1,88 @@
+# this file is used by the tests/run.sh script
+# it will spawn temporary containers to test things with selenium
+# https://www.elabftw.net
+version: '3'
+
+services:
+# our first container is nginx + php-fpm + elabftw
+    web:
+        image: elabftw/elabimg:dev
+        container_name: elabtmp
+        # drop some capabilities
+        cap_drop:
+            - SYS_ADMIN
+            - AUDIT_WRITE
+            - MKNOD
+            - SYS_CHROOT
+            - SETFCAP
+            - NET_RAW
+            - SYS_PTRACE
+        environment:
+            # no need to change
+            - DB_HOST=mysqltmp
+            # no need to change
+            - DB_NAME=phpunit
+            # no need to change
+            - DB_USER=phpunit
+            # need to change
+            - DB_PASSWORD=phpunit
+            - SECRET_KEY=def00000195a92432f2ebb86bf6e9b9646b45ea955cab7b8f2d96ba2259a85c9e09b04647078c425c5392cb631fa3d9816974bbe8e458d61e16f897ef36c0def362458fd
+            # optional: change to your server name in nginx config
+            - SERVER_NAME=elab.local
+            # optional: disable https, use this to have an http server listening on port 443
+            # useful if the SSL stack is handled by haproxy or something alike
+            - DISABLE_HTTPS=false
+            # set to true to use letsencrypt certificates
+            - ENABLE_LETSENCRYPT=false
+            - MAX_UPLOAD_SIZE=200M
+            - PHP_TIMEZONE=Europe/Paris
+            - TZ=Europe/Paris
+            - USE_REDIS=false
+            - ENABLE_IPV6=true
+        volumes:
+            - ..:/elabftw
+        networks:
+            - elabftw-net
+    mysql:
+        image: mysql:5.7
+        container_name: mysqltmp
+        # drop some capabilities
+        cap_drop:
+            - AUDIT_WRITE
+            - MKNOD
+            - SYS_CHROOT
+            - SETFCAP
+            - NET_RAW
+        environment:
+            # need to change
+            - MYSQL_ROOT_PASSWORD=phpunit
+            # no need to change
+            - MYSQL_DATABASE=phpunit
+            # no need to change
+            - MYSQL_USER=phpunit
+            # need to change
+            - MYSQL_PASSWORD=phpunit
+            - TZ=Europe/Paris
+        networks:
+            - elabftw-net
+    selenium-hub:
+        image: selenium/hub
+        container_name: selenium-hub
+        ports:
+            - "4444:4444"
+        networks:
+            - elabftw-net
+    chrome:
+        image: selenium/node-chrome
+        container_name: chrome
+        volumes:
+            - /dev/shm:/dev/shm
+        depends_on:
+            - selenium-hub
+        environment:
+            - HUB_HOST=selenium-hub
+            - HUB_PORT=4444
+        networks:
+            - elabftw-net
+networks:
+    elabftw-net:

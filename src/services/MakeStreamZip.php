@@ -25,9 +25,6 @@ class MakeStreamZip extends AbstractMake
     /** @var ZipStream $Zip the ZipStream object */
     private $Zip;
 
-    /** @var string $idList the input ids */
-    private $idList = '';
-
     /** @var array $idArr the input ids but in an array */
     private $idArr = array();
 
@@ -58,7 +55,7 @@ class MakeStreamZip extends AbstractMake
 
         $this->Zip = new ZipStream();
 
-        $this->idList = $idList;
+        $this->idArr = explode(' ', $idList);
     }
 
     /**
@@ -91,7 +88,6 @@ class MakeStreamZip extends AbstractMake
      */
     public function getZip(): void
     {
-        $this->idArr = explode(' ', $this->idList);
         foreach ($this->idArr as $id) {
             $this->addToZip((int) $id);
         }

@@ -39,7 +39,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testReadColor()
     {
-        $this->assertEquals('29aeb9', $this->Status->readColor(1));
+        $this->assertEquals('29aeb9', strtolower($this->Status->readColor(1)));
     }
 
     public function testIsTimestampable()

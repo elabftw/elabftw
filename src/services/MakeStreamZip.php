@@ -77,7 +77,7 @@ class MakeStreamZip extends AbstractMake
      */
     public function getFileName(): string
     {
-        if (count($this->idArr) === 1){
+        if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
             $this->Entity->canOrExplode('read');
             return $this->getBaseFileName() . ".zip";
@@ -155,7 +155,7 @@ class MakeStreamZip extends AbstractMake
             return $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         } elseif ($this->Entity instanceof Database) {
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
-        } else{
+        } else {
             throw ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
         }
     }

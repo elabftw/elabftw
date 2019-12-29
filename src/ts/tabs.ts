@@ -10,7 +10,7 @@ import { getGetParameters } from './misc';
 document.addEventListener('DOMContentLoaded', function() {
   // get the tab=X parameter in the url
   const params = getGetParameters();
-  let tab = parseInt(params.tab, 10);
+  let tab = parseInt((params as any).tab, 10);
   if (tab % 1 !== 0) {
     tab = 1;
   }

@@ -87,12 +87,12 @@ document.addEventListener('DOMContentLoaded', function() {
     minTime: '06:00:00',
     eventBackgroundColor: 'rgb(41,174,185)',
     // selection
-    select: function(info) {
+    select: function(info): void {
       if (!editable) { return; }
       schedulerCreate(info.startStr, info.endStr);
     },
     // on click activate modal window
-    eventClick: function(info) {
+    eventClick: function(info): void {
       console.log(info.event);
       if (!editable) { return; }
       $('#rmBind').hide();

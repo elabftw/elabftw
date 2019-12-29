@@ -42,8 +42,8 @@ try {
     // id of the item (experiment or database item)
     $id = 1;
 
-    if ($Request->request->has('item_id')) {
-        $id = (int) $Request->request->get('item_id');
+    if ($Request->request->has('itemId')) {
+        $id = (int) $Request->request->get('itemId');
     }
 
     if ($Request->request->get('type') === 'experiments' ||
@@ -81,18 +81,18 @@ try {
 
     // UNREFERENCE TAG
     if ($Request->request->has('unreferenceTag')) {
-        if (Check::id((int) $Request->request->get('tag_id')) === false) {
+        if (Check::id((int) $Request->request->get('tagId')) === false) {
             throw new IllegalActionException('Bad id value');
         }
-        $Tags->unreference((int) $Request->request->get('tag_id'));
+        $Tags->unreference((int) $Request->request->get('tagId'));
     }
 
     // DELETE TAG
     if ($Request->request->has('destroyTag') && $App->Session->get('is_admin')) {
-        if (Check::id((int) $Request->request->get('tag_id')) === false) {
+        if (Check::id((int) $Request->request->get('tagId')) === false) {
             throw new IllegalActionException('Bad id value');
         }
-        $Tags->destroy((int) $Request->request->get('tag_id'));
+        $Tags->destroy((int) $Request->request->get('tagId'));
     }
 } catch (ImproperActionException $e) {
     $Response->setData(array(

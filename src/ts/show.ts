@@ -136,7 +136,7 @@ $(document).ready(function(){
 
   // INVERT SELECTION
   $('#invertSelection').on('click', function() {
-    (<any>$('input[type=checkbox]')).each(function () {
+    ($('input[type=checkbox]') as any).each(function () {
       this.checked = !this.checked;
       if ($(this).prop('checked')) {
         $(this).parent().parent().css('background-color', bgColor);

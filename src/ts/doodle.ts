@@ -13,7 +13,48 @@ $(document).ready(function() {
   let clickY = [];
   // bool to store the state of painting
   let isPainting;
-  const context: CanvasRenderingContext2D = (<HTMLCanvasElement>document.getElementById('doodleCanvas')).getContext('2d');
+  const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
+
+  function draw(dragging) {
+    // get last items in arrays
+    const x = clickX[clickX.length - 1];
+    const y = clickY[clickY.length - 1];
+
+    const path = new Path2D();
+
+    if (dragging) {
+      path.moveTo(clickX[clickX.length - 2], clickY[clickY.length - 2]);
+    } else {
+      // if it's just a point click, draw from close location
+      path.moveTo(x - 1, y);
+    }
+    path.lineTo(x, y);
+    path.closePath();
+
+    if ($('#doodleEraser').is(':checked')) {
+      context.globalCompositeOperation = 'destination-out';
+      context.strokeStyle = 'rgba(0,0,0,1)';
+    } else {
+      context.globalCompositeOperation = 'source-over';
+      context.strokeStyle = $('#doodleStrokeStyle').val() as string;
+    }
+    context.lineJoin = 'round';
+    context.lineWidth = $('#doodleStrokeWidth').val() as number;
+
+    context.stroke(path);
+  }
+
+  function addText(x, y, text) {
+    context.font = '18px Arial';
+    context.fillStyle = $('#doodleStrokeStyle').val() as string;
+    context.fillText(text, x, y);
+  }
+
+  function addClick(x, y, dragging) {
+    clickX.push(x);
+    clickY.push(y);
+    draw(dragging);
+  }
 
   $('#doodle-anchor').on('click', '.clearCanvas', function() {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
@@ -22,7 +63,7 @@ $(document).ready(function() {
   });
 
   $('#doodle-anchor').on('click', '.saveCanvas', function() {
-    const image = (<any>$('#doodleCanvas')[0]).toDataURL();
+    const image = ($('#doodleCanvas')[0] as HTMLCanvasElement).toDataURL();
     let type = $(this).data('type');
     const id = $(this).data('id');
     const realName = prompt('Enter name of the file');
@@ -72,45 +113,4 @@ $(document).ready(function() {
   $('#doodleCanvas').mouseleave(function() {
     isPainting = false;
   });
-
-  function addText(x, y, text) {
-    context.font = '18px Arial';
-    context.fillStyle = <string>$('#doodleStrokeStyle').val();
-    context.fillText(text, x, y);
-  }
-
-  function addClick(x, y, dragging) {
-    clickX.push(x);
-    clickY.push(y);
-    draw(dragging);
-  }
-
-  function draw(dragging) {
-    // get last items in arrays
-    const x = clickX[clickX.length - 1];
-    const y = clickY[clickY.length - 1];
-
-    const path = new Path2D();
-
-    if (dragging) {
-      path.moveTo(clickX[clickX.length - 2], clickY[clickY.length - 2]);
-    } else {
-      // if it's just a point click, draw from close location
-      path.moveTo(x - 1, y);
-    }
-    path.lineTo(x, y);
-    path.closePath();
-
-    if ($('#doodleEraser').is(':checked')) {
-      context.globalCompositeOperation = 'destination-out';
-      context.strokeStyle = 'rgba(0,0,0,1)';
-    } else {
-      context.globalCompositeOperation = 'source-over';
-      context.strokeStyle = <string>$('#doodleStrokeStyle').val();
-    }
-    context.lineJoin = 'round';
-    context.lineWidth = <number>$('#doodleStrokeWidth').val();
-
-    context.stroke(path);
-  }
 });

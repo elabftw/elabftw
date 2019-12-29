@@ -6,10 +6,11 @@
  * @package elabftw
  */
 import { notif } from './misc';
+
 const Comments = {
   controller: 'app/controllers/CommentsAjaxController.php',
-  create: function() {
-    (<any>document.getElementById('commentsCreateButton')).disabled = true;
+  create: function(): void {
+    (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = true;
     const comment = $('#commentsCreateArea').val();
     const type = $('#info').data('type');
     const id = $('#info').data('id');
@@ -22,16 +23,13 @@ const Comments = {
     }).done(function(json) {
       notif(json);
       if (json.res) {
-        $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
-          //relativeMoment();
-        });
+        $('#comment_container').load('?mode=view&id=' + id + ' #comment');
       } else {
-        (<any>document.getElementById('commentsCreateButton')).disabled = false;
+        (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = false;
       }
     });
   },
-  destroy: function(commentId: string) {
-    const type = $('#info').data('type');
+  destroy: function(commentId: string): void {
     const id = $('#info').data('id');
     const confirmText = $('#info').data('confirm');
     if (confirm(confirmText)) {
@@ -42,13 +40,9 @@ const Comments = {
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          $('#comment_container').load('?mode=view&id=' + id + ' #comment', function() {
-            //relativeMoment();
-          });
+          $('#comment_container').load('?mode=view&id=' + id + ' #comment');
         }
       });
-    } else {
-      return false;
     }
   }
 };
@@ -59,7 +53,7 @@ $(document).on('click', '#commentsCreateButton', function() {
 });
 
 $(document).on('mouseenter', '.comment', function() {
-  (<any>$(this)).editable('app/controllers/CommentsAjaxController.php', {
+  ($(this) as any).editable('app/controllers/CommentsAjaxController.php', {
     name: 'update',
     type : 'textarea',
     submitdata: {

@@ -168,13 +168,13 @@ try {
     if ($Request->request->has('updateFileComment')) {
         $Entity->canOrExplode('write');
         $comment = $Request->request->filter('comment', null, FILTER_SANITIZE_STRING);
-        $id_arr = \explode('_', $Request->request->get('comment_id'));
-        $comment_id = (int) $id_arr[1];
-        if (Check::id($comment_id) === false) {
+        $idArr = \explode('_', $Request->request->get('commentId'));
+        $commentId = (int) $idArr[1];
+        if (Check::id($commentId) === false) {
             throw new IllegalActionException('The id parameter is invalid');
         }
 
-        $Entity->Uploads->updateComment($comment_id, $comment);
+        $Entity->Uploads->updateComment($commentId, $comment);
     }
 
     // CREATE UPLOAD
@@ -226,8 +226,8 @@ try {
 
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
-        $upload = $Entity->Uploads->readFromId((int) $Request->request->get('upload_id'));
-        $Entity->Uploads->destroy((int) $Request->request->get('upload_id'));
+        $upload = $Entity->Uploads->readFromId((int) $Request->request->get('uploadId'));
+        $Entity->Uploads->destroy((int) $Request->request->get('uploadId'));
         // check that the filename is not in the body. see #432
         $msg = '';
         if (strpos($Entity->entityData['body'], $upload['long_name'])) {

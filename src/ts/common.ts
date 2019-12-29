@@ -23,7 +23,7 @@ $(document).ready(function() {
 
   // Toggle modal
   $('.modalToggle').on('click', function() {
-    (<any>$('#' + $(this).data('modal'))).modal('toggle');
+    ($('#' + $(this).data('modal')) as any).modal('toggle');
   });
 
   // SORTABLE ELEMENTS
@@ -38,7 +38,7 @@ $(document).ready(function() {
     // do ajax request to update db with new order
     update: function() {
       // send the orders as an array
-      const ordering = (<any>$(this)).sortable('toArray');
+      const ordering = $(this).sortable('toArray');
 
       $.post('app/controllers/SortableAjaxController.php', {
         table: $(this).data('table'),

@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let ChemDoodle: any;
-declare let tinymce: any;
+import tinymce from 'tinymce/tinymce';
 
 interface ResponseMsg {
   res: boolean;
@@ -14,7 +14,7 @@ interface ResponseMsg {
   color?: string;
 }
 
-const moment = require('moment');
+const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 // DISPLAY COMMENT TIME RELATIVE TO NOW
 export function relativeMoment(): void {
@@ -25,7 +25,7 @@ export function relativeMoment(): void {
 }
 
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
-export function notif(info: ResponseMsg) {
+export function notif(info: ResponseMsg): void {
   const htmlText = '<p>' + info.msg + '</p>';
   let result = 'ko';
   if (info.res) {
@@ -47,7 +47,7 @@ export function notif(info: ResponseMsg) {
 }
 
 // DISPLAY 2D MOL FILES
-export function displayMolFiles() { // eslint-disable-line no-unused-vars
+export function displayMolFiles(): void {
   // loop all the mol files and display the molecule with ChemDoodle
   $.each($('.molFile'), function() {
     // id of the canvas to attach the viewer to
@@ -57,33 +57,33 @@ export function displayMolFiles() { // eslint-disable-line no-unused-vars
       const mol = ChemDoodle.readMOL(fileContent);
       const viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
       // config some stuff in the viewer
-      viewer.specs.bonds_width_2D = 0.6;
-      viewer.specs.bonds_saturationWidth_2D = 0.18;
-      viewer.specs.bonds_hashSpacing_2D = 2.5;
-      viewer.specs.atoms_font_size_2D = 10;
-      viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
-      viewer.specs.atoms_displayTerminalCarbonLabels_2D = true;
+      viewer.specs.bonds_width_2D = 0.6; // eslint-disable-line @typescript-eslint/camelcase
+      viewer.specs.bonds_saturationWidth_2D = 0.18; // eslint-disable-line @typescript-eslint/camelcase
+      viewer.specs.bonds_hashSpacing_2D = 2.5; // eslint-disable-line @typescript-eslint/camelcase
+      viewer.specs.atoms_font_size_2D = 10; // eslint-disable-line @typescript-eslint/camelcase
+      viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif']; // eslint-disable-line @typescript-eslint/camelcase
+      viewer.specs.atoms_displayTerminalCarbonLabels_2D = true; // eslint-disable-line @typescript-eslint/camelcase
       // load it
       viewer.loadMolecule(mol);
     });
   });
 }
 // for editXP/DB, ctrl-shift-D will add the date
-export function addDateOnCursor() { // eslint-disable-line no-unused-vars
+export function addDateOnCursor(): void {
   const todayDate = new Date();
   const today = todayDate.toISOString().split('T')[0];
   tinymce.activeEditor.execCommand('mceInsertContent', false, today + ' ');
 }
 
 // called when you click the save button of tinymce
-export function quickSave(type: string, id: string) { // eslint-disable-line no-unused-vars
+export function quickSave(type: string, id: string): void {
   $.post('app/controllers/EntityAjaxController.php', {
     quickSave: true,
     type : type,
     id : id,
     // we need this to get the updated content
-    title : (<HTMLInputElement>document.getElementById('title_input')).value,
-    date : (<HTMLInputElement>document.getElementById('datepicker')).value,
+    title : (document.getElementById('title_input') as HTMLInputElement).value,
+    date : (document.getElementById('datepicker') as HTMLInputElement).value,
     body : tinymce.activeEditor.getContent()
   }).done(function(json, textStatus, xhr) {
     // detect if the session timedout
@@ -100,14 +100,8 @@ export function quickSave(type: string, id: string) { // eslint-disable-line no-
     notif(json);
   });
 }
-/* parse the $_GET from the url */
-export function getGetParameters() { // eslint-disable-line no-unused-vars
-  const prmstr = window.location.search.substr(1);
-  return prmstr !== null && prmstr !== '' ? transformToAssocArray(prmstr) : {};
-}
-
 /* put the $_GET in array */
-function transformToAssocArray(prmstr: string) {
+function transformToAssocArray(prmstr: string): object {
   const params: any = {};
   const prmarr = prmstr.split('&');
   for (let i = 0; i < prmarr.length; i++) {
@@ -117,8 +111,14 @@ function transformToAssocArray(prmstr: string) {
   return params;
 }
 
+/* parse the $_GET from the url */
+export function getGetParameters(): object {
+  const prmstr = window.location.search.substr(1);
+  return prmstr !== null && prmstr !== '' ? transformToAssocArray(prmstr) : {};
+}
+
 // insert a get param in the url and reload the page
-export function insertParamAndReload(key: any, value: any) { // eslint-disable-line no-unused-vars
+export function insertParamAndReload(key: any, value: any): void {
   key = escape(key); value = escape(value);
 
   const kvp = document.location.search.substr(1).split('&');

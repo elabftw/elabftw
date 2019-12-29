@@ -8,30 +8,29 @@
 declare let key: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
-const tinymce = require('tinymce/tinymce');
-require('tinymce/plugins/advlist');
-require('tinymce/plugins/autosave');
-require('tinymce/plugins/charmap');
-require('tinymce/plugins/code');
-require('tinymce/plugins/codesample');
-require('tinymce/plugins/fullscreen');
-require('tinymce/plugins/hr');
-require('tinymce/plugins/image');
-require('tinymce/plugins/imagetools');
-require('tinymce/plugins/insertdatetime');
-require('tinymce/plugins/link');
-require('tinymce/plugins/lists');
-require('tinymce/plugins/pagebreak');
-require('tinymce/plugins/paste');
-require('tinymce/plugins/save');
-require('tinymce/plugins/searchreplace');
-require('tinymce/plugins/table');
-require('tinymce/plugins/template');
-require('tinymce/themes/silver/theme');
-require('tinymce/themes/mobile/theme');
-
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/autosave';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/code';
+import 'tinymce/plugins/codesample';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/imagetools';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/paste';
+import 'tinymce/plugins/save';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/table';
+import 'tinymce/plugins/template';
+import 'tinymce/themes/silver';
+import 'tinymce/themes/mobile';
 import './doodle';
-const Dropzone= require('dropzone/dist/dropzone-amd-module');
+const Dropzone= require('dropzone/dist/dropzone-amd-module'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 $.ajaxSetup({
   headers: {
@@ -48,7 +47,7 @@ Dropzone.options.elabftwDropzone = {
   headers: {
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   },
-  init: function() {
+  init: function(): void {
 
     // add additionnal parameters (id and type)
     this.on('sending', function(file: string, xhr: string, formData: any) {
@@ -71,8 +70,6 @@ Dropzone.options.elabftwDropzone = {
     });
   }
 };
-const type = $('#info').data('type');
-const id = $('#info').data('id');
 
 $(document).ready(function() {
   // add the title in the page name (see #324)
@@ -88,7 +85,7 @@ $(document).ready(function() {
 
   // KEYBOARD SHORTCUT
   key($('#shortcuts').data('submit'), function() {
-    (<any>document.forms).main_form.submit();
+    $('#main_form').submit();
   });
 
   ////////////////
@@ -110,8 +107,8 @@ $(document).ready(function() {
       type : type,
       id : id,
       // we need this to get the updated content
-      title : (<any>document.getElementById('title_input')).value,
-      date : (<any>document.getElementById('datepicker')).value,
+      title : (document.getElementById('title_input') as HTMLInputElement).value,
+      date : (document.getElementById('datepicker') as HTMLInputElement).value,
       body : localStorage.getItem('body')
     }).done(function() {
       localStorage.clear();
@@ -129,7 +126,7 @@ $(document).ready(function() {
   ////////////////////
 
   // GET MOL FILES
-  function getListFromMolFiles() {
+  function getListFromMolFiles(): void {
     const mols: any = [];
     $.get('app/controllers/AjaxController.php', {
       getFiles: true,
@@ -249,6 +246,11 @@ $(document).ready(function() {
   let typingTimer: any;                // timer identifier
   const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
+  function isOverCharLimit() {
+    const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
+    return text.length > 1000000;
+  }
+
   // user finished typing, save work
   function doneTyping() {
     if (isOverCharLimit()) {
@@ -256,11 +258,6 @@ $(document).ready(function() {
       return;
     }
     quickSave(type, id);
-  }
-
-  function isOverCharLimit() {
-    const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
-    return text.length > 1000000;
   }
 
   // SWITCH EDITOR
@@ -275,7 +272,7 @@ $(document).ready(function() {
 
   // DISPLAY MARKDOWN EDITOR
   if ($('#body_area').hasClass('markdown-textarea')) {
-    (<any>$('.markdown-textarea')).markdown();
+    ($('.markdown-textarea') as any).markdown();
   }
 
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
@@ -286,7 +283,7 @@ $(document).ready(function() {
     const editor = $('#iHazEditor').data('editor');
     if (editor === 'md') {
       const cursorPosition = $('#body_area').prop('selectionStart');
-      const content = (<string>$('#body_area').val());
+      const content = ($('#body_area').val() as string);
       const before = content.substring(0, cursorPosition);
       const after = content.substring(cursorPosition);
       const imgMdLink = '\n![image](' + url + ')\n';
@@ -325,16 +322,16 @@ $(document).ready(function() {
   $(document).on('click', '.annotateImg',  function() {
     $('#doodleDiv').show();
     $(document).scrollTop($('#doodle-anchor').offset().top);
-    const context: CanvasRenderingContext2D = (<HTMLCanvasElement>document.getElementById('doodleCanvas')).getContext('2d');
+    const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
     const img = new Image();
     // set src attribute to image path
     img.src = 'app/download.php?f=' + $(this).data('path');
     img.onload = function(){
       // make canvas bigger than image
-      context.canvas.width = (<HTMLImageElement>this).width * 2;
-      context.canvas.height = (<HTMLImageElement>this).height * 2;
+      context.canvas.width = (this as HTMLImageElement).width * 2;
+      context.canvas.height = (this as HTMLImageElement).height * 2;
       // add image to canvas
-      context.drawImage(img, (<HTMLImageElement>this).width / 2, (<HTMLImageElement>this).height / 2);
+      context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
     };
   });
   // STAR RATING
@@ -346,6 +343,7 @@ $(document).ready(function() {
     StarC.update($(this).data('rating').current[0].innerText);
   });
 
+  /* eslint-disable */
   tinymce.init({
     mode: 'specific_textareas',
     editor_selector: 'mceditable',
@@ -432,4 +430,5 @@ $(document).ready(function() {
     // this will GET templates from current user
     templates: 'app/controllers/AjaxController.php?getUserTpl'
   });
+  /* eslint-enable */
 });

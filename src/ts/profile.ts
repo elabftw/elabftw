@@ -7,7 +7,7 @@
  */
 import { GoogleCharts } from 'google-charts';
 
-function drawChart() {
+function drawChart(): void {
   const json = $('#stats').data('stats');
   const data = new GoogleCharts.api.visualization.DataTable(json);
   const options = {

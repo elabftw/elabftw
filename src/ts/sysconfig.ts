@@ -6,27 +6,27 @@
  * @package elabftw
  */
 import { notif } from './misc';
-const tinymce = require('tinymce/tinymce');
-require('tinymce/plugins/advlist');
-require('tinymce/plugins/autosave');
-require('tinymce/plugins/charmap');
-require('tinymce/plugins/code');
-require('tinymce/plugins/codesample');
-require('tinymce/plugins/fullscreen');
-require('tinymce/plugins/hr');
-require('tinymce/plugins/image');
-require('tinymce/plugins/imagetools');
-require('tinymce/plugins/insertdatetime');
-require('tinymce/plugins/link');
-require('tinymce/plugins/lists');
-require('tinymce/plugins/pagebreak');
-require('tinymce/plugins/paste');
-require('tinymce/plugins/save');
-require('tinymce/plugins/searchreplace');
-require('tinymce/plugins/table');
-require('tinymce/plugins/template');
-require('tinymce/themes/silver/theme');
-require('tinymce/themes/mobile/theme');
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/autosave';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/code';
+import 'tinymce/plugins/codesample';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/imagetools';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/paste';
+import 'tinymce/plugins/save';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/table';
+import 'tinymce/plugins/template';
+import 'tinymce/themes/silver';
+import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -35,10 +35,10 @@ $(document).ready(function() {
     }
   });
   // TEAMS
-  var Teams = {
+  const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
-    create: function() {
-      (<HTMLButtonElement>document.getElementById('teamsCreateButton')).disabled = true;
+    create: function(): void {
+      (document.getElementById('teamsCreateButton') as HTMLButtonElement).disabled = true;
       const name = $('#teamsName').val();
       $.post(this.controller, {
         teamsCreate: true,
@@ -47,8 +47,8 @@ $(document).ready(function() {
         Teams.destructor(data);
       });
     },
-    update: function(id) {
-      (<HTMLButtonElement>document.getElementById('teamsUpdateButton_' + id)).disabled = true;
+    update: function(id): void {
+      (document.getElementById('teamsUpdateButton_' + id) as HTMLButtonElement).disabled = true;
       const name = $('#teamName_' + id).val();
       const orgid = $('#teamOrgid_' + id).val();
       $.post(this.controller, {
@@ -60,8 +60,8 @@ $(document).ready(function() {
         Teams.destructor(data);
       });
     },
-    destroy: function(id) {
-      (<HTMLButtonElement>document.getElementById('teamsDestroyButton_' + id)).disabled = true;
+    destroy: function(id): void {
+      (document.getElementById('teamsDestroyButton_' + id) as HTMLButtonElement).disabled = true;
       $.post(this.controller, {
         teamsDestroy: true,
         teamsDestroyId: id
@@ -69,7 +69,7 @@ $(document).ready(function() {
         Teams.destructor(data);
       });
     },
-    destructor: function(json) {
+    destructor: function(json): void {
       notif(json);
       if (json.res) {
         $('#teamsDiv').load('sysconfig.php #teamsDiv');
@@ -78,7 +78,7 @@ $(document).ready(function() {
   };
 
   $(document).on('keyup', '.teamNameInput', function() {
-    (<HTMLButtonElement>document.getElementById('teamsUpdateButton_' + $(this).data('id'))).disabled = false;
+    (document.getElementById('teamsUpdateButton_' + $(this).data('id')) as HTMLButtonElement).disabled = false;
   });
 
   $(document).on('click', '#teamsCreateButton', function() {
@@ -95,7 +95,7 @@ $(document).ready(function() {
   });
 
   // MAIL METHOD in a function because is also called in document ready
-  function toggleMailMethod(method) {
+  function toggleMailMethod(method): void {
     switch (method) {
     case 'sendmail':
       $('#smtp_config').hide();
@@ -138,7 +138,7 @@ $(document).ready(function() {
   // TEST EMAIL
   $(document).on('click', '#testemailButton', function() {
     const email = $('#testemailEmail').val();
-    (<HTMLButtonElement>document.getElementById('testemailButton')).disabled = true;
+    (document.getElementById('testemailButton') as HTMLButtonElement).disabled = true;
     $('#testemailButton').text('Sending…');
     $.post('app/controllers/SysconfigAjaxController.php', {
       testemailSend: true,
@@ -147,7 +147,7 @@ $(document).ready(function() {
       notif(json);
       if (json.res) {
         $('#massSend').text('Sent!');
-        (<HTMLButtonElement>document.getElementById('testemailButton')).disabled = false;
+        (document.getElementById('testemailButton') as HTMLButtonElement).disabled = false;
       } else {
         $('#testemailButton').text('Error');
         $('#testemailButton').css('background-color', '#e6614c');
@@ -160,9 +160,9 @@ $(document).ready(function() {
   });
 
   // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-  const input_list = document.getElementsByTagName('input');
-  for (let i=0; i < input_list.length; i++) {
-    const input = input_list[i];
+  const inputList = document.getElementsByTagName('input');
+  for (let i=0; i < inputList.length; i++) {
+    const input = inputList[i];
     input.disabled = false;
   }
   // honor already saved mail_method setting and hide unused options accordingly
@@ -185,16 +185,16 @@ $(document).ready(function() {
 
   tinymce.init({
     mode: 'specific_textareas',
-    editor_selector: 'mceditable',
-    browser_spellcheck: true,
-    skin_url: 'app/css/tinymce',
+    editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
+    browser_spellcheck: true, // eslint-disable-line @typescript-eslint/camelcase
+    skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     height: '500',
     plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak hr',
-    pagebreak_separator: '<pagebreak>',
+    pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
-    removed_menuitems: 'newdocument, image',
-    image_caption: false,
-    content_style: '.mce-content-body {font-size:10pt;}',
+    removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
+    image_caption: false, // eslint-disable-line @typescript-eslint/camelcase
+    content_style: '.mce-content-body {font-size:10pt;}', // eslint-disable-line @typescript-eslint/camelcase
     language: 'en_GB'
   });
 });

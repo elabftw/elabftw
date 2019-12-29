@@ -12,26 +12,6 @@
 module.exports = {
     'parser':  '@typescript-eslint/parser',
     'extends': 'plugin:@typescript-eslint/recommended',
-    'globals': {
-        'Atomics': 'readonly',
-        'SharedArrayBuffer': 'readonly',
-        '$': 'readonly',
-        '$3Dmol': 'readonly',
-        'addDateOnCursor': 'readonly',
-        'ChemDoodle': 'readonly',
-        'Dropzone': 'readonly',
-        'getGetParameters': 'readonly',
-        'google': 'readonly',
-        'insertParamAndReload': 'readonly',
-        'key': 'readonly',
-        'MathJax': 'readonly',
-        'moment': 'readonly',
-        'notif': 'readonly',
-        'quickSave': 'readonly',
-        'relativeMoment': 'readonly',
-        'saveAs': 'readonly',
-        'tinymce': 'readonly'
-    },
     'parserOptions': {
         'ecmaVersion': 2018,
         'sourceType': 'module'

@@ -23,7 +23,7 @@ $(document).ready(function() {
 
   class Link {
 
-    create(elem) {
+    create(elem): void {
       const id = elem.data('id');
       // get link
       const link = elem.val();
@@ -48,7 +48,7 @@ $(document).ready(function() {
     }
 
     // add the body of the linked item at cursor position in editor
-    importBody(elem) {
+    importBody(elem): void {
       const id = elem.data('linkid');
       const editor = $('#iHazEditor').data('editor');
       $.get('app/controllers/EntityAjaxController.php', {
@@ -62,7 +62,7 @@ $(document).ready(function() {
 
         } else if (editor === 'md') {
           const cursorPosition = $('#body_area').prop('selectionStart');
-          const content = (<string>$('#body_area').val());
+          const content = ($('#body_area').val() as string);
           const before = content.substring(0, cursorPosition);
           const after = content.substring(cursorPosition);
           $('#body_area').val(before + json.msg + after);
@@ -73,7 +73,7 @@ $(document).ready(function() {
       });
     }
 
-    destroy(elem) {
+    destroy(elem): void {
       const id = elem.data('id');
       const linkId = elem.data('linkid');
       if (confirm(confirmLink)) {
@@ -94,7 +94,7 @@ $(document).ready(function() {
 
   class Step {
 
-    create(elem) {
+    create(elem): void {
       const id = elem.data('id');
       // get body
       const body = elem.val();
@@ -120,7 +120,7 @@ $(document).ready(function() {
       } // end if input < 0
     }
 
-    finish(elem) {
+    finish(elem): void {
       // the id of the exp/item/tpl
       const id = elem.data('id');
       const stepId = elem.data('stepid');
@@ -140,7 +140,7 @@ $(document).ready(function() {
       });
     }
 
-    destroy(elem) {
+    destroy(elem): void {
       // the id of the exp/item/tpl
       const id = elem.data('id');
       const stepId = elem.data('stepid');
@@ -208,7 +208,7 @@ $(document).ready(function() {
 
   // AUTOCOMPLETE
   const cache: any = {};
-  (<any>$('.linkinput')).autocomplete({
+  $('.linkinput').autocomplete({
     source: function(request: any, response: any) {
       const term = request.term;
       if (term in cache) {

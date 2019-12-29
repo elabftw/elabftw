@@ -7,27 +7,27 @@
  */
 import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { notif } from './misc';
-const tinymce = require('tinymce/tinymce');
-require('tinymce/plugins/advlist');
-require('tinymce/plugins/autosave');
-require('tinymce/plugins/charmap');
-require('tinymce/plugins/code');
-require('tinymce/plugins/codesample');
-require('tinymce/plugins/fullscreen');
-require('tinymce/plugins/hr');
-require('tinymce/plugins/image');
-require('tinymce/plugins/imagetools');
-require('tinymce/plugins/insertdatetime');
-require('tinymce/plugins/link');
-require('tinymce/plugins/lists');
-require('tinymce/plugins/pagebreak');
-require('tinymce/plugins/paste');
-require('tinymce/plugins/save');
-require('tinymce/plugins/searchreplace');
-require('tinymce/plugins/table');
-require('tinymce/plugins/template');
-require('tinymce/themes/silver/theme');
-require('tinymce/themes/mobile/theme');
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/autosave';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/code';
+import 'tinymce/plugins/codesample';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/imagetools';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/paste';
+import 'tinymce/plugins/save';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/table';
+import 'tinymce/plugins/template';
+import 'tinymce/themes/silver';
+import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -97,12 +97,12 @@ $(document).ready(function() {
   // TinyMCE
   tinymce.init({
     mode : 'specific_textareas',
-    editor_selector : 'mceditable',
-    skin_url: 'app/css/tinymce',
+    editor_selector : 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
+    skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr',
-    pagebreak_separator: '<pagebreak>',
+    pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
-    removed_menuitems: 'newdocument, image',
+    removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
     mentions: {
       // use # for autocompletion
       delimiter: '#',

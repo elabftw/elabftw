@@ -32,7 +32,7 @@ $(document).ready(function() {
       $.post(this.controller, {
         createTag: true,
         tag: tag,
-        item_id: tplId,
+        itemId: tplId,
         type: 'experiments_templates'
       }).done(function () {
         $('#tags_div_' + tplId).load(' #tags_div_' + tplId);
@@ -44,14 +44,14 @@ $(document).ready(function() {
     // REFERENCE A TAG
     save(): void {
       // get tag
-      const tag = <string>$('#createTagInput').val();
+      const tag = $('#createTagInput').val() as string;
       // do nothing if input is empty
       if (tag.length > 0) {
         // POST request
         $.post(this.controller, {
           createTag: true,
           tag: tag,
-          item_id: id,
+          itemId: id,
           type: type
         }).done(function(json) {
           notif(json);
@@ -79,8 +79,8 @@ $(document).ready(function() {
         $.post(this.controller, {
           unreferenceTag: true,
           type: type,
-          item_id: id,
-          tag_id: tagId
+          itemId: id,
+          tagId: tagId
         }).done(function() {
           $('#tags_div').load(location + '?mode=edit&id=' + id + ' #tags_div');
         });
@@ -93,8 +93,8 @@ $(document).ready(function() {
         $.post(this.controller, {
           unreferenceTag: true,
           type: type,
-          item_id: tplId,
-          tag_id: tagId
+          itemId: tplId,
+          tagId: tagId
         }).done(function() {
           $('#tags_div_' + tplId).load(' #tags_div_' + tplId);
         });
@@ -105,7 +105,7 @@ $(document).ready(function() {
       if (confirm('Delete this?')) {
         $.post(this.controller, {
           destroyTag: true,
-          tag_id: tagId
+          tagId: tagId
         }).done(function() {
           $('#tag_manager').load(location + '?tab=9 #tag_manager');
         });

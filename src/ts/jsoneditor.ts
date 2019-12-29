@@ -30,7 +30,7 @@ const editor = new JSONEditor(container, options);
 $('.jsoneditor-search').find('input').css('padding', '0px');
 
 // fix the keymaster shortcut library interfering with the editor
-key.filter = function(event){
+key.filter = function(event): boolean {
   const tagName = (event.target || event.srcElement).tagName;
   return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
 };

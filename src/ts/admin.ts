@@ -8,28 +8,29 @@
 import { notif } from './misc';
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
-const tinymce = require('tinymce/tinymce');
-require('tinymce/plugins/advlist');
-require('tinymce/plugins/autosave');
-require('tinymce/plugins/charmap');
-require('tinymce/plugins/code');
-require('tinymce/plugins/codesample');
-require('tinymce/plugins/fullscreen');
-require('tinymce/plugins/hr');
-require('tinymce/plugins/image');
-require('tinymce/plugins/imagetools');
-require('tinymce/plugins/insertdatetime');
-require('tinymce/plugins/link');
-require('tinymce/plugins/lists');
-require('tinymce/plugins/pagebreak');
-require('tinymce/plugins/paste');
-require('tinymce/plugins/save');
-require('tinymce/plugins/searchreplace');
-require('tinymce/plugins/table');
-require('tinymce/plugins/template');
-require('tinymce/themes/silver/theme');
-require('tinymce/themes/mobile/theme');
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/autosave';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/code';
+import 'tinymce/plugins/codesample';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/imagetools';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/paste';
+import 'tinymce/plugins/save';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/table';
+import 'tinymce/plugins/template';
+import 'tinymce/themes/silver';
+import 'tinymce/themes/mobile';
 
+/* eslint-disable */
 function tinyMceInitLight() {
   tinymce.init({
     mode: 'specific_textareas',
@@ -44,6 +45,7 @@ function tinyMceInitLight() {
     image_caption: true,
     language : $('#info').data('lang')
   });
+/* eslint-enable */
 }
 
 $(document).ready(function() {
@@ -55,8 +57,8 @@ $(document).ready(function() {
   // TEAMGROUPS
   const TeamGroups = {
     controller: 'app/controllers/TeamGroupsController.php',
-    create: function() {
-      const name = <string>$('#teamGroupCreate').val();
+    create: function(): void {
+      const name = $('#teamGroupCreate').val() as string;
       if (name.length > 0) {
         $.post(this.controller, {
           teamGroupCreate: name
@@ -69,7 +71,7 @@ $(document).ready(function() {
         });
       }
     },
-    update: function(action, user, group) {
+    update: function(action, user, group): void {
       $.post(this.controller, {
         teamGroupUpdate: true,
         action: action,
@@ -79,7 +81,7 @@ $(document).ready(function() {
         $('#team_groups_div').load('admin.php #team_groups_div');
       });
     },
-    destroy: function(id) {
+    destroy: function(id): void {
       if (confirm(confirmText)) {
         $.post(this.controller, {
           teamGroupDestroy: true,
@@ -88,7 +90,6 @@ $(document).ready(function() {
           $('#team_groups_div').load('admin.php #team_groups_div');
         });
       }
-      return false;
     }
   };
 
@@ -98,8 +99,8 @@ $(document).ready(function() {
   const cache = {};
   $(document).on('focus', '.addUserToGroup', function() {
     if (!$(this).data('autocomplete')) {
-      (<any>$(this)).autocomplete({
-        source: function(request, response) {
+      $(this).autocomplete({
+        source: function(request, response): void {
           const term = request.term;
           if (term in cache) {
             response(cache[term]);
@@ -124,7 +125,7 @@ $(document).ready(function() {
   $(document).on('keypress blur', '.addUserToGroup', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
-      const user = parseInt(<string>$(this).val(), 10);
+      const user = parseInt($(this).val() as string, 10);
       const group = $(this).data('group');
       TeamGroups.update('add', user, group);
     }
@@ -152,12 +153,12 @@ $(document).ready(function() {
   // STATUS
   const Status = {
     controller: 'app/controllers/StatusController.php',
-    create: function() {
+    create: function(): void {
       const name = $('#statusName').val();
       if (name === '') {
         notif({'res': false, 'msg': 'Name cannot be empty'});
         $('#statusName').css('border-color', 'red');
-        return false;
+        return;
       }
       const color = $('#statusColor').val();
       const isTimestampable = +$('#statusTimestamp').is(':checked');
@@ -174,7 +175,7 @@ $(document).ready(function() {
         }
       });
     },
-    update: function(id) {
+    update: function(id): void {
       const name = $('#statusName_' + id).val();
       const color = $('#statusColor_' + id).val();
       const isTimestampable = +$('#statusTimestamp_'+ id).is(':checked');
@@ -191,7 +192,7 @@ $(document).ready(function() {
         notif(json);
       });
     },
-    destroy: function(id) {
+    destroy: function(id): void {
       $.post(this.controller, {
         statusDestroy: true,
         id: id
@@ -218,12 +219,12 @@ $(document).ready(function() {
   // ITEMSTYPES
   const ItemsTypes = {
     controller: 'app/controllers/ItemsTypesAjaxController.php',
-    create: function() {
+    create: function(): void {
       const name = $('#itemsTypesName').val();
       if (name === '') {
         notif({'res': false, 'msg': 'Name cannot be empty'});
         $('#itemsTypesName').css('border-color', 'red');
-        return false;
+        return;
       }
       const color = $('#itemsTypesColor').val();
       const checkbox = $('#itemsTypesBookable').is(':checked');
@@ -245,12 +246,12 @@ $(document).ready(function() {
         }
       });
     },
-    showEditor: function(id) {
+    showEditor: function(id): void {
       $('#itemsTypesTemplate_' + id).addClass('mceditable');
       tinyMceInitLight();
       $('#itemsTypesEditor_' + id).toggle();
     },
-    update: function(id) {
+    update: function(id): void {
       const name = $('#itemsTypesName_' + id).val();
       const color = $('#itemsTypesColor_' + id).val();
       const checkbox = $('#itemsTypesBookable_' + id).is(':checked');
@@ -277,7 +278,7 @@ $(document).ready(function() {
         notif(json);
       });
     },
-    destroy: function(id) {
+    destroy: function(id): void {
       $.post(this.controller, {
         itemsTypesDestroy: true,
         id: id
@@ -326,7 +327,7 @@ $(document).ready(function() {
     }
   });
   // edit the team group name
-  (<any>$('h3.teamgroup_name')).editable('app/controllers/TeamGroupsController.php', {
+  ($('h3.teamgroup_name') as any).editable('app/controllers/TeamGroupsController.php', {
     indicator : 'Saving...',
     name : 'teamGroupUpdateName',
     submit : 'Save',
@@ -342,7 +343,7 @@ $(document).ready(function() {
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
 
-  (<any>$('.tag-editable')).editable(function(value) {
+  ($('.tag-editable') as any).editable(function(value) {
     $.post('app/controllers/TagsController.php', {
       update: true,
       newtag: value,

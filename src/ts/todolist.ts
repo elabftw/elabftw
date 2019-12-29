@@ -7,6 +7,7 @@
  */
 declare let key: any;
 import { relativeMoment, notif } from './misc';
+import 'jquery-jeditable/src/jquery.jeditable.js';
 
 $(document).ready(function() {
   $.ajaxSetup({

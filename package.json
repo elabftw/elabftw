@@ -72,6 +72,7 @@
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
     "jslint": "eslint --ext .ts src/ts",
+    "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --using-cache=no",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",

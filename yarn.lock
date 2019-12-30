@@ -4363,9 +4363,9 @@ json5@^2.1.0:
     minimist "^1.2.0"
 
 jsoneditor@8.1.*:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-8.1.0.tgz#9040ce2723981f91aea1bc0ff09a0cfc05129f75"
-  integrity sha512-RlXA8m+Br+6RghhF+koD9Wkc1MzxUMduB2/E4DZcFXoby4ZywEWqNGKLPnhC54YBTRJ0roHtDhjDNCv4Q4p/RQ==
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-8.1.1.tgz#6249a2df60a3963587954cc117eb4a83f8b4831d"
+  integrity sha512-SVWb/Uov+TWC4Kg3iyrXocrJuhK6bVroYxTjFrLnWe6eQHZwAolJkNvUQs2NoMVvAhWVQXLKTs2JyAT2dEu2kQ==
   dependencies:
     ace-builds "^1.4.7"
     ajv "^6.10.2"

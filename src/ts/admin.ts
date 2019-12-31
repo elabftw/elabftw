@@ -10,7 +10,6 @@ import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
 import 'tinymce/plugins/codesample';

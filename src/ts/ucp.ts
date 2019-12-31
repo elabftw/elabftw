@@ -9,7 +9,6 @@ import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
 import 'tinymce/plugins/codesample';

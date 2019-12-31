@@ -15,6 +15,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Exception;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
@@ -35,6 +36,10 @@ try {
 
     $ApiController = new ApiController($Request);
     $Response = $ApiController->getResponse();
+} catch (UnauthorizedException $e) {
+    // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:
+    // https://tools.ietf.org/html/rfc7235#section-3.1
+    $Response = new Response($e->getMessage(), 401, array('WWW-Authenticate' => 'Bearer'));
 } catch (ImproperActionException $e) {
     $Response = new Response($e->getMessage(), 400);
 } catch (IllegalActionException $e) {

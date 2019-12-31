@@ -50,8 +50,8 @@ class Populate
             // random date in the past 5 years
             $Entity->update($Faker->sentence, $Faker->dateTimeBetween('-5 years')->format('Ymd'), $Faker->realText(1000));
 
-            // lock 10% of experiments
-            if ($Faker->optional(0.9)->randomDigit === null) {
+            // lock 10% of experiments (but not the first one because it is used in tests)
+            if ($Faker->optional(0.9)->randomDigit === null && $i > 1) {
                 $Entity->toggleLock();
             }
 

@@ -42,7 +42,9 @@
     "friendsofphp/php-cs-fixer": "^2.15",
     "codeception/module-webdriver": "^1.0.0",
     "codeception/module-db": "^1.0.0",
-    "codeception/module-asserts": "^1.0.0"
+    "codeception/module-asserts": "^1.0.0",
+    "codeception/module-rest": "^1.0",
+    "codeception/module-phpbrowser": "^1.0"
   },
   "autoload": {
     "psr-4": {

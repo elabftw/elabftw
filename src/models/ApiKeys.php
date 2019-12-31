@@ -66,6 +66,29 @@ class ApiKeys implements CrudInterface
     }
 
     /**
+     * Create a known key so we can test against it in dev mode
+     * This function should only be called from the dev:populate command
+     *
+     * @return void
+     */
+    public function createKnown(): void
+    {
+        $apiKey = 'apiKey4Test';
+        $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
+
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid) VALUES (:name, :hash, :can_write, :userid)';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':name', 'test key');
+        $req->bindParam(':hash', $hash);
+        $req->bindValue(':can_write', 1, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+    }
+
+    /**
      * Read all keys for current user
      *
      * @return array

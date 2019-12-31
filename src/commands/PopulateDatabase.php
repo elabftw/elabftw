@@ -11,6 +11,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
@@ -136,6 +137,10 @@ class PopulateDatabase extends Command
         // Alpha team
         // toto is the sysadmin and admin of team α
         $Users->create('toto@yopmail.com', 1, 'Toto', 'Le houf', $password);
+        // add a known API key for this user so we can test it reproducibly
+        $Users1 = new Users(1);
+        $ApiKeys = new ApiKeys($Users1);
+        $ApiKeys->createKnown();
         // add more items types
         $ItemsTypes = new ItemsTypes(new Users(1));
         $ItemsTypes->update(1, 'Molecule', '#29AEB9', 0, '');
@@ -144,8 +149,8 @@ class PopulateDatabase extends Command
         $ItemsTypes->create('Antibody', '#C24F3D', 0, 'Host:', 1);
 
         // create experiments and items
-        $Experiments = new Experiments(new Users(1));
-        $Database = new Database(new Users(1));
+        $Experiments = new Experiments($Users1);
+        $Database = new Database($Users1);
         $Populate->generate($Experiments);
         $Populate->generate($Database);
 

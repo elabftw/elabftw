@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
@@ -71,6 +72,11 @@ class ApiController implements ControllerInterface
     public function __construct(Request $request)
     {
         $this->Request = $request;
+        // Check if the Authorization Token was sent along
+        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
+            throw new UnauthorizedException('No access token provided!');
+        }
+
         $this->parseReq();
     }
 
@@ -81,13 +87,6 @@ class ApiController implements ControllerInterface
      */
     public function getResponse(): Response
     {
-        // Check if the Authorization Token was sent along
-        if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
-            // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:
-            // https://tools.ietf.org/html/rfc7235#section-3.1
-            return new Response('No access token provided!', 401, array('WWW-Authenticate' => 'Bearer'));
-        }
-
         // GET ENTITY/CATEGORY
         if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
             // GET UPLOAD

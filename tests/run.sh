@@ -29,6 +29,3 @@ docker exec -it elabtmp bin/install start
 docker exec -it elabtmp bin/console dev:populate -p phpunitftw -m phpunit@example.com -u phpunit -s phpunit -y
 # run tests
 docker exec -it elabtmp php vendor/bin/codecept run --skip functionnal
-# test API
-# TODO
-#bash tests/api.sh

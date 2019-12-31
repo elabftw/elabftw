@@ -89,7 +89,7 @@ class Install extends Command
         $output->writeln('<info>✓ Hash function is present.</info>');
 
         // same doc url for cache and uploads folder
-        $doc='https://doc.elabftw.net/faq.html#failed-creating-uploads-directory';
+        $doc = 'https://doc.elabftw.net/faq.html#failed-creating-uploads-directory';
         try {
             $dirs = array($cacheDir, $uploadsDir);
             $fs->mkdir($dirs);
@@ -128,7 +128,7 @@ class Install extends Command
             $configContent = "<?php
             define('DB_HOST', '" . $config['dbHost'] . "');
             define('DB_PORT', '" . $config['dbPort'] . "');
-            define('DB_NAME', '" . $config['dbName']  . "');
+            define('DB_NAME', '" . $config['dbName'] . "');
             define('DB_USER', '" . $config['dbUser'] . "');
             define('DB_PASSWORD', '" . $config['dbPass'] . "');
             define('SECRET_KEY', '" . $key->saveToAsciiSafeString() . "');";

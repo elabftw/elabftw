@@ -351,16 +351,16 @@ class Uploads implements CrudInterface
     private function getRotationAngle(array $exifData): int
     {
         switch ($exifData['Orientation']) {
-        case 1:
-            return 0;
-        case 3:
-            return 180;
-        case 6:
-            return 90;
-        case 8:
-            return -90;
-        default:
-            return 0;
+            case 1:
+                return 0;
+            case 3:
+                return 180;
+            case 6:
+                return 90;
+            case 8:
+                return -90;
+            default:
+                return 0;
         }
     }
 

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Services\Filter;
@@ -48,7 +47,7 @@ class Database extends AbstractEntity implements CreateInterface
         $sql = 'INSERT INTO items(team, title, date, body, userid, category)
             VALUES(:team, :title, :date, :body, :userid, :category)';
         $req = $this->Db->prepare($sql);
-        $req->execute(array(
+        $this->Db->execute($req, array(
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
@@ -74,10 +73,7 @@ class Database extends AbstractEntity implements CreateInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -127,9 +123,7 @@ class Database extends AbstractEntity implements CreateInterface
         $sql = 'DELETE FROM items WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $this->Tags->destroyAll();
 
@@ -140,17 +134,13 @@ class Database extends AbstractEntity implements CreateInterface
         $sql = 'SELECT id FROM experiments_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         while ($links = $req->fetch()) {
             $delete_sql = 'DELETE FROM experiments_links WHERE id = :links_id';
             $delete_req = $this->Db->prepare($delete_sql);
             $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
-            if ($delete_req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($delete_req);
         }
     }
 }

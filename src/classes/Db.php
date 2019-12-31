@@ -98,6 +98,15 @@ final class Db
         return $this->connection->prepare($sql);
     }
 
+    public function execute($req, $arr = null): bool
+    {
+        $res = $req->execute($arr);
+        if ($res !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+        return $res;
+    }
+
     /**
      * Make a simple query
      *

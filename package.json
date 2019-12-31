@@ -70,7 +70,7 @@
     "build": "webpack-cli --config builder.js",
     "buildall": "grunt && yarn build && sass --style compressed src/scss/main.scss:web/app/css/elabftw.min.css",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
-    "coverage": "php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html",
+    "coverage": "php vendor/bin/codecept run --skip acceptance --coverage --coverage-html",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",

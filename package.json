@@ -66,7 +66,6 @@
   "scripts": {
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",
     "apidoc": "apidoc -o _apidoc -i src/controllers",
-    "apitest": "tests/api.sh",
     "build": "webpack-cli --config builder.js",
     "buildall": "grunt && yarn build && sass --style compressed src/scss/main.scss:web/app/css/elabftw.min.css",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",

@@ -461,7 +461,7 @@ class ApiController implements ControllerInterface
             return new Response('Creating database items is not supported.', 400);
         }
         $id = $this->Entity->create(0);
-        return new JsonResponse(array('id' => $id));
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
     /**
@@ -498,7 +498,7 @@ class ApiController implements ControllerInterface
             return new Response('Invalid id', 400);
         }
         $id = $this->Entity->create($this->id);
-        return new JsonResponse(array('id' => $id));
+        return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
     /**

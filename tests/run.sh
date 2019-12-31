@@ -1,11 +1,17 @@
 #! /bin/sh
-# https://www.elabftw.net
-# tests/run.sh - run elabftw acceptance + unit tests with codeception
+#
+# @author Nicolas CARPi <nicolas.carpi@curie.fr>
+# @copyright 2012 Nicolas CARPi
+# @see https://www.elabftw.net Official website
+# @license AGPL-3.0
+# @package elabftw
+#
+# This script will spawn a temporary elabftw install, populate it with fake data and run the full test suite
 
 # stop on failure
 set -eu
 
-# kill chromedriver on exit
+# make sure we tear down everything when script ends
 cleanup() {
     docker-compose -f tests/docker-compose.yml down
     sudo cp config.php.dev config.php
@@ -13,7 +19,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# swap config file for docker with the one for localhost
 # sudo is needed because config file for docker is owned by 100:101
 sudo cp config.php config.php.dev
 sudo cp tests/config-home.php config.php

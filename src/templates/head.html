@@ -34,18 +34,18 @@
 <body>
 
 <!-- container-fluid is from bootstrap -->
-<div id="container" class='container-fluid'>
+<div id='container' class='container-fluid'>
 
 <!-- begin main menu -->
 <nav class='navbar navbar-expand-lg navbar-dark'>
-    <!-- logo -->
-    <a href="index.php"><img class="navbar-brand" src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
     {% if App.Session.has('auth') or App.Session.has('anon') %}
     <!-- hamburger menu -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+    <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#main-nav' aria-controls='main-nav' aria-expanded='false' aria-label='Toggle navigation'>
+        <span class='navbar-toggler-icon'></span>
     </button>
     {% endif %}
+    <!-- logo -->
+    <a href='index.php'><img class='navbar-brand' src='app/img/logo-header.png' height='40px' alt='elabftw' /></a>
 
     {% if App.Session.has('auth') or App.Session.has('anon') %}
     <!-- everything in there will be part of the burger -->
@@ -68,14 +68,14 @@
         </div>
 
         <!-- SEARCH BAR -->
-        <form class='form-inline ml-auto' id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
+        <form class='nav-item form-inline ml-auto' id='big_search' method='get' action='{{ App.Request.getScriptName }}'>
             {% if App.Request.getScriptName|split('/')|last == 'experiments.php' or App.Request.getScriptName|split('/')|last == 'database.php' %}
             <input class='form-control' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
             {% endif %}
         </form>
         <div class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user-circle fa-lg' style='font-size: 180%'></i></a>
-          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>Logged in as {{ App.Users.userData.firstname|default('Anonymous')|raw }}</h6>
+          <div class='dropdown-menu' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>Logged in as {{ App.Users.userData.firstname|default('Anonymous')|raw }}</h6>
             {% if App.Session.has('auth') %}
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs'></i> {{ 'Settings'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user'></i> {{ 'My Profile'|trans }}</a>

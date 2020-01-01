@@ -56,9 +56,7 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
 
         // tag doesn't exist already
@@ -67,9 +65,7 @@ class Tags implements CrudInterface
             $insertReq = $this->Db->prepare($insertSql);
             $insertReq->bindParam(':tag', $tag);
             $insertReq->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-            if ($insertReq->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($insertReq);
             $tagId = $this->Db->lastInsertId();
         }
         // now reference it
@@ -103,9 +99,7 @@ class Tags implements CrudInterface
             ORDER BY tag ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -127,9 +121,7 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':item_type', $this->Entity->type);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         if ($req->rowCount() > 0) {
             $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
             $insertReq = $this->Db->prepare($insertSql);
@@ -144,9 +136,7 @@ class Tags implements CrudInterface
                 $insertReq->bindParam(':item_id', $newId, PDO::PARAM_INT);
                 $insertReq->bindParam(':item_type', $type);
                 $insertReq->bindParam(':tag_id', $tags['tag_id'], PDO::PARAM_INT);
-                if ($insertReq->execute() !== true) {
-                    throw new DatabaseErrorException('Error while executing SQL query.');
-                }
+                $this->Db->execute($insertReq);
             }
         }
     }
@@ -184,10 +174,7 @@ class Tags implements CrudInterface
         $req->bindParam(':tag', $tag);
         $req->bindParam(':newtag', $newtag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -203,9 +190,7 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $count = $req->rowCount();
         if ($count < 2) {
             return 0;
@@ -229,9 +214,7 @@ class Tags implements CrudInterface
             $req = $this->Db->prepare($sql);
             $req->bindParam(':target_tag_id', $targetTagId, PDO::PARAM_INT);
             $req->bindParam(':tag_id', $tag['id'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
         }
 
         // now delete the duplicate tags from the tags table
@@ -239,9 +222,7 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         foreach ($tagsToDelete as $tag) {
             $req->bindParam(':id', $tag['id'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
         }
 
         return count($tagsToDelete);
@@ -259,19 +240,13 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         // now check if another entity is referencing it, if not, remove it from the tags table
         $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $tags = $req->fetchAll();
 
         if (empty($tags)) {
@@ -291,17 +266,13 @@ class Tags implements CrudInterface
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         // now delete it from the tags table
         $sql = 'DELETE FROM tags WHERE id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -316,10 +287,7 @@ class Tags implements CrudInterface
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**

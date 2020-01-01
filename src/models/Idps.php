@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use PDO;
@@ -60,10 +59,7 @@ class Idps implements CrudInterface
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
         $req->bindParam(':active', $active);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
     }
@@ -79,9 +75,7 @@ class Idps implements CrudInterface
         $sql = 'SELECT * FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $res = $req->fetch();
         if ($res === false) {
             return array();
@@ -98,9 +92,7 @@ class Idps implements CrudInterface
     {
         $sql = 'SELECT * FROM idps';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -145,10 +137,7 @@ class Idps implements CrudInterface
         $req->bindParam(':slo_binding', $sloBinding);
         $req->bindParam(':x509', $x509);
         $req->bindParam(':active', $active);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -160,10 +149,7 @@ class Idps implements CrudInterface
     {
         $sql = 'SELECT * FROM idps WHERE active = 1 LIMIT 1';
         $req = $this->Db->prepare($sql);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetch();
         if ($res === false) {
@@ -183,9 +169,6 @@ class Idps implements CrudInterface
         $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

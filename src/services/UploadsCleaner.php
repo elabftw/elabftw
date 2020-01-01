@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Interfaces\CleanerInterface;
 
@@ -77,9 +76,7 @@ class UploadsCleaner implements CleanerInterface
         $req = $Db->prepare($sql);
         $req->bindParam(':long_name', $longName);
         $req->bindParam(':long_name_with_folder', $longNameWithFolder);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $Db->execute($req);
         return (bool) $req->fetch();
     }
 }

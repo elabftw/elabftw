@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Services\Filter;
@@ -68,7 +67,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid)
             VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->execute(array(
+        $this->Db->execute($req, array(
             'title' => $title,
             'date' => Filter::kdate(),
             'body' => $body,
@@ -106,9 +105,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $itemId, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         while ($data = $req->fetch()) {
             $this->setId((int) $data['item_id']);
             $itemsArr[] = $this->read();
@@ -128,9 +125,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $sql = 'SELECT is_timestampable FROM status WHERE id = :category;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $currentCategory, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         return (bool) $req->fetchColumn();
     }
 
@@ -161,9 +156,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -182,7 +175,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid)
             VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->execute(array(
+        $this->Db->execute($req, array(
             'title' => $title,
             'date' => Filter::kdate(),
             'body' => $this->entityData['body'],
@@ -220,9 +213,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $sql = 'DELETE FROM experiments WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -264,9 +255,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             WHERE experiments.elabid = :elabid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
 
@@ -284,9 +273,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $status = $req->fetchColumn();
 
         // if there is no is_default status
@@ -295,9 +282,7 @@ class Experiments extends AbstractEntity implements CreateInterface
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
             $status = $req->fetchColumn();
         }
         return (int) $status;

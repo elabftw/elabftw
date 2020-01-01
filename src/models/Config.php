@@ -57,9 +57,7 @@ class Config
 
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         if ($config === false) {
             throw new DatabaseErrorException('Error while executing SQL query.');
@@ -120,9 +118,7 @@ class Config
             $req = $this->Db->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
         }
     }
 
@@ -135,9 +131,7 @@ class Config
     {
         $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -149,9 +143,7 @@ class Config
     {
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $this->populate();
     }
 
@@ -232,8 +224,6 @@ class Config
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

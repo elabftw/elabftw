@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
@@ -53,10 +52,7 @@ class Links implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -80,9 +76,7 @@ class Links implements CrudInterface
             WHERE ' . $this->Entity->type . '_links.item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -110,9 +104,7 @@ class Links implements CrudInterface
             WHERE ' . $this->Entity->type . '_links.item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -138,14 +130,12 @@ class Links implements CrudInterface
         $linksql = 'SELECT link_id FROM ' . $table . '_links WHERE item_id = :id';
         $linkreq = $this->Db->prepare($linksql);
         $linkreq->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($linkreq->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($linkreq);
 
         while ($links = $linkreq->fetch()) {
             $sql = 'INSERT INTO ' . $this->Entity->type . '_links (link_id, item_id) VALUES(:link_id, :item_id)';
             $req = $this->Db->prepare($sql);
-            $req->execute(array(
+            $this->Db->execute($req, array(
                 'link_id' => $links['link_id'],
                 'item_id' => $newId,
             ));
@@ -165,9 +155,6 @@ class Links implements CrudInterface
         $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

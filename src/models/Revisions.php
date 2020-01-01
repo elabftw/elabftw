@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use PDO;
@@ -58,10 +57,7 @@ class Revisions implements CrudInterface
             $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
             $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
         }
     }
 
@@ -76,9 +72,7 @@ class Revisions implements CrudInterface
              WHERE item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return (int) $req->fetchColumn();
     }
@@ -97,9 +91,7 @@ class Revisions implements CrudInterface
             WHERE item_id = :item_id ORDER BY savedate DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -127,10 +119,7 @@ class Revisions implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -155,9 +144,7 @@ class Revisions implements CrudInterface
         $sql = 'SELECT body FROM ' . $this->Entity->type . '_revisions WHERE id = :rev_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
@@ -176,9 +163,7 @@ class Revisions implements CrudInterface
         $sql = 'SELECT locked FROM ' . $this->Entity->type . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $locked = $req->fetch();
 
         return $locked['locked'] == 1;

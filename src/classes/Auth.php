@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,10 +61,8 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
+        $this->Db->execute($req);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
         return $req->rowCount() === 1;
     }
 
@@ -185,9 +182,7 @@ class Auth
         $sql = 'SELECT salt FROM users WHERE email = :email AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
             throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
@@ -213,10 +208,7 @@ class Auth
         $sql = 'SELECT * FROM users WHERE token = :token LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         if ($req->rowCount() === 1) {
             $this->userData = $req->fetch();
             return true;
@@ -236,9 +228,7 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindValue(':last_login', \date('Y-m-d H:i:s'));
         $req->bindParam(':userid', $this->userData['userid']);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -252,9 +242,7 @@ class Auth
         $sql = 'SELECT * FROM users WHERE email = :email AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         if ($req->rowCount() === 1) {
             // populate the userData
             $this->userData = $req->fetch();
@@ -278,9 +266,7 @@ class Auth
         $sql = 'SELECT * FROM `groups` WHERE id = :id LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $group = $req->fetch(PDO::FETCH_ASSOC);
 
         $this->Session->set('is_admin', $group['is_admin']);
@@ -314,9 +300,6 @@ class Auth
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

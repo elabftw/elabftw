@@ -98,7 +98,15 @@ final class Db
         return $this->connection->prepare($sql);
     }
 
-    public function execute($req, $arr = null): bool
+    /**
+     * Execute a prepared statement and throw exception if it doesn't return true
+     *
+     * @param \PDOStatement $req
+     * @param array|null $arr
+     *
+     * @return bool
+     */
+    public function execute(\PDOStatement $req, ?array $arr = null): bool
     {
         $res = $req->execute($arr);
         if ($res !== true) {

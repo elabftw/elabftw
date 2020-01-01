@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -63,10 +62,7 @@ class Status extends AbstractCategory
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':is_timestampable', $isTimestampable, PDO::PARAM_INT);
         $req->bindParam(':is_default', $default, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
     }
@@ -100,9 +96,7 @@ class Status extends AbstractCategory
             FROM status WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -122,9 +116,7 @@ class Status extends AbstractCategory
         $sql = 'SELECT color FROM status WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
@@ -144,9 +136,7 @@ class Status extends AbstractCategory
         $sql = 'SELECT is_timestampable FROM status WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $status, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return (bool) $req->fetchColumn();
     }
@@ -186,10 +176,7 @@ class Status extends AbstractCategory
         $req->bindParam(':is_default', $default);
         $req->bindParam(':id', $id);
         $req->bindParam(':team', $this->Users->userData['team']);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -208,10 +195,7 @@ class Status extends AbstractCategory
         $sql = 'DELETE FROM status WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -235,9 +219,7 @@ class Status extends AbstractCategory
         $sql = 'SELECT COUNT(*) FROM experiments WHERE category = :category';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return (int) $req->fetchColumn();
     }
@@ -254,9 +236,6 @@ class Status extends AbstractCategory
         $sql = 'UPDATE status SET is_default = 0 WHERE team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

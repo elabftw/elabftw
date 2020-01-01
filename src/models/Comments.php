@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
@@ -67,9 +66,7 @@ class Comments implements CrudInterface
 
         $this->alertOwner();
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
     }
@@ -88,9 +85,7 @@ class Comments implements CrudInterface
             WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.datetime ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
@@ -116,10 +111,8 @@ class Comments implements CrudInterface
         $req->bindParam(':comment', $comment);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
         return $comment;
     }
 
@@ -135,10 +128,7 @@ class Comments implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -175,9 +165,7 @@ class Comments implements CrudInterface
         $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $commenter = $req->fetch();
 
         // get email of the XP owner
@@ -185,7 +173,7 @@ class Comments implements CrudInterface
             WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         $users = $req->fetch();
 
         // don't send an email if we are commenting on our own XP

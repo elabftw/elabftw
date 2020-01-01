@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Filter;
@@ -52,9 +51,7 @@ class Teams implements CrudInterface
         $sql = 'SELECT id FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         return (bool) $req->fetch();
     }
 
@@ -70,9 +67,7 @@ class Teams implements CrudInterface
         $sql = 'SELECT id, name, orgid FROM teams';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $teamsArr = $req->fetchAll();
 
         if (is_array($teamsArr)) {
@@ -105,9 +100,7 @@ class Teams implements CrudInterface
         $req->bindParam(':name', $name);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
 
@@ -142,9 +135,7 @@ class Teams implements CrudInterface
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetch();
         if ($res === false) {
@@ -163,9 +154,7 @@ class Teams implements CrudInterface
     {
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $res = $req->fetchAll();
         if ($res === false) {
@@ -241,9 +230,7 @@ class Teams implements CrudInterface
         $req->bindParam(':stampcert', $post['stampcert']);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -267,10 +254,7 @@ class Teams implements CrudInterface
         $req->bindParam(':name', $name);
         $req->bindParam(':orgid', $orgid);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -292,9 +276,7 @@ class Teams implements CrudInterface
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -308,7 +290,7 @@ class Teams implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        return $req->execute();
+        return $this->Db->execute($req);
     }
 
     /**
@@ -325,7 +307,7 @@ class Teams implements CrudInterface
         (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
         (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts';
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        $this->Db->execute($req);
 
         return $req->fetch(PDO::FETCH_NAMED);
     }
@@ -345,7 +327,7 @@ class Teams implements CrudInterface
         (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) WHERE users.team = :team AND experiments.timestamped = 1) AS totxpts';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
 
         return $req->fetch(PDO::FETCH_NAMED);
     }

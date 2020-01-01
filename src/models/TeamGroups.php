@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
@@ -56,10 +55,7 @@ class TeamGroups implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -73,9 +69,7 @@ class TeamGroups implements CrudInterface
 
         $sql = 'SELECT id, name FROM team_groups';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $groups = $req->fetchAll();
         if ($groups === false) {
@@ -89,9 +83,7 @@ class TeamGroups implements CrudInterface
 
         foreach ($groups as $group) {
             $req->bindParam(':groupid', $group['id'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
             $usersInGroup = $req->fetchAll();
             $fullGroups[] = array(
                 'id' => $group['id'],
@@ -150,9 +142,7 @@ class TeamGroups implements CrudInterface
         $sql = 'SELECT name FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
             return '';
@@ -179,10 +169,7 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':name', $name);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         // the group name is returned so it gets back into jeditable input field
         return $name;
     }
@@ -208,10 +195,7 @@ class TeamGroups implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -227,23 +211,17 @@ class TeamGroups implements CrudInterface
         $req = $this->Db->prepare($sql);
         // note: setting PDO::PARAM_INT here will throw error because it can also be string value!
         $req->bindParam(':id', $id);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $sql = 'DELETE FROM users2team_groups WHERE groupid = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -258,7 +236,7 @@ class TeamGroups implements CrudInterface
         $sql = 'SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':groupid', $groupid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         $authUsersArr = array();
         while ($authUsers = $req->fetch()) {
             $authUsersArr[] = (int) $authUsers['userid'];
@@ -281,7 +259,7 @@ class TeamGroups implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':userid2', $userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         $req->fetch();
         if ($req->rowCount() > 0) {
             return true;

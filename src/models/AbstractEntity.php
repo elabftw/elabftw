@@ -158,9 +158,7 @@ abstract class AbstractEntity
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
             $firstname = $req->fetchColumn();
             if ($firstname === false || $firstname === null) {
                 throw new ImproperActionException('Could not find the firstname of the locker!');
@@ -179,10 +177,7 @@ abstract class AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -325,7 +320,7 @@ abstract class AbstractEntity
             'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
 
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();
         if ($itemsArr === false) {
@@ -365,7 +360,7 @@ abstract class AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->type);
-        $req->execute();
+        $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
@@ -438,9 +433,7 @@ abstract class AbstractEntity
         }
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -490,9 +483,7 @@ abstract class AbstractEntity
         $req->bindParam(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException($sql);
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -662,10 +653,7 @@ abstract class AbstractEntity
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**

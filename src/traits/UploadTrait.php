@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use PDO;
 
@@ -67,9 +66,7 @@ trait UploadTrait
         $sql = 'SELECT userid, long_name FROM uploads WHERE userid = :userid ORDER BY userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         $uploads = $req->fetchAll();
         if ($uploads === false) {

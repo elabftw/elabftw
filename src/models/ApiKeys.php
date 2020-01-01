@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use PDO;
@@ -57,10 +56,7 @@ class ApiKeys implements CrudInterface
         $req->bindParam(':hash', $hash);
         $req->bindParam(':can_write', $canWrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return $apiKey;
     }
@@ -82,10 +78,7 @@ class ApiKeys implements CrudInterface
         $req->bindParam(':hash', $hash);
         $req->bindValue(':can_write', 1, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 
     /**
@@ -98,10 +91,7 @@ class ApiKeys implements CrudInterface
         $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
@@ -119,9 +109,7 @@ class ApiKeys implements CrudInterface
     {
         $sql = 'SELECT hash, userid, can_write FROM api_keys';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $keysArr = $req->fetchAll();
         if ($keysArr === false) {
             $keysArr = array();
@@ -146,8 +134,6 @@ class ApiKeys implements CrudInterface
         $sql = 'DELETE FROM api_keys WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
     }
 }

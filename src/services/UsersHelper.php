@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 
 /**
@@ -39,9 +38,7 @@ class UsersHelper
         $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
 
         return (bool) $req->fetchColumn();
     }
@@ -76,9 +73,7 @@ class UsersHelper
     {
         $sql = 'SELECT COUNT(*) AS usernb FROM users';
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $test = $req->fetch();
 
         return $test['usernb'] === '0';
@@ -95,9 +90,7 @@ class UsersHelper
         $sql = 'SELECT COUNT(*) AS usernb FROM users WHERE team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
         $test = $req->fetch();
 
         return $test['usernb'] === '0';

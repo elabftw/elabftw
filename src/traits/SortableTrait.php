@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\OrderingParams;
-use Elabftw\Exceptions\DatabaseErrorException;
 use PDO;
 
 /**
@@ -45,9 +44,7 @@ trait SortableTrait
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':userOrTeam', $userOrTeamValue);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
-            if ($req->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
+            $this->Db->execute($req);
         }
     }
 }

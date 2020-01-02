@@ -135,16 +135,6 @@ class MakeStreamZip extends AbstractMake
     }
 
     /**
-     * Folder begins with date for experiments
-     *
-     * @return void
-     */
-    private function nameFolder(): void
-    {
-        $this->folder = $this->getBaseFileName();
-    }
-
-    /**
      * Folder and zip file name begins with date for experiments
      *
      * @return string
@@ -228,8 +218,7 @@ class MakeStreamZip extends AbstractMake
             $entityArr['links'] = $this->Entity->Links->readAll();
             // add steps
             $entityArr['steps'] = $this->Entity->Steps->readAll();
-
-            $this->nameFolder();
+            
             $this->addTimestampFiles($id);
             if (!empty($uploadedFilesArr)) {
                 $this->addAttachedFiles($uploadedFilesArr);

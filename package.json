@@ -30,7 +30,7 @@
     "moment": "2.24.*",
     "popper.js": "1.16.*",
     "prismjs": "1.17.*",
-    "sass": "^1.23.7",
+    "sass": "^1.24.2",
     "tinymce": "5.1.*"
   },
   "devDependencies": {

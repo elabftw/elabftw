@@ -16,22 +16,26 @@
           {% for step in stepsArr %}
 
             <div class='input-group mb-2 '>
-                <div class='input-group-prepend'>
-                    <div class='input-group-text'>
-                      <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
-                    </div>
+              <div class='input-group-prepend'>
+                <div class='input-group-text'>
+                  <a class='stepDestroy' data-stepid='{{ step.id }}' data-id='{{ Entity_id }}'>
+                    <i class='fas fa-trash-alt fa-pull-right clickable'></i>
+                  </a>
                 </div>
-                <div class='form-control {{ step.finished ? 'finished' }}'>
+              </div>
+              <div class='input-group-prepend'>
+                <div class='input-group-text'>
+                  <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
+                </div>
+              </div>
+              <div class='pl-2 step-static form-control-plaintext {{ step.finished ? 'finished' }}'>
                 <span>{{ step.body|raw }}</span>
                 {% if step.finished %}
                 <span class='mr-2 text-muted'>
                     {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
                 </span>
                 {% endif %}
-                <a class='stepDestroy' data-stepid='{{ step.id }}' data-id='{{ Entity_id }}'>
-                    <i class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
-                </a>
-                </div>
+              </div>
             </div>
 
             {% endfor %}

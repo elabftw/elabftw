@@ -33,13 +33,16 @@ CREATE TABLE `api_keys` (
   `hash` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `can_write` tinyint(1) NOT NULL DEFAULT 0,
-  `userid` int(10) UNSIGNED NOT NULL
+  `userid` int(10) UNSIGNED NOT NULL,
+  `team` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- RELATIONSHIPS FOR TABLE `api_keys`:
 --   `userid`
 --       `users` -> `userid`
+--   `team`
+--       `teams` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -905,7 +908,8 @@ ALTER TABLE `users`
 -- Constraints for table `api_keys`
 --
 ALTER TABLE `api_keys`
-  ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments`

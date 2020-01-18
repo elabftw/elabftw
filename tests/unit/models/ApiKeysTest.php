@@ -13,7 +13,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->ApiKeys = new ApiKeys(new Users(1));
+        $this->ApiKeys = new ApiKeys(new Users(1, 1));
         $this->key = $this->ApiKeys->create('my key', 0);
     }
 

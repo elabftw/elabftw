@@ -177,25 +177,23 @@ class ApiController implements ControllerInterface
         $this->endpoint = array_shift($args) ?? '';
 
         // verify the key and load user info
-        $Users = new Users();
-        $ApiKeys = new ApiKeys($Users);
+        $ApiKeys = new ApiKeys(new Users());
         $keyArr = $ApiKeys->readFromApiKey($this->Request->server->get('HTTP_AUTHORIZATION') ?? '');
-        $Users->populate((int) $keyArr['userid']);
-        $this->Users = $Users;
+        $this->Users = new Users((int) $keyArr['userid'], (int) $keyArr['team']);
         $this->canWrite = (bool) $keyArr['canWrite'];
 
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
         if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads') {
-            $this->Entity = new Experiments($Users, $this->id);
+            $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
-            $this->Entity = new Database($Users, $this->id);
+            $this->Entity = new Database($this->Users, $this->id);
         } elseif ($this->endpoint === 'items_types') {
-            $this->Category = new ItemsTypes($Users);
+            $this->Category = new ItemsTypes($this->Users);
         } elseif ($this->endpoint === 'status') {
-            $this->Category = new Status($Users);
+            $this->Category = new Status($this->Users);
         } elseif ($this->endpoint === 'events') {
-            $this->Entity = new Database($Users, $this->id);
+            $this->Entity = new Database($this->Users, $this->id);
             $this->Scheduler = new Scheduler($this->Entity);
         } else {
             throw new ImproperActionException('Bad endpoint!');

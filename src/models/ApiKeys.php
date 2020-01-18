@@ -50,12 +50,13 @@ class ApiKeys implements CrudInterface
         $apiKey = \bin2hex(\random_bytes(42));
         $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
 
-        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid) VALUES (:name, :hash, :can_write, :userid)';
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':can_write', $canWrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $apiKey;
@@ -72,12 +73,13 @@ class ApiKeys implements CrudInterface
         $apiKey = 'apiKey4Test';
         $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
 
-        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid) VALUES (:name, :hash, :can_write, :userid)';
+        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', 'test key');
         $req->bindParam(':hash', $hash);
         $req->bindValue(':can_write', 1, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
@@ -88,9 +90,10 @@ class ApiKeys implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid';
+        $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
@@ -107,7 +110,7 @@ class ApiKeys implements CrudInterface
      */
     public function readFromApiKey(string $apiKey): array
     {
-        $sql = 'SELECT hash, userid, can_write FROM api_keys';
+        $sql = 'SELECT hash, userid, can_write, team FROM api_keys';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $keysArr = $req->fetchAll();
@@ -117,7 +120,7 @@ class ApiKeys implements CrudInterface
 
         foreach ($keysArr as $key) {
             if (\password_verify($apiKey, $key['hash'])) {
-                return array('userid' => $key['userid'], 'canWrite' => $key['can_write']);
+                return array('userid' => $key['userid'], 'canWrite' => $key['can_write'], 'team' => $key['team']);
             }
         }
         throw new ImproperActionException('No corresponding API key found!');

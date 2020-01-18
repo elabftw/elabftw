@@ -28,7 +28,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     public function testCheckCredentials()
     {
         $this->assertEquals($this->Auth->checkCredentials('toto@yopmail.com', 'phpunitftw'), 1);
-        $this->expectException(InvalidCredentialsException);
+        $this->expectException(InvalidCredentialsException::class);
         $this->Auth->checkCredentials('toto@yopmail.com', 'wrong password');
     }
 

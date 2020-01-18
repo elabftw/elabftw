@@ -20,6 +20,9 @@ START TRANSACTION;
       `teams_id` int(10) UNSIGNED NOT NULL
     );
     INSERT INTO `users2teams`(`users_id`, `teams_id`) SELECT `userid`, `team` FROM `users`;
+    ALTER TABLE `api_keys` ADD `team` int(10) UNSIGNED NOT NULL;
+    UPDATE `api_keys` SET `team` = (SELECT `team` FROM `users` WHERE `users.userid` = `api_keys.userid`);
+    ALTER TABLE `api_keys` ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
     ALTER TABLE `users` DROP `team`;
     UPDATE config SET conf_value = 52 WHERE conf_name = 'schema';
 COMMIT;

@@ -21,6 +21,7 @@ import 'tinymce/plugins/imagetools';
 import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
+import '../../web/app/js/plugins/mention/plugin.js';
 import 'tinymce/plugins/pagebreak';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/save';

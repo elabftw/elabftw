@@ -34,14 +34,19 @@ class Users
     /** @var Db $Db SQL Database */
     protected $Db;
 
+    private $team;
+
     /**
      * Constructor
      *
      * @param int|null $userid
      */
-    public function __construct(?int $userid = null)
+    public function __construct(?int $userid = null, ?int $team = null)
     {
         $this->Db = Db::getConnection();
+        if ($team !== null) {
+            $this->team = $team;
+        }
         if ($userid !== null) {
             $this->populate($userid);
         }
@@ -56,6 +61,7 @@ class Users
     {
         Check::idOrExplode($userid);
         $this->userData = $this->read($userid);
+        $this->userData['team'] = $this->team;
     }
 
     /**
@@ -107,7 +113,6 @@ class Users
             `password`,
             `firstname`,
             `lastname`,
-            `team`,
             `usergroup`,
             `salt`,
             `register_date`,
@@ -118,7 +123,6 @@ class Users
             :password,
             :firstname,
             :lastname,
-            :team,
             :usergroup,
             :salt,
             :register_date,
@@ -127,7 +131,6 @@ class Users
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
         $req->bindParam(':firstname', $firstname);
@@ -138,6 +141,13 @@ class Users
         $req->bindValue(':lang', $Config->configArr['lang']);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
+
+        // now add the user to the team
+        $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $this->Db->execute($req);
 
         if ($validated == '0') {
             $Email = new Email($Config, $this);
@@ -236,20 +246,22 @@ class Users
     {
         $whereTeam = '';
         if ($teamFilter) {
-            $whereTeam = 'users.team = ' . $this->userData['team'] . ' AND ';
+            $whereTeam = 'teams.id = :team AND ';
         }
 
         $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.team, users.email,
+            users.firstname, users.lastname, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             teams.name as team_name
             FROM users
-            LEFT JOIN teams ON (users.team = teams.id)
+            LEFT JOIN teams ON (teams.id = :team)
+            CROSS JOIN users2teams ON (users2teams.users_id = users.userid)
             WHERE " . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
-            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC';
+            ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
+        $req->bindValue(':team', $this->userData['team']);
         $this->Db->execute($req);
 
         $res = $req->fetchAll();
@@ -271,16 +283,19 @@ class Users
         if (is_int($validated)) {
             $valSql = ' users.validated = :validated AND ';
         }
-        $sql = "SELECT users.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
+
+        $sql = "SELECT DISTINCT users.userid, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
             teams.name AS team_name
             FROM users
-            LEFT JOIN teams ON (users.team = teams.id)
-            WHERE " . $valSql . ' users.team = :team';
+            CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
+            LEFT JOIN teams ON (teams.id = :team)
+            WHERE " . $valSql . ' teams.id = :team';
         $req = $this->Db->prepare($sql);
+
         if (is_int($validated)) {
             $req->bindValue(':validated', $validated);
         }
-        $req->bindValue(':team', $this->userData['team']);
+        $req->bindValue(':team', $this->team);
         $this->Db->execute($req);
 
         $res = $req->fetchAll();

@@ -33,77 +33,95 @@
 </div>
 
 <section class='text-center'>
-  {% if showLocal %}
     <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
-    <!-- Login form , the id is for an acceptance test -->
-    <form method='post' id='login' class='form-group' action='app/controllers/LoginController.php' autocomplete='off'>
+  {% if Session.get('team_selection_required') == 1 %}
+    <form method='post' action='app/controllers/LoginController.php'>
       <!-- form key -->
       {{ App.Csrf.getHiddenInput|raw }}
-      <h2 class='mt-4'>{{ 'Login to your account'|trans }}</h2>
-      <br>
-      <div class='col-md-4 mx-auto text-left form-group'>
-        <label for='email'>{{ 'Email'|trans }}</label>
-        <input class='form-control mb-4' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
-        <label for='password'>{{ 'Password'|trans }}</label>
-        <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
-        <a href='#' class='align_right underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
-        <input class='form-control' id='password' name='password' type='password' required />
-        <!-- Remember me checkbox -->
-        <div class='form-check mt-2'>
-          <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />
-          <label for='rememberme' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-        </div>
-      </div>
-      <!-- Login button -->
-      <button type="submit" class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
-    </form>
-    <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
-      "<a href='register.php'>",
-      "</a>")|raw }}</p>
-
-  {% endif %}
-
-  {% if App.Config.configArr.saml_toggle %}
-    <div class='separator col-md-4 mx-auto'></div>
-    <h2>{{ 'Login through your institution'|trans }}</h2>
-    <br>
-    <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
-      {{ App.Csrf.getHiddenInput|raw }}
-      <div class='form-group col-md-4 mx-auto'>
-        <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
-        <select name='saml_login' class='form-control' id='idp_login_select'>
-          {% for idp in idpsArr %}
-            {% if idp.active %}
-              <option value='{{ idp.id }}'>{{ idp.name }}</option>
-            {% endif %}
+      <input type='hidden' name='auth_userid' value='{{ Session.get('auth_userid') }}' />
+      <div class='col-md-4 mx-auto mt-4 text-left form-group'>
+        <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
+        <select name='team_selection' id='team_selection_select' class='form-control'>
+          {% for teams in Session.get('team_selection') %}
+            <option value='{{ teams.teams_id }}'>{{ teams.name }}</option>
           {% endfor %}
         </select>
-        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
       </div>
+      <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
-  {% endif %}
+  {% else %}
 
-  {% if App.Config.configArr.anon_users %}
-    <div class='separator col-md-4 mx-auto'></div>
-    <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
-    <br>
-    <form method='post' class='form-group' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
-      {{ App.Csrf.getHiddenInput|raw }}
-      <div class='form-group mx-auto col-md-4'>
-        <label for='anon_login_select'></label>
-        <div class='input-group mb-2'>
-          <div class='input-group-prepend'>
-            <div class='input-group-text'>{{ 'Select a team'|trans }}</div>
+    {% if showLocal %}
+      <!-- Login form , the id is for an acceptance test -->
+      <form method='post' id='login' class='form-group' action='app/controllers/LoginController.php' autocomplete='off'>
+        <!-- form key -->
+        {{ App.Csrf.getHiddenInput|raw }}
+        <h2 class='mt-4'>{{ 'Login to your account'|trans }}</h2>
+        <br>
+        <div class='col-md-4 mx-auto text-left form-group'>
+          <label for='email'>{{ 'Email'|trans }}</label>
+          <input class='form-control mb-4' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
+          <label for='password'>{{ 'Password'|trans }}</label>
+          <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
+          <a href='#' class='align_right underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
+          <input class='form-control' id='password' name='password' type='password' required />
+          <!-- Remember me checkbox -->
+          <div class='form-check mt-2'>
+            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />
+            <label for='rememberme' class='form-check-label'>{{ 'Remember me'|trans }}</label>
           </div>
-          <select name='team_id' class='form-control' id='anon_login_select'>
-            {% for team in teamsArr %}
-              <option value='{{ team.id }}'>{{ team.name }}</option>
+        </div>
+        <!-- Login button -->
+        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
+      </form>
+      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
+        "<a href='register.php'>",
+        "</a>")|raw }}</p>
+
+    {% endif %}
+
+    {% if App.Config.configArr.saml_toggle %}
+      <div class='separator col-md-4 mx-auto'></div>
+      <h2>{{ 'Login through your institution'|trans }}</h2>
+      <br>
+      <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        {{ App.Csrf.getHiddenInput|raw }}
+        <div class='form-group col-md-4 mx-auto'>
+          <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
+          <select name='saml_login' class='form-control' id='idp_login_select'>
+            {% for idp in idpsArr %}
+              {% if idp.active %}
+                <option value='{{ idp.id }}'>{{ idp.name }}</option>
+              {% endif %}
             {% endfor %}
           </select>
+          <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
-        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
-      </div>
-    </form>
+      </form>
+    {% endif %}
+
+    {% if App.Config.configArr.anon_users %}
+      <div class='separator col-md-4 mx-auto'></div>
+      <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
+      <br>
+      <form method='post' class='form-group' id='anon-login' action='app/controllers/LoginController.php' autocomplete='off'>
+        {{ App.Csrf.getHiddenInput|raw }}
+        <div class='form-group mx-auto col-md-4'>
+          <label for='anon_login_select'></label>
+          <div class='input-group mb-2'>
+            <div class='input-group-prepend'>
+              <div class='input-group-text'>{{ 'Select a team'|trans }}</div>
+            </div>
+            <select name='team_id' class='form-control' id='anon_login_select'>
+              {% for team in teamsArr %}
+                <option value='{{ team.id }}'>{{ team.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+        </div>
+      </form>
+    {% endif %}
   {% endif %}
 </section>
 {% endblock body %}

@@ -87,7 +87,9 @@ class UsersHelper
      */
     private function isFirstUserInTeam(int $team): bool
     {
-        $sql = 'SELECT COUNT(*) AS usernb FROM users WHERE team = :team';
+        $sql = 'SELECT COUNT(*) AS usernb FROM users
+            CROSS JOIN users2teams ON (users2teams.users_id = users.userid)
+            WHERE users2teams.teams_id = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);

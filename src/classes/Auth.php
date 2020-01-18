@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -50,9 +51,9 @@ class Auth
      *
      * @param string $email
      * @param string $password
-     * @return bool True if the login + password are good
+     * @return int userid
      */
-    public function checkCredentials(string $email, string $password): bool
+    public function checkCredentials(string $email, string $password): int
     {
         $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
@@ -63,28 +64,37 @@ class Auth
         $req->bindParam(':passwordHash', $passwordHash);
         $this->Db->execute($req);
 
-        return $req->rowCount() === 1;
+        if ($req->rowCount() !== 1) {
+            throw new InvalidCredentialsException();
+        }
+
+        return (int) $req->fetchColumn();
+    }
+
+    public function loginInTeam(int $userid, int $team, string $setCookie = 'on'): void
+    {
+        $this->populateUserDataFromUserid($userid);
+        $this->populateSession($team);
+        if ($setCookie === 'on') {
+            $this->setToken();
+        }
     }
 
     /**
      * Login with email and password
      *
-     * @param string $email
-     * @param string $password
      * @param string $setCookie will be here if the user ticked the remember me checkbox
      * @return bool Return true if user provided correct credentials
      */
-    public function login(string $email, string $password, string $setCookie = 'on'): bool
+    public function login(int $userid, string $setCookie = 'on')
     {
-        if ($this->checkCredentials($email, $password)) {
-            $this->populateUserDataFromEmail($email);
-            $this->populateSession();
-            if ($setCookie === 'on') {
-                $this->setToken();
-            }
-            return true;
+        $teams = $this->getTeamsFromUserid($userid);
+        if (\count($teams) > 1) {
+            return array($userid, $teams);
         }
-        return false;
+        $this->loginInTeam($userid, (int) $teams[0]['teams_id']);
+        
+        return true;
     }
 
     /**
@@ -164,11 +174,28 @@ class Auth
         // now try to login with the cookie
         if ($this->loginWithCookie()) {
             // successful login thanks to our cookie friend
-            $this->populateSession();
+            // TODO
+            $team = 1;
+            $this->populateSession($team);
             return true;
         }
 
         return false;
+    }
+
+    private function getTeamsFromUserid(int $userid): array
+    {
+        $sql = 'SELECT users2teams.teams_id, teams.name FROM users2teams
+            CROSS JOIN teams ON (users2teams.teams_id = teams.id)
+            WHERE users_id = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        if ($res === false) {
+            throw new ImproperActionException('Could not find a team for this user!');
+        }
+        return $res;
     }
 
     /**
@@ -203,6 +230,8 @@ class Auth
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+        $team = $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
+
 
         // Now compare current cookie with the token from SQL
         $sql = 'SELECT * FROM users WHERE token = :token LIMIT 1';
@@ -232,6 +261,27 @@ class Auth
     }
 
     /**
+     * Populate userData from userid
+     *
+     * @param string $email
+     * @return bool
+     */
+    private function populateUserDataFromUserid(int $userid): bool
+    {
+        $sql = 'SELECT * FROM users WHERE userid = :userid AND archived = 0';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        if ($req->rowCount() === 1) {
+            // populate the userData
+            $this->userData = $req->fetch();
+            $this->updateLastLogin();
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Populate userData from email
      *
      * @param string $email
@@ -257,10 +307,11 @@ class Auth
      *
      * @return void
      */
-    private function populateSession(): void
+    private function populateSession(int $team): void
     {
         $this->Session->set('auth', 1);
         $this->Session->set('userid', $this->userData['userid']);
+        $this->Session->set('team', $team);
 
         // load permissions
         $sql = 'SELECT * FROM `groups` WHERE id = :id LIMIT 1';

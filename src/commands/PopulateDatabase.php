@@ -138,11 +138,11 @@ class PopulateDatabase extends Command
         // toto is the sysadmin and admin of team α
         $Users->create('toto@yopmail.com', 1, 'Toto', 'Le houf', $password);
         // add a known API key for this user so we can test it reproducibly
-        $Users1 = new Users(1);
+        $Users1 = new Users(1, 1);
         $ApiKeys = new ApiKeys($Users1);
         $ApiKeys->createKnown();
         // add more items types
-        $ItemsTypes = new ItemsTypes(new Users(1));
+        $ItemsTypes = new ItemsTypes($Users1);
         $ItemsTypes->update(1, 'Molecule', '#29AEB9', 0, '');
         $ItemsTypes->create('Microscope', '#54AA08', 1, 'Objectives:', 1);
         $ItemsTypes->create('Plasmid', '#C0C0C0', 0, 'Concentration:', 1);
@@ -156,7 +156,7 @@ class PopulateDatabase extends Command
 
         // titi is a user in the team of toto
         $Users->create('titi@yopmail.com', 1, 'Titi', $Faker->lastName, $password);
-        $Experiments = new Experiments(new Users(2));
+        $Experiments = new Experiments(new Users(2, 1));
         $Populate->generate($Experiments, 50);
         // tutu is another user
         $Users->create('tutu@yopmail.com', 1, $Faker->firstName, $Faker->lastName, $password);

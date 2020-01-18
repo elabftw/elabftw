@@ -16,7 +16,7 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->Users = new Users(1);
+        $this->Users = new Users(1, 1);
         $this->Database= new Database($this->Users);
     }
 

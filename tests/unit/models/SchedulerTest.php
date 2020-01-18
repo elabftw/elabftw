@@ -13,7 +13,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $Users = new Users(1);
+        $Users = new Users(1, 1);
         $Database = new Database($Users, 1);
         $this->Scheduler = new Scheduler($Database);
         $this->id = 1;

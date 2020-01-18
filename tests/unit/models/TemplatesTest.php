@@ -13,7 +13,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->Templates= new Templates(new Users(1));
+        $this->Templates= new Templates(new Users(1, 1));
     }
 
     public function testCreateNew()

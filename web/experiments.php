@@ -31,7 +31,6 @@ $Response = new Response();
 $Response->prepare($Request);
 $template = 'error.html';
 
-
 try {
     $Controller = new ExperimentsController($App, new Experiments($App->Users));
     $Response = $Controller->getResponse();

@@ -110,7 +110,7 @@ class ItemsTypes extends AbstractCategory
             items_types.bookable,
             items_types.template,
             items_types.ordering
-            from items_types WHERE team = :team ORDER BY ordering ASC';
+            FROM items_types WHERE team = :team ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);

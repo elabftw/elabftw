@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
@@ -53,42 +54,55 @@ try {
 
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
-            throw new ImproperActionException(_('A mandatory field is missing!'));
+            //throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 
+        $rememberme = 'off';
         if ($Request->request->has('rememberme')) {
             $rememberme = $Request->request->get('rememberme');
-        } else {
-            $rememberme = 'off';
         }
 
-        // increase failed attempts counter
-        if (!$Session->has('failed_attempt')) {
-            $Session->set('failed_attempt', 1);
-        } else {
-            $n = $Session->get('failed_attempt');
-            $n++;
-            $Session->set('failed_attempt', $n);
-        }
         // the actual login
-        if ($Auth->login($Request->request->get('email'), $Request->request->get('password'), $rememberme)) {
-            if ($Request->cookies->has('redirect')) {
-                $location = $Request->cookies->get('redirect');
-            } else {
-                $location = '../../experiments.php';
-            }
+        $team = null;
+        if ($Request->request->has('team_selection')) {
+            $team = (int) $Request->request->get('team_selection');
+            $userid = (int) $Request->request->get('auth_userid');
+            $Auth->loginInTeam($userid, $team);
         } else {
-            // log the attempt if the login failed
-            $App->Log->warning('Failed login attempt', array('ip' => $_SERVER['REMOTE_ADDR']));
-            // inform the user
-            $Session->getFlashBag()->add(
-                'ko',
-                _("Login failed. Either you mistyped your password or your account isn't activated yet.")
-            );
+            $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
+            $loginResult = $Auth->login($userid, $rememberme);
+            if ($loginResult === true) {
+                if ($Request->cookies->has('redirect')) {
+                    $location = $Request->cookies->get('redirect');
+                } else {
+                    $location = '../../experiments.php';
+                }
+            } elseif ($loginResult === false) {
+                // increase failed attempts counter
+                if (!$Session->has('failed_attempt')) {
+                    $Session->set('failed_attempt', 1);
+                } else {
+                    $n = $Session->get('failed_attempt');
+                    $n++;
+                    $Session->set('failed_attempt', $n);
+                }
+                // log the attempt if the login failed
+                $App->Log->warning('Failed login attempt', array('ip' => $_SERVER['REMOTE_ADDR']));
+                // inform the user
+                $Session->getFlashBag()->add(
+                    'ko',
+                    _("Login failed. Either you mistyped your password or your account isn't activated yet.")
+                );
+            } elseif (is_array($loginResult)) {
+                $Session->set('team_selection_required', 1);
+                $Session->set('auth_userid', $loginResult[0]);
+                $Session->set('team_selection', $loginResult[1]);
+                $location = '../../login.php';
+            }
         }
     }
     $Response = new RedirectResponse($location);
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | InvalidCredentialsException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

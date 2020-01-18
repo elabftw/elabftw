@@ -14,5 +14,12 @@ START TRANSACTION;
     ALTER TABLE `users` DROP `close_warning`;
     ALTER TABLE `team_events` ADD `experiment` int(10) UNSIGNED DEFAULT NULL;
     INSERT INTO config (conf_name, conf_value) VALUES ('email_domain', NULL);
+    ALTER TABLE `users` DROP FOREIGN KEY `fk_users_teams_id`;
+    CREATE TABLE `users2teams` (
+      `users_id` int(10) UNSIGNED NOT NULL,
+      `teams_id` int(10) UNSIGNED NOT NULL
+    );
+    INSERT INTO `users2teams`(`users_id`, `teams_id`) SELECT `userid`, `team` FROM `users`;
+    ALTER TABLE `users` DROP `team`;
     UPDATE config SET conf_value = 52 WHERE conf_name = 'schema';
 COMMIT;

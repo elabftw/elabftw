@@ -528,7 +528,6 @@ CREATE TABLE `users` (
   `userid` int(10) UNSIGNED NOT NULL,
   `salt` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `team` int(10) UNSIGNED NOT NULL,
   `usergroup` int(10) UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
@@ -753,8 +752,7 @@ ALTER TABLE `uploads`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`userid`),
-  ADD KEY `fk_users_teams_id` (`team`);
+  ADD PRIMARY KEY (`userid`);
 
 --
 -- Indexes for table `users2team_groups`
@@ -1004,12 +1002,6 @@ ALTER TABLE `team_groups`
 ALTER TABLE `todolist`
   ADD CONSTRAINT `fk_todolist_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_users_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 -- schema 49
 CREATE TABLE `items_steps` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1052,6 +1044,11 @@ CREATE TABLE `experiments_templates_links` (
     KEY `fk_experiments_templates_links_items_id2` (`link_id`),
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- schema 52
+CREATE TABLE `users2teams` (
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `teams_id` int(10) UNSIGNED NOT NULL
 );
 --
 -- Constraints for table `users2team_groups`

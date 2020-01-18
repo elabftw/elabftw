@@ -57,7 +57,6 @@ class DatabaseCleaner implements CleanerInterface
         $this->findOrphans('team_events', 'users', 'userid', 'userid');
         $this->findOrphans('team_groups', 'teams', 'team');
         $this->findOrphans('todolist', 'users', 'userid', 'userid');
-        $this->findOrphans('users', 'teams', 'team');
 
         return 0;
     }

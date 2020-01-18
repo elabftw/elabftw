@@ -8,7 +8,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $Users = new Users(1);
+        $Users = new Users(1, 1);
         $this->Teams= new Teams($Users);
     }
 

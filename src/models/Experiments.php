@@ -250,8 +250,8 @@ class Experiments extends AbstractEntity implements CreateInterface
      */
     public function getTeamFromElabid(string $elabid): int
     {
-        $sql = 'SELECT users.team FROM `experiments`
-            LEFT JOIN users ON (experiments.userid = users.userid)
+        $sql = 'SELECT users2teams.teams_id FROM `experiments`
+            CROSS JOIN users2teams ON (users2teams.users_id = experiments.userid)
             WHERE experiments.elabid = :elabid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':elabid', $elabid, PDO::PARAM_STR);

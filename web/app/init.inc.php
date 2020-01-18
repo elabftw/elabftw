@@ -103,7 +103,10 @@ try {
 
     // load the Users with a userid if we are auth
     if ($App->Request->getSession()->has('auth')) {
-        $App->loadUser(new Users((int) $App->Request->getSession()->get('userid')));
+        $App->loadUser(new Users(
+            (int) $App->Request->getSession()->get('userid'),
+            (int) $App->Request->getSession()->get('team')
+        ));
     }
 
     // ANONYMOUS

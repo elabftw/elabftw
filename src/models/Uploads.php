@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
+use Elabftw\Services\Filter;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -359,7 +360,7 @@ class Uploads implements CrudInterface
      */
     private function getSanitizedName(string $rawName): string
     {
-        return preg_replace('/[^A-Za-z0-9]/', '.', $rawName) ?? 'file.data';
+        return Filter::forFilesystem($rawName) ?? 'file.data';
     }
 
     /**

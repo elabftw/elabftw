@@ -12,13 +12,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
-use Elabftw\Services\Filter;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
 use Gmagick;

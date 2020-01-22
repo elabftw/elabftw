@@ -19,7 +19,6 @@ module.exports = function(grunt) {
               'src/js/vendor/keymaster.js',
               'src/js/vendor/cornify.js',
               'src/js/vendor/jquery.rating.js',
-              'src/js/vendor/3Dmol-nojquery.js',
           ],
 
           'web/app/js/chemdoodle.min.js': [

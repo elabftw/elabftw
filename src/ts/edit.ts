@@ -8,6 +8,7 @@
 declare let key: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
+import '3dmol/release/3Dmol-nojquery.js';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autosave';

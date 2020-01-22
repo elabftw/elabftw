@@ -65,6 +65,18 @@ class UsersHelper
         return $res;
     }
 
+    public function isUserInTeam(int $userid, int $team): bool
+    {
+        $sql = 'SELECT users_id FROM users2teams WHERE users2teams.teams_id = :team AND users2teams.users_id = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return (bool) $req->fetchColumnn();
+    }
+
+
     /**
      * Return the group int that will be assigned to a new user in a team
      * 1 = sysadmin if it's the first user ever

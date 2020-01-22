@@ -285,7 +285,12 @@ class Users
         }
 
         $sql = "SELECT DISTINCT users.userid, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
-            teams.name AS team_name
+            teams.name AS team_name,
+            users.email,
+            users.phone,
+            users.cellphone,
+            users.website,
+            users.skype
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
             LEFT JOIN teams ON (teams.id = :team)

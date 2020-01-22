@@ -211,8 +211,6 @@ abstract class AbstractEntity
             $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
             $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
         }
-        // TODO maybe remove this join?
-        $teamsJoin = 'LEFT JOIN teams ON (teams.id = 1)';
 
 
         if ($this instanceof Experiments) {
@@ -222,8 +220,7 @@ abstract class AbstractEntity
                 experiments_comments.recent_comment,
                 (experiments_comments.recent_comment IS NOT NULL) AS has_comment,
                 SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                teams.name AS team_name";
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
 
             $from = 'FROM experiments';
 
@@ -251,7 +248,6 @@ abstract class AbstractEntity
                 $usersJoin,
                 $stepsJoin,
                 $tagsJoin,
-                $teamsJoin,
                 $statusJoin,
                 $uploadsJoin,
                 $commentsJoin,
@@ -266,7 +262,6 @@ abstract class AbstractEntity
                 SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
                 uploads.up_item_id, uploads.has_attachment,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                teams.name AS team_name,
                 GROUP_CONCAT(DISTINCT team_events.id) AS events_id";
 
             $from = 'FROM items
@@ -299,7 +294,6 @@ abstract class AbstractEntity
                 $eventsJoin,
                 $commentsJoin,
                 $tagsJoin,
-                $teamsJoin,
             ));
         } else {
             throw new IllegalActionException('Nope.');

@@ -43,7 +43,7 @@
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
         <select name='team_selection' id='team_selection_select' class='form-control'>
           {% for teams in Session.get('team_selection') %}
-            <option value='{{ teams.teams_id }}'>{{ teams.name }}</option>
+            <option value='{{ teams.id }}'>{{ teams.name }}</option>
           {% endfor %}
         </select>
       </div>

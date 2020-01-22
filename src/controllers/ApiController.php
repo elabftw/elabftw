@@ -255,7 +255,6 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} tags Tags separated by '|'
      * @apiSuccess {String} tags_id Id of the tags separated by ','
      * @apiSuccess {Number} team Id of the team
-     * @apiSuccess {String} team_name Name of the team
      * @apiSuccess {Number} timestamped 0 if not timestamped, 1 if timestamped
      * @apiSuccess {Number} timestampedby User id of the timestamper
      * @apiSuccess {DateTime} timestampedwhen Date and time of the timestamp

@@ -209,7 +209,7 @@ class Users
         $usersArr = $this->readFromQuery($term);
         $res = array();
         foreach ($usersArr as $user) {
-            $res[] = $user['userid'] . ' - ' . $user['fullname'] . ' (' . $user['team_name'] . ')';
+            $res[] = $user['userid'] . ' - ' . $user['fullname'];
         }
         return $res;
     }
@@ -244,24 +244,24 @@ class Users
      */
     public function readFromQuery(string $query, bool $teamFilter = false): array
     {
-        $whereTeam = '';
+        $teamFilterSql = '';
         if ($teamFilter) {
-            $whereTeam = 'teams.id = :team AND ';
+            $teamFilterSql = 'AND users2teams.teams_id = :team';
         }
 
         $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            teams.name as team_name
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users
-            LEFT JOIN teams ON (teams.id = :team)
-            CROSS JOIN users2teams ON (users2teams.users_id = users.userid)
-            WHERE " . $whereTeam . ' (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query OR teams.name LIKE :query)
+            CROSS JOIN users2teams ON (users2teams.users_id = users.userid " . $teamFilterSql . ')
+            WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
-        $req->bindValue(':team', $this->userData['team']);
+        if ($teamFilter) {
+            $req->bindValue(':team', $this->userData['team']);
+        }
         $this->Db->execute($req);
 
         $res = $req->fetchAll();
@@ -285,7 +285,6 @@ class Users
         }
 
         $sql = "SELECT DISTINCT users.userid, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
-            teams.name AS team_name,
             users.email,
             users.phone,
             users.cellphone,

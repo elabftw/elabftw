@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
@@ -41,6 +42,27 @@ class UsersHelper
         $this->Db->execute($req);
 
         return (bool) $req->fetchColumn();
+    }
+
+    /**
+     * Get the team id where the user belong
+     *
+     * @param int $userid
+     * @return array
+     */
+    public function getTeamsFromUserid(int $userid): array
+    {
+        $sql = 'SELECT DISTINCT teams.id, teams.name FROM teams
+            CROSS JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = teams.id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            throw new ImproperActionException('Could not find a team for this user!');
+        }
+        return $res;
     }
 
     /**

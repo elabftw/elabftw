@@ -20,6 +20,7 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,6 +44,7 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Teams = new Teams($App->Users);
     $Templates = new Templates($App->Users);
+    $UsersHelper = new UsersHelper();
 
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
@@ -67,6 +69,7 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
+        'UsersHelper' => $UsersHelper,
         'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $tagsArr,
         'fromSysconfig' => false,

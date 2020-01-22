@@ -15,6 +15,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ReleaseCheckException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
+use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,6 +36,7 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
     $Teams = new Teams($App->Users);
+    $UsersHelper = new UsersHelper();
     $teamsArr = $Teams->readAll();
     $teamsStats = $Teams->getAllStats();
 
@@ -70,6 +72,7 @@ try {
 
     $template = 'sysconfig.html';
     $renderArr = array(
+        'UsersHelper' => $UsersHelper,
         'Teams' => $Teams,
         'elabimgVersion' => $elabimgVersion,
         'ReleaseCheck' => $ReleaseCheck,

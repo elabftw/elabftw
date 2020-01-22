@@ -18,7 +18,17 @@
             {% for user in usersArr %}
             <li class='list-group-item'>
               <ul class='list-inline'>
-                <p>Team: {{ user.team_name|raw }} | Last login: {{ user.last_login ?? 'never' }}</p>
+                <p>Last login: {{ user.last_login ?? 'never' }}</p>
+                <!-- TEAM -->
+                <li class='list-inline-item'>
+                  <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
+                    {% for team in UsersHelper.getTeamsFromUserid(user.userid) %}
+                      <span class='user-badge clickable' data-team='{{ team.id }}'>{{ team.name }}</span>
+                    {% endfor %}
+                  </select>
+                </li>
+
+
                 <form method='post' action='app/controllers/UsersController.php'>
                   <div class='form-group'>
                     <input type='hidden' value='true' name='usersUpdate' />
@@ -50,16 +60,6 @@
                     <li class='list-inline-item'>
                       <label for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
                       <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
-                    </li>
-
-                    <!-- TEAM -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team'|trans }}</label>
-                      <select class='form-control custom-control-inline' name='team' id='usersUpdateTeam_{{ user.userid }}'>
-                        {% for team in teamsArr %}
-                          <option value='{{ team.id }}' {{ user.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
-                        {% endfor %}
-                      </select>
                     </li>
 
                     <!-- PERMISSION GROUP -->
@@ -116,7 +116,6 @@
                       <button class='button btn btn-danger destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
                    </li>
                 </form>
-
                 <hr>
               </ul>
             {% endfor %}

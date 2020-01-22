@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -88,12 +89,13 @@ class Auth
      */
     public function login(int $userid, string $setCookie = 'on')
     {
-        $teams = $this->getTeamsFromUserid($userid);
+        $UsersHelper = new UsersHelper();
+        $teams = $UsersHelper->getTeamsFromUserid($userid);
         if (\count($teams) > 1) {
             return array($userid, $teams);
         }
-        $this->loginInTeam($userid, (int) $teams[0]['teams_id']);
-        
+        $this->loginInTeam($userid, (int) $teams[0]['id']);
+
         return true;
     }
 
@@ -181,21 +183,6 @@ class Auth
         }
 
         return false;
-    }
-
-    private function getTeamsFromUserid(int $userid): array
-    {
-        $sql = 'SELECT users2teams.teams_id, teams.name FROM users2teams
-            CROSS JOIN teams ON (users2teams.teams_id = teams.id)
-            WHERE users_id = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetchAll();
-        if ($res === false) {
-            throw new ImproperActionException('Could not find a team for this user!');
-        }
-        return $res;
     }
 
     /**

@@ -17,6 +17,3 @@
 {% if Entity.entityData.userid != Entity.Users.userData.userid and Entity.type == 'experiments' %}
   {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
 {% endif %}
-{% if Entity.entityData.team != Entity.Users.userData.team and Entity.type == 'items' %}
-  {{ 'From team %s'|trans|format(Entity.entityData.team_name)|msg('ok', false) }}
-{% endif %}

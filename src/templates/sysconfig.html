@@ -404,6 +404,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <option value='0'{{ App.Config.configArr.saml_strict == '0' ? ' selected' }}>No</option>
               </select>
 
+              <label for='saml-sync-teams'>Synchronize the local teams with the teams sent by IDP:</label>
+              <select class='form-control col-md-4' id='saml-sync-teams' name='saml_sync_teams'>
+                <option value='1'{{ App.Config.configArr.saml_sync_teams == '1' ? ' selected' }}>Enabled</option>
+                <option value='0'{{ App.Config.configArr.saml_sync_teams == '0' ? ' selected' }}>Disabled</option>
+              </select>
+
               <label for='saml-base'>Base url:</label>
               <input class='form-control col-md-4' type='url' id='saml-base' name='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_baseurl }}' />
 

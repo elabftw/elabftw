@@ -53,7 +53,7 @@ try {
     // Create user
     $userid = $App->Users->create(
         $Request->request->get('email'),
-        (int) $Request->request->get('team'),
+        array($Request->request->get('team')),
         $Request->request->get('firstname'),
         $Request->request->get('lastname'),
         '',

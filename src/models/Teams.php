@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Services\UsersHelper;
 use PDO;
 
 /**
@@ -56,32 +57,95 @@ class Teams implements CrudInterface
     }
 
     /**
-     * Check if the team exists already and create one if not
+     * Transform a team name/orgid in the team id
      *
-     * @param string $name Name of the team (case sensitive)
-     * @param bool $allowCreate depends on the value of saml_team_create in Config
-     * @return int The team ID
+     * @param string $query name or orgid of the team
+     * @return int
      */
-    public function initializeIfNeeded(string $name, bool $allowCreate): int
+    public function getTeamIdFromNameOrOrgid(string $query): int
     {
-        $sql = 'SELECT id, name, orgid FROM teams';
+        $sql = 'SELECT id FROM teams WHERE id = :query OR name = :query OR orgid = :query';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
+        $req->bindParam(':query', $query);
         $this->Db->execute($req);
-        $teamsArr = $req->fetchAll();
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            throw new ImproperActionException('Could not find team!');
+        }
+        return (int) $res;
+    }
 
-        if (is_array($teamsArr)) {
-            foreach ($teamsArr as $team) {
-                if (($team['name'] === $name) || ($team['orgid'] === $name)) {
-                    return (int) $team['id'];
+    /**
+     * Make sure that all the teams are existing
+     * If they do not exist, create them if it's allowed by sysadmin
+     *
+     * @param array $teams
+     * @return array an array of teams id
+     */
+    public function validateTeams(array $teams): array
+    {
+        $Config = new Config();
+        $teamIdArr = array();
+        foreach ($teams as $team) {
+            try {
+                $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team);
+            } catch (ImproperActionException $e) {
+                if ($Config->configArr['saml_team_create']) {
+                    $teamIdArr[] = $this->create($team);
+                } else {
+                    throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.');
                 }
             }
         }
+        return $teamIdArr;
+    }
 
-        if ($allowCreate) {
-            return $this->create($name);
+    /**
+     * Add one user to n teams
+     *
+     * @param int $userid
+     * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param int $validated
+     *
+     * @return void
+     */
+    public function addUserToTeams(int $userid, array $teamIdArr, int $validated = 0): void
+    {
+        foreach ($teamIdArr as $teamId) {
+            // don't add a second time
+            if ($this->isUserInTeam($userid, $teamId)) {
+                break;
+            }
+            $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+            $req->bindParam(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($req);
         }
-        throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.');
+    }
+
+    /**
+     * When the user logs in, make sure that the teams they are part of
+     * are the same teams than the one sent by the IDP
+     *
+     * @param int $userid
+     * @param array $teams
+     *
+     * @return void
+     */
+    public function syncFromIdp(int $userid, array $teams): void
+    {
+        $teamIdArr = $this->validateTeams($teams);
+        // get the difference between the teams sent by idp
+        // and the teams that the user is in
+        $UsersHelper = new UsersHelper();
+        $currentTeams = $UsersHelper->getTeamsIdFromUserid($userid);
+
+        $addToTeams = \array_diff($teamIdArr, $currentTeams);
+        $rmFromTeams =\array_diff($currentTeams, $teamIdArr);
+
+        $this->rmUserFromTeams($userid, $rmFromTeams);
+        $this->addUserToTeams($userid, $addToTeams, 1);
     }
 
     /**
@@ -330,5 +394,31 @@ class Teams implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetch(PDO::FETCH_NAMED);
+    }
+
+    /**
+     * Remove a user from teams
+     *
+     */
+    private function rmUserFromTeams(int $userid, array $teamIdArr): void
+    {
+        foreach ($teamIdArr as $teamId) {
+            $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+            $req->bindParam(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+    }
+
+    private function isUserInTeam(int $userid, int $team): bool
+    {
+        $sql = 'SELECT `users_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return (bool) $req->fetchColumn();
     }
 }

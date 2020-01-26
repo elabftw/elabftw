@@ -48,7 +48,7 @@ class ApiKeys implements CrudInterface
     {
         $name = \filter_var($name, FILTER_SANITIZE_STRING);
         $apiKey = \bin2hex(\random_bytes(42));
-        $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
+        $hash = \password_hash($apiKey, 1);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
@@ -71,7 +71,7 @@ class ApiKeys implements CrudInterface
     public function createKnown(): void
     {
         $apiKey = 'apiKey4Test';
-        $hash = \password_hash($apiKey, PASSWORD_DEFAULT);
+        $hash = \password_hash($apiKey, 1);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);

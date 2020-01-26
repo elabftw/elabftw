@@ -85,7 +85,8 @@ class Auth
      * Login with email and password
      *
      * @param string $setCookie will be here if the user ticked the remember me checkbox
-     * @return bool Return true if user provided correct credentials
+     * @return mixed Return true if user provided correct credentials or an array with the userid
+     * and the teams where login is possible for display on the team selection page
      */
     public function login(int $userid, string $setCookie = 'on')
     {
@@ -112,22 +113,6 @@ class Auth
 
         $this->Session->set('is_admin', 0);
         $this->Session->set('is_sysadmin', 0);
-    }
-
-    /**
-     * Login with SAML. When this is called, user is authenticated with IDP
-     *
-     * @param string $email
-     * @return bool
-     */
-    public function loginFromSaml(string $email): bool
-    {
-        if ($this->populateUserDataFromEmail($email)) {
-            $this->populateSession();
-            $this->setToken();
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -183,6 +168,18 @@ class Auth
         }
 
         return false;
+    }
+
+    public function getUseridFromEmail(string $email): int
+    {
+        $sql = 'SELECT userid FROM users WHERE email = :email AND archived = 0 AND validated = 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':email', $email);
+        $this->Db->execute($req);
+        if ($req->rowCount() !== 1) {
+            return 0;
+        }
+        return (int) $req->fetchColumn();
     }
 
     /**

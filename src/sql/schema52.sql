@@ -14,12 +14,15 @@ START TRANSACTION;
     ALTER TABLE `users` DROP `close_warning`;
     ALTER TABLE `team_events` ADD `experiment` int(10) UNSIGNED DEFAULT NULL;
     INSERT INTO config (conf_name, conf_value) VALUES ('email_domain', NULL);
+    INSERT INTO config (conf_name, conf_value) VALUES ('saml_sync_teams', 0);
     ALTER TABLE `users` DROP FOREIGN KEY `fk_users_teams_id`;
     CREATE TABLE `users2teams` (
       `users_id` int(10) UNSIGNED NOT NULL,
       `teams_id` int(10) UNSIGNED NOT NULL
     );
     INSERT INTO `users2teams`(`users_id`, `teams_id`) SELECT `userid`, `team` FROM `users`;
+    ALTER TABLE `users2teams` ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ALTER TABLE `users2teams` ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
     ALTER TABLE `api_keys` ADD `team` int(10) UNSIGNED NOT NULL;
     UPDATE `api_keys` SET `team` = (SELECT `team` FROM `users` WHERE `users.userid` = `api_keys.userid`);
     ALTER TABLE `api_keys` ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

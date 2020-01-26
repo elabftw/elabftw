@@ -65,17 +65,15 @@ class UsersHelper
         return $res;
     }
 
-    public function isUserInTeam(int $userid, int $team): bool
+    public function getTeamsIdFromUserid(int $userid): array
     {
-        $sql = 'SELECT users_id FROM users2teams WHERE users2teams.teams_id = :team AND users2teams.users_id = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return (bool) $req->fetchColumnn();
+        $teams = $this->getTeamsFromUserid($userid);
+        $teamsIdArr = array();
+        foreach ($teams as $team) {
+            $teamsIdArr[] = $team['id'];
+        }
+        return $teamsIdArr;
     }
-
 
     /**
      * Return the group int that will be assigned to a new user in a team

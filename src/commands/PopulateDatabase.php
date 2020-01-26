@@ -78,6 +78,7 @@ class PopulateDatabase extends Command
             $question = new Question('Password for users (8 chars min): ', 'password');
             $password = $helper->ask($input, $output, $question);
         }
+        $password = (string) $password;
 
         if ($input->getOption('mailfrom')) {
             $mailfrom = $input->getOption('mailfrom');
@@ -136,7 +137,7 @@ class PopulateDatabase extends Command
 
         // Alpha team
         // toto is the sysadmin and admin of team α
-        $Users->create('toto@yopmail.com', 1, 'Toto', 'Le houf', $password);
+        $Users->create('toto@yopmail.com', array('Alpha team'), 'Toto', 'Le houf', $password);
         // add a known API key for this user so we can test it reproducibly
         $Users1 = new Users(1, 1);
         $ApiKeys = new ApiKeys($Users1);
@@ -155,21 +156,21 @@ class PopulateDatabase extends Command
         $Populate->generate($Database);
 
         // titi is a user in the team of toto
-        $Users->create('titi@yopmail.com', 1, 'Titi', $Faker->lastName, $password);
+        $Users->create('titi@yopmail.com', array('Alpha team'), 'Titi', $Faker->lastName, $password);
         $Experiments = new Experiments(new Users(2, 1));
         $Populate->generate($Experiments, 50);
         // tutu is another user
-        $Users->create('tutu@yopmail.com', 1, $Faker->firstName, $Faker->lastName, $password);
+        $Users->create('tutu@yopmail.com', array('Alpha team'), $Faker->firstName, $Faker->lastName, $password);
 
         // Bravo team
         // tata is the admin of bravo team
-        $Users->create('tata@yopmail.com', 2, 'Tata', $Faker->lastName, $password);
-        $Users->create('tyty@yopmail.com', 2, $Faker->firstName, $Faker->lastName, $password);
-        $Users->create('aaaaa@yopmail.com', 2, $Faker->firstName, $Faker->lastName, $password);
+        $Users->create('tata@yopmail.com', array('Bravo squad'), 'Tata', $Faker->lastName, $password);
+        $Users->create('tyty@yopmail.com', array('Bravo squad'), $Faker->firstName, $Faker->lastName, $password);
+        $Users->create('aaaaa@yopmail.com', array('Bravo squad'), $Faker->firstName, $Faker->lastName, $password);
 
         // Charlie team
-        $Users->create('tete@yopmail.com', 3, 'Tete', 'Gamma', $password);
-        $Users->create('bbbbb@yopmail.com', 3, $Faker->firstName, $Faker->lastName, $password);
+        $Users->create('tete@yopmail.com', array('Tango'), 'Tete', 'Gamma', $password);
+        $Users->create('bbbbb@yopmail.com', array('Tango'), $Faker->firstName, $Faker->lastName, $password);
 
         // Insert an IDP
         $Idps = new Idps;

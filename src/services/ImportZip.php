@@ -230,7 +230,7 @@ class ImportZip extends AbstractImport
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = Filter::forFilesystem($item['title']) ?? 'file';
+                $titlePath = Filter::forFilesystem($item['title']);
                 foreach ($item['uploads'] as $file) {
                     if ($this->type === 'experiments') {
                         $filePath = $this->tmpPath . '/' .

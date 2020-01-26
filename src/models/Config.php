@@ -219,6 +219,7 @@ class Config
             ('saml_relaxdestinationvalidation', 0),
             ('saml_lowercaseurlencoding', 0),
             ('email_domain', NULL),
+            ('saml_sync_teams', 0),
             ('deletable_xp', 1);";
 
         $req = $this->Db->prepare($sql);

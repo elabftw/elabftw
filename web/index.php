@@ -26,6 +26,7 @@ $Response = new RedirectResponse('experiments.php');
 try {
     if ($Request->query->has('acs')) {
         $Saml = new Saml(new Config, new Idps);
+        $Teams = new Teams($App->Users);
 
         $settings = $Saml->getSettings();
         $SamlAuth = new SamlAuth($settings);
@@ -61,29 +62,29 @@ try {
             throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
         }
 
-        if (!$Auth->loginFromSaml($email)) {
+        $userid = $Auth->getUseridFromEmail($email);
+        // GET TEAM
+        // get attribute from config
+        $teamAttribute = $Saml->Config->configArr['saml_team'];
+
+        // several teams can be returned by the IDP
+        $teams = $Session->get('samlUserdata')[$teamAttribute];
+        // or one but with ',' inside and we'll split on that
+        if (\count($teams) === 1) {
+            $teams = explode(',', $teams[0]);
+        }
+        // if no team attribute is sent by the IDP, use the default team
+        if (empty($teams)) {
+            // we directly get the id from the stored config
+            $teamId = (int) $Saml->Config->configArr['saml_team_default'];
+            if ($teamId === 0) {
+                throw new ImproperActionException('Could not find team ID to assign user!');
+            }
+            $teams = array((string) $teamId);
+        }
+
+        if ($userid === 0) {
             // the user doesn't exist yet in the db
-            // check if the team exists
-            $Teams = new Teams($App->Users);
-
-            // GET TEAM
-            // get attribute from config
-            $teamAttribute = $Saml->Config->configArr['saml_team'];
-
-            $team = $Session->get('samlUserdata')[$teamAttribute];
-            if (is_array($team)) {
-                $team = $team[0];
-            }
-            // if no team attribute is sent by the IDP, use the default team
-            if (empty($team)) {
-                // we directly get the id from the stored config
-                $teamId = (int) $Saml->Config->configArr['saml_team_default'];
-                if ($teamId === 0) {
-                    throw new ImproperActionException('Could not find team ID to assign user!');
-                }
-            } else {
-                $teamId = $Teams->initializeIfNeeded($team, (bool) $Saml->Config->configArr['saml_team_create']);
-            }
 
             // GET FIRSTNAME AND LASTNAME
             $firstnameAttribute = $Saml->Config->configArr['saml_firstname'];
@@ -97,12 +98,31 @@ try {
                 $lastname = $lastname[0];
             }
 
-            // CREATE USER
-            $App->Users->create($email, $teamId, $firstname, $lastname);
-            // ok now the user is created, try logging in again
-            if (!$Auth->loginFromSaml($email)) {
-                throw new ImproperActionException('Not authenticated!');
+            // CREATE USER (and force validation of user)
+            $userid = $App->Users->create($email, $teams, $firstname, $lastname, '', null, true);
+        }
+
+        // synchronize the teams from the IDP
+        // because teams can change since the time the user was created
+        if ($Saml->Config->configArr['saml_sync_teams']) {
+            $Teams->syncFromIdp($userid, $teams);
+        }
+
+        $loginResult = $Auth->login($userid);
+        if ($loginResult === true) {
+            if ($Request->cookies->has('redirect')) {
+                $location = $Request->cookies->get('redirect');
+            } else {
+                $location = '../../experiments.php';
             }
+        } elseif (is_array($loginResult)) {
+            $Session->set('team_selection_required', 1);
+            $Session->set('auth_userid', $loginResult[0]);
+            $Session->set('team_selection', $loginResult[1]);
+            $location = 'login.php';
+            $Response = new RedirectResponse($location);
+        } else {
+            throw new ImproperActionException('Could not login!');
         }
     }
 } catch (ImproperActionException $e) {

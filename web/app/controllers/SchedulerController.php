@@ -45,11 +45,6 @@ try {
         );
     }
 
-    // READ ALL FROM TEAM
-    if ($Request->request->get('all') === '1') {
-        $Response->setData($Scheduler->readAllFromTeam());
-    }
-
     // GET EVENTS
     if ($Request->query->has('start') && $Request->query->has('end')) {
         if (empty($Request->query->get('item'))) {

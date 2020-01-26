@@ -34,6 +34,7 @@ class Users
     /** @var Db $Db SQL Database */
     protected $Db;
 
+    /** @var int $team */
     private $team;
 
     /**
@@ -44,6 +45,7 @@ class Users
     public function __construct(?int $userid = null, ?int $team = null)
     {
         $this->Db = Db::getConnection();
+        $this->team = 0;
         if ($team !== null) {
             $this->team = $team;
         }
@@ -68,15 +70,20 @@ class Users
      * Create a new user. If no password is provided, it's because we create it from SAML.
      *
      * @param string $email
-     * @param int $team
+     * @param array $teams
      * @param string $firstname
      * @param string $lastname
      * @param string $password
      * @param int|null $group
+     * @param bool $forceValidation used when user is created from SAML login
      * @return int the new userid
      */
-    public function create(string $email, int $team, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null): int
+    public function create(string $email, array $teams, string $firstname = '', string $lastname = '', string $password = '', ?int $group = null, bool $forceValidation = false): int
     {
+        $Config = new Config();
+        $Teams = new Teams($this);
+        $UsersHelper = new UsersHelper();
+
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
@@ -97,16 +104,22 @@ class Users
         // Registration date is stored in epoch
         $registerDate = \time();
 
-        $Config = new Config();
-        $UsersHelper = new UsersHelper();
-
         // get the group for the new user
         if ($group === null) {
-            $group = $UsersHelper->getGroup($team);
+            $teamId = $Teams->getTeamIdFromNameOrOrgid((string) $teams[0]);
+            $group = $UsersHelper->getGroup($teamId);
         }
 
         // will new user be validated?
         $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
+        if ($forceValidation) {
+            $validated = 1;
+        }
+
+        // make sure that all the teams in which the user will be are created/exist
+        // this might throw an exception if the team doesn't exist and we can't create it on the fly
+        // the $teamIdArr is an array of teams ID
+        $teamIdArr = $Teams->validateTeams($teams);
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -136,26 +149,21 @@ class Users
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':register_date', $registerDate);
-        $req->bindParam(':validated', $validated);
-        $req->bindParam(':usergroup', $group);
+        $req->bindParam(':validated', $validated, PDO::PARAM_INT);
+        $req->bindParam(':usergroup', $group, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
         // now add the user to the team
-        $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        if ($validated == '0') {
+        $Teams->addUserToTeams($userid, $teamIdArr, $validated);
+        if ($validated === 0) {
             $Email = new Email($Config, $this);
-            $Email->alertAdmin($team);
+            $Email->alertAdmin($teamIdArr[0]);
             // set a flag to show correct message to user
+            // TODO put in session?
             $this->needValidation = true;
         }
-
         return $userid;
     }
 

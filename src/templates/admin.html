@@ -296,6 +296,7 @@
       <select class='form-control col-md-4' id='separator_csv' autocomplete='off' name='delimiter'>
         <option value=';'>; ({{ 'semicolon'|trans }})</option>
         <option value=','>, ({{ 'comma'|trans }})</option>
+        <option value='tab'>{{ 'Tab'|trans }}</option>
       </select>
 
       {{ App.Csrf.getHiddenInput|raw }}

@@ -1212,7 +1212,7 @@ accepts@~1.3.7:
     mime-types "~2.1.24"
     negotiator "0.6.2"
 
-ace-builds@^1.4.7:
+ace-builds@^1.4.8:
   version "1.4.8"
   resolved "https://registry.yarnpkg.com/ace-builds/-/ace-builds-1.4.8.tgz#d14be41d30294a2a12581f0bcfee4b696481ffdd"
   integrity sha512-8ZVAxwyCGAxQX8mOp9imSXH0hoSPkGfy8igJy+WO/7axL30saRhKgg1XPACSmxxPA7nfHVwM+ShWXT+vKsNuFg==
@@ -1261,7 +1261,7 @@ ajv-keywords@^3.1.0, ajv-keywords@^3.4.1:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.4.1.tgz#ef916e271c64ac12171fd8384eaae6b2345854da"
   integrity sha512-RO1ibKvd27e6FEShVFfPALuHI3WjSVNeK5FIsmme/LYRNxjKuNj+Dt7bucLa6NdSv3JcVTyMlm9kGR84z1XpaQ==
 
-ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2:
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.11.0:
   version "6.11.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.11.0.tgz#c3607cbc8ae392d8a5a536f25b21f8e5f3f87fe9"
   integrity sha512-nCprB/0syFYy9fVYU1ox1l2KN8S9I+tziH8D4zdZuLT3N6RMlGSGt5FSTpAiHB/Whv8Qs1cWHma1aMKZyaHRKA==
@@ -4625,13 +4625,13 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
-jsoneditor@8.1.*:
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-8.1.2.tgz#a22ade6658d56a8aba5eaa919c51fdb8b101e8d3"
-  integrity sha512-C9Po9z4i6upBS7GZD3XiS8DaCvQT00JLZpey7kl4MJBEGhQ8NMreZgxMTADYZEdsBQy0s2badyNcs+J4enYlyA==
+jsoneditor@8.4.*:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-8.4.1.tgz#ce9338881532e4715ca7673e7098795459eb30bf"
+  integrity sha512-vjeoXBusXLHpTlUmBw+0r4hRgmn/t8C+6WHy6a9ziF7vAxu8Ohtiu/WQ2JCkn1BgrIl6ERkXIIa+T0H+xDO2mQ==
   dependencies:
-    ace-builds "^1.4.7"
-    ajv "^6.10.2"
+    ace-builds "^1.4.8"
+    ajv "^6.11.0"
     javascript-natural-sort "^0.7.1"
     jmespath "^0.15.0"
     json-source-map "^0.6.1"

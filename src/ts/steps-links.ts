@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let tinymce: any;
+import tinymce from 'tinymce/tinymce';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { notif, relativeMoment } from './misc';
@@ -58,7 +58,7 @@ $(document).ready(function() {
         editor: editor
       }).done(function(json) {
         if (editor === 'tiny') {
-          tinymce.activeEditor.insertContent(json.msg);
+          tinymce.get('body_area').insertContent(json.msg);
 
         } else if (editor === 'md') {
           const cursorPosition = $('#body_area').prop('selectionStart');

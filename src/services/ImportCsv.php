@@ -39,6 +39,9 @@ class ImportCsv extends AbstractImport
     {
         parent::__construct($users, $request);
         $this->delimiter = $request->request->filter('delimiter', null, FILTER_SANITIZE_STRING);
+        if ($this->delimiter === 'tab') {
+            $this->delimiter = "\t";
+        }
     }
 
     /**

@@ -154,7 +154,7 @@ class MakeController implements ControllerInterface
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');
         $Response->headers->set('Cache-Control', 'no-store');
-        $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName());
+        $contentDisposition = $Response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $Make->getFileName(), 'elabftw-export.zip');
         $Response->headers->set('Content-Disposition', $contentDisposition);
         $Response->setCallback(function () use ($Make) {
             $Make->getZip();

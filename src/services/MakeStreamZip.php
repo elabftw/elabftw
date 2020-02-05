@@ -77,6 +77,11 @@ class MakeStreamZip extends AbstractMake
      */
     public function getFileName(): string
     {
+        if (\count($this->idArr) === 1) {
+            $this->Entity->setId((int) $this->idArr[0]);
+            $this->Entity->canOrExplode('read');
+            return $this->getBaseFileName() . '.zip';
+        }
         return 'export.elabftw.zip';
     }
 
@@ -129,17 +134,19 @@ class MakeStreamZip extends AbstractMake
     }
 
     /**
-     * Folder begins with date for experiments
+     * Folder and zip file name begins with date for experiments
      *
-     * @return void
+     * @return string
      */
-    private function nameFolder(): void
+    private function getBaseFileName(): string
     {
         if ($this->Entity instanceof Experiments) {
-            $this->folder = $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
+            return $this->Entity->entityData['date'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         } elseif ($this->Entity instanceof Database) {
-            $this->folder = $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
+            return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
+
+        throw ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
     }
 
     /**
@@ -210,8 +217,8 @@ class MakeStreamZip extends AbstractMake
             $entityArr['links'] = $this->Entity->Links->readAll();
             // add steps
             $entityArr['steps'] = $this->Entity->Steps->readAll();
+            $this->folder = $this->getBaseFileName();
 
-            $this->nameFolder();
             $this->addTimestampFiles($id);
             if (!empty($uploadedFilesArr)) {
                 $this->addAttachedFiles($uploadedFilesArr);

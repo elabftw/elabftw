@@ -206,7 +206,9 @@ class Email
         $arr = array();
         $Db = Db::getConnection();
 
-        $sql = 'SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team';
+        $sql = 'SELECT email FROM users
+             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
+             WHERE (`usergroup` = 1 OR `usergroup` = 2 OR `usergroup` = 3)';
         $req = $Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->execute();

@@ -39,7 +39,7 @@ try {
 
     // UPDATE USERS
     if ($Request->request->has('usersUpdate')) {
-        // you need to be at least admin to validate a user
+        // you need to be at least admin to edit a user
         if (!$Session->get('is_admin')) {
             throw new IllegalActionException('Non admin user tried to edit user.');
         }

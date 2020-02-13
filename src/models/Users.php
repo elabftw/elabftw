@@ -353,11 +353,7 @@ class Users
         $firstname = Filter::sanitize($params['firstname']);
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
-        $team = Check::id((int) $params['team']);
         $UsersHelper = new UsersHelper();
-        if ($UsersHelper->hasExperiments((int) $this->userData['userid']) && $team !== (int) $this->userData['team']) {
-            throw new ImproperActionException('You are trying to change the team of a user with existing experiments. You might want to Archive this user instead!');
-        }
 
         // check email is not already in db
         $usersEmails = $this->getAllEmails();
@@ -388,7 +384,6 @@ class Users
             firstname = :firstname,
             lastname = :lastname,
             email = :email,
-            team = :team,
             usergroup = :usergroup,
             validated = :validated
             WHERE userid = :userid';
@@ -396,7 +391,6 @@ class Users
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':email', $email);
-        $req->bindParam(':team', $team);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $usergroup);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);

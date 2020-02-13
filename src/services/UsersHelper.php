@@ -65,6 +65,12 @@ class UsersHelper
         return $res;
     }
 
+    /**
+     * Get teams id from a userid
+     *
+     * @param int $userid
+     * @return array
+     */
     public function getTeamsIdFromUserid(int $userid): array
     {
         $teams = $this->getTeamsFromUserid($userid);

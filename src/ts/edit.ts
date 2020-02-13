@@ -46,6 +46,7 @@ Dropzone.options.elabftwDropzone = {
   // i18n message to user
   dictDefaultMessage: $('#info').data('upmsg'),
   maxFilesize: $('#info').data('maxsize'), // MB
+  timeout: 300000,
   headers: {
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   },

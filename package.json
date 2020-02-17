@@ -25,7 +25,7 @@
     "jquery": "3.4.*",
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",
-    "jsoneditor": "8.4.*",
+    "jsoneditor": "8.6.*",
     "marked": "0.8.*",
     "mathjax": "3.0.*",
     "moment": "2.24.*",

@@ -1,3 +1,34 @@
+<!-- Modal for adding a user to a team -->
+<div class='modal fade' id='addUserToTeamModal' tabindex='-1' role='dialog' aria-labelledby='addUserToTeamModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addUserToTeamModalLabel'>{{ 'Add user to team'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form method='post' action='app/controllers/SysconfigController.php'>
+        <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+            {{ App.Csrf.getHiddenInput|raw }}
+            <input type='hidden' id='addUserToTeamUserid' name='userid' value='' />
+            <input type='hidden' name='addUserToTeam' value='1' />
+            <label for='teamSelect'>{{ 'Select a team'|trans }}</label>
+            <select id='teamSelect' class='form-control' name='team'>
+              {% for team in teamsArr %}
+                <option value='{{ team.id }}'>{{ team.name }}</option>
+              {% endfor %}
+            </select>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' id='goForTimestamp' class='btn btn-primary'>{{ 'Add'|trans }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <form class='box' method='get'>
   <div class='form-group'>
     <label for='search-users'>{{ 'Search users'|trans }}</label>
@@ -20,12 +51,14 @@
               <ul class='list-inline'>
                 <p>Last login: {{ user.last_login ?? 'never' }}</p>
                 <!-- TEAM -->
-                <li class='list-inline-item'>
+                <li class='list-inline-item mb-2'>
                   <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
                     {% for team in UsersHelper.getTeamsFromUserid(user.userid) %}
                       <span class='user-badge clickable' data-team='{{ team.id }}'>{{ team.name }}</span>
                     {% endfor %}
-                  </select>
+                    {% if App.Session.get('is_sysadmin') %}
+                    <span class='user-badge clickable addUserToTeam modalToggle' data-modal='addUserToTeamModal' data-userid='{{ user.userid }}'><i class='fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    {% endif %}
                 </li>
 
 

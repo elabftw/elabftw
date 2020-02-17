@@ -105,15 +105,14 @@ class Teams implements CrudInterface
      *
      * @param int $userid
      * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
-     * @param int $validated
      *
      * @return void
      */
-    public function addUserToTeams(int $userid, array $teamIdArr, int $validated = 0): void
+    public function addUserToTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
             // don't add a second time
-            if ($this->isUserInTeam($userid, $teamId)) {
+            if ($this->isUserInTeam($userid, (int) $teamId)) {
                 break;
             }
             $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
@@ -145,7 +144,7 @@ class Teams implements CrudInterface
         $rmFromTeams =\array_diff($currentTeams, $teamIdArr);
 
         $this->rmUserFromTeams($userid, $rmFromTeams);
-        $this->addUserToTeams($userid, $addToTeams, 1);
+        $this->addUserToTeams($userid, $addToTeams);
     }
 
     /**

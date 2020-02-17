@@ -14,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -77,6 +78,17 @@ try {
 
         $App->Config->update($Request->request->all());
     }
+
+    // ADD USER TO TEAM
+    if ($Request->request->has('addUserToTeam')) {
+        $tab = '3';
+        $Teams = new Teams($App->Users);
+        $Teams->addUserToTeams(
+            (int) $Request->request->get('userid'),
+            array($Request->request->get('team')),
+        );
+    }
+
 
     // CLEAR STAMP PASS
     if ($Request->query->get('clearStamppass')) {

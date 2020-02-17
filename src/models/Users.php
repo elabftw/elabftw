@@ -156,7 +156,7 @@ class Users
         $userid = $this->Db->lastInsertId();
 
         // now add the user to the team
-        $Teams->addUserToTeams($userid, $teamIdArr, $validated);
+        $Teams->addUserToTeams($userid, $teamIdArr);
         if ($validated === 0) {
             $Email = new Email($Config, $this);
             $Email->alertAdmin($teamIdArr[0]);

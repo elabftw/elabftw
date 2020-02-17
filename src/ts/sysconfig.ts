@@ -36,6 +36,9 @@ $(document).ready(function() {
   // TEAMS
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
+    addUserToTeam(userid): void {
+      $('#addUserToTeamUserid').attr('value', userid);
+    },
     create: function(): void {
       (document.getElementById('teamsCreateButton') as HTMLButtonElement).disabled = true;
       const name = $('#teamsName').val();
@@ -91,6 +94,9 @@ $(document).ready(function() {
   });
   $(document).on('click', '.teamsArchiveButton', function() {
     notif({'msg': 'Feature not yet implemented :)', 'res': true});
+  });
+  $(document).on('click', '.addUserToTeam', function() {
+    Teams.addUserToTeam($(this).data('userid'));
   });
 
   // MAIL METHOD in a function because is also called in document ready

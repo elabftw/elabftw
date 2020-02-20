@@ -9,7 +9,7 @@ import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { notif, displayMolFiles } from './misc';
-import { $3Dmol } from '3dmol/build/3Dmol-nojquery.js';
+import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 
 $(document).ready(function() {
   $.ajaxSetup({

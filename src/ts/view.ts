@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import 'jquery-jeditable/src/jquery.jeditable.js';
-import '3dmol/release/3Dmol-nojquery.js';
 import { notif } from './misc';
 // not working
 //import { key } from '../js/vendor/keymaster.js';

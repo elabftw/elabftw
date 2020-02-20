@@ -9,6 +9,7 @@ import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { notif, displayMolFiles } from './misc';
+import { $3Dmol } from '3dmol/build/3Dmol-nojquery.js';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -98,4 +99,31 @@ $(document).ready(function() {
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
+
+  // 3Dmol menu to change the display
+  // TODO: NOT WORKING because $3dmol is not here!
+  // CARTOON (only working for protein structures!)
+  $('.dropdown-item').on('click', '.3dmol-cartoon', function() {
+    $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();
+  });
+
+  // CROSS
+  $('.dropdown-item').on('click', '.3dmol-cross', function() {
+    $3Dmol.viewers[$(this).data('divid')].setStyle({},{cross:{}}).render();
+  });
+
+  // LINE
+  $('.dropdown-item').on('click', '.3dmol-line', function() {
+    $3Dmol.viewers[$(this).data('divid')].setStyle({},{line:{}}).render();
+  });
+
+  // SPHERE
+  $('.dropdown-item').on('click', '.3dmol-sphere', function() {
+    $3Dmol.viewers[$(this).data('divid')].setStyle({},{sphere:{}}).render();
+  });
+
+  // STICK
+  $('.dropdown-item').on('click', '.3dmol-stick', function() {
+    $3Dmol.viewers[$(this).data('divid')].setStyle({},{stick:{}}).render();
+  });
 });

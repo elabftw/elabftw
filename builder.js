@@ -19,7 +19,6 @@ module.exports = {
   entry: {
     main: [
       './src/ts/common.ts',
-      './src/ts/3Dmol.ts',
       './src/ts/steps-links.ts',
       './src/ts/tabs.ts',
       './src/ts/tags.ts',

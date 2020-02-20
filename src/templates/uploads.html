@@ -48,36 +48,40 @@
                             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
                                 <!--  build control dropdown to change the representation style -->
                                 <div style='padding-bottom: 5px' class='btn-group'>
-                                    <button type='button'
-                                        class='btn btn-secondary btn-xs dropdown-toggle'
-                                        data-toggle='dropdown'
-                                        aria-haspopup='true'
-                                        aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
-                                    </button>
+                                  <button type='button'
+                                    class='btn btn-secondary btn-xs dropdown-toggle'
+                                    data-toggle='dropdown'
+                                    aria-haspopup='true'
+                                    aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
+                                  </button>
 
-                                    <ul class='dropdown-menu clickable'>
+                                  <ul class='dropdown-menu clickable'>
 
-                                        {% set moldivId = '3Dmol_' ~ upload.id %}
-                                        <li class='dropdown-item'>
-                                            <span data-divid='{{ moldivId }}' class='3dmol-cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
-                                        </li>
-                                        <li class='dropdown-item'>
-                                            <span data-divid='{{ moldivId }}' class='3dmol-cross'>{{ 'Cross'|trans }}</span/>
-                                        </li>
-                                        <li class='dropdown-item'>
-                                            <span data-divid='{{ moldivId }}' class='3dmol-line'>{{'Line'|trans }}</span/>
-                                        </li>
-                                        <li class='dropdown-item'>
-                                            <span data-divid='{{ moldivId }}' class='3dmol-sphere'>{{'Sphere'|trans }}</span/>
-                                        </li>
-                                        <li class='dropdown-item'>
-                                            <span data-divid='{{ moldivId }}' class='3dmol-stick'>{{ 'Stick'|trans }}</span/>
-                                        </li>
+                                    {% set moldivId = '3Dmol_' ~ upload.id %}
+                                    <li class='dropdown-item'>
+                                      <span data-divid='{{ moldivId }}' class='3dmol-cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
+                                    </li>
+                                    <li class='dropdown-item'>
+                                      <span data-divid='{{ moldivId }}' class='3dmol-cross'>{{ 'Cross'|trans }}</span>
+                                    </li>
+                                    <li class='dropdown-item'>
+                                      <span data-divid='{{ moldivId }}' class='3dmol-line'>{{'Line'|trans }}</span>
+                                    </li>
+                                    <li class='dropdown-item'>
+                                      <span data-divid='{{ moldivId }}' class='3dmol-sphere'>{{'Sphere'|trans }}</span>
+                                    </li>
+                                    <li class='dropdown-item'>
+                                      <span data-divid='{{ moldivId }}' class='3dmol-stick'>{{ 'Stick'|trans }}</span>
+                                    </li>
 
-                                    </ul>
+                                  </ul>
                                 </div>
 
-                                <div class='row viewer_3Dmoljs' data-href='app/download.php?f={{ upload.long_name }}' data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}" data-backgroundcolor='0xffffff' id='3Dmol_{{ upload.id }}'>
+                                <div class='row viewer_3Dmoljs'
+                                  data-href='app/download.php?f={{ upload.long_name }}'
+                                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
+                                  data-backgroundcolor='0xffffff'
+                                  id='3Dmol_{{ upload.id }}'>
                                 </div>
 
             {% else %}

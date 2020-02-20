@@ -101,7 +101,6 @@ $(document).ready(function() {
   $('[data-fancybox]').fancybox();
 
   // 3Dmol menu to change the display
-  // TODO: NOT WORKING because $3dmol is not here!
   // CARTOON (only working for protein structures!)
   $('.dropdown-item').on('click', '.3dmol-cartoon', function() {
     $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();

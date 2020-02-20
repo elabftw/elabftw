@@ -20,7 +20,7 @@
     "@fullcalendar/timegrid": "^4.3.0",
     "bootstrap": "~4.4.*",
     "bootstrap-markdown-fa5": "2.10.*",
-    "dropzone": "5.5.*",
+    "dropzone": "5.7.*",
     "file-saver": "2.0.*",
     "jquery": "3.4.*",
     "jquery-jeditable": "2.0.*",

@@ -59,19 +59,19 @@
 
                                     {% set moldivId = '3Dmol_' ~ upload.id %}
                                     <li class='dropdown-item'>
-                                      <span data-divid='{{ moldivId }}' class='3dmol-cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
+                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
                                     </li>
                                     <li class='dropdown-item'>
-                                      <span data-divid='{{ moldivId }}' class='3dmol-cross'>{{ 'Cross'|trans }}</span>
+                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
                                     </li>
                                     <li class='dropdown-item'>
-                                      <span data-divid='{{ moldivId }}' class='3dmol-line'>{{'Line'|trans }}</span>
+                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{'Line'|trans }}</span>
                                     </li>
                                     <li class='dropdown-item'>
-                                      <span data-divid='{{ moldivId }}' class='3dmol-sphere'>{{'Sphere'|trans }}</span>
+                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{'Sphere'|trans }}</span>
                                     </li>
                                     <li class='dropdown-item'>
-                                      <span data-divid='{{ moldivId }}' class='3dmol-stick'>{{ 'Stick'|trans }}</span>
+                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
                                     </li>
 
                                   </ul>

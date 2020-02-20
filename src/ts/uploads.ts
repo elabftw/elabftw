@@ -100,29 +100,17 @@ $(document).ready(function() {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // 3Dmol menu to change the display
-  // CARTOON (only working for protein structures!)
-  $('.dropdown-item').on('click', '.3dmol-cartoon', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({cartoon: {color:'spectrum'}}).render();
-  });
+  // 3DMOL
+  // Top left menu to change the style of the displayed molecule
+  $('.dropdown-item').on('click', '.3dmol-style', function() {
+    const targetStyle = $(this).data('style');
+    let options = {};
+    let style = {};
+    if (targetStyle === 'cartoon') {
+      options = { color: 'spectrum' };
+    }
+    style[targetStyle] = options;
 
-  // CROSS
-  $('.dropdown-item').on('click', '.3dmol-cross', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{cross:{}}).render();
-  });
-
-  // LINE
-  $('.dropdown-item').on('click', '.3dmol-line', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{line:{}}).render();
-  });
-
-  // SPHERE
-  $('.dropdown-item').on('click', '.3dmol-sphere', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{sphere:{}}).render();
-  });
-
-  // STICK
-  $('.dropdown-item').on('click', '.3dmol-stick', function() {
-    $3Dmol.viewers[$(this).data('divid')].setStyle({},{stick:{}}).render();
+    $3Dmol.viewers[$(this).data('divid')].setStyle(style).render();
   });
 });

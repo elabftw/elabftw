@@ -105,7 +105,7 @@ $(document).ready(function() {
   $('.dropdown-item').on('click', '.3dmol-style', function() {
     const targetStyle = $(this).data('style');
     let options = {};
-    let style = {};
+    const style = {};
     if (targetStyle === 'cartoon') {
       options = { color: 'spectrum' };
     }

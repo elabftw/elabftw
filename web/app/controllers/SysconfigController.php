@@ -80,15 +80,21 @@ try {
     }
 
     // ADD USER TO TEAM
-    if ($Request->request->has('addUserToTeam')) {
+    if ($Request->request->has('editUserToTeam')) {
         $tab = '3';
         $Teams = new Teams($App->Users);
-        $Teams->addUserToTeams(
-            (int) $Request->request->get('userid'),
-            array($Request->request->get('team')),
-        );
+        if ($Request->request->get('action') === 'add') {
+            $Teams->addUserToTeams(
+                (int) $Request->request->get('userid'),
+                array($Request->request->get('team')),
+            );
+        } elseif ($Request->request->get('action') === 'rm') {
+            $Teams->rmUserFromTeams(
+                (int) $Request->request->get('userid'),
+                array($Request->request->get('team')),
+            );
+        }
     }
-
 
     // CLEAR STAMP PASS
     if ($Request->query->get('clearStamppass')) {

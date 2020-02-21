@@ -124,6 +124,25 @@ class Teams implements CrudInterface
     }
 
     /**
+     * Remove a user from teams
+     *
+     * @param int $userid
+     * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     *
+     * @return void
+     */
+    public function rmUserFromTeams(int $userid, array $teamIdArr): void
+    {
+        foreach ($teamIdArr as $teamId) {
+            $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+            $req->bindParam(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+    }
+
+    /**
      * When the user logs in, make sure that the teams they are part of
      * are the same teams than the one sent by the IDP
      *
@@ -393,21 +412,6 @@ class Teams implements CrudInterface
         $this->Db->execute($req);
 
         return $req->fetch(PDO::FETCH_NAMED);
-    }
-
-    /**
-     * Remove a user from teams
-     *
-     */
-    private function rmUserFromTeams(int $userid, array $teamIdArr): void
-    {
-        foreach ($teamIdArr as $teamId) {
-            $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-            $req->bindParam(':team', $teamId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
     }
 
     private function isUserInTeam(int $userid, int $team): bool

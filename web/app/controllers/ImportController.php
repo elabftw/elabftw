@@ -18,6 +18,7 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Services\ImportCsv;
 use Elabftw\Services\ImportZip;
 use Exception;
+use League\Csv\SyntaxError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -50,7 +51,7 @@ try {
     $msg = $Import->inserted . ' ' .
         ngettext('item imported successfully.', 'items imported successfully.', $Import->inserted);
     $App->Session->getFlashBag()->add('ok', $msg);
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | SyntaxError $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {

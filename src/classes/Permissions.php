@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,9 +74,12 @@ class Permissions
             $write = true;
         }
         if (($this->item['canwrite'] === 'team')
-            && $this->item['team'] === $this->Users->userData['team']
             && !isset($this->Users->userData['anon'])) {
-            $write = true;
+            // check if we have a team in common
+            $Teams = new Teams($this->Users);
+            if ($Teams->hasCommonTeam((int) $this->item['userid'], (int) $this->Users->userData['userid'])) {
+                $write = true;
+            }
         }
         // if the vis. setting is a team group, check we are in the group
         if (Check::id((int) $this->item['canwrite']) !== false) {
@@ -105,9 +109,12 @@ class Permissions
         // if the vis. setting is team, check we are in the same team than the $item
         // we also check for anon because anon will have the same team as real team member
         if (($this->item['canread'] === 'team') &&
-            ($this->item['team'] === $this->Users->userData['team']) &&
             !isset($this->Users->userData['anon'])) {
-            return array('read' => true, 'write' => $write);
+            // ok so we need to check if the team(s) in which the owner is match the team(s) of our current user
+            $Teams = new Teams($this->Users);
+            if ($Teams->hasCommonTeam((int) $this->item['userid'], (int) $this->Users->userData['userid'])) {
+                return array('read' => true, 'write' => $write);
+            }
         }
 
         // if the vis. setting is a team group, check we are in the group

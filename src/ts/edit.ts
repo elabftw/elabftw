@@ -433,4 +433,36 @@ $(document).ready(function() {
     templates: 'app/controllers/AjaxController.php?getUserTpl'
   });
   /* eslint-enable */
+
+  // IMPORT BODY OF LINKED ITEM INTO EDITOR
+  // this is here because here tinymce exists and is reachable
+  // before this code was in steps-links.ts but it was not working
+  const theEditor = tinymce.editors[0];
+  function importBody(elem): void {
+    const id = elem.data('linkid');
+    const editor = $('#iHazEditor').data('editor');
+    $.get('app/controllers/EntityAjaxController.php', {
+      getBody : true,
+      id : id,
+      type : 'items',
+      editor: editor
+    }).done(function(json) {
+      if (editor === 'tiny') {
+        theEditor.insertContent(json.msg);
+
+      } else if (editor === 'md') {
+        const cursorPosition = $('#body_area').prop('selectionStart');
+        const content = ($('#body_area').val() as string);
+        const before = content.substring(0, cursorPosition);
+        const after = content.substring(cursorPosition);
+        $('#body_area').val(before + json.msg + after);
+
+      } else {
+        alert('Error: could not find current editor!');
+      }
+    });
+  }
+  $('.list-group-item').on('click', '.linkImport', function() {
+    importBody($(this));
+  });
 });

@@ -11,7 +11,6 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { notif, relativeMoment } from './misc';
 
 $(document).ready(function() {
-  // TODO this is a repeat of common.ts!
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -45,32 +44,6 @@ $(document).ready(function() {
           });
         } // end if input is bad
       } // end if input < 0
-    }
-
-    // add the body of the linked item at cursor position in editor
-    importBody(elem): void {
-      const id = elem.data('linkid');
-      const editor = $('#iHazEditor').data('editor');
-      $.get('app/controllers/EntityAjaxController.php', {
-        getBody : true,
-        id : id,
-        type : 'items',
-        editor: editor
-      }).done(function(json) {
-        if (editor === 'tiny') {
-          tinymce.get('body_area').insertContent(json.msg);
-
-        } else if (editor === 'md') {
-          const cursorPosition = $('#body_area').prop('selectionStart');
-          const content = ($('#body_area').val() as string);
-          const before = content.substring(0, cursorPosition);
-          const after = content.substring(cursorPosition);
-          $('#body_area').val(before + json.msg + after);
-
-        } else {
-          alert('Error: could not find current editor!');
-        }
-      });
     }
 
     destroy(elem): void {
@@ -222,13 +195,8 @@ $(document).ready(function() {
     }
   });
 
-  // IMPORT
-  $(document).on('click', '.linkImport', function() {
-    LinkC.importBody($(this));
-  });
-
   // DESTROY
-  $(document).on('click', '.linkDestroy', function() {
+  $('.list-group-item').on('click', '.linkDestroy', function() {
     LinkC.destroy($(this));
   });
 

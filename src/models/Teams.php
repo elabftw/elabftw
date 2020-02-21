@@ -414,21 +414,7 @@ class Teams implements CrudInterface
         return $req->fetch(PDO::FETCH_NAMED);
     }
 
-    private function isUserInTeam(int $userid, int $team): bool
-    {
-        $sql = 'SELECT `users_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return (bool) $req->fetchColumn();
-    }
-
-
-    /*
-     * Check if two users have at least one team in common
-     */
+    // Check if two users have at least one team in common
     public function hasCommonTeam(int $useridA, int $useridB): bool
     {
         $UsersHelper = new UsersHelper();
@@ -438,5 +424,16 @@ class Teams implements CrudInterface
             return true;
         }
         return false;
+    }
+
+    private function isUserInTeam(int $userid, int $team): bool
+    {
+        $sql = 'SELECT `users_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return (bool) $req->fetchColumn();
     }
 }

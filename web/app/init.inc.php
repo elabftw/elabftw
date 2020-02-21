@@ -10,6 +10,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
@@ -97,6 +98,8 @@ try {
         if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
             // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
             header('Location: app/logout.php');
+        } else {
+            throw new UnauthorizedException(_('Your session expired.'));
         }
         exit;
     }
@@ -138,6 +141,8 @@ try {
     bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
+} catch (UnauthorizedException $e) {
+    // do nothing here, controller will display the error
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {
     // if something went wrong here it should stop whatever is after
     die($e->getMessage());

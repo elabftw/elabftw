@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeTimestamp;
@@ -71,7 +72,7 @@ try {
             'msg' => $MakeTimestamp->decodeAsn1($Request->request->get('asn1')),
         ));
     }
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

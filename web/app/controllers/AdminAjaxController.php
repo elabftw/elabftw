@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -45,7 +46,7 @@ try {
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
         $Response->setData($App->Users->lookFor($Request->query->get('term')));
     }
-} catch (ImproperActionException | InvalidCsrfTokenException $e) {
+} catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

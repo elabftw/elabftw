@@ -26,7 +26,7 @@ class InvalidCsrfTokenException extends Exception
      */
     public function __construct($message = null, $code = 0, Exception $previous = null)
     {
-        $message = _('Your session expired. Please retry.');
+        $message = _('Your session expired.');
         parent::__construct($message, $code, $previous);
     }
 }

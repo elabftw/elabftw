@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -24,6 +25,7 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
+use Elabftw\Services\MakeStreamZip;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,6 +66,10 @@ class ApiController implements ControllerInterface
     /** @var string $endpoint experiments, items or uploads */
     private $endpoint;
 
+    private $param;
+
+    private $secondParam;
+
     /**
      * Constructor
      *
@@ -95,6 +101,9 @@ class ApiController implements ControllerInterface
             }
 
             if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
+                if ($this->param === 'zip') {
+                    return $this->getZip();
+                }
                 return $this->getEntity();
             }
             if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
@@ -175,6 +184,8 @@ class ApiController implements ControllerInterface
 
         // assign the endpoint (experiments, items, uploads, items_types, status)
         $this->endpoint = array_shift($args) ?? '';
+        $this->param = array_shift($args) ?? '';
+        $this->secondParam = array_shift($args) ?? '';
 
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
@@ -287,6 +298,20 @@ class ApiController implements ControllerInterface
         $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
 
         return new JsonResponse($this->Entity->entityData);
+    }
+
+    private function getZip(): Response
+    {
+        // no permission check here so for the moment only let a sysadmin get that
+        // used for backups
+        if (!$this->Users->userData['is_sysadmin']) {
+            throw new IllegalActionException('Only a sysadmin can use this endpoint!');
+        }
+        $idList = $this->Entity->getIdFromLastchange($this->secondParam);
+        // MakeStreamZip requires a space separated string
+        $idList = implode(' ', $idList);
+        $Zip = new MakeStreamZip($this->Entity, $idList);
+        return new BinaryFileResponse($Zip->getZip());
     }
 
     private function getBookable(): Response

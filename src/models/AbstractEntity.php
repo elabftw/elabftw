@@ -664,6 +664,27 @@ abstract class AbstractEntity
     }
 
     /**
+     * Get an array of id changed since the lastchange date supplied
+     *
+     * @param string $lastchange 20201206
+     * @return array
+     */
+    public function getIdFromLastchange(string $lastchange): array
+    {
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE lastchange > :lastchange';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':lastchange', $lastchange);
+        $this->Db->execute($req);
+
+        $idArr = array();
+        $res = $req->fetchAll();
+        foreach ($res as $item) {
+            $idArr[] = $item['id'];
+        }
+        return $idArr;
+    }
+
+    /**
      * Now that we have an id, load the data in entityData array
      *
      * @return void

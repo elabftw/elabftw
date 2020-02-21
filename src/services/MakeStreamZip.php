@@ -44,7 +44,7 @@ class MakeStreamZip extends AbstractMake
      * @param string $idList 1+3+5+8
      * @return void
      */
-    public function __construct(AbstractEntity $entity, $idList)
+    public function __construct(AbstractEntity $entity, string $idList)
     {
         parent::__construct($entity);
 

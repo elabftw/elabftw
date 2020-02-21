@@ -671,6 +671,9 @@ abstract class AbstractEntity
      */
     public function getIdFromLastchange(string $lastchange): array
     {
+        if ($lastchange === '') {
+            $lastchange = '15000101';
+        }
         $sql = 'SELECT id FROM ' . $this->type . ' WHERE lastchange > :lastchange';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lastchange', $lastchange);

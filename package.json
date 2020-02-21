@@ -82,7 +82,8 @@
     "test": "tests/run.sh",
     "unit": "php vendor/bin/codecept run unit",
     "vulns": "snyk test",
-    "watchcss": "sass --watch src/scss/main.scss:web/app/css/elabftw.min.css"
+    "watchcss": "sass --watch src/scss/main.scss:web/app/css/elabftw.min.css",
+    "watchjs": "grunt && webpack-cli --config builder.js --watch"
   },
   "repository": "git+https://github.com/elabftw/elabftw.git",
   "author": "Nicolas CARPi",

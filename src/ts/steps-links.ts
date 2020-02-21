@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import tinymce from 'tinymce/tinymce';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { notif, relativeMoment } from './misc';

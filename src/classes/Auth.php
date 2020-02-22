@@ -247,7 +247,7 @@ class Auth
     /**
      * Populate userData from userid
      *
-     * @param string $email
+     * @param int $userid
      * @return bool
      */
     private function populateUserDataFromUserid(int $userid): bool

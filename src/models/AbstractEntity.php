@@ -91,9 +91,6 @@ abstract class AbstractEntity
     /** @var int $itemsReadNb the total number of items read from sql query */
     public $itemsReadNb;
 
-    /** @var array $entityData content of the entity */
-    public $entityData = array();
-
     /**
      * Constructor
      *
@@ -536,7 +533,7 @@ abstract class AbstractEntity
         if ($this->bypassPermissions) {
             return array('read' => true, 'write' => false);
         }
-        if (!empty($this->entityData) && !isset($item)) {
+        if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
             if (!isset($this->entityData)) {
                 return array('read' => false, 'write' => false);

@@ -20,19 +20,19 @@
     "@fullcalendar/timegrid": "^4.3.0",
     "bootstrap": "~4.4.*",
     "bootstrap-markdown-fa5": "2.10.*",
-    "dropzone": "5.5.*",
+    "dropzone": "5.7.*",
     "file-saver": "2.0.*",
     "jquery": "3.4.*",
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",
-    "jsoneditor": "8.4.*",
+    "jsoneditor": "^8.6.1",
     "marked": "0.8.*",
     "mathjax": "3.0.*",
     "moment": "2.24.*",
     "popper.js": "1.16.*",
     "prismjs": "1.19.*",
     "sass": "^1.23.7",
-    "tinymce": "5.1.*"
+    "tinymce": "5.2.*"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

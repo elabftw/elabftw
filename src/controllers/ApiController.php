@@ -27,10 +27,10 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Services\MakeBackupZip;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * For API requests
@@ -311,8 +311,11 @@ class ApiController implements ControllerInterface
             throw new IllegalActionException('Only a sysadmin can use this endpoint!');
         }
         $Zip = new MakeBackupZip($this->Entity, $this->param);
-        $Stream  = new Stream($Zip->getZip());
-        return new BinaryFileResponse($Stream);
+        $Response = new StreamedResponse();
+        $Response->setCallback(function () use ($Zip) {
+            $Zip->getZip();
+        });
+        return $Response;
     }
 
     /*

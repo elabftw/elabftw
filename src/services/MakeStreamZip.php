@@ -146,7 +146,7 @@ class MakeStreamZip extends AbstractMake
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 
-        throw ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
+        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
     }
 
     /**

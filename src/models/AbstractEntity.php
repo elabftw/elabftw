@@ -49,6 +49,7 @@ abstract class AbstractEntity
     /** @var string $type experiments or items */
     public $type = '';
 
+    /** @var bool $bypassPermissions use that to ignore the canOrExplode calls */
     public $bypassPermissions = false;
 
     /** @var string $page will be defined in children classes */
@@ -89,6 +90,9 @@ abstract class AbstractEntity
 
     /** @var int $itemsReadNb the total number of items read from sql query */
     public $itemsReadNb;
+
+    /** @var array $entityData content of the entity */
+    public $entityData = array();
 
     /**
      * Constructor
@@ -529,7 +533,10 @@ abstract class AbstractEntity
      */
     public function getPermissions(?array $item = null): array
     {
-        if (!isset($this->entityData) && !isset($item)) {
+        if ($this->bypassPermissions) {
+            return array('read' => true, 'write' => false);
+        }
+        if (!empty($this->entityData) && !isset($item)) {
             $this->populate();
             if (!isset($this->entityData)) {
                 return array('read' => false, 'write' => false);
@@ -701,7 +708,7 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    protected function populate(): void
+    public function populate(): void
     {
         if ($this->id === null) {
             throw new ImproperActionException('No id was set.');

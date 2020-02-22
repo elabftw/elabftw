@@ -80,11 +80,6 @@ class MakeBackupZip extends AbstractMake
      */
     public function getFileName(): string
     {
-        if (\count($this->idArr) === 1) {
-            $this->Entity->setId((int) $this->idArr[0]);
-            $this->Entity->canOrExplode('read');
-            return $this->getBaseFileName() . '.zip';
-        }
         return 'export.elabftw.zip';
     }
 
@@ -152,7 +147,7 @@ class MakeBackupZip extends AbstractMake
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 
-        throw ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
+        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
     }
 
     /**
@@ -203,8 +198,7 @@ class MakeBackupZip extends AbstractMake
         // we're making a backup so ignore permissions access
         $this->Entity->bypassPermissions = true;
         $this->Entity->setId($id);
-        // force read
-        $this->Entity->getPermissions();
+        $this->Entity->populate();
         $uploadedFilesArr = $this->Entity->Uploads->readAll();
         $entityArr = $this->Entity->entityData;
         // save the uploads in entityArr for the json file

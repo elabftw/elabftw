@@ -11,8 +11,11 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Models\Users;
+use Elabftw\Models\Teams;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -77,7 +80,7 @@ class Auth
         $this->populateUserDataFromUserid($userid);
         $this->populateSession($team);
         if ($setCookie === 'on') {
-            $this->setToken();
+            $this->setToken($team);
         }
     }
 
@@ -161,8 +164,7 @@ class Auth
         // now try to login with the cookie
         if ($this->loginWithCookie()) {
             // successful login thanks to our cookie friend
-            // TODO
-            $team = 1;
+            $team = (int) $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
             $this->populateSession($team);
             return true;
         }
@@ -214,7 +216,6 @@ class Auth
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
-        $team = $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
 
 
         // Now compare current cookie with the token from SQL
@@ -223,6 +224,13 @@ class Auth
         $req->bindParam(':token', $token);
         $this->Db->execute($req);
         if ($req->rowCount() === 1) {
+            // make sure user is in team
+            $team = $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
+            $userData = $req->fetch();
+            $Teams = new Teams(new Users((int) $userData['userid']));
+            if (!$Teams->isUserInTeam((int) $userData['userid'], (int) $team)) {
+                throw new IllegalActionException('Invalid token_team!');
+            }
             $this->userData = $req->fetch();
             return true;
         }
@@ -313,9 +321,10 @@ class Auth
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
      *
+     * @param int $team
      * @return void
      */
-    private function setToken(): void
+    private function setToken(int $team): void
     {
         $token = \hash('sha256', \bin2hex(\random_bytes(16)));
 
@@ -329,6 +338,7 @@ class Auth
             'samesite' => 'Lax',
         );
         \setcookie('token', $token, $cookieOptions);
+        \setcookie('token_team', (string) $team, $cookieOptions);
 
         // Update the token in SQL
         $sql = 'UPDATE users SET token = :token WHERE userid = :userid';

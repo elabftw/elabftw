@@ -426,7 +426,7 @@ class Teams implements CrudInterface
         return false;
     }
 
-    private function isUserInTeam(int $userid, int $team): bool
+    public function isUserInTeam(int $userid, int $team): bool
     {
         $sql = 'SELECT `users_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
         $req = $this->Db->prepare($sql);

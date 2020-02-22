@@ -198,7 +198,7 @@ class Auth
         if ($res === false || $res === null) {
             throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
         }
-        return $res;
+        return (string) $res;
     }
 
     /**

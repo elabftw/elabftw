@@ -9,6 +9,7 @@
     checkForThrowsInGlobalScope="true"
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
+    reportMixedIssues="false"
 >
     <projectFiles>
         <directory name="src" />

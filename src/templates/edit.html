@@ -168,8 +168,9 @@
 
 {{ include('uploads.html') }}
 
-<!-- JSON EDITOR -->
-<section class='box' id='json-editor'>
+{% if Entity.Users.userData.json_editor %}
+  <!-- JSON EDITOR -->
+  <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
     <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
     <div id='jsonEditorDiv' class='collapse mt-2'>
@@ -178,7 +179,8 @@
         <button type='submit' class='button btn btn-primary jsonSaver'>{{ 'Save'|trans }}</button>
       </div>
     </div>
-</section>
+  </section>
+{% endif %}
 
 <!-- DOODLE -->
 <section class='box' id='doodle-anchor'>

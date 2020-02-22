@@ -465,6 +465,8 @@ class Users
         $new_inc_files_pdf = Filter::onToBinary($params['inc_files_pdf'] ?? '');
         // CHEM EDITOR
         $new_chem_editor = Filter::onToBinary($params['chem_editor'] ?? '');
+        // JSON EDITOR
+        $new_json_editor = Filter::onToBinary($params['json_editor'] ?? '');
         // LANG
         $new_lang = 'en_GB';
         if (isset($params['lang']) && array_key_exists($params['lang'], Tools::getLangsArr())) {
@@ -494,6 +496,7 @@ class Users
             sc_todo = :new_sc_todo,
             show_team = :new_show_team,
             chem_editor = :new_chem_editor,
+            json_editor = :new_json_editor,
             lang = :new_lang,
             default_read = :new_default_read,
             default_write = :new_default_write,
@@ -515,6 +518,7 @@ class Users
         $req->bindParam(':new_sc_todo', $new_sc_todo);
         $req->bindParam(':new_show_team', $new_show_team);
         $req->bindParam(':new_chem_editor', $new_chem_editor);
+        $req->bindParam(':new_json_editor', $new_json_editor);
         $req->bindParam(':new_lang', $new_lang);
         $req->bindParam(':new_default_read', $new_default_read);
         $req->bindParam(':new_default_write', $new_default_write);

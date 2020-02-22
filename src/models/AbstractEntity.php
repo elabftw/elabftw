@@ -49,6 +49,8 @@ abstract class AbstractEntity
     /** @var string $type experiments or items */
     public $type = '';
 
+    public $bypassPermissions = false;
+
     /** @var string $page will be defined in children classes */
     public $page = '';
 
@@ -503,6 +505,9 @@ abstract class AbstractEntity
      */
     public function canOrExplode(string $rw): void
     {
+        if ($this->bypassPermissions) {
+            return;
+        }
         $permissions = $this->getPermissions();
 
         // READ ONLY?
@@ -666,17 +671,21 @@ abstract class AbstractEntity
     /**
      * Get an array of id changed since the lastchange date supplied
      *
-     * @param string $lastchange 20201206
+     * @param int $userid limit to this user
+     * @param string $period 20201206-20210101
      * @return array
      */
-    public function getIdFromLastchange(string $lastchange): array
+    public function getIdFromLastchange(int $userid, string $period): array
     {
-        if ($lastchange === '') {
-            $lastchange = '15000101';
+        if ($period === '') {
+            $period = '15000101-30000101';
         }
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE lastchange > :lastchange';
+        list($from, $to) = \explode('-', $period);
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND lastchange BETWEEN :from AND :to';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':lastchange', $lastchange);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':from', $from);
+        $req->bindParam(':to', $to);
         $this->Db->execute($req);
 
         $idArr = array();

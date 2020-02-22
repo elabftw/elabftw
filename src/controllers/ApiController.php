@@ -25,8 +25,9 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use Elabftw\Services\MakeStreamZip;
+use Elabftw\Services\MakeBackupZip;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,9 +67,8 @@ class ApiController implements ControllerInterface
     /** @var string $endpoint experiments, items or uploads */
     private $endpoint;
 
+    /** @var string $param used by backupzip to get the period */
     private $param;
-
-    private $secondParam;
 
     /**
      * Constructor
@@ -99,11 +99,16 @@ class ApiController implements ControllerInterface
             if ($this->endpoint === 'uploads') {
                 return $this->getUpload();
             }
+            if ($this->endpoint === 'backupzip') {
+                return $this->getBackupZip();
+            }
 
             if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
+                /*
                 if ($this->param === 'zip') {
                     return $this->getZip();
                 }
+                 */
                 return $this->getEntity();
             }
             if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
@@ -185,7 +190,6 @@ class ApiController implements ControllerInterface
         // assign the endpoint (experiments, items, uploads, items_types, status)
         $this->endpoint = array_shift($args) ?? '';
         $this->param = array_shift($args) ?? '';
-        $this->secondParam = array_shift($args) ?? '';
 
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
@@ -195,7 +199,7 @@ class ApiController implements ControllerInterface
 
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
-        if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads') {
+        if ($this->endpoint === 'experiments' || $this->endpoint === 'uploads' || $this->endpoint === 'backupzip') {
             $this->Entity = new Experiments($this->Users, $this->id);
         } elseif ($this->endpoint === 'items' || $this->endpoint === 'bookable') {
             $this->Entity = new Database($this->Users, $this->id);
@@ -300,6 +304,18 @@ class ApiController implements ControllerInterface
         return new JsonResponse($this->Entity->entityData);
     }
 
+    private function getBackupZip(): Response
+    {
+        // only let a sysadmin get that
+        if (!$this->Users->userData['is_sysadmin']) {
+            throw new IllegalActionException('Only a sysadmin can use this endpoint!');
+        }
+        $Zip = new MakeBackupZip($this->Entity, $this->param);
+        $Stream  = new Stream($Zip->getZip());
+        return new BinaryFileResponse($Stream);
+    }
+
+    /*
     private function getZip(): Response
     {
         // no permission check here so for the moment only let a sysadmin get that
@@ -313,6 +329,7 @@ class ApiController implements ControllerInterface
         $Zip = new MakeStreamZip($this->Entity, $idList);
         return new BinaryFileResponse($Zip->getZip());
     }
+     */
 
     private function getBookable(): Response
     {

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function copy;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
@@ -21,9 +22,16 @@ use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MakeThumbnail;
 use Elabftw\Traits\UploadTrait;
+use function exif_read_data;
+use function file_exists;
+use function function_exists;
 use Gmagick;
+use function in_array;
+use function mb_strlen;
 use PDO;
+use function rename;
 use Symfony\Component\HttpFoundation\Request;
+use function unlink;
 
 /**
  * All about the file uploads
@@ -58,7 +66,7 @@ class Uploads implements CrudInterface
     /**
      * Main method for normal file upload
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      * @return void
      */
     public function create(Request $request): void
@@ -67,8 +75,9 @@ class Uploads implements CrudInterface
 
         $realName = $this->getSanitizedName($request->files->get('file')->getClientOriginalName());
         $this->checkExtension($realName);
+        $ext = Tools::getExt($realName);
 
-        $longName = $this->getLongName() . '.' . Tools::getExt($realName);
+        $longName = $this->getLongName() . '.' . $ext;
         $fullPath = $this->getUploadsPath() . $longName;
 
         // Try to move the file to its final place
@@ -76,7 +85,7 @@ class Uploads implements CrudInterface
 
         // rotate the image if we can find the orientation in the exif data
         // maybe php-exif extension isn't loaded
-        if (function_exists('exif_read_data')) {
+        if (function_exists('exif_read_data') && in_array($ext, Extensions::IMAGE, true)) {
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false) {
                 $image = new Gmagick($fullPath);
@@ -125,7 +134,7 @@ class Uploads implements CrudInterface
         $this->Entity->canOrExplode('write');
 
         $allowedFileTypes = array('png', 'mol', 'json');
-        if (!\in_array($fileType, $allowedFileTypes, true)) {
+        if (!in_array($fileType, $allowedFileTypes, true)) {
             throw new IllegalActionException('Bad filetype!');
         }
 
@@ -207,7 +216,7 @@ class Uploads implements CrudInterface
     public function updateComment(int $id, string $comment): void
     {
         // check length
-        if (\mb_strlen($comment) < 2) {
+        if (mb_strlen($comment) < 2) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         $this->Entity->canOrExplode('write');
@@ -253,28 +262,28 @@ class Uploads implements CrudInterface
      */
     public function getIconFromExtension(string $ext): string
     {
-        if (\in_array($ext, Extensions::ARCHIVE, true)) {
+        if (in_array($ext, Extensions::ARCHIVE, true)) {
             return 'fa-file-archive';
         }
-        if (\in_array($ext, Extensions::CODE, true)) {
+        if (in_array($ext, Extensions::CODE, true)) {
             return 'fa-file-code';
         }
-        if (\in_array($ext, Extensions::SPREADSHEET, true)) {
+        if (in_array($ext, Extensions::SPREADSHEET, true)) {
             return 'fa-file-excel';
         }
-        if (\in_array($ext, Extensions::IMAGE, true)) {
+        if (in_array($ext, Extensions::IMAGE, true)) {
             return 'fa-file-image';
         }
         if ($ext === 'pdf') {
             return 'fa-file-pdf';
         }
-        if (\in_array($ext, Extensions::PRESENTATION, true)) {
+        if (in_array($ext, Extensions::PRESENTATION, true)) {
             return 'fa-file-powerpoint';
         }
-        if (\in_array($ext, Extensions::VIDEO, true)) {
+        if (in_array($ext, Extensions::VIDEO, true)) {
             return 'fa-file-video';
         }
-        if (\in_array($ext, Extensions::DOCUMENT, true)) {
+        if (in_array($ext, Extensions::DOCUMENT, true)) {
             return 'fa-file-word';
         }
 
@@ -376,15 +385,15 @@ class Uploads implements CrudInterface
         // fix for FreeBSD and rename across different filesystems
         // see http://php.net/manual/en/function.rename.php#117590
         if (PHP_OS === 'FreeBSD') {
-            if (\copy($orig, $dest) !== true) {
+            if (copy($orig, $dest) !== true) {
                 throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
             }
-            if (\unlink($orig) !== true) {
+            if (unlink($orig) !== true) {
                 throw new FilesystemErrorException('Error deleting file!');
             }
         }
 
-        if (\rename($orig, $dest) !== true) {
+        if (rename($orig, $dest) !== true) {
             throw new FilesystemErrorException('Error while moving the file. Check folder permissons!');
         }
     }

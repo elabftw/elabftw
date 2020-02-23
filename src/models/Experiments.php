@@ -64,8 +64,8 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid)
-            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, :userid)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
+            VALUES(:title, :date, :body, :category, :elabid, :canread, :canwrite, NOW(), :userid)';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req, array(
             'title' => $title,

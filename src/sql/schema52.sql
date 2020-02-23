@@ -28,6 +28,7 @@ START TRANSACTION;
     ALTER TABLE `api_keys` ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
     ALTER TABLE `users` DROP `team`;
     ALTER TABLE `experiments` ADD `lastchange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+    ALTER TABLE `experiments` CHANGE `datetime` `datetime` timestamp NULL;
     ALTER TABLE `items` ADD `lastchange` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
     ALTER TABLE `users` ADD `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0';
     UPDATE config SET conf_value = 52 WHERE conf_name = 'schema';

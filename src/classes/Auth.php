@@ -219,23 +219,21 @@ class Auth
 
 
         // Now compare current cookie with the token from SQL
-        $sql = 'SELECT * FROM users WHERE token = :token LIMIT 1';
+        $sql = 'SELECT userid FROM users WHERE token = :token LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $token);
         $this->Db->execute($req);
-        if ($req->rowCount() === 1) {
-            // make sure user is in team
-            $team = $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
-            $userData = $req->fetch();
-            $Teams = new Teams(new Users((int) $userData['userid']));
-            if (!$Teams->isUserInTeam((int) $userData['userid'], (int) $team)) {
-                throw new IllegalActionException('Invalid token_team!');
-            }
-            $this->userData = $req->fetch();
-            return true;
+        if ($req->rowCount() !== 1) {
+            return false;
         }
-
-        return false;
+        $userid = (int) $req->fetchColumn();
+        // make sure user is in team
+        $team = (int) $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
+        $Teams = new Teams(new Users($userid));
+        if (!$Teams->isUserInTeam($userid, $team)) {
+            throw new IllegalActionException('Invalid token_team!');
+        }
+        return $this->populateUserDataFromUserid($userid);
     }
 
     /**

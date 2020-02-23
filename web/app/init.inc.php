@@ -105,10 +105,10 @@ try {
     }
 
     // load the Users with a userid if we are auth
-    if ($App->Request->getSession()->has('auth')) {
+    if ($App->Session->has('auth')) {
         $App->loadUser(new Users(
-            (int) $App->Request->getSession()->get('userid'),
-            (int) $App->Request->getSession()->get('team')
+            (int) $App->Session->get('userid'),
+            (int) $App->Session->get('team')
         ));
     }
 

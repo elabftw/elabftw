@@ -557,7 +557,7 @@ CREATE TABLE `users` (
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `api_key` varchar(255) DEFAULT NULL,
   `default_read` varchar(255) NULL DEFAULT 'team',
-  `default_write` varchar(255) NULL DEFAULT 'team',
+  `default_write` varchar(255) NULL DEFAULT 'user',
   `single_column_layout` tinyint(1) NOT NULL DEFAULT '0',
   `cjk_fonts` tinyint(1) NOT NULL DEFAULT '0',
   `orderby` varchar(255) DEFAULT NULL,

@@ -55,7 +55,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
 
         $canread = 'team';
-        $canwrite = 'team';
+        $canwrite = 'user';
         if ($this->Users->userData['default_read'] !== null) {
             $canread = $this->Users->userData['default_read'];
         }

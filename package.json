@@ -70,6 +70,7 @@
     "build": "webpack-cli --config builder.js",
     "buildall": "grunt && yarn build && sass --style compressed src/scss/main.scss:web/app/css/elabftw.min.css",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
+    "clean": "rm -rf _apidoc _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js web/app/js/*.min.js web/app/css/*.min.css",
     "coverage": "php vendor/bin/codecept run --skip acceptance --coverage --coverage-html",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",

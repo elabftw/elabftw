@@ -31,7 +31,7 @@ sleep 10
 # install the database
 docker exec -it elabtmp bin/install start
 # populate the database
-docker exec -it elabtmp bin/console dev:populate -vv -p phpunitftw -m phpunit@example.com -u phpunit -s phpunit -y
+docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 # run tests
 docker exec -it elabtmp php vendor/bin/codecept run
 # all tests succeeded, display a koala

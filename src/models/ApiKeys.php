@@ -66,11 +66,11 @@ class ApiKeys implements CrudInterface
      * Create a known key so we can test against it in dev mode
      * This function should only be called from the dev:populate command
      *
+     * @param string $apiKey
      * @return void
      */
-    public function createKnown(): void
+    public function createKnown(string $apiKey): void
     {
-        $apiKey = 'apiKey4Test';
         $hash = \password_hash($apiKey, 1);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';

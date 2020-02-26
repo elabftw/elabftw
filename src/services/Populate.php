@@ -32,15 +32,17 @@ class Populate
         $Faker = \Faker\Factory::create();
         if ($Entity instanceof Experiments) {
             $Category = new Status($Entity->Users);
+            $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
+            $tpl = 1;
         }
         $categories = $Category->readAll();
 
 
         printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $iter; $i++) {
-            $id = $Entity->create(1);
+            $id = $Entity->create($tpl);
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);

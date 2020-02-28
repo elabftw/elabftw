@@ -8,6 +8,7 @@
  */
 $I = new AcceptanceTester($scenario);
 $I->wantTo('Test creating an item');
+$I->amOnPage('/');
 testLogin($I);
 $I->amOnPage('database.php?create=true&tpl=1');
 $I->see('Tags');

@@ -231,7 +231,7 @@ class Auth
         $team = (int) $this->Request->cookies->filter('token_team', null, FILTER_SANITIZE_STRING);
         $Teams = new Teams(new Users($userid));
         if (!$Teams->isUserInTeam($userid, $team)) {
-            throw new IllegalActionException('Invalid token_team!');
+            return false;
         }
         return $this->populateUserDataFromUserid($userid);
     }

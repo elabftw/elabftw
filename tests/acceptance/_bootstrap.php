@@ -13,7 +13,7 @@
 function testLogin($I)
 {
     // if snapshot exists -> skip login
-    if ($I->loadSessionSnapshot('login')) {
+    if ($I->amOnPage('/') && $I->loadSessionSnapshot('login')) {
         return;
     }
     // logging in

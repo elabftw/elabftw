@@ -55,6 +55,14 @@ final class Extensions
         'webp',
     );
 
+    /** @var array HAS_EXIF images with exif metadata */
+    public const HAS_EXIF = array(
+        'jpeg',
+        'jpg',
+        'tif',
+        'tiff',
+    );
+
     /** @var array 3DMOL list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html */
     public const MOLECULE = array(
         'cdjson',

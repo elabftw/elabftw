@@ -85,7 +85,7 @@ class Uploads implements CrudInterface
 
         // rotate the image if we can find the orientation in the exif data
         // maybe php-exif extension isn't loaded
-        if (function_exists('exif_read_data') && in_array($ext, Extensions::IMAGE, true)) {
+        if (function_exists('exif_read_data') && in_array($ext, Extensions::HAS_EXIF, true)) {
             $exifData = exif_read_data($fullPath);
             if ($exifData !== false) {
                 $image = new Gmagick($fullPath);
@@ -346,6 +346,9 @@ class Uploads implements CrudInterface
      */
     private function getRotationAngle(array $exifData): int
     {
+        if (empty($exifData['Orientation'])) {
+            return 0;
+        }
         switch ($exifData['Orientation']) {
             case 1:
                 return 0;

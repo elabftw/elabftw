@@ -19,6 +19,7 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use function substr;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -152,7 +153,7 @@ class App
     {
         $lang = 'en';
         if (isset($this->Users->userData['lang'])) {
-            $lang = \substr($this->Users->userData['lang'], 0, 2);
+            $lang = substr($this->Users->userData['lang'], 0, 2);
         }
 
         return $lang;

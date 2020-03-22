@@ -1,5 +1,6 @@
 -- Schema 52
 START TRANSACTION;
+    -- ALTER TABLE `users` DROP FOREIGN KEY `fk_users_teams_id`;
     ALTER TABLE `experiments` DROP FOREIGN KEY `fk_experiments_teams_id`;
     ALTER TABLE `experiments` DROP `team`;
     ALTER TABLE `experiments` ADD `canwrite` VARCHAR(255) NOT NULL DEFAULT 'user';
@@ -15,7 +16,6 @@ START TRANSACTION;
     ALTER TABLE `team_events` ADD `experiment` int(10) UNSIGNED DEFAULT NULL;
     INSERT INTO config (conf_name, conf_value) VALUES ('email_domain', NULL);
     INSERT INTO config (conf_name, conf_value) VALUES ('saml_sync_teams', 0);
-    ALTER TABLE `users` DROP FOREIGN KEY `fk_users_teams_id`;
     CREATE TABLE `users2teams` (
       `users_id` int(10) UNSIGNED NOT NULL,
       `teams_id` int(10) UNSIGNED NOT NULL

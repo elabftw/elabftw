@@ -2605,20 +2605,20 @@
         },
         {
             "name": "codeception/module-webdriver",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/module-webdriver.git",
-                "reference": "cfeadb39170aa80e6fe244de6a130453edd79fe9"
+                "reference": "9ee54108860859b120ed4a22e50f37d33aa3a518"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/cfeadb39170aa80e6fe244de6a130453edd79fe9",
-                "reference": "cfeadb39170aa80e6fe244de6a130453edd79fe9",
+                "url": "https://api.github.com/repos/Codeception/module-webdriver/zipball/9ee54108860859b120ed4a22e50f37d33aa3a518",
+                "reference": "9ee54108860859b120ed4a22e50f37d33aa3a518",
                 "shasum": ""
             },
             "require": {
-                "codeception/codeception": "4.0.x-dev | ^4.0",
+                "codeception/codeception": "^4.0",
                 "php": ">=5.6.0 <8.0",
                 "php-webdriver/webdriver": "^1.6.0"
             },
@@ -2656,7 +2656,7 @@
                 "browser-testing",
                 "codeception"
             ],
-            "time": "2020-03-06T08:39:02+00:00"
+            "time": "2020-03-23T17:08:27+00:00"
         },
         {
             "name": "codeception/phpunit-wrapper",

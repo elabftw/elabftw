@@ -4,6 +4,7 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@1.0.2
+  snyk: snyk/snyk@0.0.9
 jobs:
   build:
     working_directory: ~/elabftw/elabftw
@@ -77,9 +78,7 @@ jobs:
       - run:
           name: Run unit tests
           command: yarn run unit
-      - run:
-          name: Check for vulnerabilities
-          command: yarn run vulns
+      - snyk/scan
       - run:
           name: Code coverage
           command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml

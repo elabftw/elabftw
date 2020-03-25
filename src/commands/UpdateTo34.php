@@ -63,4 +63,3 @@ class UpdateTo34 extends Command
         return 0;
     }
 }
-

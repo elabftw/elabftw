@@ -62,7 +62,12 @@
         <!-- PASSWORD -->
         <div class='row'>
           <label for='password'>{{ 'Password'|trans }}</label>
-          <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' required />
+          <div class='input-group'>
+            <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' required />
+            <div class='input-group-append'>
+              <button class='btn btn-light input-border togglePassword' tabindex='-1' toggle='#password'><i class='fas fa-eye' aria-hidden='true'></i></button>
+            </div>
+          </div>
         </div>
 
         <!-- FIRSTNAME -->

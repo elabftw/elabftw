@@ -51,4 +51,16 @@ $(document).ready(function() {
 
   relativeMoment();
   displayMolFiles();
+
+  // SHOW/HIDE PASSWORDS
+  $('.togglePassword').on('click', function(event) {
+    event.preventDefault();
+    $(this).children().toggleClass('fa-eye fa-eye-slash');
+    const input = $($(this).attr('toggle'));
+    if (input.attr('type') === 'password') {
+      input.attr('type', 'text');
+    } else {
+      input.attr('type', 'password');
+    }
+  });
 });

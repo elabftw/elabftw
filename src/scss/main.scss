@@ -972,3 +972,8 @@ input[type='color'] {
 .color-white {
     color: white;
 }
+
+/* give the togglePassword some borders like input */
+.input-border {
+    border: 1px solid #ced4da;
+}

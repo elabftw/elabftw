@@ -53,7 +53,7 @@
 
     {% if showLocal %}
       <!-- Login form , the id is for an acceptance test -->
-      <form method='post' id='login' class='form-group' action='app/controllers/LoginController.php' autocomplete='off'>
+      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
         <!-- form key -->
         {{ App.Csrf.getHiddenInput|raw }}
         <h2 class='mt-4'>{{ 'Login to your account'|trans }}</h2>
@@ -64,7 +64,13 @@
           <label for='password'>{{ 'Password'|trans }}</label>
           <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
           <a href='#' class='align_right underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>
-          <input class='form-control' id='password' name='password' type='password' required />
+          <div class='input-group'>
+            <input class='form-control' id='password' name='password' type='password' required />
+            <div class='input-group-append'>
+              <button class='btn btn-light input-border togglePassword' tabindex='-1' toggle='#password'><i class='fas fa-eye' aria-hidden='true'></i></button>
+            </div>
+          </div>
+
           <!-- Remember me checkbox -->
           <div class='form-check mt-2'>
             <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />

@@ -1,7 +1,7 @@
 -- Schema 52
 START TRANSACTION;
     -- ALTER TABLE `users` DROP FOREIGN KEY `fk_users_teams_id`;
-    ALTER TABLE `experiments` DROP FOREIGN KEY `fk_experiments_teams_id`;
+    -- ALTER TABLE `experiments` DROP FOREIGN KEY `fk_experiments_teams_id`;
     ALTER TABLE `experiments` DROP `team`;
     ALTER TABLE `experiments` ADD `canwrite` VARCHAR(255) NOT NULL DEFAULT 'user';
     ALTER TABLE `experiments` CHANGE `visibility` `canread` VARCHAR(255) NOT NULL DEFAULT 'team';

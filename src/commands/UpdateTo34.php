@@ -43,7 +43,14 @@ class UpdateTo34 extends Command
         ));
         $Sql = new Sql();
         try {
-            $Sql->execFile('prepare34.sql');
+            $Sql->execFile('prepare34-a.sql');
+        } catch (\Exception $e) {
+            $output->writeln(array(
+                'OK',
+            ));
+        }
+        try {
+            $Sql->execFile('prepare34-b.sql');
         } catch (\Exception $e) {
             $output->writeln(array(
                 'OK',

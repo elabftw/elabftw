@@ -133,6 +133,11 @@ class Teams implements CrudInterface
      */
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
+        // make sure that the user is in more than one team before removing the team
+        $UsersHelper = new UsersHelper();
+        if (count($UsersHelper->getTeamsFromUserid($userid)) === 1) {
+            throw new ImproperActionException('Cannot remove team from user in only one team!');
+        }
         foreach ($teamIdArr as $teamId) {
             $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
             $req = $this->Db->prepare($sql);

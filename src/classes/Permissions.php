@@ -28,7 +28,7 @@ class Permissions
     /** @var Teams $Teams instance of Teams */
     private $Teams;
 
-    /** @var TeamsGroups $TeamsGroups instance of TeamsGroups */
+    /** @var TeamGroups $TeamsGroups instance of TeamsGroups */
     private $TeamGroups;
 
     /** @var array $item the item to check */

@@ -31,9 +31,6 @@ class Permissions
     /** @var TeamsGroups $TeamsGroups instance of TeamsGroups */
     private $TeamGroups;
 
-    /** @var Users $Owner instance of Users for the user owning the item */
-    private $Owner;
-
     /** @var array $item the item to check */
     private $item;
 
@@ -49,7 +46,6 @@ class Permissions
         $this->item = $item;
         $this->Teams = new Teams($this->Users);
         $this->TeamGroups = new TeamGroups($this->Users);
-        $this->Owner = new Users((int) $this->item['userid']);
     }
 
     /**
@@ -174,6 +170,7 @@ class Permissions
                     return true;
                 }
             } else { // experiment
+                $Owner = new Users((int) $this->item['userid']);
                 if ($Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
                     return true;
                 }

@@ -962,10 +962,10 @@
     "@types/events" "*"
     "@types/node" "*"
 
-"@types/bootstrap@^4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-4.3.1.tgz#15fa89a4d275b114a4eceb90909d4eb8b90d43f5"
-  integrity sha512-n7Zv7Y+C98Yv4oqbyqGn3alCvNRCya2xMYzOdVEnmnFlu04MXQk1ntVrBhXzDkiwhZZYNkNfBZn2yhTnEh/mHQ==
+"@types/bootstrap@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-4.3.2.tgz#25e6be5fc09ad58911555eb8d01dcf05f37156d8"
+  integrity sha512-ArJM2BsZ6KvPb7M3PGWNjlriFYP6gh3hINk76TTVXBqUiPYFOeyXA08gsVFSIjUqMitregBEqT79rvfgXEiLQQ==
   dependencies:
     "@types/jquery" "*"
     popper.js "^1.14.1"

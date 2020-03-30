@@ -652,6 +652,10 @@ class Users
      */
     public function destroy(): void
     {
+        $UsersHelper = new UsersHelper();
+        if ($UsersHelper->hasExperiments((int) $this->userData['userid'])) {
+            throw new ImproperActionException('Cannot delete a user that owns experiments!');
+        }
         $sql = 'DELETE FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);

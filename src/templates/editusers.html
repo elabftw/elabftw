@@ -147,9 +147,11 @@
                     </li>
 
                     <!-- DESTROY USER -->
-                    <li class='list-inline-item'>
-                      <button class='button btn btn-danger destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
-                   </li>
+                    {% if not UsersHelper.hasExperiments(user.userid) %}
+                      <li class='list-inline-item'>
+                        <button class='button btn btn-danger destroyUser' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                     </li>
+                   {% endif %}
                 </form>
                 <hr>
               </ul>

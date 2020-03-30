@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function array_diff;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
@@ -18,7 +19,6 @@ use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
-use function array_diff;
 
 /**
  * All about the teams
@@ -424,7 +424,7 @@ class Teams implements CrudInterface
     {
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsIdFromUserid($userid);
-        return in_array($team, $teams);
+        return in_array($team, $teams, true);
     }
 
     public function isUserInTeam(int $userid, int $team): bool

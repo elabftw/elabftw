@@ -53,67 +53,6 @@ class Permissions
     }
 
     /**
-     * Get the write permission for an exp/item
-     *
-     * @return bool
-     */
-    private function getWrite(): bool
-    {
-        // if anyone can write, we're sure to have access
-        if ($this->item['canwrite'] === 'public') {
-            return true;
-        }
-
-        // starting from here, if we are anon we can't possibly have write access
-        if (isset($this->Users->userData['anon'])) {
-            return false;
-        }
-
-        // if any logged in user can write, we can as we are not anon
-        if ($this->item['canwrite'] === 'organization') {
-            return true;
-        }
-
-        if ($this->item['canwrite'] === 'team') {
-            // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
-                return true;
-            }
-            // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
-                return true;
-            }
-        }
-
-        // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canwrite']) !== false) {
-            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
-                return true;
-            }
-        }
-
-        // if we own the entity, we have write access on it for sure
-        if ($this->item['userid'] === $this->Users->userData['userid']) {
-            return true;
-        }
-
-        // it's not our entity, our last chance is to be admin in the same team as owner
-        if ($this->Users->userData['is_admin']) {
-            // if it's an item (has team attribute), we need to be logged in in same team
-            if (isset($this->item['team'])) {
-                if ((int) $this->item['team'] === $this->Users->userData['team']) {
-                    return true;
-                }
-            } else { // experiment
-                if ($Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Get permissions for an experiment/item
      *
      * @return array
@@ -180,5 +119,66 @@ class Permissions
             return array('read' => true, 'write' => true);
         }
         return array('read' => false, 'write' => false);
+    }
+
+    /**
+     * Get the write permission for an exp/item
+     *
+     * @return bool
+     */
+    private function getWrite(): bool
+    {
+        // if anyone can write, we're sure to have access
+        if ($this->item['canwrite'] === 'public') {
+            return true;
+        }
+
+        // starting from here, if we are anon we can't possibly have write access
+        if (isset($this->Users->userData['anon'])) {
+            return false;
+        }
+
+        // if any logged in user can write, we can as we are not anon
+        if ($this->item['canwrite'] === 'organization') {
+            return true;
+        }
+
+        if ($this->item['canwrite'] === 'team') {
+            // items will have a team, make sure it's the same as the one we are logged in
+            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+                return true;
+            }
+            // check if we have a team in common
+            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+                return true;
+            }
+        }
+
+        // if the vis. setting is a team group, check we are in the group
+        if (Check::id((int) $this->item['canwrite']) !== false) {
+            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
+                return true;
+            }
+        }
+
+        // if we own the entity, we have write access on it for sure
+        if ($this->item['userid'] === $this->Users->userData['userid']) {
+            return true;
+        }
+
+        // it's not our entity, our last chance is to be admin in the same team as owner
+        if ($this->Users->userData['is_admin']) {
+            // if it's an item (has team attribute), we need to be logged in in same team
+            if (isset($this->item['team'])) {
+                if ((int) $this->item['team'] === $this->Users->userData['team']) {
+                    return true;
+                }
+            } else { // experiment
+                if ($Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

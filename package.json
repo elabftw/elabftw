@@ -10,7 +10,7 @@
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
     "@fortawesome/free-brands-svg-icons": "5.12.*",
-    "@fortawesome/free-regular-svg-icons": "5.12.*",
+    "@fortawesome/free-regular-svg-icons": "5.13.*",
     "@fortawesome/free-solid-svg-icons": "5.12.*",
     "@fullcalendar/bootstrap": "^4.3.0",
     "@fullcalendar/core": "^4.3.0",

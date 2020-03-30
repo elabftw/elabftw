@@ -419,16 +419,11 @@ class Teams implements CrudInterface
         return $req->fetch(PDO::FETCH_NAMED);
     }
 
-    // Check if two users have at least one team in common
-    public function hasCommonTeam(int $useridA, int $useridB): bool
+    public function hasCommonTeamWithCurrent(int $userid, int $team): bool
     {
         $UsersHelper = new UsersHelper();
-        $teamsA = $UsersHelper->getTeamsIdFromUserid($useridA);
-        $teamsB = $UsersHelper->getTeamsIdFromUserid($useridB);
-        if (\count(\array_intersect($teamsA, $teamsB)) > 0) {
-            return true;
-        }
-        return false;
+        $teams = $UsersHelper->getTeamsIdFromUserid($userid);
+        return in_array($team, $teams, true);
     }
 
     public function isUserInTeam(int $userid, int $team): bool

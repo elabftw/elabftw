@@ -255,12 +255,12 @@
     </div>
 
     {% if not searchPage %}
-        <div class='text-center pageButtons'>
+        <div class='text-center pageButtons mt-2'>
             {% if offset != 0 %}
                 <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>
             {% endif %}
             {% if limit < Entity.itemsReadNb %}
-                <button class='button btn btn-primary mt-2 nextPage'>{{ 'Next page'|trans }}</button>
+                <button class='button btn btn-primary nextPage'>{{ 'Next page'|trans }}</button>
             {% endif %}
         </div>
   {% endif %}

@@ -25,6 +25,15 @@ class Permissions
     /** @var Users $Users instance of Users */
     private $Users;
 
+    /** @var Teams $Teams instance of Teams */
+    private $Teams;
+
+    /** @var TeamsGroups $TeamsGroups instance of TeamsGroups */
+    private $TeamGroups;
+
+    /** @var Users $Owner instance of Users for the user owning the item */
+    private $Owner;
+
     /** @var array $item the item to check */
     private $item;
 
@@ -38,6 +47,70 @@ class Permissions
     {
         $this->Users = $users;
         $this->item = $item;
+        $this->Teams = new Teams($this->Users);
+        $this->TeamGroups = new TeamGroups($this->Users);
+        $this->Owner = new Users((int) $this->item['userid']);
+    }
+
+    /**
+     * Get the write permission for an exp/item
+     *
+     * @return bool
+     */
+    private function getWrite(): bool
+    {
+        // if anyone can write, we're sure to have access
+        if ($this->item['canwrite'] === 'public') {
+            return true;
+        }
+
+        // starting from here, if we are anon we can't possibly have write access
+        if (isset($this->Users->userData['anon'])) {
+            return false;
+        }
+
+        // if any logged in user can write, we can as we are not anon
+        if ($this->item['canwrite'] === 'organization') {
+            return true;
+        }
+
+        if ($this->item['canwrite'] === 'team') {
+            // items will have a team, make sure it's the same as the one we are logged in
+            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+                return true;
+            }
+            // check if we have a team in common
+            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+                return true;
+            }
+        }
+
+        // if the vis. setting is a team group, check we are in the group
+        if (Check::id((int) $this->item['canwrite']) !== false) {
+            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
+                return true;
+            }
+        }
+
+        // if we own the entity, we have write access on it for sure
+        if ($this->item['userid'] === $this->Users->userData['userid']) {
+            return true;
+        }
+
+        // it's not our entity, our last chance is to be admin in the same team as owner
+        if ($this->Users->userData['is_admin']) {
+            // if it's an item (has team attribute), we need to be logged in in same team
+            if (isset($this->item['team'])) {
+                if ((int) $this->item['team'] === $this->Users->userData['team']) {
+                    return true;
+                }
+            } else { // experiment
+                if ($Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -47,90 +120,53 @@ class Permissions
      */
     public function forExpItem(): array
     {
-        $write = false;
+        $write = $this->getWrite();
 
-        // if we own the experiment, we have read/write rights on it for sure
-        if ($this->item['userid'] === $this->Users->userData['userid']) {
-            return array('read' => true, 'write' => true);
-        }
-
-        // it's not our experiment
-        // get the owner data
-        $Owner = new Users((int) $this->item['userid']);
-        $TeamGroups = new TeamGroups($this->Users);
-
-        // check if we're admin because admin can read/write all experiments of the team
-        if ($this->Users->userData['is_admin'] && $Owner->userData['team'] === $this->Users->userData['team']) {
-            return array('read' => true, 'write' => true);
-        }
-
-        // if we don't own it (and we are not admin), we need to check if owner allowed edits
-        // owner allows edit and is in same team and we are not anon
-        if ($this->item['canwrite'] === 'public') {
-            $write = true;
-        }
-        if (($this->item['canwrite'] === 'organization')
-            && !isset($this->Users->userData['anon'])) {
-            $write = true;
-        }
-        if (($this->item['canwrite'] === 'team')
-            && !isset($this->Users->userData['anon'])) {
-            // check if we have a team in common
-            $Teams = new Teams($this->Users);
-            if ($Teams->hasCommonTeam((int) $this->item['userid'], (int) $this->Users->userData['userid'])) {
-                $write = true;
-            }
-        }
-        // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canwrite']) !== false) {
-            if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
-                $write = true;
-            }
-        }
-
-        // if we can write to it, we can read it too, so return early
+        // if we have write access, then we have read access for sure
         if ($write === true) {
-            return array('read' => true, 'write' => true);
+            return array('read' => true, 'write' => $write);
         }
 
-        // OK we cannot write to it, check for read permission now
-
-        // if we don't own the experiment (and we are not admin), we need to check read access
-        // if it is public, we can see it for sure
+        // if it's public, we can read it
         if ($this->item['canread'] === 'public') {
             return array('read' => true, 'write' => $write);
         }
 
-        // if it's organization, we need to be logged in
-        if (($this->item['canread'] === 'organization') && $this->Users->userData['userid'] !== null) {
+        // if we have the elabid in the URL, allow read access to all
+        $Request = Request::createFromGlobals();
+        // make sure we check if entity has elabid because items won't have one (null)
+        if (isset($this->item['elabid']) && ($this->item['elabid'] === $Request->query->get('elabid'))) {
+            return array('read' => true, 'write' => $write);
+        }
+
+        // starting from here, if we are anon we can't possibly have read access
+        if (isset($this->Users->userData['anon'])) {
+            return array('read' => false, 'write' => false);
+        }
+
+        if ($this->item['canread'] === 'organization') {
             return array('read' => true, 'write' => $write);
         }
 
         // if the vis. setting is team, check we are in the same team than the $item
-        // we also check for anon because anon will have the same team as real team member
-        if (($this->item['canread'] === 'team') &&
-            !isset($this->Users->userData['anon'])) {
-            // ok so we need to check if the team(s) in which the owner is match the team(s) of our current user
-            $Teams = new Teams($this->Users);
-            if ($Teams->hasCommonTeam((int) $this->item['userid'], (int) $this->Users->userData['userid'])) {
+        if ($this->item['canread'] === 'team') {
+            // items will have a team, make sure it's the same as the one we are logged in
+            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+                return array('read' => true, 'write' => $write);
+            }
+            // check if we have a team in common
+            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
             }
         }
 
         // if the vis. setting is a team group, check we are in the group
         if (Check::id((int) $this->item['canread']) !== false) {
-            if ($TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
+            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
                 return array('read' => true, 'write' => $write);
             }
         }
-
-        // if we have the elabid in the URL, allow read access to all
-        $Request = Request::createFromGlobals();
-        if ($this->item['elabid'] === $Request->query->get('elabid')) {
-            return array('read' => true, 'write' => $write);
-        }
-
-        return array('read' => false, 'write' => $write);
+        return array('read' => false, 'write' => false);
     }
 
     /**

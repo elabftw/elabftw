@@ -171,7 +171,7 @@ class Permissions
                 }
             } else { // experiment
                 $Owner = new Users((int) $this->item['userid']);
-                if ($Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
+                if ($this->Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], $this->Users->userData['team'])) {
                     return true;
                 }
             }

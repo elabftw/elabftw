@@ -18,6 +18,7 @@ use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
+use function array_diff;
 
 /**
  * All about the teams
@@ -164,8 +165,8 @@ class Teams implements CrudInterface
         $UsersHelper = new UsersHelper();
         $currentTeams = $UsersHelper->getTeamsIdFromUserid($userid);
 
-        $addToTeams = \array_diff($teamIdArr, $currentTeams);
-        $rmFromTeams =\array_diff($currentTeams, $teamIdArr);
+        $addToTeams = array_diff($teamIdArr, $currentTeams);
+        $rmFromTeams = array_diff($currentTeams, $teamIdArr);
 
         $this->rmUserFromTeams($userid, $rmFromTeams);
         $this->addUserToTeams($userid, $addToTeams);

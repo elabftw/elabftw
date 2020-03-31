@@ -317,10 +317,10 @@ class Tools
                 // do quicksearch
                 if ($table === 'experiments') {
                     // add elabid to the search columns
-                    $sql .= "(title LIKE '%$value%' OR date LIKE '%$value%' OR body LIKE '%$value%' OR elabid LIKE '%$value%')";
+                    $sql .= "(experiments.title LIKE '%$value%' OR experiments.date LIKE '%$value%' OR experiments.body LIKE '%$value%' OR experiments.elabid LIKE '%$value%')";
                 } else {
                     // quicksearch from database
-                    $sql .= "(title LIKE '%$value%' OR date LIKE '%$value%' OR body LIKE '%$value%')";
+                    $sql .= "(items.title LIKE '%$value%' OR items.date LIKE '%$value%' OR items.body LIKE '%$value%')";
                 }
             } else {
                 // from search page

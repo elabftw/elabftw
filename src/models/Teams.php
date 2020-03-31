@@ -424,7 +424,7 @@ class Teams implements CrudInterface
     {
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsIdFromUserid($userid);
-        return in_array($team, $teams, true);
+        return in_array((string) $team, $teams, true);
     }
 
     public function isUserInTeam(int $userid, int $team): bool

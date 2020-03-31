@@ -6,14 +6,8 @@
  * @package elabftw
  */
 import { getGetParameters } from './misc';
-import 'jquery-ui/ui/widgets/datepicker';
 
 $(document).ready(function(){
-  // DATEPICKER
-  $('.datepicker').datepicker({
-    dateFormat: 'yymmdd'
-  });
-
   // scroll to anchor if there is a search
   const getParams = getGetParameters();
   if ((getParams as any).type) {

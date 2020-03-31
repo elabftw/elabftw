@@ -11,6 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+use function mb_strlen;
+use function strlen;
+use function strtr;
 
 /**
  * When values need to be filtered
@@ -41,13 +44,18 @@ class Filter
      * Return the current date as YYYYMMDD format if no input
      * return input if it is a valid date
      *
-     * @param string|null $input 20160521
+     * @param string|null $input 20160521 or 2020-03-31
      * @return string
      */
     public static function kdate(?string $input = null): string
     {
-        if ($input !== null
-            && \mb_strlen($input) == '8') {
+        if ($input === null) {
+            return date('Ymd');
+        }
+        // the search page's datetime inputs will return YYYY-MM-DD
+        // so strip the '-'
+        $input = strtr($input, array('-' => ''));
+        if (mb_strlen($input) === 8) {
             // Check if day/month are good (badly)
             $datemonth = substr($input, 4, 2);
             $dateday = substr($input, 6, 2);
@@ -124,7 +132,7 @@ class Filter
             <details><summary><figure><figcaption>';
         $body = strip_tags($input, $whitelist);
         // use strlen() instead of mb_strlen() because we want the size in bytes
-        if (\strlen($body) > self::MAX_BODY_SIZE) {
+        if (strlen($body) > self::MAX_BODY_SIZE) {
             throw new ImproperActionException('Content is too big! Cannot save!');
         }
         return $body;

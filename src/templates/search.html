@@ -74,9 +74,9 @@
             <!-- SEARCH DATE -->
             <div class='col-md-8'>
                 <label for='from'>{{ 'Where date is between'|trans }}</label>
-                <input id='from' name='from' type='text' size='8' class='datepicker' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
-                <label span style='margin:0 10px;' for='to'> {{ 'and'|trans }} </label>
-                <input id='to' name='to' type='text' size='8' class='datepicker' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
+                <input id='from' name='from' type='date' class='formcontrol' value='{{ Request.query.get('from') != '' ? Request.query.get('from') }}'/>
+                <label class='ml-2' for='to'>{{ 'and'|trans }}</label>
+                <input id='to' name='to' type='date' class='formcontrol' value='{{ Request.query.get('to') != '' ? Request.query.get('to') }}'/>
             </div>
             <!-- END SEARCH DATE -->
 

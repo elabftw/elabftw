@@ -662,11 +662,14 @@ abstract class AbstractEntity
      * Add a filter to the query
      *
      * @param string $column the column on which to filter
-     * @param string $value the value to look for
+     * @param string|null $value the value to look for
      * @return void
      */
-    public function addFilter(string $column, string $value): void
+    public function addFilter(string $column, ?string $value): void
     {
+        if ($value === null) {
+            return;
+        }
         $column = filter_var($column, FILTER_SANITIZE_STRING);
         $value = filter_var($value, FILTER_SANITIZE_STRING);
         $this->filters[] = array('column' => $column, 'value' => $value);

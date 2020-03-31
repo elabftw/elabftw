@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
+import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widgets/sortable';
 import 'bootstrap/js/dist/modal.js';
 import { relativeMoment, notif, displayMolFiles } from './misc';

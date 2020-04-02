@@ -104,7 +104,6 @@ msgstr "Le password non coincidono!"
 
 #: web/app/controllers/CreateUserController.php:50
 #: web/app/controllers/RegisterController.php:53
-#, fuzzy
 msgid "A mandatory field is missing!"
 msgstr "Un campo obbligatorio non è ancora stato riempito!"
 
@@ -440,7 +439,6 @@ msgstr "Salva"
 #: web/app/controllers/SysconfigAjaxController.php:31
 #: web/app/controllers/ExperimentsAjaxController.php:33
 #: src/controllers/AbstractEntityController.php:77
-#, fuzzy
 msgid "Saved"
 msgstr "Salvato"
 
@@ -462,7 +460,6 @@ msgstr "Annulla"
 #: cache/twig/fa/fa99895e34e587d47f22c29027402bf0324095b4670ff4ed24a60e970a8a26f3.php:594
 #: cache/twig/9b/9b773a02bdb1b3b6d261815e7b7419068693b3accb5c0de422c2b333284df557.php:594
 #: cache/twig/99/999087989b87540727e602938efb8395a955b6e2d5d5fd232ab4bcea3c90f34f.php:594
-#, fuzzy
 msgid "Saving"
 msgstr "Salvataggio in corso"
 
@@ -617,7 +614,6 @@ msgstr "Utenti"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:112
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:112
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:112
-#, fuzzy
 msgid "Types of items"
 msgstr "Tipo di articoli"
 
@@ -685,7 +681,6 @@ msgstr "Questo è il testo predefinito quando qualcuno crea un esperimento."
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:801
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:805
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:801
-#, fuzzy
 msgid "You should make a backup of your database before importing thousands of items!"
 msgstr "Sarebbe opportuno effettuare un backup del database prima di importare migliaia di articoli!"
 
@@ -694,7 +689,6 @@ msgstr "Sarebbe opportuno effettuare un backup del database prima di importare m
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:703
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:703
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:703
-#, fuzzy
 msgid "1. Select a type of item to import to:"
 msgstr "1. Seleziona un tipo di articolo da importare in:"
 
@@ -706,12 +700,10 @@ msgid "Import CSV"
 msgstr "Importa CSV"
 
 #: web/app/controllers/UsersController.php:54
-#, fuzzy
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Solo un SysAdmin può creare un altro SysAdmin."
 
 #: cache/twig/b3/b30a9fc00dbe35ad2ebedbd4f578d8c31fb111902559c4ba193178ff80f68f9a.php:100
-#, fuzzy
 msgid "Type it again"
 msgstr "Digita nuovamente"
 
@@ -781,7 +773,6 @@ msgid "Someone is already using that email address!"
 msgstr "Qualcuno sta già utilizzando questo indirizzo di email!"
 
 #: web/app/controllers/RegisterController.php:68
-#, fuzzy
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
 msgstr "Registrazione completata con successo :) <br>Benvenuto/a su eLabFTW!"
 
@@ -897,7 +888,6 @@ msgstr "E la cui valutazione è"
 #: cache/twig/e1/e1feabb7150dd72d7a214665b4f6e678d49cd5aad6cce490f74198848e7464a3.php:351
 #: cache/twig/94/942f1c20337537ec40d0fe31e04ecd5460a5438e39453955223ef014d3d63743.php:351
 #: cache/twig/fc/fc6b712e2c7f1688521219ffa394f2c98629b1369e24a5ec78176afae6465956.php:351
-#, fuzzy
 msgid "Unrated"
 msgstr "Privo di valutazione"
 
@@ -911,7 +901,6 @@ msgstr "Inizia la ricerca"
 #: cache/twig/49/491fc6fc25601c3e848eb680fa6c6082efcc128adbaf19494ce87087ec6f896a.php:375
 #: cache/twig/01/01d7bedda1a82c91c2c29dd7f249701914dd9f9f8822763356faa11f9656a5af.php:375
 #: cache/twig/e2/e2272ccb437a89917cec321958c7e0c9aa73bac90445f7e3194b4f7258ff2759.php:375
-#, fuzzy
 msgid "Sorry. I couldn't find anything :("
 msgstr "Spiacente, non ho trovato nulla! :("
 
@@ -962,7 +951,6 @@ msgstr "Membri"
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:244
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:203
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:624
-#, fuzzy
 msgid "Items"
 msgstr "Articoli"
 
@@ -1040,7 +1028,6 @@ msgstr "Indirizzo del server SMTP:"
 #: cache/twig/fa/faf1e1d7dd2ed2876c47ca2d83e41f3ddae8d575a6454fe2959d6dda91c43398.php:918
 #: cache/twig/98/98ab7c2d78436a0e47234089e638f8d79560968a9cf42424d1fdab40ffbb3f45.php:918
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:918
-#, fuzzy
 msgid "Probably TLS"
 msgstr "Probabilmente TLS"
 
@@ -1065,7 +1052,6 @@ msgstr "Nome utente SMTP:"
 #: cache/twig/fa/faf1e1d7dd2ed2876c47ca2d83e41f3ddae8d575a6454fe2959d6dda91c43398.php:944
 #: cache/twig/98/98ab7c2d78436a0e47234089e638f8d79560968a9cf42424d1fdab40ffbb3f45.php:944
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:944
-#, fuzzy
 msgid "SMTP password"
 msgstr "Password SMTP"
 
@@ -1074,7 +1060,6 @@ msgstr "Password SMTP"
 #: cache/twig/f5/f5984e68be3ba8c4e947ef608706b7a99fa2ab215abfa0310902504ca5930490.php:281
 #: cache/twig/c2/c24e248a96cd909c338cdeacae1a82ff434da35e1317e9351bd9afa5b11a984b.php:275
 #: cache/twig/c4/c4d3a007acc2f4c5fbf7856ddd13cd7ccca1c00afa8eac6805c76698e5447eca.php:281
-#, fuzzy
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
 msgstr "L'amministratore di un team può modificare lo stato ed il tipo di articoli disponibili (%sAdmin Panel%s)."
 
@@ -1100,7 +1085,6 @@ msgstr "È possibile duplicare gli esperimenti con un solo clic."
 #: cache/twig/f5/f5984e68be3ba8c4e947ef608706b7a99fa2ab215abfa0310902504ca5930490.php:305
 #: cache/twig/c2/c24e248a96cd909c338cdeacae1a82ff434da35e1317e9351bd9afa5b11a984b.php:299
 #: cache/twig/c4/c4d3a007acc2f4c5fbf7856ddd13cd7ccca1c00afa8eac6805c76698e5447eca.php:305
-#, fuzzy
 msgid "Click a tag to list all items with this tag."
 msgstr "Fai clic su di un tag per elencare tutti gli articoli con questo tag."
 
@@ -1144,7 +1128,6 @@ msgstr "Modelli"
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:561
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:561
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:561
-#, fuzzy
 msgid "Modify your personal informations"
 msgstr "Modifica le tue informazioni personali"
 
@@ -1158,7 +1141,6 @@ msgstr "Modifica l'identità"
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:580
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:580
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:580
-#, fuzzy
 msgid "Modify your password"
 msgstr "Modifica la password"
 
@@ -1196,7 +1178,6 @@ msgstr "Elementi per pagina:"
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:697
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:697
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:697
-#, fuzzy
 msgid "Create new"
 msgstr "Crea nuovo"
 
@@ -1218,7 +1199,6 @@ msgstr "Ultima modifica effettuata da"
 #: cache/twig/fa/fa99895e34e587d47f22c29027402bf0324095b4670ff4ed24a60e970a8a26f3.php:504
 #: cache/twig/9b/9b773a02bdb1b3b6d261815e7b7419068693b3accb5c0de422c2b333284df557.php:504
 #: cache/twig/99/999087989b87540727e602938efb8395a955b6e2d5d5fd232ab4bcea3c90f34f.php:504
-#, fuzzy
 msgid "Unique eLabID:"
 msgstr "Identificativo univoco (eLabID):"
 
@@ -1334,7 +1314,6 @@ msgstr "Io solamente"
 #: cache/twig/f2/f2a75ee635b55b73c8166611aaf4c96c4b50fa4939fbcc321f9680fd174a529b.php:154
 #: cache/twig/f5/f50e687678c758b5df3c368276c9df3bda9d7f1ce04c9f28e9fe573764d519b3.php:149
 #: cache/twig/c8/c861f47bbf0b92b3cdcea996a8dd48d28d6aedcac5129f04be3c3cb9b4f1c674.php:154
-#, fuzzy
 msgid "Linked items"
 msgstr "Elementi correlati"
 
@@ -1386,7 +1365,6 @@ msgstr "Pannello Amm. di Sistema"
 #: cache/twig/c5/c55481a3b8ecec2f56dbc535dc00c6cf72a93d87ec9378f8187e693f777112c7.php:76
 #: cache/twig/74/740a40d221aeef683ae4dbde50b125f66c53344e4fbcbd73fc19b2e7d0a22a51.php:76
 #: cache/twig/06/069591a35fe25b2c5e8a1fdcaa6db1c4ca8ac30a4a06eceb3e92cce6216abeba.php:76
-#, fuzzy
 msgid "Admin panel"
 msgstr "Pannello Amm. di Team"
 
@@ -1912,7 +1890,6 @@ msgid "[eLabFTW] Test email"
 msgstr "[eLabFTW] Email di prova"
 
 #: src/models/ItemsTypes.php:94
-#, fuzzy
 msgid "Nothing to show with this id"
 msgstr "Non vi è nulla con questo ID"
 
@@ -2194,7 +2171,6 @@ msgstr "Path del programma sendmail:"
 #: cache/twig/fa/faf1e1d7dd2ed2876c47ca2d83e41f3ddae8d575a6454fe2959d6dda91c43398.php:900
 #: cache/twig/98/98ab7c2d78436a0e47234089e638f8d79560968a9cf42424d1fdab40ffbb3f45.php:900
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:900
-#, fuzzy
 msgid "SMTP encryption:"
 msgstr "Crittografia SMTP:"
 
@@ -3449,7 +3425,6 @@ msgstr "Editor JSON"
 #: cache/twig/0e/0e67c62cc1d3141ea01a3b4156c0e1db61106288e53d417e20f076340622ecab.php:182
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:177
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:182
-#, fuzzy
 msgid "All bookable items"
 msgstr "Tutti gli oggetti prenotabili"
 

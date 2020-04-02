@@ -104,7 +104,6 @@ msgstr "密码不匹配！"
 
 #: web/app/controllers/CreateUserController.php:50
 #: web/app/controllers/RegisterController.php:53
-#, fuzzy
 msgid "A mandatory field is missing!"
 msgstr "缺失必填字段！"
 
@@ -437,7 +436,6 @@ msgstr "保存"
 #: web/app/controllers/SysconfigAjaxController.php:31
 #: web/app/controllers/ExperimentsAjaxController.php:33
 #: src/controllers/AbstractEntityController.php:77
-#, fuzzy
 msgid "Saved"
 msgstr "已保存"
 
@@ -459,7 +457,6 @@ msgstr "取消"
 #: cache/twig/fa/fa99895e34e587d47f22c29027402bf0324095b4670ff4ed24a60e970a8a26f3.php:594
 #: cache/twig/9b/9b773a02bdb1b3b6d261815e7b7419068693b3accb5c0de422c2b333284df557.php:594
 #: cache/twig/99/999087989b87540727e602938efb8395a955b6e2d5d5fd232ab4bcea3c90f34f.php:594
-#, fuzzy
 msgid "Saving"
 msgstr "正在保存"
 
@@ -610,7 +607,6 @@ msgstr "用户"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:112
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:112
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:112
-#, fuzzy
 msgid "Types of items"
 msgstr "项目类型"
 
@@ -661,7 +657,6 @@ msgid "Default status"
 msgstr "默认状态"
 
 #: src/models/ItemsTypes.php:191
-#, fuzzy
 msgid "Remove all database items with this type before deleting this type."
 msgstr "删除此类型前请将所有数据库项目从此类型中移除。"
 
@@ -676,7 +671,6 @@ msgstr "这是创建新实验记录的默认模板。"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:801
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:805
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:801
-#, fuzzy
 msgid "You should make a backup of your database before importing thousands of items!"
 msgstr "在导入数千个项目之前务必备份您的数据库！"
 
@@ -684,7 +678,6 @@ msgstr "在导入数千个项目之前务必备份您的数据库！"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:703
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:703
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:703
-#, fuzzy
 msgid "1. Select a type of item to import to:"
 msgstr "1. 选择要导入的项目类型："
 
@@ -700,7 +693,6 @@ msgid "Only a sysadmin can put someone sysadmin."
 msgstr "只有系统管理员可以设置系统管理员。"
 
 #: cache/twig/b3/b30a9fc00dbe35ad2ebedbd4f578d8c31fb111902559c4ba193178ff80f68f9a.php:100
-#, fuzzy
 msgid "Type it again"
 msgstr "请再输入一次"
 
@@ -726,7 +718,6 @@ msgid "You don't have the rights to lock/unlock this."
 msgstr "您无权锁定 / 解锁。"
 
 #: web/app/controllers/LoginController.php:94 src/classes/Auth.php:199
-#, fuzzy
 msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
 msgstr "登录失败。您输入的密码错误或账号未激活。"
 
@@ -769,7 +760,6 @@ msgid "Someone is already using that email address!"
 msgstr "已有人使用此 Email 地址！"
 
 #: web/app/controllers/RegisterController.php:68
-#, fuzzy
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
 msgstr "注册成功 :)<br>欢迎来到 eLabFTW o/"
 
@@ -883,7 +873,6 @@ msgstr "评级为"
 #: cache/twig/e1/e1feabb7150dd72d7a214665b4f6e678d49cd5aad6cce490f74198848e7464a3.php:351
 #: cache/twig/94/942f1c20337537ec40d0fe31e04ecd5460a5438e39453955223ef014d3d63743.php:351
 #: cache/twig/fc/fc6b712e2c7f1688521219ffa394f2c98629b1369e24a5ec78176afae6465956.php:351
-#, fuzzy
 msgid "Unrated"
 msgstr "未评级"
 
@@ -897,7 +886,6 @@ msgstr "启动搜索"
 #: cache/twig/49/491fc6fc25601c3e848eb680fa6c6082efcc128adbaf19494ce87087ec6f896a.php:375
 #: cache/twig/01/01d7bedda1a82c91c2c29dd7f249701914dd9f9f8822763356faa11f9656a5af.php:375
 #: cache/twig/e2/e2272ccb437a89917cec321958c7e0c9aa73bac90445f7e3194b4f7258ff2759.php:375
-#, fuzzy
 msgid "Sorry. I couldn't find anything :("
 msgstr "抱歉，我什么也没找到 :("
 
@@ -947,7 +935,6 @@ msgstr "成员"
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:244
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:203
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:624
-#, fuzzy
 msgid "Items"
 msgstr "项目"
 
@@ -1022,7 +1009,6 @@ msgstr "SMTP 服务器地址："
 #: cache/twig/fa/faf1e1d7dd2ed2876c47ca2d83e41f3ddae8d575a6454fe2959d6dda91c43398.php:918
 #: cache/twig/98/98ab7c2d78436a0e47234089e638f8d79560968a9cf42424d1fdab40ffbb3f45.php:918
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:918
-#, fuzzy
 msgid "Probably TLS"
 msgstr "很可能是 TLS"
 
@@ -1055,7 +1041,6 @@ msgstr "SMTP 密码"
 #: cache/twig/f5/f5984e68be3ba8c4e947ef608706b7a99fa2ab215abfa0310902504ca5930490.php:281
 #: cache/twig/c2/c24e248a96cd909c338cdeacae1a82ff434da35e1317e9351bd9afa5b11a984b.php:275
 #: cache/twig/c4/c4d3a007acc2f4c5fbf7856ddd13cd7ccca1c00afa8eac6805c76698e5447eca.php:281
-#, fuzzy
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
 msgstr "团队管理员可以编辑可用的状态和项目类型 (%s管理面板%s)。"
 
@@ -1080,7 +1065,6 @@ msgstr "您可以一键复制实验记录。"
 #: cache/twig/f5/f5984e68be3ba8c4e947ef608706b7a99fa2ab215abfa0310902504ca5930490.php:305
 #: cache/twig/c2/c24e248a96cd909c338cdeacae1a82ff434da35e1317e9351bd9afa5b11a984b.php:299
 #: cache/twig/c4/c4d3a007acc2f4c5fbf7856ddd13cd7ccca1c00afa8eac6805c76698e5447eca.php:305
-#, fuzzy
 msgid "Click a tag to list all items with this tag."
 msgstr "点击标签来列出所有具有此标签的项目。"
 
@@ -1124,7 +1108,6 @@ msgstr "模板"
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:561
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:561
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:561
-#, fuzzy
 msgid "Modify your personal informations"
 msgstr "修改您的个人信息"
 
@@ -1137,7 +1120,6 @@ msgstr "修改您的身份"
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:580
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:580
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:580
-#, fuzzy
 msgid "Modify your password"
 msgstr "修改您的密码"
 
@@ -1169,14 +1151,12 @@ msgstr "更新个人资料"
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:125
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:125
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:125
-#, fuzzy
 msgid "Items per page:"
 msgstr "每页显示项目数："
 
 #: cache/twig/92/921908fd9b0efa42882521cdfd7c36c5fd6cfea6ac0e02ae6221b236397f34f7.php:697
 #: cache/twig/9f/9f6ed9266e37d35c7a13ba7208480698ccb8639974430fbba7d504b3e798fb37.php:697
 #: cache/twig/51/51e5176f0b1df19f7a8836d90192423e868620f0e2a3366d34f46923930490a6.php:697
-#, fuzzy
 msgid "Create new"
 msgstr "新建"
 
@@ -1197,7 +1177,6 @@ msgstr "最后修改："
 #: cache/twig/fa/fa99895e34e587d47f22c29027402bf0324095b4670ff4ed24a60e970a8a26f3.php:504
 #: cache/twig/9b/9b773a02bdb1b3b6d261815e7b7419068693b3accb5c0de422c2b333284df557.php:504
 #: cache/twig/99/999087989b87540727e602938efb8395a955b6e2d5d5fd232ab4bcea3c90f34f.php:504
-#, fuzzy
 msgid "Unique eLabID:"
 msgstr "唯一 eLabID："
 
@@ -1310,7 +1289,6 @@ msgstr "只有我"
 #: cache/twig/f2/f2a75ee635b55b73c8166611aaf4c96c4b50fa4939fbcc321f9680fd174a529b.php:154
 #: cache/twig/f5/f50e687678c758b5df3c368276c9df3bda9d7f1ce04c9f28e9fe573764d519b3.php:149
 #: cache/twig/c8/c861f47bbf0b92b3cdcea996a8dd48d28d6aedcac5129f04be3c3cb9b4f1c674.php:154
-#, fuzzy
 msgid "Linked items"
 msgstr "链接的项目"
 
@@ -1417,7 +1395,6 @@ msgstr "团队"
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:210
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:687
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:210
-#, fuzzy
 msgid "URL for external timestamping service:"
 msgstr "外部时间戳服务衔接"
 
@@ -1428,7 +1405,6 @@ msgstr "外部时间戳服务衔接"
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:224
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:700
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:224
-#, fuzzy
 msgid "Chain of certificates of the external timestamping service:"
 msgstr "外部时间戳服务证书链"
 
@@ -1447,7 +1423,6 @@ msgid "Your timestamping service provider password"
 msgstr "您的时间戳服务提供者的密码"
 
 #: src/models/AbstractEntity.php:173
-#, fuzzy
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr "您用任何方法都无法编辑或解锁一个带有时间戳的实验记录。"
 
@@ -1456,12 +1431,8 @@ msgid "Your session expired. Please retry."
 msgstr "该对话已失效。请重新尝试。"
 
 #: web/app/controllers/RegisterController.php:66
-#, fuzzy
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
-msgstr ""
-"注册成功:)\n"
-"您的账户必须立即得到管理员的确认。\n"
-"当一切都做完后，您会收到一封邮件。"
+msgstr "注册成功:)<br>您的账户必须立即得到管理员的确认。<br>当一切都做完后，您会收到一封邮件。"
 
 #: cache/twig/4d/4d8e8e09b592486b2e66163bcabd247b1574eb1b7ca1a154d48a09d10821ae09.php:48
 #: cache/twig/bc/bc659a279ab010d4efeb15eebb5b2d19e79e372aa48631dbc983db3cd1072240.php:48
@@ -1482,12 +1453,10 @@ msgstr "添加附件"
 #: cache/twig/2b/2bdc3bf2dde700cd717f8141a2f6e74630adb286c2cac77f9e60fc35817fac51.php:569
 #: cache/twig/ad/ad89683fab67ab450f4407d95db067efe65d9ede276d7e527b548ed26fbc869c.php:569
 #: cache/twig/b2/b2e7c8307fd3f85b20ec4a5014322505a94e69c9a7a1f548ad8b1559256d778a.php:569
-#, fuzzy
 msgid "Drop files here to upload"
 msgstr "请选取上传文件"
 
 #: src/models/Revisions.php:113
-#, fuzzy
 msgid "You cannot restore a revision of a locked item!"
 msgstr "您无法保存对已锁定项目的修改！"
 
@@ -1522,7 +1491,6 @@ msgid "Download timestamped pdf"
 msgstr "下载PDF格式的时间戳"
 
 #: web/app/controllers/ImportController.php:51
-#, fuzzy
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
 msgstr[0] "项目已成功加载。"
@@ -1635,7 +1603,6 @@ msgstr "已配置新密码。您现在可以登录。"
 #: cache/twig/fa/fa99895e34e587d47f22c29027402bf0324095b4670ff4ed24a60e970a8a26f3.php:295
 #: cache/twig/9b/9b773a02bdb1b3b6d261815e7b7419068693b3accb5c0de422c2b333284df557.php:295
 #: cache/twig/99/999087989b87540727e602938efb8395a955b6e2d5d5fd232ab4bcea3c90f34f.php:295
-#, fuzzy
 msgid "Lock/Unlock item"
 msgstr "锁定/解锁 项目"
 
@@ -1793,7 +1760,6 @@ msgstr "删除"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:508
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:508
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:508
-#, fuzzy
 msgid "Add a new type of item"
 msgstr "添加新项目类型"
 
@@ -1819,7 +1785,6 @@ msgstr "在％sscheduler％s中"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:554
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:554
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:554
-#, fuzzy
 msgid "Database Items Types"
 msgstr "数据库项目类型"
 
@@ -2158,7 +2123,6 @@ msgstr "邮件发送方式："
 #: cache/twig/fa/faf1e1d7dd2ed2876c47ca2d83e41f3ddae8d575a6454fe2959d6dda91c43398.php:850
 #: cache/twig/98/98ab7c2d78436a0e47234089e638f8d79560968a9cf42424d1fdab40ffbb3f45.php:850
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:850
-#, fuzzy
 msgid "Select mailing method..."
 msgstr "选择发送方式..."
 
@@ -2872,7 +2836,6 @@ msgstr "实验模板"
 #: cache/twig/f5/f50e687678c758b5df3c368276c9df3bda9d7f1ce04c9f28e9fe573764d519b3.php:193
 #: cache/twig/c8/c861f47bbf0b92b3cdcea996a8dd48d28d6aedcac5129f04be3c3cb9b4f1c674.php:198
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:120
-#, fuzzy
 msgid "Import"
 msgstr "导入"
 
@@ -2931,7 +2894,6 @@ msgstr "您可以按‘%s’来使用待办事宜。"
 #: cache/twig/c8/c8cc8ef0f4445634f976479d6077ed8870bdef1c16cb727ddc8f72e97aac6943.php:243
 #: cache/twig/26/2624bc746c668cacb170fb22d97ed1b38ce491ca4931d469d48c65e1ad87f421.php:116
 #: cache/twig/3f/3f20e4a5a77566695eade437da4dbfbb0bd524b50f196aafad6a14158d8d3743.php:291
-#, fuzzy
 msgid "Select a team"
 msgstr "选择团队"
 
@@ -3428,7 +3390,6 @@ msgstr "JSON编辑器"
 #: cache/twig/0e/0e67c62cc1d3141ea01a3b4156c0e1db61106288e53d417e20f076340622ecab.php:182
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:177
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:182
-#, fuzzy
 msgid "All bookable items"
 msgstr "所有可订阅项目"
 

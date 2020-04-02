@@ -609,7 +609,6 @@ msgstr "Gebruikers"
 #: cache/twig/0b/0bf2cf8a0e91e96ab7db509a96003ce7c343c9bc4dac6fd4c372aa9c6bdc86cc.php:112
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:112
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:112
-#, fuzzy
 msgid "Types of items"
 msgstr "Soorten items"
 
@@ -696,7 +695,6 @@ msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Enkel een systeembeheerder kan iemand de rol systeembeheerder toewijzen."
 
 #: cache/twig/b3/b30a9fc00dbe35ad2ebedbd4f578d8c31fb111902559c4ba193178ff80f68f9a.php:100
-#, fuzzy
 msgid "Type it again"
 msgstr "Typ het opnieuw"
 
@@ -877,7 +875,6 @@ msgstr "En de beoordeling is"
 #: cache/twig/e1/e1feabb7150dd72d7a214665b4f6e678d49cd5aad6cce490f74198848e7464a3.php:351
 #: cache/twig/94/942f1c20337537ec40d0fe31e04ecd5460a5438e39453955223ef014d3d63743.php:351
 #: cache/twig/fc/fc6b712e2c7f1688521219ffa394f2c98629b1369e24a5ec78176afae6465956.php:351
-#, fuzzy
 msgid "Unrated"
 msgstr "Niet beoordeeld"
 
@@ -940,7 +937,6 @@ msgstr "Leden"
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:244
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:203
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:624
-#, fuzzy
 msgid "Items"
 msgstr "Items"
 
@@ -2131,7 +2127,6 @@ msgstr "Verstuur e-mails via:"
 #: cache/twig/fa/faf1e1d7dd2ed2876c47ca2d83e41f3ddae8d575a6454fe2959d6dda91c43398.php:850
 #: cache/twig/98/98ab7c2d78436a0e47234089e638f8d79560968a9cf42424d1fdab40ffbb3f45.php:850
 #: cache/twig/9d/9d51f4b9d563aa3e715d53baf350f97b070f9c7d4d62fda122b514b64a41d455.php:850
-#, fuzzy
 msgid "Select mailing method..."
 msgstr "Selecteer e-mail methode..."
 
@@ -2847,7 +2842,6 @@ msgstr "Templates voor Experimenten"
 #: cache/twig/f5/f50e687678c758b5df3c368276c9df3bda9d7f1ce04c9f28e9fe573764d519b3.php:193
 #: cache/twig/c8/c861f47bbf0b92b3cdcea996a8dd48d28d6aedcac5129f04be3c3cb9b4f1c674.php:198
 #: cache/twig/17/17289f125ed96f8d6beacbe00c4a4371419b6f2264116b4f18b1addf62059fc1.php:120
-#, fuzzy
 msgid "Import"
 msgstr "Importeer"
 
@@ -3178,7 +3172,7 @@ msgstr "Geen templates van andere gebruikers van het team weer te geven!"
 #: cache/twig/0e/0e67c62cc1d3141ea01a3b4156c0e1db61106288e53d417e20f076340622ecab.php:543
 #: cache/twig/28/288881a3c0ddb875d3b45be9f9a21a5d33171566dbb821dbb15b7e227cf494c0.php:543
 msgid "Send an email to all team members"
-msgstr "Zend een e-mail naar alle teamleden."
+msgstr "Zend een e-mail naar alle teamleden"
 
 #: cache/twig/88/886bdc3787345ba932cf7bae960d058527e25244fa689b52b6604e8999570e65.php:554
 #: cache/twig/0e/0e67c62cc1d3141ea01a3b4156c0e1db61106288e53d417e20f076340622ecab.php:554

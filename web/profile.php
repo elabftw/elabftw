@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Models\Experiments;
+use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,12 +31,13 @@ try {
     $Entity = new Experiments($App->Users);
     $Entity->addFilter('experiments.userid', $App->Users->userData['userid']);
     $itemsArr = $Entity->read(false);
-    $count = \count($itemsArr);
+    $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status
     // see https://developers.google.com/chart/interactive/docs/reference?csw=1#datatable-class
     $UserStats = new UserStats($App->Users, $count);
     $UserStats->makeStats();
+    $UsersHelper = new UsersHelper();
     $stats = array();
     // columns
     $stats['cols'] = array(
@@ -57,6 +60,7 @@ try {
 
     $template = 'profile.html';
     $renderArr = array(
+        'UsersHelper' => $UsersHelper,
         'UserStats' => $UserStats,
         'colorsJson' => $colorsJson,
         'statsJson' => $statsJson,

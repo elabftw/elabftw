@@ -6,8 +6,14 @@
     <i class='fas fa-user fa-lg mr-1 align-top'></i><h5 class='d-inline'>{{ 'Info'|trans }}</h5>
     <hr>
     <div>
-        <p>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</p>
-        <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
+      <h4>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</h4>
+      <!-- TEAM -->
+      <h5>{{ 'Member of:'|trans }}
+      {% for team in UsersHelper.getTeamsFromUserid(App.Users.userData.userid) %}
+        <span class='btn btn-secondary'>{{ team.name }}</span>
+      {% endfor %}
+      </h5>
+      <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
     </div>
 </section>
 

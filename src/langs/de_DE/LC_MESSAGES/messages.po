@@ -3658,7 +3658,7 @@ msgstr "Passwort vergessen?"
 #: cache/twig/c8/c8cc8ef0f4445634f976479d6077ed8870bdef1c16cb727ddc8f72e97aac6943.php:159
 #: cache/twig/3f/3f20e4a5a77566695eade437da4dbfbb0bd524b50f196aafad6a14158d8d3743.php:207
 msgid "Don't have an account? %sRegister%s now!"
-msgstr "Noch keinen Benutzer? Jetzt %registrieren%s!"
+msgstr "Noch keinen Benutzer? Jetzt %sregistrieren%s!"
 
 #: cache/twig/fe/fed9645e51b215e9899f07ff4ed13183130f7c2945db1d2673ee8d8e6263e1df.php:915
 msgid "From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags."

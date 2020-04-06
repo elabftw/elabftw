@@ -433,15 +433,16 @@ abstract class AbstractEntity
     }
 
     /**
-     * Set a limit for sql read. The limit is two times the wanted number of
+     * Set a limit for sql read. The limit is n times the wanted number of
      * displayed results so we can remove the ones without read access
+     * and still display enough of them
      *
      * @param int $num number of items to ignore
      * @return void
      */
     public function setLimit(int $num): void
     {
-        $num *= 2;
+        $num *= 10;
         $this->limit = 'LIMIT ' . (string) $num;
     }
 

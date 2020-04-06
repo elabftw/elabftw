@@ -77,7 +77,7 @@
         </form>
         <div class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user-circle fa-lg' style='font-size: 180%'></i></a>
-          <div class='dropdown-menu' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>Logged in as {{ App.Users.userData.firstname|default('Anonymous')|raw }}</h6>
+          <div class='dropdown-menu' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as'|trans }} {{ App.Users.userData.firstname|default('Anonymous')|raw }}</h6>
             {% if App.Session.has('auth') %}
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs'></i> {{ 'Settings'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user'></i> {{ 'My Profile'|trans }}</a>

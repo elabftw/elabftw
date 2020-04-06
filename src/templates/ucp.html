@@ -122,7 +122,7 @@
         <input id='pdf_sig' type='checkbox' name='pdf_sig'
           {{ App.Request.cookies.get('pdf_sig') == '1' ? " checked='checked'" }}
         />
-        <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)' }}</label>
+        <label for='pdf_sig'>{{ 'Enable french style signature block in pdf export (setting is only set for this browser)'|trans }}</label>
 
         </p>
     </section>

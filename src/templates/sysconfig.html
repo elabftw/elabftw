@@ -104,7 +104,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </select>
           <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
 
-          <h3>Registration and authentication configuration</h3>
+          <h3>{{ 'Registration and authentication configuration'|trans }}</h3>
 
           <label for='anon_users'>{{ 'Allow anonymous visitors to login and see Public experiments:'|trans }}</label>
           <select class='form-control col-md-4' name='anon_users' id='anon_users'>
@@ -181,9 +181,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
             {% for team in teamsArr %}
               {% set count = Teams.getStats(team.id) %}
-              <label for='teamName_{{ team.id }}'>Team Name</label>
+              <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
               <input data-id='{{ team.id }}' class='form-control col-md-3 custom-control-inline teamNameInput' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
-              <label for='teamOrgid_{{ team.id }}'>Team Organisation ID</label>
+              <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
               <input data-id='{{ team.id }}' class='form-control col-md-3 custom-control-inline teamNameInput' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
               <button data-id='{{ team.id }}' disabled id='teamsUpdateButton_{{ team.id }}' class='button btn btn-primary teamsUpdateButton'>
                   {{ 'Save'|trans }}
@@ -320,7 +320,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <select class='form-control col-md-4' id='smtp_encryption' name='smtp_encryption'>
           <option value='tls' {{ App.Config.configArr.smtp_encryption == 'tls' ? ' selected' }}>TLS</option>
           <option value='startssl' {{ App.Config.configArr.smtp_encryption == 'startssl' ? ' selected' }}>STARTSSL</option>
-          <option value='none' {{ App.Config.configArr.smtp_encryption == 'none' ? ' selected' }}>None</option>
+          <option value='none' {{ App.Config.configArr.smtp_encryption == 'none' ? ' selected' }}>{{ 'None'|trans }}</option>
         </select>
         <span class='smallgray'>{{ 'Probably TLS'|trans }}</span>
 

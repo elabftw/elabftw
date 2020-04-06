@@ -1,22 +1,22 @@
 <footer>
     <p class='footer-left'>
         <a class='elab-tooltip-top' style='color:#343434' href='https://twitter.com/elabftw'>
-            <span>Follow eLabFTW on Twitter!</span>
+          <span>{{ 'Follow eLabFTW on Twitter!'|trans }}</span>
             <i class='fab fa-twitter fa-lg'></i>
         </a>
 
         <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw'>
-            <span>Code repository on GitHub</span>
+          <span>{{ 'Code repository on GitHub'|trans }}</span>
             <i class='fab fa-github fa-lg'></i>
         </a>
 
         <a class='elab-tooltip-top' style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
-            <span>Join the discussion on Gitter</span>
+          <span>{{ 'Join the discussion on Gitter'|trans }}</span>
             <i class='fab fa-gitter fa-lg'></i>
         </a>
 
         <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw/issues/new/choose'>
-            <span>Report a bug</span>
+          <span>{{ 'Report a bug'|trans }}</span>
             <i class='fas fa-bug fa-lg'></i>
         </a>
 
@@ -30,7 +30,7 @@
 
                     {% if App.Users.readAllFromTeam(0)|length > 0 %}
                         <span class='badge badge-dark p-1'>{{ App.Users.readAllFromTeam(0)|length }}</span>
-                        <span class='sr-only'>Unconfirmed users</span>
+                        <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
                     {% endif %}
                 </a>
             {% endif %}

@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Filter;
 use Exception;
 
 $elabRoot = \dirname(__DIR__, 2);
@@ -47,9 +48,7 @@ try {
         $filename = $final_filename;
     } else {
         // we redo a check for filename
-        // IMPORTANT
-        // the replacing char needs to be a dot, so we keep the file extension at the end!
-        $filename = preg_replace('/[^A-Za-z0-9]/', '.', $_GET['name']);
+        $filename = Filter::forFilesystem($_GET['name']);
         if ($filename === '') {
             $filename = 'unnamed_file';
         }

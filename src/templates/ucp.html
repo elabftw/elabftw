@@ -49,6 +49,7 @@
           <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
           <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
           <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{{ 'Comment'|trans }}</option>
+          <option value='lastchange' {{ App.Users.userData.orderby == 'lastchange' ? ' selected' }}>{{ 'Last modified'|trans }}</option>
       </select>
 
       <label for='sort'>{{ 'Sort:'|trans }}</label>

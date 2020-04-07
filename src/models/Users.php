@@ -18,7 +18,9 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
+use function in_array;
 use PDO;
+use function setcookie;
 
 /**
  * Users
@@ -365,7 +367,7 @@ class Users
 
         // now make sure the new email is not already used by someone
         // it's okay if it's the same email as before though
-        if (\in_array($email, $emailsArr, true) && $email !== $this->userData['email']) {
+        if (in_array($email, $emailsArr, true) && $email !== $this->userData['email']) {
             throw new ImproperActionException('Email is already used by non archived user!');
         }
 
@@ -413,8 +415,8 @@ class Users
 
         // ORDER BY
         $new_orderby = null;
-        $whitelistOrderby = array(null, 'cat', 'date', 'title', 'comment');
-        if (isset($params['orderby']) && \in_array($params['orderby'], $whitelistOrderby, true)) {
+        $whitelistOrderby = array(null, 'cat', 'date', 'title', 'comment', 'lastchange');
+        if (isset($params['orderby']) && in_array($params['orderby'], $whitelistOrderby, true)) {
             $new_orderby = $params['orderby'];
         }
 
@@ -455,7 +457,7 @@ class Users
         // PDF format
         $new_pdf_format = 'A4';
         $formatsArr = array('A4', 'LETTER', 'ROYAL');
-        if (\in_array($params['pdf_format'], $formatsArr, true)) {
+        if (in_array($params['pdf_format'], $formatsArr, true)) {
             $new_pdf_format = $params['pdf_format'];
         }
 
@@ -480,9 +482,9 @@ class Users
         // Signature pdf
         // only use cookie here because it's temporary code
         if (isset($params['pdf_sig']) && $params['pdf_sig'] === 'on') {
-            \setcookie('pdf_sig', '1', time() + 2592000, '/', '', true, true);
+            setcookie('pdf_sig', '1', time() + 2592000, '/', '', true, true);
         } else {
-            \setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
+            setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
         }
 
         $sql = 'UPDATE users SET

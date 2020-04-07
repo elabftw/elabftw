@@ -365,10 +365,10 @@ class Tools
     public static function qFilter(array $query): string
     {
         $res = '';
-        foreach($query as $key => $value) {
+        foreach ($query as $key => $value) {
             // tags for instance are arrays
             if ($key === 'tags') {
-                foreach($value as $tag) {
+                foreach ($value as $tag) {
                     $res .= '&tags[]=' . $tag;
                 }
             } else {

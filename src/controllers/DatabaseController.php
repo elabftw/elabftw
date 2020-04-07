@@ -182,7 +182,7 @@ class DatabaseController extends AbstractEntityController
 
         if ($order === 'cat') {
             $this->Entity->order = 'items_types.id';
-        } elseif ($order === 'date' || $order === 'rating' || $order === 'title' || $order === 'id') {
+        } elseif ($order === 'date' || $order === 'rating' || $order === 'title' || $order === 'id' || $order === 'lastchange') {
             $this->Entity->order = 'items.' . $order;
         } elseif ($order === 'comment') {
             $this->Entity->order = 'items_comments.recent_comment';

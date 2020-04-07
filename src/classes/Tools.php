@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
+use function filter_var;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
 use Symfony\Component\HttpFoundation\Request;
@@ -375,6 +376,6 @@ class Tools
                 $res .= '&' . $key . '=' . $value;
             }
         }
-        return $res;
+        return filter_var($res, FILTER_SANITIZE_STRING);
     }
 }

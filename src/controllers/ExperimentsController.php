@@ -249,6 +249,9 @@ class ExperimentsController extends AbstractEntityController
             $itemsArr = $this->Entity->read($getTags);
         }
 
+        // store the query parameters in the Session
+        $this->App->Session->set('lastquery', $this->App->Request->query->all());
+
         $template = 'show.html';
 
         $renderArr = array(

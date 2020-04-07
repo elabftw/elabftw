@@ -66,4 +66,19 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(12, Tools::getLimitOptions(12)[1]);
         $this->assertEquals(52, Tools::getLimitOptions(52)[3]);
     }
+
+    public function testQFilter()
+    {
+        $input = array(
+            'tags' => array('some tag', 'another tag'),
+            'q' => '',
+            'cat' => '2',
+            'mode' => 'show',
+            'sort' => 'asc',
+            'order' => 'date',
+            'limit' => '15',
+        );
+        $output = '&tags[]=some tag&tags[]=another tag&q=&cat=2&mode=show&sort=asc&order=date&limit=15';
+        $this->assertEquals($output, Tools::qFilter($input));
+    }
 }

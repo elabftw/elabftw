@@ -9,7 +9,13 @@
 {% endif %}
 
 <!-- BACK TO LINK -->
-<a href='?mode=show'>
+{% if App.Session.has('lastquery') %}
+  {% set lastquery = App.Session.get('lastquery')|qFilter %}
+{% else %}
+  {% set lastquery = 'mode=show' %}
+{% endif %}
+
+<a href='?{{ lastquery }}'>
   <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'Back to listing'|trans }}
 </a>
 

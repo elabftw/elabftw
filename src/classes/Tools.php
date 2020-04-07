@@ -355,4 +355,26 @@ class Tools
         array_splice($limits, $place, 0, array($input));
         return $limits;
     }
+
+    /**
+     * Transform a query object in a query string
+     *
+     * @param array $query the query array given by Request
+     * @return string
+     */
+    public static function qFilter(array $query): string
+    {
+        $res = '';
+        foreach($query as $key => $value) {
+            // tags for instance are arrays
+            if ($key === 'tags') {
+                foreach($value as $tag) {
+                    $res .= '&tags[]=' . $tag;
+                }
+            } else {
+                $res .= '&' . $key . '=' . $value;
+            }
+        }
+        return $res;
+    }
 }

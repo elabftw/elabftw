@@ -222,6 +222,9 @@ class DatabaseController extends AbstractEntityController
         $this->Entity->setLimit($limit);
         // END PAGINATION
 
+        // store the query parameters in the Session
+        $this->App->Session->set('lastquery', $this->App->Request->query->all());
+
         $itemsArr = $this->Entity->read($getTags);
 
         $template = 'show.html';

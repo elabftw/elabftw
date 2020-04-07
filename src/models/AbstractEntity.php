@@ -19,6 +19,7 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
+use function explode;
 use PDO;
 
 /**
@@ -688,7 +689,7 @@ abstract class AbstractEntity
         if ($period === '') {
             $period = '15000101-30000101';
         }
-        list($from, $to) = \explode('-', $period);
+        list($from, $to) = explode('-', $period);
         $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND lastchange BETWEEN :from AND :to';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);

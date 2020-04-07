@@ -104,11 +104,6 @@ class ApiController implements ControllerInterface
             }
 
             if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
-                /*
-                if ($this->param === 'zip') {
-                    return $this->getZip();
-                }
-                 */
                 return $this->getEntity();
             }
             if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
@@ -304,6 +299,17 @@ class ApiController implements ControllerInterface
         return new JsonResponse($this->Entity->entityData);
     }
 
+    /**
+     * @api {get} /backupzip/[:period] Get backup zip
+     * @apiName GetBackupZip
+     * @apiGroup Backup
+     * @apiParam {String} period time period FROM-TO in the format YYYYMMDD-YYYMMDD (e.g. 20191129-20200501)
+     * @apiPermission Sysadmin
+     * @apiDescription Get a zip with the experiments from a time period, ordered by users, only the ones changed in the time period
+     * @apiExample {curl} Example usage:
+     * curl -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/backupzip/202000224-20200701" --output out.zip
+     * @apiSuccess {Binary} zip Zip file
+     */
     private function getBackupZip(): Response
     {
         // only let a sysadmin get that
@@ -318,22 +324,14 @@ class ApiController implements ControllerInterface
         return $Response;
     }
 
-    /*
-    private function getZip(): Response
-    {
-        // no permission check here so for the moment only let a sysadmin get that
-        // used for backups
-        if (!$this->Users->userData['is_sysadmin']) {
-            throw new IllegalActionException('Only a sysadmin can use this endpoint!');
-        }
-        $idList = $this->Entity->getIdFromLastchange($this->secondParam);
-        // MakeStreamZip requires a space separated string
-        $idList = implode(' ', $idList);
-        $Zip = new MakeStreamZip($this->Entity, $idList);
-        return new BinaryFileResponse($Zip->getZip());
-    }
+    /**
+     * @api {get} /bookable/ Get bookable items
+     * @apiName GetBookable
+     * @apiGroup Entity
+     * @apiDescription Get only the bookable items
+     * @apiExample {curl} Example usage:
+     * curl -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/bookable
      */
-
     private function getBookable(): Response
     {
         $this->Entity->addFilter('bookable', '1');

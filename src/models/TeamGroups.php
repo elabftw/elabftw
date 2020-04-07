@@ -67,8 +67,9 @@ class TeamGroups implements CrudInterface
     {
         $fullGroups = array();
 
-        $sql = 'SELECT id, name FROM team_groups';
+        $sql = 'SELECT DISTINCT id, name FROM team_groups CROSS JOIN users2teams ON (users2teams.teams_id = team_groups.team AND users2teams.teams_id = :team)';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $groups = $req->fetchAll();
@@ -77,8 +78,8 @@ class TeamGroups implements CrudInterface
         }
 
         $sql = "SELECT DISTINCT users.userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users CROSS JOIN users2team_groups
-            ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+            FROM users
+            CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
         $req = $this->Db->prepare($sql);
 
         foreach ($groups as $group) {

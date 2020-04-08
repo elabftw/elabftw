@@ -259,14 +259,16 @@ class Users
             $teamFilterSql = 'AND users2teams.teams_id = :team';
         }
 
-        $sql = "SELECT users.userid,
+        // NOTE: previously, the ORDER BY started with the team, but that didn't work
+        // with the DISTINCT, so it was removed.
+        $sql = "SELECT DISTINCT users.userid,
             users.firstname, users.lastname, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid " . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
+            ORDER BY users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
         if ($teamFilter) {

@@ -29,7 +29,8 @@ import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
-  $.ajaxSetup({
+    let type = 'experiments_templates';
+    $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }
@@ -70,6 +71,21 @@ $(document).ready(function() {
   $(document).on('click', '#import-from-file', function() {
     $('#import_tpl').toggle();
   });
+
+    // CAN READ/WRITE SELECT PERMISSION
+    $(document).on('change', '.permissionSelect', function() {
+        const value = $(this).val();
+        const rw = $(this).data('rw');
+        $.post('app/controllers/EntityAjaxController.php', {
+            updatePermissions: true,
+            rw: rw,
+            id: $('.badgetabactive').data('id'),
+            type: type,
+            value: value,
+        }).done(function(json) {
+            notif(json);
+        });
+    });
 
   // input to upload an elabftw.tpl file
   $('#import_tpl').hide().on('change', function() {

@@ -62,15 +62,28 @@ class Templates extends AbstractEntity
         if ($userid === null) {
             $userid = $this->Users->userData['userid'];
         }
+
+        $canread = 'team';
+        $canwrite = 'user';
+
+        if ($this->Users->userData['default_read'] !== null) {
+            $canread = $this->Users->userData['default_read'];
+        }
+        if ($this->Users->userData['default_write'] !== null) {
+            $canwrite = $this->Users->userData['default_write'];
+        }
+
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $body = Filter::body($body);
 
-        $sql = 'INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)';
+        $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
         $req->bindParam('userid', $userid, PDO::PARAM_INT);
+        $req->bindParam('canread', $canread, PDO::PARAM_STR);
+        $req->bindParam('canwrite', $canwrite, PDO::PARAM_STR);
         $this->Db->execute($req);
     }
 
@@ -184,14 +197,22 @@ class Templates extends AbstractEntity
         $sql = "SELECT experiments_templates.id,
             experiments_templates.body,
             experiments_templates.name,
+            experiments_templates.userid, /* added to use it for editing of templates*/
+            experiments_templates.canread, /* added this line to reuse in ucp.html to pre-select the visiblity option */
+            experiments_templates.canwrite,
+            users.show_team_template,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
             FROM experiments_templates
             LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
-            WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
-            AND experiments_templates.team = :team
+            WHERE
+            (experiments_templates.userid = :userid)
+            OR
+            (experiments_templates.team = :team AND experiments_templates.canread in ('team'))
+            OR
+            ( experiments_templates.canread not in ('user') AND experiments_templates.canread in ('public','organization'))
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -204,6 +225,26 @@ class Templates extends AbstractEntity
         }
         return $res;
     }
+
+    /*  To get the steps related to the specific template    */
+
+    public function readTemplateSteps(string $templateID): array
+    {
+        $sql = "SELECT GROUP_CONCAT(body SEPARATOR '|') as steps , item_id FROM `experiments_templates_steps`
+                    where item_id ='$templateID'";
+
+        $req = $this->Db->prepare($sql);
+        if ($req->execute() !== true) {
+            throw new DatabaseErrorException('Error while executing SQL query.');
+        }
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
 
     /**
      * Get the body of the default experiment template

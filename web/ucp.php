@@ -34,7 +34,27 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readAll();
+    $templatesArr = $Templates->readFromTeam();
+
+    $filterTemplates = [];
+    $i=0;
+    while($i < sizeof($templatesArr)){
+        $templateSteps = $Templates->readTemplateSteps($templatesArr[$i]['id']);
+        if($App->Users->userData['show_team_template'] == 1){
+            $filterTemplates[$i] = $templatesArr[$i];
+            $filterTemplates[$i]['steps'] = $templateSteps[0]['steps'];
+        } else if($templatesArr[$i]['userid'] == $App->Users->userData['userid']
+                    || $templatesArr[$i]['userid'] == 0){
+            $filterTemplates[$i]= $templatesArr[$i];
+            $filterTemplates[$i]['steps'] = $templateSteps[0]['steps'];
+        }
+        $i++;
+    }
+
+    // TEAM GROUPS
+    // Added Visibility clause
+    $TeamGroups = new TeamGroups($App->Users);
+    $visibilityArr = $TeamGroups->getVisibilityList();
 
     $template = 'ucp.html';
     $renderArr = array(
@@ -42,7 +62,9 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
-        'templatesArr' => $templatesArr,
+        'templatesArr' => $filterTemplates,
+        'visibilityArr' => $visibilityArr, // Added Visibility
+
     );
 } catch (Exception $e) {
     $template = 'error.html';

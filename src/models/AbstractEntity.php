@@ -443,7 +443,7 @@ abstract class AbstractEntity
      */
     public function setLimit(int $num): void
     {
-        $num *= 10;
+        $num *= 20;
         $this->limit = 'LIMIT ' . (string) $num;
     }
 

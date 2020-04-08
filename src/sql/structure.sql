@@ -1068,9 +1068,14 @@ ALTER TABLE `users2teams`
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+-- schema 53
+    ALTER TABLE `users` ADD `show_team_template` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `show_team`;
+    ALTER TABLE `experiments_templates` ADD `canread` VARCHAR(255) NOT NULL DEFAULT 'team' AFTER `userid`,
+        ADD `canwrite` VARCHAR(255) NOT NULL DEFAULT 'user' AFTER `canread`;
 COMMIT;
-
-
+--
 --
 -- Constraints for table `users2team_groups`
 --

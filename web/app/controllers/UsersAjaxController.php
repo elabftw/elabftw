@@ -43,13 +43,14 @@ try {
             throw new IllegalActionException('Non admin user tried to validate user.');
         }
 
-        // we need Config to send email. TODO make better constructors so we don't have to worry about that
         $targetUser = new Users((int) $Request->request->get('userid'));
 
         // check we validate user of our team
-        if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
+        /* TODO
+        if (((int) $App->Users->userData['team'] !== (int) $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
             throw new IllegalActionException('User tried to validate user from other team.');
         }
+         */
 
         // all good, validate user
         $targetUser->validate();

@@ -229,7 +229,7 @@ class ExperimentsController extends AbstractEntityController
         $visibilityArr = $TeamGroups->getVisibilityList();
 
         $Templates = new Templates($this->Entity->Users);
-        $templatesArr = $Templates->readFromTeam();
+        $templatesArr = $Templates->readInclusive();
 
         $templatesStructureArr = [];
         $i = 0;

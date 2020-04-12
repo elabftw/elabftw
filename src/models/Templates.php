@@ -197,54 +197,80 @@ class Templates extends AbstractEntity
         $sql = "SELECT experiments_templates.id,
             experiments_templates.body,
             experiments_templates.name,
-            experiments_templates.userid, /* added to use it for editing of templates*/
-            experiments_templates.canread, /* added this line to reuse in ucp.html to pre-select the visiblity option */
-            experiments_templates.canwrite,
-            users.show_team_template,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
             FROM experiments_templates
             LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
-            WHERE
-            (experiments_templates.userid = :userid)
-            OR
-            (experiments_templates.team = :team AND experiments_templates.canread in ('team'))
-            OR
-            ( experiments_templates.canread not in ('user') AND experiments_templates.canread in ('public','organization'))
+            WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
+            AND experiments_templates.team = :team
             GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
+
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
         }
+
         return $res;
     }
 
-    /*  To get the steps related to the specific template    */
-
-    public function readTemplateSteps(string $templateID): array
+    /*
+     * Read all the templates in the experiment_templates table including the currentuser
+     *  and default template ( userid = 0 )
+     */
+    public function readInclusive(): array
     {
-        $sql = "SELECT GROUP_CONCAT(body SEPARATOR '|') as steps , item_id FROM `experiments_templates_steps`
-                    where item_id ='$templateID'";
+
+        if (!$this->Users->userData['show_team_template']) {
+            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
+        }
+
+        $sql = "SELECT DISTINCT experiments_templates.*,
+                GROUP_CONCAT(DISTINCT steps_t.body SEPARATOR '|') as steps,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+                GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,
+                GROUP_CONCAT(DISTINCT tags.id) as tags_id,
+                users.show_team_template
+                FROM experiments_templates
+                LEFT JOIN users ON (experiments_templates.userid = users.userid)
+                LEFT JOIN ( SELECT item_id AS id,body
+                                FROM experiments_templates_steps) AS steps_t
+                ON ( experiments_templates.id = steps_t.id)
+                LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
+                LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+                WHERE 1=1 ";
+
+        foreach ($this->filters as $filter) {
+            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
+        }
+
+        $sql .= "GROUP BY id ORDER BY experiments_templates.id ASC , steps ASC";
 
         $req = $this->Db->prepare($sql);
-        if ($req->execute() !== true) {
-            throw new DatabaseErrorException('Error while executing SQL query.');
-        }
+        $this->Db->execute($req);
+
 
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
         }
-        return $res;
-    }
 
+        // loop the array and only add the ones we can read to return to template
+        $finalArr = array();
+        foreach ($res as $item) {
+            $permissions = $this->getPermissions($item);
+            if ($permissions['read']) {
+                $finalArr[] = $item;
+            }
+        }
+        return $finalArr;
+    }
 
     /**
      * Get the body of the default experiment template

@@ -34,22 +34,7 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readFromTeam();
-
-    $filterTemplates = [];
-    $i=0;
-    while($i < sizeof($templatesArr)){
-        $templateSteps = $Templates->readTemplateSteps($templatesArr[$i]['id']);
-        if($App->Users->userData['show_team_template'] == 1){
-            $filterTemplates[$i] = $templatesArr[$i];
-            $filterTemplates[$i]['steps'] = $templateSteps[0]['steps'];
-        } else if($templatesArr[$i]['userid'] == $App->Users->userData['userid']
-                    || $templatesArr[$i]['userid'] == 0){
-            $filterTemplates[$i]= $templatesArr[$i];
-            $filterTemplates[$i]['steps'] = $templateSteps[0]['steps'];
-        }
-        $i++;
-    }
+    $templatesArr = $Templates->readInclusive();
 
     // TEAM GROUPS
     // Added Visibility clause
@@ -62,7 +47,7 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
-        'templatesArr' => $filterTemplates,
+        'templatesArr' => $templatesArr,
         'visibilityArr' => $visibilityArr, // Added Visibility
 
     );

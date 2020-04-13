@@ -356,7 +356,7 @@
 
     {% for template in templatesArr %}
       <div class='subdivhandle' id='subtab_{{ template.id }}div'>
-        {% if template.canwrite != 'user' or template.userid == App.Users.userData.userid %}
+        {% if template.isWritable %}
         <!-- TAGS -->
         <i class='fas fa-tags'></i>
         <label>{{ 'Tags'|trans }}</label>
@@ -407,7 +407,7 @@
         {% else %}
         <div class="badgetab">
           <h5 style="display: inline;">{{ template.name }}</h5>
-          <span style="float: right; color: #ff0000;"><i>This template is not editable</i></span>
+          <span class="tpl-noteditable"><i>This template is not editable</i></span>
           {% if template.tags|length > 0 %}
           <span class='tags'><i class='fas fa-tags'></i></span>
               {% set tagsIdArr = template.tags_id|split(',') %}
@@ -418,22 +418,53 @@
                 {% endfor %}
               {% endif %}
           <div class='template-spacing'>
-            <h6>Read: <span>{{ template.canread }}</span></h6>
-            <h6>Write: <span>{{ template.canwrite }}</span></h6>
-          </div>
-          <div id='body_view' class='txt'>{{ template.body|raw }}</div>
-          {% if template.steps|length > 0 %}
-          <h5 class='template-spacing steps underlined'>Steps</h5>
-          {% set stepsValueArr = template.steps|split('|') %}
-            {% for steps in stepsValueArr %}
-            <a class='steps text-primary'>{{ steps|raw }}</a>
+            {% if template.canread > 0 %}
+              {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
+                <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
+              {% endfor %}
+            {% else %}
+                <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ template.canread }}
+            {% endif %}
+
+            {% if template.canwrite > 0 %}
+            {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
+                <i class='fas fa-pen-alt' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
             {% endfor %}
-          {% endif %}
+            {% else %}
+                <i class='fas fa-pen-alt' title='{{ 'rVisibility'|trans }}'></i> {{ template.canwrite }}
+            {% endif %}
+          </div>
+          <h6></h6>
+          <div id='body_view' class='txt'>{{ template.body|raw }}</div>
+            <div class="row">
+              <div class="col-md-6">
+                {% if template.steps|length > 0 %}
+                  <h5 class='template-spacing steps underlined'>Steps</h5>
+                    {% set stepsValueArr = template.steps|split('|') %}
+                    {% for steps in stepsValueArr %}
+                      <ul>
+                        <li><a class='steps text-primary'>{{ steps|raw }}</a></li>
+                      </ul>
+                    {% endfor %}
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                {% if template.links|length > 0 %}
+                  <h5 class='template-spacing steps underlined'>Links</h5>
+                    {% set LinksValueArr = template.links|split('|') %}
+                    {% for links in LinksValueArr %}
+                      <ul>
+                        <li><a class='steps text-primary' href="database.php?mode=view&id={{ links }}">DB{{ links|raw }}</a></li>
+                      </ul>
+                    {% endfor %}
+                {% endif %}
+              </div>
+            </div>
         </div>
         {% endif %}
-</div>
-  {% endfor %}
-</div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 
 <!-- TAB 4 - API KEYS -->

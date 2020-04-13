@@ -981,3 +981,9 @@ input[type='color'] {
 .template-spacing {
   margin-top: 5px;
 }
+
+.tpl-noteditable {
+  color: $red;
+  float: right;
+  @extend .hover-danger;
+}

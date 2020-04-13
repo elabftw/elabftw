@@ -100,7 +100,7 @@
             <div class='dropdown-divider'></div>
             {% if templatesArr|length > 0 %}
               {% for canread, tpl in templatesArr %}
-              <h6 class="dropdown-header">{{canread|capitalize}} {{ 'templates'|trans }}</h6>
+              <h6 class="dropdown-header">{{canread}} {{ 'templates'|trans }}</h6>
                 {% for templates in tpl %}
                 <a href='?create=true&tpl={{ tpl.id }}'>
                   <li class='dropdown-item'>

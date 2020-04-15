@@ -316,10 +316,8 @@ abstract class AbstractEntity
             $this->tagFilter . ' ' .
             'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
 
-
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-
 
         $itemsArr = $req->fetchAll();
         if ($itemsArr === false) {
@@ -336,7 +334,6 @@ abstract class AbstractEntity
                 $finalArr[] = $item;
             }
         }
-
 
         // reduce the dimension of the array if we have only one item
         if (count($itemsArr) === 1 && !empty($this->id)) {

@@ -1,4 +1,3 @@
--- Schema 52
 START TRANSACTION;
     ALTER TABLE `users` ADD `show_team_template` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `show_team`;
     ALTER TABLE `experiments_templates` ADD `canread` VARCHAR(255) NOT NULL DEFAULT 'team' AFTER `userid`,

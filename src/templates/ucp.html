@@ -428,10 +428,10 @@
 
             {% if template.canwrite > 0 %}
             {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
-                <i class='fas fa-pen-alt' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
+                <i class='fas fa-pencil-alt' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
             {% endfor %}
             {% else %}
-                <i class='fas fa-pen-alt' title='{{ 'rVisibility'|trans }}'></i> {{ template.canwrite }}
+                <i class='fas fa-pencil-alt' title='{{ 'rVisibility'|trans }}'></i> {{ template.canwrite }}
             {% endif %}
           </div>
           <h6></h6>

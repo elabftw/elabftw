@@ -317,11 +317,9 @@ abstract class AbstractEntity
             'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
 
 
-
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
-        //var_dump($sql);
 
         $itemsArr = $req->fetchAll();
         if ($itemsArr === false) {
@@ -333,15 +331,12 @@ abstract class AbstractEntity
         // loop the array and only add the ones we can read to return to template
         $finalArr = array();
         foreach ($itemsArr as $item) {
-            //var_dump($item);
             $permissions = $this->getPermissions($item);
-            //var_dump($permissions);
             if ($permissions['read']) {
                 $finalArr[] = $item;
             }
         }
 
-        //var_dump($finalArr);
 
         // reduce the dimension of the array if we have only one item
         if (count($itemsArr) === 1 && !empty($this->id)) {

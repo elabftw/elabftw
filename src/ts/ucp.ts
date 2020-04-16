@@ -29,8 +29,8 @@ import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
-    let type = 'experiments_templates';
-    $.ajaxSetup({
+  let type = 'experiments_templates';
+  $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }

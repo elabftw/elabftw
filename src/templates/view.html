@@ -184,14 +184,19 @@
 
   {% include('steps-links-view.html') %}
 
-  {% if Entity.type == 'experiments' %}
-      <!-- eLabID -->
-      <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
-  {% endif %}
+  <div class='row'>
+    <div class='col-6'>
+      <!-- SHOW LAST MOD -->
+      <p>{{ 'Last modified by %s (%s)'|trans|format(Entity.entityData.fullname|raw, Entity.entityData.lastchange) }}</p>
+    </div>
+    <div class='col-6'>
 
-  <!-- SHOW LAST MOD -->
-  <p>{{ 'Last modified by %s (%s)'|trans|format(Entity.entityData.fullname|raw, Entity.entityData.lastchange) }}</p>
-
+    {% if Entity.type == 'experiments' %}
+        <!-- eLabID -->
+        <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
+    {% endif %}
+    </div>
+  </div>
 
 </section>
 

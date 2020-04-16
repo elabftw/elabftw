@@ -189,10 +189,8 @@
       <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</p>
   {% endif %}
 
-  {% if Entity.type == 'items' %}
-      <!-- SHOW USER -->
-      <p>{{ 'Last modified by'|trans }} {{ Entity.entityData.fullname|raw }}</p>
-  {% endif %}
+  <!-- SHOW LAST MOD -->
+  <p>{{ 'Last modified by %s (%s)'|trans|format(Entity.entityData.fullname|raw, Entity.entityData.lastchange) }}</p>
 
 
 </section>

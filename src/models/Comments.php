@@ -64,9 +64,9 @@ class Comments implements CrudInterface
         $req->bindParam(':comment', $comment);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
-        $this->alertOwner();
-
         $this->Db->execute($req);
+
+        $this->alertOwner();
 
         return $this->Db->lastInsertId();
     }

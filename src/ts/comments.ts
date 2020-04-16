@@ -22,11 +22,8 @@ const Comments = {
       id: id,
     }).done(function(json) {
       notif(json);
-      if (json.res) {
-        $('#comment_container').load('?mode=view&id=' + id + ' #comment');
-      } else {
-        (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = false;
-      }
+      $('#comment_container').load('?mode=view&id=' + id + ' #comment');
+      (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = false;
     });
   },
   destroy: function(commentId: string): void {

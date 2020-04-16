@@ -19,6 +19,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Exception;
+use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -75,6 +76,14 @@ try {
     if ($Request->request->has('destroy')) {
         $Entity->Comments->destroy((int) $Request->request->get('id'));
     }
+} catch (Swift_TransportException $e) {
+    // for swift error, don't display error to user as it might contain sensitive information
+    // but log it and display general error. See #841
+    $App->Log->error('', array('exception' => $e));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => _('Error sending email'),
+    ));
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,

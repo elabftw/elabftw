@@ -27,9 +27,7 @@
           <label for='canread_select'>{{ 'Visibility'|trans }}</label>
           <select id='canread_select' class='permissionSelect form-control' data-rw='read'>
             {% for key, value in visibilityArr %}
-            <option value='{{ key }}'
-                    {{ Entity.entityData.canread == key ? ' selected' }}
-            >{{ value|trans }}</option>
+            <option value='{{ key }}'>{{ value|trans }}</option>
             {% endfor %}
           </select>
           <!-- CAN WRITE -->
@@ -37,9 +35,7 @@
           <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
           <select id='canwrite_select' class='permissionSelect form-control' data-rw='write'>
             {% for key, value in visibilityArr %}
-            <option value='{{ key }}'
-                    {{ Entity.entityData.canwrite == key ? ' selected' }}
-            >{{ value|trans }}</option>
+            <option value='{{ key }}'>{{ value|trans }}</option>
             {% endfor %}
           </select>
         </div>
@@ -380,7 +376,7 @@
             <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
             <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
             <!-- MANAGE PERMISSIONS -->
-            <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-rw="{{ template.canread }}" data-wr="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
           </div>
         </div>
           <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>

@@ -86,6 +86,15 @@ $(document).ready(function() {
         });
     });
 
+
+    // select the already selected permission for templates
+    $(document).on('click', '.modalToggle', function() {
+        const read = $(this).data('rw');
+        const write = $(this).data('wr');
+        $("#canread_select option[value='" + read +"']").prop("selected",true);
+        $("#canwrite_select option[value='" + write +"']").prop("selected",true);
+    });
+
   // input to upload an elabftw.tpl file
   $('#import_tpl').hide().on('change', function() {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');

@@ -204,6 +204,8 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
+  `canread` varchar(255) NOT NULL,
+  `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -551,6 +553,7 @@ CREATE TABLE `users` (
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `show_team_template` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
@@ -1068,13 +1071,9 @@ ALTER TABLE `users2teams`
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-
--- schema 53
-    ALTER TABLE `users` ADD `show_team_template` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `show_team`;
-    ALTER TABLE `experiments_templates` ADD `canread` VARCHAR(255) NOT NULL DEFAULT 'team' AFTER `userid`,
-        ADD `canwrite` VARCHAR(255) NOT NULL DEFAULT 'user' AFTER `canread`;
 COMMIT;
+
+
 --
 --
 -- Constraints for table `users2team_groups`

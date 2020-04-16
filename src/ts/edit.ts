@@ -62,7 +62,7 @@ Dropzone.options.elabftwDropzone = {
   // i18n message to user
   dictDefaultMessage: $('#info').data('upmsg'),
   maxFilesize: $('#info').data('maxsize'), // MB
-  timeout: 900000,
+  timeout: 300000,
   headers: {
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   },
@@ -76,7 +76,7 @@ Dropzone.options.elabftwDropzone = {
     });
 
     // once it is done
-    this.on('complete', function(answer: any) {
+    this.on('complete', function(answer: any) { 
       // check the answer we get back from app/controllers/EntityController.php
       const json = JSON.parse(answer.xhr.responseText);
       notif(json);
@@ -84,6 +84,15 @@ Dropzone.options.elabftwDropzone = {
       if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
         $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
           displayMolFiles();
+	var dropZone = Dropzone.forElement('#elabftw-dropzone');
+	
+	// Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
+	  if (typeof dropZone.tiny_image_success !== 'undefined' && dropZone.tiny_image_success !== null) {
+   		var url = $('#uploadsDiv').children().last().find('img').attr('src');
+		url = url.substring(0, url.length-7);
+		dropZone.tiny_image_success(url);
+		dropZone.tiny_image_success = null;
+      		}
         });
       }
     });
@@ -370,9 +379,16 @@ $(document).ready(function() {
     skin_url: 'app/css/tinymce',
     plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
     pagebreak_separator: '<pagebreak>',
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+    toolbar1: 'undo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
+    images_reuse_filename: true,
+    paste_data_images: true,
+    images_upload_handler: function (blobInfo, success, failure) {
+	var dropZone = Dropzone.forElement('#elabftw-dropzone');
+	dropZone.addFile(blobInfo.blob());
+	dropZone.tiny_image_success = success;
+},
     content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [
       {text: 'Bash', value: 'bash'},

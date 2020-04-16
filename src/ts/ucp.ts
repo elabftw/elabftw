@@ -29,7 +29,6 @@ import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
-  let type = 'experiments_templates';
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -80,7 +79,7 @@ $(document).ready(function() {
             updatePermissions: true,
             rw: rw,
             id: $('.badgetabactive').data('id'),
-            type: type,
+            type: 'experiments_templates',
             value: value,
         }).done(function(json) {
             notif(json);

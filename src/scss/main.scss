@@ -977,9 +977,3 @@ input[type='color'] {
 .input-border {
     border: 1px solid #ced4da;
 }
-
-.tpl-noteditable {
-  color: $red;
-  float: right;
-  @extend .hover-danger;
-}

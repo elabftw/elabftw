@@ -407,7 +407,7 @@
         {% else %}
         <div class="badgetab">
           <h5 style="display: inline;">{{ template.name }}</h5>
-          <span class="tpl-noteditable"><i>This template is not editable</i></span>
+          {{ 'This template is not editable'|trans|msg('ok', false) }}
           {% if template.tags|length > 0 %}
           <span class='tags'><i class='fas fa-tags'></i></span>
               {% set tagsIdArr = template.tags_id|split(',') %}

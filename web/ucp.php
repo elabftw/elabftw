@@ -48,8 +48,7 @@ try {
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr,
-        'visibilityArr' => $visibilityArr, // Added Visibility
-
+        'visibilityArr' => $visibilityArr,
     );
 } catch (Exception $e) {
     $template = 'error.html';

@@ -417,7 +417,7 @@
                      <a class='tag' href=''>{{ tag|raw }}</a>
                 {% endfor %}
               {% endif %}
-          <div class='template-spacing'>
+          <div class='mt-2'>
             {% if template.canread > 0 %}
               {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
                 <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
@@ -439,7 +439,7 @@
             <div class="row">
               <div class="col-md-6">
                 {% if template.steps|length > 0 %}
-                  <h5 class='template-spacing steps underlined'>Steps</h5>
+                  <h5 class='mt-2 steps underlined'>Steps</h5>
                     {% set stepsValueArr = template.steps|split('|') %}
                     {% for steps in stepsValueArr %}
                       <ul>
@@ -450,7 +450,7 @@
               </div>
               <div class="col-md-6">
                 {% if template.links|length > 0 %}
-                  <h5 class='template-spacing steps underlined'>Links</h5>
+                  <h5 class='mt-2 steps underlined'>Links</h5>
                     {% set LinksValueArr = template.links|split('|') %}
                     {% for links in LinksValueArr %}
                       <ul>

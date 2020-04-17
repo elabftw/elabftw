@@ -62,7 +62,7 @@ Dropzone.options.elabftwDropzone = {
   // i18n message to user
   dictDefaultMessage: $('#info').data('upmsg'),
   maxFilesize: $('#info').data('maxsize'), // MB
-  timeout: 300000,
+  timeout: 900000,
   headers: {
     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
   },
@@ -383,7 +383,7 @@ $(document).ready(function() {
     skin_url: 'app/css/tinymce',
     plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
     pagebreak_separator: '<pagebreak>',
-    toolbar1: 'undo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
+    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
     images_reuse_filename: true,

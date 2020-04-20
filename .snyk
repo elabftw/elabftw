@@ -6,6 +6,10 @@ ignore:
     - 3dmol > gulp-cli > yargs > yargs-parser:
         reason: not affected
         expires: '2020-04-24T16:00:02.676Z'
+  SNYK-JS-JQUERY-565129:
+    - jquery:
+        reason: waiting for new patch because 3.5.0 has big bug
+        expires: '2020-05-20T14:03:40.669Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-HTTPSPROXYAGENT-469131:

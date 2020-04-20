@@ -1,52 +1,56 @@
 <footer>
-    <p class='footer-left'>
-        <a class='elab-tooltip-top' style='color:#343434' href='https://twitter.com/elabftw'>
-          <span>{{ 'Follow eLabFTW on Twitter!'|trans }}</span>
-            <i class='fab fa-twitter fa-lg'></i>
+  <p class='footer-left'>
+    <a class='elab-tooltip-top' style='color:#343434' href='https://twitter.com/elabftw'>
+      <span>{{ 'Follow eLabFTW on Twitter!'|trans }}</span>
+        <i class='fab fa-twitter fa-lg'></i>
+    </a>
+
+    <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw'>
+      <span>{{ 'Code repository on GitHub'|trans }}</span>
+        <i class='fab fa-github fa-lg'></i>
+    </a>
+
+    <a class='elab-tooltip-top' style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
+      <span>{{ 'Join the discussion on Gitter'|trans }}</span>
+        <i class='fab fa-gitter fa-lg'></i>
+    </a>
+
+    <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw/issues/new/choose'>
+      <span>{{ 'Report a bug'|trans }}</span>
+        <i class='fas fa-bug fa-lg'></i>
+    </a>
+
+    <span>
+      {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}
+        <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
+      {% endif %}
+
+      {% if App.Session.has('auth') and (App.Session.get('is_admin') == 1) %}
+        <a href='admin.php'>{{ 'Admin panel'|trans }}
+
+          {% if App.Users.readAllFromTeam(0)|length > 0 %}
+            <span class='badge badge-dark p-1'>{{ App.Users.readAllFromTeam(0)|length }}</span>
+            <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
+          {% endif %}
         </a>
+      {% endif %}
 
-        <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw'>
-          <span>{{ 'Code repository on GitHub'|trans }}</span>
-            <i class='fab fa-github fa-lg'></i>
-        </a>
+      {% if App.Session.has('auth') %}
+        <a href='ucp.php'>{{ 'User panel'|trans }}</a>
+      {% endif %}
+    </span>
+  </p>
 
-        <a class='elab-tooltip-top' style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
-          <span>{{ 'Join the discussion on Gitter'|trans }}</span>
-            <i class='fab fa-gitter fa-lg'></i>
-        </a>
-
-        <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw/issues/new/choose'>
-          <span>{{ 'Report a bug'|trans }}</span>
-            <i class='fas fa-bug fa-lg'></i>
-        </a>
-
-        <span>
-            {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}
-                <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
-            {% endif %}
-
-            {% if App.Session.has('auth') and (App.Session.get('is_admin') == 1) %}
-                <a href='admin.php'>{{ 'Admin panel'|trans }}
-
-                    {% if App.Users.readAllFromTeam(0)|length > 0 %}
-                        <span class='badge badge-dark p-1'>{{ App.Users.readAllFromTeam(0)|length }}</span>
-                        <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
-                    {% endif %}
-                </a>
-            {% endif %}
-        </span>
-    </p>
-
-    <p class='footer-right'>
-        {{ 'Powered by'|trans }}
-        <a href='https://www.elabftw.net'>eLabFTW</a><br>
-            {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
-        {% if App.Config.configArr.debug %}
-            ({{ App.Db.getNumberOfQueries }} SQL)
-            <br>{{ 'Memory usage:'|trans }}
-            {{ App.getMemoryUsage|formatBytes }} ({{ App.getMemoryUsage }} {{ 'bytes'|trans }})
-        {% endif %}
-    </p>
+  <p class='footer-right'>
+    {{ 'Powered by'|trans }}
+    <a href='https://www.elabftw.net'>eLabFTW</a><br>
+        {{ 'Page generated in'|trans }} {{ App.getGenerationTime }} {{ 'seconds'|trans }}
+    {% if App.Config.configArr.debug %}
+        ({{ App.Db.getNumberOfQueries }} SQL)
+        <br>{{ 'Memory usage:'|trans }}
+        {{ App.getMemoryUsage|formatBytes }} ({{ App.getMemoryUsage }} {{ 'bytes'|trans }})
+    {% endif %}
+  </p>
 </footer>
 
 </div><!-- end container -->

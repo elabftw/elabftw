@@ -14,6 +14,8 @@ use Elabftw\Models\Config;
 use function filter_var;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -67,7 +69,10 @@ class Tools
      */
     public static function md2html(string $md): string
     {
-        $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42));
+        $environment = Environment::createCommonMarkEnvironment();
+        $environment->addExtension(new GithubFlavoredMarkdownExtension());
+
+        $converter = new CommonMarkConverter(array('allow_unsafe_links' => false, 'max_nesting_level' => 42), $environment);
         return \trim($converter->convertToHtml($md), "\n");
     }
 

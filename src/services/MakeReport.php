@@ -70,6 +70,7 @@ class MakeReport
             'archived',
             'last_login',
             'full_name',
+            'team(s)',
             'diskusage_in_bytes',
             'diskusage_formatted',
             'exp_total',
@@ -84,7 +85,10 @@ class MakeReport
     protected function getRows(): array
     {
         $allUsers = $this->Teams->Users->readFromQuery('');
+        $UsersHelper = new UsersHelper();
         foreach ($allUsers as $key => $user) {
+            // get the teams of user
+            $teams = implode(',', $UsersHelper->getTeamsNameFromUserid((int) $user['userid']));
             // get disk usage for all uploaded files
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
@@ -93,6 +97,7 @@ class MakeReport
             $itemsArr = $Entity->read(false);
             $count = \count($itemsArr);
 
+            $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
             $allUsers[$key]['exp_total'] = $count;

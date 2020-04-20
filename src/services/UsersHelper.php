@@ -82,6 +82,22 @@ class UsersHelper
     }
 
     /**
+     * Get teams name from a userid
+     *
+     * @param int $userid
+     * @return array
+     */
+    public function getTeamsNameFromUserid(int $userid): array
+    {
+        $teams = $this->getTeamsFromUserid($userid);
+        $teamsArr = array();
+        foreach ($teams as $team) {
+            $teamsArr[] = $team['name'];
+        }
+        return $teamsArr;
+    }
+
+    /**
      * Return the group int that will be assigned to a new user in a team
      * 1 = sysadmin if it's the first user ever
      * 2 = admin for first user in a team

@@ -40,4 +40,9 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $body = \str_repeat('a', 4120001);
         Filter::body($body);
     }
+
+    public function testForFilesystem()
+    {
+        $this->assertEquals('blah', Filter::forFilesystem('=blah/'));
+    }
 }

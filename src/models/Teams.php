@@ -168,8 +168,8 @@ class Teams implements CrudInterface
         $addToTeams = array_diff($teamIdArr, $currentTeams);
         $rmFromTeams = array_diff($currentTeams, $teamIdArr);
 
-        $this->rmUserFromTeams($userid, $rmFromTeams);
         $this->addUserToTeams($userid, $addToTeams);
+        $this->rmUserFromTeams($userid, $rmFromTeams);
     }
 
     /**

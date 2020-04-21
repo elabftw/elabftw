@@ -21,8 +21,10 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
-          <input placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
-          <button class='button btn btn-primary' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+          <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+          <div class='text-center'>
+            <button class='button btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+          </div>
         </form>
       </div>
       <div class='modal-footer'>

@@ -14,7 +14,7 @@ $(document).ready(function() {
     if (password !== confirmPassword) {
       $('#checkPasswordMatchDiv').html('<p>' + $('#passwordMatch').data('not') + '</p>');
     } else {
-      $('#checkPasswordMatchDiv').html('<button class="button" type="submit" name="Submit">' + $('#passwordMatch').data('save') + '</button>');
+      $('#checkPasswordMatchDiv').html('<button class="button btn btn-primary" type="submit" name="Submit">' + $('#passwordMatch').data('save') + '</button>');
     }
   });
 });

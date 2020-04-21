@@ -212,7 +212,7 @@
           {% endif %}
 
           <div data-type='{{ Entity.type }}' id='bodyToggleImg_{{ item.id }}' class='bodyToggleImg clickable'>
-              <i class='align_right fas fa-plus-circle mr-1' title='Show more'></i>
+            <i class='align_right fas fa-plus-circle mr-1' title='{{ 'Show more'|trans }}'></i>
           </div>
           <p class='item-info'>
               <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' aria-label='Select' style='width:15px;vertical-align:-3px;' />

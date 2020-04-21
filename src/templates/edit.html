@@ -60,7 +60,7 @@
       <!-- MANAGE PERMISSIONS -->
       <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- SWITCH EDITOR -->
-      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt'></i> {{ 'Switch editor' }}</a>
+      <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
       {% if revNum > 0 %}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>

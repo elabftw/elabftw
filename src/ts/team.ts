@@ -10,23 +10,23 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-import '@fullcalendar/core/locales/ca';
-import '@fullcalendar/core/locales/de';
-import '@fullcalendar/core/locales/en-gb';
-import '@fullcalendar/core/locales/es';
-import '@fullcalendar/core/locales/fr';
-import '@fullcalendar/core/locales/it';
-import '@fullcalendar/core/locales/id';
-import '@fullcalendar/core/locales/ja';
-//import '@fullcalendar/core/locales/kr'
-import '@fullcalendar/core/locales/nl';
-import '@fullcalendar/core/locales/pl';
-import '@fullcalendar/core/locales/pt';
-import '@fullcalendar/core/locales/pt-br';
-import '@fullcalendar/core/locales/ru';
-import '@fullcalendar/core/locales/sk';
-import '@fullcalendar/core/locales/sl';
-import '@fullcalendar/core/locales/zh-cn';
+import caLocale from '@fullcalendar/core/locales/ca';
+import deLocale from '@fullcalendar/core/locales/de';
+import enLocale from '@fullcalendar/core/locales/en-gb';
+import esLocale from '@fullcalendar/core/locales/es';
+import frLocale from '@fullcalendar/core/locales/fr';
+import idLocale from '@fullcalendar/core/locales/id';
+import itLocale from '@fullcalendar/core/locales/it';
+import jaLocale from '@fullcalendar/core/locales/ja';
+import koLocale from '@fullcalendar/core/locales/ko'
+import nlLocale from '@fullcalendar/core/locales/nl';
+import plLocale from '@fullcalendar/core/locales/pl';
+import ptLocale from '@fullcalendar/core/locales/pt';
+import ptbrLocale from '@fullcalendar/core/locales/pt-br';
+import ruLocale from '@fullcalendar/core/locales/ru';
+import skLocale from '@fullcalendar/core/locales/sk';
+import slLocale from '@fullcalendar/core/locales/sl';
+import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
@@ -68,6 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     themeSystem: 'bootstrap',
     // i18n
+    // all available locales
+    locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
+    // selected locale
     locale: $('#info').data('lang'),
     defaultView: 'timeGridWeek',
     // allow selection of range

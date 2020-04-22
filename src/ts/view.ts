@@ -32,8 +32,9 @@ $(document).ready(function() {
     }).done(function(json) {
       notif(json);
       if (json.res) {
-        // change the lock icon
-        $('#lock').toggleClass('fa-lock-open').toggleClass('fa-lock');
+        // reload the page to change the icon and make the edit button disappear
+        // and fix the issue #1897
+        window.location.href = '?mode=view&id=' + id;
       }
     });
   });

@@ -32,7 +32,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 
 function schedulerCreate(start: string, end: string): void {
-  const title = prompt('Comment:');
+  const title = prompt($('#info').data('addacomment'));
   if (title) {
     // add it to SQL
     $.post('app/controllers/SchedulerController.php', {

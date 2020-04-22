@@ -18,7 +18,7 @@ import frLocale from '@fullcalendar/core/locales/fr';
 import idLocale from '@fullcalendar/core/locales/id';
 import itLocale from '@fullcalendar/core/locales/it';
 import jaLocale from '@fullcalendar/core/locales/ja';
-import koLocale from '@fullcalendar/core/locales/ko'
+import koLocale from '@fullcalendar/core/locales/ko';
 import nlLocale from '@fullcalendar/core/locales/nl';
 import plLocale from '@fullcalendar/core/locales/pl';
 import ptLocale from '@fullcalendar/core/locales/pt';

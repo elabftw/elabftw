@@ -39,7 +39,6 @@ module.exports = {
       'prismjs/components/prism-css.js',
       'prismjs/components/prism-fortran.js',
       'prismjs/components/prism-go.js',
-      'prismjs/components/prism-markup.js',
       'prismjs/components/prism-java.js',
       'prismjs/components/prism-javascript.js',
       'prismjs/components/prism-julia.js',

@@ -364,7 +364,6 @@ $(document).ready(function() {
       {text: 'CSS', value: 'css'},
       {text: 'Fortran', value: 'fortran'},
       {text: 'Go', value: 'go'},
-      {text: 'HTML/XML', value: 'markup'},
       {text: 'Java', value: 'java'},
       {text: 'JavaScript', value: 'javascript'},
       {text: 'Julia', value: 'julia'},

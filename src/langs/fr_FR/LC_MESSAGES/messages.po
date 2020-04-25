@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-22 14:57+0200\n"
+"POT-Creation-Date: 2020-04-25 18:41+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
@@ -618,6 +618,12 @@ msgstr "Conseil : vous pouvez utiliser '%' comme joker"
 msgid "Launch search"
 msgstr "Lancer la recherche"
 
+#: cache/twig/f8/f879af99faa1119587e7908dac5048aecda9881ea3d05d0ea15d68495c499826.php:392
+#: cache/twig/77/77a82a490f768712e5df4ede9f99d34a836d5cd41fe3692f0e4fea973999a1b2.php:91
+#: cache/twig/05/0576f5c4f9b9dbc1134d2d7dcca549601ba5f308c1b1cc9745acb2fb28dc7911.php:91
+msgid "Clear all"
+msgstr "Effacer tout"
+
 #: cache/twig/21/21eb472c57cd821a1a764f85176463139204e652065390e226d75bff4cd0dc6f.php:77
 #: cache/twig/8d/8d8d9619f218c0bca70ebc9f79aabb5b2cf7a56b26ac0db3478991169c5547f6.php:77
 msgid "Edit permissions"
@@ -836,11 +842,6 @@ msgstr "Todoliste"
 #: cache/twig/05/0576f5c4f9b9dbc1134d2d7dcca549601ba5f308c1b1cc9745acb2fb28dc7911.php:50
 msgid "Add"
 msgstr "Ajouter"
-
-#: cache/twig/77/77a82a490f768712e5df4ede9f99d34a836d5cd41fe3692f0e4fea973999a1b2.php:91
-#: cache/twig/05/0576f5c4f9b9dbc1134d2d7dcca549601ba5f308c1b1cc9745acb2fb28dc7911.php:91
-msgid "Clear all"
-msgstr "Effacer tout"
 
 #: cache/twig/0e/0e5573d973749d5139ce07236914a6a9517320275fda0d5a3d52f337d2d8544c.php:54
 #: cache/twig/a3/a3c30216424db37fa2d72e6c858b60a917f3dfbf1cdbc90ba7b0fdcb2110194e.php:54

@@ -74,7 +74,7 @@ trait TwigTrait
         $TwigEnvironment->addFunction($limitOptions);
 
         // i18n for twig
-        $TwigEnvironment->addExtension(new \Twig_Extensions_Extension_I18n());
+        $TwigEnvironment->addExtension(new \Twig\Extensions\I18nExtension());
 
         // add the version as a global var so we can have it for the ?v=x.x.x for js files
         $ReleaseCheck = new ReleaseCheck($config);

@@ -3,6 +3,7 @@ parameters:
   sets:
     - 'code-quality'
     - 'php73'
+    - 'twig-underscore-to-namespace'
   exclude_rectors:
     - Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector
     - Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector

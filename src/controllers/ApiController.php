@@ -183,7 +183,7 @@ class ApiController implements ControllerInterface
         $this->id = $id;
 
         // assign the endpoint (experiments, items, uploads, items_types, status)
-        $this->endpoint = array_shift($args) ?? '';
+        $this->endpoint = array_shift($args);
         $this->param = array_shift($args) ?? '';
 
         // verify the key and load user info

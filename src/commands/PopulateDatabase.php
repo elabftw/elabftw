@@ -20,6 +20,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
+use function is_string;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -67,6 +68,10 @@ class PopulateDatabase extends Command
 
         // read the yaml config file
         $file = $input->getArgument('file');
+        if (!is_string($file)) {
+            $output->writeln('Error parsing the file path!');
+            return 1;
+        }
         try {
             $yaml = Yaml::parseFile($file);
         } catch (ParseException $e) {
@@ -129,6 +134,9 @@ class PopulateDatabase extends Command
             $firstname = $user['firstname'] ?? $Faker->firstName;
             $lastname = $user['lastname'] ?? $Faker->lastName;
             $password = $user['password'] ?? $input->getOption('password') ?? self::DEFAULT_PASSWORD;
+            if (!is_string($password)) {
+                $password = self::DEFAULT_PASSWORD;
+            }
             $email = $user['email'] ?? $Faker->safeEmail;
 
             $userid = $Users->create($email, array($user['team']), $firstname, $lastname, $password);

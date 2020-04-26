@@ -199,7 +199,10 @@ class Email
      * Fetch the email(s) of the admin(s) for a team
      *
      * @param int $team
-     * @return array
+     *
+     * @return scalar[]
+     *
+     * @psalm-return array<scalar, scalar>
      */
     private function getAdminEmail($team): array
     {

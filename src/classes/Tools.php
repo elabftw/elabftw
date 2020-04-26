@@ -378,7 +378,7 @@ class Tools
                     $res .= '&tags[]=' . $tag;
                 }
             } else {
-                $res .= '&' . $key . '=' . $value;
+                $res .= '&' . (string) $key . '=' . $value;
             }
         }
         return filter_var($res, FILTER_SANITIZE_STRING);

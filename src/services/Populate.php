@@ -53,12 +53,12 @@ class Populate
             $Entity->update($Faker->sentence, $Faker->dateTimeBetween('-5 years')->format('Ymd'), $Faker->realText(1000));
 
             // lock 10% of experiments (but not the first one because it is used in tests)
-            if ($Faker->optional(0.9)->randomDigit === null && $i > 1) {
+            if ($Faker->randomDigit > 8 && $i > 1) {
                 $Entity->toggleLock();
             }
 
             // change the visibility
-            if ($Faker->optional(0.9)->randomDigit === null) {
+            if ($Faker->randomDigit > 8) {
                 $Entity->updatePermissions('read', $Faker->randomElement(array('organization', 'public', 'user')));
                 $Entity->updatePermissions('write', $Faker->randomElement(array('organization', 'public', 'user')));
             }

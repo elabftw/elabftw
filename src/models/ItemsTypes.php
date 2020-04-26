@@ -98,7 +98,7 @@ class ItemsTypes extends AbstractCategory
         if ($res === false || $res === null) {
             return '';
         }
-        return $res;
+        return (string) $res;
     }
 
     /**
@@ -143,7 +143,7 @@ class ItemsTypes extends AbstractCategory
         if ($res === false || $res === null) {
             return '';
         }
-        return $res;
+        return (string) $res;
     }
 
     /**

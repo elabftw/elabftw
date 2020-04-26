@@ -6,8 +6,10 @@ parameters:
     - 'twig-underscore-to-namespace'
     - 'psr4'
     - 'dead-code'
+    - 'phpstan'
   exclude_rectors:
     - Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector
     - Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector
     - Rector\SOLID\Rector\ClassMethod\UseInterfaceOverImplementationInConstructorRector
     - Rector\DeadCode\Rector\Concat\RemoveConcatAutocastRector
+    - Rector\PHPStan\Rector\Cast\RecastingRemovalRector

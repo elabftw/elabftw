@@ -122,7 +122,7 @@ class Status extends AbstractCategory
         if ($res === false || $res === null) {
             return '00FF00';
         }
-        return $res;
+        return (string) $res;
     }
 
     /**

@@ -287,6 +287,9 @@ class Auth
         $req->bindParam(':id', $this->userData['usergroup'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $group = $req->fetch(PDO::FETCH_ASSOC);
+        if (!is_array($group)) {
+            return;
+        }
 
         $this->Session->set('is_admin', $group['is_admin']);
         $this->Session->set('is_sysadmin', $group['is_sysadmin']);

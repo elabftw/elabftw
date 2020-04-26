@@ -20,6 +20,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use function explode;
+use function is_bool;
 use PDO;
 
 /**
@@ -164,7 +165,7 @@ abstract class AbstractEntity
             $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
             $this->Db->execute($req);
             $firstname = $req->fetchColumn();
-            if ($firstname === false || $firstname === null) {
+            if (is_bool($firstname) || $firstname === null) {
                 throw new ImproperActionException('Could not find the firstname of the locker!');
             }
             throw new ImproperActionException(

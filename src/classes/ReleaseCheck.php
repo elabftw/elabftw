@@ -65,7 +65,7 @@ class ReleaseCheck
             try {
                 $response = $this->get(self::URL_HTTP);
             } catch (RequestException $e) {
-                throw new ReleaseCheckException('Could not make request to server!', $e->getCode(), $e);
+                throw new ReleaseCheckException('Could not make request to server!', (int) $e->getCode(), $e);
             }
         }
 

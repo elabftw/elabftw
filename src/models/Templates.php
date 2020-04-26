@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
+use function is_bool;
 use PDO;
 
 /**
@@ -223,10 +224,10 @@ class Templates extends AbstractEntity
         $this->Db->execute($req);
 
         $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
+        if (is_bool($res) || $res === null) {
             return '';
         }
-        return $res;
+        return (string) $res;
     }
 
     /**

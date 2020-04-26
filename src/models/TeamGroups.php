@@ -148,7 +148,7 @@ class TeamGroups implements CrudInterface
         if ($res === false || $res === null) {
             return '';
         }
-        return $res;
+        return (string) $res;
     }
 
     /**

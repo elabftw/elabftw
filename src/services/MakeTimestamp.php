@@ -418,7 +418,7 @@ class MakeTimestamp extends AbstractMake
         try {
             return $client->request('POST', $this->stampParams['stampprovider'], $options);
         } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), $e->getCode(), $e);
+            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
         }
     }
 
@@ -523,7 +523,7 @@ class MakeTimestamp extends AbstractMake
         try {
             $this->runProcess(array('which', 'java'));
         } catch (ProcessFailedException $e) {
-            throw new ImproperActionException("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.", $e->getCode(), $e);
+            throw new ImproperActionException("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.", (int) $e->getCode(), $e);
         }
     }
 
@@ -550,7 +550,7 @@ class MakeTimestamp extends AbstractMake
             $Log->pushHandler(new ErrorLogHandler());
             $Log->error('', array(array('userid' => $this->Entity->Users->userData['userid']), array('Error', $e)));
             $msg = 'Could not validate the timestamp with java failsafe method. Maybe your java version is too old? Please report this bug on GitHub.';
-            throw new ImproperActionException($msg, $e->getCode(), $e);
+            throw new ImproperActionException($msg, (int) $e->getCode(), $e);
         }
         return (bool) stripos($output, 'matches');
     }

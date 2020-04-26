@@ -97,7 +97,7 @@ class Check
             ),
             FILTER_NULL_ON_FAILURE,
         );
-        return filter_var($limit, FILTER_VALIDATE_INT, $filterOptions) ?? 15;
+        return filter_var($limit, FILTER_VALIDATE_INT, $filterOptions);
     }
 
     /**

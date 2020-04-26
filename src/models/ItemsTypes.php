@@ -204,7 +204,6 @@ class ItemsTypes extends AbstractCategory
      */
     public function destroyAll(): void
     {
-        return;
     }
 
     /**

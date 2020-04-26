@@ -243,6 +243,7 @@ class Tools
      * A better print_r()
      * Used for debugging only
      *
+     * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
      * @param array $arr
      * @return string
      */

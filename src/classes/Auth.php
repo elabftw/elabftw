@@ -86,11 +86,11 @@ class Auth
     /**
      * Login with email and password
      *
-     * @param string $setCookie will be here if the user ticked the remember me checkbox
+     * @param int $userid
      * @return mixed Return true if user provided correct credentials or an array with the userid
      * and the teams where login is possible for display on the team selection page
      */
-    public function login(int $userid, string $setCookie = 'on')
+    public function login(int $userid)
     {
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
@@ -260,27 +260,6 @@ class Auth
         $sql = 'SELECT * FROM users WHERE userid = :userid AND archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        if ($req->rowCount() === 1) {
-            // populate the userData
-            $this->userData = $req->fetch();
-            $this->updateLastLogin();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Populate userData from email
-     *
-     * @param string $email
-     * @return bool
-     */
-    private function populateUserDataFromEmail(string $email): bool
-    {
-        $sql = 'SELECT * FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $email);
         $this->Db->execute($req);
         if ($req->rowCount() === 1) {
             // populate the userData

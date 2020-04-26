@@ -63,7 +63,10 @@ final class Extensions
         'tiff',
     );
 
-    /** @var array 3DMOL list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html */
+    /**
+     * @var array 3DMOL list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html
+     * @norector \Rector\DeadCode\Rector\ClassConst\RemoveUnusedClassConstantRector
+     */
     public const MOLECULE = array(
         'cdjson',
         'cif',

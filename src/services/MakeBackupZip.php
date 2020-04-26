@@ -35,9 +35,6 @@ class MakeBackupZip extends AbstractMake
     /** @var string $folder name of folder */
     private $folder = '';
 
-    /** @var array $jsonArr array that will be converted to json */
-    private $jsonArr = array();
-
     /**
      * Give me a time period, I make good zip for you
      *
@@ -99,8 +96,6 @@ class MakeBackupZip extends AbstractMake
                 $this->addToZip((int) $id, $user['fullname']);
             }
         }
-        // add the (hidden) .elabftw.json file useful for reimport
-        //$this->Zip->addFile('.elabftw.json', (string) json_encode($this->jsonArr));
         $this->Zip->finish();
     }
 
@@ -214,7 +209,5 @@ class MakeBackupZip extends AbstractMake
             $this->addAttachedFiles($uploadedFilesArr);
         }
         $this->addPdf();
-        // add an entry to the json file
-        $this->jsonArr[] = $entityArr;
     }
 }

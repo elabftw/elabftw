@@ -205,7 +205,6 @@ class Status extends AbstractCategory
      */
     public function destroyAll(): void
     {
-        return;
     }
 
     /**

@@ -536,7 +536,7 @@ abstract class AbstractEntity
         if ($this->bypassPermissions) {
             return array('read' => true, 'write' => false);
         }
-        if (!isset($this->entityData) && !isset($item)) {
+        if (empty($this->entityData) && !isset($item)) {
             $this->populate();
             if (!isset($this->entityData)) {
                 return array('read' => false, 'write' => false);

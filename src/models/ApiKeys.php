@@ -13,6 +13,9 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use function filter_var;
+use function password_hash;
+use function password_verify;
 use PDO;
 
 /**
@@ -46,9 +49,9 @@ class ApiKeys implements CrudInterface
      */
     public function create(string $name, int $canWrite): string
     {
-        $name = \filter_var($name, FILTER_SANITIZE_STRING);
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
         $apiKey = \bin2hex(\random_bytes(42));
-        $hash = \password_hash($apiKey, 1);
+        $hash = password_hash($apiKey, 1);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
@@ -71,7 +74,7 @@ class ApiKeys implements CrudInterface
      */
     public function createKnown(string $apiKey): void
     {
-        $hash = \password_hash($apiKey, 1);
+        $hash = password_hash($apiKey, 1);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
@@ -119,7 +122,7 @@ class ApiKeys implements CrudInterface
         }
 
         foreach ($keysArr as $key) {
-            if (\password_verify($apiKey, $key['hash'])) {
+            if (password_verify($apiKey, $key['hash'])) {
                 return array('userid' => $key['userid'], 'canWrite' => $key['can_write'], 'team' => $key['team']);
             }
         }

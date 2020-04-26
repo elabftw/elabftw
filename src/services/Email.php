@@ -201,8 +201,6 @@ class Email
      * @param int $team
      *
      * @return scalar[]
-     *
-     * @psalm-return array<scalar, scalar>
      */
     private function getAdminEmail($team): array
     {
@@ -218,7 +216,7 @@ class Email
         $req->execute();
 
         while ($email = $req->fetchColumn()) {
-            $arr[] = $email;
+            $arr[] = (string) $email;
         }
 
         // if we have only one admin, we need to have an associative array

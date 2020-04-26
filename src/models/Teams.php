@@ -94,7 +94,7 @@ class Teams implements CrudInterface
                 if ($Config->configArr['saml_team_create']) {
                     $teamIdArr[] = $this->create($team);
                 } else {
-                    throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.');
+                    throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.', $e->getCode(), $e);
                 }
             }
         }

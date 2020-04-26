@@ -114,7 +114,7 @@ class ImportZip extends AbstractImport
         if ($content === false) {
             throw new ImproperActionException('Unable to read the json file!');
         }
-        $this->json = json_decode($content, true);
+        $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         if (isset($this->json[0]['elabid'])) {
             $this->type = 'experiments';
         }

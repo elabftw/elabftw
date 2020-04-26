@@ -309,10 +309,8 @@ class Uploads implements CrudInterface
         }
         // now delete file from filesystem
         $filePath = $this->getUploadsPath() . $uploadArr['long_name'];
-        if (file_exists($filePath)) {
-            if (unlink($filePath) !== true) {
-                throw new FilesystemErrorException('Could not delete file!');
-            }
+        if (file_exists($filePath) && unlink($filePath) !== true) {
+            throw new FilesystemErrorException('Could not delete file!');
         }
 
         // Delete SQL entry (and verify the type)

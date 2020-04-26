@@ -194,9 +194,8 @@ class MakePdf extends AbstractMake
             $html .= "<span style='color:#" . $link['color'] . "'>" .
                 $link['name'] . "</span> - <a href='" . $fullItemUrl . "'>" . $link['title'] . '</a></p>';
         }
-        $html .= '</section>';
 
-        return $html;
+        return $html . '</section>';
     }
 
     /**
@@ -225,9 +224,7 @@ class MakePdf extends AbstractMake
             $html .= $comment['comment'] . '</p>';
         }
 
-        $html .= '</section>';
-
-        return $html;
+        return $html . '</section>';
     }
 
     /**
@@ -323,9 +320,7 @@ class MakePdf extends AbstractMake
             }
             $html .= '</p>';
         }
-
-        $html .= '</section>';
-        return $html;
+        return $html . '</section>';
     }
 
     /**

@@ -98,7 +98,7 @@ class MakeStreamZip extends AbstractMake
         }
 
         // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFile('.elabftw.json', (string) json_encode($this->jsonArr));
+        $this->Zip->addFile('.elabftw.json', (string) json_encode($this->jsonArr, JSON_THROW_ON_ERROR));
 
         $this->Zip->finish();
     }

@@ -262,9 +262,6 @@ class TeamGroups implements CrudInterface
         $req->bindParam(':userid2', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         $req->fetch();
-        if ($req->rowCount() > 0) {
-            return true;
-        }
-        return false;
+        return $req->rowCount() > 0;
     }
 }

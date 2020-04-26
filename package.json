@@ -79,6 +79,8 @@
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
     "phpstan": "phpstan analyse --memory-limit 2G -c src/tools/phpstan.neon",
     "psalm": "psalm -c=src/tools/psalm.xml",
+    "rector": "docker run -v /home/ktr/.dev/elabftw:/project rector/rector:latest process /project/src --config /project/rector.yml --autoload-file /project/vendor/autoload.php",
+    "rector-dry": "docker run -v /home/ktr/.dev/elabftw:/project rector/rector:latest process /project/src --config /project/rector.yml --autoload-file /project/vendor/autoload.php --dry-run",
     "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc",
     "test": "tests/run.sh",
     "unit": "php vendor/bin/codecept run unit",

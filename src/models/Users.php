@@ -93,7 +93,7 @@ class Users
             throw new ImproperActionException(_('Someone is already using that email address!'));
         }
 
-        if ($password) {
+        if ($password !== '') {
             Check::passwordLength($password);
         }
 

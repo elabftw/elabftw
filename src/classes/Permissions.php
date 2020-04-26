@@ -96,10 +96,8 @@ class Permissions
         }
 
         // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canread']) !== false) {
-            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
-                return array('read' => true, 'write' => $write);
-            }
+        if (Check::id((int) $this->item['canread']) !== false && $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
+            return array('read' => true, 'write' => $write);
         }
         return array('read' => false, 'write' => false);
     }
@@ -151,10 +149,8 @@ class Permissions
         }
 
         // if the vis. setting is a team group, check we are in the group
-        if (Check::id((int) $this->item['canwrite']) !== false) {
-            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
-                return true;
-            }
+        if (Check::id((int) $this->item['canwrite']) !== false && $this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canwrite'])) {
+            return true;
         }
 
         // if we own the entity, we have write access on it for sure

@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use function mb_strlen;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -100,7 +101,7 @@ class Tools
         }
 
         // get unit
-        $unit = strtolower($input[\mb_strlen($input) - 1]);
+        $unit = strtolower($input[mb_strlen($input) - 1]);
         $value = (int) $input;
 
         // convert to Mb
@@ -143,7 +144,7 @@ class Tools
      */
     public static function formatDate(string $date, string $s = '.'): string
     {
-        if (\mb_strlen($date) != 8) {
+        if (mb_strlen($date) !== 8) {
             throw new InvalidArgumentException('Date has wrong size!');
         }
         return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date[4] . $date[5] . $s . $date[6] . $date[7];
@@ -255,8 +256,7 @@ class Tools
                 $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
             }
         }
-        $html .= '</ul>';
-        return $html;
+        return $html . '</ul>';
     }
 
     /**
@@ -333,8 +333,7 @@ class Tools
                 $sql .= $table . '.' . $column . " LIKE '%$value%'";
             }
         }
-        $sql .= ')';
-        return $sql;
+        return $sql . ')';
     }
 
     /**

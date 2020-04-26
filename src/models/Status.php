@@ -157,7 +157,7 @@ class Status extends AbstractCategory
         $color = Check::color($color);
 
         $default = 0;
-        if ($isDefault) {
+        if ($isDefault !== 0) {
             $this->setDefaultFalse();
             $default = 1;
         }

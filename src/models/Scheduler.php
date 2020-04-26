@@ -254,14 +254,12 @@ class Scheduler
         // check permission before deleting
         $event = $this->readFromId();
         // if the user is not the same, check if we are admin
-        if ($event['userid'] !== $this->Database->Users->userData['userid']) {
-            // admin and sysadmin will have usergroup of 1 or 2
-            if ((int) $this->Database->Users->userData['usergroup'] <= 2) {
-                // check user is in our team
-                $Booker = new Users((int) $event['userid']);
-                if ($Booker->userData['team'] !== $this->Database->Users->userData['team']) {
-                    throw new ImproperActionException(Tools::error(true));
-                }
+        // admin and sysadmin will have usergroup of 1 or 2
+        if ($event['userid'] !== $this->Database->Users->userData['userid'] && (int) $this->Database->Users->userData['usergroup'] <= 2) {
+            // check user is in our team
+            $Booker = new Users((int) $event['userid']);
+            if ($Booker->userData['team'] !== $this->Database->Users->userData['team']) {
+                throw new ImproperActionException(Tools::error(true));
             }
         }
         $sql = 'DELETE FROM team_events WHERE id = :id';

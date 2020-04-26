@@ -1,0 +1,9 @@
+parameters:
+  php_version_features: '7.3'
+  sets:
+    - 'code-quality'
+    - 'php73'
+  exclude_rectors:
+    - Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector
+    - Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector
+    - Rector\SOLID\Rector\ClassMethod\UseInterfaceOverImplementationInConstructorRector

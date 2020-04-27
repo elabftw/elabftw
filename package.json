@@ -55,7 +55,7 @@
     "grunt-contrib-uglify-es": "gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "1.1.*",
     "grunt-shell": "3.0.*",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^4.2.0",
     "lodash": ">=4.17.13",
     "snyk": "^1.305.0",
     "ts-loader": "^6.2.1",

@@ -27,6 +27,23 @@ import 'tinymce/plugins/table';
 import 'tinymce/plugins/template';
 import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
+import '../js/tinymce-langs/ca_ES.js';
+import '../js/tinymce-langs/de_DE.js';
+import '../js/tinymce-langs/en_GB.js';
+import '../js/tinymce-langs/es_ES.js';
+import '../js/tinymce-langs/fr_FR.js';
+import '../js/tinymce-langs/id_ID.js';
+import '../js/tinymce-langs/it_IT.js';
+import '../js/tinymce-langs/ja_JP.js';
+import '../js/tinymce-langs/ko_KR.js';
+import '../js/tinymce-langs/nl_BE.js';
+import '../js/tinymce-langs/pl_PL.js';
+import '../js/tinymce-langs/pt_BR.js';
+import '../js/tinymce-langs/pt_PT.js';
+import '../js/tinymce-langs/ru_RU.js';
+import '../js/tinymce-langs/sk_SK.js';
+import '../js/tinymce-langs/sl_SI.js';
+import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
   $.ajaxSetup({

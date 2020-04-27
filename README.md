@@ -6,7 +6,7 @@
   <strong>A free, modern, flexible electronic lab notebook for researchers</strong>
 </p>
 
-[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net)
+[Official website](https://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://doc.elabftw.net) | [Dedicated hosting](https://www.deltablot.com/elabftw)
 
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
@@ -36,7 +36,7 @@ Without a server, even an old computer with 1 GB of RAM and an old CPU can be us
 
 # Installation
 
-**eLabFTW** can easily be installed on any GNU/Linux server. It requires at least 512 MB of RAM (1 GB recommended) and 300 MB of disk space. Installation is done through Docker, so [Docker](https://www.docker.com/) needs to be installed on your computer. Since it runs in a Docker container, php, webservers or mysql do not have to be installed on your server.  Everything is provided by the container so different versions and extensions do not matter.
+**eLabFTW** can easily be installed on any GNU/Linux server. It requires at least 512 MB of RAM (1 GB recommended) and 300 MB of disk space. Installation is done through Docker, so [Docker](https://www.docker.com/) needs to be installed on your computer. Since it runs in a Docker container, php, webservers or mysql do not have to be installed on your server.  Everything is provided by the containers so different versions and extensions do not matter. This makes upgrading versions much easier.
 
 The documentation explains everything:
 
@@ -44,7 +44,7 @@ The documentation explains everything:
 
 # Contributing
 
-**eLabFTW** is a collaborative project. See the [contributing page](https://doc.elabftw.net/contributing.html).
+**eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/contributing.html) to see how you can help with translation or code.
 
 If you have found a security issue, please report it by email to the address associated to my GPG key:
 
@@ -54,20 +54,28 @@ gpg --search-keys "Nicolas CARPi"
 
 # Support
 
-Free support is available through [GitHub issues](https://github.com/elabftw/elabftw/issues/new). Please open an issue if you have a problem, want to make a suggestion, ask a question or discuss a feature.
+Free support is available through [GitHub issues](https://github.com/elabftw/elabftw/issues/new/choose). Please open an issue if you have a problem, want to make a suggestion, ask a question or discuss a feature.
 
 You can also join the [chat room on Gitter](https://gitter.im/elabftw/elabftw).
 
-Pro support, hosting or commercial license are available from [Deltablot](https://www.deltablot.com/elabftw).
+Pro support, dedicated hosting or commercial license are available from [Deltablot](https://www.deltablot.com/elabftw).
 
 [Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
 
 Or use GitHub to follow releases:
 
-![release watch](https://i.imgur.com/CZ54KaH.gif)
+![release watch](https://i.imgur.com/whSAWEs.gif)
 
 # Funding
 
-This project is sponsored by [Institut Curie](https://science.curie.fr/).
+As you know, eLabFTW is distributed without charge.
+
+If you find this project useful, please consider making a small donation either:
+
+* as a [GitHub Sponsor](https://github.com/sponsors/NicolasCARPi)
+
+* or with [Liberapay](https://liberapay.com/NicolasCARPi/donate)
+
+This project is backed by [Institut Curie](https://science.curie.fr/) and [Deltablot](https://www.deltablot.com).
 
 Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

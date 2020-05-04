@@ -35,7 +35,7 @@
     "tinymce": "5.2.*"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
+    "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.5.5",
     "@types/bootstrap": "^4.3.1",
     "@types/fancybox": "^3.5.2",

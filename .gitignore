@@ -3,7 +3,7 @@
 .php_cs
 .scannerwork
 *.bak
-_apidoc
+apidoc/html
 _srcdoc
 build
 cache

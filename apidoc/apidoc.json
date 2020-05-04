@@ -4,5 +4,9 @@
   "description": "Documentation for elab's API",
   "template": {
     "withCompare": false
+  },
+  "header": {
+    "title": "Getting started",
+    "filename": "apidoc/header.md"
   }
 }

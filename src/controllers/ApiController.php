@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -221,6 +222,20 @@ class ApiController implements ControllerInterface
      * @apiGroup Entity
      * @apiDescription Get the data from items or just one item if id is set.
      * @apiUse GetEntity
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get all items
+     * all_items = manager.get_all_items()
+     * # get item with id 42
+     * item = manager.get_item(42)
+     * print(json.dumps(item, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get all items
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items
+     * # get item with id 42
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} body Main content
      * @apiSuccess {String} category Item type
      * @apiSuccess {Number} category_id Id of the item type
@@ -247,6 +262,20 @@ class ApiController implements ControllerInterface
      * @apiGroup Entity
      * @apiDescription Get the data from experiments or just one experiment if id is set.
      * @apiUse GetEntity
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get all experiments
+     * all_exp = manager.get_all_experiments()
+     * # get experiment with id 42
+     * exp = manager.get_experiment(42)
+     * print(json.dumps(exp, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get all experiments
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments
+     * # get experiment with id 42
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
      * @apiSuccess {String} body Main content
      * @apiSuccess {String} category Status
      * @apiSuccess {Number} category_id Id of the status
@@ -300,15 +329,27 @@ class ApiController implements ControllerInterface
     }
 
     /**
-     * @api {get} /backupzip/[:period] Get backup zip
+     * @api {get} /backupzip/:period Get backup zip
      * @apiName GetBackupZip
      * @apiGroup Backup
      * @apiParam {String} period time period FROM-TO in the format YYYYMMDD-YYYMMDD (e.g. 20191129-20200501)
      * @apiPermission Sysadmin
      * @apiDescription Get a zip with the experiments from a time period, ordered by users, only the ones changed in the time period
-     * @apiExample {curl} Example usage:
+     * @apiExample {python} Python example
+     * import elabapy
+     * import datetime
+     * from datetime import timedelta
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get all modified experiments from last week
+     * now = datetime.datetime.now()
+     * lastweek = now - timedelta(weeks=1)
+     * period = "-".join((lastweek.strftime('%Y%m%d'), now.strftime('%Y%m%d')))
+     * with open(period + '.zip', 'wb') as zipfile:
+     *     zipfile.write(manager.get_backup_zip(period))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
      * curl -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/backupzip/202000224-20200701" --output out.zip
-     * @apiSuccess {Binary} zip Zip file
+     * @apiSuccess {Binary} zip Zip file with experiments modified during `period`
      */
     private function getBackupZip(): Response
     {
@@ -329,8 +370,15 @@ class ApiController implements ControllerInterface
      * @apiName GetBookable
      * @apiGroup Entity
      * @apiDescription Get only the bookable items
-     * @apiExample {curl} Example usage:
-     * curl -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/bookable
+     * @apiExample {python} Python example
+     * import elabapy
+     * import json
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * bookable = manager.get_bookable()
+     * print(json.dumps(bookable, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/bookable
      */
     private function getBookable(): Response
     {
@@ -343,7 +391,14 @@ class ApiController implements ControllerInterface
      * @apiName GetEvent
      * @apiGroup Events
      * @apiDescription Get all the events from the team or just one event if the id is set
-     * @apiExample {curl} Example usage:
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * event = manager.get_event(2)
+     * print(json.dumps(event, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get info about event with id 2
      * curl -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/events/2"
      * @apiSuccess {Number} id Id of the event
      * @apiSuccess {Number} team Id of the team
@@ -352,6 +407,7 @@ class ApiController implements ControllerInterface
      * @apiSuccess {String} end End date/time
      * @apiSuccess {String} title Comment for the event
      * @apiSuccess {Number} userid Id of the user that booked it
+     * @apiSuccess {Number} experiment Id of the bound experiment
      * @apiSuccessExample {json} Success-Response:
      * {
      *     "id":"2",
@@ -360,7 +416,13 @@ class ApiController implements ControllerInterface
      *     "start":"2019-11-29T09:30:00",
      *     "end":"2019-11-29T14:30:00",
      *     "title":"ahaha",
-     *     "userid":"1"
+     *     "userid":"1",
+     *     "experiment": "12"
+     * }
+     * @apiErrorExample {json} Error-Response:
+     * HTTP/2 404 NOT FOUND
+     * {
+     *     "result": "No data associated with that id"
      * }
      */
 
@@ -377,16 +439,30 @@ class ApiController implements ControllerInterface
             return new JsonResponse($this->Scheduler->readAllFromTeam('2018-12-23T00:00:00 01:00', '2119-12-23T00:00:00 01:00'));
         }
         $this->Scheduler->setId($this->id);
-        return new JsonResponse($this->Scheduler->readFromId());
+        try {
+            return new JsonResponse($this->Scheduler->readFromId());
+        } catch (DatabaseErrorException $e) {
+            return new JsonResponse(array('result' => $e->getMessage()), 404);
+        }
     }
 
     /**
      * @api {get} /uploads/:id Get an upload
      * @apiName GetUpload
      * @apiGroup Entity
-     * @apiSuccess {Binary} the file
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # get upload with id 42
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/uploads/42
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # get upload with id 42
+     * with open('example.gz', 'wb') as datafile:
+     *     datafile.write(manager.get_upload(42))
+     * @apiSuccess {Binary} None the file
      * @apiSuccessExample Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/2 200 OK
      *     [BINARY DATA]
      */
 
@@ -416,9 +492,18 @@ class ApiController implements ControllerInterface
      * @api {get} /items_types Get the list of id of available items_types
      * @apiName GetItemsTypes
      * @apiGroup Category
-     * @apiSuccess {String[]} list of items_types for the team
+     * @apiExample {python} Python example
+     * import elabapy
+     * import json
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * items_types = manager.get_items_types()
+     * print(json.dumps(items_types, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items_types
+     * @apiSuccess {String[]} None list of items_types for the team
      * @apiSuccessExample {Json} Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/2 200 OK
      *     {
      *         [
      *           {
@@ -445,9 +530,18 @@ class ApiController implements ControllerInterface
      * @api {get} /status Get the list of status for current team
      * @apiName GetStatus
      * @apiGroup Category
-     * @apiSuccess {String[]} list of status for the team
+     * @apiExample {python} Python example
+     * import elabapy
+     * import json
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * items_types = manager.get_status()
+     * print(json.dumps(items_types, indent=4, sort_keys=True))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * curl -H "Authorization: $TOKEN" https://elab.example.org/api/v1/status
+     * @apiSuccess {String[]} None list of status for the team
      * @apiSuccessExample {Json} Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/2 200 OK
      *     {
      *         [
      *           {
@@ -482,11 +576,22 @@ class ApiController implements ControllerInterface
      * @api {post} /experiments Create experiment
      * @apiName CreateExperiment
      * @apiGroup Entity
-     * @apiSuccess {String} Id Id of the new experiment
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * response = manager.create_experiment()
+     * print(f"Created experiment with id {response['id']}.")
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # create an experiment with default status
+     * curl -X POST -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments
+     * @apiSuccess {String} result success or error message
+     * @apiSuccess {String} id Id of the new experiment
      * @apiSuccessExample {Json} Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/2 200 OK
      *     {
-     *       "id": "42"
+     *       "result": "success",
+     *       "id": 42
      *     }
      */
 
@@ -508,11 +613,22 @@ class ApiController implements ControllerInterface
      * @api {post} /items/:id Create a database item
      * @apiName CreateItem
      * @apiGroup Entity
-     * @apiSuccess {String} Id Id of the new item type (category)
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * response = manager.create_item(3)
+     * print(f"Created database item with id {response['id']}.")
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # create a database item in category with id 3
+     * curl -X POST -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/3
+     * @apiSuccess {String} result success or error message
+     * @apiSuccess {String} id Id of the new item type (category)
      * @apiSuccessExample {Json} Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/2 200 OK
      *     {
-     *       "id": "42"
+     *       "result": "success",
+     *       "id": 42
      *     }
      */
 
@@ -545,11 +661,21 @@ class ApiController implements ControllerInterface
      * @api {post} /experiments/:id Add a link
      * @apiName AddLink
      * @apiGroup Entity
-     * @apiParam {Number} id Entity id
+     * @apiParam {Number} id Experiment id
      * @apiParam {Number} link Id of the database item to link to
-     * @apiSuccess {String} Success or error message
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # link database item 106 to experiment 42
+     * params = { "link": 106 }
+     * print(manager.add_link_to_experiment(42, params)
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # link database item 106 to experiment 42
+     * curl -X POST -F "link=106" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * @apiSuccess {String} result Success or error message
      * @apiSuccessExample {Json} Success-Response:
-     *     HTTP/1.1 200 OK
+     *     HTTP/2 200 OK
      *     {
      *       "result": "success"
      *     }
@@ -562,9 +688,6 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        if ($this->Entity instanceof Database) {
-            return new Response('Creating database items is not supported.', 400);
-        }
         $this->Entity->Links->create((int) $this->Request->request->get('link'));
         return new JsonResponse(array('result' => 'success'));
     }
@@ -576,6 +699,20 @@ class ApiController implements ControllerInterface
      * @apiParam {String} endpoint 'experiments' or 'items'
      * @apiParam {Number} id Entity id
      * @apiParam {String} tag Tag to add
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * params = { "tag": "some-tag"}
+     * # add tag "some-tag" to experiment 42
+     * print(manager.add_tag_to_experiment(42, params)
+     * # add tag "some-tag" to database item 42
+     * print(manager.add_tag_to_item(42, params)
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # add tag "some-tag" to experiment 42
+     * curl -X POST -F "tag=some-tag" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * # add tag "some-tag" to database item 42
+     * curl -X POST -F "tag=some-tag" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
      * @apiError {String} error Error mesage
      * @apiParamExample {Json} Request-Example:
@@ -603,13 +740,27 @@ class ApiController implements ControllerInterface
      * @apiParam {Sring} start Start time
      * @apiParam {Number} end End time
      * @apiParam {String} title Comment for the booking
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # book database item 42 on the 30th of November 2019 from noon to 2pm
+     * params = {
+     *     "start": "2019-11-30T12:00:00",
+     *     "end": "2019-11-30T14:00:00",
+     *     "title": "Booked from API",
+     * }
+     * print(manager.create_event(42))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # book database item 42 on the 30th of November 2019 from noon to 2pm
+     * curl -X POST -F "start=2019-11-30T12:00:00" -F "end=2019-11-30T14:00:00" -F "title=Booked from API" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/42
      * @apiSuccess {String} result Success
      * @apiSuccess {String} id Id of new event
      * @apiError {Number} error Error mesage
      * @apiParamExample {Json} Request-Example:
      *     {
      *       "start": "2019-11-30T12:00:00",
-     *       "end": "2019-11-30T14:00:00"
+     *       "end": "2019-11-30T14:00:00",
      *       "title": "Booked from API"
      *     }
      */
@@ -637,8 +788,17 @@ class ApiController implements ControllerInterface
      * @api {delete} /events/:id Destroy event
      * @apiName DestroyEvent
      * @apiGroup Events
-     * @apiParam {Number} id Id of the event
      * @apiDescription Delete an event
+     * @apiParam {Number} id Id of the event
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # destroy event with id 13
+     * print(manager.destroy_event(13))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # destroy event with id 13
+     * curl -X DELETE -H "Authorization: $TOKEN" https://elab.example.org/api/v1/events/13
      * @apiSuccess {String} result Success
      * @apiError {String} error Error mesage
      */
@@ -667,6 +827,20 @@ class ApiController implements ControllerInterface
      * @apiParam {String} body Main content
      * @apiParam {String} date Date
      * @apiParam {String} title Title
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # update experiment 42
+     * params = { "title": "New title", "date": "20200504", "body": "New body content" }
+     * print(manager.post_experiment(42, params))
+     * # update database item 42
+     * print(manager.post_item(42, params))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # update experiment 42
+     * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * # update database item 42
+     * curl -X POST -F "title=a new title" -F "body=a new body" -F "date=20200504" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
      * @apiSuccess {String} result Success
      * @apiError {String} error Error mesage
      * @apiParamExample {Json} Request-Example:
@@ -699,6 +873,23 @@ class ApiController implements ControllerInterface
      * @apiParam {String} endpoint 'experiments' or 'items'
      * @apiParam {Number} id Entity id
      * @apiParam {File} file File to upload
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # upload your-file.jpg to experiment 42
+     * with open('your-file.jpg', 'r') as myfile:
+     *     params = { 'file': myfile }
+     *     print(manager.upload_to_experiment(42, params))
+     * # upload your-file.jpg to database item 1337
+     * with open('your-file.jpg', 'r') as myfile:
+     *     params = { 'file': myfile }
+     *     print(manager.upload_to_item(1337, params))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # upload your-file.jpg to experiment 42
+     * curl -X POST -F "file=@your-file.jpg" -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/experiments/42"
+     * # upload your-file.jpg to database item 42
+     * curl -X POST -F "file=@your-file.jpg" -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/items/42"
      * @apiSuccess {String} result Success
      * @apiError {String} error Error mesage
      */

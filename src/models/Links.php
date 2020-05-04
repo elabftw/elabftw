@@ -48,6 +48,14 @@ class Links implements CrudInterface
         $Database->canOrExplode('read');
         $this->Entity->canOrExplode('write');
 
+        // check if this link doesn't exist already
+        $links = $this->readAll();
+        foreach ($links as $existingLink) {
+            if ((int) $existingLink['itemid'] === $link) {
+                return;
+            }
+        }
+        // create new link
         $sql = 'INSERT INTO ' . $this->Entity->type . '_links (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -94,72 +94,76 @@ class ApiController implements ControllerInterface
      */
     public function getResponse(): Response
     {
-        // GET ENTITY/CATEGORY
-        if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
-            // GET UPLOAD
-            if ($this->endpoint === 'uploads') {
-                return $this->getUpload();
-            }
-            if ($this->endpoint === 'backupzip') {
-                return $this->getBackupZip();
+        try {
+            // GET ENTITY/CATEGORY
+            if ($this->Request->server->get('REQUEST_METHOD') === 'GET') {
+                // GET UPLOAD
+                if ($this->endpoint === 'uploads') {
+                    return $this->getUpload();
+                }
+                if ($this->endpoint === 'backupzip') {
+                    return $this->getBackupZip();
+                }
+
+                if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
+                    return $this->getEntity();
+                }
+                if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
+                    return $this->getCategory();
+                }
+                if ($this->endpoint === 'bookable') {
+                    return $this->getBookable();
+                }
+                if ($this->endpoint === 'events') {
+                    return $this->getEvents();
+                }
             }
 
-            if ($this->endpoint === 'experiments' || $this->endpoint === 'items') {
-                return $this->getEntity();
-            }
-            if ($this->endpoint === 'items_types' || $this->endpoint === 'status') {
-                return $this->getCategory();
-            }
-            if ($this->endpoint === 'bookable') {
-                return $this->getBookable();
-            }
-            if ($this->endpoint === 'events') {
-                return $this->getEvents();
-            }
-        }
 
+            // POST request
+            if ($this->Request->server->get('REQUEST_METHOD') === 'POST') {
+                // POST means write access for the access token
+                if (!$this->canWrite) {
+                    return new Response('Cannot use readonly key with POST method!', 403);
+                }
+                // FILE UPLOAD
+                if ($this->Request->files->count() > 0) {
+                    return $this->uploadFile();
+                }
 
-        // POST request
+                // TITLE DATE BODY UPDATE
+                if ($this->Request->request->has('date')) {
+                    return $this->updateEntity();
+                }
 
-        if ($this->Request->server->get('REQUEST_METHOD') === 'POST') {
-            // POST means write access for the access token
-            if (!$this->canWrite) {
-                return new Response('Cannot use readonly key with POST method!', 403);
-            }
-            // FILE UPLOAD
-            if ($this->Request->files->count() > 0) {
-                return $this->uploadFile();
-            }
+                // ADD TAG
+                if ($this->Request->request->has('tag')) {
+                    return $this->createTag();
+                }
 
-            // TITLE DATE BODY UPDATE
-            if ($this->Request->request->has('date')) {
-                return $this->updateEntity();
-            }
+                // ADD LINK
+                if ($this->Request->request->has('link')) {
+                    return $this->createLink();
+                }
 
-            // ADD TAG
-            if ($this->Request->request->has('tag')) {
-                return $this->createTag();
-            }
+                if ($this->endpoint === 'events') {
+                    return $this->createEvent();
+                }
 
-            // ADD LINK
-            if ($this->Request->request->has('link')) {
-                return $this->createLink();
+                // CREATE AN EXPERIMENT/ITEM
+                if ($this->Entity instanceof Database) {
+                    return $this->createItem();
+                }
+                return $this->createExperiment();
             }
 
-            if ($this->endpoint === 'events') {
-                return $this->createEvent();
+            // DELETE requests
+            if ($this->Request->server->get('REQUEST_METHOD') === 'DELETE') {
+                return $this->destroyEvent();
             }
 
-            // CREATE AN EXPERIMENT/ITEM
-            if ($this->Entity instanceof Database) {
-                return $this->createItem();
-            }
-            return $this->createExperiment();
-        }
-
-        // DELETE requests
-        if ($this->Request->server->get('REQUEST_METHOD') === 'DELETE') {
-            return $this->destroyEvent();
+        } catch (ResourceNotFoundException $e) {
+            return new JsonResponse(array('result' => $e->getMessage()), 404);
         }
 
         // send error 405 for Method Not Allowed, with Allow header as per spec:
@@ -439,11 +443,7 @@ class ApiController implements ControllerInterface
             return new JsonResponse($this->Scheduler->readAllFromTeam('2018-12-23T00:00:00 01:00', '2119-12-23T00:00:00 01:00'));
         }
         $this->Scheduler->setId($this->id);
-        try {
-            return new JsonResponse($this->Scheduler->readFromId());
-        } catch (DatabaseErrorException $e) {
-            return new JsonResponse(array('result' => $e->getMessage()), 404);
-        }
+        return new JsonResponse($this->Scheduler->readFromId());
     }
 
     /**

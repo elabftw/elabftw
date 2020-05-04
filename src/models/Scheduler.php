@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 use DateTime;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\EntityTrait;
 use PDO;
@@ -151,7 +151,7 @@ class Scheduler
 
         $res = $req->fetch();
         if ($res === false) {
-            throw new DatabaseErrorException('No data associated with that id');
+            throw new ResourceNotFoundException();
         }
 
         return $res;

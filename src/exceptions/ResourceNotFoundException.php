@@ -12,9 +12,10 @@ namespace Elabftw\Exceptions;
 use Exception;
 
 /**
- * Throw this if the SQL query failed
+ * Throw this if the requested resource cannot be found
+ * Should reply with status code 404
  */
-class DatabaseErrorException extends Exception
+class ResourceNotFoundException extends Exception
 {
     /**
      * Redefine the exception so message isn't optional
@@ -23,8 +24,9 @@ class DatabaseErrorException extends Exception
      * @param int $code
      * @param Exception|null $previous
      */
-    public function __construct($message, $code = 0, Exception $previous = null)
+    public function __construct($message = null, $code = 404, Exception $previous = null)
     {
+        $message = _('Nothing to show with this id');
         parent::__construct($message, $code, $previous);
     }
 }

@@ -20721,7 +20721,7 @@ ChemDoodle.uis.gui.templateDepot = (function(JSON, localStorage, undefined) {
       // Contact us for permission to remove it,
       // http://www.ichemlabs.com/contact-us
       // ELABFTW modif
-      sb.push('<div width="100%"><button class="button getMolButton">Select from uploaded files</button><div class="getMolDiv"></div></div>');
+      sb.push('<div width="100%"><button class="button btn btn-neutral getMolButton">Select from uploaded files</button><div class="getMolDiv"></div></div>');
       // END ELABFTW MODIF
       sb.push('<div width="100%">Or paste <em>MOLFile</em> or <em>ChemDoodle JSON</em> text and press the <strong>Load</strong> button.<br><br><center><a href="http://www.chemdoodle.com" target="_blank">Where do I get MOLFiles or ChemDoodle JSON?</a></center><br></div>');
       sb.push('<textarea rows="12" id="'+sketcher.id+'_open_text" style="width:100%;"></textarea>');

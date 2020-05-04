@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractCategory;
@@ -161,7 +161,6 @@ class ApiController implements ControllerInterface
             if ($this->Request->server->get('REQUEST_METHOD') === 'DELETE') {
                 return $this->destroyEvent();
             }
-
         } catch (ResourceNotFoundException $e) {
             return new JsonResponse(array('result' => $e->getMessage()), 404);
         }

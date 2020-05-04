@@ -13,8 +13,8 @@ namespace Elabftw\Models;
 use DateTime;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 

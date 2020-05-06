@@ -124,26 +124,6 @@
     </table>
 </section>
 
-<!-- TAG CLOUD -->
-<section class='box'>
-    <h5><i class='fas fa-cloud'></i> {{ 'Tag cloud'|trans }}</h5>
-    <hr>
-    <div>
-        {# handle minimum tag count #}
-        {% set cloudArr = TagCloud.getCloudArr %}
-        {% if cloudArr|length <= 10 %}
-            {% trans %}
-                Not enough tags to make a tagcloud
-            {% endtrans %}
-        {% else %}
-        {% for tag, class in cloudArr %}
-            <a href='experiments.php?mode=show&tags[]={{ tag|raw }}' class='{{ class }}'>{{ tag|raw }}</a>
-        {% endfor %}
-
-        {% endif %}
-    </div>
-</section>
-
 </div>
 
 <!-- TAB 3 TEMPLATE -->

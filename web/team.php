@@ -47,9 +47,10 @@ try {
     $Database->addFilter('bookable', '1');
     $Scheduler = new Scheduler($Database);
 
-    $TagCloud = new TagCloud((int) $App->Users->userData['team']);
+    // disabled because takes too much resources
+    //$TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
-    $itemsArr = $Database->read();
+    $itemsArr = $Database->read(false);
     $itemData = null;
 
     $allItems = true;
@@ -75,7 +76,7 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
-        'TagCloud' => $TagCloud,
+        //'TagCloud' => $TagCloud,
         'Scheduler' => $Scheduler,
         'allItems' => $allItems,
         'itemsArr' => $itemsArr,

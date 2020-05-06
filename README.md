@@ -78,4 +78,10 @@ If you find this project useful, please consider making a small donation either:
 
 This project is backed by [Institut Curie](https://science.curie.fr/) and [Deltablot](https://www.deltablot.com).
 
+<p align='center'>
+  <a href="https://www.deltablot.com">
+    <img src='https://i.imgur.com/9j2a9na.jpg' alt='deltablot logo' />
+  </a>
+</p>
+
 Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

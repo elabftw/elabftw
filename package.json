@@ -22,7 +22,7 @@
     "bootstrap-markdown-fa5": "2.10.*",
     "dropzone": "5.7.*",
     "file-saver": "2.0.*",
-    "jquery": "3.4.*",
+    "jquery": "^3.5.1",
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",
     "jsoneditor": "^8.6.1",

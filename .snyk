@@ -10,6 +10,10 @@ ignore:
     - jquery:
         reason: waiting for new patch because 3.5.0 has big bug
         expires: '2020-05-20T14:03:40.669Z'
+  SNYK-JS-JQUERY-567880:
+    - jquery:
+        reason: 3.5.0 is broken
+        expires: '2020-06-05T12:29:44.606Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-HTTPSPROXYAGENT-469131:

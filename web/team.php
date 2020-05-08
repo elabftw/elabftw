@@ -70,7 +70,7 @@ try {
     }
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readInclusive();
+    $templatesArr = $Templates->readFromTeam();
 
     $template = 'team.html';
     $renderArr = array(

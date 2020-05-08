@@ -186,6 +186,48 @@ class Templates extends AbstractEntity
         return $res;
     }
 
+    /**
+     * Read the templates from the team. Don't take into account the userid = 0 (common templates)
+     * nor the current user templates
+     *
+     * @return array
+     */
+    public function readFromTeam(): array
+    {
+        $sql = "SELECT experiments_templates.*,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
+            FROM experiments_templates
+            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
+            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            LEFT JOIN users ON (experiments_templates.userid = users.userid)
+            WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
+            AND experiments_templates.team = :team
+            GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+
+        // loop the array and only add the ones we can read to return to template
+        $finalArr = array();
+        foreach ($res as $item) {
+            $permissions = $this->getPermissions($item);
+            if ($permissions['read']) {
+                $item['isWritable'] = $permissions['write'];
+                $finalArr[] = $item;
+            }
+        }
+
+        return $finalArr;
+    }
+
     /*
      * Read all the templates in the experiment_templates table including the currentuser
      *  and default template ( userid = 0 )
@@ -213,7 +255,7 @@ class Templates extends AbstractEntity
                 ON ( experiments_templates.id = links_t.id)
                 LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-                WHERE 1=1 ";
+                WHERE experiments_templates.userid != 0 ";
 
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);

@@ -38,9 +38,9 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($this->Templates->readAll()));
     }
 
-    public function testReadFromTeam()
+    public function testReadInclusive()
     {
-        $this->assertTrue(is_array($this->Templates->readFromTeam()));
+        $this->assertTrue(is_array($this->Templates->readInclusive()));
     }
 
     public function testReadCommonBody()

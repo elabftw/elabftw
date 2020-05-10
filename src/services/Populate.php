@@ -66,6 +66,17 @@ class Populate
             // change the category (status/item type)
             $category = $Faker->randomElement($categories);
             $Entity->updateCategory((int) $category['category_id']);
+
+            // maybe upload a file
+            if ($Faker->randomDigit > 7) {
+                $Entity->Uploads->createFromString('json', $Faker->word, '{ "some": "content" }');
+            }
+
+            // maybe add a few steps
+            if ($Faker->randomDigit > 8) {
+                $Entity->Steps->create($Faker->word);
+                $Entity->Steps->create($Faker->word);
+            }
         }
         printf("Generated %d %s \n", $iter, $Entity->type);
     }

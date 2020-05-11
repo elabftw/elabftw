@@ -227,9 +227,25 @@ class ExperimentsController extends AbstractEntityController
 
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $visibilityArr = $TeamGroups->getVisibilityList();
+        $teamGroupsArr = $TeamGroups->readAll();
 
         $Templates = new Templates($this->Entity->Users);
-        $templatesArr = $Templates->readAll();
+        $templatesArr = $Templates->readInclusive();
+
+        $templatesStructureArr = [];
+        $i = 0;
+
+        /* we created an array like dictionary with key-value pairs, each canRead is contain multiple templates
+                associated with it to be used in createNew dropdown  */
+        while ($i < sizeof($templatesArr)) {
+            foreach ($teamGroupsArr as $item){
+                if($item['id'] == $templatesArr[$i]['canread']){
+                    $templatesArr[$i]["canread"] = $item['name'];
+                }
+            }
+            $templatesStructureArr[$templatesArr[$i]["canread"]][] = $templatesArr[$i];
+            $i++;
+        }
 
         // READ ALL ITEMS
 
@@ -263,7 +279,7 @@ class ExperimentsController extends AbstractEntityController
             'limit' => $limit,
             'searchType' => $searchType,
             'tag' => $tag,
-            'templatesArr' => $templatesArr,
+            'templatesArr' => $templatesStructureArr,
             'visibilityArr' => $visibilityArr,
         );
         $Response = new Response();

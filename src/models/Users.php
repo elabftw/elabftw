@@ -454,6 +454,8 @@ class Users
 
         // SHOW TEAM
         $new_show_team = Filter::onToBinary($params['show_team'] ?? '');
+        // SHOW TEAM TEMPLATES
+        $new_show_team_template = Filter::onToBinary($params['show_team_template'] ?? '');
         // CJK FONTS
         $new_cjk_fonts = Filter::onToBinary($params['cjk_fonts'] ?? '');
         // PDF/A
@@ -501,6 +503,7 @@ class Users
             sc_submit = :new_sc_submit,
             sc_todo = :new_sc_todo,
             show_team = :new_show_team,
+            show_team_template = :new_show_team_template,
             chem_editor = :new_chem_editor,
             json_editor = :new_json_editor,
             lang = :new_lang,
@@ -523,6 +526,7 @@ class Users
         $req->bindParam(':new_sc_submit', $new_sc_submit);
         $req->bindParam(':new_sc_todo', $new_sc_todo);
         $req->bindParam(':new_show_team', $new_show_team);
+        $req->bindParam(':new_show_team_template', $new_show_team_template);
         $req->bindParam(':new_chem_editor', $new_chem_editor);
         $req->bindParam(':new_json_editor', $new_json_editor);
         $req->bindParam(':new_lang', $new_lang);

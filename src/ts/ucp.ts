@@ -88,6 +88,30 @@ $(document).ready(function() {
     $('#import_tpl').toggle();
   });
 
+    // CAN READ/WRITE SELECT PERMISSION
+    $(document).on('change', '.permissionSelect', function() {
+        const value = $(this).val();
+        const rw = $(this).data('rw');
+        $.post('app/controllers/EntityAjaxController.php', {
+            updatePermissions: true,
+            rw: rw,
+            id: $('.badgetabactive').data('id'),
+            type: 'experiments_templates',
+            value: value,
+        }).done(function(json) {
+            notif(json);
+        });
+    });
+
+
+    // select the already selected permission for templates
+    $(document).on('click', '.modalToggle', function() {
+        const read = $(this).data('read');
+        const write = $(this).data('write');
+        $("#canread_select option[value='" + read +"']").prop("selected",true);
+        $("#canwrite_select option[value='" + write +"']").prop("selected",true);
+    });
+
   // input to upload an elabftw.tpl file
   $('#import_tpl').hide().on('change', function() {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');

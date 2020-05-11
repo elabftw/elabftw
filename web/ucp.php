@@ -34,7 +34,12 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readAll();
+    $templatesArr = $Templates->readInclusive();
+
+    // TEAM GROUPS
+    // Added Visibility clause
+    $TeamGroups = new TeamGroups($App->Users);
+    $visibilityArr = $TeamGroups->getVisibilityList();
 
     $template = 'ucp.html';
     $renderArr = array(
@@ -43,6 +48,7 @@ try {
         'langsArr' => Tools::getLangsArr(),
         'teamGroupsArr' => $teamGroupsArr,
         'templatesArr' => $templatesArr,
+        'visibilityArr' => $visibilityArr,
     );
 } catch (Exception $e) {
     $template = 'error.html';

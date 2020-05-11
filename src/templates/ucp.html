@@ -10,6 +10,43 @@
     </ul>
 </menu>
 
+<!-- Modal for edit permissions -->
+<div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='permModalLabel'>{{ 'Edit permissions'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <!-- CAN READ -->
+        <div class='form-group'>
+          <i class='fas fa-eye' title='Visibility'></i>
+          <label for='canread_select'>{{ 'Visibility'|trans }}</label>
+          <select id='canread_select' class='permissionSelect form-control' data-rw='read'>
+            {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+          <!-- CAN WRITE -->
+          <i class='fas fa-pencil-alt' title='Can write'></i>
+          <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
+          <select id='canwrite_select' class='permissionSelect form-control' data-rw='write'>
+            {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TAB 1 - USER PREFERENCES -->
 <div class='divhandle' id='tab1div'>
   <form class='form-group' action='app/controllers/UcpController.php' method='post'>
@@ -137,6 +174,11 @@
           {{ App.Users.userData.show_team == '1' ? " checked='checked'" }}
         />
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
+        <br>
+        <input id='show_team_template' type='checkbox' name='show_team_template'
+               {{ App.Users.userData.show_team_template == '1' ? " checked='checked'" }}
+        />
+        <label for='show_team_template'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
         <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
           {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
@@ -283,7 +325,7 @@
     <ul class='nav nav-pills sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
         <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
-        <li class='subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
+        <li class='subtabhandle clickable badge badge-secondary badgetab' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
         {% endfor %}
     </ul>
     <hr>
@@ -310,6 +352,7 @@
 
     {% for template in templatesArr %}
       <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+        {% if template.isWritable %}
         <!-- TAGS -->
         <i class='fas fa-tags'></i>
         <label>{{ 'Tags'|trans }}</label>
@@ -328,6 +371,13 @@
             {% endif %}
           </span>
           <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+        </div>
+          <div class='dropdown' style="position: relative; bottom: 5px">
+            <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
+            <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+            <!-- MANAGE PERMISSIONS -->
+            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read="{{ template.canread }}" data-write="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+          </div>
         </div>
           <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
               <i class='fas fa-download fa-pull-right clickable'></i>
@@ -350,9 +400,67 @@
             </div>
           </form>
           {% include('steps-links-edit.html') %}
+        {% else %}
+        <div class="badgetab">
+          <h5 style="display: inline;">{{ template.name }}</h5>
+          {{ 'This template is not editable'|trans|msg('ok', false) }}
+          {% if template.tags|length > 0 %}
+          <span class='tags'><i class='fas fa-tags'></i></span>
+              {% set tagsIdArr = template.tags_id|split(',') %}
+              {% set tagsValueArr = template.tags|split('|') %}
+                {% for key, tag in tagsValueArr %}
+                {# the key allows to get the id stored in tagsIdArr #}
+                     <a class='tag' href=''>{{ tag|raw }}</a>
+                {% endfor %}
+              {% endif %}
+          <div class='mt-2'>
+            {% if template.canread > 0 %}
+              {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
+                <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
+              {% endfor %}
+            {% else %}
+                <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ template.canread }}
+            {% endif %}
+
+            {% if template.canwrite > 0 %}
+            {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
+                <i class='fas fa-pencil-alt' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
+            {% endfor %}
+            {% else %}
+                <i class='fas fa-pencil-alt' title='{{ 'rVisibility'|trans }}'></i> {{ template.canwrite }}
+            {% endif %}
+          </div>
+          <h6></h6>
+          <div id='body_view' class='txt'>{{ template.body|raw }}</div>
+            <div class="row">
+              <div class="col-md-6">
+                {% if template.steps|length > 0 %}
+                  <h5 class='mt-2 steps underlined'>Steps</h5>
+                    {% set stepsValueArr = template.steps|split('|') %}
+                    {% for steps in stepsValueArr %}
+                      <ul>
+                        <li><a class='steps text-primary'>{{ steps|raw }}</a></li>
+                      </ul>
+                    {% endfor %}
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                {% if template.links|length > 0 %}
+                  <h5 class='mt-2 steps underlined'>Links</h5>
+                    {% set LinksValueArr = template.links|split('|') %}
+                    {% for links in LinksValueArr %}
+                      <ul>
+                        <li><a class='steps text-primary' href="database.php?mode=view&id={{ links }}">DB{{ links|raw }}</a></li>
+                      </ul>
+                    {% endfor %}
+                {% endif %}
+              </div>
+            </div>
         </div>
-    {% endfor %}
+        {% endif %}
     </div>
+    {% endfor %}
+  </div>
 </div>
 
 <!-- TAB 4 - API KEYS -->

@@ -109,7 +109,6 @@ class Permissions
      */
     public function forTemplates(): array
     {
-
         $write = $this->getWrite();
 
         if ($this->item['userid'] === $this->Users->userData['userid']) {

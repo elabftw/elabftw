@@ -28,7 +28,7 @@
     "jsoneditor": "^8.6.1",
     "marked": "^1.0.0",
     "mathjax": "3.0.*",
-    "moment": "2.24.*",
+    "moment": "2.25.*",
     "popper.js": "1.16.*",
     "prismjs": "1.20.*",
     "sass": "^1.23.7",

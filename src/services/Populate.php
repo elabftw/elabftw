@@ -27,7 +27,7 @@ class Populate
      * @param int $iter number of items to add
      * @return void
      */
-    public function generate(AbstractEntity $Entity, int $iter = 100): void
+    public function generate(AbstractEntity $Entity, int $iter = 500): void
     {
         $Faker = \Faker\Factory::create();
         if ($Entity instanceof Experiments) {

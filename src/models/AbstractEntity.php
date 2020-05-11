@@ -90,9 +90,6 @@ abstract class AbstractEntity
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
 
-    /** @var int $itemsReadNb the total number of items read from sql query */
-    public $itemsReadNb;
-
     /**
      * Constructor
      *
@@ -109,7 +106,6 @@ abstract class AbstractEntity
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
-        $this->itemsReadNb = 0;
         $this->filters = array();
 
         if ($id !== null) {
@@ -183,6 +179,136 @@ abstract class AbstractEntity
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Read several entities for show mode
+     * Here be dragons!
+     */
+    public function readShow(int $team, int $userid, bool $getTags = true, bool $isAnon = false): array
+    {
+        $select = "SELECT DISTINCT entity.id,
+            entity.title,
+            entity.date,
+            entity.category,
+            entity.userid,
+            entity.locked,
+            entity.canread,
+            entity.canwrite,
+            entity.lastchange,
+            uploads.up_item_id, uploads.has_attachment,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
+            categoryt.id AS category_id,
+            categoryt.name AS category,
+            categoryt.color,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            commentst.recent_comment,
+            (commentst.recent_comment IS NOT NULL) AS has_comment";
+
+        $uploadsJoin = 'LEFT JOIN (
+            SELECT uploads.item_id AS up_item_id,
+                (uploads.item_id IS NOT NULL) AS has_attachment,
+                uploads.type
+            FROM uploads
+            GROUP BY uploads.item_id, uploads.type)
+            AS uploads
+            ON (uploads.up_item_id = entity.id AND uploads.type = \'%1$s\')';
+
+
+        $tagsSelect = '';
+        $tagsJoin = '';
+        if ($getTags) {
+            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+            $tagsJoin = 'LEFT JOIN tags2entity ON (entity.id = tags2entity.item_id AND tags2entity.item_type = \'%1$s\') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)';
+        }
+
+        $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
+        $teamJoin = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = ' . $team . ')';
+
+        $categoryTable = $this->type === 'experiments' ? 'status' : 'items_types';
+        $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';
+
+        $commentsJoin = 'LEFT JOIN (
+            SELECT MAX(
+                %1$s_comments.datetime) AS recent_comment,
+                %1$s_comments.item_id
+                FROM %1$s_comments GROUP BY %1$s_comments.item_id
+            ) AS commentst
+            ON (commentst.item_id = entity.id)';
+        $stepsJoin = 'LEFT JOIN (
+            SELECT %1$s_steps.item_id AS steps_item_id,
+            %1$s_steps.body AS next_step,
+            %1$s_steps.finished AS finished
+            FROM %1$s_steps)
+            AS stepst ON (
+            entity.id = steps_item_id
+            AND stepst.finished = 0)';
+
+        $from = 'FROM %1$s AS entity';
+
+        $permissionFilter = ' AND (';
+        $permissionFilter .= "entity.canread = 'public' ";
+        if ($isAnon === false) {
+            $permissionFilter .= " OR entity.canread = 'organization'";
+        }
+        // TODO handle hasCommonTeamWithUser
+        $permissionFilter .= " OR (entity.canread = 'team' AND users2teams.teams_id = $team) ";
+        $permissionFilter .= " OR (entity.canread = 'user' AND entity.userid = $userid)";
+        $permissionFilter .= ')';
+
+        if ($this instanceof Experiments) {
+            $select .= ', entity.timestamped';
+            $eventsJoin = '';
+
+        } elseif ($this instanceof Database) {
+            $select .= ", categoryt.bookable,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id";
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
+        } else {
+            throw new IllegalActionException('Nope.');
+        }
+
+        $sqlArr = array(
+            $select,
+            $tagsSelect,
+            $from,
+            $categoryJoin,
+            $commentsJoin,
+            $eventsJoin,
+            $stepsJoin,
+            $tagsJoin,
+            $usersJoin,
+            $teamJoin,
+            $uploadsJoin,
+        );
+
+        $sql = sprintf(implode(' ', $sqlArr), $this->type);
+
+        // there might or might not be a condition for the where, so make sure there is at least one
+        $sql .= ' WHERE 1=1';
+
+        $sql .= $permissionFilter;
+
+        foreach ($this->filters as $filter) {
+            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
+        }
+        $sql .= $this->titleFilter . ' ' .
+            $this->dateFilter . ' ' .
+            $this->bodyFilter . ' ' .
+            $this->queryFilter . ' ' .
+            ' GROUP BY id ' . ' ' .
+            $this->tagFilter . ' ' .
+            'ORDER BY ' . $this->order . ' ' . $this->sort . ', entity.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        $itemsArr = $req->fetchAll();
+        if ($itemsArr === false) {
+            $itemsArr = array();
+        }
+
+        return $itemsArr;
     }
 
     /**
@@ -324,8 +450,6 @@ abstract class AbstractEntity
         if ($itemsArr === false) {
             $itemsArr = array();
         }
-        // store the total number of items read from db
-        $this->itemsReadNb = count($itemsArr);
 
         // loop the array and only add the ones we can read to return to template
         $finalArr = array();
@@ -444,7 +568,7 @@ abstract class AbstractEntity
      */
     public function setLimit(int $num): void
     {
-        $num *= 20;
+        //$num *= 20;
         $this->limit = 'LIMIT ' . (string) $num;
     }
 
@@ -663,6 +787,7 @@ abstract class AbstractEntity
 
     /**
      * Add a filter to the query
+     * Second param is nullable because it can come from a request param
      *
      * @param string $column the column on which to filter
      * @param string|null $value the value to look for

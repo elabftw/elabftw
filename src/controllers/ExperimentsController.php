@@ -186,11 +186,11 @@ class ExperimentsController extends AbstractEntityController
         if ($order === 'cat') {
             $this->Entity->order = 'status.id';
         } elseif ($order === 'date' || $order === 'rating' || $order === 'title' || $order === 'id' || $order === 'lastchange') {
-            $this->Entity->order = 'experiments.' . $order;
+            $this->Entity->order = 'entity.' . $order;
         } elseif ($order === 'comment') {
             $this->Entity->order = 'experiments_comments.recent_comment';
         } elseif ($order === 'user') {
-            $this->Entity->order = 'experiments.userid';
+            $this->Entity->order = 'entity.userid';
         }
 
         // SORT
@@ -243,10 +243,10 @@ class ExperimentsController extends AbstractEntityController
         } else {
             // filter by user only if we are not making a search
             if (!$this->Entity->Users->userData['show_team'] && ($searchType === '' || $searchType === 'filter')) {
-                $this->Entity->addFilter('experiments.userid', $this->App->Users->userData['userid']);
+                $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);
             }
 
-            $itemsArr = $this->Entity->read($getTags);
+            $itemsArr = $this->Entity->readShow($this->App->Users->userData['team'], (int) $this->App->Users->userData['userid'], $getTags);
         }
 
         // store the query parameters in the Session

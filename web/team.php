@@ -44,13 +44,13 @@ try {
 
     $Database = new Database($App->Users);
     // we only want the bookable type of items
-    $Database->addFilter('bookable', '1');
+    $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
 
     // disabled because takes too much resources
     //$TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
-    $itemsArr = $Database->read(false);
+    $itemsArr = $Database->readShow();
     $itemData = null;
 
     $allItems = true;

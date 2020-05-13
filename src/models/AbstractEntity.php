@@ -259,7 +259,7 @@ abstract class AbstractEntity
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        $sql = $this->getReadSqlBeforeWhere(true, true);
+        $sql = $this->getReadSqlBeforeWhere($getTags, true);
 
         $sql .= ' WHERE entity.id = ' . (string) $this->id;
 
@@ -626,12 +626,20 @@ abstract class AbstractEntity
         $this->entityData = $this->read();
     }
 
+    /**
+     * Get the SQL string for read before the WHERE
+     *
+     * @param bool $getTags do we get the tags too?
+     * @param bool $fullSelect select all the columns of entity
+     * @return string
+     */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
-        $team = (string) $this->Users->userData['team'];
         if ($fullSelect) {
+            // get all the columns of entity table
             $select = 'SELECT DISTINCT entity.*,';
         } else {
+            // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,
                 entity.title,
                 entity.date,
@@ -667,7 +675,10 @@ abstract class AbstractEntity
             ON (uploads.up_item_id = entity.id AND uploads.type = \'%1$s\')';
 
         $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
-        $teamJoin = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = ' . $team . ')';
+        $teamJoin = sprintf(
+            'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = %s)',
+            $this->Users->userData['team']
+        );
 
         $categoryTable = $this->type === 'experiments' ? 'status' : 'items_types';
         $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';

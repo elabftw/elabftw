@@ -12,9 +12,11 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -208,85 +210,8 @@ abstract class AbstractEntity
      */
     public function readShow(): array
     {
+        $sql = $this->getReadSqlBeforeWhere(false, false);
         $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
-        $team = (string) $this->Users->userData['team'];
-
-        $select = "SELECT DISTINCT entity.id,
-            entity.title,
-            entity.date,
-            entity.category,
-            entity.userid,
-            entity.locked,
-            entity.canread,
-            entity.canwrite,
-            entity.lastchange,
-            uploads.up_item_id, uploads.has_attachment,
-            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-            categoryt.id AS category_id,
-            categoryt.name AS category,
-            categoryt.color,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment";
-
-        $uploadsJoin = 'LEFT JOIN (
-            SELECT uploads.item_id AS up_item_id,
-                (uploads.item_id IS NOT NULL) AS has_attachment,
-                uploads.type
-            FROM uploads
-            GROUP BY uploads.item_id, uploads.type)
-            AS uploads
-            ON (uploads.up_item_id = entity.id AND uploads.type = \'%1$s\')';
-
-        $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
-        $teamJoin = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = ' . $team . ')';
-
-        $categoryTable = $this->type === 'experiments' ? 'status' : 'items_types';
-        $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';
-
-        $commentsJoin = 'LEFT JOIN (
-            SELECT MAX(
-                %1$s_comments.datetime) AS recent_comment,
-                %1$s_comments.item_id
-                FROM %1$s_comments GROUP BY %1$s_comments.item_id
-            ) AS commentst
-            ON (commentst.item_id = entity.id)';
-        $stepsJoin = 'LEFT JOIN (
-            SELECT %1$s_steps.item_id AS steps_item_id,
-            %1$s_steps.body AS next_step,
-            %1$s_steps.finished AS finished
-            FROM %1$s_steps)
-            AS stepst ON (
-            entity.id = steps_item_id
-            AND stepst.finished = 0)';
-
-        $from = 'FROM %1$s AS entity';
-
-        if ($this instanceof Experiments) {
-            $select .= ', entity.timestamped';
-            $eventsJoin = '';
-        } elseif ($this instanceof Database) {
-            $select .= ', categoryt.bookable,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
-        } else {
-            throw new IllegalActionException('Nope.');
-        }
-
-        $sqlArr = array(
-            $select,
-            $from,
-            $categoryJoin,
-            $commentsJoin,
-            $eventsJoin,
-            $stepsJoin,
-            $usersJoin,
-            $teamJoin,
-            $uploadsJoin,
-        );
-
-        // replace all %1$s by 'experiments' or 'items'
-        $sql = sprintf(implode(' ', $sqlArr), $this->type);
 
         // there might or might not be a condition for the WHERE, so make sure there is at least one
         $sql .= ' WHERE 1=1';
@@ -323,158 +248,35 @@ abstract class AbstractEntity
     }
 
     /**
-     * Read all from the entity
-     * Optionally with filters
+     * Read all from one entity
      * Here be dragons!
      *
-     * @param bool $getTags if true, might take a very long time, false in show mode
-     *
-     * @deprecated this should be nuked
+     * @param bool $getTags if true, might take a long time
      * @return array
      */
     public function read(bool $getTags = true): array
     {
-        if ($this->id !== null) {
-            $this->addFilter($this->type . '.id', (string) $this->id);
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
         }
+        $sql = $this->getReadSqlBeforeWhere(true, true);
 
-        $uploadsJoin = 'LEFT JOIN (
-            SELECT uploads.item_id AS up_item_id,
-                (uploads.item_id IS NOT NULL) AS has_attachment,
-                uploads.type
-            FROM uploads
-            GROUP BY uploads.item_id, uploads.type)
-            AS uploads
-            ON (uploads.up_item_id = ' . $this->type . ".id AND uploads.type = '" . $this->type . "')";
-
-
-        $tagsSelect = '';
-        $tagsJoin = '';
-        if ($getTags) {
-            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-            $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
-        }
-
-
-        if ($this instanceof Experiments) {
-            $select = 'SELECT DISTINCT ' . $this->type . ".*,
-                status.color, status.name AS category, status.id AS category_id,
-                uploads.up_item_id, uploads.has_attachment,
-                experiments_comments.recent_comment,
-                (experiments_comments.recent_comment IS NOT NULL) AS has_comment,
-                SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
-
-            $from = 'FROM experiments';
-
-            $usersJoin = 'LEFT JOIN users ON (experiments.userid = users.userid)';
-            $stepsJoin = 'LEFT JOIN (
-                SELECT experiments_steps.item_id AS steps_item_id,
-                experiments_steps.body AS next_step,
-                experiments_steps.finished AS finished
-                FROM experiments_steps)
-                AS stepst ON (
-                experiments.id = steps_item_id
-                AND stepst.finished = 0)';
-
-            $statusJoin = 'LEFT JOIN status ON (status.id = experiments.category)';
-            $commentsJoin = 'LEFT JOIN (
-                SELECT MAX(experiments_comments.datetime) AS recent_comment,
-                    experiments_comments.item_id FROM experiments_comments GROUP BY experiments_comments.item_id
-                ) AS experiments_comments
-                ON (experiments_comments.item_id = experiments.id)';
-
-            $sql = implode(' ', array(
-                $select,
-                $tagsSelect,
-                $from,
-                $usersJoin,
-                $stepsJoin,
-                $tagsJoin,
-                $statusJoin,
-                $uploadsJoin,
-                $commentsJoin,
-            ));
-        } elseif ($this instanceof Database) {
-            $sql = "SELECT DISTINCT items.*, items_types.name AS category,
-                items_types.color,
-                items_types.id AS category_id,
-                items_types.bookable,
-                items_comments.recent_comment,
-                (items_comments.recent_comment IS NOT NULL) AS has_comment,
-                SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-                uploads.up_item_id, uploads.has_attachment,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id";
-
-            $from = 'FROM items
-                LEFT JOIN items_types ON (items.category = items_types.id)
-                LEFT JOIN users ON (users.userid = items.userid)';
-
-            $stepsJoin = 'LEFT JOIN (
-                SELECT items_steps.item_id AS steps_item_id,
-                items_steps.body AS next_step,
-                items_steps.finished AS finished
-                FROM items_steps)
-                AS stepst ON (
-                items.id = steps_item_id
-                AND stepst.finished = 0)';
-
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = items.id)';
-
-            $commentsJoin = 'LEFT JOIN (
-                SELECT MAX(items_comments.datetime) AS recent_comment,
-                    items_comments.item_id FROM items_comments GROUP BY items_comments.item_id
-                ) AS items_comments
-                ON (items_comments.item_id = items.id)';
-
-            $sql .= ' ';
-            $sql .= implode(' ', array(
-                $tagsSelect,
-                $from,
-                $uploadsJoin,
-                $stepsJoin,
-                $eventsJoin,
-                $commentsJoin,
-                $tagsJoin,
-            ));
-        } else {
-            throw new IllegalActionException('Nope.');
-        }
-
-        $sql .= ' WHERE 1=1';
-
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
-        $sql .= $this->titleFilter . ' ' .
-            $this->dateFilter . ' ' .
-            $this->bodyFilter . ' ' .
-            $this->queryFilter . ' ' .
-            ' GROUP BY id ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
+        $sql .= ' WHERE entity.id = ' . (string) $this->id;
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
-        $itemsArr = $req->fetchAll();
-        if ($itemsArr === false) {
-            $itemsArr = array();
+        $item = $req->fetch();
+        if ($item === false) {
+            throw new ResourceNotFoundException();
         }
 
-        // loop the array and only add the ones we can read to return to template
-        $finalArr = array();
-        foreach ($itemsArr as $item) {
-            $permissions = $this->getPermissions($item);
-            if ($permissions['read']) {
-                $finalArr[] = $item;
-            }
+        $permissions = $this->getPermissions($item);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException(Tools::error(true));
         }
 
-        // reduce the dimension of the array if we have only one item
-        if (count($itemsArr) === 1 && !empty($this->id)) {
-            return $itemsArr[0];
-        }
-        return $finalArr;
+        return $item;
     }
 
     /**
@@ -822,6 +624,99 @@ abstract class AbstractEntity
 
         // load the entity in entityData array
         $this->entityData = $this->read();
+    }
+
+    private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
+    {
+        $team = (string) $this->Users->userData['team'];
+        if ($fullSelect) {
+            $select = 'SELECT DISTINCT entity.*,';
+        } else {
+            $select = 'SELECT DISTINCT entity.id,
+                entity.title,
+                entity.date,
+                entity.category,
+                entity.userid,
+                entity.locked,
+                entity.canread,
+                entity.canwrite,
+                entity.lastchange,';
+        }
+        $select .= "uploads.up_item_id, uploads.has_attachment,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
+            categoryt.id AS category_id,
+            categoryt.name AS category,
+            categoryt.color,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            commentst.recent_comment,
+            (commentst.recent_comment IS NOT NULL) AS has_comment";
+
+        $tagsSelect = '';
+        $tagsJoin = '';
+        if ($getTags) {
+            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+            $tagsJoin = 'LEFT JOIN tags2entity ON (entity.id = tags2entity.item_id AND tags2entity.item_type = \'%1$s\') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)';
+        }
+        $uploadsJoin = 'LEFT JOIN (
+            SELECT uploads.item_id AS up_item_id,
+                (uploads.item_id IS NOT NULL) AS has_attachment,
+                uploads.type
+            FROM uploads
+            GROUP BY uploads.item_id, uploads.type)
+            AS uploads
+            ON (uploads.up_item_id = entity.id AND uploads.type = \'%1$s\')';
+
+        $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
+        $teamJoin = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = ' . $team . ')';
+
+        $categoryTable = $this->type === 'experiments' ? 'status' : 'items_types';
+        $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';
+
+        $commentsJoin = 'LEFT JOIN (
+            SELECT MAX(
+                %1$s_comments.datetime) AS recent_comment,
+                %1$s_comments.item_id
+                FROM %1$s_comments GROUP BY %1$s_comments.item_id
+            ) AS commentst
+            ON (commentst.item_id = entity.id)';
+        $stepsJoin = 'LEFT JOIN (
+            SELECT %1$s_steps.item_id AS steps_item_id,
+            %1$s_steps.body AS next_step,
+            %1$s_steps.finished AS finished
+            FROM %1$s_steps)
+            AS stepst ON (
+            entity.id = steps_item_id
+            AND stepst.finished = 0)';
+
+        $from = 'FROM %1$s AS entity';
+
+        if ($this instanceof Experiments) {
+            $select .= ', entity.timestamped';
+            $eventsJoin = '';
+        } elseif ($this instanceof Database) {
+            $select .= ', categoryt.bookable,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
+        } else {
+            throw new IllegalActionException('Nope.');
+        }
+
+        $sqlArr = array(
+            $select,
+            $tagsSelect,
+            $from,
+            $categoryJoin,
+            $commentsJoin,
+            $tagsJoin,
+            $eventsJoin,
+            $stepsJoin,
+            $usersJoin,
+            $teamJoin,
+            $uploadsJoin,
+        );
+
+        // replace all %1$s by 'experiments' or 'items'
+        return sprintf(implode(' ', $sqlArr), $this->type);
     }
 
     /**

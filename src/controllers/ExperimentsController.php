@@ -51,7 +51,7 @@ class ExperimentsController extends AbstractEntityController
     protected function view(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
-        $this->Entity->canOrExplode('read');
+        $this->Entity->populate();
 
         // LINKS
         $linksArr = $this->Entity->Links->readAll();
@@ -94,8 +94,7 @@ class ExperimentsController extends AbstractEntityController
     protected function edit(): Response
     {
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
-        // check permissions
-        $this->Entity->canOrExplode('write');
+        $this->Entity->populate();
         // a locked experiment cannot be edited
         if ($this->Entity->entityData['locked']) {
             throw new ImproperActionException(_('This item is locked. You cannot edit it!'));

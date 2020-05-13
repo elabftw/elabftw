@@ -70,8 +70,6 @@ class Links implements CrudInterface
      */
     public function readAll(): array
     {
-        $this->Entity->canOrExplode('read');
-
         $sql = 'SELECT items.id AS itemid,
             ' . $this->Entity->type . '_links.id AS linkid,
             items.title,

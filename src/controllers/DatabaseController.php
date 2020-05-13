@@ -232,6 +232,8 @@ class DatabaseController extends AbstractEntityController
         }
 
         $itemsArr = $this->Entity->readShow();
+        // get tags separately
+        $tagsArr = $this->Entity->getTags($itemsArr);
 
         $template = 'show.html';
 
@@ -243,6 +245,7 @@ class DatabaseController extends AbstractEntityController
             'limit' => $limit,
             'offset' => $offset,
             'query' => $query,
+            'tagsArr' => $tagsArr,
             'searchType' => $searchType,
             'visibilityArr' => $visibilityArr,
         );

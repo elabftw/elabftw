@@ -292,24 +292,32 @@ abstract class AbstractEntity
     /**
      * Read the tags of the entity
      *
-     * @param int $id id of the entity
+     * @param array $items the results of all items from readShow()
      *
      * @return array
      */
-    public function getTags(int $id): array
+    public function getTags(array $items): array
     {
-        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags.tag FROM tags2entity
+        $itemIds = '(';
+        foreach ($items as $item) {
+            $itemIds .= 'tags2entity.item_id = ' . $item['id'] . ' OR ';
+        }
+        $sqlid .= rtrim($itemIds, ' OR ') . ')';
+        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            WHERE tags2entity.item_id = :id and tags2entity.item_type = :type';
+            WHERE tags2entity.item_type = :type AND ' . $sqlid;
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->type);
         $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
         }
-        return $res;
+        $allTags = array();
+        foreach ($res as $tags) {
+            $allTags[$tags['item_id']][] = $tags;
+        }
+        return $allTags;
     }
 
     /**

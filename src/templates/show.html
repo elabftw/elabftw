@@ -239,10 +239,10 @@
 
           {{ owner|raw }}
 
-          {% set tagsArr = Entity.getTags(item.id) %}
-          {% if tagsArr|length > 0 %}
+          {% set itemtagsArr = tagsArr[item.id] %}
+          {% if itemtagsArr|length > 0 %}
           <span class='tags'><i class='fas fa-tags mr-1'></i>
-              {% for tag in tagsArr %}
+              {% for tag in itemtagsArr %}
               <a class='tag' href='?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
               {% endfor %}
           {% endif %}

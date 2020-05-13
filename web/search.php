@@ -194,6 +194,8 @@ if ($Request->query->count() > 0) {
 
         // READ the results
         $itemsArr = $Entity->readShow();
+        // get tags separately
+        $tagsArr = $Entity->getTags($itemsArr);
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)
@@ -205,6 +207,7 @@ if ($Request->query->count() > 0) {
             'searchType' => 'something',
             // generate light show page
             'searchPage' => true,
+            'tagsArr' => $tagsArr,
         ));
     }
 } else {

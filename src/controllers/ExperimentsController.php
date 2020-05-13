@@ -142,7 +142,6 @@ class ExperimentsController extends AbstractEntityController
     protected function show(): Response
     {
         $searchType = '';
-        $tag = '';
         $query = '';
 
         // CATEGORY FILTER
@@ -249,6 +248,8 @@ class ExperimentsController extends AbstractEntityController
 
             $itemsArr = $this->Entity->readShow();
         }
+        // get tags separately
+        $tagsArr = $this->Entity->getTags($itemsArr);
 
 
         // store the query parameters in the Session
@@ -264,7 +265,7 @@ class ExperimentsController extends AbstractEntityController
             'query' => $query,
             'limit' => $limit,
             'searchType' => $searchType,
-            'tag' => $tag,
+            'tagsArr' => $tagsArr,
             'templatesArr' => $templatesArr,
             'visibilityArr' => $visibilityArr,
         );

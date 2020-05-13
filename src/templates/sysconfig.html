@@ -32,7 +32,7 @@
     {% endif %}
 
     {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-        {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/postinstall.html#setting-up-email'>", "</a>")|msg('ko') }}
+        {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
     {% endif %}
 {% endif %}
 

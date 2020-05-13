@@ -135,6 +135,11 @@ abstract class AbstractEntityController implements ControllerInterface
             $searchType = 'query';
         }
 
+        // RELATED FILTER
+        if (Check::id((int) $this->App->Request->query->get('related')) !== false) {
+            $searchType = 'related';
+        }
+
         // ORDER
         $order = '';
 
@@ -264,6 +269,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'view',
             'revNum' => $revNum,
             'stepsArr' => $stepsArr,
+            'timestampInfo' => $timestampInfo,
         );
 
         $Response = new Response();

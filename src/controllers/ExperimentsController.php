@@ -13,7 +13,6 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
-use Elabftw\Services\Check;
 
 /**
  * For experiments.php
@@ -46,8 +45,7 @@ class ExperimentsController extends AbstractEntityController
     protected function getItemsArr(string $searchType): array
     {
         // related filter
-        if (Check::id((int) $this->App->Request->query->get('related')) !== false) {
-            $searchType = 'related';
+        if ($searchType === 'related') {
             return $this->Entity->readRelated((int) $this->App->Request->query->get('related'));
         }
 

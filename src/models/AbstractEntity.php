@@ -302,7 +302,7 @@ abstract class AbstractEntity
         foreach ($items as $item) {
             $itemIds .= 'tags2entity.item_id = ' . $item['id'] . ' OR ';
         }
-        $sqlid .= rtrim($itemIds, ' OR ') . ')';
+        $sqlid = rtrim($itemIds, ' OR ') . ')';
         $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             WHERE tags2entity.item_type = :type AND ' . $sqlid;

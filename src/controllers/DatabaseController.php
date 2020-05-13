@@ -154,9 +154,8 @@ class DatabaseController extends AbstractEntityController
             foreach ($ids as $id) {
                 $idFilter .= 'entity.id = ' . $id . ' OR ';
             }
-            $idFilter = rtrim($idFilter, ' OR ');
-            $idFilter .= ')';
-            $this->Entity->idFilter = $idFilter;
+            $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
+            $this->Entity->idFilter = $trimmedFilter;
             $searchType = 'tag';
         }
         // QUERY FILTER

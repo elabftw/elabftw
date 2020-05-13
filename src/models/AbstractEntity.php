@@ -398,6 +398,7 @@ abstract class AbstractEntity
      */
     public function setLimit(int $num): void
     {
+        $num += 1;
         $this->limit = 'LIMIT ' . (string) $num;
     }
 

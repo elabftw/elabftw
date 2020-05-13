@@ -260,7 +260,9 @@
         {% if offset != 0 %}
           <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>
         {% endif %}
+        {% if limit < itemsArr|length %}
           <button class='button btn btn-primary nextPage'>{{ 'Next page'|trans }}</button>
+        {% endif %}
       </div>
   {% endif %}
 

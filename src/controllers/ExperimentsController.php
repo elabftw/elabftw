@@ -233,11 +233,12 @@ class ExperimentsController extends AbstractEntityController
 
         // READ ALL ITEMS
 
+        // only show public to anon
         if ($this->App->Session->get('anon')) {
-            $this->Entity->addFilter($this->Entity->type . '.canread', 'public');
-            $itemsArr = $this->Entity->read($getTags);
+            $this->Entity->addFilter('entity.canread', 'public');
+        }
         // related filter
-        } elseif (Check::id((int) $this->App->Request->query->get('related')) !== false) {
+        if (Check::id((int) $this->App->Request->query->get('related')) !== false) {
             $searchType = 'related';
             $itemsArr = $this->Entity->readRelated((int) $this->App->Request->query->get('related'));
         } else {
@@ -246,7 +247,12 @@ class ExperimentsController extends AbstractEntityController
                 $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);
             }
 
-            $itemsArr = $this->Entity->readShow($this->App->Users->userData['team'], (int) $this->App->Users->userData['userid'], $getTags);
+            $itemsArr = $this->Entity->readShow(
+                $this->App->Users->userData['team'],
+                $getTags,
+                // array of teamgroups ids
+                $TeamGroups->getGroupsFromUser(),
+            );
         }
 
         // store the query parameters in the Session

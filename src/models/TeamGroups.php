@@ -264,4 +264,22 @@ class TeamGroups implements CrudInterface
         $req->fetch();
         return $req->rowCount() > 0;
     }
+
+    public function getGroupsFromUser(): array
+    {
+        $groups = array();
+
+        $sql = 'SELECT DISTINCT groupid FROM users2team_groups WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return $groups;
+        }
+        foreach ($res as $group) {
+            $groups[] = $group['groupid'];
+        }
+        return $groups;
+    }
 }

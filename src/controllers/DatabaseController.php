@@ -181,11 +181,11 @@ class DatabaseController extends AbstractEntityController
         }
 
         if ($order === 'cat') {
-            $this->Entity->order = 'items_types.id';
+            $this->Entity->order = 'entity.id';
         } elseif ($order === 'date' || $order === 'rating' || $order === 'title' || $order === 'id' || $order === 'lastchange') {
             $this->Entity->order = 'entity.' . $order;
         } elseif ($order === 'comment') {
-            $this->Entity->order = 'items_comments.recent_comment';
+            $this->Entity->order = 'commentst.recent_comment';
         } elseif ($order === 'user') {
             $this->Entity->order = 'entity.userid';
         }
@@ -225,7 +225,17 @@ class DatabaseController extends AbstractEntityController
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->query->all());
 
-        $itemsArr = $this->Entity->readShow($this->App->Users->userData['team'], $getTags);
+        // only show public to anon
+        if ($this->App->Session->get('anon')) {
+            $this->Entity->addFilter('entity.canread', 'public');
+        }
+
+        $itemsArr = $this->Entity->readShow(
+            $this->App->Users->userData['team'],
+            $getTags,
+            // array of teamgroups ids
+            $TeamGroups->getGroupsFromUser(),
+        );
 
         $template = 'show.html';
 

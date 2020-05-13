@@ -181,11 +181,28 @@ abstract class AbstractEntity
         $this->Db->execute($req);
     }
 
+
     /**
      * Read several entities for show mode
-     * Here be dragons!
+     * The goal here is to decrease the number of read columns to reduce memory footprint
+     * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
+     * Only logged in users use this function
+     *
+     *                   \||/
+     *                   |  @___oo
+     *         /\  /\   / (__,,,,|
+     *        ) /^\) ^\/ _)
+     *        )   /^\/   _)
+     *        )   _ /  / _)
+     *    /\  )/\/ ||  | )_)
+     *   <  >      |(,,) )__)
+     *    ||      /    \)___)\
+     *    | \____(      )___) )___
+     *     \______(_______;;; __;;;
+     *
+     *          Here be dragons!
      */
-    public function readShow(int $team, int $userid, bool $getTags = true, bool $isAnon = false): array
+    public function readShow(int $team, bool $getTags = true, array $teamgroups = array()): array
     {
         $select = "SELECT DISTINCT entity.id,
             entity.title,
@@ -246,16 +263,6 @@ abstract class AbstractEntity
 
         $from = 'FROM %1$s AS entity';
 
-        $permissionFilter = ' AND (';
-        $permissionFilter .= "entity.canread = 'public' ";
-        if ($isAnon === false) {
-            $permissionFilter .= " OR entity.canread = 'organization'";
-        }
-        // TODO handle hasCommonTeamWithUser
-        $permissionFilter .= " OR (entity.canread = 'team' AND users2teams.teams_id = $team) ";
-        $permissionFilter .= " OR (entity.canread = 'user' AND entity.userid = $userid)";
-        $permissionFilter .= ')';
-
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
             $eventsJoin = '';
@@ -282,16 +289,27 @@ abstract class AbstractEntity
             $uploadsJoin,
         );
 
+        // replace all %1$s by 'experiments' or 'items'
         $sql = sprintf(implode(' ', $sqlArr), $this->type);
 
-        // there might or might not be a condition for the where, so make sure there is at least one
+        // there might or might not be a condition for the WHERE, so make sure there is at least one
         $sql .= ' WHERE 1=1';
-
-        $sql .= $permissionFilter;
 
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
+        // add team filter
+        $sql .= " AND ( (entity.canread = 'team' AND users2teams.users_id = entity.userid)";
+        // add all the teamgroups in which the user is
+        if (!empty($teamgroups)) {
+            $sql .= " OR (";
+            foreach($teamgroups as $teamgroup) {
+                $sql .= "entity.canread = $teamgroup";
+            }
+            $sql .= ")";
+        }
+        $sql .= ")";
+
         $sql .= $this->titleFilter . ' ' .
             $this->dateFilter . ' ' .
             $this->bodyFilter . ' ' .

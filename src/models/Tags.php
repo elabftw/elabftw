@@ -88,6 +88,8 @@ class Tags implements CrudInterface
      */
     public function readAll(?string $term = null): array
     {
+        $this->Entity->canOrExplode('read');
+
         $tagFilter = '';
         if ($term !== null) {
             $tagFilter = " AND tags.tag LIKE '%$term%'";
@@ -117,6 +119,7 @@ class Tags implements CrudInterface
      */
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
+        $this->Entity->canOrExplode('read');
         $sql = 'SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -167,6 +170,7 @@ class Tags implements CrudInterface
      */
     public function update(string $tag, string $newtag): void
     {
+        $this->Entity->canOrExplode('write');
         $newtag = $this->checkTag($newtag);
 
         $sql = 'UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team';
@@ -284,6 +288,7 @@ class Tags implements CrudInterface
      */
     public function destroyAll(): void
     {
+        $this->Entity->canOrExplode('write');
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

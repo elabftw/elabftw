@@ -652,7 +652,7 @@ abstract class AbstractEntity
      */
     public function getTimestampInfo(): array
     {
-        if ($this->entityData['timestamped'] === '0' || $this instanceof Database) {
+        if ($this instanceof Database || $this->entityData['timestamped'] === '0') {
             return array();
         }
         $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);

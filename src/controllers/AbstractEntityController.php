@@ -12,8 +12,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
 use Elabftw\Models\Revisions;

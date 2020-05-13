@@ -229,12 +229,22 @@ abstract class AbstractEntity
         }
         $sql .= ')';
 
-        $sql .= $this->titleFilter . ' ' .
-            $this->dateFilter . ' ' .
-            $this->bodyFilter . ' ' .
-            $this->queryFilter . ' ' .
-            $this->idFilter . ' ' .
-            ' GROUP BY id ORDER BY ' . $this->order . ' ' . $this->sort . ', entity.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
+        $sqlArr = array(
+            $this->titleFilter,
+            $this->dateFilter,
+            $this->bodyFilter,
+            $this->queryFilter,
+            $this->idFilter,
+            'GROUP BY id ORDER BY',
+            $this->order,
+            $this->sort,
+            ', entity.id',
+            $this->sort,
+            $this->limit,
+            $this->offset,
+        );
+
+        $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

@@ -302,11 +302,9 @@ abstract class AbstractEntity
         $sql .= " AND ( (entity.canread = 'team' AND users2teams.users_id = entity.userid)";
         // add all the teamgroups in which the user is
         if (!empty($teamgroups)) {
-            $sql .= " OR (";
             foreach($teamgroups as $teamgroup) {
-                $sql .= "entity.canread = $teamgroup";
+                $sql .= " OR (entity.canread = $teamgroup)";
             }
-            $sql .= ")";
         }
         $sql .= ")";
 

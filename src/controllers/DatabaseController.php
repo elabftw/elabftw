@@ -140,7 +140,6 @@ class DatabaseController extends AbstractEntityController
         // if this variable is not empty the error message shown will be different if there are no results
         $searchType = null;
         $query = '';
-        $getTags = false;
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -149,14 +148,16 @@ class DatabaseController extends AbstractEntityController
         }
         // TAG FILTER
         if (!empty($this->App->Request->query->get('tags')[0])) {
-            $having = 'HAVING ';
-            foreach ($this->App->Request->query->get('tags') as $tag) {
-                $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
-                $having .= " (tags LIKE '%|$tag|%' OR tags LIKE '$tag' OR tags LIKE '$tag|%' OR tags LIKE '%|$tag') AND ";
+            // get all the ids with that tag
+            $ids = $this->Entity->Tags->getIdFromTags($this->App->Request->query->get('tags'), (int) $this->App->Users->userData['team']);
+            $idFilter = ' AND (';
+            foreach ($ids as $id) {
+                $idFilter .= 'entity.id = ' . $id . ' OR ';
             }
-            $this->Entity->tagFilter = rtrim($having, ' AND');
+            $idFilter = rtrim($idFilter, ' OR ');
+            $idFilter .= ')';
+            $this->Entity->idFilter = $idFilter;
             $searchType = 'tag';
-            $getTags = true;
         }
         // QUERY FILTER
         if (!empty($this->App->Request->query->get('q'))) {
@@ -230,12 +231,7 @@ class DatabaseController extends AbstractEntityController
             $this->Entity->addFilter('entity.canread', 'public');
         }
 
-        $itemsArr = $this->Entity->readShow(
-            $this->App->Users->userData['team'],
-            $getTags,
-            // array of teamgroups ids
-            $TeamGroups->getGroupsFromUser(),
-        );
+        $itemsArr = $this->Entity->readShow();
 
         $template = 'show.html';
 

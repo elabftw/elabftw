@@ -291,6 +291,43 @@ class Tags implements CrudInterface
     }
 
     /**
+     * Get a list of entity id filtered by tags
+     *
+     * @param array $tags tags from the query string
+     * @param int $team current logged in team
+     * @return array
+     */
+    public function getIdFromTags(array $tags, int $team): array
+    {
+        $tagIds = array();
+        foreach ($tags as $tag) {
+            $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tag', $tag);
+            $req->bindParam(':team', $team, PDO::PARAM_INT);
+            $req->execute();
+            $results = $req->fetchAll();
+            foreach ($results as $res) {
+                $tagIds[] = (int) $res['id'];
+            }
+        }
+
+        $itemIds = array();
+        foreach ($tagIds as $tagid) {
+            $sql = 'SELECT item_id FROM tags2entity WHERE tag_id = :tagid AND item_type = :type';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tagid', $tagid, PDO::PARAM_INT);
+            $req->bindParam(':type', $this->Entity->type);
+            $req->execute();
+            $results = $req->fetchAll();
+            foreach ($results as $res) {
+                $itemIds[] = (int) $res['item_id'];
+            }
+        }
+        return $itemIds;
+    }
+
+    /**
      * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
      * also remove | because we use this as separator for tags in SQL
      *

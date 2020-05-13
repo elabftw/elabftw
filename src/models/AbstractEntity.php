@@ -60,6 +60,9 @@ abstract class AbstractEntity
     /** @var array $filters an array of arrays with filters for sql query */
     public $filters;
 
+    /** @var string $idFilter sql of ids to include */
+    public $idFilter;
+
     /** @var string $titleFilter inserted in sql */
     public $titleFilter = '';
 
@@ -68,9 +71,6 @@ abstract class AbstractEntity
 
     /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
-
-    /** @var string $tagFilter inserted in sql */
-    public $tagFilter = '';
 
     /** @var string $queryFilter inserted in sql */
     public $queryFilter = '';
@@ -90,6 +90,9 @@ abstract class AbstractEntity
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
 
+    /** @var TeamGroups $TeamGroups instance of TeamGroups */
+    protected $TeamGroups;
+
     /**
      * Constructor
      *
@@ -106,7 +109,9 @@ abstract class AbstractEntity
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
+        $this->TeamGroups = new TeamGroups($this->Users);
         $this->filters = array();
+        $this->idFilter = '';
 
         if ($id !== null) {
             $this->setId($id);
@@ -181,7 +186,6 @@ abstract class AbstractEntity
         $this->Db->execute($req);
     }
 
-
     /**
      * Read several entities for show mode
      * The goal here is to decrease the number of read columns to reduce memory footprint
@@ -202,8 +206,11 @@ abstract class AbstractEntity
      *
      *          Here be dragons!
      */
-    public function readShow(int $team, bool $getTags = true, array $teamgroups = array()): array
+    public function readShow(): array
     {
+        $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
+        $team = (string) $this->Users->userData['team'];
+
         $select = "SELECT DISTINCT entity.id,
             entity.title,
             entity.date,
@@ -230,14 +237,6 @@ abstract class AbstractEntity
             GROUP BY uploads.item_id, uploads.type)
             AS uploads
             ON (uploads.up_item_id = entity.id AND uploads.type = \'%1$s\')';
-
-
-        $tagsSelect = '';
-        $tagsJoin = '';
-        if ($getTags) {
-            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-            $tagsJoin = 'LEFT JOIN tags2entity ON (entity.id = tags2entity.item_id AND tags2entity.item_type = \'%1$s\') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)';
-        }
 
         $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
         $teamJoin = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = ' . $team . ')';
@@ -266,10 +265,9 @@ abstract class AbstractEntity
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
             $eventsJoin = '';
-
         } elseif ($this instanceof Database) {
-            $select .= ", categoryt.bookable,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id";
+            $select .= ', categoryt.bookable,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
             $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
         } else {
             throw new IllegalActionException('Nope.');
@@ -277,13 +275,11 @@ abstract class AbstractEntity
 
         $sqlArr = array(
             $select,
-            $tagsSelect,
             $from,
             $categoryJoin,
             $commentsJoin,
             $eventsJoin,
             $stepsJoin,
-            $tagsJoin,
             $usersJoin,
             $teamJoin,
             $uploadsJoin,
@@ -301,20 +297,19 @@ abstract class AbstractEntity
         // add team filter
         $sql .= " AND ( (entity.canread = 'team' AND users2teams.users_id = entity.userid)";
         // add all the teamgroups in which the user is
-        if (!empty($teamgroups)) {
-            foreach($teamgroups as $teamgroup) {
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
                 $sql .= " OR (entity.canread = $teamgroup)";
             }
         }
-        $sql .= ")";
+        $sql .= ')';
 
         $sql .= $this->titleFilter . ' ' .
             $this->dateFilter . ' ' .
             $this->bodyFilter . ' ' .
             $this->queryFilter . ' ' .
-            ' GROUP BY id ' . ' ' .
-            $this->tagFilter . ' ' .
-            'ORDER BY ' . $this->order . ' ' . $this->sort . ', entity.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
+            $this->idFilter . ' ' .
+            ' GROUP BY id ORDER BY ' . $this->order . ' ' . $this->sort . ', entity.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -334,6 +329,7 @@ abstract class AbstractEntity
      *
      * @param bool $getTags if true, might take a very long time, false in show mode
      *
+     * @deprecated this should be nuked
      * @return array
      */
     public function read(bool $getTags = true): array
@@ -455,9 +451,7 @@ abstract class AbstractEntity
             $this->dateFilter . ' ' .
             $this->bodyFilter . ' ' .
             $this->queryFilter . ' ' .
-            ' GROUP BY id ' . ' ' .
-            $this->tagFilter . ' ' .
-            'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
+            ' GROUP BY id ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -584,7 +578,6 @@ abstract class AbstractEntity
      */
     public function setLimit(int $num): void
     {
-        //$num *= 20;
         $this->limit = 'LIMIT ' . (string) $num;
     }
 
@@ -633,9 +626,8 @@ abstract class AbstractEntity
      */
     public function getCan(string $rw): string
     {
-        $TeamGroups = new TeamGroups($this->Users);
         if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
-            return $TeamGroups->readName((int) $this->entityData['can' . $rw]);
+            return $this->TeamGroups->readName((int) $this->entityData['can' . $rw]);
         }
         return ucfirst($this->entityData['can' . $rw]);
     }
@@ -698,36 +690,6 @@ abstract class AbstractEntity
         }
 
         return array('read' => false, 'write' => false);
-    }
-
-    /**
-     * Get a list of experiments with title starting with $term and optional user filter
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getExpList(string $term): array
-    {
-        $Experiments = new Experiments($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Experiments->titleFilter = " AND experiments.title LIKE '%$term%'";
-
-        return $Experiments->read(false);
-    }
-
-    /**
-     * Get a list of items with a filter on the $term
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getDbList(string $term): array
-    {
-        $Database = new Database($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Database->titleFilter = " AND items.title LIKE '%$term%'";
-
-        return $Database->read(false);
     }
 
     /**
@@ -860,5 +822,36 @@ abstract class AbstractEntity
 
         // load the entity in entityData array
         $this->entityData = $this->read();
+    }
+
+    /**
+     * Get a list of experiments with title starting with $term and optional user filter
+     *
+     * @param string $term the query
+     * @return array
+     */
+    private function getExpList(string $term): array
+    {
+        $Entity = new Experiments($this->Users);
+        $term = filter_var($term, FILTER_SANITIZE_STRING);
+        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+
+        return $Entity->readShow();
+    }
+
+    /**
+     * Get a list of items with a filter on the $term
+     *
+     * @param string $term the query
+     * @return array
+     * TODO merge with getExpList
+     */
+    private function getDbList(string $term): array
+    {
+        $Entity = new Database($this->Users);
+        $term = filter_var($term, FILTER_SANITIZE_STRING);
+        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+
+        return $Entity->readShow();
     }
 }

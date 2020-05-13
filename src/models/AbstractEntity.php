@@ -462,9 +462,6 @@ abstract class AbstractEntity
      */
     public function canOrExplode(string $rw): void
     {
-        if ($this->bypassPermissions) {
-            return;
-        }
         $permissions = $this->getPermissions();
 
         // READ ONLY?

@@ -313,7 +313,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'lang' => Tools::getCalendarLang($this->App->Users->userData['lang']),
+            'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
             'linksArr' => $linksArr,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',

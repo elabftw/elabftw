@@ -760,7 +760,6 @@ abstract class AbstractEntity
      *
      * @param string $term the query
      * @return array
-     * TODO merge with getExpList
      */
     private function getDbList(string $term): array
     {

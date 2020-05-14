@@ -117,7 +117,6 @@ class Tags implements CrudInterface
      */
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
-        $this->Entity->canOrExplode('read');
         $sql = 'SELECT tag_id FROM tags2entity WHERE item_id = :item_id AND item_type = :item_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -286,7 +285,6 @@ class Tags implements CrudInterface
      */
     public function destroyAll(): void
     {
-        $this->Entity->canOrExplode('write');
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

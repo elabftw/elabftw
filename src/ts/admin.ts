@@ -60,6 +60,10 @@ function tinyMceInitLight() {
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
+    charmap_append: [
+          [0x2640, 'female sign'],
+          [0x2642, 'male sign']
+    ],
     language : $('#info').data('lang')
   });
 /* eslint-enable */

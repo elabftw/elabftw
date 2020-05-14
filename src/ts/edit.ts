@@ -393,6 +393,10 @@ $(document).ready(function() {
       {text: 'Ruby', value: 'ruby'}
     ],
     language: $('#info').data('lang'),
+    charmap_append: [
+          [0x2640, 'female sign'],
+          [0x2642, 'male sign']
+    ],
     mentions: {
       // use # for autocompletion
       delimiter: '#',

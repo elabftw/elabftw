@@ -61,8 +61,8 @@ function tinyMceInitLight() {
     removed_menuitems: 'newdocument, image',
     image_caption: true,
     charmap_append: [
-          [0x2640, 'female sign'],
-          [0x2642, 'male sign']
+      [0x2640, 'female sign'],
+      [0x2642, 'male sign']
     ],
     language : $('#info').data('lang')
   });

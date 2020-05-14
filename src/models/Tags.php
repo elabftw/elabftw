@@ -88,8 +88,6 @@ class Tags implements CrudInterface
      */
     public function readAll(?string $term = null): array
     {
-        $this->Entity->canOrExplode('read');
-
         $tagFilter = '';
         if ($term !== null) {
             $tagFilter = " AND tags.tag LIKE '%$term%'";

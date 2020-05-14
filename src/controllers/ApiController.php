@@ -318,7 +318,7 @@ class ApiController implements ControllerInterface
     private function getEntity(): Response
     {
         if ($this->id === null) {
-            return new JsonResponse($this->Entity->readShow());
+            return new JsonResponse($this->Entity->readShow(true));
         }
         $this->Entity->canOrExplode('read');
         // add the uploaded files

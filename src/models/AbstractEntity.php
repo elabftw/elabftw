@@ -193,6 +193,7 @@ abstract class AbstractEntity
      * The goal here is to decrease the number of read columns to reduce memory footprint
      * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
      * Only logged in users use this function
+     * @param bool $extended use it to get a full reply. used by API to get everything back
      *
      *                   \||/
      *                   |  @___oo
@@ -208,9 +209,9 @@ abstract class AbstractEntity
      *
      *          Here be dragons!
      */
-    public function readShow(): array
+    public function readShow(bool $extended = false): array
     {
-        $sql = $this->getReadSqlBeforeWhere(false, false);
+        $sql = $this->getReadSqlBeforeWhere($extended, $extended);
         $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
 
         // there might or might not be a condition for the WHERE, so make sure there is at least one

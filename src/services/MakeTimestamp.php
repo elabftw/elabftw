@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Alexander Minges <alexander.minges@gmail.com>
  * @author David Müller
  * @copyright 2015 Nicolas CARPi, Alexander Minges

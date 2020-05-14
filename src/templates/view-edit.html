@@ -18,6 +18,7 @@
 <a href='?{{ lastquery }}'>
   <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'Back to listing'|trans }}
 </a>
+{% block backtoview %}{% endblock %}
 
 <!-- show message if we are not owner -->
 {% if Entity.entityData.userid != Entity.Users.userData.userid and Entity.type == 'experiments' %}

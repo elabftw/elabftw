@@ -30,9 +30,6 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse('../../experiments.php');
 
 try {
-    if ($App->Session->has('anon')) {
-        throw new IllegalActionException('Anonymous user tried to access database controller.');
-    }
     // CSRF
     $App->Csrf->validate();
 

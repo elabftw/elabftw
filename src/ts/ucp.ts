@@ -143,6 +143,10 @@ $(document).ready(function() {
     pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
     removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
+    charmap_append: [ // eslint-disable-line @typescript-eslint/camelcase
+      [0x2640, 'female sign'],
+      [0x2642, 'male sign']
+    ],
     mentions: {
       // use # for autocompletion
       delimiter: '#',

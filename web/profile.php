@@ -29,8 +29,8 @@ $Response->prepare($Request);
 try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
-    $Entity->addFilter('experiments.userid', $App->Users->userData['userid']);
-    $itemsArr = $Entity->read(false);
+    $Entity->addFilter('entity.userid', $App->Users->userData['userid']);
+    $itemsArr = $Entity->readShow();
     $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status

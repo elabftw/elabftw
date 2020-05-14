@@ -34,11 +34,6 @@ try {
         throw new IllegalActionException('Non admin user tried to create a user.');
     }
 
-    // check for disabled local register
-    if ($App->Config->configArr['local_register'] === '0') {
-        throw new ImproperActionException(_('Registration is disabled.'));
-    }
-
     // CSRF
     $App->Csrf->validate();
 

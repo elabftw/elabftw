@@ -67,10 +67,10 @@ class Templates extends AbstractEntity
         $canread = 'team';
         $canwrite = 'user';
 
-        if ($this->Users->userData['default_read'] !== null) {
+        if (isset($this->Users->userData['default_read'])) {
             $canread = $this->Users->userData['default_read'];
         }
-        if ($this->Users->userData['default_write'] !== null) {
+        if (isset($this->Users->userData['default_write'])) {
             $canwrite = $this->Users->userData['default_write'];
         }
 

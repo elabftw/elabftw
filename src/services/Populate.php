@@ -27,7 +27,7 @@ class Populate
      * @param int $iter number of items to add
      * @return void
      */
-    public function generate(AbstractEntity $Entity, int $iter = 500): void
+    public function generate(AbstractEntity $Entity, int $iter = 50): void
     {
         $Faker = \Faker\Factory::create();
         if ($Entity instanceof Experiments) {
@@ -67,8 +67,8 @@ class Populate
             $category = $Faker->randomElement($categories);
             $Entity->updateCategory((int) $category['category_id']);
 
-            // maybe upload a file
-            if ($Faker->randomDigit > 7) {
+            // maybe upload a file but not on the first one
+            if ($Faker->randomDigit > 7 && $id !== 1) {
                 $Entity->Uploads->createFromString('json', $Faker->word, '{ "some": "content" }');
             }
 

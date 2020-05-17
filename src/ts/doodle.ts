@@ -113,4 +113,40 @@ $(document).ready(function() {
   $('#doodleCanvas').mouseleave(function() {
     isPainting = false;
   });
+
+  let doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement
+  doodleCanvas.addEventListener('touchstart', function(e) {
+    let rect = this.getBoundingClientRect();
+    let touch = e.touches[0];
+    isPainting = true;
+    addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+  }, false);
+
+  doodleCanvas.addEventListener('touchmove', function(e) {
+    if (isPainting) {
+      let rect = this.getBoundingClientRect();
+      let touch = e.touches[0];
+      addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
+    }
+  }, false);
+
+  doodleCanvas.addEventListener('touchend', function() {
+    isPainting = false;
+  }, false);
+
+  doodleCanvas.addEventListener('touchcancel', function() {
+    isPainting = false;
+  }, false);
+
+  doodleCanvas.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+  }, false);
+
+  doodleCanvas.addEventListener('touchend', function (e) {
+    e.preventDefault();
+  }, false);
+
+  doodleCanvas.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+  }, false);
 });

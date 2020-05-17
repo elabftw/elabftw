@@ -114,18 +114,18 @@ $(document).ready(function() {
     isPainting = false;
   });
 
-  let doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement
+  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
   doodleCanvas.addEventListener('touchstart', function(e) {
-    let rect = this.getBoundingClientRect();
-    let touch = e.touches[0];
+    const rect = this.getBoundingClientRect();
+    const touch = e.touches[0];
     isPainting = true;
     addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
   }, false);
 
   doodleCanvas.addEventListener('touchmove', function(e) {
     if (isPainting) {
-      let rect = this.getBoundingClientRect();
-      let touch = e.touches[0];
+      const rect = this.getBoundingClientRect();
+      const touch = e.touches[0];
       addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
     }
   }, false);

@@ -195,7 +195,10 @@ if ($Request->query->count() > 0) {
         // READ the results
         $itemsArr = $Entity->readShow();
         // get tags separately
-        $tagsArr = $Entity->getTags($itemsArr);
+        $tagsArr = array();
+        if (count($itemsArr) > 0) {
+            $tagsArr = $Entity->getTags($itemsArr);
+        }
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)

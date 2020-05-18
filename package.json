@@ -26,7 +26,7 @@
     "jquery-jeditable": "2.0.*",
     "jquery-ui": "^1.12.1",
     "jsoneditor": "^8.6.1",
-    "marked": "^1.0.0",
+    "marked": "^1.1.0",
     "mathjax": "3.0.*",
     "moment": "2.24.*",
     "popper.js": "1.16.*",

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -138,13 +139,15 @@ if ($Request->query->count() > 0) {
         if (!empty($selectedTagsArr)) {
             // get all the ids with that tag
             $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
-            $idFilter = ' AND (';
-            foreach ($ids as $id) {
-                $idFilter .= 'entity.id = ' . $id . ' OR ';
+            if (count($ids) > 0) {
+                $idFilter = ' AND (';
+                foreach ($ids as $id) {
+                    $idFilter .= 'entity.id = ' . $id . ' OR ';
+                }
+                $idFilter = rtrim($idFilter, ' OR ');
+                $idFilter .= ')';
+                $Entity->idFilter = $idFilter;
             }
-            $idFilter = rtrim($idFilter, ' OR ');
-            $idFilter .= ')';
-            $Entity->idFilter = $idFilter;
         }
 
         // Visibility search

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -110,7 +110,11 @@ final class Db
      */
     public function execute(\PDOStatement $req, ?array $arr = null): bool
     {
-        $res = $req->execute($arr);
+        try {
+            $res = $req->execute($arr);
+        } catch (PDOException $e) {
+            throw new DatabaseErrorException('Error with SQL query', 515, $e);
+        }
         if ($res !== true) {
             throw new DatabaseErrorException('Error while executing SQL query.');
         }

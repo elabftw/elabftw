@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -73,13 +73,14 @@ class Links implements CrudInterface
         $sql = 'SELECT items.id AS itemid,
             ' . $this->Entity->type . '_links.id AS linkid,
             items.title,
-            items_types.name,
-            items_types.bookable,
-            items_types.color
+            category.name,
+            category.bookable,
+            category.color
             FROM ' . $this->Entity->type . '_links
             LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.category = items_types.id)
-            WHERE ' . $this->Entity->type . '_links.item_id = :id';
+            LEFT JOIN items_types AS category ON (items.category = category.id)
+            WHERE ' . $this->Entity->type . '_links.item_id = :id
+            ORDER by category.name ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);

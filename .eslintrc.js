@@ -1,7 +1,7 @@
 /*
  * Config file for eslint
  *
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Alexander Minges <alexander.minges@gmail.com>
  * @copyright 2015 Nicolas CARPi, Alexander Minges
  * @see https://www.elabftw.net Official website

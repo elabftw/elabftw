@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -138,13 +139,15 @@ if ($Request->query->count() > 0) {
         if (!empty($selectedTagsArr)) {
             // get all the ids with that tag
             $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
-            $idFilter = ' AND (';
-            foreach ($ids as $id) {
-                $idFilter .= 'entity.id = ' . $id . ' OR ';
+            if (count($ids) > 0) {
+                $idFilter = ' AND (';
+                foreach ($ids as $id) {
+                    $idFilter .= 'entity.id = ' . $id . ' OR ';
+                }
+                $idFilter = rtrim($idFilter, ' OR ');
+                $idFilter .= ')';
+                $Entity->idFilter = $idFilter;
             }
-            $idFilter = rtrim($idFilter, ' OR ');
-            $idFilter .= ')';
-            $Entity->idFilter = $idFilter;
         }
 
         // Visibility search
@@ -195,7 +198,10 @@ if ($Request->query->count() > 0) {
         // READ the results
         $itemsArr = $Entity->readShow();
         // get tags separately
-        $tagsArr = $Entity->getTags($itemsArr);
+        $tagsArr = array();
+        if (count($itemsArr) > 0) {
+            $tagsArr = $Entity->getTags($itemsArr);
+        }
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)

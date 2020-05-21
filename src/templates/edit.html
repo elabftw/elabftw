@@ -11,7 +11,14 @@
 {% endif %}
 
 
-{% include('view-edit.html') %}
+{% embed 'view-edit.html' %}
+  {% block backtoview %}
+  <a href='?mode=view&id={{ Entity.id }}'>
+    <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'View mode'|trans }}
+  </a>
+  {% endblock %}
+{% endembed %}
+
 <!-- Modal for edit permissions -->
 <div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>

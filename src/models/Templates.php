@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -67,10 +67,10 @@ class Templates extends AbstractEntity
         $canread = 'team';
         $canwrite = 'user';
 
-        if ($this->Users->userData['default_read'] !== null) {
+        if (isset($this->Users->userData['default_read'])) {
             $canread = $this->Users->userData['default_read'];
         }
-        if ($this->Users->userData['default_write'] !== null) {
+        if (isset($this->Users->userData['default_write'])) {
             $canwrite = $this->Users->userData['default_write'];
         }
 
@@ -115,12 +115,14 @@ class Templates extends AbstractEntity
     {
         $template = $this->read();
 
-        $sql = 'INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)';
+        $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':name', $template['name']);
         $req->bindParam(':body', $template['body']);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam('canread', $template['canread'], PDO::PARAM_STR);
+        $req->bindParam('canwrite', $template['canwrite'], PDO::PARAM_STR);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -146,7 +148,7 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = 'SELECT id, name, body, userid FROM experiments_templates WHERE id = :id AND team = :team';
+        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

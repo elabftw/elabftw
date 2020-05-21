@@ -62,7 +62,8 @@
     "typescript": "^3.7.3",
     "webpack": "^4.39.0",
     "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-cli": "3.3.*"
+    "webpack-cli": "3.3.*",
+    "cpy-cli": "^2.0.0"
   },
   "scripts": {
     "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",

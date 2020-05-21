@@ -1,4 +1,4 @@
-<h1>This is a fork for the [Mayor lab](https://mayorlab.msl.ubc.ca)</h1>
+# This is a fork for the [Mayor lab](https://mayorlab.msl.ubc.ca)
 
 <p align='center'>
   <img src='https://i.imgur.com/hq6SAZf.png' alt='elabftw logo' />

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -318,7 +318,7 @@ class ApiController implements ControllerInterface
     private function getEntity(): Response
     {
         if ($this->id === null) {
-            return new JsonResponse($this->Entity->read());
+            return new JsonResponse($this->Entity->readShow(true));
         }
         $this->Entity->canOrExplode('read');
         // add the uploaded files

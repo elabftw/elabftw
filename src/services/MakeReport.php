@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -93,8 +93,8 @@ class MakeReport
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
-            $Entity->addFilter('experiments.userid', $user['userid']);
-            $itemsArr = $Entity->read(false);
+            $Entity->addFilter('entity.userid', $user['userid']);
+            $itemsArr = $Entity->readShow();
             $count = \count($itemsArr);
 
             $allUsers[$key]['team(s)'] = $teams;

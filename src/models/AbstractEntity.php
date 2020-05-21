@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -12,9 +12,11 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -60,6 +62,9 @@ abstract class AbstractEntity
     /** @var array $filters an array of arrays with filters for sql query */
     public $filters;
 
+    /** @var string $idFilter sql of ids to include */
+    public $idFilter;
+
     /** @var string $titleFilter inserted in sql */
     public $titleFilter = '';
 
@@ -68,9 +73,6 @@ abstract class AbstractEntity
 
     /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
-
-    /** @var string $tagFilter inserted in sql */
-    public $tagFilter = '';
 
     /** @var string $queryFilter inserted in sql */
     public $queryFilter = '';
@@ -90,8 +92,8 @@ abstract class AbstractEntity
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
 
-    /** @var int $itemsReadNb the total number of items read from sql query */
-    public $itemsReadNb;
+    /** @var TeamGroups $TeamGroups instance of TeamGroups */
+    protected $TeamGroups;
 
     /**
      * Constructor
@@ -109,8 +111,9 @@ abstract class AbstractEntity
         $this->Uploads = new Uploads($this);
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
-        $this->itemsReadNb = 0;
+        $this->TeamGroups = new TeamGroups($this->Users);
         $this->filters = array();
+        $this->idFilter = '';
 
         if ($id !== null) {
             $this->setId($id);
@@ -186,136 +189,63 @@ abstract class AbstractEntity
     }
 
     /**
-     * Read all from the entity
-     * Optionally with filters
-     * Here be dragons!
+     * Read several entities for show mode
+     * The goal here is to decrease the number of read columns to reduce memory footprint
+     * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
+     * Only logged in users use this function
+     * @param bool $extended use it to get a full reply. used by API to get everything back
      *
-     * @param bool $getTags if true, might take a very long time, false in show mode
+     *                   \||/
+     *                   |  @___oo
+     *         /\  /\   / (__,,,,|
+     *        ) /^\) ^\/ _)
+     *        )   /^\/   _)
+     *        )   _ /  / _)
+     *    /\  )/\/ ||  | )_)
+     *   <  >      |(,,) )__)
+     *    ||      /    \)___)\
+     *    | \____(      )___) )___
+     *     \______(_______;;; __;;;
      *
-     * @return array
+     *          Here be dragons!
      */
-    public function read(bool $getTags = true): array
+    public function readShow(bool $extended = false): array
     {
-        if ($this->id !== null) {
-            $this->addFilter($this->type . '.id', (string) $this->id);
-        }
+        $sql = $this->getReadSqlBeforeWhere($extended, $extended);
+        $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
 
-        $uploadsJoin = 'LEFT JOIN (
-            SELECT uploads.item_id AS up_item_id,
-                (uploads.item_id IS NOT NULL) AS has_attachment,
-                uploads.type
-            FROM uploads
-            GROUP BY uploads.item_id, uploads.type)
-            AS uploads
-            ON (uploads.up_item_id = ' . $this->type . ".id AND uploads.type = '" . $this->type . "')";
-
-
-        $tagsSelect = '';
-        $tagsJoin = '';
-        if ($getTags) {
-            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-            $tagsJoin = 'LEFT JOIN tags2entity ON (' . $this->type . ".id = tags2entity.item_id AND tags2entity.item_type = '" . $this->type . "') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)";
-        }
-
-
-        if ($this instanceof Experiments) {
-            $select = 'SELECT DISTINCT ' . $this->type . ".*,
-                status.color, status.name AS category, status.id AS category_id,
-                uploads.up_item_id, uploads.has_attachment,
-                experiments_comments.recent_comment,
-                (experiments_comments.recent_comment IS NOT NULL) AS has_comment,
-                SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname";
-
-            $from = 'FROM experiments';
-
-            $usersJoin = 'LEFT JOIN users ON (experiments.userid = users.userid)';
-            $stepsJoin = 'LEFT JOIN (
-                SELECT experiments_steps.item_id AS steps_item_id,
-                experiments_steps.body AS next_step,
-                experiments_steps.finished AS finished
-                FROM experiments_steps)
-                AS stepst ON (
-                experiments.id = steps_item_id
-                AND stepst.finished = 0)';
-
-            $statusJoin = 'LEFT JOIN status ON (status.id = experiments.category)';
-            $commentsJoin = 'LEFT JOIN (
-                SELECT MAX(experiments_comments.datetime) AS recent_comment,
-                    experiments_comments.item_id FROM experiments_comments GROUP BY experiments_comments.item_id
-                ) AS experiments_comments
-                ON (experiments_comments.item_id = experiments.id)';
-
-            $sql = implode(' ', array(
-                $select,
-                $tagsSelect,
-                $from,
-                $usersJoin,
-                $stepsJoin,
-                $tagsJoin,
-                $statusJoin,
-                $uploadsJoin,
-                $commentsJoin,
-            ));
-        } elseif ($this instanceof Database) {
-            $sql = "SELECT DISTINCT items.*, items_types.name AS category,
-                items_types.color,
-                items_types.id AS category_id,
-                items_types.bookable,
-                items_comments.recent_comment,
-                (items_comments.recent_comment IS NOT NULL) AS has_comment,
-                SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
-                uploads.up_item_id, uploads.has_attachment,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id";
-
-            $from = 'FROM items
-                LEFT JOIN items_types ON (items.category = items_types.id)
-                LEFT JOIN users ON (users.userid = items.userid)';
-
-            $stepsJoin = 'LEFT JOIN (
-                SELECT items_steps.item_id AS steps_item_id,
-                items_steps.body AS next_step,
-                items_steps.finished AS finished
-                FROM items_steps)
-                AS stepst ON (
-                items.id = steps_item_id
-                AND stepst.finished = 0)';
-
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = items.id)';
-
-            $commentsJoin = 'LEFT JOIN (
-                SELECT MAX(items_comments.datetime) AS recent_comment,
-                    items_comments.item_id FROM items_comments GROUP BY items_comments.item_id
-                ) AS items_comments
-                ON (items_comments.item_id = items.id)';
-
-            $sql .= ' ';
-            $sql .= implode(' ', array(
-                $tagsSelect,
-                $from,
-                $uploadsJoin,
-                $stepsJoin,
-                $eventsJoin,
-                $commentsJoin,
-                $tagsJoin,
-            ));
-        } else {
-            throw new IllegalActionException('Nope.');
-        }
-
+        // there might or might not be a condition for the WHERE, so make sure there is at least one
         $sql .= ' WHERE 1=1';
 
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
-        $sql .= $this->titleFilter . ' ' .
-            $this->dateFilter . ' ' .
-            $this->bodyFilter . ' ' .
-            $this->queryFilter . ' ' .
-            ' GROUP BY id ' . ' ' .
-            $this->tagFilter . ' ' .
-            'ORDER BY ' . $this->order . ' ' . $this->sort . ', ' . $this->type . '.id ' . $this->sort . ' ' . $this->limit . ' ' . $this->offset;
+        // add pub/org/team filter
+        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid)";
+        // add all the teamgroups in which the user is
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= " OR (entity.canread = $teamgroup)";
+            }
+        }
+        $sql .= ')';
+
+        $sqlArr = array(
+            $this->titleFilter,
+            $this->dateFilter,
+            $this->bodyFilter,
+            $this->queryFilter,
+            $this->idFilter,
+            'GROUP BY id ORDER BY',
+            $this->order,
+            $this->sort,
+            ', entity.id',
+            $this->sort,
+            $this->limit,
+            $this->offset,
+        );
+
+        $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -324,46 +254,71 @@ abstract class AbstractEntity
         if ($itemsArr === false) {
             $itemsArr = array();
         }
-        // store the total number of items read from db
-        $this->itemsReadNb = count($itemsArr);
 
-        // loop the array and only add the ones we can read to return to template
-        $finalArr = array();
-        foreach ($itemsArr as $item) {
-            $permissions = $this->getPermissions($item);
-            if ($permissions['read']) {
-                $finalArr[] = $item;
-            }
+        return $itemsArr;
+    }
+
+    /**
+     * Read all from one entity
+     * Here be dragons!
+     *
+     * @param bool $getTags if true, might take a long time
+     * @return array
+     */
+    public function read(bool $getTags = true): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $sql = $this->getReadSqlBeforeWhere($getTags, true);
+
+        $sql .= ' WHERE entity.id = ' . (string) $this->id;
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        $item = $req->fetch();
+        if ($item === false) {
+            throw new ResourceNotFoundException();
         }
 
-        // reduce the dimension of the array if we have only one item
-        if (count($itemsArr) === 1 && !empty($this->id)) {
-            return $itemsArr[0];
+        $permissions = $this->getPermissions($item);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException(Tools::error(true));
         }
-        return $finalArr;
+
+        return $item;
     }
 
     /**
      * Read the tags of the entity
      *
-     * @param int $id id of the entity
+     * @param array $items the results of all items from readShow()
      *
      * @return array
      */
-    public function getTags(int $id): array
+    public function getTags(array $items): array
     {
-        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags.tag FROM tags2entity
+        $itemIds = '(';
+        foreach ($items as $item) {
+            $itemIds .= 'tags2entity.item_id = ' . $item['id'] . ' OR ';
+        }
+        $sqlid = rtrim($itemIds, ' OR ') . ')';
+        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            WHERE tags2entity.item_id = :id and tags2entity.item_type = :type';
+            WHERE tags2entity.item_type = :type AND ' . $sqlid;
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->type);
         $this->Db->execute($req);
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
         }
-        return $res;
+        $allTags = array();
+        foreach ($res as $tags) {
+            $allTags[$tags['item_id']][] = $tags;
+        }
+        return $allTags;
     }
 
     /**
@@ -444,7 +399,7 @@ abstract class AbstractEntity
      */
     public function setLimit(int $num): void
     {
-        $num *= 20;
+        $num += 1;
         $this->limit = 'LIMIT ' . (string) $num;
     }
 
@@ -493,9 +448,8 @@ abstract class AbstractEntity
      */
     public function getCan(string $rw): string
     {
-        $TeamGroups = new TeamGroups($this->Users);
         if (Check::id((int) $this->entityData['can' . $rw]) !== false) {
-            return $TeamGroups->readName((int) $this->entityData['can' . $rw]);
+            return $this->TeamGroups->readName((int) $this->entityData['can' . $rw]);
         }
         return ucfirst($this->entityData['can' . $rw]);
     }
@@ -509,9 +463,6 @@ abstract class AbstractEntity
      */
     public function canOrExplode(string $rw): void
     {
-        if ($this->bypassPermissions) {
-            return;
-        }
         $permissions = $this->getPermissions();
 
         // READ ONLY?
@@ -558,36 +509,6 @@ abstract class AbstractEntity
         }
 
         return array('read' => false, 'write' => false);
-    }
-
-    /**
-     * Get a list of experiments with title starting with $term and optional user filter
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getExpList(string $term): array
-    {
-        $Experiments = new Experiments($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Experiments->titleFilter = " AND experiments.title LIKE '%$term%'";
-
-        return $Experiments->read(false);
-    }
-
-    /**
-     * Get a list of items with a filter on the $term
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getDbList(string $term): array
-    {
-        $Database = new Database($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Database->titleFilter = " AND items.title LIKE '%$term%'";
-
-        return $Database->read(false);
     }
 
     /**
@@ -663,6 +584,7 @@ abstract class AbstractEntity
 
     /**
      * Add a filter to the query
+     * Second param is nullable because it can come from a request param
      *
      * @param string $column the column on which to filter
      * @param string|null $value the value to look for
@@ -719,5 +641,165 @@ abstract class AbstractEntity
 
         // load the entity in entityData array
         $this->entityData = $this->read();
+    }
+
+    /**
+     * Get token and pdf info for displaying in view mode
+     *
+     * @return array
+     */
+    public function getTimestampInfo(): array
+    {
+        if ($this instanceof Database || $this->entityData['timestamped'] === '0') {
+            return array();
+        }
+        $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
+
+        $Uploads = new Uploads(new Experiments($this->Users, (int) $this->entityData['id']));
+        $Uploads->Entity->type = 'exp-pdf-timestamp';
+        $pdf = $Uploads->readAll();
+
+        $Uploads->Entity->type = 'timestamp-token';
+        $token = $Uploads->readAll();
+
+        return array(
+            'timestamper' => $timestamper,
+            'pdf' => $pdf,
+            'token' => $token,
+        );
+    }
+
+    /**
+     * Get the SQL string for read before the WHERE
+     *
+     * @param bool $getTags do we get the tags too?
+     * @param bool $fullSelect select all the columns of entity
+     * @return string
+     */
+    private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
+    {
+        if ($fullSelect) {
+            // get all the columns of entity table
+            $select = 'SELECT DISTINCT entity.*,';
+        } else {
+            // only get the columns interesting for show mode
+            $select = 'SELECT DISTINCT entity.id,
+                entity.title,
+                entity.date,
+                entity.category,
+                entity.userid,
+                entity.locked,
+                entity.canread,
+                entity.canwrite,
+                entity.lastchange,';
+        }
+        $select .= "uploads.up_item_id, uploads.has_attachment,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
+            categoryt.id AS category_id,
+            categoryt.name AS category,
+            categoryt.color,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            commentst.recent_comment,
+            (commentst.recent_comment IS NOT NULL) AS has_comment";
+
+        $tagsSelect = '';
+        $tagsJoin = '';
+        if ($getTags) {
+            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+            $tagsJoin = 'LEFT JOIN tags2entity ON (entity.id = tags2entity.item_id AND tags2entity.item_type = \'%1$s\') LEFT JOIN tags ON (tags2entity.tag_id = tags.id)';
+        }
+        $uploadsJoin = 'LEFT JOIN (
+            SELECT uploads.item_id AS up_item_id,
+                (uploads.item_id IS NOT NULL) AS has_attachment,
+                uploads.type
+            FROM uploads
+            GROUP BY uploads.item_id, uploads.type)
+            AS uploads
+            ON (uploads.up_item_id = entity.id AND uploads.type = \'%1$s\')';
+
+        $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
+        $teamJoin = sprintf(
+            'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = %s)',
+            $this->Users->userData['team']
+        );
+
+        $categoryTable = $this->type === 'experiments' ? 'status' : 'items_types';
+        $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';
+
+        $commentsJoin = 'LEFT JOIN (
+            SELECT MAX(
+                %1$s_comments.datetime) AS recent_comment,
+                %1$s_comments.item_id
+                FROM %1$s_comments GROUP BY %1$s_comments.item_id
+            ) AS commentst
+            ON (commentst.item_id = entity.id)';
+        $stepsJoin = 'LEFT JOIN (
+            SELECT %1$s_steps.item_id AS steps_item_id,
+            %1$s_steps.body AS next_step,
+            %1$s_steps.finished AS finished
+            FROM %1$s_steps)
+            AS stepst ON (
+            entity.id = steps_item_id
+            AND stepst.finished = 0)';
+
+        $from = 'FROM %1$s AS entity';
+
+        if ($this instanceof Experiments) {
+            $select .= ', entity.timestamped';
+            $eventsJoin = '';
+        } elseif ($this instanceof Database) {
+            $select .= ', categoryt.bookable,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
+        } else {
+            throw new IllegalActionException('Nope.');
+        }
+
+        $sqlArr = array(
+            $select,
+            $tagsSelect,
+            $from,
+            $categoryJoin,
+            $commentsJoin,
+            $tagsJoin,
+            $eventsJoin,
+            $stepsJoin,
+            $usersJoin,
+            $teamJoin,
+            $uploadsJoin,
+        );
+
+        // replace all %1$s by 'experiments' or 'items'
+        return sprintf(implode(' ', $sqlArr), $this->type);
+    }
+
+    /**
+     * Get a list of experiments with title starting with $term and optional user filter
+     *
+     * @param string $term the query
+     * @return array
+     */
+    private function getExpList(string $term): array
+    {
+        $Entity = new Experiments($this->Users);
+        $term = filter_var($term, FILTER_SANITIZE_STRING);
+        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+
+        return $Entity->readShow();
+    }
+
+    /**
+     * Get a list of items with a filter on the $term
+     *
+     * @param string $term the query
+     * @return array
+     */
+    private function getDbList(string $term): array
+    {
+        $Entity = new Database($this->Users);
+        $term = filter_var($term, FILTER_SANITIZE_STRING);
+        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
+
+        return $Entity->readShow();
     }
 }

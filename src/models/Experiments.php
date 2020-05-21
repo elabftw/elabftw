@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -214,32 +214,6 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-    }
-
-    /**
-     * Get token and pdf info for displaying in view mode
-     *
-     * @return array
-     */
-    public function getTimestampInfo(): array
-    {
-        if ($this->entityData['timestamped'] === '0') {
-            return array();
-        }
-        $timestamper = $this->Users->read((int) $this->entityData['timestampedby']);
-
-        $Uploads = new Uploads(new self($this->Users, (int) $this->entityData['id']));
-        $Uploads->Entity->type = 'exp-pdf-timestamp';
-        $pdf = $Uploads->readAll();
-
-        $Uploads->Entity->type = 'timestamp-token';
-        $token = $Uploads->readAll();
-
-        return array(
-            'timestamper' => $timestamper,
-            'pdf' => $pdf,
-            'token' => $token,
-        );
     }
 
     /**

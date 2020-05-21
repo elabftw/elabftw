@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -30,9 +30,6 @@ require_once \dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse('../../experiments.php');
 
 try {
-    if ($App->Session->has('anon')) {
-        throw new IllegalActionException('Anonymous user tried to access database controller.');
-    }
     // CSRF
     $App->Csrf->validate();
 

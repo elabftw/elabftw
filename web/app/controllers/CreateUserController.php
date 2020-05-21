@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -32,11 +32,6 @@ if ($Request->request->get('frompage') === 'sysconfig.php') {
 try {
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to create a user.');
-    }
-
-    // check for disabled local register
-    if ($App->Config->configArr['local_register'] === '0') {
-        throw new ImproperActionException(_('Registration is disabled.'));
     }
 
     // CSRF

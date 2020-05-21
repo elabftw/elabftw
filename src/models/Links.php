@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -70,8 +70,6 @@ class Links implements CrudInterface
      */
     public function readAll(): array
     {
-        $this->Entity->canOrExplode('read');
-
         $sql = 'SELECT items.id AS itemid,
             ' . $this->Entity->type . '_links.id AS linkid,
             items.title,

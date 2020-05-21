@@ -2,7 +2,7 @@
 /**
  * team.php
  *
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -44,13 +44,13 @@ try {
 
     $Database = new Database($App->Users);
     // we only want the bookable type of items
-    $Database->addFilter('bookable', '1');
+    $Database->addFilter('categoryt.bookable', '1');
     $Scheduler = new Scheduler($Database);
 
     // disabled because takes too much resources
     //$TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
-    $itemsArr = $Database->read(false);
+    $itemsArr = $Database->readShow();
     $itemData = null;
 
     $allItems = true;
@@ -63,10 +63,10 @@ try {
             $selectedItem = $Request->query->get('item');
             $allItems = false;
             // itemData is to display the name/category of the selected item
-        }
-        $itemData = $Scheduler->Database->read();
-        if (empty($itemData)) {
-            throw new ImproperActionException(_('Nothing to show with this id'));
+            $itemData = $Scheduler->Database->read();
+            if (empty($itemData)) {
+                throw new ImproperActionException(_('Nothing to show with this id'));
+            }
         }
     }
 

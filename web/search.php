@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -136,26 +137,31 @@ if ($Request->query->count() > 0) {
     if ($Request->query->has('type')) {
         // Tag search
         if (!empty($selectedTagsArr)) {
-            $having = 'HAVING ';
-            foreach ($selectedTagsArr as $tag) {
-                $tag = \filter_var($tag, FILTER_SANITIZE_STRING);
-                $having .= " (tags LIKE '%|$tag|%' OR tags LIKE '$tag' OR tags LIKE '$tag|%' OR tags LIKE '%|$tag') AND ";
+            // get all the ids with that tag
+            $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
+            if (count($ids) > 0) {
+                $idFilter = ' AND (';
+                foreach ($ids as $id) {
+                    $idFilter .= 'entity.id = ' . $id . ' OR ';
+                }
+                $idFilter = rtrim($idFilter, ' OR ');
+                $idFilter .= ')';
+                $Entity->idFilter = $idFilter;
             }
-            $Entity->tagFilter .= rtrim($having, ' AND');
         }
 
         // Visibility search
         if (!empty($vis)) {
-            $Entity->addFilter($Entity->type . '.canread', $vis);
+            $Entity->addFilter('entity.canread', $vis);
         }
 
         // Date search
         if (!empty($from) && !empty($to)) {
-            $Entity->dateFilter = ' AND ' . $Entity->type . ".date BETWEEN '$from' AND '$to'";
+            $Entity->dateFilter = " AND entity.date BETWEEN '$from' AND '$to'";
         } elseif (!empty($from) && empty($to)) {
-            $Entity->dateFilter = ' AND ' . $Entity->type . ".date BETWEEN '$from' AND '99991212'";
+            $Entity->dateFilter = " AND entity.date BETWEEN '$from' AND '99991212'";
         } elseif (empty($from) && !empty($to)) {
-            $Entity->dateFilter = ' AND ' . $Entity->type . ".date BETWEEN '00000101' AND '$to'";
+            $Entity->dateFilter = " AND entity.date BETWEEN '00000101' AND '$to'";
         }
 
         if ($Request->query->get('type') === 'experiments') {
@@ -169,28 +175,33 @@ if ($Request->query->count() > 0) {
                 }
                 // all the team is 0 as userid
                 if ($Request->query->get('owner') !== '0') {
-                    $Entity->addFilter('experiments.userid', $owner);
+                    $Entity->addFilter('entity.userid', $owner);
                 }
             }
 
             // Status search
             if (!empty($status)) {
-                $Entity->addFilter($Entity->type . '.category', $status);
+                $Entity->addFilter('entity.category', $status);
             }
         } else {
             // Rating search
             if (!empty($rating)) {
-                $Entity->addFilter($Entity->type . '.rating', (string) $rating);
+                $Entity->addFilter('entity.rating', (string) $rating);
             }
 
             // FILTER ON DATABASE ITEMS TYPES
             if (Check::id((int) $Request->query->get('type')) !== false) {
-                $Entity->addFilter('items_types.id', $Request->query->get('type'));
+                $Entity->addFilter('categoryt.id', $Request->query->get('type'));
             }
         }
 
         // READ the results
-        $itemsArr = $Entity->read(true);
+        $itemsArr = $Entity->readShow();
+        // get tags separately
+        $tagsArr = array();
+        if (count($itemsArr) > 0) {
+            $tagsArr = $Entity->getTags($itemsArr);
+        }
 
         // RENDER THE SECOND PART OF THE PAGE
         // with a subpart of show.html (no create new/filter menu, and no head)
@@ -202,6 +213,7 @@ if ($Request->query->count() > 0) {
             'searchType' => 'something',
             // generate light show page
             'searchPage' => true,
+            'tagsArr' => $tagsArr,
         ));
     }
 } else {

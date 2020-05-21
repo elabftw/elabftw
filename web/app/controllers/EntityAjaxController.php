@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -94,6 +94,9 @@ try {
      */
 
     if ($Request->request->has('saveAsImage')) {
+        if ($App->Session->has('anon')) {
+            throw new IllegalActionException('Anonymous user tried to access database controller.');
+        }
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
     }
 
@@ -180,16 +183,25 @@ try {
 
     // CREATE UPLOAD
     if ($Request->request->has('upload')) {
+        if ($App->Session->has('anon')) {
+            throw new IllegalActionException('Anonymous user tried to access database controller.');
+        }
         $Entity->Uploads->create($Request);
     }
 
     // REPLACE UPLOAD
     if ($Request->request->has('replace')) {
+        if ($App->Session->has('anon')) {
+            throw new IllegalActionException('Anonymous user tried to access database controller.');
+        }
         $Entity->Uploads->replace($Request);
     }
 
     // ADD MOL FILE OR PNG
     if ($Request->request->has('addFromString')) {
+        if ($App->Session->has('anon')) {
+            throw new IllegalActionException('Anonymous user tried to access database controller.');
+        }
         $Entity->Uploads->createFromString(
             $Request->request->get('fileType'),
             $Request->request->get('realName'),
@@ -199,6 +211,9 @@ try {
 
     // DESTROY ENTITY
     if ($Request->request->has('destroy')) {
+        if ($App->Session->has('anon')) {
+            throw new IllegalActionException('Anonymous user tried to access database controller.');
+        }
 
         // check for deletable xp
         if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')
@@ -227,6 +242,9 @@ try {
 
     // DESTROY UPLOAD
     if ($Request->request->has('uploadsDestroy')) {
+        if ($App->Session->has('anon')) {
+            throw new IllegalActionException('Anonymous user tried to access database controller.');
+        }
         $upload = $Entity->Uploads->readFromId((int) $Request->request->get('uploadId'));
         $Entity->Uploads->destroy((int) $Request->request->get('uploadId'));
         // check that the filename is not in the body. see #432

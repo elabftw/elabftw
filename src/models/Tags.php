@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -167,6 +167,7 @@ class Tags implements CrudInterface
      */
     public function update(string $tag, string $newtag): void
     {
+        $this->Entity->canOrExplode('write');
         $newtag = $this->checkTag($newtag);
 
         $sql = 'UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team';
@@ -288,6 +289,43 @@ class Tags implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Get a list of entity id filtered by tags
+     *
+     * @param array $tags tags from the query string
+     * @param int $team current logged in team
+     * @return array
+     */
+    public function getIdFromTags(array $tags, int $team): array
+    {
+        $tagIds = array();
+        foreach ($tags as $tag) {
+            $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tag', $tag);
+            $req->bindParam(':team', $team, PDO::PARAM_INT);
+            $req->execute();
+            $results = $req->fetchAll();
+            foreach ($results as $res) {
+                $tagIds[] = (int) $res['id'];
+            }
+        }
+
+        $itemIds = array();
+        foreach ($tagIds as $tagid) {
+            $sql = 'SELECT item_id FROM tags2entity WHERE tag_id = :tagid AND item_type = :type';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':tagid', $tagid, PDO::PARAM_INT);
+            $req->bindParam(':type', $this->Entity->type);
+            $req->execute();
+            $results = $req->fetchAll();
+            foreach ($results as $res) {
+                $itemIds[] = (int) $res['item_id'];
+            }
+        }
+        return $itemIds;
     }
 
     /**

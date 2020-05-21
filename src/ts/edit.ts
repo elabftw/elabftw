@@ -1,5 +1,5 @@
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -393,6 +393,10 @@ $(document).ready(function() {
       {text: 'Ruby', value: 'ruby'}
     ],
     language: $('#info').data('lang'),
+    charmap_append: [
+      [0x2640, 'female sign'],
+      [0x2642, 'male sign']
+    ],
     mentions: {
       // use # for autocompletion
       delimiter: '#',

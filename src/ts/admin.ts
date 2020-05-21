@@ -1,5 +1,5 @@
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -60,6 +60,10 @@ function tinyMceInitLight() {
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
+    charmap_append: [
+      [0x2640, 'female sign'],
+      [0x2642, 'male sign']
+    ],
     language : $('#info').data('lang')
   });
 /* eslint-enable */

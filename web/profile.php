@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -29,8 +29,8 @@ $Response->prepare($Request);
 try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
-    $Entity->addFilter('experiments.userid', $App->Users->userData['userid']);
-    $itemsArr = $Entity->read(false);
+    $Entity->addFilter('entity.userid', $App->Users->userData['userid']);
+    $itemsArr = $Entity->readShow();
     $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status

@@ -389,7 +389,7 @@ class MakePdf extends AbstractMake
             $pdfSig = "<div class='footer-block signatures'>
 User's signature:<br><br>
 Witness' name:<br><br>
-Witness' signature:<br><br>
+Witness' signature:<br>
 </div>";
         }
 
@@ -404,21 +404,21 @@ Witness' signature:<br><br>
 <htmlpageheader name="header">
     <div id="header">
         <h1>' . $this->Entity->entityData['title'] . '</h1>
-        <p style="float:left; width:90%;">
+        <p style="float:left; width:84%;">
             <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
             <strong>Tags:</strong> <em>' .
-                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
+                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em><br />
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
-        <p style="float:right; width:10%;"><br /><br />
+        <p style="float:right; width:15%; text-align:right;"><br /><strong>Mayor Lab</strong>
+            <br />
             {PAGENO} / {nbpg}
         </p>
     </div>
 </htmlpageheader>
 <htmlpagefooter name="footer">' . $pdfSig . '
-    <div class="footer-block footer">
-        PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
+    <div class="footer-block footer" style="font-size:7pt;">
+        PDF file generated with <a href="https://www.elabftw.net">eLabFTW</a> on {DATE d-m-Y} at {DATE H:m} in the <a href="https://mayorlab.msl.ubc.ca/"><strong>Mayor Lab</strong></a> @ <a href="https://www.msl.ubc.ca">MSL</a> @ <a href="https://www.ubc.ca">UBC</a>
     </div>
 </htmlpagefooter>
 ';

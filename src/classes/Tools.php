@@ -322,16 +322,15 @@ class Tools
             }
             if ($column === '') {
                 // do quicksearch
+                $elabidSql = '';
                 if ($table === 'experiments') {
                     // add elabid to the search columns
-                    $sql .= "(experiments.title LIKE '%$value%' OR experiments.date LIKE '%$value%' OR experiments.body LIKE '%$value%' OR experiments.elabid LIKE '%$value%')";
-                } else {
-                    // quicksearch from database
-                    $sql .= "(items.title LIKE '%$value%' OR items.date LIKE '%$value%' OR items.body LIKE '%$value%')";
+                    $elabidSql = " OR entity.elabid LIKE '%$value%'";
                 }
+                $sql .= "(entity.title LIKE '%$value%' OR entity.date LIKE '%$value%' OR entity.body LIKE '%$value%' $elabidSql)";
             } else {
                 // from search page
-                $sql .= $table . '.' . $column . " LIKE '%$value%'";
+                $sql .= 'entity.' . $column . " LIKE '%$value%'";
             }
         }
         return $sql . ')';

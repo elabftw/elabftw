@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // fill the bound div
       $('#eventTitle').text(info.event.title);
       if (info.event.extendedProps.experiment != null) {
-        $('#eventBound').text('Event is bound to an experiment.');
+        $('#eventBound').html("Event is bound to an <a href='experiments.php?mode=view&id=" + info.event.extendedProps.experiment + "'>experiment</a>.");
         $('#rmBind').show();
       }
       // bind an experiment to the event

@@ -156,8 +156,11 @@
   </div>
 
   <!-- SHOW EVENTS -->
-  {% if Entity.entityData.events_id %}<i class='far fa-calendar-alt'></i>
+  {% if Entity.entityData.events_id and Entity.type == 'items' %}<i class='far fa-calendar-alt'></i>
     {{ '%s%d%sSee bookings%s'|trans|format("<a href='team.php?item=", Entity.entityData.id, "'>", "</a>")|raw }}
+  {% endif %}
+  {% if Entity.entityData.is_bound and Entity.type == 'experiments' %}<i class='far fa-calendar-alt'></i>
+  {{ '%s%d%sSee bookings%s'|trans|format("<a id='seeBookings' href='#' class='seeEvents osef", 0, "'>", "</a>")|raw }}
   {% endif %}
 
   <!-- SHOW NEXT STEP -->

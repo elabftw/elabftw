@@ -678,9 +678,13 @@ abstract class AbstractEntity
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
+        $teamEventsJoin = '';
         if ($fullSelect) {
             // get all the columns of entity table
-            $select = 'SELECT DISTINCT entity.*,';
+            $select = 'SELECT DISTINCT entity.*,
+                GROUP_CONCAT(DISTINCT team_events.experiment IS NOT NULL) AS is_bound,
+                GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,';
         } else {
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,
@@ -742,17 +746,21 @@ abstract class AbstractEntity
             entity.id = steps_item_id
             AND stepst.finished = 0)';
 
+
         $from = 'FROM %1$s AS entity';
 
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
-            $eventsJoin = '';
+            $eventsColumn = 'experiment';
         } elseif ($this instanceof Database) {
-            $select .= ', categoryt.bookable,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
+            $select .= ', categoryt.bookable';
+            $eventsColumn = 'item';
         } else {
             throw new IllegalActionException('Nope.');
+        }
+        $eventsJoin = '';
+        if ($fullSelect) {
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id)';
         }
 
         $sqlArr = array(

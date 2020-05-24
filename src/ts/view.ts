@@ -44,6 +44,19 @@ $(document).ready(function() {
     window.location.href = '?mode=edit&id=' + id;
   });
 
+  // CLICK SEE EVENTS BUTTON
+  $(document).on('click', '.seeEvents', function() {
+    $.get('app/controllers/EntityAjaxController.php', {
+      getBoundEvents: true,
+      type: type,
+      id: id
+    }).done(function(json) {
+      notif(json);
+      if (json.res) {
+      }
+    });
+  });
+
   // DECODE ASN1
   $(document).on('click', '.decodeAsn1', function() {
     $.post('app/controllers/ExperimentsAjaxController.php', {

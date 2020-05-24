@@ -44,18 +44,28 @@ function schedulerCreate(start: string, end: string): void {
     }).done(function(json) {
       notif(json);
       if (json.res) {
-        window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+        window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(start));
       }
     });
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
+  // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
   if ($('#info').data('all')) {
     editable = false;
     selectable = false;
   }
+  // get the start parameter from url and use that as start time if it's there
+  const params = new URLSearchParams(document.location.search.substring(1));
+  const start = params.get('start');
+  let selectedDate = new Date().valueOf();
+  if (start !== null) {
+    selectedDate = new Date(decodeURIComponent(start)).valueOf();
+  }
+
+  // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
   // SCHEDULER
@@ -80,8 +90,17 @@ document.addEventListener('DOMContentLoaded', function() {
     editable: editable,
     // allow "more" link when too many events
     eventLimit: true,
+    // set the date loaded
+    defaultDate: selectedDate,
     // load the events as JSON
-    events: 'app/controllers/SchedulerController.php?item=' + $('#info').data('item'),
+    eventSources: [
+      {
+        url: 'app/controllers/SchedulerController.php',
+        extraParams: {
+          item: $('#info').data('item'),
+        },
+      },
+    ],
     // first day is monday
     firstDay: 1,
     // remove possibility to book whole day, might add it later
@@ -96,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     // on click activate modal window
     eventClick: function(info): void {
-      console.log(info.event);
       if (!editable) { return; }
       $('#rmBind').hide();
       $('#eventModal').modal('toggle');
@@ -116,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // fill the bound div
       $('#eventTitle').text(info.event.title);
       if (info.event.extendedProps.experiment != null) {
-        $('#eventBound').html("Event is bound to an <a href='experiments.php?mode=view&id=" + info.event.extendedProps.experiment + "'>experiment</a>.");
+        $('#eventBound').html('Event is bound to an <a href="experiments.php?mode=view&id=' + info.event.extendedProps.experiment + '">experiment</a>.');
         $('#rmBind').show();
       }
       // bind an experiment to the event

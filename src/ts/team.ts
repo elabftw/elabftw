@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).done(function(json) {
           $('#eventModal').modal('toggle');
           notif(json);
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
+          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });
       });
       // BIND AUTOCOMPLETE

@@ -72,7 +72,7 @@ module.exports = function(grunt) {
       },
       tinymce: {
         // copy the mobile font file
-        command: 'cpy-cli node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff'
+        command: 'yarn cpy node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/'
       }
     }
   });

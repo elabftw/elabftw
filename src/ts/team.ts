@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
           if (json.res) {
             $('#bindinput').val('');
             $('#eventModal').modal('toggle');
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
           }
         });
       });
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).done(function(json) {
           $('#eventModal').modal('toggle');
           notif(json);
-          window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });
       });
       // BIND AUTOCOMPLETE

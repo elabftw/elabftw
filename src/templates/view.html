@@ -160,7 +160,9 @@
     {{ '%s%d%sSee bookings%s'|trans|format("<a href='team.php?item=", Entity.entityData.id, "'>", "</a>")|raw }}
   {% endif %}
   {% if Entity.entityData.is_bound and Entity.type == 'experiments' %}<i class='far fa-calendar-alt'></i>
-  {{ '%s%d%sSee bookings%s'|trans|format("<a id='seeBookings' href='#' class='seeEvents osef", 0, "'>", "</a>")|raw }}
+    {{ '%s%d%sSee bookings%s'|trans|format("<a id='seeBookings' href='#' class='seeEvents osef", 0, "'>", "</a>")|raw }}
+    <div id='boundBookings'></div>
+
   {% endif %}
 
   <!-- SHOW NEXT STEP -->

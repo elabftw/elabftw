@@ -10,6 +10,7 @@ import { notif } from './misc';
 // not working
 //import { key } from '../js/vendor/keymaster.js';
 declare let key: any;
+const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 $(document).ready(function() {
   // add the title in the page name (see #324)
@@ -51,8 +52,12 @@ $(document).ready(function() {
       type: type,
       id: id
     }).done(function(json) {
-      notif(json);
       if (json.res) {
+        let bookings = '';
+        for(let i=0; i < json.msg.length; i++) {
+          bookings = bookings + '<a href="team.php?item=' + json.msg[i].item + '&start=' + encodeURIComponent(json.msg[i].start) + '"><button class="mr-2 btn btn-neutral relative-moment">' + moment(json.msg[i].start).fromNow() + '</button></a>';
+        }
+        $('#boundBookings').html(bookings);
       }
     });
   });

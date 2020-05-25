@@ -91,7 +91,7 @@ try {
     // GET BOUND EVENTS
     if ($Request->query->has('getBoundEvents')) {
         $Entity->canOrExplode('read');
-        $events = $Entity->entityData['bound_events'];
+        $events = $Entity->getBoundEvents();
         $Response->setData(array(
             'res' => true,
             'msg' => $events,

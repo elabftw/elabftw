@@ -84,18 +84,18 @@ Dropzone.options.elabftwDropzone = {
       if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
         $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
           displayMolFiles();
-          let dropZone = Dropzone.forElement('#elabftw-dropzone');
+          const dropZone = Dropzone.forElement('#elabftw-dropzone');
 
           // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
-          if (typeof dropZone.tiny_image_success !== 'undefined' && dropZone.tiny_image_success !== null) {
+          if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
             let url = $('#uploadsDiv').children().last().find('img').attr('src');
-          // This is from the html element that shows the thumbnail. The ending appended to the original upload is: "_th.jpg"
-          // Removing this appendage allows us to have the original file. This is a hack to demonstrate the pasting functionality.
-          url = url.substring(0, url.length-7);
-          dropZone.tiny_image_success(url);
-          // This is to make sure that we do not end up adding a file to tinymce if a previous file was pasted and a consecutive file was uploaded using Dropzone.
-          // The 'undefined' check is not enough. That is just for before any file was pasted.
-          dropZone.tiny_image_success = null;
+            // This is from the html element that shows the thumbnail. The ending appended to the original upload is: "_th.jpg"
+            // Removing this appendage allows us to have the original file. This is a hack to demonstrate the pasting functionality.
+            url = url.substring(0, url.length-7);
+            dropZone.tinyImageSuccess(url);
+            // This is to make sure that we do not end up adding a file to tinymce if a previous file was pasted and a consecutive file was uploaded using Dropzone.
+            // The 'undefined' check is not enough. That is just for before any file was pasted.
+            dropZone.tinyImageSuccess = null;
           }
         });
       }
@@ -397,7 +397,7 @@ $(document).ready(function() {
       }
       else
         dropZone.addFile(blobInfo.blob());
-      dropZone.tiny_image_success = success;
+      dropZone.tinyImageSuccess = success;
     },
     content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [

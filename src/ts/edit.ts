@@ -262,8 +262,8 @@ $(document).ready(function() {
   });
 
   // AUTOSAVE
-  let typingTimer: any;                // timer identifier
-  const doneTypingInterval = 7000;  // time in ms between end of typing and save
+  let typingTimer: any;               // timer identifier
+  const doneTypingInterval = 600000;  // time in ms between end of typing and save
 
   function isOverCharLimit() {
     const body = tinymce.get(0).getBody(), text = tinymce.trim(body.innerText || body.textContent);
@@ -418,7 +418,7 @@ $(document).ready(function() {
     },
     // save button :
     save_onsavecallback: function() {
-      quickSave(type , id);
+      quickSave(type, id);
     },
     // keyboard shortcut to insert today's date at cursor in editor
     setup: function(editor: any) {

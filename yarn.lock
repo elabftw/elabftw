@@ -788,10 +788,10 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.28"
 
-"@fullcalendar/bootstrap@^4.3.0":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/bootstrap/-/bootstrap-4.4.0.tgz#4d77d19b4e2d3aaf518f1ade187d8e4db341d2a1"
-  integrity sha512-2YYM2tPhTwNtYFBcIm4Cf/72pJ3qzRRmzGZx13mJeVYjbSOe1rn/tquff/mMDPPtfCZ4+XqXOLCzAeW7eWHGgw==
+"@fullcalendar/bootstrap@^4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/bootstrap/-/bootstrap-4.4.2.tgz#b396aa39fd2e49c1bfb68deb677df5a5544bb924"
+  integrity sha512-zxtQvpZqr7zeBCfszo/i1e4zCvGwLh2zOp8J6Wxw5s73HsB1zuftWop7sPO+qhRrhX5MdM9i/wr8/nNY8BZSmw==
 
 "@fullcalendar/core@^4.3.0":
   version "4.4.0"

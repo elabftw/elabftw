@@ -808,10 +808,10 @@
   resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-4.4.0.tgz#fc8f8baaf5cb3533d6ce0a684d6f9952a4430685"
   integrity sha512-nGu0ZzYYlNpIhqfyv3JupteWKFETs3W1MzbRJcEZkuPncn4BooEi4A2blgHfacHAmmpaNkT84tAmhzi734MFBA==
 
-"@fullcalendar/list@^4.3.0":
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/list/-/list-4.4.0.tgz#8edab49d06903b7de0ca68eefc1d44d0a58860a9"
-  integrity sha512-uUDSPS71czNTK5Z3x3HzeE3KIvqkCfvhY+mGFdaAL6+7VpCwEIfB6s3GIJOjzu9TONmczMk4jdq0b1WUFLY5PQ==
+"@fullcalendar/list@^4.4.2":
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/list/-/list-4.4.2.tgz#9f922c41f5e3f1522dcb16e0f76386361f3da8d0"
+  integrity sha512-buhfd0w0PavH3EVZ6DR6kvjb+wPDe16XEpNcPkTpvIxnAziwGBvcUeHUBd9KvtEhOcvs9sAKoYKbU4xwHFK0Wg==
 
 "@fullcalendar/timegrid@^4.3.0":
   version "4.4.0"

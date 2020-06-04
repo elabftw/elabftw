@@ -96,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     // on click activate modal window
     eventClick: function(info): void {
-      console.log(info.event);
       if (!editable) { return; }
       $('#rmBind').hide();
       $('#eventModal').modal('toggle');

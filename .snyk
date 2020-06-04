@@ -5,7 +5,7 @@ ignore:
   SNYK-JS-YARGSPARSER-560381:
     - 3dmol > gulp-cli > yargs > yargs-parser:
         reason: not affected
-        expires: '2020-05-25T16:33:13.333Z'
+        expires: '2020-07-04T19:23:24.655Z'
   SNYK-JS-JQUERY-565129:
     - jquery:
         reason: waiting for new patch because 3.5.0 has big bug

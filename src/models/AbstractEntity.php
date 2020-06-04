@@ -161,7 +161,7 @@ abstract class AbstractEntity
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid']) && !$permissions['write']) {
+        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);

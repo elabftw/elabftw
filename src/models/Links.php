@@ -80,7 +80,63 @@ class Links implements CrudInterface
             LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)
             LEFT JOIN items_types AS category ON (items.category = category.id)
             WHERE ' . $this->Entity->type . '_links.item_id = :id
-            ORDER by category.name ASC';
+            ORDER by category.name ASC, items.title ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
+     * Get linked-by-items for an item
+     *
+     * @return array
+     */
+    // This needs to be adjusted to fulfill read permissions
+    public function readLinkedByItemsAll(): array
+    {
+        $sql = 'SELECT items.id AS itemid,
+            items_links.id AS linkid,
+            items.title,
+            category.name,
+            category.bookable,
+            category.color
+            FROM items_links
+            LEFT JOIN items ON (items_links.item_id = items.id)
+            LEFT JOIN items_types AS category ON (items.category = category.id)
+            WHERE items_links.link_id = :id
+            ORDER by category.name ASC, items.title ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
+    }
+
+    /**
+     * Get linked-by-experiments for an item
+     *
+     * @return array
+     */
+    // This needs to be adjusted to fulfill read permissions
+    public function readLinkedByExperimentsAll(): array
+    {
+        $sql = 'SELECT experiments.id AS experimentid,
+            experiments_links.id AS linkid,
+            experiments.title
+            FROM experiments_links
+            LEFT JOIN experiments ON (experiments_links.item_id = experiments.id)
+            WHERE experiments_links.link_id = :id
+            ORDER by experiments.title ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);

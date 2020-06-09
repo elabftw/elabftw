@@ -114,6 +114,15 @@ class Experiments extends AbstractEntity implements CreateInterface
         return $itemsArr;
     }
 
+    public function getBoundEvents(): array
+    {
+        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     /**
      * Can this experiment be timestamped?
      *

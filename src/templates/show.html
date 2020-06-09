@@ -99,14 +99,12 @@
             </li></a>
             <div class='dropdown-divider'></div>
             {% if templatesArr|length > 0 %}
-              {% for canread, tpl in templatesArr %}
-              <h6 class="dropdown-header">{{canread}} {{ 'templates'|trans }}</h6>
-                {% for templates in tpl %}
+              {% for tpl in templatesArr %}
                 <a href='?create=true&tpl={{ tpl.id }}'>
                   <li class='dropdown-item'>
-                    {{ templates.name|raw }}
-                  </li></a>
-                {% endfor %}
+                    {{ tpl.name|raw }}
+                  </li>
+                </a>
               {% endfor %}
             {% else %}
             <h6 class='dropdown-header'>{{ 'No templates found'|trans }}</h6>

@@ -161,7 +161,7 @@ abstract class AbstractEntity
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid']) && !$permissions['write']) {
+        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -221,7 +221,7 @@ abstract class AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid)";
+        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' AND entity.userid = :userid)";
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -248,6 +248,7 @@ abstract class AbstractEntity
         $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();
@@ -678,9 +679,13 @@ abstract class AbstractEntity
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
+        $teamEventsJoin = '';
         if ($fullSelect) {
             // get all the columns of entity table
-            $select = 'SELECT DISTINCT entity.*,';
+            $select = 'SELECT DISTINCT entity.*,
+                GROUP_CONCAT(DISTINCT team_events.experiment IS NOT NULL) AS is_bound,
+                GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,';
         } else {
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,
@@ -742,17 +747,21 @@ abstract class AbstractEntity
             entity.id = steps_item_id
             AND stepst.finished = 0)';
 
+
         $from = 'FROM %1$s AS entity';
 
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
-            $eventsJoin = '';
+            $eventsColumn = 'experiment';
         } elseif ($this instanceof Database) {
-            $select .= ', categoryt.bookable,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
+            $select .= ', categoryt.bookable';
+            $eventsColumn = 'item';
         } else {
             throw new IllegalActionException('Nope.');
+        }
+        $eventsJoin = '';
+        if ($fullSelect) {
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id)';
         }
 
         $sqlArr = array(

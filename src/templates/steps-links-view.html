@@ -17,6 +17,7 @@
 <!-- LINKS -->
 {% if linksArr %}
   <div class='mt-2'>
+    <h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
     <ul class='list-group'>
       {% for link in linksArr %}
         <li class='list-group-item'>
@@ -28,4 +29,38 @@
       {% endfor %}
     </ul>
   </div>
+{% endif %}
+
+<!-- LINKEDBY -->
+{% if Entity.type == 'items' %}
+{% if linkedByItemsArr %}
+  <div class='mt-2'>
+    <h4 class='d-inline'>{{ 'Referenced by items'|trans }}</h4>
+    <ul class='list-group'>
+{% for link in linkedByItemsArr %}
+      <li class='list-group-item'>
+        <i class='fas fa-link mr-1'></i>
+{% if link.bookable %}
+        <i class='far fa-calendar-alt'></i>
+{% endif %}
+        {{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>{{ link.title|raw }}</a>
+      </li>
+{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if linkedByExperimentsArr %}
+  <div class='mt-2'>
+    <h4 class='d-inline'>{{ 'Referenced by experiments'|trans }}</h4>
+    <ul class='list-group'>
+{% for link in linkedByExperimentsArr %}
+      <li class='list-group-item'>
+        <i class='fas fa-link mr-1'></i>
+        <a href='experiments.php?mode=view&id={{ link.experimentid }}'>{{ link.title|raw }}</a>
+      </li>
+{% endfor %}
+    </ul>
+  </div>
+{% endif %}
 {% endif %}

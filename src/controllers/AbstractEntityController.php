@@ -248,6 +248,12 @@ abstract class AbstractEntityController implements ControllerInterface
         // LINKS
         $linksArr = $this->Entity->Links->readAll();
 
+        // LINKED BY
+        if ($this->Entity->type === 'items') {
+            $linkedByItemsArr = $this->Entity->Links->readLinkedByItemsAll();
+            $linkedByExperimentsArr = $this->Entity->Links->readLinkedByExperimentsAll();
+        }
+
         // STEPS
         $stepsArr = $this->Entity->Steps->readAll();
 
@@ -266,6 +272,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'commentsArr' => $commentsArr,
             'linksArr' => $linksArr,
+            'linkedByItemsArr' => $linkedByItemsArr,
+            'linkedByExperimentsArr' => $linkedByExperimentsArr,
             'mode' => 'view',
             'revNum' => $revNum,
             'stepsArr' => $stepsArr,

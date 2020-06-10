@@ -25,7 +25,7 @@
     "symfony/http-foundation": "5.0.*",
     "twig/twig": "2.12.*",
     "twig/extensions": "1.5.*",
-    "monolog/monolog": "2.0.*",
+    "monolog/monolog": "2.1.*",
     "maennchen/zipstream-php": "^2.0.0",
     "league/csv": "^9.4",
     "mpdf/qrcode": "^1.0",

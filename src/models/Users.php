@@ -162,8 +162,10 @@ class Users
         // now add the user to the team
         $Teams->addUserToTeams($userid, $teamIdArr);
         if ($validated === 0) {
+            $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
             $Email = new Email($Config, $this);
-            $Email->alertAdmin($teamIdArr[0]);
+            $Email->alertAdmin($teamIdArr[0], $userInfo);
+            $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
             // TODO put in session?
             $this->needValidation = true;

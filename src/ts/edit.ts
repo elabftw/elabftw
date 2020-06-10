@@ -391,13 +391,13 @@ $(document).ready(function() {
     images_upload_handler: function (blobInfo, success, failure) {
       let dropZone = Dropzone.forElement('#elabftw-dropzone');
       // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-      if(typeof blobInfo.blob().name=== 'undefined'){
-          let fileOfBlob = new File([blobInfo.blob()], prompt('Enter filename with extension e.g. .jpeg'));
-          dropZone.addFile(fileOfBlob);
-      }
-      else
+      if (typeof blobInfo.blob().name=== 'undefined'){
+        let fileOfBlob = new File([blobInfo.blob()], prompt('Enter filename with extension e.g. .jpeg'));
+        dropZone.addFile(fileOfBlob);
+      } else {
         dropZone.addFile(blobInfo.blob());
-      dropZone.tinyImageSuccess = success;
+        dropZone.tinyImageSuccess = success;
+      }
     },
     content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [

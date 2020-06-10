@@ -89,7 +89,7 @@ try {
     }
 
     // GET BOUND EVENTS
-    if ($Request->query->has('getBoundEvents')) {
+    if ($Request->query->has('getBoundEvents') && $Entity instanceof Experiments) {
         $Entity->canOrExplode('read');
         $events = $Entity->getBoundEvents();
         $Response->setData(array(

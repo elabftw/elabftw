@@ -169,7 +169,7 @@ class Email
      * This exists because experience shows that users don't read the notification and expect
      * their account to work right away.
      *
-     * @param int $team
+     * @param string $email email of the user to notify
      * @return void
      */
     public function alertUserNeedValidation($email): void
@@ -187,7 +187,7 @@ class Email
         // Set the To
         ->setTo($email)
         // Give it a body
-        ->setBody(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $url . $footer);
+        ->setBody(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $footer);
         // SEND EMAIL
         $this->send($message);
     }

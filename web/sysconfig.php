@@ -28,6 +28,9 @@ $App->pageTitle = _('eLabFTW Configuration');
 $Response = new Response();
 $Response->prepare($Request);
 
+$template = 'error.html';
+$renderArr = array();
+
 try {
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysconfig panel.');
@@ -87,12 +90,10 @@ try {
         'usersArr' => $usersArr,
     );
 } catch (IllegalActionException $e) {
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error(true));
+    $renderArr['error'] = Tools::error(true);
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
+    $renderArr['error'] = $e->getMessage();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

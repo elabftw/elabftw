@@ -28,13 +28,13 @@ use Symfony\Component\HttpFoundation\Response;
 require_once \dirname(__DIR__, 3) . '/config.php';
 require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-try {
-    // create Request object
-    $Request = Request::createFromGlobals();
-    $Log = new Logger('elabftw');
-    $Log->pushHandler(new ErrorLogHandler());
+// create Request object
+$Request = Request::createFromGlobals();
+$Log = new Logger('elabftw');
+$Log->pushHandler(new ErrorLogHandler());
+$ApiController = new ApiController($Request);
 
-    $ApiController = new ApiController($Request);
+try {
     $Response = $ApiController->getResponse();
 } catch (UnauthorizedException $e) {
     // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:

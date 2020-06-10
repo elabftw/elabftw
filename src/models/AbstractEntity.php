@@ -623,6 +623,9 @@ abstract class AbstractEntity
 
         $idArr = array();
         $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
         foreach ($res as $item) {
             $idArr[] = $item['id'];
         }

@@ -26,7 +26,14 @@
   </div>
 </div>
 
-{% include('view-edit.html') %}
+{% embed 'view-edit.html' %}
+  {% block createnew %}
+    {% include('create-new.html') %}
+  {% endblock %}
+  {% block createmodal %}
+    {% include('show-view-edit.html') %}
+  {% endblock %}
+{% endembed %}
 
 {% if Entity.entityData.timestamped %}
 <div class='alert alert-success'><i class='fas fa-info-circle'></i>

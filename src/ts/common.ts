@@ -63,4 +63,18 @@ $(document).ready(function() {
       input.attr('type', 'password');
     }
   });
+
+  // CLICK THE CREATE NEW BUTTON
+  // done with javascript because if it's a link the css is not clean
+  // and there is a gap with the separator
+  // also this allows different behavior for exp/items
+  $('.createNew').on('click', function() {
+    const path = window.location.pathname;
+    if (path.split('/').pop() === 'experiments.php') {
+      window.location.replace('?create=1');
+    } else {
+      $('#createModal').modal('toggle');
+    }
+  });
+
 });

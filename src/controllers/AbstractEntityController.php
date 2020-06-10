@@ -35,6 +35,9 @@ abstract class AbstractEntityController implements ControllerInterface
     /** @var AbstractEntity $Entity instance of AbstractEntity */
     protected $Entity;
 
+    /** @var Templates $Templates instance of Templates */
+    protected $Templates;
+
     /** @var array $categoryArr array of category (status or item type) */
     protected $categoryArr = array();
 
@@ -48,6 +51,7 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         $this->App = $app;
         $this->Entity = $entity;
+        $this->Templates = new Templates($entity->Users);
     }
 
     /**
@@ -109,7 +113,6 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // VISIBILITY LIST
         $TeamGroups = new TeamGroups($this->Entity->Users);
-        $visibilityArr = $TeamGroups->getVisibilityList();
 
         // CATEGORY FILTER
         if (Check::id((int) $this->App->Request->query->get('cat')) !== false) {
@@ -211,9 +214,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->query->all());
 
-        $Templates = new Templates($this->Entity->Users);
-        $templatesArr = $Templates->readAll();
-
         $template = 'show.html';
 
         $renderArr = array(
@@ -225,8 +225,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'query' => $query,
             'searchType' => $searchType,
             'tagsArr' => $tagsArr,
-            'templatesArr' => $templatesArr,
-            'visibilityArr' => $visibilityArr,
+            'templatesArr' => $this->Templates->readAll(),
+            'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);
@@ -245,31 +245,21 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
 
-        // LINKS
-        $linksArr = $this->Entity->Links->readAll();
-
-        // STEPS
-        $stepsArr = $this->Entity->Steps->readAll();
-
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
-        $revNum = $Revisions->readCount();
-
-        // COMMENTS
-        $commentsArr = $this->Entity->Comments->readAll();
-
-        $timestampInfo = $this->Entity->getTimestampInfo();
 
         $template = 'view.html';
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
-            'commentsArr' => $commentsArr,
-            'linksArr' => $linksArr,
+            'categoryArr' => $this->categoryArr,
+            'commentsArr' => $this->Entity->Comments->readAll(),
+            'linksArr' => $this->Entity->Links->readAll(),
             'mode' => 'view',
-            'revNum' => $revNum,
-            'stepsArr' => $stepsArr,
-            'timestampInfo' => $timestampInfo,
+            'revNum' => $Revisions->readCount(),
+            'stepsArr' => $this->Entity->Steps->readAll(),
+            'templatesArr' => $this->Templates->readAll(),
+            'timestampInfo' => $this->Entity->getTimestampInfo(),
         );
 
         $Response = new Response();
@@ -296,17 +286,9 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
-        $revNum = $Revisions->readCount();
 
         // VISIBILITY ARR
         $TeamGroups = new TeamGroups($this->Entity->Users);
-        $visibilityArr = $TeamGroups->getVisibilityList();
-
-        // LINKS
-        $linksArr = $this->Entity->Links->readAll();
-
-        // STEPS
-        $stepsArr = $this->Entity->Steps->readAll();
 
         $template = 'edit.html';
 
@@ -314,12 +296,13 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'lang' => Tools::getCalendarLang($this->App->Users->userData['lang'] ?? 'en_GB'),
-            'linksArr' => $linksArr,
+            'linksArr' => $this->Entity->Links->readAll(),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'mode' => 'edit',
-            'revNum' => $revNum,
-            'stepsArr' => $stepsArr,
-            'visibilityArr' => $visibilityArr,
+            'revNum' => $Revisions->readCount(),
+            'stepsArr' => $this->Entity->Steps->readAll(),
+            'templatesArr' => $this->Templates->readAll(),
+            'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
 
         $Response = new Response();

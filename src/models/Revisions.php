@@ -21,7 +21,7 @@ use PDO;
 class Revisions implements CrudInterface
 {
     /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
-    private const MIN_DELTA = 20;
+    private const MIN_DELTA = 100;
 
     /** @var Db $Db SQL Database */
     private $Db;

@@ -110,6 +110,11 @@ try {
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
     }
 
+    // TOGGLE PIN
+    if ($Request->request->has('togglePin')) {
+        $Entity->togglePin();
+    }
+
     // CREATE STEP
     if ($Request->request->has('createStep')) {
         $Entity->Steps->create($Request->request->get('body'));

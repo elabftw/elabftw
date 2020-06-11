@@ -109,4 +109,18 @@ $(document).ready(function() {
       }
     });
   });
+
+  // TOGGLE PINNED
+  $(document).on('click', '#pinIcon', function() {
+    $.post('app/controllers/EntityAjaxController.php', {
+      togglePin: true,
+      type: type,
+      id: id
+    }).done(function(json) {
+      if (json.res) {
+        $('#pinIcon').find('[data-fa-i2svg]').toggleClass('grayed-out');
+      }
+      notif(json);
+    });
+  });
 });

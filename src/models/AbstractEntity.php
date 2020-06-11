@@ -674,6 +674,58 @@ abstract class AbstractEntity
     }
 
     /**
+     * Check if the current entity is pin of current user
+     *
+     * @return bool
+     */
+    public function isPinned(): bool
+    {
+        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Users->userData['userid']);
+        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->type);
+
+        $this->Db->execute($req);
+        return $req->rowCount() > 0;
+    }
+
+    /**
+     * Add/remove current entity as pinned for current user
+     *
+     * @return void
+     */
+    public function togglePin(): void
+    {
+        $this->canOrExplode('read');
+        $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
+    }
+
+    /**
+     * Get the items pinned by current users to display in show mode
+     *
+     * @return array
+     */
+    public function getPinned(): array
+    {
+        $sql = 'SELECT DISTINCT entity_id FROM pin2users WHERE users_id = :users_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Users->userData['userid']);
+        $req->bindParam(':type', $this->type);
+
+        $this->Db->execute($req);
+
+        $ids = $req->fetchAll();
+        $pinArr = array();
+        $entity = clone $this;
+        foreach ($ids as $id) {
+            $entity->setId((int) $id['entity_id']);
+            $pinArr[] = $entity->read();
+        }
+        return $pinArr;
+    }
+
+    /**
      * Get the SQL string for read before the WHERE
      *
      * @param bool $getTags do we get the tags too?
@@ -813,5 +865,41 @@ abstract class AbstractEntity
         $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
 
         return $Entity->readShow();
+    }
+
+    /**
+     * Add current entity to pinned of current user
+     *
+     * @return void
+     */
+    private function addToPinned(): void
+    {
+        $this->canOrExplode('read');
+
+        $sql = 'INSERT INTO pin2users(users_id, entity_id, type) VALUES (:users_id, :entity_id, :type)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Users->userData['userid']);
+        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->type);
+
+        $this->Db->execute($req);
+    }
+
+    /**
+     * Remove current entity from pinned of current user
+     *
+     * @return void
+     */
+    private function rmFromPinned(): void
+    {
+        $this->canOrExplode('read');
+
+        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND users_id = :users_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Users->userData['userid']);
+        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->type);
+
+        $this->Db->execute($req);
     }
 }

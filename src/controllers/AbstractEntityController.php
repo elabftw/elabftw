@@ -219,6 +219,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'pinnedArr' => $this->Entity->getPinned(),
             'itemsArr' => $itemsArr,
             'limit' => $limit,
             'offset' => $offset,

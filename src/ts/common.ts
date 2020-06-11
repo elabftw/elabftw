@@ -55,7 +55,7 @@ $(document).ready(function() {
   // SHOW/HIDE PASSWORDS
   $('.togglePassword').on('click', function(event) {
     event.preventDefault();
-    $(this).children().toggleClass('fa-eye fa-eye-slash');
+    $(this).find('[data-fa-i2svg]').toggleClass('fa-eye fa-eye-slash');
     const input = $($(this).attr('toggle'));
     if (input.attr('type') === 'password') {
       input.attr('type', 'text');

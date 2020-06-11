@@ -701,6 +701,11 @@ abstract class AbstractEntity
         $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
     }
 
+    /**
+     * Get the items pinned by current users to display in show mode
+     *
+     * @return array
+     */
     public function getPinned(): array
     {
         $sql = 'SELECT DISTINCT entity_id FROM pin2users WHERE users_id = :users_id AND type = :type';

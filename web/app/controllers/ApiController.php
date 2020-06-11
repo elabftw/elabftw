@@ -32,9 +32,9 @@ require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 $Request = Request::createFromGlobals();
 $Log = new Logger('elabftw');
 $Log->pushHandler(new ErrorLogHandler());
-$ApiController = new ApiController($Request);
 
 try {
+    $ApiController = new ApiController($Request);
     $Response = $ApiController->getResponse();
 } catch (UnauthorizedException $e) {
     // send error 401 if it's lacking an Authorization header, with WWW-Authenticate header as per spec:

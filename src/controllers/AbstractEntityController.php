@@ -246,12 +246,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
 
-        // LINKED BY
-        $linkedByItemsArr = array();
-        $linkedByExperimentsArr = array();
+        // SHOW RELATED ITEMS AND EXPERIMENTS
+        $relatedItemsArr = array();
+        $relatedExperimentsArr = array();
         if ($this->Entity->type === 'items') {
-            $linkedByItemsArr = $this->Entity->Links->readLinkedByItemsAll();
-            $linkedByExperimentsArr = $this->Entity->Links->readLinkedByExperimentsAll();
+            $relatedItemsArr = $this->Entity->Links->readRelatedItemsAll();
+            $relatedExperimentsArr = $this->Entity->Links->readRelatedExperimentsAll();
         }
 
         // REVISIONS
@@ -264,8 +264,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'commentsArr' => $this->Entity->Comments->readAll(),
             'linksArr' => $this->Entity->Links->readAll(),
-            'linkedByItemsArr' => $linkedByItemsArr,
-            'linkedByExperimentsArr' => $linkedByExperimentsArr,
+            'relatedItemsArr' => $relatedItemsArr,
+            'relatedExperimentsArr' => $relatedExperimentsArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
             'stepsArr' => $this->Entity->Steps->readAll(),

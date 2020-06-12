@@ -245,6 +245,9 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
 
+        // LINKS
+        $linksArr = $this->Entity->Links->readAll();
+
         // LINKED BY
         $linkedByItemsArr = array();
         $linkedByExperimentsArr = array();
@@ -253,21 +256,30 @@ abstract class AbstractEntityController implements ControllerInterface
             $linkedByExperimentsArr = $this->Entity->Links->readLinkedByExperimentsAll();
         }
 
+        // STEPS
+        $stepsArr = $this->Entity->Steps->readAll();
+
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
+        $revNum = $Revisions->readCount();
+
+        // COMMENTS
+        $commentsArr = $this->Entity->Comments->readAll();
+
+        $timestampInfo = $this->Entity->getTimestampInfo();
 
         $template = 'view.html';
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
-            'commentsArr' => $this->Entity->Comments->readAll(),
-            'linksArr' => $this->Entity->Links->readAll(),
+            'commentsArr' => $commentsArr,
+            'linksArr' => $linksArr,
             'linkedByItemsArr' => $linkedByItemsArr,
             'linkedByExperimentsArr' => $linkedByExperimentsArr,
             'mode' => 'view',
-            'revNum' => $Revisions->readCount(),
-            'stepsArr' => $this->Entity->Steps->readAll(),
-            'timestampInfo' => $this->Entity->getTimestampInfo(),
+            'revNum' => $revNum,
+            'stepsArr' => $stepsArr,
+            'timestampInfo' => $timestampInfo,
         );
 
         $Response = new Response();

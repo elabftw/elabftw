@@ -1071,9 +1071,49 @@ ALTER TABLE `users2teams`
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
 
 
+--
+-- Table structure for table `pin2users`
+--
+
+CREATE TABLE `pin2users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL
+);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_pin2users_userid` (`users_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 --
 -- Constraints for table `users2team_groups`

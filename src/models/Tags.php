@@ -308,6 +308,9 @@ class Tags implements CrudInterface
             $req->bindParam(':team', $team, PDO::PARAM_INT);
             $req->execute();
             $results = $req->fetchAll();
+            if ($results === false) {
+                return array();
+            }
             foreach ($results as $res) {
                 $tagIds[] = (int) $res['id'];
             }
@@ -321,6 +324,9 @@ class Tags implements CrudInterface
             $req->bindParam(':type', $this->Entity->type);
             $req->execute();
             $results = $req->fetchAll();
+            if ($results === false) {
+                return array();
+            }
             foreach ($results as $res) {
                 $itemIds[] = (int) $res['item_id'];
             }

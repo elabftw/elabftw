@@ -23,8 +23,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$tab = '1';
 try {
-    $tab = '1';
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }

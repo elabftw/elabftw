@@ -22,6 +22,8 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use GuzzleHttp\Exception\RequestException;
+use function hash_file;
+use function is_readable;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDO;
@@ -324,7 +326,7 @@ class MakeTimestamp extends AbstractMake
      */
     private function getResponseTime(): string
     {
-        if (!\is_readable($this->responsefilePath)) {
+        if (!is_readable($this->responsefilePath)) {
             throw new ImproperActionException('The token is not readable.');
         }
 
@@ -431,10 +433,14 @@ class MakeTimestamp extends AbstractMake
      */
     private function getHash($file): string
     {
-        if (!\is_readable($file)) {
+        if (!is_readable($file)) {
             throw new ImproperActionException('The file is not readable.');
         }
-        return \hash_file($this->stampParams['hash'], $file);
+        $hash = hash_file($this->stampParams['hash'], $file);
+        if ($hash === false) {
+            throw new ImproperActionException('Error creating hash from file!');
+        }
+        return $hash;
     }
 
     /**
@@ -488,7 +494,7 @@ class MakeTimestamp extends AbstractMake
     {
         $certPath = \dirname(__DIR__, 2) . '/' . $this->stampParams['stampcert'];
 
-        if (!\is_readable($certPath)) {
+        if (!is_readable($certPath)) {
             throw new ImproperActionException('Cannot read the certificate file!');
         }
 

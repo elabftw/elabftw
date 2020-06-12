@@ -33,6 +33,9 @@ $App->pageTitle = _('Admin panel');
 $Response = new Response();
 $Response->prepare($Request);
 
+$template = 'error.html';
+$renderArr = array();
+
 try {
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
@@ -85,16 +88,13 @@ try {
     );
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error(true));
+    $renderArr['error'] = Tools::error(true);
 } catch (DatabaseErrorException | FilesystemErrorException | ImproperActionException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
+    $renderArr['error'] = $e->getMessage();
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
+    $renderArr['error'] = Tools::error();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

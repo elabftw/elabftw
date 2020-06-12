@@ -3,27 +3,7 @@
 {% block body %}
 
 {% if not searchPage %}
-<!-- Modal for create new database -->
-<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel'>{{ 'Select type'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body'>
-        {% for category in categoryArr %}
-          <button style='color:#{{ category.color }}; border: 1px #ccc solid; margin-bottom: 5px' class='btn d-block'>
-            <a style='color:#{{ category.color }}' href='?create=true&tpl={{ category.category_id }}'>{{ category.category }}</a>
-          </button>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-</div>
-<!-- end modal -->
+{% include('show-view-edit.html') %}
 <div class='row'>
   <!-- LEFT MENU: FILTER/ORDER/SORT/LIMIT -->
   <!-- we hide this menu for small devices -->
@@ -80,52 +60,8 @@
     </form>
   </div>
 
-  <!-- RIGHT MENU: CREATE NEW -->
-  {% if not App.Session.get('anon') %}
-  <div class='col-md-2'>
-    <div class='btn-group align_right'>
-      <div class='btn-group dropleft' role='group'>
-        <button type='button' class='btn btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-          <span class='sr-only'>Toggle create new menu</span>
-        </button>
-        <ul class='dropdown-menu' aria-label='Create new'>
-          {% if Entity.type == 'experiments' %}
-            <a href='?create=true'><li class='dropdown-item'>
-              {% trans %}
-              Experiment
-              {% plural 1 %}
-              Experiments
-              {% endtrans %}
-            </li></a>
-            <div class='dropdown-divider'></div>
-            {% if templatesArr|length > 0 %}
-              {% for tpl in templatesArr %}
-                <a href='?create=true&tpl={{ tpl.id }}'>
-                  <li class='dropdown-item'>
-                    {{ tpl.name|raw }}
-                  </li>
-                </a>
-              {% endfor %}
-            {% else %}
-            <h6 class='dropdown-header'>{{ 'No templates found'|trans }}</h6>
-            {% endif %}
-            <div class='dropdown-divider'></div>
-                <a href='ucp.php?tab=3'>
-                    <li class='dropdown-item'>{{ 'Manage templates'|trans }}</li>
-                </a>
-          {% else %}
-              {% for category in categoryArr %}
-                  <a href='?create=true&tpl={{ category.category_id }}'>
-                      <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
-                  </a>
-              {% endfor %}
-          {% endif %}
-        </ul>
-      </div>
-      <button type='button' class='btn btn-primary createNew'>{{ 'Create'|trans }}</button>
-    </div>
-  </div>
-{% endif %}
+  {% include('create-new.html') %}
+
 </div>
 <hr>
 
@@ -138,6 +74,16 @@
 {% elseif count == 0 and searchType == '' and not App.Session.get('anon') and not App.Request.query.get('offset') %}
     {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
 {% else %}
+    {% if pinnedArr %}
+      <div class='row display-flex'>
+        {% set isPinned = true %}
+        {% for item in pinnedArr|slice(0, limit) %}
+          {% include('show-item.html') %}
+        {% endfor %}
+        {% set isPinned = false %}
+      </div>
+      <hr>
+    {% endif %}
     <p class='smallgray' style='display:inline'>
       {% if searchPage %}
         {{ count }}
@@ -182,76 +128,7 @@
     </p>
     <div class='row display-flex'>
     {% for item in itemsArr|slice(0, limit) %}
-      {# dim the experiment a bit if it's not yours #}
-      {% set opacity = '1' %}
-      {% set owner = '' %}
-      {% if (Entity.Users.userData.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
-        {% set opacity = '0.7' %}
-        {% set owner = item.fullname %}
-      {% endif %}
-      {% if Entity.Users.userData.single_column_layout %}
-        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
-      {% else %}
-        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
-      {% endif %}
-      <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ item.id }}' style='opacity:{{ opacity }}; border-left: 6px solid #{{ item.color }}'>
-
-          <p class='title'>
-          {% if item.locked %}
-              <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
-          {% endif %}
-
-          <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
-          </p>
-          {% if item.next_step|length > 0 %}
-              {% set stepsArr = item.next_step|split('|') %}
-              {% set next = stepsArr|first %}
-              <p class='item-next'>
-              {{ 'Next step'|trans }}: <span class='item-next-step'>{{ next|raw }}</span>
-              </p>
-          {% endif %}
-
-          <div data-type='{{ Entity.type }}' id='bodyToggleImg_{{ item.id }}' class='bodyToggleImg clickable'>
-            <i class='align_right fas fa-plus-circle mr-1' title='{{ 'Show more'|trans }}'></i>
-          </div>
-          <p class='item-info'>
-              <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' aria-label='Select' style='width:15px;vertical-align:-3px;' />
-          {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-          <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
-          {% endif %}
-          <span class='item-category' style='color:#{{ item.color }}'>{{ item.category }}</span>
-          <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|kdate }}</span>
-          {% if item.timestamped %}
-              <i class='far fa-calendar-check'></i>
-          {% endif %}
-
-          {# show attached if there is a file attached #}
-          {% if item.has_attachment %}
-              <i class='fas fa-paperclip'></i>
-          {% endif %}
-          {% if item.has_comment %}
-              <i class='fas fa-comments'></i>
-          {% endif %}
-
-          {% if Entity.type == 'items' and item.rating > 0 %}
-              {{ item.rating|stars|raw }}
-          {% endif %}
-
-          {{ owner|raw }}
-
-          {% set itemtagsArr = tagsArr[item.id] %}
-          {% if itemtagsArr|length > 0 %}
-          <span class='tags'><i class='fas fa-tags mr-1'></i>
-              {% for tag in itemtagsArr %}
-              <a class='tag' href='{{ Entity.page }}.php?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
-              {% endfor %}
-          {% endif %}
-
-
-          </p>
-          <div class='bodyToggle' id='bodyToggle_{{ item.id }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-      </section>
-      </div>
+      {% include('show-item.html') %}
     {% endfor %}
     </div>
 

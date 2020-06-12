@@ -27,15 +27,14 @@ $(document).ready(function(){
     $(this).submit();
   });
 
-  // bodyToggleImg is the little +/- image
-  $('.bodyToggleImg').on('click', function() {
+  // TOGGLE BODY
+  // toggleBody is the little +/- image
+  $('.toggleBody').on('click', function() {
+    const randId = $(this).data('randid');
     // transform the + in - and vice versa
-    $(this).children().toggleClass('fa-minus-circle').toggleClass('fa-plus-circle');
-
+    $(this).find('[data-fa-i2svg]').toggleClass('fa-minus-circle fa-plus-circle');
     // get the id to show the toggleBody
-    let id = $(this).parent().attr('id');
-    const idArr = id.split('_');
-    id = idArr[1];
+    const id = $(this).data('id');
     // get html of body
     $.get('app/controllers/EntityAjaxController.php', {
       getBody : true,
@@ -43,13 +42,12 @@ $(document).ready(function(){
       type : $(this).data('type')
       // and put it in the div and show the div
     }).done(function(data) {
-      $('#bodyToggle_' + id).html(data.msg);
       // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-      const width = $('#parent_' + id).width() - 30;
-      // adjust the width of the children
-      $('#bodyToggle_' + id).css('width', width);
-      // display div
-      $('#bodyToggle_' + id).toggle();
+      const width = $('#parent_' + randId).width() - 30;
+      // add html content and adjust the width of the children
+      $('#' + randId).html(data.msg)
+        .css('width', width)
+        .toggle();
       // ask mathjax to reparse the page
       MathJax.typeset();
     });
@@ -86,19 +84,6 @@ $(document).ready(function(){
     }
   });
 
-  // CLICK THE CREATE NEW BUTTON
-  // done with javascript because if it's a link the css is not clean
-  // and there is a gap with the separator
-  // also this allows different behavior for exp/items
-  $('.createNew').on('click', function() {
-    const path = window.location.pathname;
-    if (path.split('/').pop() === 'experiments.php') {
-      insertParamAndReload('create', 1);
-    } else {
-      $('#createModal').modal('toggle');
-    }
-  });
-
   // EXPAND ALL
   $('#expandAll').on('click', function() {
     if ($(this).data('status') === 'closed') {
@@ -108,7 +93,7 @@ $(document).ready(function(){
       $(this).data('status', 'closed');
       $(this).text($(this).data('expand'));
     }
-    $('.bodyToggleImg').each(function() {
+    $('.toggleBody').each(function() {
       $(this).trigger('click');
     });
   });

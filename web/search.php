@@ -19,6 +19,9 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use function filter_var;
+use function rtrim;
+use function trim;
 
 /**
  * The search page
@@ -60,15 +63,19 @@ if ($Request->query->get('type') === 'experiments') {
 // TITLE
 $title = '';
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
-    $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type);
+    $title = filter_var(trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
+    if ($title !== false) {
+        $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type);
+    }
 }
 
 // BODY
 $body = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
-    $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type);
+    $body = filter_var(trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
+    if ($body !== false) {
+        $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type);
+    }
 }
 
 // TAGS
@@ -168,10 +175,9 @@ if ($Request->query->count() > 0) {
 
             // USERID FILTER
             if ($Request->query->has('owner')) {
+                $owner = $App->Users->userData['userid'];
                 if (Check::id((int) $Request->query->get('owner')) !== false) {
                     $owner = $Request->query->get('owner');
-                } elseif (empty($Request->query->get('owner'))) {
-                    $owner = $App->Users->userData['userid'];
                 }
                 // all the team is 0 as userid
                 if ($Request->query->get('owner') !== '0') {

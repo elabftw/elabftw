@@ -380,6 +380,10 @@ class Tools
                 $res .= '&' . (string) $key . '=' . $value;
             }
         }
-        return filter_var($res, FILTER_SANITIZE_STRING);
+        $output = filter_var($res, FILTER_SANITIZE_STRING);
+        if ($output === false) {
+            return '';
+        }
+        return $output;
     }
 }

@@ -396,7 +396,11 @@ class Uploads implements CrudInterface
     private function getHash(string $file): string
     {
         if (filesize($file) < self::BIG_FILE_THRESHOLD) {
-            return hash_file($this->hashAlgorithm, $file);
+            $hash = hash_file($this->hashAlgorithm, $file);
+            if ($hash === false) {
+                throw new ImproperActionException('Error creating hash from file!');
+            }
+            return $hash;
         }
 
         return '';

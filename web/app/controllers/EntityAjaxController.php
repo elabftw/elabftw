@@ -89,7 +89,7 @@ try {
     }
 
     // GET BOUND EVENTS
-    if ($Request->query->has('getBoundEvents')) {
+    if ($Request->query->has('getBoundEvents') && $Entity instanceof Experiments) {
         $Entity->canOrExplode('read');
         $events = $Entity->getBoundEvents();
         $Response->setData(array(
@@ -108,6 +108,11 @@ try {
             throw new IllegalActionException('Anonymous user tried to access database controller.');
         }
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
+    }
+
+    // TOGGLE PIN
+    if ($Request->request->has('togglePin')) {
+        $Entity->togglePin();
     }
 
     // CREATE STEP

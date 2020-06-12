@@ -28,12 +28,12 @@ use Symfony\Component\HttpFoundation\Response;
 require_once \dirname(__DIR__, 3) . '/config.php';
 require_once \dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-try {
-    // create Request object
-    $Request = Request::createFromGlobals();
-    $Log = new Logger('elabftw');
-    $Log->pushHandler(new ErrorLogHandler());
+// create Request object
+$Request = Request::createFromGlobals();
+$Log = new Logger('elabftw');
+$Log->pushHandler(new ErrorLogHandler());
 
+try {
     $ApiController = new ApiController($Request);
     $Response = $ApiController->getResponse();
 } catch (UnauthorizedException $e) {

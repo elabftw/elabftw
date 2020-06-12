@@ -8,6 +8,7 @@
 $darkgray: #343434;
 $maingray: #797979;
 $lightgray: #f2f2f2;
+$lightgraybutnottoolight: #d6d6d6;
 $bordersgray: #dcdddc;
 $elabblue: #29aeb9;
 $darkblue: #1F8591;
@@ -904,18 +905,14 @@ svg.fa-trash-alt:hover {
     color: $darkred;
 }
 
-.bodyToggle {
-    display: none;
-}
-
-.bodyToggleImg {
-    float: right;
-    margin-top: 3px;
-}
-
 /* font awesome icons color */
 .svg-inline--fa {
     color: $maingray;
+}
+
+/* for icons such as pin */
+.grayed-out {
+    color: $lightgraybutnottoolight;
 }
 
 /* in the fullcalendar toolabar they are used in a button so we want them white */

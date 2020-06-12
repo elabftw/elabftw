@@ -246,14 +246,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->setId((int) $this->App->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
 
-        // SHOW RELATED ITEMS AND EXPERIMENTS
-        $relatedItemsArr = array();
-        $relatedExperimentsArr = array();
-        if ($this->Entity->type === 'items') {
-            $relatedItemsArr = $this->Entity->Links->readRelatedItemsAll();
-            $relatedExperimentsArr = $this->Entity->Links->readRelatedExperimentsAll();
-        }
-
         // REVISIONS
         $Revisions = new Revisions($this->Entity);
 
@@ -264,14 +256,18 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'commentsArr' => $this->Entity->Comments->readAll(),
             'linksArr' => $this->Entity->Links->readAll(),
-            'relatedItemsArr' => $relatedItemsArr,
-            'relatedExperimentsArr' => $relatedExperimentsArr,
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
             'stepsArr' => $this->Entity->Steps->readAll(),
             'templatesArr' => $this->Templates->readAll(),
             'timestampInfo' => $this->Entity->getTimestampInfo(),
         );
+
+        // SHOW RELATED ITEMS AND EXPERIMENTS
+        if ($this->Entity->type === 'items') {
+            $renderArr['relatedItemsArr'] = $this->Entity->Links->readRelatedItemsAll();
+            $renderArr['relatedExperimentsArr'] = $this->Entity->Links->readRelatedExperimentsAll();
+        }
 
         $Response = new Response();
         $Response->prepare($this->App->Request);

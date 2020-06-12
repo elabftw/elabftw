@@ -97,10 +97,9 @@ class Links implements CrudInterface
      *
      * @return array
      */
-    // This needs to be adjusted to fulfill read permissions
     public function readLinkedByItemsAll(): array
     {
-        $sql = 'SELECT items.id AS itemid,
+        $sql = "SELECT items.id AS itemid,
             items_links.id AS linkid,
             items.title,
             category.name,
@@ -109,10 +108,34 @@ class Links implements CrudInterface
             FROM items_links
             LEFT JOIN items ON (items_links.item_id = items.id)
             LEFT JOIN items_types AS category ON (items.category = category.id)
+            LEFT JOIN users ON (items.userid = users.userid)
+            CROSS JOIN users2teams ON (users2teams.users_id = users.userid
+                                       AND users2teams.teams_id = :team_id)
             WHERE items_links.link_id = :id
+            AND (items.canread = 'public'
+                 OR items.canread = 'organization'
+                 OR (items.canread = 'team'
+                     AND users2teams.users_id = items.userid)
+                 OR (items.canread = 'user'
+                     AND items.userid = :user_id)";
+
+        // add all the teamgroups in which the user is
+        $TeamGroups = new TeamGroups($this->Entity->Users);
+        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= " OR (items.canread = $teamgroup)";
+            }
+        }
+
+        $sql .= ')
             ORDER by category.name ASC, items.title ASC';
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
+
         $this->Db->execute($req);
 
         $res = $req->fetchAll();
@@ -127,18 +150,40 @@ class Links implements CrudInterface
      *
      * @return array
      */
-    // This needs to be adjusted to fulfill read permissions
     public function readLinkedByExperimentsAll(): array
     {
-        $sql = 'SELECT experiments.id AS experimentid,
+        $sql = "SELECT experiments.id AS experimentid,
             experiments_links.id AS linkid,
             experiments.title
             FROM experiments_links
             LEFT JOIN experiments ON (experiments_links.item_id = experiments.id)
+            LEFT JOIN users ON (experiments.userid = users.userid)
+            CROSS JOIN users2teams ON (users2teams.users_id = users.userid
+                                       AND users2teams.teams_id = :team_id)
             WHERE experiments_links.link_id = :id
+            AND (experiments.canread = 'public'
+                 OR experiments.canread = 'organization'
+                 OR (experiments.canread = 'team'
+                     AND users2teams.users_id = experiments.userid)
+                 OR (experiments.canread = 'user'
+                     AND experiments.userid = :user_id)";
+
+        // add all the teamgroups in which the user is
+        $TeamGroups = new TeamGroups($this->Entity->Users);
+        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= " OR (experiments.canread = $teamgroup)";
+            }
+        }
+
+        $sql .= ')
             ORDER by experiments.title ASC';
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetchAll();

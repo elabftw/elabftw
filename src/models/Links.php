@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
@@ -100,24 +101,25 @@ class Links implements CrudInterface
      */
     public function readRelated(string $type): array
     {
-        if (!($type === 'items' or $types === 'experiments')) {
+        if (!($type === 'items' or $type === 'experiments')) {
             throw new ImproperActionException(_('Internal error.'));
         }
 
-        $sql = "SELECT $type.id AS entityid, 
-            {$type}_links.id AS linkid,
-            $type.title";
+        $sql = "SELECT $type.id AS entityid, {$type}_links.id AS linkid, $type.title";
+
         if ($type === 'items') {
-            $sql .= ", category.name,
-                category.bookable,
-                category.color";
+            $sql .= ", category.name, category.bookable, category.color";
         }
+
         $sql .= " FROM {$type}_links
             LEFT JOIN {$type} ON ({$type}_links.item_id = {$type}.id)";
+
         if ($type === 'items') {
-            $sql .= "LEFT JOIN {$type}_types AS category ON ($type.category = category.id)";
+            $sql .= " LEFT JOIN {$type}_types AS category ON ($type.category = category.id)";
         }
-        $sql .= "LEFT JOIN users ON ($type.userid = users.userid)
+
+        // Only load entities from database for which the user has read permission.
+        $sql .= " LEFT JOIN users ON ($type.userid = users.userid)
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid
                                        AND users2teams.teams_id = :team_id)
             WHERE {$type}_links.link_id = :id
@@ -137,8 +139,13 @@ class Links implements CrudInterface
             }
         }
 
-        $sql .= ')
-            ORDER by category.name ASC, $type.title ASC';
+        $sql .= ") ORDER by";
+
+        if ($type === 'items') {
+            $sql .= " category.name ASC,";
+        }
+
+        $sql .= " $type.title ASC";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

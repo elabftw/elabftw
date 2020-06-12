@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Exception\ImproperActionException;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 /**
@@ -97,55 +98,56 @@ class Links implements CrudInterface
      * Get related entities
      *
      * @param string $type Type of related entities (items or experiments)
+     * @throws ImproperActionException
      * @return array
      */
     public function readRelated(string $type): array
     {
-        if (!($type === 'items' or $type === 'experiments')) {
-            throw new ImproperActionException(_('Internal error.'));
+        if (!($type === 'items' || $type === 'experiments')) {
+            throw new ImproperActionException(Tools::error());
         }
 
-        $sql = "SELECT $type.id AS entityid, {$type}_links.id AS linkid, $type.title";
+        $sql = 'SELECT ' . $type . '.id AS entityid, ' . $type . '_links.id AS linkid, ' . $type . '.title';
 
         if ($type === 'items') {
-            $sql .= ", category.name, category.bookable, category.color";
+            $sql .= ', category.name, category.bookable, category.color';
         }
 
-        $sql .= " FROM {$type}_links
-            LEFT JOIN {$type} ON ({$type}_links.item_id = {$type}.id)";
+        $sql .= ' FROM ' . $type . '_links
+            LEFT JOIN ' . $type . ' ON (' . $type . '_links.item_id = ' . $type . '.id)';
 
         if ($type === 'items') {
-            $sql .= " LEFT JOIN {$type}_types AS category ON ($type.category = category.id)";
+            $sql .= ' LEFT JOIN ' . $type . '_types AS category ON (' . $type . '.category = category.id)';
         }
 
         // Only load entities from database for which the user has read permission.
-        $sql .= " LEFT JOIN users ON ($type.userid = users.userid)
+        $sql .= ' LEFT JOIN users ON (' . $type . '.userid = users.userid)
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid
                                        AND users2teams.teams_id = :team_id)
-            WHERE {$type}_links.link_id = :id
-            AND ($type.canread = 'public'
-                 OR $type.canread = 'organization'
-                 OR ($type.canread = 'team'
-                     AND users2teams.users_id = $type.userid)
-                 OR ($type.canread = 'user'
-                     AND $type.userid = :user_id)";
+            WHERE ' . $type . '_links.link_id = :id
+            AND (' . $type . '.canread = \'public\'
+                 OR ' . $type . '.canread = \'organization\'
+                 OR (' . $type . '.canread = \'team\'
+                     AND users2teams.users_id = ' . $type . '.userid)
+                 OR (' . $type . '.canread = \'user\'
+                     AND ' . $type . '.userid = :user_id)';
 
         // add all the teamgroups in which the user is
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= " OR ($type.canread = $teamgroup)";
+                $sql .= ' OR (' . $type . '.canread = $teamgroup)';
             }
         }
 
-        $sql .= ") ORDER by";
+        $sql .= ') ORDER by';
 
         if ($type === 'items') {
-            $sql .= " category.name ASC,";
+            $sql .= ' category.name ASC,';
         }
 
-        $sql .= " $type.title ASC";
+        $sql .= ' ' . $type . '.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

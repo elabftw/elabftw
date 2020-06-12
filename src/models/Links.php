@@ -93,11 +93,11 @@ class Links implements CrudInterface
     }
 
     /**
-     * Get linked-by-items for an item
+     * Get related items
      *
      * @return array
      */
-    public function readLinkedByItemsAll(): array
+    public function readRelatedItemsAll(): array
     {
         $sql = "SELECT items.id AS itemid,
             items_links.id AS linkid,
@@ -146,11 +146,11 @@ class Links implements CrudInterface
     }
 
     /**
-     * Get linked-by-experiments for an item
+     * Get related experiments
      *
      * @return array
      */
-    public function readLinkedByExperimentsAll(): array
+    public function readRelatedExperimentsAll(): array
     {
         $sql = "SELECT experiments.id AS experimentid,
             experiments_links.id AS linkid,

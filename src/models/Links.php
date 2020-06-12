@@ -11,8 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exception\ImproperActionException;
-use Elabftw\Elabftw\Tools;
+use Exception;
 use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
@@ -104,7 +103,7 @@ class Links implements CrudInterface
     public function readRelated(string $type): array
     {
         if (!($type === 'items' || $type === 'experiments')) {
-            throw new ImproperActionException(Tools::error());
+            throw new Exception();
         }
 
         $sql = 'SELECT ' . $type . '.id AS entityid, ' . $type . '_links.id AS linkid, ' . $type . '.title';

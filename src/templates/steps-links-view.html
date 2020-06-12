@@ -31,13 +31,13 @@
   </div>
 {% endif %}
 
-<!-- LINKEDBY -->
+<!-- RELATED ITEMS/EXPERIMENTS -->
 {% if Entity.type == 'items' %}
-{% if linkedByItemsArr %}
+{% if relatedItemsArr %}
   <div class='mt-2'>
-    <h4 class='d-inline'>{{ 'Referenced by items'|trans }}</h4>
+    <h4 class='d-inline'>{{ 'Related items'|trans }}</h4>
     <ul class='list-group'>
-{% for link in linkedByItemsArr %}
+{% for link in relatedItemsArr %}
       <li class='list-group-item'>
         <i class='fas fa-link mr-1'></i>
 {% if link.bookable %}
@@ -50,11 +50,11 @@
   </div>
 {% endif %}
 
-{% if linkedByExperimentsArr %}
+{% if relatedExperimentsArr %}
   <div class='mt-2'>
-    <h4 class='d-inline'>{{ 'Referenced by experiments'|trans }}</h4>
+    <h4 class='d-inline'>{{ 'Related experiments'|trans }}</h4>
     <ul class='list-group'>
-{% for link in linkedByExperimentsArr %}
+{% for link in relatedExperimentsArr %}
       <li class='list-group-item'>
         <i class='fas fa-link mr-1'></i>
         <a href='experiments.php?mode=view&id={{ link.experimentid }}'>{{ link.title|raw }}</a>

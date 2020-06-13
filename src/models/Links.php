@@ -106,37 +106,37 @@ class Links implements CrudInterface
             throw new Exception();
         }
 
-        $sql = 'SELECT ' . $type . '.id AS entityid, ' . $type . '_links.id AS linkid, ' . $type . '.title';
+        $sql = 'SELECT entity.id AS entityid, entity_links.id AS linkid, entity.title';
 
         if ($type === 'items') {
             $sql .= ', category.name, category.bookable, category.color';
         }
 
-        $sql .= ' FROM ' . $type . '_links
-            LEFT JOIN ' . $type . ' ON (' . $type . '_links.item_id = ' . $type . '.id)';
+        $sql .= ' FROM %1$s_links as entity_links
+            LEFT JOIN %1$s AS entity ON (entity_links.item_id = entity.id)';
 
         if ($type === 'items') {
-            $sql .= ' LEFT JOIN ' . $type . '_types AS category ON (' . $type . '.category = category.id)';
+            $sql .= ' LEFT JOIN %1$s_types AS category ON (entity.category = category.id)';
         }
 
         // Only load entities from database for which the user has read permission.
-        $sql .= ' LEFT JOIN users ON (' . $type . '.userid = users.userid)
+        $sql .= ' LEFT JOIN users ON (entity.userid = users.userid)
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid
                                        AND users2teams.teams_id = :team_id)
-            WHERE ' . $type . '_links.link_id = :id
-            AND (' . $type . '.canread = \'public\'
-                 OR ' . $type . '.canread = \'organization\'
-                 OR (' . $type . '.canread = \'team\'
-                     AND users2teams.users_id = ' . $type . '.userid)
-                 OR (' . $type . '.canread = \'user\'
-                     AND ' . $type . '.userid = :user_id)';
+            WHERE entity_links.link_id = :id
+            AND (entity.canread = \'public\'
+                 OR entity.canread = \'organization\'
+                 OR (entity.canread = \'team\'
+                     AND users2teams.users_id = entity.userid)
+                 OR (entity.canread = \'user\'
+                     AND entity.userid = :user_id)';
 
         // add all the teamgroups in which the user is
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= ' OR (' . $type . '.canread = $teamgroup)';
+                $sql .= ' OR (entity.canread = $teamgroup)';
             }
         }
 
@@ -146,9 +146,9 @@ class Links implements CrudInterface
             $sql .= ' category.name ASC,';
         }
 
-        $sql .= ' ' . $type . '.title ASC';
+        $sql .= ' entity.title ASC';
 
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare(sprintf($sql, $type));
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);

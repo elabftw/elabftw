@@ -97,7 +97,7 @@ class Links implements CrudInterface
      * Get related entities
      *
      * @param string $type Type of related entities (items or experiments)
-     * @throws ImproperActionException
+     * @throws Exception
      * @return array
      */
     public function readRelated(string $type): array

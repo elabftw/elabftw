@@ -161,7 +161,7 @@ abstract class AbstractEntity
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid']) && !$permissions['write']) {
+        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -221,7 +221,7 @@ abstract class AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid)";
+        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' AND entity.userid = :userid)";
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -248,6 +248,7 @@ abstract class AbstractEntity
         $sql .= implode(' ', $sqlArr);
 
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $itemsArr = $req->fetchAll();

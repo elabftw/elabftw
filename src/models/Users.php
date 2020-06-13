@@ -331,9 +331,9 @@ class Users
      */
     public function getAllEmails(bool $fromTeam = false): array
     {
-        $sql = 'SELECT email FROM users WHERE validated = 1 AND archived = 0';
+        $sql = 'SELECT email, teams_id FROM users CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE validated = 1 AND archived = 0';
         if ($fromTeam) {
-            $sql .= ' AND team = :team';
+            $sql .= ' AND users2teams.teams_id = :team';
         }
         $req = $this->Db->prepare($sql);
         if ($fromTeam) {

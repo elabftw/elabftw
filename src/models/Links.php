@@ -162,7 +162,7 @@ class Links implements CrudInterface
         return $res;
     }
 
-   /**
+    /**
      * Get links from an id
      *
      * @param int $id

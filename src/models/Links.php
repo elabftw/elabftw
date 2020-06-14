@@ -96,68 +96,67 @@ class Links implements CrudInterface
     /**
      * Get related entities
      *
-     * @param string $type Type of related entities (items or experiments)
-     * @throws Exception
-     * @return array
+     * @return associative array It contains two result arrays (items, experiments).
      */
-    public function readRelated(string $type): array
+    public function readRelated(): array
     {
-        if (!($type === 'items' || $type === 'experiments')) {
-            throw new Exception();
-        }
+        $res = array('items' => array(), 'experiments' => array());
 
-        $sql = 'SELECT entity.id AS entityid, entity_links.id AS linkid, entity.title';
+        foreach (array_keys($res) as $type) {
 
-        if ($type === 'items') {
-            $sql .= ', category.name, category.bookable, category.color';
-        }
+            $sql = 'SELECT entity.id AS entityid, entity_links.id AS linkid, entity.title';
 
-        $sql .= ' FROM %1$s_links as entity_links
-            LEFT JOIN %1$s AS entity ON (entity_links.item_id = entity.id)';
-
-        if ($type === 'items') {
-            $sql .= ' LEFT JOIN %1$s_types AS category ON (entity.category = category.id)';
-        }
-
-        // Only load entities from database for which the user has read permission.
-        $sql .= ' LEFT JOIN users ON (entity.userid = users.userid)
-            CROSS JOIN users2teams ON (users2teams.users_id = users.userid
-                                       AND users2teams.teams_id = :team_id)
-            WHERE entity_links.link_id = :id
-            AND (entity.canread = \'public\'
-                 OR entity.canread = \'organization\'
-                 OR (entity.canread = \'team\'
-                     AND users2teams.users_id = entity.userid)
-                 OR (entity.canread = \'user\'
-                     AND entity.userid = :user_id)';
-
-        // add all the teamgroups in which the user is
-        $TeamGroups = new TeamGroups($this->Entity->Users);
-        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= ' OR (entity.canread = $teamgroup)';
+            if ($type === 'items') {
+                $sql .= ', category.name, category.bookable, category.color';
             }
-        }
 
-        $sql .= ') ORDER by';
+            $sql .= ' FROM %1$s_links as entity_links
+                LEFT JOIN %1$s AS entity ON (entity_links.item_id = entity.id)';
 
-        if ($type === 'items') {
-            $sql .= ' category.name ASC,';
-        }
+            if ($type === 'items') {
+                $sql .= ' LEFT JOIN %1$s_types AS category ON (entity.category = category.id)';
+            }
 
-        $sql .= ' entity.title ASC';
+            // Only load entities from database for which the user has read permission.
+            $sql .= ' LEFT JOIN users ON (entity.userid = users.userid)
+                CROSS JOIN users2teams ON (users2teams.users_id = users.userid
+                                           AND users2teams.teams_id = :team_id)
+                WHERE entity_links.link_id = :id
+                AND (entity.canread = \'public\'
+                     OR entity.canread = \'organization\'
+                     OR (entity.canread = \'team\'
+                         AND users2teams.users_id = entity.userid)
+                     OR (entity.canread = \'user\'
+                         AND entity.userid = :user_id)';
 
-        $req = $this->Db->prepare(sprintf($sql, $type));
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
+            // add all the teamgroups in which the user is
+            $TeamGroups = new TeamGroups($this->Entity->Users);
+            $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+            if (!empty($teamgroupsOfUser)) {
+                foreach ($teamgroupsOfUser as $teamgroup) {
+                    $sql .= ' OR (entity.canread = $teamgroup)';
+                }
+            }
 
-        $this->Db->execute($req);
+            $sql .= ') ORDER by';
 
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
+            if ($type === 'items') {
+                $sql .= ' category.name ASC,';
+            }
+
+            $sql .= ' entity.title ASC';
+
+            $req = $this->Db->prepare(sprintf($sql, $type));
+            $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+            $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+            $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
+
+            $this->Db->execute($req);
+
+            $partialRes = $req->fetchAll();
+            if ($partialRes !== false) {
+                $res[$type] = $partialRes;
+            }
         }
         return $res;
     }

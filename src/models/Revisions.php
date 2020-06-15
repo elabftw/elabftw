@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use function count;
 use function mb_strlen;
 use PDO;
 

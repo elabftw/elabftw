@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Exception;
 use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
@@ -103,7 +102,6 @@ class Links implements CrudInterface
         $res = array('items' => array(), 'experiments' => array());
 
         foreach (array_keys($res) as $type) {
-
             $sql = 'SELECT entity.id AS entityid, entity_links.id AS linkid, entity.title';
 
             if ($type === 'items') {
@@ -162,11 +160,11 @@ class Links implements CrudInterface
     }
 
     /**
-     * Get links from an id
-     *
-     * @param int $id
-     * @return array
-     */
+      * Get links from an id
+      *
+      * @param int $id
+      * @return array
+      */
     public function readFromId(int $id): array
     {
         $sql = 'SELECT items.id AS itemid,

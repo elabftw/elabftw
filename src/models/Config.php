@@ -220,7 +220,8 @@ class Config
             ('saml_lowercaseurlencoding', 0),
             ('email_domain', NULL),
             ('saml_sync_teams', 0),
-            ('deletable_xp', 1);";
+            ('deletable_xp', 1),
+            ('max_revisions', 10);";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

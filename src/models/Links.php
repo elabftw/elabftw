@@ -160,11 +160,11 @@ class Links implements CrudInterface
     }
 
     /**
-      * Get links from an id
-      *
-      * @param int $id
-      * @return array
-      */
+     * Get links from an id
+     *
+     * @param int $id
+     * @return array
+     */
     public function readFromId(int $id): array
     {
         $sql = 'SELECT items.id AS itemid,

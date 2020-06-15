@@ -267,7 +267,7 @@ abstract class AbstractEntityController implements ControllerInterface
         // RELATED ITEMS AND EXPERIMENTS
         if ($this->Entity->type === 'items') {
             ['items' => $renderArr['relatedItemsArr'],
-             'experiments' => $renderArr['relatedExperimentsArr']
+                'experiments' => $renderArr['relatedExperimentsArr']
             ] = $this->Entity->Links->readRelated();
         }
 

@@ -95,7 +95,7 @@ class Links implements CrudInterface
     /**
      * Get related entities
      *
-     * @return associative array It contains two result arrays (items, experiments).
+     * @return array It contains two result arrays (items, experiments).
      */
     public function readRelated(): array
     {

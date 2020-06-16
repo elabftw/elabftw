@@ -261,6 +261,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $timestampInfo = $this->Entity->getTimestampInfo();
 
         $template = 'view.html';
+
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
@@ -271,6 +272,13 @@ abstract class AbstractEntityController implements ControllerInterface
             'stepsArr' => $stepsArr,
             'timestampInfo' => $timestampInfo,
         );
+
+        // RELATED ITEMS AND EXPERIMENTS
+        if ($this->Entity->type === 'items') {
+            ['items' => $renderArr['relatedItemsArr'],
+                'experiments' => $renderArr['relatedExperimentsArr']
+            ] = $this->Entity->Links->readRelated();
+        }
 
         $Response = new Response();
         $Response->prepare($this->App->Request);

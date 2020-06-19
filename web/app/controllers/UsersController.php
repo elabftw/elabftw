@@ -16,6 +16,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Models\Users;
+use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -45,8 +46,10 @@ try {
         }
 
         $targetUser = new Users((int) $Request->request->get('userid'));
+        $UsersHelper = new UsersHelper();
+        $targetUserTeams = $UsersHelper->getTeamsIdFromUserid((int) $targetUser->userData['userid']);
         // check we edit user of our team
-        if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
+        if (!in_array((string) $App->Users->userData['team'], $targetUserTeams, true) && !$Session->get('is_sysadmin')) {
             throw new IllegalActionException('User tried to edit user from other team.');
         }
         // a non sysadmin cannot put someone sysadmin

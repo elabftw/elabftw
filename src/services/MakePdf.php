@@ -65,6 +65,25 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Build HTML content that will be fed to mpdf->WriteHTML()
+     *
+     * @return string
+     */
+    public function getContent(): string
+    {
+        $content = $this->buildHeader();
+        $content .= $this->buildBody();
+        $content .= $this->addLinkedItems();
+        $content .= $this->addSteps();
+        $content .= $this->addAttachedFiles();
+        $content .= $this->addComments();
+        $content .= $this->buildInfoBlock();
+
+        return $content;
+    }
+}
+
+    /**
      * Generate pdf and return it as string
      *
      * @return string
@@ -421,24 +440,7 @@ Witness' signature:<br><br>
         <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
     </div>
 </htmlpagefooter>
+<sethtmlpageheader name="header" value="on" show-this-page="1" />
+<sethtmlpagefooter name="footer" value="on" />
 ';
     }
-
-    /**
-     * Build HTML content that will be fed to mpdf->WriteHTML()
-     *
-     * @return string
-     */
-    private function getContent(): string
-    {
-        $content = $this->buildHeader();
-        $content .= $this->buildBody();
-        $content .= $this->addLinkedItems();
-        $content .= $this->addSteps();
-        $content .= $this->addAttachedFiles();
-        $content .= $this->addComments();
-        $content .= $this->buildInfoBlock();
-
-        return $content;
-    }
-}

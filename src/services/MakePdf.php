@@ -81,7 +81,6 @@ class MakePdf extends AbstractMake
 
         return $content;
     }
-}
 
     /**
      * Generate pdf and return it as string
@@ -444,3 +443,4 @@ Witness' signature:<br><br>
 <sethtmlpagefooter name="footer" value="on" />
 ';
     }
+}

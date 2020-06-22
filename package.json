@@ -16,7 +16,7 @@
     "@fullcalendar/core": "^4.3.0",
     "@fullcalendar/daygrid": "^4.3.0",
     "@fullcalendar/interaction": "^4.3.0",
-    "@fullcalendar/list": "^4.3.0",
+    "@fullcalendar/list": "^5.0.0",
     "@fullcalendar/timegrid": "^4.3.0",
     "bootstrap": "^4.5.0",
     "bootstrap-markdown-fa5": "2.10.*",

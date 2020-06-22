@@ -9,7 +9,7 @@
     "3dmol": "^1.4.0",
     "@fancyapps/fancybox": "3.5.*",
     "@fortawesome/fontawesome-svg-core": "1.2.*",
-    "@fortawesome/free-brands-svg-icons": "^5.12.0",
+    "@fortawesome/free-brands-svg-icons": "^5.13.1",
     "@fortawesome/free-regular-svg-icons": "^5.12.0",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@fullcalendar/bootstrap": "^4.3.0",

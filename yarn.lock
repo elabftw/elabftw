@@ -839,6 +839,13 @@
   resolved "https://registry.yarnpkg.com/@fullcalendar/bootstrap/-/bootstrap-4.4.2.tgz#b396aa39fd2e49c1bfb68deb677df5a5544bb924"
   integrity sha512-zxtQvpZqr7zeBCfszo/i1e4zCvGwLh2zOp8J6Wxw5s73HsB1zuftWop7sPO+qhRrhX5MdM9i/wr8/nNY8BZSmw==
 
+"@fullcalendar/common@~5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.0.0.tgz#aed713cb0f81e53cd8539b7f4904b9c231bcdcda"
+  integrity sha512-Xb6nXIaeDpws/HZpvPMd5WlNPJkiD74D4jnRvY7EgirDSVP9VXJEHf/tT8E+M6kmjRuchWWe5x07rFheWonkyw==
+  dependencies:
+    tslib "^2.0.0"
+
 "@fullcalendar/core@^4.3.0":
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-4.4.2.tgz#864abe98cce4497a163c01a8fc30389f15d3d4e1"
@@ -849,10 +856,13 @@
   resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-4.4.2.tgz#568bfb3c7cc97f83b57cf3aef0fa3ed1bf6eda16"
   integrity sha512-axjfMhxEXHShV3r2TZjf+2niJ1C6LdAxkHKmg7mVq4jXtUQHOldU5XsjV0v2lUAt1urJBFi2zajfK8798ukL3Q==
 
-"@fullcalendar/interaction@^4.3.0":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-4.4.2.tgz#0a6be06538f843b6f0f4e9b4de87a5e3ec3629fb"
-  integrity sha512-3ItpGFnxcYQT4NClqhq93QTQwOI8x3mlMf5M4DgK5avVaSzpv9g8p+opqeotK2yzpFeINps06cuQyB1h7vcv1Q==
+"@fullcalendar/interaction@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/interaction/-/interaction-5.0.0.tgz#730e7df7b6edeb62988b0a67f889258374e9875d"
+  integrity sha512-IlM6f93kWqDLLHpvGK1GwM3UfCbTmuNqzLqzL2q7K260HgAnmqHdkAVYs3EFPb1epNJlaQ9QR3mNB42nRJkRpQ==
+  dependencies:
+    "@fullcalendar/common" "~5.0.0"
+    tslib "^2.0.0"
 
 "@fullcalendar/list@^4.3.0":
   version "4.4.2"

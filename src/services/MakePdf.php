@@ -104,11 +104,11 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Build the pdf
+     * Initialize Mpdf
      *
      * @return Mpdf
      */
-    private function generate(): Mpdf
+    public function initializeMpdf($multiEntity = false): void
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -130,11 +130,28 @@ class MakePdf extends AbstractMake
         $mpdf->setAutoBottomMargin = 'stretch';
 
         // set metadata
-        $mpdf->SetAuthor($this->Entity->entityData['fullname']);
-        $mpdf->SetTitle($this->Entity->entityData['title']);
+        $mpdf->SetAuthor($this->Entity->Users->userData['fullname']);
+        $mpdf->SetTitle('eLabFTW pdf');
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
         $mpdf->SetCreator('www.elabftw.net');
+
+        if (!$multiEntity) {
+            $mpdf->SetAuthor($this->Entity->entityData['fullname']);
+            $mpdf->SetTitle($this->Entity->entityData['title']);
+            $mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
+        }
+
+        return $mpdf;
+    }
+
+    /**
+     * Build the pdf
+     *
+     * @return Mpdf
+     */
+    private function generate(): Mpdf
+    {
+        $mpdf = $this->initializeMpdf();
 
         // write content
         $mpdf->WriteHTML($this->getContent());

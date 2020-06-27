@@ -39,12 +39,14 @@ class MakeMultiPdf extends AbstractMake
 
         $this->idArr = explode(' ', $idList);
 
-        $this->initializeMpdf();
-
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit
         // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
         error_reporting(E_ERROR);
+
+        $makePdf = new MakePdf($this->Entity, true);
+
+        $this->mpdf = $makePdf->initializeMpdf(true);
     }
 
     /**
@@ -82,40 +84,6 @@ class MakeMultiPdf extends AbstractMake
         return $this->mpdf->Output('', 'S');
     }
 
-    /**
-     * Initialize Mpdf
-     *
-     * @return void
-     */
-    private function initializeMpdf(): void
-    {
-        $format = $this->Entity->Users->userData['pdf_format'];
-
-        // we use a custom tmp dir, not the same as Twig because its content gets deleted after pdf is generated
-        $tmpDir = \dirname(__DIR__, 2) . '/cache/mpdf/';
-        if (!is_dir($tmpDir) && !mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
-            throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
-        }
-
-        // create the pdf
-        $this->mpdf = new Mpdf(array(
-            'format' => $format,
-            'tempDir' => $tmpDir,
-            'mode' => 'utf-8',
-        ));
-
-        // make sure header and footer are not overlapping the body text
-        $this->mpdf->setAutoTopMargin = 'stretch';
-        $this->mpdf->setAutoBottomMargin = 'stretch';
-
-        // set metadata
-        $this->mpdf->SetAuthor($this->Entity->Users->userData['fullname']);
-        $this->mpdf->SetTitle('Multi Entity elabftw pdf');
-        $this->mpdf->SetSubject('eLabFTW pdf');
-        //$this->mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
-        $this->mpdf->SetCreator('www.elabftw.net');
-    }
-    
     /**
      * This is where the magic happens
      *

@@ -49,6 +49,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
         <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li>
         <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
+        <li class='tabhandle' id='tab9'>{{ 'External auth'|trans }}</li>
     </ul>
 </menu>
 
@@ -656,6 +657,39 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         </form>
     </div>
 </div>
+
+<!-- TAB 9 EXTERNAL AUTH -->
+<div class='divhandle box' id='tab9div'>
+    <form method='post' action='app/controllers/SysconfigController.php'>
+      <div class='form-group'>
+        <h3>{{ 'External authentication mapping'|trans }}</h3>
+        <hr>
+        <input type='hidden' name='updateConfig' value='true' />
+
+          <p class='smallgray'>{{ 'If the server manages authentication, then you can provide here the environment variables names for user information.'|trans }}</p>
+
+        <label for='extauth_remote_user'>{{ 'Remote user:'|trans }}</label>                            
+        <input class='form-control col-md-4' type='text' placeholder='REMOTE_USER' value='{{ App.Config.configArr.extauth_remote_user }}' name='extauth_remote_user' id='extauth_remote_user' />                     
+        
+        <label for='extauth_first_name'>{{ 'First name:'|trans }}</label> 
+        <input class='form-control col-md-4' type='text' placeholder='MELLON_givenName' value='{{ App.Config.configArr.extauth_first_name }}' name='extauth_first_name' id='extauth_first_name' />   
+
+        <label for='extauth_family_name'>{{ 'Family name:'|trans }}</label> 
+        <input class='form-control col-md-4' type='text' placeholder='MELLON_sn' value='{{ App.Config.configArr.extauth_family_name }}' name='extauth_family_name' id='extauth_family_name' />   
+
+        <label for='extauth_email'>{{ 'E-mail address:'|trans }}</label> 
+        <input class='form-control col-md-4' type='text' placeholder='MELLON_mail' value='{{ App.Config.configArr.extauth_email }}' name='extauth_email' id='extauth_email' />   
+
+        <label for='extauth_teams'>{{ 'Teams:'|trans }}</label> 
+        <input class='form-control col-md-4' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' name='extauth_teams' id='extauth_teams' />   
+
+        <div class='submitButtonDiv'>
+            <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+            <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
+        </div>
+    </form>
+</div>
+
 
 <script src='app/js/sysconfig.bundle.js'></script>
 {% endblock body %}

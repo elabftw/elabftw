@@ -220,6 +220,12 @@ class Config
             ('saml_lowercaseurlencoding', 0),
             ('email_domain', NULL),
             ('saml_sync_teams', 0),
+            ('extauth_remote_user', ''),
+            ('extauth_first_name', ''),
+            ('extauth_family_name', ''),
+            ('extauth_email', ''),
+            ('extauth_teams', ''),
+
             ('deletable_xp', 1);";
 
         $req = $this->Db->prepare($sql);

@@ -40,6 +40,27 @@ try {
         exit;
     }
 
+    // Check for external authentication by web server
+    if (isset($_SERVER[$App->Config->configArr['extauth_remote_user']])) {
+	$Teams = new Teams($App->Users);
+
+	$fname = $_SERVER[$App->Config->configArr['extauth_first_name']];
+	$lname = $_SERVER[$App->Config->configArr['extauth_family_name']];
+        $email = $_SERVER[$App->Config->configArr['extauth_email']];
+	$pwd = '********'; /* unused password */
+	$teams = array($_SERVER[$App->Config->configArr['extauth_teams']]);
+	if (sizeof($Teams->validateTeams($teams)) == 0)
+		$teams = array("1"); /* Default teams */
+
+        if (($userid = $Auth->getUseridFromEmail($email)) == 0) {
+            $App->Users->create($email, $teams, $fname, $lname, $pwd);
+            $App->Log->info('New user autocreated');
+            $userid = $Auth->getUseridFromEmail($email);
+        }
+        $Session->set('email', $email);
+        $Auth->login($userid);
+    }
+
     $BannedUsers = new BannedUsers($App->Config);
 
     // if we are not in https, die saying we work only in https

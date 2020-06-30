@@ -54,17 +54,7 @@ try {
         }
     }
 
-    // EXTERNAL AUTH
-    if ($Request->request->has('extauth_remote_user')) {
-        $tab = '9';
-        $App->Config->update(array('extauth_remote_user' => $Request->request->get('extauth_remote_user')));
-        $App->Config->update(array('extauth_first_name' => $Request->request->get('extauth_first_name')));
-        $App->Config->update(array('extauth_family_name' => $Request->request->get('extauth_family_name')));
-        $App->Config->update(array('extauth_email' => $Request->request->get('extauth_email')));
-        $App->Config->update(array('extauth_teams' => $Request->request->get('extauth_teams')));
-    }
-
-    // TAB 1 and 4 to 7
+    // TAB 1, 4 to 7 and 9
     if ($Request->request->has('updateConfig')) {
         if ($Request->request->has('lang')) {
             $tab = '1';
@@ -84,6 +74,10 @@ try {
 
         if ($Request->request->has('saml_debug')) {
             $tab = '7';
+        }
+
+        if ($Request->request->has('extauth_remote_user')) {
+            $tab = '9';
         }
 
         $App->Config->update($Request->request->all());

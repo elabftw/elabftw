@@ -309,7 +309,7 @@ class Users
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
             LEFT JOIN teams ON (teams.id = :team)
-            WHERE " . $valSql . ' teams.id = :team';
+            WHERE " . $valSql . ' teams.id = :team ORDER BY fullname';
         $req = $this->Db->prepare($sql);
 
         if (is_int($validated)) {

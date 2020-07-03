@@ -55,9 +55,7 @@ try {
         $lastname = $App->Request->server->get($lastname_attr);
         $email = $App->Request->server->get($email_attr);
         $teams = array($App->Request->server->get($teams_attr));
-        /*
-         * Use default team is none is provided
-         */
+        // Use default team is none is provided
         if (sizeof($Teams->validateTeams($teams)) == 0) {
             $teams = array('1');
         }

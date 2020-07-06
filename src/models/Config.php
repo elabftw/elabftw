@@ -221,7 +221,12 @@ class Config
             ('email_domain', NULL),
             ('saml_sync_teams', 0),
             ('deletable_xp', 1),
-            ('max_revisions', 10);";
+            ('max_revisions', 10),
+            ('extauth_remote_user', ''),
+            ('extauth_firstname', ''),
+            ('extauth_lastname', ''),
+            ('extauth_email', ''),
+            ('extauth_teams', '');";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

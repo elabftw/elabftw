@@ -40,6 +40,41 @@ try {
         exit;
     }
 
+    // Check for external authentication by web server
+    $remote_user_attr = $App->Config->configArr['extauth_remote_user'];
+    $remote_user = $App->Request->server->get($remote_user_attr);
+    if (isset($remote_user)) {
+        $Teams = new Teams($App->Users);
+
+        $firstname_attr = $App->Config->configArr['extauth_firstname'];
+        $lastname_attr = $App->Config->configArr['extauth_lastname'];
+        $email_attr = $App->Config->configArr['extauth_email'];
+        $teams_attr = $App->Config->configArr['extauth_teams'];
+
+        $firstname = $App->Request->server->get($firstname_attr);
+        $lastname = $App->Request->server->get($lastname_attr);
+        $email = $App->Request->server->get($email_attr);
+        $teams = array($App->Request->server->get($teams_attr));
+        // Use default team is none is provided
+        if (sizeof($Teams->validateTeams($teams)) == 0) {
+            $teams = array('1');
+        }
+
+        /*
+         * Unused password, but $App->Users->create() insists
+         * on it being at least 8 chars long.
+         */
+        $pwd = '********';
+
+        if (($userid = $Auth->getUseridFromEmail($email)) == 0) {
+            $App->Users->create($email, $teams, $firstname, $lastname, $pwd);
+            $App->Log->info('New user '.$email.' autocreated');
+            $userid = $Auth->getUseridFromEmail($email);
+        }
+        $Session->set('email', $email);
+        $Auth->login($userid);
+    }
+
     $BannedUsers = new BannedUsers($App->Config);
 
     // if we are not in https, die saying we work only in https

@@ -54,7 +54,7 @@ try {
         }
     }
 
-    // TAB 1 and 4 to 7
+    // TAB 1, 4 to 7 and 9
     if ($Request->request->has('updateConfig')) {
         if ($Request->request->has('lang')) {
             $tab = '1';
@@ -74,6 +74,10 @@ try {
 
         if ($Request->request->has('saml_debug')) {
             $tab = '7';
+        }
+
+        if ($Request->request->has('extauth_remote_user')) {
+            $tab = '9';
         }
 
         $App->Config->update($Request->request->all());

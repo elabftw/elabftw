@@ -247,6 +247,20 @@ class Experiments extends AbstractEntity implements CreateInterface
     }
 
     /**
+     * Count all the experiments owned by a user
+     *
+     * @return int
+     */
+    public function countAll(): int
+    {
+        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
      * Select what will be the status for the experiment
      *
      * @return int The status ID

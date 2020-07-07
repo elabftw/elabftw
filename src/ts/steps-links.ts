@@ -195,7 +195,7 @@ $(document).ready(function() {
   });
 
   // DESTROY
-  $('.list-group-item').on('click', '.linkDestroy', function() {
+  $(document).on('click', '.linkDestroy', function() {
     LinkC.destroy($(this));
   });
 

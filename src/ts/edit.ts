@@ -508,7 +508,7 @@ $(document).ready(function() {
       }
     });
   }
-  $('.list-group-item').on('click', '.linkImport', function() {
+  $(document).on('click', '.linkImport', function() {
     importBody($(this));
   });
 });

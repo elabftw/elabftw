@@ -93,14 +93,11 @@ class MakeReport
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
             // get total number of experiments
             $Entity = new Experiments(new Users((int) $user['userid']));
-            $Entity->addFilter('entity.userid', $user['userid']);
-            $itemsArr = $Entity->readShow();
-            $count = \count($itemsArr);
 
             $allUsers[$key]['team(s)'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $allUsers[$key]['exp_total'] = $count;
+            $allUsers[$key]['exp_total'] = $Entity->countAll();
         }
         return $allUsers;
     }

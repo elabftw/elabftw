@@ -15,6 +15,8 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -108,7 +110,7 @@ class MakePdf extends AbstractMake
      *
      * @return Mpdf
      */
-    public function initializeMpdf($multiEntity = false): void
+    public function initializeMpdf($multiEntity = false): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -118,12 +120,35 @@ class MakePdf extends AbstractMake
             throw new FilesystemErrorException("Could not create the $tmpDir directory! Please check permissions on this folder.");
         }
 
+        $defaultConfig = (new ConfigVariables())->getDefaults();
+        $fontDirs = array_merge($defaultConfig['fontDir'], array(
+            \dirname(__DIR__, 2) . '/web/app/css/fonts/OpenSansEmoji',
+        ));
+    
+        $defaultFontConfig = (new FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'] + array(
+            'opensansemoji' => array(
+                'R' => 'OpenSansEmoji.ttf',
+            ),
+        );
+
+        $backupSubsFont = array_merge(
+            array('opensansemoji'),
+            $defaultFontConfig['backupSubsFont'],
+        );
+
         // create the pdf
         $mpdf = new Mpdf(array(
+            'fontDir' => $fontDirs,
+            'fontdata' => $fontData,
             'format' => $format,
             'tempDir' => $tmpDir,
             'mode' => 'utf-8',
         ));
+
+        $mpdf->useSubstitutions = true;
+        $mpdf->maxTTFFilesize = 10000;
+        $mpdf->backupSubsFont = $backupSubsFont;
 
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';

@@ -15,6 +15,7 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
+use function mb_strlen;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -211,7 +212,7 @@ class Auth
     {
         // If user has a cookie; check cookie is valid
         // the token is a sha256 sum: 64 char
-        if (!$this->Request->cookies->has('token') || \mb_strlen($this->Request->cookies->get('token')) !== 64) {
+        if (!$this->Request->cookies->has('token') || mb_strlen($this->Request->cookies->get('token') ?? '') !== 64) {
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);

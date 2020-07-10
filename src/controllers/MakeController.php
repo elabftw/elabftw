@@ -22,6 +22,7 @@ use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
+use function substr_count;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -66,7 +67,7 @@ class MakeController implements ControllerInterface
                 return $this->makePdf();
 
             case 'multiPdf':
-                if (\substr_count($this->App->Request->query->get('id'), ' ') === 0) {
+                if (substr_count($this->App->Request->query->get('id'), ' ') === 0) {
                     return $this->makePdf();
                 }
                 return $this->makeMultiPdf();

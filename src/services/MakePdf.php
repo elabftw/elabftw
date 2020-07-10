@@ -443,7 +443,7 @@ Witness' signature:<br><br>
         <p style="float:left; width:90%;">
             <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
             <strong>Tags:</strong> <em>' .
-                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
+                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
         <p style="float:right; width:10%;"><br /><br />

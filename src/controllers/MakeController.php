@@ -18,11 +18,13 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeCsv;
+use Elabftw\Services\MakeJson;
 use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
 use function substr_count;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -62,6 +64,9 @@ class MakeController implements ControllerInterface
         switch ($this->App->Request->query->get('what')) {
             case 'csv':
                 return $this->makeCsv();
+
+            case 'json':
+                return $this->makeJson();
 
             case 'pdf':
                 return $this->makePdf();
@@ -119,6 +124,26 @@ class MakeController implements ControllerInterface
             200,
             array(
                 'Content-Type' => 'application/pdf',
+                'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
+                'Cache-Control' => 'no-store',
+                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
+            )
+        );
+    }
+
+    /**
+     * Create a JSON export
+     *
+     * @return JsonResponse
+     */
+    private function makeJson(): JsonResponse
+    {
+        $Make = new MakeJson($this->Entity, $this->App->Request->query->get('id'));
+        return new JsonResponse(
+            $Make->getJson(),
+            200,
+            array(
+                'Content-Type' => 'application/json',
                 'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',

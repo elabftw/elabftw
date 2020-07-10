@@ -10,6 +10,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';

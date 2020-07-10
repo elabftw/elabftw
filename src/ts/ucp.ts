@@ -8,6 +8,7 @@
 import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';

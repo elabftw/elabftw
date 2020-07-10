@@ -20,6 +20,7 @@
     "@fullcalendar/timegrid": "^4.3.0",
     "bootstrap": "^4.5.0",
     "bootstrap-markdown-fa5": "2.10.*",
+    "bootstrap-select": "^1.13.18",
     "dropzone": "5.7.*",
     "file-saver": "2.0.*",
     "jquery": "^3.5.1",

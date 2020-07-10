@@ -2073,6 +2073,11 @@ bootstrap-markdown-fa5@2.10.*:
   resolved "https://registry.yarnpkg.com/bootstrap-markdown-fa5/-/bootstrap-markdown-fa5-2.10.2.tgz#600eb34a8924aec5296e3e4fbaa32e8880d780d7"
   integrity sha512-g3FPBA7rYDz8Lrek760WvedppTjsCaSw897Ik05h8+DzTKzxzwp18WPmmQpo9NdafONMxYBJaqKPkNaeNUg/Mg==
 
+bootstrap-select@^1.13.18:
+  version "1.13.18"
+  resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.13.18.tgz#4557119d58dc1159189977161c803962220e4dda"
+  integrity sha512-V1IzK4rxBq5FrJtkzSH6RmFLFBsjx50byFbfAf8jYyXROWs7ZpprGjdHeoyq2HSsHyjJhMMwjsQhRoYAfxCGow==
+
 bootstrap@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.5.0.tgz#97d9dbcb5a8972f8722c9962483543b907d9b9ec"

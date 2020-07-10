@@ -23,7 +23,7 @@
             <!-- SEARCH WITH TAG -->
             <div class='col-md-6'>
                 <label for='tags-select'>{{ 'With the tag'|trans }}</label>
-                <select multiple name='tags[]' id='tags-select' class='custom-select'>
+                <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
                     {% for tag in tagsArr %}
                     <option value='{{ tag.tag }}' {{ tag.tag in selectedTagsArr ? 'selected' }}>{{ tag.tag|raw }}</option>
                     {% endfor %}

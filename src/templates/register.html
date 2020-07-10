@@ -40,7 +40,7 @@
         <!-- TEAM -->
         <div class='row'>
           <label for='team'>{{ 'Team'|trans }}</label>
-          <select name='team' class='form-control' id='team' required>
+          <select name='team' class='form-control selectpicker' id='team' required data-show-subtext='true' data-live-search='true'>
             <option selected disabled>{{ 'Select a team'|trans }}</option>
             {% for team in teamsArr %}
               <option value='{{ team.id }}'>{{ team.name }}</option>

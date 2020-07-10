@@ -28,6 +28,7 @@ $theme-colors: (
     "neutral": $maingray,
 );
 @import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-select/sass/bootstrap-select.scss';
 
 @import 'autocomplete';
 @import 'footer';

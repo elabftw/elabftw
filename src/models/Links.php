@@ -116,16 +116,16 @@ class Links implements CrudInterface
             }
 
             // Only load entities from database for which the user has read permission.
-            $sql .= ' LEFT JOIN users ON (entity.userid = users.userid)
+            $sql .= " LEFT JOIN users ON (entity.userid = users.userid)
                 CROSS JOIN users2teams ON (users2teams.users_id = users.userid
                                            AND users2teams.teams_id = :team_id)
                 WHERE entity_links.link_id = :id
-                AND (entity.canread = \'public\'
-                     OR entity.canread = \'organization\'
-                     OR (entity.canread = \'team\'
+                AND (entity.canread = 'public'
+                     OR entity.canread = 'organization'
+                     OR (entity.canread = 'team'
                          AND users2teams.users_id = entity.userid)
-                     OR (entity.canread = \'user\'
-                         AND entity.userid = :user_id)';
+                     OR (entity.canread = 'user'
+                         AND entity.userid = :user_id)";
 
             // add all the teamgroups in which the user is
             $TeamGroups = new TeamGroups($this->Entity->Users);

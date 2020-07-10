@@ -429,6 +429,13 @@ Witness' signature:<br><br>
 </div>";
         }
 
+        // don't show the Tags line if there are none
+        $tags = '';
+        if ($this->Entity->entityData['tags']) {
+            $tags = '<strong>Tags:</strong> <em>' .
+                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
+        }
+
         // we add a custom style for td for bug #350
         return '
 <html>
@@ -441,9 +448,7 @@ Witness' signature:<br><br>
     <div id="header">
         <h1>' . $this->Entity->entityData['title'] . '</h1>
         <p style="float:left; width:90%;">
-            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
-            <strong>Tags:</strong> <em>' .
-                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
+            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />' . $tags . '
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
         <p style="float:right; width:10%;"><br /><br />

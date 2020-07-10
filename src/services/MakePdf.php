@@ -16,6 +16,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Mpdf\Mpdf;
+use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -65,6 +66,24 @@ class MakePdf extends AbstractMake
     }
 
     /**
+     * Build HTML content that will be fed to mpdf->WriteHTML()
+     *
+     * @return string
+     */
+    public function getContent(): string
+    {
+        $content = $this->buildHeader();
+        $content .= $this->buildBody();
+        $content .= $this->addLinkedItems();
+        $content .= $this->addSteps();
+        $content .= $this->addAttachedFiles();
+        $content .= $this->addComments();
+        $content .= $this->buildInfoBlock();
+
+        return $content;
+    }
+
+    /**
      * Generate pdf and return it as string
      *
      * @return string
@@ -86,11 +105,11 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Build the pdf
+     * Initialize Mpdf
      *
      * @return Mpdf
      */
-    private function generate(): Mpdf
+    public function initializeMpdf($multiEntity = false): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -112,11 +131,28 @@ class MakePdf extends AbstractMake
         $mpdf->setAutoBottomMargin = 'stretch';
 
         // set metadata
-        $mpdf->SetAuthor($this->Entity->entityData['fullname']);
-        $mpdf->SetTitle($this->Entity->entityData['title']);
+        $mpdf->SetAuthor($this->Entity->Users->userData['fullname']);
+        $mpdf->SetTitle('eLabFTW pdf');
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
         $mpdf->SetCreator('www.elabftw.net');
+
+        if (!$multiEntity) {
+            $mpdf->SetAuthor($this->Entity->entityData['fullname']);
+            $mpdf->SetTitle($this->Entity->entityData['title']);
+            $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags']));
+        }
+
+        return $mpdf;
+    }
+
+    /**
+     * Build the pdf
+     *
+     * @return Mpdf
+     */
+    private function generate(): Mpdf
+    {
+        $mpdf = $this->initializeMpdf();
 
         // write content
         $mpdf->WriteHTML($this->getContent());
@@ -407,7 +443,7 @@ Witness' signature:<br><br>
         <p style="float:left; width:90%;">
             <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
             <strong>Tags:</strong> <em>' .
-                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
+                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
         <p style="float:right; width:10%;"><br /><br />
@@ -421,24 +457,8 @@ Witness' signature:<br><br>
         <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
     </div>
 </htmlpagefooter>
+<sethtmlpageheader name="header" value="on" show-this-page="1" />
+<sethtmlpagefooter name="footer" value="on" />
 ';
-    }
-
-    /**
-     * Build HTML content that will be fed to mpdf->WriteHTML()
-     *
-     * @return string
-     */
-    private function getContent(): string
-    {
-        $content = $this->buildHeader();
-        $content .= $this->buildBody();
-        $content .= $this->addLinkedItems();
-        $content .= $this->addSteps();
-        $content .= $this->addAttachedFiles();
-        $content .= $this->addComments();
-        $content .= $this->buildInfoBlock();
-
-        return $content;
     }
 }

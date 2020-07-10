@@ -16,7 +16,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Mpdf\Mpdf;
-use fuction str_replace;
+use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

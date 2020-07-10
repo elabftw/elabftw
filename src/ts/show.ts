@@ -11,6 +11,9 @@ import { insertParamAndReload, notif } from './misc';
 import 'bootstrap/js/src/modal.js';
 
 $(document).ready(function(){
+  if ($('#info').data('page') !== 'show') {
+    return;
+  }
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')

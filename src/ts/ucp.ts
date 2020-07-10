@@ -47,6 +47,9 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'ucp') {
+    return;
+  }
   $.ajaxSetup({
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')

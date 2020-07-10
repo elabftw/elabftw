@@ -255,6 +255,7 @@
 {% endif %}
 
 <div id='info'
+    data-page='view'
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
     data-locale='{{ App.Users.userData.lang }}'
@@ -265,5 +266,4 @@
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 
-<script src='app/js/view.bundle.js?v={{ v }}'></script>
 {% endblock body %}

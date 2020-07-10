@@ -50,6 +50,9 @@ function schedulerCreate(start: string, end: string): void {
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
+  if ($('#info').data('page') !== 'team') {
+    return;
+  }
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;

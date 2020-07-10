@@ -509,8 +509,6 @@
 <!-- END PAGE -->
 
 <div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
-<div id='info' data-confirm="{{ 'Delete this?'|trans }}" data-confirmtag="{{ 'Delete this tag?'|trans }}" data-type='experiments_templates'></div>
+<div id='info' data-page='ucp' data-confirm="{{ 'Delete this?'|trans }}" data-confirmtag="{{ 'Delete this tag?'|trans }}" data-type='experiments_templates'></div>
 
-<!-- to export templates -->
-<script src='app/js/ucp.bundle.js?v={{ v }}'></script>
 {% endblock body %}

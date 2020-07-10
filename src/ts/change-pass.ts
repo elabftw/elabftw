@@ -6,6 +6,9 @@
  * @package elabftw
  */
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'change-pass') {
+    return;
+  }
   // check if passwords match
   $('#cpassword').keyup(function() {
     const password = $('#password').val();

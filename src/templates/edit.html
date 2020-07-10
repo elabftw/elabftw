@@ -241,6 +241,7 @@
 {% endif %}
 
 <div id='info'
+    data-page='edit'
     data-upmsg='{{ 'Drop files here to upload'|trans }}'
     data-maxsize='{{ maxUploadSize }}'
     data-type='{{ Entity.type }}'
@@ -261,6 +262,5 @@
 <!-- Load the JSONEditor CSS -->
 <link href='app/css/jsoneditor/jsoneditor.min.css' rel='stylesheet' type='text/css'>
 
-<script src='app/js/edit.bundle.js?v={{ v }}'></script>
 <script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 {% endblock body %}

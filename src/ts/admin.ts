@@ -71,6 +71,9 @@ function tinyMceInitLight() {
 }
 
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'admin') {
+    return;
+  }
   const confirmText = $('#info').data('confirm');
 
   // activate editors in new item type and common template

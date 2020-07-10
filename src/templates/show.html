@@ -147,6 +147,7 @@
 
 <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
 <div id='info'
+    data-page='show'
     data-locale='{{ App.Users.userData.lang }}'
     data-limit='{{ limit }}'
     data-offset='{{ offset }}'
@@ -154,5 +155,4 @@
 </div>
 <div id='type' data-type='{{ Entity.type }}'></div>
 
-<script src='app/js/show.bundle.js?v={{ v }}'></script>
 {% endblock body %}

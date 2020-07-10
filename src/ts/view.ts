@@ -13,6 +13,9 @@ declare let key: any;
 const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'view') {
+    return;
+  }
   // add the title in the page name (see #324)
   document.title = $('.title_view').text() + ' - eLabFTW';
 

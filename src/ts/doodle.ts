@@ -8,6 +8,9 @@
 import { notif } from './misc';
 
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'edit') {
+    return;
+  }
   // store the clicks
   let clickX = [];
   let clickY = [];

@@ -9,6 +9,10 @@ import { GoogleCharts } from 'google-charts';
 
 function drawChart(): void {
   const json = $('#stats').data('stats');
+  if (typeof json === 'undefined') {
+    // we are not on the profile page
+    return;
+  }
   const data = new GoogleCharts.api.visualization.DataTable(json);
   const options = {
     title: $('#stats').data('title'),

@@ -337,13 +337,9 @@ $(document).ready(function() {
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
   $(document).on('click', '.plusMinusButton',  function() {
     if ($(this).html() === '+') {
-      $(this).html('-');
-      $(this).addClass('btn-neutral');
-      $(this).removeClass('btn-primary');
+      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
     } else {
-      $(this).html('+');
-      $(this).removeClass('btn-neutral');
-      $(this).addClass('btn-primary');
+      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
     }
   });
 

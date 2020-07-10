@@ -48,11 +48,16 @@ $(document).ready(function() {
     $(document).on('click', '.jsonLoader', function() {
       $.get('app/download.php', {
         f: $(this).data('link')
-      }).done(function(data){
+      }).done(function(data) {
         try {
           editor.set(JSON.parse(data));
-          $('#jsonEditorDiv').show();
-        } catch(e){
+          $('#jsonEditorDiv').collapse('toggle');
+          if ($('.jsonEditorPlusMinusButton').html() === '+') {
+            $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');
+          } else {
+            $('.jsonEditorPlusMinusButton').html('+').removeClass('btn-neutral').addClass('btn-primary');
+          }
+        } catch(e) {
           // If it is just a parsing error, then we let the user edit the file.
           if (e.message.includes('JSON.parse')) {
             editor.setMode('text');
@@ -96,12 +101,11 @@ $(document).ready(function() {
         formData.append('type', 'experiments');
         formData.append('file', blob);
 
-        $.ajax({
+        $.post({
           url: 'app/controllers/EntityAjaxController.php',
           data: formData,
           processData: false,
           contentType: false,
-          type: 'POST',
           success:function(json){
             notif(json);
           }

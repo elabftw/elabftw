@@ -162,7 +162,7 @@
             {% if editor == 'md' %}
                     <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
             {% else %}
-                <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+                <textarea id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
             {% endif %}
 
             <div class='submitButtonDiv'>

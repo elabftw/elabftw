@@ -11,8 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Experiments;
-use Mpdf\Mpdf;
 
 /**
  * Make a PDF from several experiments or db items
@@ -38,13 +36,7 @@ class MakeMultiPdf extends AbstractMake
 
         $this->idArr = explode(' ', $idList);
 
-        // suppress the "A non-numeric value encountered" error from mpdf
-        // see https://github.com/baselbers/mpdf/commit
-        // 5cbaff4303604247f698afc6b13a51987a58f5bc#commitcomment-23217652
-        error_reporting(E_ERROR);
-
         $makePdf = new MakePdf($this->Entity, true);
-
         $this->mpdf = $makePdf->initializeMpdf(true);
     }
 

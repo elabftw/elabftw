@@ -250,6 +250,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $Revisions = new Revisions($this->Entity);
 
         $template = 'view.html';
+
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'Entity' => $this->Entity,
@@ -262,6 +263,13 @@ abstract class AbstractEntityController implements ControllerInterface
             'templatesArr' => $this->Templates->readAll(),
             'timestampInfo' => $this->Entity->getTimestampInfo(),
         );
+
+        // RELATED ITEMS AND EXPERIMENTS
+        if ($this->Entity->type === 'items') {
+            ['items' => $renderArr['relatedItemsArr'],
+                'experiments' => $renderArr['relatedExperimentsArr']
+            ] = $this->Entity->Links->readRelated();
+        }
 
         $Response = new Response();
         $Response->prepare($this->App->Request);

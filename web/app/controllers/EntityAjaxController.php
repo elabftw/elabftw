@@ -145,6 +145,11 @@ try {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
+    // UPDATE RATING
+    if ($Request->request->has('rating') && $Entity instanceof Database) {
+        $Entity->setId((int) $Request->request->get('id'));
+        $Entity->updateRating((int) $Request->request->get('rating'));
+    }
 
     // TOGGLE LOCK
     if ($Request->request->has('lock')) {

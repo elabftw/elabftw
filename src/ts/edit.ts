@@ -219,13 +219,14 @@ $(document).ready(function() {
       controller: string;
 
       constructor() {
-        this.controller = 'database.php';
+        this.controller = 'app/controllers/EntityAjaxController.php';
       }
 
       update(rating: any) {
         $.post(this.controller, {
           rating: rating,
-          id: id
+          id: id,
+          type: 'items',
         }).done(function(json) {
           notif(json);
         });
@@ -365,10 +366,10 @@ $(document).ready(function() {
   });
   // STAR RATING
   const StarC = new Star();
-  $('.rating-cancel').on('click', function() {
+  $(document).on('click', '.rating-cancel', function() {
     StarC.update(0);
   });
-  $('.star').on('click', function() {
+  $(document).on('click', '.star', function() {
     StarC.update($(this).data('rating').current[0].innerText);
   });
 

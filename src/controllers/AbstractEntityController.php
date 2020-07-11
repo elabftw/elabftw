@@ -77,18 +77,6 @@ abstract class AbstractEntityController implements ControllerInterface
             return new RedirectResponse('?mode=edit&id=' . (string) $id);
         }
 
-        // UPDATE RATING
-        if ($this->App->Request->request->has('rating') && $this->Entity instanceof Database) {
-            $this->Entity->setId((int) $this->App->Request->request->get('id'));
-            $this->Entity->updateRating((int) $this->App->Request->request->get('rating'));
-            $Response = new JsonResponse();
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-            ));
-            return $Response;
-        }
-
         // DEFAULT MODE IS SHOW
         return $this->show();
     }

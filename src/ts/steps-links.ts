@@ -10,11 +10,6 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { notif, relativeMoment, makeSortableGreatAgain } from './misc';
 
 $(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
   const type = $('#info').data('type');
   const confirmStep = $('#info').data('confirmstep');
   const confirmLink = $('#info').data('confirmlink');

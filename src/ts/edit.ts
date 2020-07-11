@@ -58,11 +58,6 @@ $(document).ready(function() {
   if ($('#info').data('page') !== 'edit') {
     return;
   }
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
 
   // UPLOAD FORM
   const elabDropzone = new Dropzone('form#elabftw-dropzone', {

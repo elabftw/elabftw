@@ -50,11 +50,6 @@ $(document).ready(function() {
   if ($('#info').data('page') !== 'ucp') {
     return;
   }
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
   const Templates = {
     controller: 'app/controllers/EntityAjaxController.php',
     saveToFile: function(id, name): void {

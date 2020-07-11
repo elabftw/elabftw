@@ -14,11 +14,6 @@ $(document).ready(function(){
   if ($('#info').data('page') !== 'show') {
     return;
   }
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
 
   // CREATE EXPERIMENT
   key($('#shortcuts').data('create'), function() {

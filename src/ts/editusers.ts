@@ -6,13 +6,6 @@
  * @package elabftw
  */
 import { notif, insertParamAndReload } from './misc';
-$(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-});
 
 // ARCHIVE USER TOGGLE
 $(document).on('click', '.toggleArchiveUser', function(e) {

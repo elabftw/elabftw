@@ -10,12 +10,7 @@ import { relativeMoment, notif } from './misc';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 
 $(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-  // TODOLIST TOGGLE
+  // TOGGLE
   // use shortcut
   key($('#todoSc').data('toggle'), function() {
     $('#todoList').toggle();
@@ -24,6 +19,8 @@ $(document).ready(function() {
   $(document).on('click', '.todoToggle', function() {
     $('#todoList').toggle();
   });
+
+  // EDIT
   $(document).on('mouseenter', '.todoItem', function() {
     ($(this) as any).editable(function(value) {
       $.post('app/controllers/TodolistController.php', {

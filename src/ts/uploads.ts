@@ -12,14 +12,10 @@ import { notif, displayMolFiles } from './misc';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 
 $(document).ready(function() {
-  if ($('#info').data('page') !== 'edit' || $('#info').data('page') !== 'view') {
+  const pages = ['edit', 'view'];
+  if (!pages.includes($('#info').data('page'))) {
     return;
   }
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
   displayMolFiles();
 
   // REPLACE UPLOAD toggle form

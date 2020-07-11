@@ -26,6 +26,7 @@ module.exports = {
       './src/ts/jsoneditor.ts',
       './src/ts/team.ts',
       './src/ts/uploads.ts',
+      './src/ts/todolist.ts',
       './src/ts/ucp.ts',
       './src/ts/view.ts',
       './src/ts/comments.ts',

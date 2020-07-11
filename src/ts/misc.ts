@@ -137,3 +137,27 @@ export function insertParamAndReload(key: any, value: any): void {
   // reload the page
   document.location.search = kvp.join('&');
 }
+
+// SORTABLE ELEMENTS
+export function makeSortableGreatAgain(): void {
+  // need an axis and a table via data attribute
+  $('.sortable').sortable({
+    // limit to horizontal dragging
+    axis : $(this).data('axis'),
+    helper : 'clone',
+    handle : '.sortableHandle',
+    // we don't want the Create new pill to be sortable
+    cancel: 'nonSortable',
+    // do ajax request to update db with new order
+    update: function() {
+      // send the order as an array
+      const ordering = $(this).sortable('toArray');
+      $.post('app/controllers/SortableAjaxController.php', {
+        table: $(this).data('table'),
+        ordering: ordering
+      }).done(function(json) {
+        notif(json);
+      });
+    }
+  });
+}

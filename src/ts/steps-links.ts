@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
-import { notif, relativeMoment } from './misc';
+import { notif, relativeMoment, makeSortableGreatAgain } from './misc';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -85,6 +85,7 @@ $(document).ready(function() {
           // reload the step list
           $('#steps_div_' + id).load(loadUrl, function() {
             relativeMoment();
+            makeSortableGreatAgain();
           });
           // clear input field
           elem.val('');
@@ -132,6 +133,7 @@ $(document).ready(function() {
             // reload the step list
             $('#steps_div_' + id).load(loadUrl, function() {
               relativeMoment();
+              makeSortableGreatAgain();
             });
           }
         });

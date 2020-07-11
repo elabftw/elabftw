@@ -9,7 +9,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
 import 'bootstrap/js/dist/modal.js';
 import 'bootstrap-select';
-import { relativeMoment, notif, displayMolFiles } from './misc';
+import { relativeMoment, notif, displayMolFiles, makeSortableGreatAgain } from './misc';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -27,29 +27,8 @@ $(document).ready(function() {
     ($('#' + $(this).data('modal')) as any).modal('toggle');
   });
 
-  // SORTABLE ELEMENTS
-  // need an axis and a table via data attribute
-  $('.sortable').sortable({
-    // limit to horizontal dragging
-    axis : $(this).data('axis'),
-    helper : 'clone',
-    handle : '.sortableHandle',
-    // we don't want the Create new pill to be sortable
-    cancel: 'nonSortable',
-    // do ajax request to update db with new order
-    update: function() {
-      // send the orders as an array
-      const ordering = $(this).sortable('toArray');
 
-      $.post('app/controllers/SortableAjaxController.php', {
-        table: $(this).data('table'),
-        ordering: ordering
-      }).done(function(json) {
-        notif(json);
-      });
-    }
-  });
-
+  makeSortableGreatAgain();
   relativeMoment();
   displayMolFiles();
 

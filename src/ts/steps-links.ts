@@ -164,6 +164,25 @@ $(document).ready(function() {
     StepC.destroy($(this));
   });
 
+  // EDITABLE STEPS
+  $(document).on('mouseenter', '.stepInput', function() {
+    ($(this) as any).editable(function(value) {
+      $.post('app/controllers/AjaxController.php', {
+        type: $(this).data('type'),
+        updateStep: true,
+        body: value,
+        id: $(this).data('id'),
+      });
+
+      return(value);
+    }, {
+      tooltip : 'Click to edit',
+      indicator : 'Saving...',
+      onblur: 'submit',
+      style : 'display:inline'
+    });
+  });
+
   // END STEPS
   ////////////
 

@@ -173,6 +173,21 @@ class Steps implements CrudInterface
     }
 
     /**
+     * Update the body of a step
+     *
+     * @param int $id step id
+     * @param string $body new body
+     * @return void
+     */
+    public function updateBody(int $id, string $body) {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    /**
      * Delete a step
      *
      * @param int $id ID of the step

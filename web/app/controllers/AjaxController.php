@@ -85,6 +85,20 @@ try {
 
         $Response->setData($res);
     }
+
+    // UPDATE STEP BODY
+    if ($Request->request->has('updateStep')) {
+        $id = (int) $Request->request->get('id');
+        if ($Request->request->get('type') === 'experiments') {
+            $Entity = new Experiments($App->Users, $id);
+        } else {
+            $Entity = new Database($App->Users, $id);
+        }
+        $Entity->canOrExplode('write');
+        $Steps = $Entity->Steps;
+        $Steps->updateBody($id, $Request->request->get('body'));
+    }
+
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,

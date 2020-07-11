@@ -49,11 +49,11 @@ import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
-//const Dropzone= require('dropzone/dist/dropzone-amd-module'); // eslint-disable-line @typescript-eslint/no-var-requires
 import Dropzone from 'dropzone';
 
-
+// the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
+
 $(document).ready(function() {
   if ($('#info').data('page') !== 'edit') {
     return;

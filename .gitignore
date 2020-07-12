@@ -22,4 +22,5 @@ uploads
 web/app/css/tinymce/fonts/*.woff
 .sass-cache
 src/ts/*.js
+src/ts/langs/*.js
 web/app/js/scripts-tags.html

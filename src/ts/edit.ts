@@ -50,6 +50,7 @@ import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import Dropzone from 'dropzone';
+import i18next from 'i18next';
 
 // the dropzone is created programmatically, disable autodiscover
 Dropzone.autoDiscover = false;
@@ -62,7 +63,8 @@ $(document).ready(function() {
   // UPLOAD FORM
   const elabDropzone = new Dropzone('form#elabftw-dropzone', {
     // i18n message to user
-    dictDefaultMessage: $('#info').data('upmsg'),
+    //dictDefaultMessage: $('#info').data('upmsg'),
+    dictDefaultMessage: i18next.t('dropzone-upload-area'),
     maxFilesize: $('#info').data('maxsize'), // MB
     timeout: 900000,
     headers: {
@@ -110,7 +112,6 @@ $(document).ready(function() {
 
   const type = $('#info').data('type');
   const id = $('#info').data('id');
-  const confirmText = $('#info').data('confirm');
   let location = 'experiments.php';
   if (type != 'experiments') {
     location = 'database.php';
@@ -199,7 +200,7 @@ $(document).ready(function() {
   class Entity {
 
     destroy() {
-      if (confirm(confirmText)) {
+      if (confirm(i18next.t('entity-delete-warning'))) {
         const controller = 'app/controllers/EntityAjaxController.php';
         $.post(controller, {
           destroy: true,
@@ -343,7 +344,7 @@ $(document).ready(function() {
   $('#datepicker').datepicker({dateFormat: 'yymmdd'});
   // If the title is 'Untitled', clear it on focus
   $('#title_input').focus(function(){
-    if ($(this).val() === $('#info').data('untitled')) {
+    if ($(this).val() === i18next.t('entity-default-title')) {
       $('#title_input').val('');
     }
   });

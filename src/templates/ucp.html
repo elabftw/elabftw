@@ -175,10 +175,10 @@
         />
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
         <br>
-        <input id='show_team_template' type='checkbox' name='show_team_template'
-               {{ App.Users.userData.show_team_template == '1' ? " checked='checked'" }}
+        <input id='show_team_templates' type='checkbox' name='show_team_templates'
+               {{ App.Users.userData.show_team_templates == '1' ? " checked='checked'" }}
         />
-        <label for='show_team_template'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
+        <label for='show_team_templates'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
         <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
           {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
@@ -379,10 +379,10 @@
             <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read="{{ template.canread }}" data-write="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
           </div>
         </div>
-          <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
+        <a class='saveToFile' title='{{ 'Download template'|trans }}' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
               <i class='fas fa-download fa-pull-right clickable'></i>
           </a>
-          <a class='destroy-template' title='Destroy template' data-id='{{ template.id }}'>
+          <a class='destroy-template' title='{{ 'Destroy template'|trans }}' data-id='{{ template.id }}'>
               <i class='fas fa-trash-alt fa-pull-right mr-1 clickable'></i>
           </a>
 
@@ -400,65 +400,84 @@
             </div>
           </form>
           {% include('steps-links-edit.html') %}
+
         {% else %}
-        <div class="badgetab">
-          <h5 style="display: inline;">{{ template.name }}</h5>
+
           {{ 'This template is not editable'|trans|msg('ok', false) }}
-          {% if template.tags|length > 0 %}
-          <span class='tags'><i class='fas fa-tags'></i></span>
-              {% set tagsIdArr = template.tags_id|split(',') %}
+          <div class='box'>
+            <h4>{{ template.name }} ({{ template.fullname }})</h4>
+
+            {% if template.tags|length > 0 %}
+              <span class='tags'><i class='fas fa-tags'></i></span>
               {% set tagsValueArr = template.tags|split('|') %}
-                {% for key, tag in tagsValueArr %}
-                {# the key allows to get the id stored in tagsIdArr #}
-                     <a class='tag' href=''>{{ tag|raw }}</a>
-                {% endfor %}
-              {% endif %}
-          <div class='mt-2'>
-            {% if template.canread > 0 %}
-              {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
-                <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
+              {% for tag in tagsValueArr %}
+                <span class='tag'>{{ tag|raw }}</span>
               {% endfor %}
-            {% else %}
-                <i class='fas fa-eye' title='{{ 'rVisibility'|trans }}'></i> {{ template.canread }}
             {% endif %}
 
-            {% if template.canwrite > 0 %}
-            {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
-                <i class='fas fa-pencil-alt' title='{{ 'rVisibility'|trans }}'></i> {{ teamGroup.name }}
-            {% endfor %}
-            {% else %}
-                <i class='fas fa-pencil-alt' title='{{ 'rVisibility'|trans }}'></i> {{ template.canwrite }}
-            {% endif %}
-          </div>
-          <h6></h6>
-          <div id='body_view' class='txt'>{{ template.body|raw }}</div>
-            <div class="row">
-              <div class="col-md-6">
-                {% if template.steps|length > 0 %}
-                  <h5 class='mt-2 steps underlined'>Steps</h5>
-                    {% set stepsValueArr = template.steps|split('|') %}
-                    {% for steps in stepsValueArr %}
-                      <ul>
-                        <li><a class='steps text-primary'>{{ steps|raw }}</a></li>
-                      </ul>
+            <div class='mt-2'>
+              {# TODO we should be able to use getCan from abstract entity here #}
+              {% if template.canread > 0 %}
+                {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
+                  <i class='fas fa-eye'></i> {{ teamGroup.name }}
+                {% endfor %}
+              {% else %}
+                <i class='fas fa-eye'></i> {{ template.canread }}
+              {% endif %}
+
+              {% if template.canwrite > 0 %}
+                {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
+                  <i class='fas fa-pencil-alt'></i> {{ teamGroup.name }}
+                {% endfor %}
+              {% else %}
+                <i class='fas fa-pencil-alt'></i> {{ template.canwrite }}
+              {% endif %}
+            </div>
+
+            <div id='body_view' class='txt'>{{ template.body|raw }}</div>
+            <div class='row'>
+              <div class='col-md-6'>
+                {% set stepsArr = Entity.Steps.readFromId(template.id) %}
+                {% if stepsArr %}
+                  <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
+                  <div class='mt-2'>
+                    {% for step in stepsArr %}
+                      <div class='input-group mb-2' id='step_{{ step.id }}'>
+                        <div class='input-group-prepend'>
+                          <div class='input-group-text'>
+                            <input type='checkbox' disabled autocomplete='off'>
+                          </div>
+                        </div>
+                        <div class='pl-2 step-static form-control-plaintext'>
+                          <span>{{ step.body|raw }}</span>
+                        </div>
+                      </div>
                     {% endfor %}
+                  </div>
                 {% endif %}
               </div>
-              <div class="col-md-6">
-                {% if template.links|length > 0 %}
-                  <h5 class='mt-2 steps underlined'>Links</h5>
-                    {% set LinksValueArr = template.links|split('|') %}
-                    {% for links in LinksValueArr %}
-                      <ul>
-                        <li><a class='steps text-primary' href="database.php?mode=view&id={{ links }}">DB{{ links|raw }}</a></li>
-                      </ul>
-                    {% endfor %}
+              <div class='col-md-6'>
+                {% set linksArr = Entity.Links.readFromId(template.id) %}
+                {% if linksArr %}
+                  <div class='mt-2' id='links_div_{{ template.id }}'>
+                    <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
+                    <ul class='list-group'>
+                      {% for link in linksArr %}
+                        <li class='list-group-item'>
+                          <i class='fas fa-link mr-1'></i>
+                          {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+                          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                              {{ link.title|raw }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
                 {% endif %}
               </div>
             </div>
-        </div>
+          </div>
         {% endif %}
-    </div>
+      </div>
     {% endfor %}
   </div>
 </div>

@@ -214,7 +214,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'query' => $query,
             'searchType' => $searchType,
             'tagsArr' => $tagsArr,
-            'templatesArr' => $this->Templates->readAll(),
+            'templatesArr' => $this->Templates->readInclusive(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
         $Response = new Response();

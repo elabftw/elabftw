@@ -8,6 +8,7 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { notif } from './misc';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const id = $('#info').data('id');
@@ -15,7 +16,6 @@ $(document).ready(function() {
   if (type === undefined) {
     type = 'experiments_templates';
   }
-  const confirmText = $('#info').data('confirmtag');
 
   class Tag {
     controller: string;
@@ -75,7 +75,7 @@ $(document).ready(function() {
 
     // REMOVE THE TAG FROM AN ENTITY
     unreference(tagId: number): void {
-      if (confirm(confirmText)) {
+      if (confirm(i18next.t('tag-delete-warning'))) {
         $.post(this.controller, {
           unreferenceTag: true,
           type: type,
@@ -89,7 +89,7 @@ $(document).ready(function() {
 
     // REMOVE THE TAG FROM AN ENTITY
     unreferenceForTemplate(tagId: number, tplId: number): void {
-      if (confirm(confirmText)) {
+      if (confirm(i18next.t('tag-delete-warning'))) {
         $.post(this.controller, {
           unreferenceTag: true,
           type: type,
@@ -102,7 +102,7 @@ $(document).ready(function() {
     }
     // REMOVE A TAG COMPLETELY (from admin panel/tag manager)
     destroy(tagId: number): void {
-      if (confirm('Delete this?')) {
+      if (confirm(i18next.t('tag-delete-warning'))) {
         $.post(this.controller, {
           destroyTag: true,
           tagId: tagId

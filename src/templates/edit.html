@@ -242,17 +242,9 @@
 
 <div id='info'
     data-page='edit'
-    data-upmsg='{{ 'Drop files here to upload'|trans }}'
     data-maxsize='{{ maxUploadSize }}'
     data-type='{{ Entity.type }}'
-    data-id='{{ Entity.id }}'
-    data-locale='{{ App.Users.userData.lang }}'
-    data-confirm="{{ 'The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'|trans }}"
-    data-confirmtag="{{ 'Delete this tag?'|trans }}"
-    data-confirmstep="{{ 'Delete this step?'|trans }}"
-    data-confirmlink="{{ 'Delete this link?'|trans }}"
-    data-untitled="{{ 'Untitled'|trans }}"
-    data-lang="{{ Entity.Users.userData.lang }}">
+    data-id='{{ Entity.id }}'>
 </div>
 <div id='shortcuts'
     data-create='{{ Entity.Users.userData.sc_create }}'

@@ -10,6 +10,7 @@ import 'jquery-ui/ui/widgets/sortable';
 import 'bootstrap/js/dist/modal.js';
 import 'bootstrap-select';
 import { relativeMoment, notif, displayMolFiles, makeSortableGreatAgain } from './misc';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -17,6 +18,10 @@ $(document).ready(function() {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
     }
   });
+
+  // set the language for js translated strings
+  i18next.changeLanguage($('#user-prefs').data('lang'));
+
   // TOGGLABLE
   $(document).on('click', '.togglableNext', function() {
     $(this).next().toggle();

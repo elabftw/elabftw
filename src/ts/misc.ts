@@ -18,7 +18,7 @@ const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-v
 
 // DISPLAY COMMENT TIME RELATIVE TO NOW
 export function relativeMoment(): void {
-  moment.locale($('#info').data('locale'));
+  moment.locale($('#user-prefs').data('lang'));
   $.each($('.relative-moment'), function(i, el) {
     el.textContent = moment(el.title, 'YYYY-MM-DD H:m:s').fromNow();
   });

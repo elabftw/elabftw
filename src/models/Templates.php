@@ -237,25 +237,16 @@ class Templates extends AbstractEntity
      */
     public function readInclusive(): array
     {
-        if (!$this->Users->userData['show_team_template']) {
+        if (!$this->Users->userData['show_team_templates']) {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
 
         $sql = "SELECT DISTINCT experiments_templates.*,
-                GROUP_CONCAT(DISTINCT steps_t.body SEPARATOR '|') as steps,
-                GROUP_CONCAT(DISTINCT link_id SEPARATOR '|') as links,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname,
                 GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,
-                GROUP_CONCAT(DISTINCT tags.id) as tags_id,
-                users.show_team_template
+                GROUP_CONCAT(DISTINCT tags.id) as tags_id
                 FROM experiments_templates
                 LEFT JOIN users ON (experiments_templates.userid = users.userid)
-                LEFT JOIN ( SELECT item_id AS id,body
-                                FROM experiments_templates_steps) AS steps_t
-                ON ( experiments_templates.id = steps_t.id)
-                LEFT JOIN ( SELECT item_id AS id, link_id
-                                FROM experiments_templates_links) AS links_t
-                ON ( experiments_templates.id = links_t.id)
                 LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
                 LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
                 WHERE experiments_templates.userid != 0 ";
@@ -264,7 +255,7 @@ class Templates extends AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
-        $sql .= 'GROUP BY id ORDER BY experiments_templates.id ASC , steps ASC';
+        $sql .= 'GROUP BY id ORDER BY experiments_templates.id ASC';
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

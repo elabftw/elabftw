@@ -553,7 +553,7 @@ CREATE TABLE `users` (
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `show_team_template` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `show_team_templates` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',

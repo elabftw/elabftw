@@ -50,9 +50,29 @@ try {
         'templatesArr' => $templatesArr,
         'visibilityArr' => $visibilityArr,
     );
-} catch (Exception $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (IllegalActionException $e) {
+    // log notice and show message
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException | FilesystemErrorException $e) {
+    // log error and show message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $template = 'error.html';
+    $renderArr = array('error' => Tools::error());
+    $Response->setContent($App->render($template, $renderArr));
 }
 $Response->setContent($App->render($template, $renderArr));
 $Response->send();

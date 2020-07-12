@@ -1,0 +1,21 @@
+<?php
+/**
+ * This file is just here so that the strings are picked up by the merge-po.sh script
+ * These strings are used in JS and appear nowhere else in the codebase
+ * They must be in i18n.ts
+ *
+ */
+// dropzone-upload-area
+_('Drop files here to upload');
+// entity-default-title
+_('Untitled');
+// entity-delete-warning
+_('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?');
+// link-delete-warning
+_('Delete this link?');
+// step-delete-warning
+_('Delete this step?');
+// tag-delete-warning
+_('Delete this tag?');
+// upload-file-comment
+_('File comment');

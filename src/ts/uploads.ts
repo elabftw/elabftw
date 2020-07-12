@@ -10,6 +10,7 @@ import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { notif, displayMolFiles } from './misc';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   const pages = ['edit', 'view'];
@@ -38,21 +39,16 @@ $(document).ready(function() {
 
       return(value);
     }, {
-      tooltip : 'File comment',
-      placeholder: 'File comment',
-      indicator : 'Saving...',
+      tooltip : i18next.t('upload-file-comment'),
+      placeholder: i18next.t('upload-file-comment'),
       name : 'fileComment',
       onedit: function() {
         if ($(this).text() === 'Click to add a comment') {
           $(this).text('');
         }
       },
-      submit : 'Save',
-      onblur : 'ignore',
-      cancel : 'Cancel',
-      submitcssclass : 'button btn btn-primary',
-      cancelcssclass : 'button btn btn-danger',
-      style : 'display:inline'
+      onblur : 'submit',
+      style : 'display:inline',
     });
   });
 

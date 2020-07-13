@@ -11,6 +11,8 @@ _('Drop files here to upload');
 _('Untitled');
 // entity-delete-warning
 _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?');
+// generic-delete-warning
+_('Delete this?');
 // link-delete-warning
 _('Delete this link?');
 // step-delete-warning

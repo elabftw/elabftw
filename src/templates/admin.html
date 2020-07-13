@@ -109,7 +109,7 @@
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
           <a href='#'>
-            <i class='fas fa-trash-alt clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
+            <i class='fas fa-trash-alt clickable teamGroupDelete align_right' data-id='{{ teamGroup.id }}'></i>
           </a>
           <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
@@ -359,15 +359,12 @@
     <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
     <div id='tag_manager'>
       {% for tag in tagsArr %}
-        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
+        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
     </div>
   </div>
 </div>
 
-<div id='info'
-  data-page='admin'
-  data-lang='{{ App.Users.userData.lang }}'
-  data-confirm='{{ 'Delete this?'| trans }}'>
+<div id='info' data-page='admin'></div>
 
 {% endblock body %}

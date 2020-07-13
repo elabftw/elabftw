@@ -7,6 +7,7 @@
  */
 import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { notif } from './misc';
+import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
@@ -61,7 +62,7 @@ $(document).ready(function() {
       saveAs(blob, name + '.elabftw.tpl');
     },
     destroy: function(id): void {
-      if (confirm('Delete this ?')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
         $.post(this.controller, {
           destroy: true,
           id: id,
@@ -157,7 +158,7 @@ $(document).ready(function() {
         });
       }
     },
-    language : $('#language').data('lang')
+    language : $('#user-prefs').data('lang')
   });
 
   // DESTROY API KEY

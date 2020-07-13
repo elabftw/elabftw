@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 
 const Comments = {
   controller: 'app/controllers/CommentsAjaxController.php',
@@ -28,8 +29,7 @@ const Comments = {
   },
   destroy: function(commentId: string): void {
     const id = $('#info').data('id');
-    const confirmText = $('#info').data('confirm');
-    if (confirm(confirmText)) {
+    if (confirm(i18next.t('generic-delete-warning'))) {
       $.post(this.controller, {
         destroy: true,
         type: $('#info').data('type'),

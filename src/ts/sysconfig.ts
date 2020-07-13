@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
@@ -175,7 +176,7 @@ $(document).ready(function() {
 
   $(document).on('click', '.idpsDestroy', function() {
     const elem = $(this);
-    if (confirm($(this).data('confirm'))) {
+    if (confirm(i18next.t('generic-delete-warning'))) {
       $.post('app/controllers/SysconfigAjaxController.php', {
         idpsDestroy: true,
         id: $(this).data('id')

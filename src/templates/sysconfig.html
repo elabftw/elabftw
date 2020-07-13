@@ -602,7 +602,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <h4>Existing Identity Providers</h4>
             {% for idp in idpsArr %}
                 <div class='box' id='idps_div'>
-                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i>
+                  <i class='fas fa-trash-alt fa-2x clickable idpsDestroy align_right' title='Delete' data-id='{{ idp.id }}'></i>
                   <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
                   <form method='post' action='app/controllers/IdpsController.php'>
                     <div class='form-group'>
@@ -688,9 +688,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' name='extauth_teams' id='extauth_teams' />
 
         <div class='submitButtonDiv'>
-            <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-            <button class='button btn btn-danger' type='submit' name='clear_policy'>{{ 'Clear'|trans }}</button>
+          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
+      </div>
     </form>
 </div>
 

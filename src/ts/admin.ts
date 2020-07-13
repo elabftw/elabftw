@@ -7,6 +7,7 @@
  */
 import { notif } from './misc';
 import $ from 'jquery';
+import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import tinymce from 'tinymce/tinymce';
@@ -74,7 +75,6 @@ $(document).ready(function() {
   if ($('#info').data('page') !== 'admin') {
     return;
   }
-  const confirmText = $('#info').data('confirm');
 
   // activate editors in new item type and common template
   tinyMceInitLight();
@@ -107,7 +107,7 @@ $(document).ready(function() {
       });
     },
     destroy: function(id): void {
-      if (confirm(confirmText)) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
         $.post(this.controller, {
           teamGroupDestroy: true,
           teamGroupGroup: id

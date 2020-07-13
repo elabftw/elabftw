@@ -504,7 +504,7 @@
             <td>{{ key.name }}</td>
             <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
             <td>{{ key.created_at }}</td>
-            <td><i class='fas fa-trash-alt fa-2x clickable keyDestroy' title='Delete' data-id='{{ key.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i></td>
+            <td><i class='fas fa-trash-alt fa-2x clickable keyDestroy' title='Delete' data-id='{{ key.id }}'></i></td>
           </tr>
       {% endfor %}
     </tbody>
@@ -527,7 +527,6 @@
 </div>
 <!-- END PAGE -->
 
-<div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
-<div id='info' data-page='ucp' data-confirm="{{ 'Delete this?'|trans }}" data-confirmtag="{{ 'Delete this tag?'|trans }}" data-type='experiments_templates'></div>
+<div id='info' data-page='ucp' data-type='experiments_templates'></div>
 
 {% endblock body %}

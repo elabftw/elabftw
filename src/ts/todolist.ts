@@ -9,15 +9,25 @@ declare let key: any;
 import { relativeMoment, notif } from './misc';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 
+function toggleTodolist(): void {
+  if ($('#todoList').is(':visible')) {
+    $('#container').css('width', '100%').css('margin-right', 'auto');
+  } else {
+    $('#container').css('width', '70%').css('margin-right', '0');
+  }
+  $('#todoList').toggle();
+}
+
+
 $(document).ready(function() {
   // TOGGLE
   // use shortcut
   key($('#todoSc').data('toggle'), function() {
-    $('#todoList').toggle();
+    toggleTodolist();
   });
   // or click the button
   $(document).on('click', '.todoToggle', function() {
-    $('#todoList').toggle();
+    toggleTodolist();
   });
 
   // EDIT

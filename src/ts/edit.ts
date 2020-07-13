@@ -448,6 +448,12 @@ $(document).ready(function() {
     // keyboard shortcut to insert today's date at cursor in editor
     setup: function(editor: any) {
       editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+      editor.addShortcut('ctrl+=', 'subscript', function() {
+        editor.execCommand('subscript');
+      });
+      editor.addShortcut('ctrl+shift+=', 'superscript', function() {
+        editor.execCommand('superscript');
+      });
       editor.on('keydown', function() {
         clearTimeout(typingTimer);
       });

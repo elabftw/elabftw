@@ -50,7 +50,7 @@
     "apidoc": "^0.23.0",
     "babel-loader": "^8.0.6",
     "eslint": "^6.8.0",
-    "expose-loader": "0.7.*",
+    "expose-loader": "1.0.*",
     "google-charts": "^2.0.0",
     "grunt": "1.1.*",
     "grunt-contrib-cssmin": "3.0.*",

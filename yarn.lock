@@ -848,15 +848,30 @@
   resolved "https://registry.yarnpkg.com/@fullcalendar/bootstrap/-/bootstrap-4.4.2.tgz#b396aa39fd2e49c1bfb68deb677df5a5544bb924"
   integrity sha512-zxtQvpZqr7zeBCfszo/i1e4zCvGwLh2zOp8J6Wxw5s73HsB1zuftWop7sPO+qhRrhX5MdM9i/wr8/nNY8BZSmw==
 
+"@fullcalendar/common@~5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.1.0.tgz#a45e01ebdcf00654f4d45f0457926cf2f5909820"
+  integrity sha512-ubwf9T0BDocGLh0AK8achrmc0siQdrp3Wn6Rmg/Ht4/WnwBtjc5gumzJ0ezG/xHE0GWG+Pz6Tm0IJF/jE7NJHw==
+  dependencies:
+    tslib "^2.0.0"
+
 "@fullcalendar/core@^4.3.0":
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-4.4.2.tgz#864abe98cce4497a163c01a8fc30389f15d3d4e1"
   integrity sha512-vq7KQGuAJ1ieFG5tUqwxwUwmXYtblFOTjHaLAVHo6iEPB52mS7DS45VJfkhaQmX4+5/+BHRpg82G1qkuAINwtg==
 
-"@fullcalendar/daygrid@^4.3.0", "@fullcalendar/daygrid@~4.4.0":
+"@fullcalendar/daygrid@^4.3.0":
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-4.4.2.tgz#568bfb3c7cc97f83b57cf3aef0fa3ed1bf6eda16"
   integrity sha512-axjfMhxEXHShV3r2TZjf+2niJ1C6LdAxkHKmg7mVq4jXtUQHOldU5XsjV0v2lUAt1urJBFi2zajfK8798ukL3Q==
+
+"@fullcalendar/daygrid@~5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-5.1.0.tgz#4f8cb30e99ff00600f064645942d21e8f668c946"
+  integrity sha512-zdO/EFer8wWrr+kvkMfyizPi/F7yvOCpGOb6Arz6QqyOgFl1ffNUQoRf1iQf7h2PnIEvZWZdZs+3wuMwwmhb3g==
+  dependencies:
+    "@fullcalendar/common" "~5.1.0"
+    tslib "^2.0.0"
 
 "@fullcalendar/interaction@^4.3.0":
   version "4.4.2"
@@ -868,12 +883,14 @@
   resolved "https://registry.yarnpkg.com/@fullcalendar/list/-/list-4.4.2.tgz#9f922c41f5e3f1522dcb16e0f76386361f3da8d0"
   integrity sha512-buhfd0w0PavH3EVZ6DR6kvjb+wPDe16XEpNcPkTpvIxnAziwGBvcUeHUBd9KvtEhOcvs9sAKoYKbU4xwHFK0Wg==
 
-"@fullcalendar/timegrid@^4.3.0":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/timegrid/-/timegrid-4.4.2.tgz#9d5b26204cd2b0928e7498c54f758a6d07b15191"
-  integrity sha512-M5an7qii8OUmI4ogY47k5pn2j/qUbLp6sa6Vo0gO182HR5pb9YtrEZnoQhnScok+I0BkDkLFzMQoiAMTjBm2PQ==
+"@fullcalendar/timegrid@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/timegrid/-/timegrid-5.1.0.tgz#618efedcbd344a61c716b02c943b0566dcaca07a"
+  integrity sha512-0PpsJeLnXl1D5B8LV5y4ky7OpFMfFaqs+Z2tPBOvhGAWZnyRH23CRuQQUIws/Cf9Uc097T714fNXwkQwwSUuLg==
   dependencies:
-    "@fullcalendar/daygrid" "~4.4.0"
+    "@fullcalendar/common" "~5.1.0"
+    "@fullcalendar/daygrid" "~5.1.0"
+    tslib "^2.0.0"
 
 "@nodelib/fs.scandir@2.1.3":
   version "2.1.3"

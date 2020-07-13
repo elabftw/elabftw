@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const t = {
   translation: {
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
@@ -8,6 +9,6 @@ const t = {
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "upload-file-comment": "파일 코멘트",
   }
-}
+};
 
 export default t;

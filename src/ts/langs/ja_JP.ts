@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const t = {
   translation: {
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
@@ -8,6 +9,6 @@ const t = {
     "tag-delete-warning": "このタグを削除しますか？",
     "upload-file-comment": "ファイルコメント",
   }
-}
+};
 
 export default t;

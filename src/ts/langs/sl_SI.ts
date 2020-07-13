@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const t = {
   translation: {
     "dropzone-upload-area": "Za nalaganje povlecite datoteko sem",
@@ -8,6 +9,6 @@ const t = {
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "upload-file-comment": "Komentar datoteke",
   }
-}
+};
 
 export default t;

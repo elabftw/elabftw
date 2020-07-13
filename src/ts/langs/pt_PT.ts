@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const t = {
   translation: {
     "dropzone-upload-area": "Arraste os ficheiros para aqui para os carregar",
@@ -8,6 +9,6 @@ const t = {
     "tag-delete-warning": "Excluir esta tag?",
     "upload-file-comment": "Comentário no arquivo",
   }
-}
+};
 
 export default t;

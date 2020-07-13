@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const t = {
   translation: {
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
@@ -8,6 +9,6 @@ const t = {
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "upload-file-comment": "Comentari d’arxiu",
   }
-}
+};
 
 export default t;

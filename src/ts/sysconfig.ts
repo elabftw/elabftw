@@ -30,7 +30,7 @@ import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
-  if ($('#info').data('page') !== 'sysconfig') {
+  if (window.location.pathname !== '/sysconfig.php') {
     return;
   }
   // TEAMS

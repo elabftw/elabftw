@@ -52,7 +52,7 @@ function schedulerCreate(start: string, end: string): void {
   }
 }
 document.addEventListener('DOMContentLoaded', function() {
-  if ($('#info').data('page') !== 'team') {
+  if (window.location.pathname !== '/team.php') {
     return;
   }
   // if we show all items, they are not editable
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: $('#user-prefs').data('lang'),
+    locale: $('#info').data('calendarlang'),
     defaultView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,

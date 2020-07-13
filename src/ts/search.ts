@@ -8,7 +8,7 @@
 import { getGetParameters } from './misc';
 
 $(document).ready(function(){
-  if ($('#info').data('page') !== 'search') {
+  if (window.location.pathname !== '/search.php') {
     return;
   }
   // scroll to anchor if there is a search

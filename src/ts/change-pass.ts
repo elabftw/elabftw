@@ -6,7 +6,7 @@
  * @package elabftw
  */
 $(document).ready(function() {
-  if ($('#info').data('page') !== 'change-pass') {
+  if (window.location.pathname !== '/change-pass.php') {
     return;
   }
   // check if passwords match

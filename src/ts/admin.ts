@@ -72,7 +72,7 @@ function tinyMceInitLight() {
 }
 
 $(document).ready(function() {
-  if ($('#info').data('page') !== 'admin') {
+  if (window.location.pathname !== '/admin.php') {
     return;
   }
 

@@ -98,7 +98,6 @@ try {
         $Steps = $Entity->Steps;
         $Steps->updateBody($id, $Request->request->get('body'));
     }
-
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,

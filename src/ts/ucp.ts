@@ -48,7 +48,7 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
-  if ($('#info').data('page') !== 'ucp') {
+  if (window.location.pathname !== '/ucp.php') {
     return;
   }
   const Templates = {

@@ -179,7 +179,8 @@ class Steps implements CrudInterface
      * @param string $body new body
      * @return void
      */
-    public function updateBody(int $id, string $body) {
+    public function updateBody(int $id, string $body)
+    {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $body);

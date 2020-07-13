@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is just here so that the strings are picked up by the merge-po.sh script
  * These strings are used in JS and appear nowhere else in the codebase

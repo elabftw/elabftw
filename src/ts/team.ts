@@ -30,6 +30,7 @@ import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import dayGridPlugin from '@fullcalendar/daygrid';
 
 function schedulerCreate(start: string, end: string): void {
   const title = prompt($('#info').data('addacomment'));
@@ -73,11 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
-    plugins: [ timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
+    plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     header: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridWeek, listWeek',
+      right: 'timeGridWeek, listWeek, dayGridMonth',
     },
     themeSystem: 'bootstrap',
     // i18n

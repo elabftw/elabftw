@@ -417,7 +417,7 @@ $(document).ready(function() {
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'}
     ],
-    language: $('#info').data('lang'),
+    language: $('#user-prefs').data('lang'),
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign']

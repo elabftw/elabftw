@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "comment-add": "Voeg een opmerking toe",
     "dropzone-upload-area": "Sleep bestanden om te uploaden hierheen",
     "entity-default-title": "Geen titel",
     "entity-delete-warning": "Het geselecteerde item(s) en alle geassocieerde gegevens zullen permanent verwijderd worden. Dit kan niet ongedaan gemaakt worden. Bent u zeker?",

@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
@@ -33,7 +34,7 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
 function schedulerCreate(start: string, end: string): void {
-  const title = prompt($('#info').data('addacomment'));
+  const title = prompt(i18next.t('comment-add'));
   if (title) {
     // add it to SQL
     $.post('app/controllers/SchedulerController.php', {
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: $('#info').data('lang'),
+    locale: $('#user-prefs').data('lang'),
     defaultView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,

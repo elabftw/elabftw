@@ -66,7 +66,7 @@ function tinyMceInitLight() {
       [0x2640, 'female sign'],
       [0x2642, 'male sign']
     ],
-    language : $('#info').data('lang')
+    language : $('#user-prefs').data('lang')
   });
 /* eslint-enable */
 }

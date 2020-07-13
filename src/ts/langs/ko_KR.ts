@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "comment-add": "의견 추가",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "entity-default-title": "제목없음",
     "entity-delete-warning": "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?",

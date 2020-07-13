@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "comment-add": "Aggiungi un commento",
     "dropzone-upload-area": "Trascina qui i file da allegare",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",

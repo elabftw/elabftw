@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "comment-add": "Dodaj komentar",
     "dropzone-upload-area": "Za nalaganje povlecite datoteko sem",
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmeti in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",

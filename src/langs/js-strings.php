@@ -5,6 +5,8 @@
  * They must be in i18n.ts
  *
  */
+// comment-add
+_('Add a comment');
 // dropzone-upload-area
 _('Drop files here to upload');
 // entity-default-title

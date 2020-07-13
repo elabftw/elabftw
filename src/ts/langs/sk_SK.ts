@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 const t = {
   translation: {
+    "comment-add": "Pridať komentár",
     "dropzone-upload-area": "Tu vložte súbory, ktoré chcete priložiť",
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",

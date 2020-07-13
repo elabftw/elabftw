@@ -73,9 +73,11 @@
                   <a class='linkDestroy' data-linkid='{{ link.linkid }}' data-id='{{ Entity_id }}'>
                     <i title='{{ 'Delete'|trans }}' class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
                   </a>
-                  <a class='linkImport' data-linkid='{{ link.itemid }}'>
-                    <i title='{{ 'Import'|trans }}' class='fas fa-lg fa-file-import fa-pull-right clickable'></i>
-                  </a>
+                  {% if Entity.type != 'experiments_templates' %}
+                    <a class='linkImport' data-linkid='{{ link.itemid }}'>
+                      <i title='{{ 'Import'|trans }}' class='fas fa-lg fa-file-import fa-pull-right clickable'></i>
+                    </a>
+                  {% endif %}
                 </li>
                 {% endfor %}
             </ul>

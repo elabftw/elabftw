@@ -29,6 +29,7 @@ $theme-colors: (
 );
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-select/sass/bootstrap-select.scss';
+@import '../../node_modules/@fullcalendar/common/main';
 
 @import 'autocomplete';
 @import 'footer';
@@ -916,7 +917,7 @@ svg.fa-trash-alt:hover {
     color: $lightgraybutnottoolight;
 }
 
-/* in the fullcalendar toolabar they are used in a button so we want them white */
+/* in the fullcalendar toolbar icons are used in a button so we want them white */
 .fc-toolbar {
     .svg-inline--fa {
         color: #fff;

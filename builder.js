@@ -107,6 +107,10 @@ module.exports = {
           loader: 'ts-loader',
         },
       },
+      {
+        test: /\.css$/i,
+        use: 'css-loader',
+      },
       // transpile things with babel so javascript works with Edge
       {
         test: /\.m?js$/,

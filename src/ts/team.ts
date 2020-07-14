@@ -76,27 +76,30 @@ document.addEventListener('DOMContentLoaded', function() {
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
-    header: {
+    headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridWeek, listWeek, dayGridMonth',
+      right: 'timeGridWeek,listWeek,dayGridMonth',
     },
     themeSystem: 'bootstrap',
+    // TODO remove this when https://github.com/fullcalendar/fullcalendar/issues/5613 is fixed
+    bootstrapFontAwesome: false,
     // i18n
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
     locale: $('#info').data('calendarlang'),
-    defaultView: 'timeGridWeek',
+    initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
     // draw an event while selecting
     selectMirror: true,
+    // if no item is selected, the calendar is not editable
     editable: editable,
     // allow "more" link when too many events
-    eventLimit: true,
+    dayMaxEventRows: true,
     // set the date loaded
-    defaultDate: selectedDate,
+    initialDate: selectedDate,
     // load the events as JSON
     eventSources: [
       {
@@ -111,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // day start at 6 am
-    minTime: '06:00:00',
+    slotMinTime: '06:00:00',
     eventBackgroundColor: 'rgb(41,174,185)',
     // selection
     select: function(info): void {
@@ -220,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
     },
   });
   calendar.render();
+  calendar.updateSize();
 
 });
 

@@ -11,7 +11,6 @@
 
 // CORE
 import { library, dom, config } from '@fortawesome/fontawesome-svg-core';
-config.autoReplaceSvg = 'nest';
 
 // SOLID
 import {

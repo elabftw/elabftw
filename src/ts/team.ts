@@ -82,8 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
       right: 'timeGridWeek,listWeek,dayGridMonth',
     },
     themeSystem: 'bootstrap',
-    // TODO remove this when https://github.com/fullcalendar/fullcalendar/issues/5613 is fixed
-    bootstrapFontAwesome: false,
     // i18n
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],

@@ -10,7 +10,8 @@
  */
 
 // CORE
-import { library, dom } from '@fortawesome/fontawesome-svg-core';
+import { library, dom, config } from '@fortawesome/fontawesome-svg-core';
+config.autoReplaceSvg = 'nest';
 
 // SOLID
 import {

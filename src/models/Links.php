@@ -132,7 +132,7 @@ class Links implements CrudInterface
             $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
             if (!empty($teamgroupsOfUser)) {
                 foreach ($teamgroupsOfUser as $teamgroup) {
-                    $sql .= ' OR (entity.canread = $teamgroup)';
+                    $sql .= ' OR (entity.canread = ' . $teamgroup . ')';
                 }
             }
 

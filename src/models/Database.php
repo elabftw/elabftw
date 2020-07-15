@@ -142,5 +142,8 @@ class Database extends AbstractEntity implements CreateInterface
             $delete_req->bindParam(':links_id', $links['id'], PDO::PARAM_INT);
             $this->Db->execute($delete_req);
         }
+
+        // delete from pinned
+        $this->rmFromPinned();
     }
 }

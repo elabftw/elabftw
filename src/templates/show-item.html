@@ -33,7 +33,7 @@
 
             <p class='item-info'>
               <!-- checkbox -->
-              <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-type='{{ Entity.type }}' autocomplete='off' aria-label='Select' style='width:15px;vertical-align:-3px;' />
+              <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' autocomplete='off' aria-label='Select' style='width:15px;vertical-align:-3px;' />
               <!-- toggle body -->
               <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable'>
                 <i class='fas fa-plus-circle' title='{{ 'Toggle content'|trans }}'></i>

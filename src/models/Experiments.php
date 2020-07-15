@@ -227,6 +227,9 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        // delete from pinned
+        $this->rmFromPinned();
     }
 
     /**

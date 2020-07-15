@@ -884,7 +884,7 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    private function rmFromPinned(): void
+    protected function rmFromPinned(): void
     {
         $this->canOrExplode('read');
 

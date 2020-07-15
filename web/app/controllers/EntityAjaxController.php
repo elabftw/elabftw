@@ -103,6 +103,7 @@ try {
      *
      */
 
+    // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {
         if ($App->Session->has('anon')) {
             throw new IllegalActionException('Anonymous user tried to access database controller.');

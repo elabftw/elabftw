@@ -67,7 +67,11 @@ $(document).ready(function(){
   function getCheckedBoxes() {
     const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
-      checkedBoxes.push($(this).data('id'));
+      checkedBoxes.push({
+        "id": $(this).data('id'),
+        // the randomid is used to get the parent container and hide it when delete
+        "randomid": $(this).data('randomid'),
+      });
     });
     return checkedBoxes;
   }
@@ -153,10 +157,10 @@ $(document).ready(function(){
       return;
     }
     // loop on it and update the status/item type
-    $.each(checked, function(index, value) {
+    $.each(checked, function(index) {
       ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
         updateCategory : true,
-        id : value,
+        id: checked[index]['id'],
         categoryId : $('#catChecked').val(),
         type : $('#type').data('type')
       }));
@@ -183,11 +187,11 @@ $(document).ready(function(){
       return;
     }
     // loop on it and update the status/item type
-    $.each(checked, function(index, value) {
+    $.each(checked, function(index) {
       ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
         updatePermissions : true,
         rw: 'read',
-        id : value,
+        id: checked[index]['id'],
         visibility : $('#visChecked').val(),
         type : $('#type').data('type')
       }));
@@ -218,7 +222,8 @@ $(document).ready(function(){
     $(this).html('Please wait…');
     const type = $('#type').data('type');
     const what = $(this).data('what');
-    window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+');
+    const checkedIds = checked.map(value => value.id).join('+');
+    window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checkedIds;
   });
 
   // THE DELETE BUTTON FOR CHECKED BOXES
@@ -237,15 +242,15 @@ $(document).ready(function(){
       return false;
     }
     // loop on it and delete stuff
-    $.each(checked, function(index, value) {
+    $.each(checked, function(index) {
       $.post('app/controllers/EntityAjaxController.php', {
         destroy: true,
-        id: value,
+        id: checked[index]['id'],
         type: $('#type').data('type')
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          $('#parent_' + value).hide(200);
+          $('#parent_' + checked[index]['randomid']).hide(200);
         }
       });
     });

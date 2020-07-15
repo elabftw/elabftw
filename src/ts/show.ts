@@ -220,10 +220,7 @@ $(document).ready(function(){
     $(this).attr('disabled', 'disabled');
     // also display a wait text
     $(this).html('Please wait…');
-    const type = $('#type').data('type');
-    const what = $(this).data('what');
-    const checkedIds = checked.map(value => value.id).join('+');
-    window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checkedIds;
+    window.location.href = `make.php?what=${$(this).data('what')}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
   });
 
   // THE DELETE BUTTON FOR CHECKED BOXES
@@ -239,7 +236,7 @@ $(document).ready(function(){
       return;
     }
     if (!confirm(i18next.t('entity-delete-warning'))) {
-      return false;
+      return;
     }
     // loop on it and delete stuff
     $.each(checked, function(index) {

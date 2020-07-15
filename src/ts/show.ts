@@ -68,9 +68,9 @@ $(document).ready(function(){
     const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
       checkedBoxes.push({
-        "id": $(this).data('id'),
+        'id': $(this).data('id'),
         // the randomid is used to get the parent container and hide it when delete
-        "randomid": $(this).data('randomid'),
+        'randomid': $(this).data('randomid'),
       });
     });
     return checkedBoxes;

@@ -720,6 +720,24 @@ abstract class AbstractEntity
     }
 
     /**
+     * Remove current entity from pinned of current user
+     *
+     * @return void
+     */
+    protected function rmFromPinned(): void
+    {
+        $this->canOrExplode('read');
+
+        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND users_id = :users_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Users->userData['userid']);
+        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->type);
+
+        $this->Db->execute($req);
+    }
+
+    /**
      * Get the SQL string for read before the WHERE
      *
      * @param bool $getTags do we get the tags too?
@@ -871,24 +889,6 @@ abstract class AbstractEntity
         $this->canOrExplode('read');
 
         $sql = 'INSERT INTO pin2users(users_id, entity_id, type) VALUES (:users_id, :entity_id, :type)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Remove current entity from pinned of current user
-     *
-     * @return void
-     */
-    protected function rmFromPinned(): void
-    {
-        $this->canOrExplode('read');
-
-        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND users_id = :users_id AND type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Users->userData['userid']);
         $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);

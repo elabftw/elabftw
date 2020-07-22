@@ -22,9 +22,11 @@ function toggleTodolist(): void {
 $(document).ready(function() {
   // TOGGLE
   // use shortcut
-  key($('#todoSc').data('toggle'), function() {
-    toggleTodolist();
-  });
+  if ($('#todoSc').length) {
+    key($('#todoSc').data('toggle'), function() {
+      toggleTodolist();
+    });
+  }
   // or click the button
   $(document).on('click', '.todoToggle', function() {
     toggleTodolist();

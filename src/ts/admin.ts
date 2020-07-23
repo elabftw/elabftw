@@ -218,15 +218,17 @@ $(document).ready(function() {
       });
     },
     destroy: function(id): void {
-      $.post(this.controller, {
-        statusDestroy: true,
-        id: id
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          $('#status_' + id).hide();
-        }
-      });
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        $.post(this.controller, {
+          statusDestroy: true,
+          id: id
+        }).done(function(json) {
+          notif(json);
+          if (json.res) {
+            $('#status_' + id).remove();
+          }
+        });
+      }
     }
   };
   $(document).on('click', '#statusCreate', function() {

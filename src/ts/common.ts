@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import 'jquery-ui/ui/widgets/sortable';
 import 'bootstrap/js/dist/modal.js';
 import 'bootstrap-select';
 import { relativeMoment, notif, displayMolFiles, makeSortableGreatAgain } from './misc';

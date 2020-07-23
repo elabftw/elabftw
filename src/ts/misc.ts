@@ -7,6 +7,7 @@
  */
 declare let ChemDoodle: any;
 import tinymce from 'tinymce/tinymce';
+import 'jquery-ui/ui/widgets/sortable';
 
 interface ResponseMsg {
   res: boolean;

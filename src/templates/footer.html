@@ -21,11 +21,11 @@
     </a>
 
     <span>
-      {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}
+      {% if App.Session.has('auth') and App.Session.get('is_sysadmin') %}
         <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
       {% endif %}
 
-      {% if App.Session.has('auth') and (App.Session.get('is_admin') == 1) %}
+      {% if App.Session.has('auth') and App.Session.get('is_admin') %}
         <a href='admin.php'>{{ 'Admin panel'|trans }}
 
           {% if App.Users.readAllFromTeam(0)|length > 0 %}

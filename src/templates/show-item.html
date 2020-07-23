@@ -17,6 +17,7 @@
               {% endif %}
 
             <p class='title'>
+              <!-- lock icon -->
               {% if item.locked %}
                 <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
               {% endif %}
@@ -34,14 +35,14 @@
             <p class='item-info'>
               <!-- checkbox -->
               <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' autocomplete='off' aria-label='Select' style='width:15px;vertical-align:-3px;' />
+              <!-- edit icon -->
+              {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
+              {% endif %}
               <!-- toggle body -->
               <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} class='toggleBody clickable'>
                 <i class='fas fa-plus-circle' title='{{ 'Toggle content'|trans }}'></i>
               </span>
-              <!-- lock icon -->
-              {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
-              {% endif %}
               <!-- category -->
               <span class='item-category' style='color:#{{ item.color }}'>{{ item.category }}</span>
               <!-- date -->

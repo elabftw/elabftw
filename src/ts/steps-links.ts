@@ -98,12 +98,15 @@ $(document).ready(function() {
         stepId: stepId,
         type: type
       }).done(function() {
+          let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
+          if (type === 'experiments_templates') {
+            loadUrl = '? #steps_div_' + id;
+          }
         // reload the step list
         $('#steps_div_' + id).load('?mode=edit&id=' + id + ' #steps_div_' + id, function() {
           relativeMoment();
+          makeSortableGreatAgain();
         });
-        // clear input field
-        elem.val('');
       });
     }
 

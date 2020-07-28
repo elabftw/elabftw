@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Mpdf\QrCode\QrCode;
 use Mpdf\QrCode\Output\Png;
+use Mpdf\QrCode\QrCode;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 
 /**
  * Implements the IQRCodeProvider necessary for Two Factor Authentication.
- * It uses mpdf/qrcode to generate the QR code locally without external dependencies. 
+ * It uses mpdf/qrcode to generate the QR code locally without external dependencies.
  */
 class MpdfQrProvider implements IQRCodeProvider
 {
@@ -36,7 +36,7 @@ class MpdfQrProvider implements IQRCodeProvider
      * @param array $color RGB foreground and border color. Default [0, 0, 0].
      * @param int $compression Compression level: from 0 (default, no compression) to 9.
      */
-    public function __construct(array $background = [255, 255, 255], array $color = [0, 0, 0], int $compression = 0)
+    public function __construct(array $background = array(255, 255, 255), array $color = array(0, 0, 0), int $compression = 0)
     {
         $this->background = $background;
         $this->color = $color;
@@ -48,7 +48,7 @@ class MpdfQrProvider implements IQRCodeProvider
      *
      * @return string The mime type
      */
-    public function getMimeType() : string
+    public function getMimeType()
     {
         return 'image/png';
     }
@@ -59,14 +59,12 @@ class MpdfQrProvider implements IQRCodeProvider
      * @param string $qrtext
      * @param int $size
      *
-     * @return string 
+     * @return string
      */
-    public function getQRCodeImage(string $qrtext, int $size) : string
+    public function getQRCodeImage($qrtext, $size)
     {
         $qrCode = new QrCode($qrtext);
         $png = new Png();
-        $result = $png->output($qrCode, $size, $this->background, $this->color, $this->compression);
-
-        return $result;
+        return $png->output($qrCode, $size, $this->background, $this->color, $this->compression);
     }
 }

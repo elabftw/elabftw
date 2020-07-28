@@ -75,7 +75,11 @@ try {
             $Auth->loginInTeam($userid, $team);
         } else {
             // If checkCredentials fails there will be an exception and the subsequent code will not be executed.
-            $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
+            if (!$Session->has('auth_userid')) {
+                $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
+            } else {
+                $userid = $Session->get('auth_userid');
+            }
             $MFASecret = $Auth->getMFASecret($userid);
 
             if ($MFASecret && !$Session->has('mfa_secret')) {
@@ -83,12 +87,12 @@ try {
                 $Session->set('mfa_secret', $MFASecret);
                 $Session->set('rememberme', $rememberme);
                 $location = '../../login.php';
-
             } elseif (
                 !$MFASecret
-                || ($MFASecret
+                || (
+                    $MFASecret
                     && $Request->request->has('mfa_code')
-                    && $Auth->verifyMFACode($App->Session->get('mfa_secret'), (int) $Request->request->get('mfa_code'))
+                    && $Auth->verifyMFACode($App->Session->get('mfa_secret'), (string) $Request->request->get('mfa_code'))
                    )
             ) {
                 $loginResult = $Auth->login($userid, $rememberme);

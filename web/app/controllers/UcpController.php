@@ -65,14 +65,14 @@ try {
         $tab = '2';
 
         // check verification code
-        if ($Auth->verifyMFACode($App->Session->get('mfa_secret'), (int) $Request->request->get('mfa_code'))) {
+        if ($Auth->verifyMFACode($App->Session->get('mfa_secret'), (string) $Request->request->get('mfa_code'))) {
             // Enable MFA
             $App->Users->updateMFA($App->Session->get('mfa_secret'));
             $App->Session->remove('mfa_secret');
             $App->Session->getFlashBag()->add('ok', _('Two Factor Authentication enabled.'));
         } else {
             $App->Session->remove('mfa_secret');
-            $App->Session->getFlashBag()->add('warning', _('Code not verified. Two Factor Authentication not enabled!'));
+            $App->Session->getFlashBag()->add('warning', _('Two Factor Authentication not enabled!'));
         }
     }
 

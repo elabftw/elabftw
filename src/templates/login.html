@@ -42,8 +42,8 @@
       {{ App.Csrf.getHiddenInput|raw }}
       <input type='hidden' name='rememberme' value='{{ Session.get('rememberme') }}' />
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
-        <label for='mfa_auth_code'>{{ 'Authentication code'|trans }}</label>
-        <input class='form-control mb-4' id='mfa_auth_code' name='mfa_auth_code' type='text' required='required' />
+        <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
+        <input class='form-control mb-4' id='mfa_code' name='mfa_code' type='text' required='required' />
         <p>Open the two-factor authentication app on your device to get your authentication code and verify your identity.</p>
       </div>
       <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Verify'|trans }}</button>

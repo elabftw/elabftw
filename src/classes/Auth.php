@@ -125,7 +125,7 @@ class Auth
      * @param int $userid
      * @return mixed MFA secret or false
      */
-    public function getMFASecret(int $userid):
+    public function getMFASecret(int $userid)
     {
         $sql = 'SELECT mfa_secret FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
@@ -138,7 +138,7 @@ class Auth
         }
         return false;
     }
-    
+
     /**
      * Generate a new MFA secret
      *
@@ -153,12 +153,12 @@ class Auth
     /**
      * Verify the MFA code
      *
-     * @param string $secret 
+     * @param string $secret
      * @param int $code Verification code
      *
      * @return bool True if code is valid
      */
-    public function verifyMFACode(string $secret, int $code): bool
+    public function verifyMFACode(string $secret, string $code): bool
     {
         $tfa = new TwoFactorAuth('eLabFTW');
         if ($tfa->verifyCode($secret, $code)) {
@@ -166,6 +166,7 @@ class Auth
         }
         $this->increaseFailedAttempt(false);
         $this->Session->getFlashBag()->add('warning', _('Code not verified.'));
+        return false;
     }
 
     /**

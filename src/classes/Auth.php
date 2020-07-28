@@ -154,7 +154,7 @@ class Auth
      * Verify the MFA code
      *
      * @param string $secret
-     * @param int $code Verification code
+     * @param string $code Verification code
      *
      * @return bool True if code is valid
      */

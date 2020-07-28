@@ -66,7 +66,7 @@ try {
         $team = null;
         if ($Session->has('team_selection_required')) {
             $team = (int) $Request->request->get('team_selection');
-            $userid = (int) $Request->request->get('auth_userid');
+            $userid = (int) $Session->get('auth_userid');
             $Auth->loginInTeam($userid, $team);
         } else {
             $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));

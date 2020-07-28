@@ -18,6 +18,7 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
+use function filter_var;
 use function in_array;
 use PDO;
 use function setcookie;
@@ -43,6 +44,7 @@ class Users
      * Constructor
      *
      * @param int|null $userid
+     * @param int|null $team
      */
     public function __construct(?int $userid = null, ?int $team = null)
     {
@@ -97,8 +99,8 @@ class Users
             Check::passwordLength($password);
         }
 
-        $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
         $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
@@ -363,6 +365,12 @@ class Users
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
         $UsersHelper = new UsersHelper();
 
+        // Admins can only disable 2FA
+        $useMFA = Filter::onToBinary($params['use_mfa'] ?? '');
+        if (!$useMFA) {
+            $this->updateMFA();
+        }
+
         // check email is not already in db
         $usersEmails = $this->getAllEmails();
         $emailsArr = array();
@@ -566,7 +574,6 @@ class Users
         $params['cellphone'] = filter_var($params['cellphone'], FILTER_SANITIZE_STRING);
         // Check skype
         $params['skype'] = filter_var($params['skype'], FILTER_SANITIZE_STRING);
-
         // Check website
         $params['website'] = filter_var($params['website'], FILTER_VALIDATE_URL);
 
@@ -588,6 +595,29 @@ class Users
         $req->bindParam(':cellphone', $params['cellphone']);
         $req->bindParam(':skype', $params['skype']);
         $req->bindParam(':website', $params['website']);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    /**
+     * Update the two factor authentication setting for the user
+     *
+     * @param mixed $MFASecret The secret or false (default)
+     * @return void
+     */
+    public function updateMFA($MFASecret = false): void
+    {
+        if ($MFASecret) {
+            $sql = 'UPDATE users SET mfa_secret = :mfa_secret WHERE userid = :userid';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':mfa_secret', $MFASecret, PDO::PARAM_STR);
+            $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+            $this->Db->execute($req);
+            return;
+        }
+
+        $sql = 'UPDATE users SET mfa_secret = null WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
     }

@@ -38,7 +38,9 @@ try {
         $SamlAuth = new SamlAuth($settings);
         $returnUrl = $settings['baseurl'] . '/index.php?acs';
         $SamlAuth->login($returnUrl);
-    } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
+
+    // login as anonymous
+    } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) {
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {
             $Auth->loginAsAnon((int) $Request->request->get('team_id'));
             if ($Request->cookies->has('redirect')) {
@@ -48,7 +50,6 @@ try {
             }
         }
     } else {
-
         // CSRF
         $App->Csrf->validate();
 
@@ -64,40 +65,51 @@ try {
 
         // the actual login
         $team = null;
-        if ($Request->request->has('team_selection')) {
+        if ($Session->has('team_selection_required')) {
             $team = (int) $Request->request->get('team_selection');
-            $userid = (int) $Request->request->get('auth_userid');
+            $userid = $Session->get('auth_userid');
+
+            $Session->remove('team_selection_required');
+            $Session->remove('auth_userid');
+
             $Auth->loginInTeam($userid, $team);
         } else {
+            // If checkCredentials fails there will be an exception and the subsequent code will not be executed.
             $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
-            $loginResult = $Auth->login($userid, $rememberme);
-            if ($loginResult === true) {
-                if ($Request->cookies->has('redirect')) {
-                    $location = $Request->cookies->get('redirect');
-                } else {
-                    $location = '../../experiments.php';
-                }
-            } elseif ($loginResult === false) {
-                // increase failed attempts counter
-                if (!$Session->has('failed_attempt')) {
-                    $Session->set('failed_attempt', 1);
-                } else {
-                    $n = $Session->get('failed_attempt');
-                    $n++;
-                    $Session->set('failed_attempt', $n);
-                }
-                // log the attempt if the login failed
-                $App->Log->warning('Failed login attempt', array('ip' => $_SERVER['REMOTE_ADDR']));
-                // inform the user
-                $Session->getFlashBag()->add(
-                    'ko',
-                    _("Login failed. Either you mistyped your password or your account isn't activated yet.")
-                );
-            } elseif (is_array($loginResult)) {
-                $Session->set('team_selection_required', 1);
-                $Session->set('auth_userid', $loginResult[0]);
-                $Session->set('team_selection', $loginResult[1]);
+            $MFASecret = $Auth->getMFASecret($userid);
+
+            if ($MFASecret && !$Session->has('mfa_secret')) {
+                $Session->set('auth_userid', $userid);
+                $Session->set('mfa_secret', $MFASecret);
+                $Session->set('rememberme', $rememberme);
                 $location = '../../login.php';
+
+            } elseif (
+                !$MFASecret
+                || ($MFASecret
+                    && $Request->request->has('mfa_code')
+                    && $Auth->verifyMFACode($App->Session->get('mfa_secret'), (int) $Request->request->get('mfa_code'))
+                   )
+            ) {
+                $loginResult = $Auth->login($userid, $rememberme);
+
+                if ($loginResult && $Session->has('mfa_secret')) {
+                    $Session->remove('mfa_secret');
+                    $Session->remove('rememberme');
+                }
+
+                if ($loginResult === true) {
+                    if ($Request->cookies->has('redirect')) {
+                        $location = $Request->cookies->get('redirect');
+                    } else {
+                        $location = '../../experiments.php';
+                    }
+                } elseif (is_array($loginResult)) {
+                    $Session->set('team_selection_required', 1);
+                    $Session->set('auth_userid', $loginResult[0]);
+                    $Session->set('team_selection', $loginResult[1]);
+                    $location = '../../login.php';
+                }
             }
         }
     }

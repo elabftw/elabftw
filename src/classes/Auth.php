@@ -17,6 +17,7 @@ use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use function mb_strlen;
 use PDO;
+use RobThree\Auth\TwoFactorAuth;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -69,7 +70,7 @@ class Auth
         $this->Db->execute($req);
 
         if ($req->rowCount() !== 1) {
-            throw new InvalidCredentialsException();
+            $this->increaseFailedAttempt(true);
         }
 
         return (int) $req->fetchColumn();
@@ -91,14 +92,14 @@ class Auth
      * @return mixed Return true if user provided correct credentials or an array with the userid
      * and the teams where login is possible for display on the team selection page
      */
-    public function login(int $userid)
+    public function login(int $userid, string $rememberme)
     {
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
         if (\count($teams) > 1) {
             return array($userid, $teams);
         }
-        $this->loginInTeam($userid, (int) $teams[0]['id']);
+        $this->loginInTeam($userid, (int) $teams[0]['id'], $rememberme);
 
         return true;
     }
@@ -116,6 +117,55 @@ class Auth
 
         $this->Session->set('is_admin', 0);
         $this->Session->set('is_sysadmin', 0);
+    }
+
+    /**
+     * Does user use two factor authentication?
+     *
+     * @param int $userid
+     * @return mixed MFA secret or false
+     */
+    public function getMFASecret(int $userid):
+    {
+        $sql = 'SELECT mfa_secret FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid);
+        $this->Db->execute($req);
+        $res = $req->fetchColumn();
+
+        if ($res !== null || $res !== false) {
+            return (string) $res;
+        }
+        return false;
+    }
+    
+    /**
+     * Generate a new MFA secret
+     *
+     * @return string Generate a new MFA secret
+     */
+    public function newMFASecret(): string
+    {
+        $tfa = new TwoFactorAuth('eLabFTW');
+        return $tfa->createSecret(160);
+    }
+
+    /**
+     * Verify the MFA code
+     *
+     * @param string $secret 
+     * @param int $code Verification code
+     *
+     * @return bool True if code is valid
+     */
+    public function verifyMFACode(string $secret, int $code): bool
+    {
+        $tfa = new TwoFactorAuth('eLabFTW');
+        if ($tfa->verifyCode($secret, $code)) {
+            return true;
+        }
+        $this->increaseFailedAttempt(false);
+        $this->Session->getFlashBag()->add('warning', _('Code not verified.'));
     }
 
     /**
@@ -198,6 +248,7 @@ class Auth
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
+            $this->increaseFailedAttempt(false);
             throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
         }
         return (string) $res;
@@ -216,7 +267,6 @@ class Auth
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
-
 
         // Now compare current cookie with the token from SQL
         $sql = 'SELECT userid FROM users WHERE token = :token LIMIT 1';
@@ -326,5 +376,26 @@ class Auth
         $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Increase the failed attempts counter
+     *
+     * @param bool $throwException Do you want to throw the InvalidCredentialsException
+     * @return void
+     */
+    private function increaseFailedAttempt(bool $throwException): void
+    {
+        if (!$this->Session->has('failed_attempt')) {
+            $this->Session->set('failed_attempt', 1);
+        } else {
+            $n = $this->Session->get('failed_attempt');
+            $n++;
+            $this->Session->set('failed_attempt', $n);
+        }
+
+        if ($throwException) {
+            throw new InvalidCredentialsException();
+        }
     }
 }

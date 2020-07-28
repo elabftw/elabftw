@@ -46,6 +46,34 @@ try {
             throw new ImproperActionException(_('Please input your current password!'));
         }
         $App->Users->updateAccount($Request->request->all());
+
+        // TWO FACTOR AUTHENTICATION
+        $useMFA = Filter::onToBinary($Request->request->get('use_mfa') ?? '');
+        if ($useMFA && !$App->Users->userData['mfa_secret']) {
+            // No MFA secret yet but user wants to enable
+            // Need to request verification code to confirm user got secret and can authenticate in the future via MFA
+            $App->Session->set('mfa_secret', $Auth->newMFASecret());
+
+        } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
+            // Disable MFA
+            $App->Users->updateMFA();
+        }
+    }
+
+    // TAB 2 : CONFIRM TWO FACTOR AUTHENTICATION
+    if ($Request->request->has('mfa_code')) {
+        $tab = '2';
+
+        // check verification code
+        if ($Auth->verifyMFACode($App->Session->get('mfa_secret'), (int) $Request->request->get('mfa_code'))) {
+            // Enable MFA
+            $App->Users->updateMFA($App->Session->get('mfa_secret'));
+            $App->Session->remove('mfa_secret');
+            $App->Session->getFlashBag()->add('ok', _('Two Factor Authentication enabled.'));
+        } else {
+            $App->Session->remove('mfa_secret');
+            $App->Session->getFlashBag()->add('warning', _('Code not verified. Two Factor Authentication not enabled!'));
+        }
     }
 
     // TAB 2 : CHANGE PASSWORD
@@ -57,12 +85,9 @@ try {
 
         $App->Users->updatePassword($Request->request->get('newpass'));
     }
-
     // END TAB 2
 
-    // TAB 3 : EXPERIMENTS TEMPLATES
-
-    // ADD NEW TPL
+    // TAB 3 : EXPERIMENTS TEMPLATES, ADD NEW TPL
     if ($Request->request->has('new_tpl_form')) {
         $tab = '3';
 
@@ -78,7 +103,7 @@ try {
         $Templates->createNew($tpl_name, $tpl_body);
     }
 
-    // EDIT TEMPLATES
+    // TAB 3 : EXPERIMENTS TEMPLATES, AEDIT TEMPLATES
     if ($Request->request->has('tpl_form')) {
         $tab = '3';
 
@@ -89,6 +114,7 @@ try {
             $Request->request->get('tpl_body')[0]
         );
     }
+    // END TAB 3
 
     // TAB 4 : CREATE API KEY
     if ($Request->request->has('createApiKey')) {

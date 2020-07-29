@@ -264,6 +264,42 @@ class Experiments extends AbstractEntity implements CreateInterface
     }
 
     /**
+     * Get the current unfinished steps from experiments owned by current user
+     *
+     * @return array
+     */
+    public function getSteps(): array
+    {
+        $sql = "SELECT experiments.id, experiments.title, stepst.finished, stepst.steps_body, stepst.steps_id
+            FROM experiments
+            CROSS JOIN (
+                SELECT item_id, finished,
+                GROUP_CONCAT(experiments_steps.body SEPARATOR '|') AS steps_body,
+                GROUP_CONCAT(experiments_steps.id SEPARATOR '|') AS steps_id
+                FROM experiments_steps
+                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = experiments.id)
+            WHERE userid = :userid GROUP BY experiments.id ORDER BY experiments.id DESC";
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+
+        // clean up the results so we get a nice array with experiment id/title and steps with their id/body
+        // use reference to edit in place
+        foreach ($res as &$exp) {
+            $exp['steps'] = array_combine(explode('|', $exp['steps_id']), explode('|', $exp['steps_body']));
+            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
+        }
+
+        return $res;
+    }
+
+    /**
      * Select what will be the status for the experiment
      *
      * @return int The status ID

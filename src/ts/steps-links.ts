@@ -98,12 +98,9 @@ $(document).ready(function() {
         stepId: stepId,
         type: type
       }).done(function() {
-          let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
-          if (type === 'experiments_templates') {
-            loadUrl = '? #steps_div_' + id;
-          }
+        const loadUrl = window.location + ' #steps_div_' + id;
         // reload the step list
-        $('#steps_div_' + id).load('?mode=edit&id=' + id + ' #steps_div_' + id, function() {
+        $('#steps_div_' + id).load(loadUrl, function() {
           relativeMoment();
           makeSortableGreatAgain();
         });
@@ -123,10 +120,7 @@ $(document).ready(function() {
         }).done(function(json) {
           notif(json);
           if (json.res) {
-            let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
-            if (type === 'experiments_templates') {
-              loadUrl = '? #steps_div_' + id;
-            }
+            const loadUrl = window.location + ' #steps_div_' + id;
             // reload the step list
             $('#steps_div_' + id).load(loadUrl, function() {
               relativeMoment();
@@ -169,6 +163,7 @@ $(document).ready(function() {
         updateStep: true,
         body: value,
         id: $(this).data('id'),
+        stepid: $(this).data('stepid'),
       });
 
       return(value);

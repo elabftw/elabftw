@@ -118,7 +118,7 @@ try {
 
     // CREATE STEP
     if ($Request->request->has('createStep')) {
-        $Entity->Steps->create($Request->request->get('body'));
+        $Entity->Steps->create($Request->request->filter('body', null, FILTER_SANITIZE_STRING));
     }
 
     // FINISH STEP

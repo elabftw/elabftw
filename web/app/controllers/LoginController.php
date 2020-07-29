@@ -93,7 +93,7 @@ try {
                     $MFASecret
                     && $Request->request->has('mfa_code')
                     && $Auth->verifyMFACode($App->Session->get('mfa_secret'), (string) $Request->request->get('mfa_code'))
-                   )
+                )
             ) {
                 $loginResult = $Auth->login($userid, $rememberme);
 

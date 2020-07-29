@@ -53,7 +53,6 @@ try {
             // No MFA secret yet but user wants to enable
             // Need to request verification code to confirm user got secret and can authenticate in the future via MFA
             $App->Session->set('mfa_secret', $Auth->newMFASecret());
-
         } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
             // Disable MFA
             $App->Users->updateMFA();

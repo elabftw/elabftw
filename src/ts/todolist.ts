@@ -91,37 +91,37 @@ const Todolist = {
       }
     });
   },
+
+  // TOGGLE
+  toggle: function(): void {
+    if ($('#todoList').is(':visible')) {
+      $('#container').css('width', '100%').css('margin-right', 'auto');
+      localStorage.setItem('isTodolistOpen', '0');
+    } else {
+      $('#container').css('width', '70%').css('margin-right', '0');
+      Todolist.getTodoItems();
+      Todolist.getSteps();
+      localStorage.setItem('isTodolistOpen', '1');
+    }
+    $('#todoList').toggle();
+  }
 };
 
-function toggleTodolist(): void {
-  if ($('#todoList').is(':visible')) {
-    $('#container').css('width', '100%').css('margin-right', 'auto');
-    localStorage.setItem('isTodolistOpen', '0');
-  } else {
-    $('#container').css('width', '70%').css('margin-right', '0');
-    Todolist.getTodoItems();
-    Todolist.getSteps();
-    localStorage.setItem('isTodolistOpen', '1');
-  }
-  $('#todoList').toggle();
-}
-
-
 $(document).ready(function() {
-  // reopen it if it was previously opened
+  // reopen todolist panel if it was previously opened
   if (localStorage.getItem('isTodolistOpen') === '1') {
-    toggleTodolist();
+    Todolist.toggle();
   }
   // TOGGLE
   // use shortcut
   if ($('#todoSc').length) {
     key($('#todoSc').data('toggle'), function() {
-      toggleTodolist();
+      Todolist.toggle();
     });
   }
   // or click the button
   $(document).on('click', '.todoToggle', function() {
-    toggleTodolist();
+    Todolist.toggle();
   });
 
   // EDIT
@@ -153,8 +153,5 @@ $(document).ready(function() {
 
   $(document).on('click', '.destroyTodoItem', function() {
     Todolist.destroy($(this).data('id'));
-  });
-  $(document).on('click', '#todoGetSteps', function() {
-    Todolist.getSteps();
   });
 });

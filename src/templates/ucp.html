@@ -249,7 +249,7 @@
     </section>
 
     <div class='text-center mt-3'>
-      <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
   </form>
 </div>
@@ -261,12 +261,12 @@
       {{ App.Csrf.getHiddenInput|raw }}
       {% if App.Session.has('mfa_secret') %}
         <div class='row'>
-          <div class="text-center col-md-5 mx-auto">
+          <div class='text-center col-md-5 mx-auto'>
             <h4>{{ 'Two Factor Authentication'|trans }}</h4>
-            <p><img src="{{ mfaQRCodeDataUri|raw }}"></p>
+            <p><img src='{{ mfaQRCodeDataUri|raw }}'></p>
 
             <p>
-              <label for="mfa_secret">{{ 'Secret for manual setup'|trans }}</label>
+              <label for='mfa_secret'>{{ 'Secret for manual setup'|trans }}</label>
               <div class='input-group'>
                 <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' type='password' readonly='readonly' />
                 <div class='input-group-append'>
@@ -276,8 +276,9 @@
             </p>
 
             <p>
-              <label for="mfa_code">{{ 'Verification code'|trans }}</label>
-              <input id="mfa_code" name="mfa_code" class="form-control text-center" pattern='.{6}' required='required'>
+              <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
+              <input type='text' id='mfa_code' name='mfa_code' class='form-control text-center' pattern='.{6}' required='required' aria-describedby='mfa_code_help_block' autocomplete='off'>
+              <span id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the two-factor authentication app on your device to get your authentication code and verify your identity.'|trans }}</span>
             </p>
 
             <div class='submitButtonDiv'>
@@ -300,7 +301,7 @@
             <label for='newpass'>{{ 'New password'|trans }}</label>
             <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
             <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-            <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type="password" pattern='.{8,}' />
+            <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
           </div>
         </div>
         <hr>
@@ -311,8 +312,8 @@
           <div class='col-md-6'>
             <label for='use_mfa'>{{ 'Use 2FA?'|trans }}</label>
             <select class='form-control' autocomplete='off' name='use_mfa' id='use_mfa'>
-              <option value='1' {{ App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'Yes'|trans }}</option>
-              <option value='0' {{ not App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'No'|trans }}</option>
+              <option value='on' {{ App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'Yes'|trans }}</option>
+              <option value='off' {{ not App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'No'|trans }}</option>
             </select>
           </div>
         </div>
@@ -391,7 +392,7 @@
         <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not App.Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
         <br>
         <div class='text-center'>
-          <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>
       </form>
     </div>
@@ -418,11 +419,11 @@
             </span>
             <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
           </div>
-          <div class='dropdown' style="position: relative; bottom: 5px">
+          <div class='dropdown' style='position: relative; bottom: 5px'>
             <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
             <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
               <!-- MANAGE PERMISSIONS -->
-              <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read="{{ template.canread }}" data-write="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+              <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read='{{ template.canread }}' data-write='{{ template.canwrite }}'><i class='fas fa-share-alt'' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
             </div>
           </div>
           <a class='saveToFile' title='{{ 'Download template'|trans }}' data-name='{{ template.name }}' data-id='e{{ template.id }}'>

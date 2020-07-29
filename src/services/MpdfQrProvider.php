@@ -48,8 +48,10 @@ class MpdfQrProvider implements IQRCodeProvider
      *
      * @return string The mime type
      */
-    public function getMimeType()
+    public function getMimeType(): string
     {
+        // Do not use type declarations for function arguments here.
+        // The IQRCodeProvider interface does not use it.
         return 'image/png';
     }
 
@@ -61,8 +63,10 @@ class MpdfQrProvider implements IQRCodeProvider
      *
      * @return string
      */
-    public function getQRCodeImage($qrtext, $size)
+    public function getQRCodeImage($qrtext, $size): string
     {
+        // Do not use type declarations for function arguments here.
+        // The IQRCodeProvider interface does not use it.
         $qrCode = new QrCode($qrtext);
         $png = new Png();
         return $png->output($qrCode, $size, $this->background, $this->color, $this->compression);

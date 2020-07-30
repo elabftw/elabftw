@@ -1823,19 +1823,19 @@ apidoc-core@^0.11.1:
     lodash "~4.17.15"
     semver "~6.3.0"
 
-apidoc@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.23.0.tgz#469764ced8992bcf6b7734eb51539244fb3a3d1c"
-  integrity sha512-bn2QNaqyyL5ihRUlBBqwffElJg+hAgxAWPDdjJiLxDJ66Jiw+jf8uucFLYC9XHFqjdM7YTqLluM2PPshrqzObg==
+apidoc@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/apidoc/-/apidoc-0.24.0.tgz#b0f88e60cae4f7a95cec29dcfa42e7671a3315fe"
+  integrity sha512-1aKEMOJaX9coPTwbVcDtCcxtv7VIhR6YEWxWMtoKouYaaMqmScTBikq8umIH8pjr77F2AjrNWFiLhfwsHLsvkA==
   dependencies:
     apidoc-core "^0.11.1"
     commander "^2.20.0"
     fs-extra "^8.1.0"
     handlebars "^4.7.6"
-    lodash "^4.17.15"
+    lodash "^4.17.19"
     markdown-it "^10.0.0"
-    nodemon "^2.0.3"
-    winston "^3.2.1"
+    nodemon "^2.0.4"
+    winston "^3.3.3"
 
 aproba@^1.1.1:
   version "1.2.0"
@@ -6086,7 +6086,7 @@ node.extend@^2.0.0:
     has "^1.0.3"
     is "^3.2.1"
 
-nodemon@^2.0.3:
+nodemon@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.4.tgz#55b09319eb488d6394aa9818148c0c2d1c04c416"
   integrity sha512-Ltced+hIfTmaS28Zjv1BM552oQ3dbwPqI4+zI0SLgq+wpJhSyqgYude/aZa/3i31VCQWMfXJVxvu86abcam3uQ==
@@ -9036,7 +9036,7 @@ winston-transport@^4.4.0:
     readable-stream "^2.3.7"
     triple-beam "^1.2.0"
 
-winston@^3.2.1:
+winston@^3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/winston/-/winston-3.3.3.tgz#ae6172042cafb29786afa3d09c8ff833ab7c9170"
   integrity sha512-oEXTISQnC8VlSAKf1KYSSd7J6IWuRPQqDdo8eoRNaYKLvwSb5+79Z3Yi1lrl6KDpU6/VWaxpakDAtb1oQ4n9aw==

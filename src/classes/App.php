@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TwigTrait;
@@ -63,9 +62,6 @@ class App
 
     /** @var array $warning the warning messages from flashBag */
     public $warning = array();
-
-    /** @var array $todoItems items on the todolist, populated if logged in */
-    public $todoItems = array();
 
     /** @var array $teamConfigArr the config for the current team */
     public $teamConfigArr = array();
@@ -134,10 +130,6 @@ class App
     public function loadUser(Users $users): void
     {
         $this->Users = $users;
-
-        // todolist
-        $Todolist = new Todolist($this->Users);
-        $this->todoItems = $Todolist->readAll();
 
         // team config
         $Teams = new Teams($this->Users);

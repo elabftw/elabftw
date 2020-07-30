@@ -77,7 +77,6 @@ try {
         }
     }
 
-
     // DESTROY
     if ($Request->request->has('usersDestroy')) {
 

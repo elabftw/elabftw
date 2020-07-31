@@ -84,10 +84,9 @@ class DisplayParams
 
     private function setOrder(): void
     {
+        // NOTE: in 7.4 we will be able to use ??= here
         // load the pref from the user
-        if (isset($this->App->Users->userData['orderby'])) {
-            $this->order = $this->App->Users->userData['orderby'];
-        }
+        $this->order = $this->App->Users->userData['orderby'] ?? $this->order;
 
         // now get pref from the filter-order-sort menu
         $this->order = $this->App->Request->query->get('order') ?? $this->order;
@@ -96,9 +95,7 @@ class DisplayParams
     private function setSort(): void
     {
         // load the pref from the user
-        if (isset($this->Entity->Users->userData['sort'])) {
-            $this->sort = $this->Entity->Users->userData['sort'];
-        }
+        $this->sort = $this->Entity->Users->userData['sort'] ?? $this->sort;
 
         // now get pref from the filter-order-sort menu
         $this->sort = $this->App->Request->query->get('sort') ?? $this->sort;

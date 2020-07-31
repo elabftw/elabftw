@@ -736,14 +736,24 @@ abstract class AbstractEntity
      */
     protected function setOrder(): void
     {
-        if ($this->DisplayParams->order === 'cat') {
-            $this->order = 'categoryt.id';
-        } elseif ($this->DisplayParams->order === 'date' || $this->DisplayParams->order === 'rating' || $this->DisplayParams->order === 'title' || $this->DisplayParams->order === 'id' || $this->DisplayParams->order === 'lastchange') {
-            $this->order = 'entity.' . $this->DisplayParams->order;
-        } elseif ($this->DisplayParams->order === 'comment') {
-            $this->order = 'commentst.recent_comment';
-        } elseif ($this->DisplayParams->order === 'user') {
-            $this->order = 'entity.userid';
+        switch($this->DisplayParams->order)
+        {
+            case 'cat':
+                $this->order = 'categoryt.id';
+                break;
+            case 'date':
+            case 'rating':
+            case 'title':
+            case 'id':
+            case 'lastchange':
+                $this->order = 'entity.' . $this->DisplayParams->order;
+                break;
+            case 'comment':
+                $this->order = 'commentst.recent_comment';
+                break;
+            case 'user':
+                $this->order = 'entity.userid';
+                break;
         }
     }
 

@@ -101,42 +101,13 @@ export function quickSave(type: string, id: string): void {
     notif(json);
   });
 }
-/* put the $_GET in array */
-function transformToAssocArray(prmstr: string): object {
-  const params: any = {};
-  const prmarr = prmstr.split('&');
-  for (let i = 0; i < prmarr.length; i++) {
-    const tmparr = prmarr[i].split('=');
-    params[tmparr[0]] = tmparr[1];
-  }
-  return params;
-}
-
-/* parse the $_GET from the url */
-export function getGetParameters(): object {
-  const prmstr = window.location.search.substr(1);
-  return prmstr !== null && prmstr !== '' ? transformToAssocArray(prmstr) : {};
-}
 
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: any, value: any): void {
-  key = escape(key); value = escape(value);
-
-  const kvp = document.location.search.substr(1).split('&');
-  let i = kvp.length; let x; while (i--) {
-    x = kvp[i].split('=');
-
-    if (x[0] === key) {
-      x[1] = value;
-      kvp[i] = x.join('=');
-      break;
-    }
-  }
-
-  if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
-
+  let params = new URLSearchParams(document.location.search.slice(1));
+  params.set(key, value);
   // reload the page
-  document.location.search = kvp.join('&');
+  document.location.search = params.toString();
 }
 
 // SORTABLE ELEMENTS

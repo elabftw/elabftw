@@ -5,15 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getGetParameters } from './misc';
-
 $(document).ready(function(){
   if (window.location.pathname !== '/search.php') {
     return;
   }
   // scroll to anchor if there is a search
-  const getParams = getGetParameters();
-  if ((getParams as any).type) {
+  const params = new URLSearchParams(document.location.search.slice(1));
+  if (params.has('type')) {
     window.location.hash = '#anchor';
   }
 });

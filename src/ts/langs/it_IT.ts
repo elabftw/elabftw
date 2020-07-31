@@ -7,6 +7,7 @@ const t = {
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
     "generic-delete-warning": "Cancellare questo?",
     "link-delete-warning": "Eliminare questo collegamento?",
+    "please-wait": "Attendere prego",
     "step-delete-warning": "Cancellare questo passaggio?",
     "tag-delete-warning": "Si vuol eliminare questo tag?",
     "upload-file-comment": "Commento sul file",

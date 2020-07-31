@@ -219,7 +219,7 @@ $(document).ready(function(){
     // grey out the box to signal it has been clicked
     $(this).attr('disabled', 'disabled');
     // also display a wait text
-    $(this).html('Please wait…');
+    $(this).html(i18next.t('please-wait'));
     window.location.href = `make.php?what=${$(this).data('what')}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
   });
 

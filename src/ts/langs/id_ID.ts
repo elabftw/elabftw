@@ -7,6 +7,7 @@ const t = {
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",
     "generic-delete-warning": "Hapus ini?",
     "link-delete-warning": "Hapus tautan ini?",
+    "please-wait": "Mohon tunggu",
     "step-delete-warning": "Hapus langkah ini?",
     "tag-delete-warning": "Hapus label ini?",
     "upload-file-comment": "File komentar",

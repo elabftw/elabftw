@@ -2,7 +2,6 @@
 /**
  * This file is just here so that the strings are picked up by the merge-po.sh script
  * These strings are used in JS and appear nowhere else in the codebase
- * They must be in i18n.ts
  *
  */
 // comment-add
@@ -17,6 +16,8 @@ _('The selected item(s) and all associated data will be permanently deleted. Thi
 _('Delete this?');
 // link-delete-warning
 _('Delete this link?');
+// please-wait
+_('Please wait…');
 // step-delete-warning
 _('Delete this step?');
 // tag-delete-warning

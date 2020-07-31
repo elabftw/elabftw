@@ -22,8 +22,10 @@ $(document).ready(function(){
   });
 
   // validate the form upon change. fix #451
+  // add to the input itself, not the form for more flexibility
+  // for instance the tags input allow multiple selection, so we don't want to submit on change
   $('.autosubmit').on('change', function() {
-    $(this).submit();
+    $(this).closest('form').submit();
   });
 
   // TOGGLE BODY

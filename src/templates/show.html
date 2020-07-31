@@ -9,13 +9,12 @@
   <!-- we hide this menu for small devices -->
   <div class='col-md-10 hidden-xs'>
 
-    <form id='filter-order-sort' class='autosubmit form-inline'>
+    <form id='filter-order-sort' class='form-inline'>
       <div class='form-group'>
-        <input type='hidden' name='tags[]' value='{{ tag }}' />
         <input type='hidden' name='q' value='{{ query }}' />
 
         <!-- CATEGORY -->
-        <select name='cat' class='form-control select-filter-status' aria-label='Filter category'>
+        <select name='cat' class='autosubmit mr-1 form-control select-filter-status' aria-label='Filter category'>
             <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
             {% for category in categoryArr %}
                 <option value='{{ category.category_id }}' {{ App.Request.query.get('cat') == category.category_id ? 'selected'}}>
@@ -26,7 +25,7 @@
         <input type='hidden' name='mode' value='show' />
 
         <!-- ORDER -->
-        <select name='order' class='form-control select-order' aria-label='Order by'>
+        <select name='order' class='autosubmit mr-1 form-control select-order' aria-label='Order by'>
             <option value=''>{{ 'Order by'|trans }}</option>
             <option value='cat' {{ App.Request.query.get('order') == 'cat' ? 'selected' }}>{{ 'Category'|trans }}</option>
             <option value='id' {{ App.Request.query.get('order') == 'id' ? 'selected' }}>{{ 'Id'|trans }}</option>
@@ -42,19 +41,28 @@
         </select>
 
         <!-- SORT -->
-        <select name='sort' class='form-control select-sort' aria-label='Sort by'>
+        <select name='sort' class='autosubmit mr-1 form-control select-sort' aria-label='Sort by'>
             <option value=''>{{ 'Sort'|trans }}</option>
             <option value='desc' {{ App.Request.query.get('sort') == 'desc' ? 'selected' }}>{{ 'DESC'|trans }}</option>
             <option value='asc' {{ App.Request.query.get('sort') == 'asc' ? 'selected' }}>{{ 'ASC'|trans }}</option>
         </select>
 
         <!-- LIMIT -->
-        <select autocomplete='off' name='limit' id='select-limit' class='form-control' aria-label='Number of results shown'>
+        <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 form-control' aria-label='Number of results shown'>
           <option value=''>{{ 'Results per page'|trans }}</option>
           {% for option in limitOptions(limit) %}
           <option {{ option == limit ? 'selected' }} value='{{ option }}'>{{ option }}</option>
           {% endfor %}
         </select>
+
+        <!-- SEARCH WITH TAG -->
+        <select multiple name='tags[]' class='form-control mr-1 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
+          {% for tag in tagsArrForSelect %}
+            <option value='{{ tag.tag }}' {{ tag.tag in selectedTagsArr ? 'selected' }}>{{ tag.tag|raw }}</option>
+          {% endfor %}
+        </select>
+        <!-- onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button -->
+        <button class='btn btn-primary autosubmit'>{{ 'Go'|trans }}</button>
 
       </div>
     </form>

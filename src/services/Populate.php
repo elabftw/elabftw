@@ -35,7 +35,7 @@ class Populate
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
-            $tpl = 1;
+            $tpl = (int) $Category->readAll()[0]['category_id'];
         }
         $categories = $Category->readAll();
 

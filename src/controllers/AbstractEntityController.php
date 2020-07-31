@@ -114,6 +114,10 @@ abstract class AbstractEntityController implements ControllerInterface
                 $idFilter .= 'entity.id = ' . $id . ' OR ';
             }
             $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
+            // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
+            if ($trimmedFilter === ' AND ()') {
+                throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
+            }
             $this->Entity->idFilter = $trimmedFilter;
             $searchType = 'tag';
         }
@@ -196,6 +200,8 @@ abstract class AbstractEntityController implements ControllerInterface
         if (!empty($itemsArr)) {
             $tagsArr = $this->Entity->getTags($itemsArr);
         }
+        // get all the tags for the top search bar
+        $tagsArrForSelect = $this->Entity->Tags->readAll();
 
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->query->all());
@@ -212,6 +218,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'query' => $query,
             'searchType' => $searchType,
             'tagsArr' => $tagsArr,
+            'tagsArrForSelect' => $tagsArrForSelect,
             'templatesArr' => $this->Templates->readInclusive(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );

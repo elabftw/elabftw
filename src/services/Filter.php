@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+use function filter_var;
 use function mb_strlen;
 use function strlen;
 use function strtr;
@@ -78,7 +79,7 @@ class Filter
      */
     public static function sanitize(string $input): string
     {
-        $output = \filter_var($input, FILTER_SANITIZE_STRING);
+        $output = filter_var($input, FILTER_SANITIZE_STRING);
         if ($output === false) {
             return '';
         }
@@ -136,5 +137,26 @@ class Filter
             throw new ImproperActionException('Content is too big! Cannot save!');
         }
         return $body;
+    }
+
+    /**
+     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+     * also remove | because we use this as separator for tags in SQL
+     *
+     * @param string $tag the tag to sanitize
+     * @return string
+     */
+    public function tag(string $tag): string
+    {
+        $tag = filter_var($tag, FILTER_SANITIZE_STRING);
+        if ($tag === false) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
+        }
+        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), $tag));
+        // empty tags are disallowed
+        if ($tag === '') {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
+        }
+        return $tag;
     }
 }

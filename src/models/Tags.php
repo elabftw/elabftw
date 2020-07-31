@@ -12,8 +12,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Services\Filter;
 use PDO;
 
 /**
@@ -47,7 +47,7 @@ class Tags implements CrudInterface
     public function create(string $tag): int
     {
         $this->Entity->canOrExplode('write');
-        $tag = $this->checkTag($tag);
+        $tag = Filter::tag($tag);
 
         $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
@@ -168,7 +168,7 @@ class Tags implements CrudInterface
     public function update(string $tag, string $newtag): void
     {
         $this->Entity->canOrExplode('write');
-        $newtag = $this->checkTag($newtag);
+        $newtag = Filter::tag($newtag);
 
         $sql = 'UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -332,26 +332,5 @@ class Tags implements CrudInterface
             }
         }
         return $itemIds;
-    }
-
-    /**
-     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-     * also remove | because we use this as separator for tags in SQL
-     *
-     * @param string $tag The tag to check
-     * @return string
-     */
-    private function checkTag(string $tag): string
-    {
-        $tag = filter_var($tag, FILTER_SANITIZE_STRING);
-        if ($tag === false) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), $tag));
-        // empty tags are disallowed
-        if ($tag === '') {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        return $tag;
     }
 }

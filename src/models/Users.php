@@ -361,7 +361,6 @@ class Users
         $firstname = Filter::sanitize($params['firstname']);
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
-        $UsersHelper = new UsersHelper();
 
         // check email is not already in db
         $usersEmails = $this->getAllEmails();

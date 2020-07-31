@@ -136,6 +136,13 @@ module.exports = {
           options: {
             exposes: 'moment',
           },
+      },
+      // use a custom loader for 3Dmol.js
+      {
+        test: /3Dmol-nojquery.js$/,
+        use: {
+          loader: path.resolve('src/ts/3Dmol-loader.ts'),
+        }
       }
     ]
   }

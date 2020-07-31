@@ -47,42 +47,28 @@ try {
         }
         $App->Users->updateAccount($Request->request->all());
 
+        // CHANGE PASSWORD
+        if (!empty($Request->request->get('newpass'))) {
+            // check the confirm password
+            if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
+                throw new ImproperActionException(_('The passwords do not match!'));
+            }
+
+            $App->Users->updatePassword($Request->request->get('newpass'));
+        }
+
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($Request->request->get('use_mfa') ?? '');
+        $Mfa = new Mfa($App->Request, $App->Session);
+
+        // No MFA secret yet but user wants to enable
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
-            // No MFA secret yet but user wants to enable
-            // Need to request verification code to confirm user got secret and can authenticate in the future via MFA
-            $App->Session->set('mfa_secret', $Auth->newMFASecret());
+            $Mfa->enable('../../ucp.php?tab=2');
+
+        // Disable MFA
         } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
-            // Disable MFA
-            $App->Users->updateMFA();
+            $Mfa->disable($App->Users->userData['userid']);
         }
-    }
-
-    // TAB 2 : CONFIRM TWO FACTOR AUTHENTICATION
-    if ($Request->request->has('mfa_code')) {
-        $tab = '2';
-
-        // check verification code
-        if ($Auth->verifyMFACode($App->Session->get('mfa_secret'), (string) $Request->request->get('mfa_code'))) {
-            // Enable MFA
-            $App->Users->updateMFA($App->Session->get('mfa_secret'));
-            $App->Session->remove('mfa_secret');
-            $App->Session->getFlashBag()->add('ok', _('Two Factor Authentication enabled.'));
-        } else {
-            $App->Session->remove('mfa_secret');
-            $App->Session->getFlashBag()->add('warning', _('Two Factor Authentication not enabled!'));
-        }
-    }
-
-    // TAB 2 : CHANGE PASSWORD
-    if (!empty($Request->request->get('newpass'))) {
-        // check the confirm password
-        if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
-            throw new ImproperActionException(_('The passwords do not match!'));
-        }
-
-        $App->Users->updatePassword($Request->request->get('newpass'));
     }
     // END TAB 2
 

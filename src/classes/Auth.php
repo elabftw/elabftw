@@ -70,12 +70,21 @@ class Auth
         $this->Db->execute($req);
 
         if ($req->rowCount() !== 1) {
-            $this->increaseFailedAttempt(true);
+            $this->increaseFailedAttempt();
+            throw new InvalidCredentialsException();
         }
 
         return (int) $req->fetchColumn();
     }
 
+    /**
+     * actual login with userid and team
+     *
+     * @param int $userid
+     * @param int $team
+     * @param string $setCookie default on
+     * @return void
+     */
     public function loginInTeam(int $userid, int $team, string $setCookie = 'on'): void
     {
         $this->populateUserDataFromUserid($userid);
@@ -89,15 +98,16 @@ class Auth
      * Login with email and password
      *
      * @param int $userid
+     * @param string $rememberme default 
      * @return mixed Return true if user provided correct credentials or an array with the userid
      * and the teams where login is possible for display on the team selection page
      */
-    public function login(int $userid, string $rememberme)
+    public function login(int $userid, string $rememberme = 'on')
     {
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
         if (\count($teams) > 1) {
-            return array($userid, $teams);
+            return array($teams);
         }
         $this->loginInTeam($userid, (int) $teams[0]['id'], $rememberme);
 
@@ -120,56 +130,6 @@ class Auth
     }
 
     /**
-     * Does user use two factor authentication?
-     *
-     * @param int $userid
-     * @return mixed MFA secret or false
-     */
-    public function getMFASecret(int $userid)
-    {
-        $sql = 'SELECT mfa_secret FROM users WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-
-        if ($res !== null || $res !== false) {
-            return (string) $res;
-        }
-        return false;
-    }
-
-    /**
-     * Generate a new MFA secret
-     *
-     * @return string Generate a new MFA secret
-     */
-    public function newMFASecret(): string
-    {
-        $tfa = new TwoFactorAuth('eLabFTW');
-        return $tfa->createSecret(160);
-    }
-
-    /**
-     * Verify the MFA code
-     *
-     * @param string $secret
-     * @param string $code Verification code
-     *
-     * @return bool True if code is valid
-     */
-    public function verifyMFACode(string $secret, string $code): bool
-    {
-        $tfa = new TwoFactorAuth('eLabFTW');
-        if ($tfa->verifyCode($secret, $code)) {
-            return true;
-        }
-        $this->increaseFailedAttempt(false);
-        $this->Session->getFlashBag()->add('warning', _('Code not verified.'));
-        return false;
-    }
-
-    /**
      * Check if we need to bother with authentication of current user
      *
      * @return bool True if we are authentified (or if we don't need to be)
@@ -184,6 +144,8 @@ class Auth
             'login.php',
             'LoginController.php',
             'metadata.php',
+            'mfa.php',
+            'MfaController.php',
             'register.php',
             'RegisterController.php',
             'ResetPasswordController.php',
@@ -207,6 +169,7 @@ class Auth
         if ($this->Session->has('anon')) {
             return true;
         }
+
         // if we are already logged in with the session, skip everything
         if ($this->Session->has('auth')) {
             return true;
@@ -249,7 +212,7 @@ class Auth
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
-            $this->increaseFailedAttempt(false);
+            $this->increaseFailedAttempt();
             throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
         }
         return (string) $res;
@@ -382,10 +345,9 @@ class Auth
     /**
      * Increase the failed attempts counter
      *
-     * @param bool $throwException Do you want to throw the InvalidCredentialsException
      * @return void
      */
-    private function increaseFailedAttempt(bool $throwException): void
+    public function increaseFailedAttempt(): void
     {
         if (!$this->Session->has('failed_attempt')) {
             $this->Session->set('failed_attempt', 1);
@@ -393,10 +355,6 @@ class Auth
             $n = $this->Session->get('failed_attempt');
             $n++;
             $this->Session->set('failed_attempt', $n);
-        }
-
-        if ($throwException) {
-            throw new InvalidCredentialsException();
         }
     }
 }

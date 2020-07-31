@@ -58,62 +58,49 @@ try {
             //throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 
-        $rememberme = 'off';
+        $App->Session->set('rememberme', 'off');
         if ($Request->request->has('rememberme')) {
-            $rememberme = $Request->request->get('rememberme');
+            $App->Session->set('rememberme', $Request->request->get('rememberme'));
         }
+
+        if (!$App->Session->has('auth_userid')) {
+            // If checkCredentials fails there will be an exception and the subsequent code will not be executed.
+            $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
+            $App->Session->set('auth_userid', $userid);
+        }
+
+        $Mfa = new Mfa($App->Request, $App->Session);
+        // redirect to MFA code verification if necesssary
+        $Mfa->needVerification($App->Session->get('auth_userid'), '../../loginController.php');
 
         // the actual login
         $team = null;
-        if ($Session->has('team_selection_required')) {
-            $team = (int) $Request->request->get('team_selection');
-            $userid = $Session->get('auth_userid');
+        if ($App->Session->has('team_selection_required')) {
+            $Auth->loginInTeam(
+                $App->Session->get('auth_userid'),
+                (int) $Request->request->get('team_selection'),
+                $App->Session->get('rememberme')
+            );
 
-            $Session->remove('team_selection_required');
-            $Session->remove('auth_userid');
-
-            $Auth->loginInTeam($userid, $team);
+            $App->Session->remove('rememberme');
+            $App->Session->remove('team_selection_required');
+            $App->Session->remove('auth_userid');
         } else {
-            // If checkCredentials fails there will be an exception and the subsequent code will not be executed.
-            if (!$Session->has('auth_userid')) {
-                $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
-            } else {
-                $userid = $Session->get('auth_userid');
-            }
-            $MFASecret = $Auth->getMFASecret($userid);
-
-            if ($MFASecret && !$Session->has('mfa_secret')) {
-                $Session->set('auth_userid', $userid);
-                $Session->set('mfa_secret', $MFASecret);
-                $Session->set('rememberme', $rememberme);
+            $loginResult = $Auth->login($App->Session->get('auth_userid'), $App->Session->get('rememberme'));
+ 
+            if ($loginResult === true) {
+                $App->Session->remove('rememberme');
+                $App->Session->remove('auth_userid');
+ 
+                if ($Request->cookies->has('redirect')) {
+                    $location = $Request->cookies->get('redirect');
+                } else {
+                    $location = '../../experiments.php';
+                }
+            } elseif (is_array($loginResult)) {
+                $App->Session->set('team_selection_required', 1);
+                $App->Session->set('team_selection', $loginResult);
                 $location = '../../login.php';
-            } elseif (
-                !$MFASecret
-                || (
-                    $MFASecret
-                    && $Request->request->has('mfa_code')
-                    && $Auth->verifyMFACode($App->Session->get('mfa_secret'), (string) $Request->request->get('mfa_code'))
-                )
-            ) {
-                $loginResult = $Auth->login($userid, $rememberme);
-
-                if ($loginResult && $Session->has('mfa_secret')) {
-                    $Session->remove('mfa_secret');
-                    $Session->remove('rememberme');
-                }
-
-                if ($loginResult === true) {
-                    if ($Request->cookies->has('redirect')) {
-                        $location = $Request->cookies->get('redirect');
-                    } else {
-                        $location = '../../experiments.php';
-                    }
-                } elseif (is_array($loginResult)) {
-                    $Session->set('team_selection_required', 1);
-                    $Session->set('auth_userid', $loginResult[0]);
-                    $Session->set('team_selection', $loginResult[1]);
-                    $location = '../../login.php';
-                }
             }
         }
     }

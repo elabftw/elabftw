@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function chunk_split;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
@@ -53,16 +52,6 @@ try {
         'templatesArr' => $templatesArr,
         'visibilityArr' => $visibilityArr,
     );
-
-    // If we enable 2FA we need to provide the secret.
-    // For user convenience we provide it as QR code and as plain text
-    if ($App->Session->has('mfa_secret')) {
-        $qrProvider = new MpdfQrProvider();
-        $tfa = new TwoFactorAuth('eLabFTW', 6, 30, 'sha1', $qrProvider);
-
-        $renderArr['mfaQRCodeDataUri'] = $tfa->getQRCodeImageAsDataUri($App->Users->userData['email'], $App->Session->get('mfa_secret'));
-        $renderArr['mfaSecret'] = chunk_split($App->Session->get('mfa_secret'), 4, ' ');
-    }
 } catch (ImproperActionException $e) {
     // show message to user
     $template = 'error.html';

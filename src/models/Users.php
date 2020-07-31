@@ -365,10 +365,10 @@ class Users
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
         $UsersHelper = new UsersHelper();
 
-        // Admins can only disable 2FA
-        $useMFA = Filter::onToBinary($params['use_mfa'] ?? '');
-        if (!$useMFA) {
-            $this->updateMFA();
+        // (Sys)admins can only disable 2FA
+        if (Filter::sanitize($params['use_mfa']) === 'off') {
+            // this will not work!
+            Mfa::disable($this->userData['userid']);
         }
 
         // check email is not already in db
@@ -595,29 +595,6 @@ class Users
         $req->bindParam(':cellphone', $params['cellphone']);
         $req->bindParam(':skype', $params['skype']);
         $req->bindParam(':website', $params['website']);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Update the two factor authentication setting for the user
-     *
-     * @param mixed $MFASecret The secret or false (default)
-     * @return void
-     */
-    public function updateMFA($MFASecret = false): void
-    {
-        if ($MFASecret) {
-            $sql = 'UPDATE users SET mfa_secret = :mfa_secret WHERE userid = :userid';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':mfa_secret', $MFASecret, PDO::PARAM_STR);
-            $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-            $this->Db->execute($req);
-            return;
-        }
-
-        $sql = 'UPDATE users SET mfa_secret = null WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
     }

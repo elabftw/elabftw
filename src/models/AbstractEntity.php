@@ -81,18 +81,6 @@ abstract class AbstractEntity
     /** @var DisplayParams $DisplayParams */
     public $DisplayParams;
 
-    /** @var string $order inserted in sql */
-    public $order = 'date';
-
-    /** @var string $sort inserted in sql */
-    public $sort = 'DESC';
-
-    /** @var string $limit limit for sql */
-    public $limit = '';
-
-    /** @var string $offset offset for sql */
-    public $offset = '';
-
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
 
@@ -241,12 +229,13 @@ abstract class AbstractEntity
             $this->queryFilter,
             $this->idFilter,
             'GROUP BY id ORDER BY',
-            $this->order,
+            $this->getOrderSql(),
             $this->DisplayParams->sort,
             ', entity.id',
             $this->DisplayParams->sort,
-            $this->limit,
-            $this->offset,
+            // add one so we can display Next page if there are more things to display
+            'LIMIT ' . (string) ($this->DisplayParams->limit + 1),
+            'OFFSET ' . (string) $this->DisplayParams->offset,
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -397,12 +386,6 @@ abstract class AbstractEntity
     public function setDisplayParams(DisplayParams $displayParams): void
     {
         $this->DisplayParams = $displayParams;
-        // LIMIT
-        $this->setLimit();
-        // OFFSET
-        $this->setOffset();
-        // ORDER
-        $this->setOrder();
         $this->queryFilter = Tools::getSearchSql($this->DisplayParams->query, 'and', '', $this->type);
     }
 
@@ -717,53 +700,28 @@ abstract class AbstractEntity
     }
 
     /**
-     * Set a limit for sql read. The limit is n times the wanted number of
-     * displayed results so we can remove the ones without read access
-     * and still display enough of them
-     *
-     * @return void
-     */
-    protected function setLimit(): void
-    {
-        $num = $this->DisplayParams->limit + 1;
-        $this->limit = 'LIMIT ' . (string) $num;
-    }
-
-    /**
      * Order by in sql
      *
-     * @return void
+     * @return string the column for order by
      */
-    protected function setOrder(): void
+    protected function getOrderSql(): string
     {
         switch ($this->DisplayParams->order) {
             case 'cat':
-                $this->order = 'categoryt.id';
-                break;
+                return 'categoryt.id';
             case 'date':
             case 'rating':
             case 'title':
             case 'id':
             case 'lastchange':
-                $this->order = 'entity.' . $this->DisplayParams->order;
-                break;
+                return 'entity.lastchange';
             case 'comment':
-                $this->order = 'commentst.recent_comment';
-                break;
+                return 'commentst.recent_comment';
             case 'user':
-                $this->order = 'entity.userid';
-                break;
+                return 'entity.userid';
+            default:
+                return 'date';
         }
-    }
-
-    /**
-     * Add an offset to the displayed results
-     *
-     * @return void
-     */
-    protected function setOffset(): void
-    {
-        $this->offset = 'OFFSET ' . (string) $this->DisplayParams->offset;
     }
 
     /**

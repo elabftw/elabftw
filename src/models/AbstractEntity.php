@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -76,6 +77,9 @@ abstract class AbstractEntity
 
     /** @var string $queryFilter inserted in sql */
     public $queryFilter = '';
+
+    /** @var DisplayParams $DisplayParams */
+    public $DisplayParams;
 
     /** @var string $order inserted in sql */
     public $order = 'date';
@@ -238,9 +242,9 @@ abstract class AbstractEntity
             $this->idFilter,
             'GROUP BY id ORDER BY',
             $this->order,
-            $this->sort,
+            $this->DisplayParams->sort,
             ', entity.id',
-            $this->sort,
+            $this->DisplayParams->sort,
             $this->limit,
             $this->offset,
         );
@@ -385,28 +389,21 @@ abstract class AbstractEntity
     }
 
     /**
-     * Set a limit for sql read. The limit is n times the wanted number of
-     * displayed results so we can remove the ones without read access
-     * and still display enough of them
+     * Set the DisplayParams property and build the sql params for it
      *
-     * @param int $num number of items to ignore
+     * @param DisplayParams $displayParams
      * @return void
      */
-    public function setLimit(int $num): void
+    public function setDisplayParams(DisplayParams $displayParams): void
     {
-        $num += 1;
-        $this->limit = 'LIMIT ' . (string) $num;
-    }
-
-    /**
-     * Add an offset to the displayed results
-     *
-     * @param int $num number of items to ignore
-     * @return void
-     */
-    public function setOffset(int $num): void
-    {
-        $this->offset = 'OFFSET ' . (string) $num;
+        $this->DisplayParams = $displayParams;
+        // LIMIT
+        $this->setLimit();
+        // OFFSET
+        $this->setOffset();
+        // ORDER
+        $this->setOrder();
+        $this->queryFilter = Tools::getSearchSql($this->DisplayParams->query, 'and', '', $this->type);
     }
 
     /**
@@ -717,6 +714,47 @@ abstract class AbstractEntity
             $pinArr[] = $entity->read();
         }
         return $pinArr;
+    }
+
+    /**
+     * Set a limit for sql read. The limit is n times the wanted number of
+     * displayed results so we can remove the ones without read access
+     * and still display enough of them
+     *
+     * @return void
+     */
+    protected function setLimit(): void
+    {
+        $num = $this->DisplayParams->limit + 1;
+        $this->limit = 'LIMIT ' . (string) $num;
+    }
+
+    /**
+     * Order by in sql
+     *
+     * @return void
+     */
+    protected function setOrder(): void
+    {
+        if ($this->DisplayParams->order === 'cat') {
+            $this->order = 'categoryt.id';
+        } elseif ($this->DisplayParams->order === 'date' || $this->DisplayParams->order === 'rating' || $this->DisplayParams->order === 'title' || $this->DisplayParams->order === 'id' || $this->DisplayParams->order === 'lastchange') {
+            $this->order = 'entity.' . $this->DisplayParams->order;
+        } elseif ($this->DisplayParams->order === 'comment') {
+            $this->order = 'commentst.recent_comment';
+        } elseif ($this->DisplayParams->order === 'user') {
+            $this->order = 'entity.userid';
+        }
+    }
+
+    /**
+     * Add an offset to the displayed results
+     *
+     * @return void
+     */
+    protected function setOffset(): void
+    {
+        $this->offset = 'OFFSET ' . (string) $this->DisplayParams->offset;
     }
 
     /**

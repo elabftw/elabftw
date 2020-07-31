@@ -194,7 +194,7 @@ $(document).ready(function(){
         updatePermissions : true,
         rw: 'read',
         id: checked[index]['id'],
-        visibility : $('#visChecked').val(),
+        value: $('#visChecked').val(),
         type : $('#type').data('type')
       }));
     });

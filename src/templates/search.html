@@ -1,8 +1,8 @@
 {% include('head.html') %}
 
 <!-- SEARCH PAGE BEGIN -->
+<form name="search" method="get" action="search.php">
 <section class='searchform box'>
-    <form name="search" method="get" action="search.php">
         <div class='row'>
             <!-- SEARCH IN-->
             <div class='col-md-3'>
@@ -148,6 +148,8 @@
               </span>
             </a>
         </div>
-    </form>
-</section>
+  </section>
+<!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
+  it avoids having to repeat the query params -->
+{{ not App.Request.query.has('type') ? '</form>' }}
 <a href='#' id='anchor'></a>

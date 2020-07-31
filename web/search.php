@@ -78,12 +78,6 @@ if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
     }
 }
 
-// TAGS
-$selectedTagsArr = array();
-if ($Request->query->has('tags') && !empty($Request->query->get('tags'))) {
-    $selectedTagsArr = $Request->query->get('tags');
-}
-
 // VISIBILITY
 $vis = '';
 if ($Request->query->has('vis') && !empty($Request->query->get('vis'))) {
@@ -114,7 +108,6 @@ $renderArr = array(
     'title' => $title,
     'body' => $body,
     'andor' => $andor,
-    'selectedTagsArr' => $selectedTagsArr,
     'tagsArr' => $tagsArr,
 );
 echo $App->render('search.html', $renderArr);
@@ -143,7 +136,7 @@ if ($Request->query->count() > 0) {
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
         // Tag search
-        if (!empty($selectedTagsArr)) {
+        if (!empty($Request->query->get('tags'))) {
             // get all the ids with that tag
             $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
             if (count($ids) > 0) {

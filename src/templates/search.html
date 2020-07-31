@@ -25,7 +25,7 @@
                 <label for='tags-select'>{{ 'With the tag'|trans }}</label>
                 <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
                     {% for tag in tagsArr %}
-                    <option value='{{ tag.tag }}' {{ tag.tag in selectedTagsArr ? 'selected' }}>{{ tag.tag|raw }}</option>
+                    <option value='{{ tag.tag }}' {{ tag.tag in App.Request.query.get('tags') ? 'selected' }}>{{ tag.tag|raw }}</option>
                     {% endfor %}
                 </select>
             </div>

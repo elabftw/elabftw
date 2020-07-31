@@ -95,7 +95,7 @@ class DisplayParams
     private function setSort(): void
     {
         // load the pref from the user
-        $this->sort = $this->Entity->Users->userData['sort'] ?? $this->sort;
+        $this->sort = $this->App->Users->userData['sort'] ?? $this->sort;
 
         // now get pref from the filter-order-sort menu
         $this->sort = $this->App->Request->query->get('sort') ?? $this->sort;

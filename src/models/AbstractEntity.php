@@ -736,8 +736,7 @@ abstract class AbstractEntity
      */
     protected function setOrder(): void
     {
-        switch($this->DisplayParams->order)
-        {
+        switch ($this->DisplayParams->order) {
             case 'cat':
                 $this->order = 'categoryt.id';
                 break;

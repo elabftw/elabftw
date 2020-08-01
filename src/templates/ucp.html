@@ -259,108 +259,78 @@
   <div class='box'>
     <form class='form-group' method='post' action='app/controllers/UcpController.php'>
       {{ App.Csrf.getHiddenInput|raw }}
-      {% if App.Session.has('mfa_secret') %}
-        <div class='row'>
-          <div class='text-center col-md-5 mx-auto'>
-            <h4>{{ 'Two Factor Authentication'|trans }}</h4>
-            <p><img src='{{ mfaQRCodeDataUri|raw }}'></p>
+      <div class='row'>
+        <div class='col-md-6'>
+          <h4>{{ 'Modify your personal informations'|trans }}</h4>
+          <label for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
+          <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='off' pattern='.{8,}' required />
+          <label for='email'>{{ 'Email'|trans }}</label>
+          <input class='form-control' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
+        </div>
+        <div class='col-md-6'>
+          <h4>{{ 'Modify your password'|trans }}</h4>
+          <label for='newpass'>{{ 'New password'|trans }}</label>
+          <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
+          <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
+          <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
+        </div>
+      </div>
+      <hr>
+      <br>
 
-            <p>
-              <label for='mfa_secret'>{{ 'Secret for manual setup'|trans }}</label>
-              <div class='input-group'>
-                <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' type='password' readonly='readonly' />
-                <div class='input-group-append'>
-                  <span class='btn btn-light input-border togglePassword' tabindex='-1' toggle='#mfa_secret'><i class='fas fa-eye' aria-hidden='true'></i></span>
-                </div>
-              </div>
-            </p>
+      <h4>{{ 'Two Factor Authentication'|trans }}</h4>
+      <div class='row'>
+        <div class='col-md-6'>
+          <label for='use_mfa'>{{ 'Use 2FA?'|trans }}</label>
+          <select class='form-control' autocomplete='off' name='use_mfa' id='use_mfa'>
+            <option value='on' {{ App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'Yes'|trans }}</option>
+            <option value='off' {{ not App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'No'|trans }}</option>
+          </select>
+        </div>
+      </div>
+      <hr>
+      <br>
 
-            <p>
-              <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
-              <input type='text' id='mfa_code' name='mfa_code' class='form-control text-center' pattern='.{6}' required='required' aria-describedby='mfa_code_help_block' autocomplete='off'>
-              <span id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the two-factor authentication app on your device to get your authentication code and verify your identity.'|trans }}</span>
-            </p>
+      <h4>{{ 'Modify your identity'|trans }}</h4>
+      <div class='row'>
+        <div class='col-md-6'>
+          <label for='firstname'>{{ 'Firstname'|trans }}</label>
+          <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+        </div>
+        <div class='col-md-6'>
+          <label for='lastname'>{{ 'Lastname'|trans }}</label>
+          <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+        </div>
+      </div>
+      <hr>
+      <br>
 
-            <div class='submitButtonDiv'>
-              <button type='submit' class='button btn btn-primary'>{{ 'Verify'|trans }}</button>
-            </div>
-          </div>
+      <h4>{{ 'Modify your contact information'|trans }}</h4>
+      <div class='row'>
+        <div class='col-md-6'>
+          <label for='phone'>{{ 'Phone'|trans }} </label>
+          <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' />
         </div>
+        <div class='col-md-6'>
+          <label for='cellphone'>{{ 'Mobile'|trans }}</label>
+          <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' />
+        </div>
+      </div>
 
-      {% else %}
-        <div class='row'>
-          <div class='col-md-6'>
-            <h4>{{ 'Modify your personal informations'|trans }}</h4>
-            <label for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
-            <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='off' pattern='.{8,}' required />
-            <label for='email'>{{ 'Email'|trans }}</label>
-            <input class='form-control' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
-          </div>
-          <div class='col-md-6'>
-            <h4>{{ 'Modify your password'|trans }}</h4>
-            <label for='newpass'>{{ 'New password'|trans }}</label>
-            <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
-            <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-            <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
-          </div>
+      <div class='row'>
+        <div class='col-md-6'>
+          <label for='skype'>{{ 'Skype'|trans }}</label>
+          <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' />
         </div>
-        <hr>
-        <br>
-  
-        <h4>{{ 'Two Factor Authentication'|trans }}</h4>
-        <div class='row'>
-          <div class='col-md-6'>
-            <label for='use_mfa'>{{ 'Use 2FA?'|trans }}</label>
-            <select class='form-control' autocomplete='off' name='use_mfa' id='use_mfa'>
-              <option value='on' {{ App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'Yes'|trans }}</option>
-              <option value='off' {{ not App.Users.userData.mfa_secret ? "selected='selected'" }}>{{ 'No'|trans }}</option>
-            </select>
-          </div>
+        <div class='col-md-6'>
+          <label for='website'>{{ 'Website'|trans }}</label>
+          <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' />
         </div>
-        <hr>
-        <br>
-  
-        <h4>{{ 'Modify your identity'|trans }}</h4>
-        <div class='row'>
-          <div class='col-md-6'>
-            <label for='firstname'>{{ 'Firstname'|trans }}</label>
-            <input class='form-control' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
-          </div>
-          <div class='col-md-6'>
-            <label for='lastname'>{{ 'Lastname'|trans }}</label>
-            <input class='form-control' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
-          </div>
-        </div>
-        <hr>
-        <br>
-  
-        <h4>{{ 'Modify your contact information'|trans }}</h4>
-        <div class='row'>
-          <div class='col-md-6'>
-            <label for='phone'>{{ 'Phone'|trans }} </label>
-            <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' />
-          </div>
-          <div class='col-md-6'>
-            <label for='cellphone'>{{ 'Mobile'|trans }}</label>
-            <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' />
-          </div>
-        </div>
-  
-        <div class='row'>
-          <div class='col-md-6'>
-            <label for='skype'>{{ 'Skype'|trans }}</label>
-            <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' />
-          </div>
-          <div class='col-md-6'>
-            <label for='website'>{{ 'Website'|trans }}</label>
-            <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' />
-          </div>
-        </div>
-  
-        <div class='submitButtonDiv'>
-          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Update profile'|trans }}</button>
-        </div>
-      {% endif %}
+      </div>
+
+      <div class='submitButtonDiv'>
+        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Update profile'|trans }}</button>
+      </div>
     </form>
   </div>
 </div>

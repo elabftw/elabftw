@@ -11,6 +11,7 @@
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -21,7 +22,6 @@ use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use function count;
 
 /**
  * Login page

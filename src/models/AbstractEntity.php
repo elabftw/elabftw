@@ -751,7 +751,6 @@ abstract class AbstractEntity
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
-        $teamEventsJoin = '';
         if ($fullSelect) {
             // get all the columns of entity table
             $select = 'SELECT DISTINCT entity.*,

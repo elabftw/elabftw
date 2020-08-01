@@ -366,9 +366,11 @@ class Users
         $UsersHelper = new UsersHelper();
 
         // (Sys)admins can only disable 2FA
-        if (Filter::sanitize($params['use_mfa']) === 'off') {
-            // this will not work!
-            Mfa::disable($this->userData['userid']);
+        $mfaSql = '';
+        if ($params['use_mfa'] === 'off') {
+            $mfaSql = ', mfa_secret = null';
+        } elseif ($params['use_mfa'] === 'on' && !$this->userData['mfa_secret']) {
+            throw new ImproperActionException('Only users themselves can activate two factor authetication!');
         }
 
         // check email is not already in db
@@ -401,8 +403,9 @@ class Users
             lastname = :lastname,
             email = :email,
             usergroup = :usergroup,
-            validated = :validated
-            WHERE userid = :userid';
+            validated = :validated';
+        $sql .= $mfaSql;
+        $sql .= ' WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);

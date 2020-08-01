@@ -11,7 +11,7 @@
 
 <section class='text-center'>
   <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
-  <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
+  <form method='post' action='app/controllers/MfaController.php' autocomplete='off'>
     <!-- form key -->
     {{ App.Csrf.getHiddenInput|raw }}
     {% if App.Session.has('enable_mfa') %}

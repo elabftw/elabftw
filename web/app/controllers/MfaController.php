@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function array;
 use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -46,6 +45,8 @@ try {
             $location = $App->Session->get('mfa_redirect');
             $App->Session->remove('mfa_redirect');
             $App->Session->remove('mfa_secret');
+        } elseif (!$verifyMFACode) {
+            $Auth->increaseFailedAttempt();
         }
     }
 

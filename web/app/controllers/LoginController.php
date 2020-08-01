@@ -71,7 +71,7 @@ try {
 
         $Mfa = new Mfa($App->Request, $App->Session);
         // redirect to MFA code verification if necesssary
-        $Mfa->needVerification($App->Session->get('auth_userid'), '../../loginController.php');
+        $Mfa->needVerification($App->Session->get('auth_userid'), 'LoginController.php');
 
         // the actual login
         $team = null;

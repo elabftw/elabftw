@@ -26,14 +26,14 @@ class Mfa
     /** @var SessionInterface $Session the current session */
     public $Session;
 
+    /** @var Db $Db SQL Database */
+    protected $Db;
+
     /** @var TwoFactorAuth $Mfa */
     private $TwoFactorAuth;
 
     /** @var Request $Request current request */
     private $Request;
-
-    /** @var Db $Db SQL Database */
-    protected $Db;
 
     /**
      * Constructor
@@ -58,12 +58,13 @@ class Mfa
     public function needVerification(int $userid, string $redirect): void
     {
         $MFASecret = $this->getSecret($userid);
-        if (MFASecret && !$App->Session->has('mfa_verified')) {
+        if ($MFASecret && !$this->Session->has('mfa_verified')) {
             $this->Session->set('mfa_secret', $MFASecret);
             $this->Session->set('mfa_redirect', $redirect);
 
             $Response = new RedirectResponse('../../mfa.php');
             $Response->send();
+            exit();
         }
     }
 
@@ -111,10 +112,12 @@ class Mfa
      */
     public function saveSecret(): void
     {
+        $mfaSecret = $this->Session->get('mfa_secret');
+        $userid = $this->Session->get('userid');
         $sql = 'UPDATE users SET mfa_secret = :mfa_secret WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':mfa_secret', $this->Session->get('mfa_secret'), PDO::PARAM_STR);
-        $req->bindParam(':userid', $this->Session->get('userid'), PDO::PARAM_INT);
+        $req->bindParam(':mfa_secret', $mfaSecret);
+        $req->bindParam(':userid', $userid);
         $this->Db->execute($req);
 
         $this->Session->getFlashBag()->add('ok', _('Two Factor Authentication enabled.'));
@@ -138,7 +141,7 @@ class Mfa
     {
         $sql = 'UPDATE users SET mfa_secret = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid);
         $this->Db->execute($req);
     }
 
@@ -164,7 +167,6 @@ class Mfa
             $this->Session->set('mfa_verified', time());
             return true;
         }
-        Auth::increaseFailedAttempt();
         $this->Session->getFlashBag()->add('ko', _('Code not verified.'));
         return false;
     }

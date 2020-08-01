@@ -67,7 +67,7 @@ try {
 
         // Disable MFA
         } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
-            $Mfa->disable($App->Users->userData['userid']);
+            $Mfa->disable((int) $App->Users->userData['userid']);
         }
     }
     // END TAB 2

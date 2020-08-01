@@ -13,9 +13,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
-use Elabftw\Services\MpdfQrProvider;
 use Exception;
-use RobThree\Auth\TwoFactorAuth;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

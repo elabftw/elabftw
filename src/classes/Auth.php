@@ -17,7 +17,6 @@ use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use function mb_strlen;
 use PDO;
-use RobThree\Auth\TwoFactorAuth;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -98,7 +97,7 @@ class Auth
      * Login with email and password
      *
      * @param int $userid
-     * @param string $rememberme default 
+     * @param string $rememberme default
      * @return mixed Return true if user provided correct credentials or an array with the userid
      * and the teams where login is possible for display on the team selection page
      */
@@ -196,6 +195,22 @@ class Auth
             return 0;
         }
         return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Increase the failed attempts counter
+     *
+     * @return void
+     */
+    public function increaseFailedAttempt(): void
+    {
+        if (!$this->Session->has('failed_attempt')) {
+            $this->Session->set('failed_attempt', 1);
+        } else {
+            $n = $this->Session->get('failed_attempt');
+            $n++;
+            $this->Session->set('failed_attempt', $n);
+        }
     }
 
     /**
@@ -340,21 +355,5 @@ class Auth
         $req->bindParam(':token', $token);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
-    }
-
-    /**
-     * Increase the failed attempts counter
-     *
-     * @return void
-     */
-    public function increaseFailedAttempt(): void
-    {
-        if (!$this->Session->has('failed_attempt')) {
-            $this->Session->set('failed_attempt', 1);
-        } else {
-            $n = $this->Session->get('failed_attempt');
-            $n++;
-            $this->Session->set('failed_attempt', $n);
-        }
     }
 }

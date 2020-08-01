@@ -673,19 +673,19 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
           <p class='smallgray'>{{ 'If the server manages authentication, then you can provide here the environment variables names for user information.'|trans }}</p>
 
-        <label for='extauth_remote_user'>{{ 'Remote user:'|trans }}</label>
+        <label for='extauth_remote_user'>{{ 'Remote user'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='REMOTE_USER' value='{{ App.Config.configArr.extauth_remote_user }}' name='extauth_remote_user' id='extauth_remote_user' />
 
-        <label for='extauth_firstname'>{{ 'First name:'|trans }}</label>
+        <label for='extauth_firstname'>{{ 'Firstname'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_givenName' value='{{ App.Config.configArr.extauth_firstname }}' name='extauth_firstname' id='extauth_firstname' />
 
-        <label for='extauth_lastname'>{{ 'Family name:'|trans }}</label>
+        <label for='extauth_lastname'>{{ 'Lastname'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_sn' value='{{ App.Config.configArr.extauth_lastname }}' name='extauth_lastname' id='extauth_lastname' />
 
-        <label for='extauth_email'>{{ 'E-mail address:'|trans }}</label>
+        <label for='extauth_email'>{{ 'Email'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_mail' value='{{ App.Config.configArr.extauth_email }}' name='extauth_email' id='extauth_email' />
 
-        <label for='extauth_teams'>{{ 'Teams:'|trans }}</label>
+        <label for='extauth_teams'>{{ 'Teams'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' name='extauth_teams' id='extauth_teams' />
 
         <div class='submitButtonDiv'>

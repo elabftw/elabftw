@@ -273,8 +273,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <p class='smallgray'>{{ 'Set to yes for added security.'|trans }}</p>
 
     <label for='email_domain'>{{ 'Enforce a domain name for emails'|trans }}</label>
-    <input id='email_domain' name='email_domain' class='form-control col-md-4' type='text' placeholder='example.com' value='{{ App.Config.configArr.email_domain }}' />
-    <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}</p>
+    <input id='email_domain' name='email_domain' class='form-control col-md-4' type='text' placeholder='example.edu' value='{{ App.Config.configArr.email_domain }}' />
+    <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}<br>
+    {{ 'You can add several domains by separating them with a comma.'|trans }}</p>
 
     <label for='login_tries'>{{ 'Number of allowed login attempts:'|trans }}</label>
     <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.login_tries }}' name='login_tries' id='login_tries' />

@@ -20,7 +20,7 @@ class MakeMultiPdf extends AbstractMake
     /** @var array $idArr the input ids but in an array */
     private $idArr = array();
 
-    /** @var Mpdf $mpdf The mpdf object which contains all information for the multi entiy PDF file */
+    /** @var \Mpdf\Mpdf $mpdf The mpdf object which contains all information for the multi entiy PDF file */
     private $mpdf;
 
     /**

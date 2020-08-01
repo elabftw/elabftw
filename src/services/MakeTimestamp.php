@@ -433,10 +433,11 @@ class MakeTimestamp extends AbstractMake
      */
     private function getHash($file): string
     {
-        if (!is_readable($file)) {
+        $hash = hash_file($this->stampParams['hash'], $file);
+        if ($hash === false) {
             throw new ImproperActionException('The file is not readable.');
         }
-        return hash_file($this->stampParams['hash'], $file);
+        return $hash;
     }
 
     /**

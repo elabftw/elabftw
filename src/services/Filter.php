@@ -146,7 +146,7 @@ class Filter
      * @param string $tag the tag to sanitize
      * @return string
      */
-    public function tag(string $tag): string
+    public static function tag(string $tag): string
     {
         $tag = filter_var($tag, FILTER_SANITIZE_STRING);
         if ($tag === false) {

@@ -21,6 +21,7 @@ use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use function count;
 
 /**
  * Login page
@@ -55,8 +56,8 @@ try {
         $lastname = $App->Request->server->get($lastname_attr);
         $email = $App->Request->server->get($email_attr);
         $teams = array($App->Request->server->get($teams_attr));
-        // Use default team is none is provided
-        if (sizeof($Teams->validateTeams($teams)) == 0) {
+        // Use default team if none is provided
+        if (count($Teams->validateTeams($teams)) === 0) {
             $teams = array('1');
         }
 
@@ -68,7 +69,7 @@ try {
 
         if (($userid = $Auth->getUseridFromEmail($email)) == 0) {
             $App->Users->create($email, $teams, $firstname, $lastname, $pwd);
-            $App->Log->info('New user '.$email.' autocreated');
+            $App->Log->info('New user ' . $email . ' autocreated');
             $userid = $Auth->getUseridFromEmail($email);
         }
         $Session->set('email', $email);

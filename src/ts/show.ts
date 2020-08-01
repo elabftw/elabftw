@@ -207,8 +207,9 @@ $(document).ready(function(){
     notif({'msg': 'Saved', 'res': true});
   });
 
-  // MAKE ZIP/CSV
-  $('.csvzip').on('click', function() {
+  // Export selected menu
+  $('#exportChecked').on('change', function() {
+    const what = $('#exportChecked').val();
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
       const json = {
@@ -218,11 +219,7 @@ $(document).ready(function(){
       notif(json);
       return;
     }
-    // grey out the box to signal it has been clicked
-    $(this).attr('disabled', 'disabled');
-    // also display a wait text
-    $(this).html(i18next.t('please-wait'));
-    window.location.href = `make.php?what=${$(this).data('what')}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
+    window.location.href = `make.php?what=${what}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
   });
 
   // THE DELETE BUTTON FOR CHECKED BOXES

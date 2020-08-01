@@ -54,10 +54,13 @@
             {% endfor %}
           </select>
 
-          <button data-what='zip' class='button btn btn-primary csvzip'>{{ 'Make Zip'|trans }}</button>
-          <button data-what='csv' class='button btn btn-primary csvzip'>{{ 'Make Csv'|trans }}</button>
-          <button data-what='multiPdf' class='button btn btn-primary csvzip'>{{ 'Make PDF'|trans }}</button>
-          <button data-what='json' class='button btn btn-primary csvzip'>{{ 'Make JSON'|trans }}</button>
+          <select autocomplete='off' id='exportChecked'>
+            <option selected disabled>{{ 'Export'|trans }}</option>
+            <option value='zip'>{{ 'Make Zip'|trans }}</option>
+            <option value='csv'>{{ 'Make Csv'|trans }}</option>
+            <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
+            <option value='json'>{{ 'Make JSON'|trans }}</option>
+          </select>
           <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
       <div class='row display-flex'>

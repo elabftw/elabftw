@@ -91,12 +91,19 @@ $(document).ready(function() {
       // the id of the exp/item/tpl
       const id = elem.data('id');
       const stepId = elem.data('stepid');
+      // on the todolist we don't want to grab the type from the page
+      // because it's only steps from experiments
+      // so if the element has a data-type, take that instead
+      let itemType = type;
+      if (elem.data('type')) {
+        itemType = elem.data('type');
+      }
 
       $.post('app/controllers/EntityAjaxController.php', {
         finishStep: true,
         id: id,
         stepId: stepId,
-        type: type
+        type: itemType
       }).done(function() {
         const loadUrl = window.location + ' #steps_div_' + id;
         // reload the step list

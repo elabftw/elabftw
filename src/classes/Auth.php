@@ -103,6 +103,7 @@ class Auth
      */
     public function login(int $userid, string $rememberme = 'on')
     {
+        $this->Session->remove('failed_attempt');
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
         if (\count($teams) > 1) {

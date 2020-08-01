@@ -22,9 +22,7 @@ const Todolist = {
       }).done(function(json) {
         if (json.res) {
           // reload the todolist
-          $('#todoItems-list').load('? #todoItems-list>*', function() {
-            relativeMoment();
-          });
+          Todolist.getTodoItems();
           // and clear the input
           $('#todo').val('');
         } else {

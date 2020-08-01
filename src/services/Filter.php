@@ -12,9 +12,12 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
+use function htmlspecialchars_decode;
 use function mb_strlen;
+use function strip_tags;
 use function strlen;
 use function strtr;
+use function trim;
 
 /**
  * When values need to be filtered
@@ -152,7 +155,7 @@ class Filter
         if ($tag === false) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
         }
-        $tag = \trim(str_replace(array('\\', '|'), array('', ' '), $tag));
+        $tag = trim(str_replace(array('\\', '|'), array('', ' '), $tag));
         // empty tags are disallowed
         if ($tag === '') {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));

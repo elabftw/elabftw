@@ -103,6 +103,7 @@ class Mfa
 
         $Response = new RedirectResponse('../../mfa.php');
         $Response->send();
+        exit;
     }
 
     /**
@@ -129,6 +130,7 @@ class Mfa
 
         $Response = new RedirectResponse($location);
         $Response->send();
+        exit;
     }
 
     /**

@@ -150,11 +150,10 @@
 <h2 {% if hideTitle %}style='display:none'{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
 
 <!-- INFO BOX (FLASH MESSAGES) -->
-{% if not App.Session.has('mfa_secret') %}
-  {% for ok in App.ok %}
-    {{ ok|msg('ok') }}
-  {% endfor %}
-{%endif%}
+
+{% for ok in App.ok %}
+  {{ ok|msg('ok') }}
+{% endfor %}
 {% for ko in App.ko %}
   {{ ko|msg('ko') }}
 {% endfor %}

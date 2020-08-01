@@ -134,6 +134,7 @@ try {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
+
     // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");
@@ -141,6 +142,17 @@ try {
     bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
+
+    if ($App->Session->has('auth')
+        && $App->Session->has('mfa_secret')
+        && !(basename($App->Request->getScriptName()) === 'mfa.php'
+            || basename($App->Request->getScriptName()) === 'MfaController.php')
+    ) {
+        $App->Session->remove('mfa_secret');
+        $App->Session->remove('enable_mfa');
+        $App->Session->remove('mfa_redirect');
+        $App->ko[] = _('Two Factor Authentication not enabled!');
+    }
 } catch (UnauthorizedException $e) {
     // do nothing here, controller will display the error
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {

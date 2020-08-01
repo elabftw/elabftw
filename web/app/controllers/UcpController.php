@@ -63,6 +63,8 @@ try {
 
         // No MFA secret yet but user wants to enable
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
+            $App->Session->getFlashBag()->add('ok', _('Saved'));
+            // This will redirect us right away to mfa.php
             $Mfa->enable('../../ucp.php?tab=2');
 
         // Disable MFA

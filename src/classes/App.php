@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function basename;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Todolist;
@@ -79,7 +80,11 @@ class App
     {
         $this->Request = $request;
         $this->Session = $session;
-        $this->ok = $this->Session->getFlashBag()->get('ok');
+
+        // Don't get 'ok' falshes during mfa
+        if (!(basename($this->Request->getScriptName()) === 'mfa.php' || basename($this->Request->getScriptName()) === 'MfaController.php')) {
+            $this->ok = $this->Session->getFlashBag()->get('ok');
+        }
         $this->ko = $this->Session->getFlashBag()->get('ko');
         $this->warning = $this->Session->getFlashBag()->get('warning');
 

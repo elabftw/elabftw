@@ -41,7 +41,7 @@ try {
     if ($App->Config->configArr['email_domain']) {
         $splitEmail = explode('@', $Request->request->get('email'));
         $splitDomains = explode(',', $App->Config->configArr['email_domain']);
-        if (!in_array($splitEmail[1], $splitDomains)) {
+        if (!in_array($splitEmail[1], $splitDomains, true)) {
             throw new ImproperActionException(_('This email domain is not allowed.'));
         }
     }

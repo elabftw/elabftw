@@ -104,7 +104,7 @@ export function quickSave(type: string, id: string): void {
 
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: any, value: any): void {
-  let params = new URLSearchParams(document.location.search.slice(1));
+  const params = new URLSearchParams(document.location.search.slice(1));
   params.set(key, value);
   // reload the page
   document.location.search = params.toString();

@@ -41,7 +41,7 @@ try {
         }
     } else {
         if ($verifyMFACode) {
-            // Redirect to where one comes from
+            // Redirect to previously specified location
             $location = $App->Session->get('mfa_redirect');
             $App->Session->remove('mfa_redirect');
             $App->Session->remove('mfa_secret');

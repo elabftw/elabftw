@@ -98,8 +98,7 @@ class Auth
      *
      * @param int $userid
      * @param string $rememberme default
-     * @return mixed Return true if user provided correct credentials or an array with the userid
-     * and the teams where login is possible for display on the team selection page
+     * @return mixed Return true or an array with the teams where login is possible for display on the team selection page
      */
     public function login(int $userid, string $rememberme = 'on')
     {

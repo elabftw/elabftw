@@ -688,6 +688,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='extauth_teams'>{{ 'Teams'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' name='extauth_teams' id='extauth_teams' />
 
+        <label for='logout_url'>{{ 'Logout URL'|trans }}</label>
+        <input class='form-control col-md-4' type='text' placeholder='https://idp.example.edu/saml/logout' value='{{ App.Config.configArr.logout_url }}' name='logout_url' id='logout_url' />
+
         <div class='submitButtonDiv'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>

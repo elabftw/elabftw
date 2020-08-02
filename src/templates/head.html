@@ -22,10 +22,12 @@
   <link rel='stylesheet' media='all' href='app/css/elabftw.min.css?v={{ v }}' />
   <link rel='stylesheet' media='all' href='app/css/vendor.min.css?v={{ v }}' />
 
-  <script src='app/js/vendors~main.bundle.js?v={{ v }}'></script>
-  <script src='app/js/main.bundle.js?v={{ v }}'></script>
-  <!-- concatenated JS built by grunt for non es6 libraries -->
-  <script src='app/js/vendor.min.js?v={{ v }}'></script>
+  <script defer src='app/js/vendors~main.bundle.js?v={{ v }}'></script>
+  <!-- the main JS bundle with all the elabftw TS code (see builder.js) -->
+  <script defer src='app/js/main.bundle.js?v={{ v }}'></script>
+  <!-- concatenated JS built by grunt for non es6 libraries (see Gruntfile.js) -->
+  <script defer src='app/js/vendor.min.js?v={{ v }}'></script>
+  <script defer src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 
 </head>
 
@@ -78,6 +80,13 @@
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs'></i> {{ 'User panel'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user'></i> {{ 'My Profile'|trans }}</a>
               <a class='dropdown-item todoToggle' href='#'><i class='fas fa-list'></i> {{ 'Todolist'|trans }}</a>
+              {% if App.Session.get('is_admin') %}
+                <a class='dropdown-item' href='admin.php'><i class='fas fa-tools'></i> {{ 'Admin panel'|trans }}</a>
+              {% endif %}
+              {% if App.Session.get('is_sysadmin') %}
+                <a class='dropdown-item' href='sysconfig.php'><i class='fas fa-tools' style='color:#e6614c'></i> {{ 'Sysadmin panel'|trans }}</a>
+              {% endif %}
+
             {% endif %}
             <a class='dropdown-item modalToggle' data-modal='helpModal' href='#'><i class='fas fa-question-circle'></i> {{ 'Help'|trans }}</a>
             <div class='dropdown-divider'></div>

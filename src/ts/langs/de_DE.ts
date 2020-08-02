@@ -7,6 +7,7 @@ const t = {
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Bist du sicher?",
     "generic-delete-warning": "Element löschen?",
     "link-delete-warning": "Diesen Link löschen?",
+    "please-wait": "Warten Sie mal",
     "step-delete-warning": "Diesen Schritt löschen?",
     "tag-delete-warning": "Schlagwort löschen?",
     "upload-file-comment": "Dateikommentar",

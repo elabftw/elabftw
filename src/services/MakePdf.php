@@ -109,7 +109,7 @@ class MakePdf extends AbstractMake
      *
      * @return Mpdf
      */
-    public function initializeMpdf($multiEntity = false): Mpdf
+    public function initializeMpdf(bool $multiEntity = false): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -77,17 +78,8 @@ abstract class AbstractEntity
     /** @var string $queryFilter inserted in sql */
     public $queryFilter = '';
 
-    /** @var string $order inserted in sql */
-    public $order = 'date';
-
-    /** @var string $sort inserted in sql */
-    public $sort = 'DESC';
-
-    /** @var string $limit limit for sql */
-    public $limit = '';
-
-    /** @var string $offset offset for sql */
-    public $offset = '';
+    /** @var DisplayParams $DisplayParams */
+    public $DisplayParams;
 
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
@@ -237,12 +229,13 @@ abstract class AbstractEntity
             $this->queryFilter,
             $this->idFilter,
             'GROUP BY id ORDER BY',
-            $this->order,
-            $this->sort,
+            $this->getOrderSql(),
+            $this->DisplayParams->sort,
             ', entity.id',
-            $this->sort,
-            $this->limit,
-            $this->offset,
+            $this->DisplayParams->sort,
+            // add one so we can display Next page if there are more things to display
+            'LIMIT ' . (string) ($this->DisplayParams->limit + 1),
+            'OFFSET ' . (string) $this->DisplayParams->offset,
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -385,28 +378,15 @@ abstract class AbstractEntity
     }
 
     /**
-     * Set a limit for sql read. The limit is n times the wanted number of
-     * displayed results so we can remove the ones without read access
-     * and still display enough of them
+     * Set the DisplayParams property and build the sql params for it
      *
-     * @param int $num number of items to ignore
+     * @param DisplayParams $displayParams
      * @return void
      */
-    public function setLimit(int $num): void
+    public function setDisplayParams(DisplayParams $displayParams): void
     {
-        $num += 1;
-        $this->limit = 'LIMIT ' . (string) $num;
-    }
-
-    /**
-     * Add an offset to the displayed results
-     *
-     * @param int $num number of items to ignore
-     * @return void
-     */
-    public function setOffset(int $num): void
-    {
-        $this->offset = 'OFFSET ' . (string) $num;
+        $this->DisplayParams = $displayParams;
+        $this->queryFilter = Tools::getSearchSql($this->DisplayParams->query, 'and', '', $this->type);
     }
 
     /**
@@ -720,6 +700,31 @@ abstract class AbstractEntity
     }
 
     /**
+     * Order by in sql
+     *
+     * @return string the column for order by
+     */
+    protected function getOrderSql(): string
+    {
+        switch ($this->DisplayParams->order) {
+            case 'cat':
+                return 'categoryt.id';
+            case 'date':
+            case 'rating':
+            case 'title':
+            case 'id':
+            case 'lastchange':
+                return 'entity.lastchange';
+            case 'comment':
+                return 'commentst.recent_comment';
+            case 'user':
+                return 'entity.userid';
+            default:
+                return 'date';
+        }
+    }
+
+    /**
      * Remove current entity from pinned of current user
      *
      * @return void
@@ -746,7 +751,6 @@ abstract class AbstractEntity
      */
     private function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
-        $teamEventsJoin = '';
         if ($fullSelect) {
             // get all the columns of entity table
             $select = 'SELECT DISTINCT entity.*,

@@ -59,6 +59,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // use this setting to prevent bug in fullcalendar
   // see https://github.com/fullcalendar/fullcalendar/issues/5544
   config.autoReplaceSvg = 'nest';
+  // this setting has a side-effect with the top right fa icon
+  // so we set it at a correct size again
+  $('.fa-user-circle').css('font-size', '130%');
 
   // if we show all items, they are not editable
   let editable = true;

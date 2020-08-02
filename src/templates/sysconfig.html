@@ -273,8 +273,9 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <p class='smallgray'>{{ 'Set to yes for added security.'|trans }}</p>
 
     <label for='email_domain'>{{ 'Enforce a domain name for emails'|trans }}</label>
-    <input id='email_domain' name='email_domain' class='form-control col-md-4' type='text' placeholder='example.com' value='{{ App.Config.configArr.email_domain }}' />
-    <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}</p>
+    <input id='email_domain' name='email_domain' class='form-control col-md-4' type='text' placeholder='example.edu' value='{{ App.Config.configArr.email_domain }}' />
+    <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}<br>
+    {{ 'You can add several domains by separating them with a comma.'|trans }}</p>
 
     <label for='login_tries'>{{ 'Number of allowed login attempts:'|trans }}</label>
     <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.login_tries }}' name='login_tries' id='login_tries' />
@@ -421,14 +422,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <label for='saml-entityid'>EntityId:</label>
               <input class='form-control col-md-4' type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
 
-              <label for='saml-acs-url'>Assertion consumer service URL: (add /index.php?acs to baseurl)</label>
-              <input class='form-control col-md-4' type='url' id='saml-acs-url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ App.Config.configArr.saml_acs_url }}' />
-
               <label for='saml-acs-binding'>SAML protocol binding to be used when returning the Response message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
               <input class='form-control col-md-4' type='text' id='saml-acs-binding' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_acs_binding}}' />
-
-              <label for='saml-slo-url'>Single Logout Service</label>
-              <input class='form-control col-md-4' type='url' id='saml-slo-url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_slo_url }}' />
 
               <label for='saml-slo-binding'>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
               <input class='form-control col-md-4' type='text' id='saml-slo-binding' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_slo_binding }}' />
@@ -672,20 +667,23 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
           <p class='smallgray'>{{ 'If the server manages authentication, then you can provide here the environment variables names for user information.'|trans }}</p>
 
-        <label for='extauth_remote_user'>{{ 'Remote user:'|trans }}</label>
+        <label for='extauth_remote_user'>{{ 'Remote user'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='REMOTE_USER' value='{{ App.Config.configArr.extauth_remote_user }}' name='extauth_remote_user' id='extauth_remote_user' />
 
-        <label for='extauth_firstname'>{{ 'First name:'|trans }}</label>
+        <label for='extauth_firstname'>{{ 'Firstname'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_givenName' value='{{ App.Config.configArr.extauth_firstname }}' name='extauth_firstname' id='extauth_firstname' />
 
-        <label for='extauth_lastname'>{{ 'Family name:'|trans }}</label>
+        <label for='extauth_lastname'>{{ 'Lastname'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_sn' value='{{ App.Config.configArr.extauth_lastname }}' name='extauth_lastname' id='extauth_lastname' />
 
-        <label for='extauth_email'>{{ 'E-mail address:'|trans }}</label>
+        <label for='extauth_email'>{{ 'Email'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_mail' value='{{ App.Config.configArr.extauth_email }}' name='extauth_email' id='extauth_email' />
 
-        <label for='extauth_teams'>{{ 'Teams:'|trans }}</label>
+        <label for='extauth_teams'>{{ 'Teams'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' name='extauth_teams' id='extauth_teams' />
+
+        <label for='logout_url'>{{ 'Logout URL'|trans }}</label>
+        <input class='form-control col-md-4' type='text' placeholder='https://idp.example.edu/saml/logout' value='{{ App.Config.configArr.logout_url }}' name='logout_url' id='logout_url' />
 
         <div class='submitButtonDiv'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>

@@ -7,6 +7,7 @@ const t = {
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",
     "generic-delete-warning": "Odstrániť toto?",
     "link-delete-warning": "Odstrániť tento odkaz?",
+    "please-wait": "Prosím čakajte",
     "step-delete-warning": "Odstrániť tento krok?",
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",

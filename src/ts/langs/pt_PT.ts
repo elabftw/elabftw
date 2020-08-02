@@ -7,6 +7,7 @@ const t = {
     "entity-delete-warning": "O (s) item (s) selecionado (s) e todos os dados associados serão excluídos permanentemente. Isto não pode ser desfeito. Você tem certeza?",
     "generic-delete-warning": "Eliminar isto?",
     "link-delete-warning": "Excluir este link?",
+    "please-wait": "Por favor, espere",
     "step-delete-warning": "Excluir esta etapa?",
     "tag-delete-warning": "Excluir esta tag?",
     "upload-file-comment": "Comentário no arquivo",

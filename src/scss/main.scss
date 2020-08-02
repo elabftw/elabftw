@@ -681,11 +681,6 @@ the form-control fails to do that so we do the border ourselves */
     float: left;
 }
 
-/* EXPERIMENTS/DATABASE - FILTER & ORDER */
-form#filter-order-sort select {
-    margin-left: 2px;
-}
-
 /*
  * fix the white space when columned items don't have the same height
  * see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643

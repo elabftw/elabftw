@@ -363,7 +363,6 @@ class Users
         $firstname = Filter::sanitize($params['firstname']);
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
-        $UsersHelper = new UsersHelper();
 
         // (Sys)admins can only disable 2FA
         $mfaSql = '';

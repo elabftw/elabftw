@@ -6,6 +6,7 @@
  * @package elabftw
  */
 declare let key: any;
+declare let MathJax: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
 import tinymce from 'tinymce/tinymce';
@@ -307,7 +308,16 @@ $(document).ready(function() {
 
   // DISPLAY MARKDOWN EDITOR
   if ($('#body_area').hasClass('markdown-textarea')) {
-    ($('.markdown-textarea') as any).markdown();
+    ($('.markdown-textarea') as any).markdown({
+      onPreview: function() {
+        // ask mathjax to reparse the page
+        // if we call typeset directly it doesn't work
+        // so add a timeout
+        setTimeout(function() {
+          MathJax.typeset();
+        }, 1);
+      }
+    });
   }
 
   // INSERT IMAGE AT CURSOR POSITION IN TEXT

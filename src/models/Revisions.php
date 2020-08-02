@@ -148,12 +148,14 @@ class Revisions implements CrudInterface
 
     public function prune(): int
     {
+        $numberToRemove = 0;
         $current = count($this->readAll());
         $max = $this->getMaxCount();
         if ($current > $max) {
             $numberToRemove = $max - $current;
             $this->destroyOld($numberToRemove);
         }
+        return $numberToRemove;
     }
 
     /**

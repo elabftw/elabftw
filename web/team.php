@@ -45,6 +45,7 @@ try {
     $Database = new Database($App->Users);
     // we only want the bookable type of items
     $Database->addFilter('categoryt.bookable', '1');
+    $Database->setDisplayParams(new DisplayParams($App));
     $Scheduler = new Scheduler($Database);
 
     // disabled because takes too much resources

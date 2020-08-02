@@ -91,19 +91,26 @@ $(document).ready(function() {
       // the id of the exp/item/tpl
       const id = elem.data('id');
       const stepId = elem.data('stepid');
+      // on the todolist we don't want to grab the type from the page
+      // because it's only steps from experiments
+      // so if the element has a data-type, take that instead
+      let itemType = type;
+      if (elem.data('type')) {
+        itemType = elem.data('type');
+      }
 
       $.post('app/controllers/EntityAjaxController.php', {
         finishStep: true,
         id: id,
         stepId: stepId,
-        type: type
+        type: itemType
       }).done(function() {
+        const loadUrl = window.location + ' #steps_div_' + id;
         // reload the step list
-        $('#steps_div_' + id).load('?mode=edit&id=' + id + ' #steps_div_' + id, function() {
+        $('#steps_div_' + id).load(loadUrl, function() {
           relativeMoment();
+          makeSortableGreatAgain();
         });
-        // clear input field
-        elem.val('');
       });
     }
 
@@ -120,10 +127,7 @@ $(document).ready(function() {
         }).done(function(json) {
           notif(json);
           if (json.res) {
-            let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
-            if (type === 'experiments_templates') {
-              loadUrl = '? #steps_div_' + id;
-            }
+            const loadUrl = window.location + ' #steps_div_' + id;
             // reload the step list
             $('#steps_div_' + id).load(loadUrl, function() {
               relativeMoment();
@@ -166,6 +170,7 @@ $(document).ready(function() {
         updateStep: true,
         body: value,
         id: $(this).data('id'),
+        stepid: $(this).data('stepid'),
       });
 
       return(value);

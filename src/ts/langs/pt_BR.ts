@@ -7,6 +7,7 @@ const t = {
     "entity-delete-warning": "Os items selecionados e todas os dados associados com eles serão permanentemente apagados. Não vai ter jeito de voltar atrás. Tem certeza?",
     "generic-delete-warning": "Apagar isto?",
     "link-delete-warning": "Apagar este link?",
+    "please-wait": "Por favor, espere",
     "step-delete-warning": "Apagar este passo?",
     "tag-delete-warning": "Apagar esta etiqueta?",
     "upload-file-comment": "Comentário no arquivo",

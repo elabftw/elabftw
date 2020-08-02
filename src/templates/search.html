@@ -1,8 +1,8 @@
 {% include('head.html') %}
 
 <!-- SEARCH PAGE BEGIN -->
+<form name="search" method="get" action="search.php">
 <section class='searchform box'>
-    <form name="search" method="get" action="search.php">
         <div class='row'>
             <!-- SEARCH IN-->
             <div class='col-md-3'>
@@ -25,7 +25,7 @@
                 <label for='tags-select'>{{ 'With the tag'|trans }}</label>
                 <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
                     {% for tag in tagsArr %}
-                    <option value='{{ tag.tag }}' {{ tag.tag in selectedTagsArr ? 'selected' }}>{{ tag.tag|raw }}</option>
+                    <option value='{{ tag.tag }}' {{ tag.tag in App.Request.query.get('tags') ? 'selected' }}>{{ tag.tag|raw }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -148,6 +148,8 @@
               </span>
             </a>
         </div>
-    </form>
-</section>
+  </section>
+<!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
+  it avoids having to repeat the query params -->
+{{ not App.Request.query.has('type') ? '</form>' }}
 <a href='#' id='anchor'></a>

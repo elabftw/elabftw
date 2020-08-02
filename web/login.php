@@ -11,6 +11,7 @@
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -33,6 +34,8 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
+    $Teams = new Teams($App->Users);
+
     // Check if already logged in
     if ($Session->has('auth') || $Session->has('anon')) {
         $Response = new RedirectResponse('experiments.php');
@@ -41,38 +44,29 @@ try {
     }
 
     // Check for external authentication by web server
-    $remote_user_attr = $App->Config->configArr['extauth_remote_user'];
-    $remote_user = $App->Request->server->get($remote_user_attr);
-    if (isset($remote_user)) {
-        $Teams = new Teams($App->Users);
+    $remoteUser = $App->Request->server->get($App->Config->configArr['extauth_remote_user']);
 
-        $firstname_attr = $App->Config->configArr['extauth_firstname'];
-        $lastname_attr = $App->Config->configArr['extauth_lastname'];
-        $email_attr = $App->Config->configArr['extauth_email'];
-        $teams_attr = $App->Config->configArr['extauth_teams'];
-
-        $firstname = $App->Request->server->get($firstname_attr);
-        $lastname = $App->Request->server->get($lastname_attr);
-        $email = $App->Request->server->get($email_attr);
-        $teams = array($App->Request->server->get($teams_attr));
-        // Use default team is none is provided
-        if (sizeof($Teams->validateTeams($teams)) == 0) {
+    if (isset($remoteUser)) {
+        $firstname = $App->Request->server->get($App->Config->configArr['extauth_firstname']);
+        $lastname = $App->Request->server->get($App->Config->configArr['extauth_lastname']);
+        $email = $App->Request->server->get($App->Config->configArr['extauth_email']);
+        $teams = array($App->Request->server->get($App->Config->configArr['extauth_teams']));
+        // Use default team if none is provided
+        if (count($Teams->validateTeams($teams)) === 0) {
             $teams = array('1');
         }
 
-        /*
-         * Unused password, but $App->Users->create() insists
-         * on it being at least 8 chars long.
-         */
-        $pwd = '********';
-
-        if (($userid = $Auth->getUseridFromEmail($email)) == 0) {
-            $App->Users->create($email, $teams, $firstname, $lastname, $pwd);
-            $App->Log->info('New user '.$email.' autocreated');
+        if (($userid = $Auth->getUseridFromEmail($email)) === 0) {
+            $App->Users->create($email, $teams, $firstname, $lastname, '');
+            $App->Log->info('New user ' . $email . ' autocreated from external auth');
             $userid = $Auth->getUseridFromEmail($email);
         }
-        $Session->set('email', $email);
         $Auth->login($userid);
+        // add this to the session so for logout we know we need to hit the logout_url from config to logout from external server too
+        $Session->set('is_ext_auth', 1);
+        $Response = new RedirectResponse('experiments.php');
+        $Response->send();
+        exit;
     }
 
     $BannedUsers = new BannedUsers($App->Config);
@@ -111,7 +105,6 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
 
-    $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
 
     $template = 'login.html';

@@ -40,8 +40,8 @@ class Uploads implements CrudInterface
 {
     use UploadTrait;
 
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
-    private const BIG_FILE_THRESHOLD = 5000000;
+    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
+    private const BIG_FILE_THRESHOLD = 50000000;
 
     /** @var AbstractEntity $Entity an entity */
     public $Entity;

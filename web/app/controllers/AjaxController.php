@@ -20,6 +20,7 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
+use Elabftw\Models\Todolist;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -86,17 +87,38 @@ try {
         $Response->setData($res);
     }
 
+    // GET TODOITEMS
+    if ($Request->query->has('getTodoItems')) {
+        $Todolist = new Todolist($App->Users);
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $Todolist->readAll(),
+        ));
+    }
+
+    // GET EXPERIMENTS STEPS FOR TODOLIST
+    if ($Request->query->has('getExperimentsSteps')) {
+        $Experiments = new Experiments($App->Users);
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $Experiments->getSteps(),
+        ));
+    }
+
     // UPDATE STEP BODY
     if ($Request->request->has('updateStep')) {
         $id = (int) $Request->request->get('id');
+        $stepid = (int) $Request->request->get('stepid');
         if ($Request->request->get('type') === 'experiments') {
             $Entity = new Experiments($App->Users, $id);
+        } elseif ($Request->request->get('type') === 'experiments_templates') {
+            $Entity = new Templates($App->Users, $id);
         } else {
             $Entity = new Database($App->Users, $id);
         }
         $Entity->canOrExplode('write');
         $Steps = $Entity->Steps;
-        $Steps->updateBody($id, $Request->request->get('body'));
+        $Steps->updateBody($stepid, $Request->request->get('body'));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(

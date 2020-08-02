@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users;
+use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -35,36 +36,26 @@ try {
     // CSRF
     $App->Csrf->validate();
 
+    // you need to be at least admin to validate/archive/delete a user
+    if (!$Session->get('is_admin')) {
+        throw new IllegalActionException('Non admin user tried to edit another user.');
+    }
+    $UsersHelper = new UsersHelper();
+    $targetUser = new Users((int) $Request->request->get('userid'));
+    $targetUserTeams = $UsersHelper->getTeamsIdFromUserid((int) $targetUser->userData['userid']);
+
+    if (!in_array((string) $App->Users->userData['team'], $targetUserTeams, true) && !$Session->get('is_sysadmin')) {
+        throw new IllegalActionException('User tried to edit user from other team.');
+    }
+
     // VALIDATE USER
     if ($Request->request->has('usersValidate')) {
-
-        // you need to be at least admin to validate a user
-        if (!$Session->get('is_admin')) {
-            throw new IllegalActionException('Non admin user tried to validate user.');
-        }
-
-        $targetUser = new Users((int) $Request->request->get('userid'));
-
-        // check we validate user of our team
-        /* TODO
-        if (((int) $App->Users->userData['team'] !== (int) $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
-            throw new IllegalActionException('User tried to validate user from other team.');
-        }
-         */
-
         // all good, validate user
         $targetUser->validate();
     }
 
     // ARCHIVE USER TOGGLE
     if ($Request->request->has('toggleArchiveUser')) {
-
-        // you need to be at least admin to archive a user
-        if (!$Session->get('is_admin')) {
-            throw new IllegalActionException('Non admin user tried to archive another user.');
-        }
-        $targetUser = new Users((int) $Request->request->get('userid'));
-
         if ($targetUser->userData['validated'] === '0') {
             throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
         }
@@ -77,24 +68,10 @@ try {
         }
     }
 
-
     // DESTROY
     if ($Request->request->has('usersDestroy')) {
-
-        // you need to be at least admin to delete a user
-        if (!$Session->get('is_admin')) {
-            throw new IllegalActionException('Non admin user tried to delete another user.');
-        }
-
-        // load data on the user to delete
-        $targetUser = new Users((int) $Request->request->get('userid'));
         if ($targetUser->userData['is_sysadmin']) {
             throw new IllegalActionException('Sysadmin users cannot be deleted!');
-        }
-
-        // need to be sysadmin to delete user from other team
-        if (($App->Users->userData['team'] !== $targetUser->userData['team']) && !$Session->get('is_sysadmin')) {
-            throw new IllegalActionException('Admin user tried to delete user from other team.');
         }
 
         $targetUser->destroy();

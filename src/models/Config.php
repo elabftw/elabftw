@@ -183,9 +183,7 @@ class Config
             ('saml_strict', '1'),
             ('saml_baseurl', NULL),
             ('saml_entityid', NULL),
-            ('saml_acs_url', NULL),
             ('saml_acs_binding', NULL),
-            ('saml_slo_url', NULL),
             ('saml_slo_binding', NULL),
             ('saml_nameidformat', NULL),
             ('saml_x509', NULL),
@@ -226,7 +224,8 @@ class Config
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),
             ('extauth_email', ''),
-            ('extauth_teams', '');";
+            ('extauth_teams', ''),
+            ('logout_url', '');";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

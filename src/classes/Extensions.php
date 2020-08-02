@@ -59,8 +59,6 @@ final class Extensions
     public const HAS_EXIF = array(
         'jpeg',
         'jpg',
-        'tif',
-        'tiff',
     );
 
     /**

@@ -66,9 +66,6 @@ class App
     /** @var array $teamConfigArr the config for the current team */
     public $teamConfigArr = array();
 
-    /** @var string $logoutUrl custom logout URL */
-    public $logoutUrl = '';
-
     /**
      * Constructor
      *
@@ -92,11 +89,6 @@ class App
         // UPDATE SQL SCHEMA if necessary or show error message if version mismatch
         $Update = new Update($this->Config, new Sql());
         $Update->checkSchema();
-
-        $this->logoutUrl = 'app/logout.php';
-        if (!empty($this->Config->configArr['logout_url'])) {
-            $this->logoutUrl = $this->Config->configArr['logout_url'];
-        }
     }
 
     /**

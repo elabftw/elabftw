@@ -62,6 +62,8 @@ try {
             $userid = $Auth->getUseridFromEmail($email);
         }
         $Auth->login($userid);
+        // add this to the session so for logout we know we need to hit the logout_url from config to logout from external server too
+        $Session->set('is_ext_auth', 1);
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;

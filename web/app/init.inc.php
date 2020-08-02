@@ -143,6 +143,7 @@ try {
     textdomain($domain);
     // END i18n
 
+    // Clean up after user initiated mfa activation but did not succeed/complete.
     if ($App->Session->has('auth')
         && $App->Session->has('mfa_secret')
         && !(basename($App->Request->getScriptName()) === 'mfa.php'

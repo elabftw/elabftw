@@ -11,7 +11,6 @@
 
 namespace Elabftw\Elabftw;
 
-use function count;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;

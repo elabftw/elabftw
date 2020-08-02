@@ -685,6 +685,21 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='logout_url'>{{ 'Logout URL'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='https://idp.example.edu/saml/logout' value='{{ App.Config.configArr.logout_url }}' name='logout_url' id='logout_url' />
 
+        <label for='saml-team-default'>If no team attribute is found, to which team user is assigned?</label>
+        <select class='form-control col-md-4' name='saml_team_default' id='saml-team-default'>
+          {% for team in teamsArr %}
+            <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
+          {% endfor %}
+          <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+        </select>
+
+        <label for='saml-team-create'>Create team sent by server if it doesn't exist already:</label>
+        <select class='form-control col-md-4' id='saml-team-create' name='saml_team_create'>
+            <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
+            <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
+        </select>
+
+
         <div class='submitButtonDiv'>
           <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
         </div>

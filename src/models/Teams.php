@@ -89,7 +89,7 @@ class Teams implements CrudInterface
         $teamIdArr = array();
         foreach ($teams as $team) {
             try {
-                $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team);
+                $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team ?? '');
             } catch (ImproperActionException $e) {
                 if ($Config->configArr['saml_team_create']) {
                     $teamIdArr[] = $this->create($team);

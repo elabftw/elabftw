@@ -86,7 +86,7 @@ class Saml
                 // returned to the requester, in this case our SP.
                 'assertionConsumerService' => array(
                     // URL Location where the <Response> from the IdP will be returned
-                    'url' => $this->Config->configArr['saml_acs_url'],
+                    'url' => $this->Config->configArr['saml_baseurl'] . '/index.php?acs',
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
@@ -112,7 +112,7 @@ class Saml
                 // returned to the requester, in this case our SP.
                 'singleLogoutService' => array(
                     // URL Location where the <Response> from the IdP will be returned
-                    'url' => $this->Config->configArr['saml_slo_url'],
+                    'url' => $this->Config->configArr['saml_baseurl'] . '/app/logout.php?sls',
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only

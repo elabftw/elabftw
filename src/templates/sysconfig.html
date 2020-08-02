@@ -422,14 +422,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <label for='saml-entityid'>EntityId:</label>
               <input class='form-control col-md-4' type='url' id='saml-entityid' name='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
 
-              <label for='saml-acs-url'>Assertion consumer service URL: (add /index.php?acs to baseurl)</label>
-              <input class='form-control col-md-4' type='url' id='saml-acs-url' name='saml_acs_url' placeholder='https://elabftw.example.org/index.php?acs' value='{{ App.Config.configArr.saml_acs_url }}' />
-
               <label for='saml-acs-binding'>SAML protocol binding to be used when returning the Response message. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
               <input class='form-control col-md-4' type='text' id='saml-acs-binding' name='saml_acs_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_acs_binding}}' />
-
-              <label for='saml-slo-url'>Single Logout Service</label>
-              <input class='form-control col-md-4' type='url' id='saml-slo-url' name='saml_slo_url' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_slo_url }}' />
 
               <label for='saml-slo-binding'>Single Logout Service binding. Default is "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect".</label>
               <input class='form-control col-md-4' type='text' id='saml-slo-binding' name='saml_slo_binding' placeholder='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' value='{{ App.Config.configArr.saml_slo_binding }}' />

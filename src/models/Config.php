@@ -227,7 +227,7 @@ class Config
             ('extauth_lastname', ''),
             ('extauth_email', ''),
             ('extauth_teams', ''),
-            ('logout_url', NULL);";
+            ('logout_url', '');";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

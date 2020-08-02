@@ -23,16 +23,16 @@ use function time;
  */
 class Mfa
 {
-    /** @var SessionInterface $Session the current session */
+    /** @var Session $Session Current session */
     public $Session;
 
     /** @var Db $Db SQL Database */
     protected $Db;
 
-    /** @var TwoFactorAuth $Mfa */
+    /** @var TwoFactorAuth $TwoFactorAuth PHP Class for handling two/multi-factor authentication */
     private $TwoFactorAuth;
 
-    /** @var Request $Request current request */
+    /** @var Request $Request Current request */
     private $Request;
 
     /**
@@ -50,9 +50,10 @@ class Mfa
     }
 
     /**
-     * Generate a new MFA secret
+     * Test if user has 2FA activated
+     * Redirect to multi-factor code submission if active
      *
-     * @param string $redirect Where do you wan to go after the verification
+     * @param string $redirect Where user will be redirected to after code submission
      * @return void
      */
     public function needVerification(int $userid, string $redirect): void
@@ -69,7 +70,7 @@ class Mfa
     }
 
     /**
-     * Does user use two factor authentication?
+     * Load MFA secret of user from databse if exists
      *
      * @param int $userid
      * @return mixed MFA secret or false
@@ -90,8 +91,9 @@ class Mfa
 
     /**
      * Generate a new MFA secret
+     * Redirect to multi-factor code submission
      *
-     * @param string $redirect Where do you wan to go after the verification
+     * @param string $redirect Where user will be redirected to after code submission
      * @return void
      */
     public function enable(string $redirect): void
@@ -108,6 +110,7 @@ class Mfa
 
     /**
      * Save secret in database
+     * Redirect to previously specified location
      *
      * @return void
      */
@@ -134,7 +137,7 @@ class Mfa
     }
 
     /**
-     * Disable two factor authentication for user
+     * Disable two-factor authentication for user
      *
      * @param int $uderid
      * @return void

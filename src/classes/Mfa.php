@@ -70,7 +70,7 @@ class Mfa
     }
 
     /**
-     * Load MFA secret of user from databse if exists
+     * Load MFA secret of user from database if exists
      *
      * @param int $userid
      * @return mixed MFA secret or false

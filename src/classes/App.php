@@ -77,7 +77,7 @@ class App
         $this->Request = $request;
         $this->Session = $session;
 
-        // Don't get 'ok' falshes during mfa
+        // Don't get 'ok' flashes during mfa
         if (!(basename($this->Request->getScriptName()) === 'mfa.php' || basename($this->Request->getScriptName()) === 'MfaController.php')) {
             $this->ok = $this->Session->getFlashBag()->get('ok');
         }

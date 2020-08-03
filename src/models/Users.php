@@ -369,7 +369,7 @@ class Users
         if ($params['use_mfa'] === 'off') {
             $mfaSql = ', mfa_secret = null';
         } elseif ($params['use_mfa'] === 'on' && !$this->userData['mfa_secret']) {
-            throw new ImproperActionException('Only users themselves can activate two factor authetication!');
+            throw new ImproperActionException('Only users themselves can activate two factor authentication!');
         }
 
         // check email is not already in db

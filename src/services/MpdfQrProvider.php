@@ -27,7 +27,7 @@ class MpdfQrProvider implements IQRCodeProvider
     /** @var array $color */
     public $color = array();
 
-    /** @var array $compression */
+    /** @var int $compression */
     public $compression;
 
     /**

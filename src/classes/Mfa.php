@@ -84,7 +84,7 @@ class Mfa
         $this->Db->execute($req);
         $res = $req->fetchColumn();
 
-        if ($res !== null || $res !== false) {
+        if ($res === null || $res === false) {
             return (string) $res;
         }
         return false;
@@ -169,7 +169,7 @@ class Mfa
      */
     public function verifyCode(): bool
     {
-        if ($this->TwoFactorAuth->verifyCode($this->Session->get('mfa_secret'), Filter::sanitize($this->Request->request->get('mfa_code')))) {
+        if ($this->TwoFactorAuth->verifyCode($this->Session->get('mfa_secret'), Filter::sanitize((string) $this->Request->request->get('mfa_code')))) {
             $this->Session->set('mfa_verified', time());
             return true;
         }

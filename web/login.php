@@ -11,7 +11,6 @@
 
 namespace Elabftw\Elabftw;
 
-use function count;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -50,11 +49,19 @@ try {
         $firstname = $App->Request->server->get($App->Config->configArr['extauth_firstname']);
         $lastname = $App->Request->server->get($App->Config->configArr['extauth_lastname']);
         $email = $App->Request->server->get($App->Config->configArr['extauth_email']);
-        $teams = array($App->Request->server->get($App->Config->configArr['extauth_teams']));
-        // Use default team if none is provided
-        if (count($Teams->validateTeams($teams)) === 0) {
-            $teams = array('1');
+
+        // try and get the team
+        $teamId = $App->Request->server->get($App->Config->configArr['extauth_teams']);
+        // no team found!
+        if (empty($teamId)) {
+            // check for the default team
+            $teamId = (int) $App->Config->configArr['saml_team_default'];
+            // or throw error if sysadmin configured it like that
+            if ($teamId === 0) {
+                throw new ImproperActionException('Could not find team ID to assign user!');
+            }
         }
+        $teams = array((string) $teamId);
 
         if (($userid = $Auth->getUseridFromEmail($email)) === 0) {
             $App->Users->create($email, $teams, $firstname, $lastname, '');

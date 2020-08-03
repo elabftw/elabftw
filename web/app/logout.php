@@ -8,13 +8,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Elabftw;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use OneLogin\Saml2\Auth as SamlAuth;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
 require_once \dirname(__DIR__, 2) . '/config.php';

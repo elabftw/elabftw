@@ -60,7 +60,7 @@ class Mfa
     public function needVerification(int $userid, string $redirect): void
     {
         $MFASecret = $this->getSecret($userid);
-        if ($MFASecret && !$this->Session->has('mfa_verified')) {
+        if ($MFASecret !== '' && !$this->Session->has('mfa_verified')) {
             $this->Session->set('mfa_secret', $MFASecret);
             $this->Session->set('mfa_redirect', $redirect);
 
@@ -74,7 +74,7 @@ class Mfa
      * Load MFA secret of user from database if exists
      *
      * @param int $userid
-     * @return mixed MFA secret or false
+     * @return string MFA secret or an empty string if there is no secret
      */
     public function getSecret(int $userid)
     {
@@ -84,10 +84,8 @@ class Mfa
         $this->Db->execute($req);
         $res = $req->fetchColumn();
 
-        if ($res === null || $res === false) {
-            return (string) $res;
-        }
-        return false;
+        // No need to check for $res = false or null as casting takes care of it.
+        return (string) $res;
     }
 
     /**

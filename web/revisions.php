@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * revisions.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 

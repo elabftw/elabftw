@@ -139,14 +139,16 @@ class Mfa
      * Disable two-factor authentication for user
      *
      * @param int $uderid
-     * @return void
+     * @return bool true if successful
      */
-    public function disable(int $userid): void
+    public function disable(int $userid): bool
     {
         $sql = 'UPDATE users SET mfa_secret = null WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
         $this->Db->execute($req);
+        
+        return (bool) $req->rowCount();
     }
 
     /**

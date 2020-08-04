@@ -46,7 +46,7 @@ try {
             $location = $App->Session->get('mfa_redirect');
             $App->Session->remove('mfa_redirect');
             $App->Session->remove('mfa_secret');
-        } elseif (!$verifyMFACode && !$App->Session->has('auth')) {
+        } elseif ($verifyMFACode === false && $App->Session->has('auth') === false) {
             $Auth->increaseFailedAttempt();
         }
     }

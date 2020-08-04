@@ -138,7 +138,7 @@ class Mfa
     /**
      * Disable two-factor authentication for user
      *
-     * @param int $uderid
+     * @param int $userid
      * @return bool true if successful
      */
     public function disable(int $userid): bool

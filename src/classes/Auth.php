@@ -107,7 +107,7 @@ class Auth
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
         if (\count($teams) > 1) {
-            return array($teams);
+            return $teams;
         }
         $this->loginInTeam($userid, (int) $teams[0]['id'], $rememberme);
 

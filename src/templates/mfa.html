@@ -22,7 +22,7 @@
       <div class='text-center col-md-5 mx-auto'>
         <label for='mfa_secret'>{{ 'Secret for manual setup'|trans }}</label>
         <div class='input-group'>
-          <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' type='password' readonly='readonly' />
+          <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' type='password' readonly='readonly' autocomplete='off'/>
           <div class='input-group-append'>
             <span class='btn btn-light input-border togglePassword' tabindex='-1' toggle='#mfa_secret'><i class='fas fa-eye' aria-hidden='true'></i></span>
           </div>
@@ -31,10 +31,13 @@
     {% endif %}
     <div class='col-md-4 mx-auto mt-4 form-group'>
       <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
-      <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' required='required' pattern='.{6}' aria-describedby='mfa_code_help_block' />
+      <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfa_code_help_block' />
       <p id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the authenticator app on your device to get your authentication code and verify your identity.'|trans }}</p>
     </div>
     <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Verify'|trans }}</button>
+    {% if App.Session.has('enable_mfa') %}
+      <button type='submit' class='button btn btn-danger' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
+    {% endif %}
   </form>
 </section>
 {% endblock body %}

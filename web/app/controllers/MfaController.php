@@ -37,6 +37,12 @@ try {
     if ($App->Session->has('enable_mfa')) {
         if ($verifyMFACode) {
             $Mfa->saveSecret();
+        } elseif ($Request->request->get('Submit') === 'cancel') {
+            $App->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
+            $location = $App->Session->get('mfa_redirect');
+            $App->Session->remove('mfa_redirect');
+            $App->Session->remove('mfa_secret');
+            $App->Session->remove('enable_mfa');
         } else {
             $App->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
         }

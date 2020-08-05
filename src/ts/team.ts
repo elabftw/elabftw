@@ -34,30 +34,6 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { config } from '@fortawesome/fontawesome-svg-core';
 
-function schedulerCreate(start: string, end: string): void {
-  const title = prompt(i18next.t('comment-add'));
-  if (title) {
-    // add it to SQL
-    $.post('app/controllers/SchedulerController.php', {
-      create: true,
-      start: start,
-      end: end,
-      title: title,
-      item: $('#info').data('item')
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(start));
-      }
-    });
-  // for some reason, if we extract the replace line out of the title condition, the post request is blocked because empty
-  // if there is no replace, it works fine in both case (empty title and not empty)
-  // but if it's there, the not empty case won't run and I have no idea why
-  // FIXME: see text above
-  } else {
-    window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(start));
-  }
-}
 document.addEventListener('DOMContentLoaded', function() {
   if (window.location.pathname !== '/team.php') {
     return;
@@ -131,7 +107,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // selection
     select: function(info): void {
       if (!editable) { return; }
-      schedulerCreate(info.startStr, info.endStr);
+      const title = prompt(i18next.t('comment-add'));
+      if (!title) {
+        // make the selected area disappear
+        calendar.unselect();
+        return;
+      }
+      $.post('app/controllers/SchedulerController.php', {
+        create: true,
+        start: info.startStr,
+        end: info.endStr,
+        title: title,
+        item: $('#info').data('item')
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.startStr));
+        }
+      });
     },
     // on click activate modal window
     eventClick: function(info): void {

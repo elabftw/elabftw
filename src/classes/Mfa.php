@@ -171,7 +171,7 @@ class Mfa
      */
     public function verifyCode(): bool
     {
-        if ($this->TwoFactorAuth->verifyCode($this->Session->get('mfa_secret'), Filter::sanitize((string) $this->Request->request->get('mfa_code')))) {
+        if ($this->TwoFactorAuth->verifyCode($this->Session->get('mfa_secret'), Filter::sanitize((string) $this->Request->request->get('mfa_code')), 2)) {
             $this->Session->set('mfa_verified', time());
             return true;
         }

@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
     allDaySlot: false,
     // day start at 6 am
     slotMinTime: '06:00:00',
-    eventBackgroundColor: 'rgb(41,174,185)',
+    eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
     // selection
     select: function(info): void {
       if (!editable) { return; }

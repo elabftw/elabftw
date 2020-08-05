@@ -144,8 +144,6 @@ class Auth
             'login.php',
             'LoginController.php',
             'metadata.php',
-            'mfa.php',
-            'MfaController.php',
             'register.php',
             'RegisterController.php',
             'ResetPasswordController.php',

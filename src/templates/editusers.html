@@ -124,7 +124,7 @@
 
                   <!-- 2FA -->
                   <li class='list-inline-item'>
-                    <label for='usersUpdate2FA_{{ user.userid }}'>{{ 'Use 2FA?'|trans }}</label>
+                    <label for='usersUpdate2FA_{{ user.userid }}'>{{ 'Uses 2FA?'|trans }}</label>
                     <select class='form-control custom-control-inline' autocomplete='off' name='use_mfa' id='usersUpdate2FA_{{ user.userid }}' {{ not user.mfa_secret ? "disabled='disabled'" }}>
                       <option value='on' {{ user.mfa_secret ? "selected='selected'" }}>{{ 'Yes'|trans }}</option>
                       <option value='off' {{ not user.mfa_secret ? "selected='selected'" }}>{{ 'No'|trans }}</option>

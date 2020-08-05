@@ -29,11 +29,12 @@ $location = '../../login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Saml = new Saml($App->Config, new Idps);
-    $Teams = new Teams($App->Users);
+    // CSRF
+    $App->Csrf->validate();
 
     // LOGIN WITH SAML
     if ($Request->request->has('saml_login')) {
+        $Saml = new Saml($App->Config, new Idps);
         $settings = $Saml->getSettings();
         $SamlAuth = new SamlAuth($settings);
         $returnUrl = $settings['baseurl'] . '/index.php?acs';
@@ -41,6 +42,7 @@ try {
 
     // login as anonymous
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) {
+        $Teams = new Teams($App->Users);
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {
             $Auth->loginAsAnon((int) $Request->request->get('team_id'));
             if ($Request->cookies->has('redirect')) {
@@ -49,10 +51,32 @@ try {
                 $location = '../../experiments.php';
             }
         }
-    } else {
-        // CSRF
-        $App->Csrf->validate();
 
+        // Two Factor Authentication
+    } elseif ($App->Session->has('mfa_secret')) {
+        // Check verification code
+        $Mfa = new Mfa($App->Request, $App->Session);
+        $verifyMFACode = $Mfa->verifyCode();
+
+        if ($App->Session->has('enable_mfa')) {
+            if ($verifyMFACode) {
+                $location = $Mfa->saveSecret();
+            } elseif ($Request->request->get('Submit') === 'cancel') {
+                $location = $Mfa->abortEnable();
+            } else {
+                $App->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
+            }
+        } else {
+            if ($verifyMFACode) {
+                $location = $Mfa->cleanup();
+//            } elseif ($verifyMFACode === false && $App->Session->has('auth') === false) {
+            } else {
+                $Auth->increaseFailedAttempt();
+            }
+        }
+
+        // LOGIN: internal credential check
+    } else {
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
             //throw new ImproperActionException(_('A mandatory field is missing!'));
@@ -69,9 +93,12 @@ try {
             $App->Session->set('auth_userid', $userid);
         }
 
+        // redirect to verify MFA code if necesssary
         $Mfa = new Mfa($App->Request, $App->Session);
-        // redirect to MFA code verification if necesssary
-        $Mfa->needVerification($App->Session->get('auth_userid'), 'LoginController.php');
+        if ($Mfa->needVerification($App->Session->get('auth_userid'), 'LoginController.php')) {
+            $Response->send();
+            exit();
+        }
 
         // the actual login
         $team = null;

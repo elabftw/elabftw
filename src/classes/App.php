@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function basename;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -78,7 +77,7 @@ class App
         $this->Session = $session;
 
         // Don't get 'ok' flashes during mfa
-        if (!(basename($this->Request->getScriptName()) === 'mfa.php' || basename($this->Request->getScriptName()) === 'MfaController.php')) {
+        if (!$this->Session->has('mfa_secret')) {
             $this->ok = $this->Session->getFlashBag()->get('ok');
         }
         $this->ko = $this->Session->getFlashBag()->get('ko');

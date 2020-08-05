@@ -20,6 +20,10 @@ use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Exception;
+use function implode;
+use function in_array;
+use function md5;
+use function str_split;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,10 +38,51 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    $Teams = new Teams($App->Users);
+    // if we are not in https, die saying we work only in https
+    if (!$Request->isSecure() && !$Request->server->has('HTTP_X_FORWARDED_PROTO')) {
+        // get the url to display a link to click (without the port)
+        $url = Tools::getUrl($Request);
+        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
+            $url . "'>$url</a>";
+        throw new ImproperActionException($message);
+    }
+
+    // disable login if too much failed_attempts
+    $BannedUsers = new BannedUsers($App->Config);
+    if ($App->Session->has('failed_attempt') && $App->Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
+        // get user info
+        $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+        // add the user to the banned list
+        $BannedUsers->create($fingerprint);
+
+        $App->Session->remove('failed_attempt');
+    }
+
+    // Check if we are banned after too much failed login attempts
+    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
+        throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
+    }
+
+    // Show MFA if necessary
+    if ($App->Session->has('mfa_secret')) {
+        $App->pageTitle = _('Two Factor Authentication');
+        $template = 'mfa.html';
+        $renderArr = array('hideTitle' => true);
+
+        // If one enables 2FA we need to provide the secret.
+        // For user convenience it is provide as QR code and as plain text.
+        if ($App->Session->has('enable_mfa')) {
+            $Mfa = new Mfa($App->Request, $App->Session);
+            $renderArr['mfaQRCodeImageDataUri'] = $Mfa->getQRCodeImageAsDataUri($App->Users->userData['email']);
+            $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));
+        }
+        $Response->setContent($App->render($template, $renderArr));
+        $Response->send();
+        exit();
+    }
 
     // Check if already logged in
-    if ($Session->has('auth') || $Session->has('anon')) {
+    if ($App->Session->has('auth') || $App->Session->has('anon')) {
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;
@@ -71,36 +116,10 @@ try {
         }
         $Auth->login($userid);
         // add this to the session so for logout we know we need to hit the logout_url from config to logout from external server too
-        $Session->set('is_ext_auth', 1);
+        $App->Session->set('is_ext_auth', 1);
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;
-    }
-
-    $BannedUsers = new BannedUsers($App->Config);
-
-    // if we are not in https, die saying we work only in https
-    if (!$Request->isSecure() && !$Request->server->has('HTTP_X_FORWARDED_PROTO')) {
-        // get the url to display a link to click (without the port)
-        $url = Tools::getUrl($Request);
-        $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='" .
-            $url . "'>$url</a>";
-        throw new ImproperActionException($message);
-    }
-
-    // disable login if too much failed_attempts
-    if ($Session->has('failed_attempt') && $Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
-        // get user info
-        $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
-        // add the user to the banned list
-        $BannedUsers->create($fingerprint);
-
-        $Session->remove('failed_attempt');
-    }
-
-    // Check if we are banned after too much failed login attempts
-    if (\in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
-        throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
     }
 
     // don't show the local login form if it's disabled
@@ -113,12 +132,12 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
 
+    $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
 
     $template = 'login.html';
     $renderArr = array(
         'BannedUsers' => $BannedUsers,
-        'Session' => $Session,
         'idpsArr' => $idpsArr,
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal,

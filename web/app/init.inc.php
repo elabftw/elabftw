@@ -145,13 +145,12 @@ try {
 
     // Clean up after user initiated mfa activation but did not succeed/complete.
     if ($App->Session->has('auth')
-        && $App->Session->has('mfa_secret')
-        && !(basename($App->Request->getScriptName()) === 'mfa.php'
-            || basename($App->Request->getScriptName()) === 'MfaController.php')
+        && $App->Session->has('enable_mfa')
+        && !(basename($App->Request->getScriptName()) === 'login.php'
+            || basename($App->Request->getScriptName()) === 'LoginController.php')
     ) {
-        $App->Session->remove('mfa_secret');
-        $App->Session->remove('enable_mfa');
-        $App->Session->remove('mfa_redirect');
+        $Mfa = new Mfa($App->Request, $App->Session);
+        $location = $Mfa->cleanup(true);
         $App->ko[] = _('Two Factor Authentication not enabled!');
     }
 } catch (UnauthorizedException $e) {

@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfQrProvider;
 use RobThree\Auth\TwoFactorAuth;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use function time;
@@ -51,69 +50,52 @@ class Mfa
     }
 
     /**
-     * Test if user has 2FA activated
-     * Redirect to multi-factor code submission if active
-     *
-     * @param string $redirect Where user will be redirected to after code submission
-     * @return void
-     */
-    public function needVerification(int $userid, string $redirect): void
-    {
-        $MFASecret = $this->getSecret($userid);
-        if ($MFASecret !== '' && !$this->Session->has('mfa_verified')) {
-            $this->Session->set('mfa_secret', $MFASecret);
-            $this->Session->set('mfa_redirect', $redirect);
-
-            $Response = new RedirectResponse('../../mfa.php');
-            $Response->send();
-            exit();
-        }
-    }
-
-    /**
-     * Load MFA secret of user from database if exists
-     *
-     * @param int $userid
-     * @return string MFA secret or an empty string if there is no secret
-     */
-    public function getSecret(int $userid)
-    {
-        $sql = 'SELECT mfa_secret FROM users WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-
-        // No need to check for $res = false or null as casting takes care of it.
-        return (string) $res;
-    }
-
-    /**
      * Generate a new MFA secret
      * Redirect to multi-factor code submission
      *
      * @param string $redirect Where user will be redirected to after code submission
-     * @return void
+     * @return string location where MFA verification takes place
      */
-    public function enable(string $redirect): void
+    public function enable(string $redirect): string
     {
         // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
         $this->Session->set('mfa_secret', $this->TwoFactorAuth->createSecret(160));
         $this->Session->set('enable_mfa', true);
         $this->Session->set('mfa_redirect', $redirect);
 
-        $Response = new RedirectResponse('../../mfa.php');
-        $Response->send();
-        exit;
+        return (string) '../../login.php';
+    }
+
+    /**
+     * Get QR code image with MFA secret as data URI
+     *
+     * @param string $email
+     * @return string
+     */
+    public function getQRCodeImageAsDataUri(string $email): string
+    {
+        return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->Session->get('mfa_secret'));
+    }
+
+    /**
+     * Abort enable MFA
+     *
+     * @return string previously specified redirect location
+     */
+    public function abortEnable(): string
+    {
+        $this->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
+        $location = $this->Session->get('mfa_redirect');
+
+        return (string) $this->cleanup(true);
     }
 
     /**
      * Save secret in database
-     * Redirect to previously specified location
      *
-     * @return void
+     * @return string previously specified redirect location
      */
-    public function saveSecret(): void
+    public function saveSecret(): string
     {
         $mfaSecret = $this->Session->get('mfa_secret');
         $userid = $this->Session->get('userid');
@@ -124,15 +106,25 @@ class Mfa
         $this->Db->execute($req);
 
         $this->Session->getFlashBag()->add('ok', _('Two Factor Authentication enabled.'));
-        $location = $this->Session->get('mfa_redirect');
 
+        return $this->cleanup(true);
+    }
+
+    /**
+     * Cleanup after two-factor authentication
+     *
+     * @param bool $enable
+     * @return string previously specified redirect location
+     */
+    public function cleanup($enable = false): string
+    {
+        if ($enable) {
+            $this->Session->remove('enable_mfa');
+        }
         $this->Session->remove('mfa_secret');
-        $this->Session->remove('enable_mfa');
+        $location = $this->Session->get('mfa_redirect');
         $this->Session->remove('mfa_redirect');
-
-        $Response = new RedirectResponse($location);
-        $Response->send();
-        exit;
+        return (string) $location;
     }
 
     /**
@@ -147,19 +139,29 @@ class Mfa
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid);
         $this->Db->execute($req);
-        
+
+        if ($userid == $this->Session->get('userid')) {
+            $this->Session->remove('mfa_verified');
+        }
+
         return (bool) $req->rowCount();
     }
 
     /**
-     * Get QR code image with MFA secret as data URI
+     * Test if we need to verify MFA code
      *
-     * @param string $email
-     * @return string
+     * @param string $redirect Where user will be redirected to after code submission
+     * @return bool true if we need to verify MFA code
      */
-    public function getQRCodeImageAsDataUri(string $email): string
+    public function needVerification(int $userid, string $redirect): bool
     {
-        return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->Session->get('mfa_secret'));
+        $MFASecret = $this->getSecret($userid);
+        if ($MFASecret !== '' && !$this->Session->has('mfa_verified')) {
+            $this->Session->set('mfa_secret', $MFASecret);
+            $this->Session->set('mfa_redirect', $redirect);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -175,5 +177,23 @@ class Mfa
         }
         $this->Session->getFlashBag()->add('ko', _('Code not verified.'));
         return false;
+    }
+
+    /**
+     * Load MFA secret of user from database if exists
+     *
+     * @param int $userid
+     * @return string MFA secret or an empty string if there is no secret
+     */
+    private function getSecret(int $userid)
+    {
+        $sql = 'SELECT mfa_secret FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid);
+        $this->Db->execute($req);
+        $res = $req->fetchColumn();
+
+        // No need to check for $res = false or null as casting takes care of it.
+        return (string) $res;
     }
 }

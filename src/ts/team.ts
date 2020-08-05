@@ -50,6 +50,12 @@ function schedulerCreate(start: string, end: string): void {
         window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(start));
       }
     });
+  // for some reason, if we extract the replace line out of the title condition, the post request is blocked because empty
+  // if there is no replace, it works fine in both case (empty title and not empty)
+  // but if it's there, the not empty case won't run and I have no idea why
+  // FIXME: see text above
+  } else {
+    window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(start));
   }
 }
 document.addEventListener('DOMContentLoaded', function() {

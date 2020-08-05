@@ -56,22 +56,22 @@ try {
     } elseif ($App->Session->has('mfa_secret')) {
         // Check verification code
         $Mfa = new Mfa($App->Request, $App->Session);
-        $verifyMFACode = $Mfa->verifyCode();
-
-        if ($App->Session->has('enable_mfa')) {
-            if ($verifyMFACode) {
-                $location = $Mfa->saveSecret();
-            } elseif ($Request->request->get('Submit') === 'cancel') {
-                $location = $Mfa->abortEnable();
-            } else {
-                $App->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
-            }
+        if ($App->Session->has('enable_mfa') && $Request->request->get('Submit') === 'cancel') {
+            $location = $Mfa->abortEnable();
         } else {
-            if ($verifyMFACode) {
-                $location = $Mfa->cleanup();
-//            } elseif ($verifyMFACode === false && $App->Session->has('auth') === false) {
+            $verifyMFACode = $Mfa->verifyCode();
+            if ($App->Session->has('enable_mfa')) {
+                if ($verifyMFACode) {
+                    $location = $Mfa->saveSecret();
+                } else {
+                    $App->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
+                }
             } else {
-                $Auth->increaseFailedAttempt();
+                if ($verifyMFACode) {
+                    $location = $Mfa->cleanup();
+                } else {
+                    $Auth->increaseFailedAttempt();
+                }
             }
         }
 

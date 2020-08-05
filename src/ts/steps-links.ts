@@ -111,6 +111,7 @@ $(document).ready(function() {
           relativeMoment();
           makeSortableGreatAgain();
         });
+        $('#todo_step_' + stepId).prop('checked', !$('#todo_step_' + stepId).prop('checked'));
       });
     }
 

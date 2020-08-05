@@ -57,7 +57,7 @@ const Todolist = {
       for (const exp of json.msg) {
         html += `<li><h3><a href='experiments.php?mode=view&id=${exp.id}'>${exp.title}</a></h3>`;
         for (const [stepId, stepBody] of Object.entries(exp.steps)) {
-          html += `<div><input type='checkbox' class='stepbox mr-1' data-id='${exp.id}' data-type='experiments' data-stepid='${stepId}' />${stepBody}</div>`;
+          html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='experiments' data-stepid='${stepId}' />${stepBody}</div>`;
         }
         html += '</li>';
       }

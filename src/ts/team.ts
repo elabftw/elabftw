@@ -34,24 +34,6 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { config } from '@fortawesome/fontawesome-svg-core';
 
-function schedulerCreate(start: string, end: string): void {
-  const title = prompt(i18next.t('comment-add'));
-  if (title) {
-    // add it to SQL
-    $.post('app/controllers/SchedulerController.php', {
-      create: true,
-      start: start,
-      end: end,
-      title: title,
-      item: $('#info').data('item')
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(start));
-      }
-    });
-  }
-}
 document.addEventListener('DOMContentLoaded', function() {
   if (window.location.pathname !== '/team.php') {
     return;
@@ -121,11 +103,28 @@ document.addEventListener('DOMContentLoaded', function() {
     allDaySlot: false,
     // day start at 6 am
     slotMinTime: '06:00:00',
-    eventBackgroundColor: 'rgb(41,174,185)',
+    eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
     // selection
     select: function(info): void {
       if (!editable) { return; }
-      schedulerCreate(info.startStr, info.endStr);
+      const title = prompt(i18next.t('comment-add'));
+      if (!title) {
+        // make the selected area disappear
+        calendar.unselect();
+        return;
+      }
+      $.post('app/controllers/SchedulerController.php', {
+        create: true,
+        start: info.startStr,
+        end: info.endStr,
+        title: title,
+        item: $('#info').data('item')
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.startStr));
+        }
+      });
     },
     // on click activate modal window
     eventClick: function(info): void {

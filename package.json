@@ -32,7 +32,7 @@
     "mathjax": "3.0.*",
     "moment": "^2.25.3",
     "popper.js": "1.16.*",
-    "prismjs": "1.20.*",
+    "prismjs": "1.21.*",
     "sass": "^1.23.7",
     "tinymce": "5.4.*"
   },

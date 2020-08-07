@@ -52,13 +52,14 @@ try {
             }
         }
 
-        // Two Factor Authentication
+    // Two Factor Authentication
     } elseif ($App->Session->has('mfa_secret')) {
-        // Check verification code
+        // Abort activation by user
         $Mfa = new Mfa($App->Request, $App->Session);
         if ($App->Session->has('enable_mfa') && $Request->request->get('Submit') === 'cancel') {
             $location = $Mfa->abortEnable();
         } else {
+           // Check verification code
             $verifyMFACode = $Mfa->verifyCode();
             if ($App->Session->has('enable_mfa')) {
                 if ($verifyMFACode) {
@@ -75,7 +76,7 @@ try {
             }
         }
 
-        // LOGIN: internal credential check
+    // LOGIN: internal credential check
     } else {
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
@@ -93,14 +94,14 @@ try {
             $App->Session->set('auth_userid', $userid);
         }
 
-        // redirect to verify MFA code if necesssary
+        // Redirect to verify MFA code if necesssary
         $Mfa = new Mfa($App->Request, $App->Session);
         if ($Mfa->needVerification($App->Session->get('auth_userid'), 'LoginController.php')) {
             $Response->send();
             exit();
         }
 
-        // the actual login
+        // The actual login
         $team = null;
         if ($App->Session->has('team_selection_required')) {
             $Auth->loginInTeam(

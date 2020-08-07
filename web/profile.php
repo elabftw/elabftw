@@ -30,6 +30,12 @@ try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
     $Entity->addFilter('entity.userid', $App->Users->userData['userid']);
+
+    // create the DisplayParams object from the query
+    $DisplayParams = new DisplayParams($App);
+    // and make the entity add filters in the sql to comply with query
+    $Entity->setDisplayParams($DisplayParams);
+
     $itemsArr = $Entity->readShow();
     $count = count($itemsArr);
 

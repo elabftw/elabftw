@@ -39,7 +39,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'x509',
             '1'
         );
-        $idp = $this->Idps->read($id);
+        $idp = $this->Idps->getActive($id);
         $this->assertEquals('Updated', $idp['name']);
         $this->assertEquals('x509', $idp['x509']);
         $this->Idps->destroy($id);

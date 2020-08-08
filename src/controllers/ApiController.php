@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -38,6 +40,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ApiController implements ControllerInterface
 {
+    private $App;
+
     /** @var Request $Request instance of Request */
     private $Request;
 
@@ -76,9 +80,10 @@ class ApiController implements ControllerInterface
      *
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(App $app)
     {
-        $this->Request = $request;
+        $this->App = $app;
+        $this->Request = $app->Request;
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             throw new UnauthorizedException('No access token provided!');
@@ -317,6 +322,7 @@ class ApiController implements ControllerInterface
      */
     private function getEntity(): Response
     {
+        $this->Entity->setDisplayParams(new DisplayParams($this->App));
         if ($this->id === null) {
             return new JsonResponse($this->Entity->readShow(true));
         }

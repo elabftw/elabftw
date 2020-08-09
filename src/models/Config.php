@@ -148,7 +148,8 @@ class Config
     }
 
     /**
-     * Insert the default values in config
+     * Insert the default values in the sql config table
+     * Only run once of first ever page load
      *
      * @return void
      */

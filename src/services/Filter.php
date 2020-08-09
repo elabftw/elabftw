@@ -33,6 +33,11 @@ class Filter
      */
     private const MAX_BODY_SIZE = 4120000;
 
+    public static function toBinary(string $input): int
+    {
+        return $input ? 1 : 0;
+    }
+
     /**
      * Return 0 or 1 if input is on. Used for UCP.
      *

@@ -16,6 +16,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Maps\Team;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\Email;
@@ -47,15 +48,10 @@ try {
 
     // UPDATE TEAM
     if ($Request->request->has('teamsUpdate')) {
-        $orgid = '';
-        if ($Request->request->has('teamsUpdateOrgid')) {
-            $orgid = $Request->request->get('teamsUpdateOrgid');
-        }
-        $Teams->updateName(
-            (int) $Request->request->get('teamsUpdateId'),
-            $Request->request->get('teamsUpdateName'),
-            $orgid
-        );
+        $Team = new Team((int) $Request->request->get('teamsUpdateId'));
+        $Team->setOrgid($Request->request->get('teamsUpdateOrgid'));
+        $Team->setName($Request->request->get('teamsUpdateName'));
+        $Team->save();
     }
 
     // DESTROY TEAM

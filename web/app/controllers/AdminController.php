@@ -15,6 +15,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Maps\Team;
 use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -37,9 +38,24 @@ try {
 
     $Teams = new Teams($App->Users);
 
-    // UPDATE TEAM SETTINGS
+    // UPDATE TEAM SETTINGS (first tab of admin panel)
     if ($Request->request->has('teamsUpdateFull')) {
-        $Teams->update($Request->request->all());
+        $Team = new Team((int) $App->Users->userData['team']);
+        $Team->setDeletableXp($Request->request->get('deletable_xp') ?? '');
+        $Team->setPublicDb($Request->request->get('public_db') ?? '');
+        $Team->setLinkName($Request->request->get('link_name') ?? 'Documentation');
+        $Team->setLinkHref($Request->request->get('link_href') ?? 'https://doc.elabftw.net');
+        $Team->setDoForceCanread($Request->request->get('do_force_canread') ?? '');
+        $Team->setDoForceCanwrite($Request->request->get('do_force_canwrite') ?? '');
+        $Team->setStamplogin($Request->request->get('stamplogin') ?? '');
+        if (!empty($Request->request->get('stamppass'))) {
+            $Team->setStamppass($Request->request->get('stamppass'));
+        }
+        $Team->setStampprovider($Request->request->get('stampprovider'));
+        $Team->setStampcert($Request->request->get('stampcert'));
+
+        // save the changes
+        $Team->save();
     }
 
     // CLEAR STAMP PASS

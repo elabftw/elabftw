@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Maps\Team;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -401,9 +402,17 @@ abstract class AbstractEntity
         $this->canOrExplode('write');
         Check::visibility($value);
         Check::rw($rw);
+        // check if the permissions are enforced
+        $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
+            if ($Team->getDoForceCanread() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canread';
         } else {
+            if ($Team->getDoForceCanwrite() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canwrite';
         }
 

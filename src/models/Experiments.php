@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Maps\Team;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Services\Filter;
@@ -61,6 +62,15 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
         if ($this->Users->userData['default_write'] !== null) {
             $canwrite = $this->Users->userData['default_write'];
+        }
+
+        // enforce the permissions if the admin has set them
+        $Team = new Team((int) $this->Users->userData['team']);
+        if ($Team->getDoForceCanread() === 1) {
+            $canread = $Team->getForceCanread() ?? 'team';
+        }
+        if ($Team->getDoForceCanwrite() === 1) {
+            $canwrite = $Team->getForceCanread() ?? 'user';
         }
 
         // SQL for create experiments

@@ -46,7 +46,9 @@ try {
         $Team->setLinkName($Request->request->get('link_name') ?? 'Documentation');
         $Team->setLinkHref($Request->request->get('link_href') ?? 'https://doc.elabftw.net');
         $Team->setDoForceCanread($Request->request->get('do_force_canread') ?? '');
+        $Team->setForceCanread($Request->request->get('force_canread') ?? '');
         $Team->setDoForceCanwrite($Request->request->get('do_force_canwrite') ?? '');
+        $Team->setForceCanwrite($Request->request->get('force_canwrite') ?? '');
         $Team->setStamplogin($Request->request->get('stamplogin') ?? '');
         if (!empty($Request->request->get('stamppass'))) {
             $Team->setStamppass($Request->request->get('stamppass'));

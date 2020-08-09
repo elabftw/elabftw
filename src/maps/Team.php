@@ -65,10 +65,10 @@ class Team
     /** @var int $doForceCanwrite */
     private $doForceCanwrite;
 
-    /** @var string $forceCanread */
+    /** @var string|null $forceCanread */
     private $forceCanread;
 
-    /** @var string $forceCanwrite */
+    /** @var string|null $forceCanwrite */
     private $forceCanwrite;
 
     /**
@@ -141,6 +141,21 @@ class Team
     public function getDoForceCanread(): int
     {
         return $this->doForceCanread;
+    }
+
+    public function getDoForceCanwrite(): int
+    {
+        return $this->doForceCanwrite;
+    }
+
+    public function getForceCanread(): ?string
+    {
+        return $this->forceCanread;
+    }
+
+    public function getForceCanwrite(): ?string
+    {
+        return $this->forceCanwrite;
     }
 
     public function setDoForceCanwrite(string $setting): void

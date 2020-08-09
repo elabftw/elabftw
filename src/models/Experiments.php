@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Maps\Team;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
 

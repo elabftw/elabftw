@@ -56,9 +56,6 @@ class Team
     /** @var string|null $stampcert path to the cert for the team's timestamping provider */
     private $stampcert;
 
-    /** @var string $stamphash */
-    private $stamphash = 'sha256';
-
     /** @var string|null $orgid */
     private $orgid;
 
@@ -194,16 +191,6 @@ class Team
         }
     }
 
-    /** not implemented
-    public function setStamphash(string $setting): void
-    {
-        $allowed = array('sha1', 'sha256', 'sha512');
-        if (!in_array($setting, $allowed, true)) {
-            throw new ImproperActionException('Timestamping hash is invalid');
-        }
-        $this->stamphash = $setting;
-    }
-     */
     public function setOrgid(?string $setting): void
     {
         if ($setting !== null) {
@@ -281,7 +268,6 @@ class Team
         $this->stamppass = $team['stamppass'];
         $this->stampprovider = $team['stampprovider'];
         $this->setStampcert($team['stampcert']);
-        //$this->setStamphash($team['stamphash']);
         $this->publicDb = Filter::toBinary($team['public_db']);
         $this->doForceCanread = Filter::toBinary($team['do_force_canread']);
         $this->doForceCanwrite = Filter::toBinary($team['do_force_canwrite']);

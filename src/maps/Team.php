@@ -284,8 +284,8 @@ class Team
         $this->stampprovider = $team['stampprovider'];
         $this->setStampcert($team['stampcert']);
         $this->publicDb = Filter::toBinary($team['public_db']);
-        $this->doForceCanread = Filter::toBinary($team['do_force_canread']);
-        $this->doForceCanwrite = Filter::toBinary($team['do_force_canwrite']);
+        $this->doForceCanread = Filter::toBinary($team['do_force_canread'] ?? '');
+        $this->doForceCanwrite = Filter::toBinary($team['do_force_canwrite'] ?? '');
         $this->forceCanread = $team['force_canread'];
         $this->forceCanwrite = $team['force_canwrite'];
     }

@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\Status;
 
 /**

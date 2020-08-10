@@ -11,13 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
+use function explode;
 use function filter_var;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use function mb_strlen;
-use function explode;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

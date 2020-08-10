@@ -21,6 +21,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
+use Elabftw\Services\ListBuilder;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -65,8 +66,12 @@ try {
 
     // GET MENTION LIST
     if ($Request->query->has('term') && $Request->query->has('mention')) {
-        $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
-        $Response->setData($Entity->getMentionList($term));
+        $term = $Request->query->get('term');
+        $ExperimentsHelper = new ListBuilder(new Experiments($App->Users));
+        $DatabaseHelper = new ListBuilder(new Database($App->Users););
+        // return list of itemd and experiments
+        $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
+        $Response->setData($mentionArr);
     }
 
     // GET BODY
@@ -84,9 +89,8 @@ try {
 
     // GET LINK LIST
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
-        // we don't care about the entity type as getAutocomplete() is available in AbstractEntity
-        $Entity = new Experiments($App->Users);
-        $Response->setData($Entity->getAutocomplete($Request->query->get('term'), $Request->query->get('source')));
+        $ListBuilder = new ListBuilder(new Database($App->Users));
+        $Response->setData($ListBuilder->getAutocomplete($Request->query->get('term')));
     }
 
     // GET BOUND EVENTS

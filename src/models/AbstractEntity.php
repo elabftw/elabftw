@@ -459,60 +459,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Get an array formatted for the autocomplete input (link and bind)
-     *
-     * @param string $term the query
-     * @param string $source experiments or items
-     * @return array
-     */
-    public function getAutocomplete(string $term, string $source): array
-    {
-        if ($source === 'experiments') {
-            $items = $this->getExpList($term);
-        } elseif ($source === 'items') {
-            $items = $this->getDbList($term);
-        } else {
-            throw new \InvalidArgumentException;
-        }
-        $linksArr = array();
-        foreach ($items as $item) {
-            $linksArr[] = $item['id'] . ' - ' . $item['category'] . ' - ' . substr($item['title'], 0, 60);
-        }
-        return $linksArr;
-    }
-
-    /**
-     * Get an array of a mix of experiments and database items
-     * for use with the mention plugin of tinymce (# and $ autocomplete)
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getMentionList(string $term): array
-    {
-        $mentionArr = array();
-
-        // add items from database
-        $itemsArr = $this->getDbList($term);
-        foreach ($itemsArr as $item) {
-            $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
-                $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',
-            );
-        }
-
-        // complete the list with experiments
-        // fix #191
-        $experimentsArr = $this->getExpList($term);
-        foreach ($experimentsArr as $item) {
-            $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
-                $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
-            );
-        }
-
-        return $mentionArr;
-    }
-
-    /**
      * Update the category for an entity
      *
      * @param int $category id of the category (status or items types)
@@ -798,36 +744,6 @@ abstract class AbstractEntity
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->type);
-    }
-
-    /**
-     * Get a list of experiments with title starting with $term and optional user filter
-     *
-     * @param string $term the query
-     * @return array
-     */
-    private function getExpList(string $term): array
-    {
-        $Entity = new Experiments($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
-
-        return $Entity->readShow(new DisplayParams());
-    }
-
-    /**
-     * Get a list of items with a filter on the $term
-     *
-     * @param string $term the query
-     * @return array
-     */
-    private function getDbList(string $term): array
-    {
-        $Entity = new Database($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
-
-        return $Entity->readShow(new DisplayParams());
     }
 
     /**

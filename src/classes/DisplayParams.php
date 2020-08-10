@@ -55,7 +55,6 @@ class DisplayParams
         if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty($app->Request->query->get('tags')[0])) {
             $this->searchType = 'something';
         }
-
     }
 
     /**

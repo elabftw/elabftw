@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Models\Experiments;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
 
 /**

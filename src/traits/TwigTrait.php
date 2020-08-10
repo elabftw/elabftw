@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use function dirname;
 use Elabftw\Elabftw\ReleaseCheck;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
-use function dirname;
 use function is_readable;
 
 /**

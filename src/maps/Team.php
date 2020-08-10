@@ -14,6 +14,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\MapInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use PDO;
@@ -21,7 +22,7 @@ use PDO;
 /**
  * One team
  */
-class Team
+class Team implements MapInterface
 {
     /** @var Db $Db */
     private $Db;
@@ -82,7 +83,7 @@ class Team
         $this->hydrate();
     }
 
-    public final function setName(?string $setting): void
+    final public function setName(?string $setting): void
     {
         if ($setting === null) {
             throw new ImproperActionException('Team name cannot be empty!');
@@ -90,37 +91,37 @@ class Team
         $this->name = $setting;
     }
 
-    public final function getName(): string
+    final public function getName(): string
     {
         return $this->name;
     }
 
-    public final function setDeletableXp(string $setting): void
+    final public function setDeletableXp(string $setting): void
     {
         $this->deletableXp = Filter::toBinary($setting);
     }
 
-    public final function getDeletableXp(): int
+    final public function getDeletableXp(): int
     {
         return $this->deletableXp;
     }
 
-    public final function setPublicDb(string $setting): void
+    final public function setPublicDb(string $setting): void
     {
         $this->publicDb = Filter::toBinary($setting);
     }
 
-    public final function setLinkName(string $setting): void
+    final public function setLinkName(string $setting): void
     {
         $this->linkName = Filter::sanitize($setting);
     }
 
-    public final function getLinkName(): string
+    final public function getLinkName(): string
     {
         return $this->linkName;
     }
 
-    public final function setLinkHref(string $url): void
+    final public function setLinkHref(string $url): void
     {
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new ImproperActionException('Link target is not a valid URL');
@@ -128,71 +129,71 @@ class Team
         $this->linkHref = $url;
     }
 
-    public final function getLinkHref(): string
+    final public function getLinkHref(): string
     {
         return $this->linkHref;
     }
 
-    public final function setDoForceCanread(string $setting): void
+    final public function setDoForceCanread(string $setting): void
     {
         $this->doForceCanread = Filter::toBinary($setting);
     }
 
-    public final function getDoForceCanread(): int
+    final public function getDoForceCanread(): int
     {
         return $this->doForceCanread;
     }
 
-    public final function getDoForceCanwrite(): int
+    final public function getDoForceCanwrite(): int
     {
         return $this->doForceCanwrite;
     }
 
-    public final function getForceCanread(): string
+    final public function getForceCanread(): string
     {
         return $this->forceCanread;
     }
 
-    public final function getForceCanwrite(): string
+    final public function getForceCanwrite(): string
     {
         return $this->forceCanwrite;
     }
 
-    public final function setDoForceCanwrite(string $setting): void
+    final public function setDoForceCanwrite(string $setting): void
     {
         $this->doForceCanwrite = Filter::toBinary($setting);
     }
 
-    public final function setForceCanread(string $setting): void
+    final public function setForceCanread(string $setting): void
     {
         $this->forceCanread = Check::visibility($setting);
     }
 
-    public final function setForceCanwrite(string $setting): void
+    final public function setForceCanwrite(string $setting): void
     {
         $this->forceCanwrite = Check::visibility($setting);
     }
 
-    public final function setStamplogin(?string $setting): void
+    final public function setStamplogin(?string $setting): void
     {
         if (!empty($setting)) {
             $this->stamplogin = Filter::sanitize($setting);
         }
     }
 
-    public final function setStamppass(string $setting): void
+    final public function setStamppass(string $setting): void
     {
         $this->stamppass = Crypto::encrypt($setting, Key::loadFromAsciiSafeString(\SECRET_KEY));
     }
 
-    public final function setStampcert(?string $setting): void
+    final public function setStampcert(?string $setting): void
     {
         if (!empty($setting)) {
             $this->stampcert = Filter::sanitize($setting);
         }
     }
 
-    public final function setStampprovider(?string $url): void
+    final public function setStampprovider(?string $url): void
     {
         if (!empty($url)) {
             if (filter_var($url, FILTER_VALIDATE_URL) === false) {
@@ -202,7 +203,7 @@ class Team
         }
     }
 
-    public final function setOrgid(?string $setting): void
+    final public function setOrgid(?string $setting): void
     {
         if ($setting !== null) {
             $this->orgid = Filter::sanitize($setting);

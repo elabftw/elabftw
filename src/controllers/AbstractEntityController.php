@@ -20,6 +20,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
+use function is_array;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -98,17 +99,20 @@ abstract class AbstractEntityController implements ControllerInterface
         // TAG FILTER
         if (!empty($this->App->Request->query->get('tags')[0])) {
             // get all the ids with that tag
-            $ids = $this->Entity->Tags->getIdFromTags($this->App->Request->query->get('tags'), (int) $this->App->Users->userData['team']);
-            $idFilter = ' AND (';
-            foreach ($ids as $id) {
-                $idFilter .= 'entity.id = ' . $id . ' OR ';
+            $tagsFromGet = $this->App->Request->query->get('tags') ?? array();
+            if (is_array($tagsFromGet)) {
+                $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet, (int) $this->App->Users->userData['team']);
+                $idFilter = ' AND (';
+                foreach ($ids as $id) {
+                    $idFilter .= 'entity.id = ' . $id . ' OR ';
+                }
+                $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
+                // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
+                if ($trimmedFilter === ' AND ()') {
+                    throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
+                }
+                $this->Entity->idFilter = $trimmedFilter;
             }
-            $trimmedFilter = rtrim($idFilter, ' OR ') . ')';
-            // don't add it if it's empty (for instance we search in items for a tag that only exists on experiments)
-            if ($trimmedFilter === ' AND ()') {
-                throw new ImproperActionException(_("Sorry. I couldn't find anything :("));
-            }
-            $this->Entity->idFilter = $trimmedFilter;
         }
 
         // create the DisplayParams object from the query

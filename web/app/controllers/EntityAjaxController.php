@@ -68,7 +68,7 @@ try {
     if ($Request->query->has('term') && $Request->query->has('mention')) {
         $term = $Request->query->get('term');
         $ExperimentsHelper = new ListBuilder(new Experiments($App->Users));
-        $DatabaseHelper = new ListBuilder(new Database($App->Users););
+        $DatabaseHelper = new ListBuilder(new Database($App->Users));
         // return list of itemd and experiments
         $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
         $Response->setData($mentionArr);

@@ -435,8 +435,8 @@ CREATE TABLE `teams` (
   `stamphash` varchar(10) DEFAULT 'sha256',
   `orgid` varchar(255) DEFAULT NULL,
   `public_db` tinyint(1) NOT NULL DEFAULT '0',
-  `force_canread` varchar(255) DEFAULT NULL,
-  `force_canwrite` varchar(255) DEFAULT NULL,
+  `force_canread` varchar(255) NOT NULL DEFAULT 'team',
+  `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
   `do_force_canread` int(1) NOT NULL DEFAULT '0',
   `do_force_canwrite` int(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

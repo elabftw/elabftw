@@ -65,10 +65,10 @@ class Team
     /** @var int $doForceCanwrite */
     private $doForceCanwrite;
 
-    /** @var string|null $forceCanread */
+    /** @var string $forceCanread */
     private $forceCanread;
 
-    /** @var string|null $forceCanwrite */
+    /** @var string $forceCanwrite */
     private $forceCanwrite;
 
     /**
@@ -82,7 +82,7 @@ class Team
         $this->hydrate();
     }
 
-    public function setName(?string $setting): void
+    public final function setName(?string $setting): void
     {
         if ($setting === null) {
             throw new ImproperActionException('Team name cannot be empty!');
@@ -90,37 +90,37 @@ class Team
         $this->name = $setting;
     }
 
-    public function getName(): string
+    public final function getName(): string
     {
         return $this->name;
     }
 
-    public function setDeletableXp(string $setting): void
+    public final function setDeletableXp(string $setting): void
     {
         $this->deletableXp = Filter::toBinary($setting);
     }
 
-    public function getDeletableXp(): int
+    public final function getDeletableXp(): int
     {
         return $this->deletableXp;
     }
 
-    public function setPublicDb(string $setting): void
+    public final function setPublicDb(string $setting): void
     {
         $this->publicDb = Filter::toBinary($setting);
     }
 
-    public function setLinkName(string $setting): void
+    public final function setLinkName(string $setting): void
     {
         $this->linkName = Filter::sanitize($setting);
     }
 
-    public function getLinkName(): string
+    public final function getLinkName(): string
     {
         return $this->linkName;
     }
 
-    public function setLinkHref(string $url): void
+    public final function setLinkHref(string $url): void
     {
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new ImproperActionException('Link target is not a valid URL');
@@ -128,75 +128,71 @@ class Team
         $this->linkHref = $url;
     }
 
-    public function getLinkHref(): string
+    public final function getLinkHref(): string
     {
         return $this->linkHref;
     }
 
-    public function setDoForceCanread(string $setting): void
+    public final function setDoForceCanread(string $setting): void
     {
         $this->doForceCanread = Filter::toBinary($setting);
     }
 
-    public function getDoForceCanread(): int
+    public final function getDoForceCanread(): int
     {
         return $this->doForceCanread;
     }
 
-    public function getDoForceCanwrite(): int
+    public final function getDoForceCanwrite(): int
     {
         return $this->doForceCanwrite;
     }
 
-    public function getForceCanread(): ?string
+    public final function getForceCanread(): string
     {
         return $this->forceCanread;
     }
 
-    public function getForceCanwrite(): ?string
+    public final function getForceCanwrite(): string
     {
         return $this->forceCanwrite;
     }
 
-    public function setDoForceCanwrite(string $setting): void
+    public final function setDoForceCanwrite(string $setting): void
     {
         $this->doForceCanwrite = Filter::toBinary($setting);
     }
 
-    public function setForceCanread(?string $setting): void
+    public final function setForceCanread(string $setting): void
     {
-        if (!empty($setting)) {
-            $this->forceCanread = Check::visibility($setting);
-        }
+        $this->forceCanread = Check::visibility($setting);
     }
 
-    public function setForceCanwrite(?string $setting): void
+    public final function setForceCanwrite(string $setting): void
     {
-        if (!empty($setting)) {
-            $this->forceCanwrite = Check::visibility($setting);
-        }
+        $this->forceCanwrite = Check::visibility($setting);
     }
 
-    public function setStamplogin(?string $setting): void
+    public final function setStamplogin(?string $setting): void
     {
         if (!empty($setting)) {
             $this->stamplogin = Filter::sanitize($setting);
         }
     }
 
-    public function setStamppass(string $setting): void
+    public final function setStamppass(string $setting): void
     {
         $this->stamppass = Crypto::encrypt($setting, Key::loadFromAsciiSafeString(\SECRET_KEY));
     }
 
-    public function setStampcert(?string $setting): void
+    public final function setStampcert(?string $setting): void
     {
         if (!empty($setting)) {
             $this->stampcert = Filter::sanitize($setting);
         }
     }
 
-    public function setStampprovider(?string $url): void
+    public final function setStampprovider(?string $url): void
     {
         if (!empty($url)) {
             if (filter_var($url, FILTER_VALIDATE_URL) === false) {
@@ -206,7 +202,7 @@ class Team
         }
     }
 
-    public function setOrgid(?string $setting): void
+    public final function setOrgid(?string $setting): void
     {
         if ($setting !== null) {
             $this->orgid = Filter::sanitize($setting);
@@ -274,19 +270,19 @@ class Team
     private function hydrate(): void
     {
         $team = $this->read();
-        $this->name = $team['name'];
-        $this->orgid = $team['orgid'];
-        $this->deletableXp = Filter::toBinary($team['deletable_xp']);
+        $this->setName($team['name']);
+        $this->setOrgid($team['orgid']);
+        $this->setDeletableXp($team['deletable_xp']);
         $this->setLinkName($team['link_name']);
         $this->setLinkHref($team['link_href']);
         $this->setStamplogin($team['stamplogin']);
         $this->stamppass = $team['stamppass'];
         $this->stampprovider = $team['stampprovider'];
         $this->setStampcert($team['stampcert']);
-        $this->publicDb = Filter::toBinary($team['public_db']);
-        $this->doForceCanread = Filter::toBinary($team['do_force_canread'] ?? '');
-        $this->doForceCanwrite = Filter::toBinary($team['do_force_canwrite'] ?? '');
-        $this->forceCanread = $team['force_canread'];
-        $this->forceCanwrite = $team['force_canwrite'];
+        $this->setPublicDb($team['public_db']);
+        $this->setDoForceCanread($team['do_force_canread'] ?? '');
+        $this->setDoForceCanwrite($team['do_force_canwrite'] ?? '');
+        $this->setForceCanread($team['force_canread']);
+        $this->setForceCanwrite($team['force_canwrite']);
     }
 }

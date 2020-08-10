@@ -66,12 +66,8 @@ class Experiments extends AbstractEntity implements CreateInterface
 
         // enforce the permissions if the admin has set them
         $Team = new Team((int) $this->Users->userData['team']);
-        if ($Team->getDoForceCanread() === 1) {
-            $canread = $Team->getForceCanread() ?? 'team';
-        }
-        if ($Team->getDoForceCanwrite() === 1) {
-            $canwrite = $Team->getForceCanread() ?? 'user';
-        }
+        $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
+        $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)

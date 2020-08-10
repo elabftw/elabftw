@@ -348,26 +348,6 @@ abstract class AbstractEntity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        /* disable this for now: we don't change the userid upon edition anymore
-            or the item might seemingly change team
-        if ($this instanceof Database) {
-            // if we are the admin doing an edit on a visibility = user item, we don't want to change the userid
-            // first get the visibility
-            $sql = 'SELECT userid, canread FROM items WHERE id = :id';
-            $req2 = $this->Db->prepare($sql);
-            $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
-            if ($req2->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            $item = $req2->fetch();
-
-            $newUserid = $this->Users->userData['userid'];
-            if ($item['canread'] === 'user') {
-                $newUserid = $item['userid'];
-            }
-            $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
-        }
-         */
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);

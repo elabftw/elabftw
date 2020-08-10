@@ -7,7 +7,7 @@
       <form>
     {% endif %}
     <div class='form-group form-inline'>
-      <input type='hidden' name='q' value='{{ Entity.DisplayParams.query }}' />
+      <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
 
         <!-- CATEGORY -->
         <select name='cat' class='autosubmit mr-1 form-control select-filter-status' aria-label='Filter category'>
@@ -46,7 +46,7 @@
         <!-- LIMIT -->
         <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 form-control' aria-label='Number of results shown'>
           <option value=''>{{ 'Results per page'|trans }}</option>
-          {% for option in limitOptions(Entity.DisplayParams.limit) %}
+          {% for option in limitOptions(DisplayParams.limit) %}
           <option {{ option == Entity.limitNb ? 'selected' }} value='{{ option }}'>{{ option }}</option>
           {% endfor %}
         </select>

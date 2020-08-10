@@ -72,7 +72,7 @@ class MakeController implements ControllerInterface
                 return $this->makePdf();
 
             case 'multiPdf':
-                if (substr_count($this->App->Request->query->get('id'), ' ') === 0) {
+                if (substr_count($this->App->Request->query->get('id') ?? '', ' ') === 0) {
                     return $this->makePdf();
                 }
                 return $this->makeMultiPdf();
@@ -95,7 +95,7 @@ class MakeController implements ControllerInterface
      */
     private function makeCsv(): Response
     {
-        $Make = new MakeCsv($this->Entity, $this->App->Request->query->get('id'));
+        $Make = new MakeCsv($this->Entity, $this->App->Request->query->get('id') ?? '0');
         return new Response(
             $Make->getCsv(),
             200,
@@ -138,7 +138,7 @@ class MakeController implements ControllerInterface
      */
     private function makeJson(): JsonResponse
     {
-        $Make = new MakeJson($this->Entity, $this->App->Request->query->get('id'));
+        $Make = new MakeJson($this->Entity, $this->App->Request->query->get('id') ?? '');
         return new JsonResponse(
             $Make->getJson(),
             200,
@@ -158,7 +158,7 @@ class MakeController implements ControllerInterface
      */
     private function makeMultiPdf(): Response
     {
-        $Make = new MakeMultiPdf($this->Entity, $this->App->Request->query->get('id'));
+        $Make = new MakeMultiPdf($this->Entity, $this->App->Request->query->get('id') ?? '0');
         return new Response(
             $Make->getMultiPdf(),
             200,
@@ -202,7 +202,7 @@ class MakeController implements ControllerInterface
      */
     private function makeZip(): Response
     {
-        $Make = new MakeStreamZip($this->Entity, $this->App->Request->query->get('id'));
+        $Make = new MakeStreamZip($this->Entity, $this->App->Request->query->get('id') ?? '0');
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');

@@ -58,7 +58,7 @@ class Permissions
         $write = $this->getWrite();
 
         // if we have write access, then we have read access for sure
-        if ($write === true) {
+        if ($write) {
             return array('read' => true, 'write' => $write);
         }
 

@@ -19,7 +19,7 @@
       {% if pinnedArr %}
         <div class='row display-flex'>
           {% set isPinned = true %}
-          {% for item in pinnedArr|slice(0, Entity.DisplayParams.limit) %}
+          {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
             {% include('show-item.html') %}
           {% endfor %}
           {% set isPinned = false %}
@@ -64,16 +64,16 @@
           <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
       </p>
       <div class='row display-flex'>
-      {% for item in itemsArr|slice(0, Entity.DisplayParams.limit) %}
+      {% for item in itemsArr|slice(0, DisplayParams.limit) %}
         {% include('show-item.html') %}
       {% endfor %}
       </div>
 
       <div class='text-center pageButtons mt-2'>
-        {% if Entity.DisplayParams.offset != 0 %}
+        {% if DisplayParams.offset != 0 %}
           <button class='button btn btn-neutral previousPage'>{{ 'Previous page'|trans }}</button>
         {% endif %}
-        {% if Entity.DisplayParams.limit < itemsArr|length %}
+        {% if DisplayParams.limit < itemsArr|length %}
           <button class='button btn btn-primary nextPage'>{{ 'Next page'|trans }}</button>
         {% endif %}
       </div>
@@ -85,8 +85,8 @@
       data-page='show'
       data-type='{{ Entity.type }}'
       data-locale='{{ App.Users.userData.lang }}'
-      data-limit='{{ Entity.DisplayParams.limit }}'
-      data-offset='{{ Entity.DisplayParams.offset }}'>
+      data-limit='{{ DisplayParams.limit }}'
+      data-offset='{{ DisplayParams.offset }}'>
   </div>
   <div id='type' data-type='{{ Entity.type }}'></div>
 

@@ -18,6 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -74,12 +75,6 @@ abstract class AbstractEntity
 
     /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
-
-    /** @var string $queryFilter inserted in sql */
-    public $queryFilter = '';
-
-    /** @var DisplayParams $DisplayParams */
-    public $DisplayParams;
 
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
@@ -185,6 +180,7 @@ abstract class AbstractEntity
      * The goal here is to decrease the number of read columns to reduce memory footprint
      * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
      * Only logged in users use this function
+     * @param DisplayParams $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
      *
      *                   \||/
@@ -201,7 +197,7 @@ abstract class AbstractEntity
      *
      *          Here be dragons!
      */
-    public function readShow(bool $extended = false): array
+    public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
         $sql = $this->getReadSqlBeforeWhere($extended, $extended);
         $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
@@ -226,16 +222,16 @@ abstract class AbstractEntity
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
-            $this->queryFilter,
+            Tools::getSearchSql($displayParams->query, 'and', '', $this->type),
             $this->idFilter,
             'GROUP BY id ORDER BY',
-            $this->getOrderSql(),
-            $this->DisplayParams->sort,
+            $displayParams->getOrderSql(),
+            $displayParams->sort,
             ', entity.id',
-            $this->DisplayParams->sort,
+            $displayParams->sort,
             // add one so we can display Next page if there are more things to display
-            'LIMIT ' . (string) ($this->DisplayParams->limit + 1),
-            'OFFSET ' . (string) $this->DisplayParams->offset,
+            'LIMIT ' . (string) ($displayParams->limit + 1),
+            'OFFSET ' . (string) $displayParams->offset,
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -378,18 +374,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Set the DisplayParams property and build the sql params for it
-     *
-     * @param DisplayParams $displayParams
-     * @return void
-     */
-    public function setDisplayParams(DisplayParams $displayParams): void
-    {
-        $this->DisplayParams = $displayParams;
-        $this->queryFilter = Tools::getSearchSql($this->DisplayParams->query, 'and', '', $this->type);
-    }
-
-    /**
      * Update read or write permissions for an entity
      *
      * @param string $rw read or write
@@ -401,9 +385,17 @@ abstract class AbstractEntity
         $this->canOrExplode('write');
         Check::visibility($value);
         Check::rw($rw);
+        // check if the permissions are enforced
+        $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
+            if ($Team->getDoForceCanread() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canread';
         } else {
+            if ($Team->getDoForceCanwrite() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canwrite';
         }
 
@@ -700,31 +692,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Order by in sql
-     *
-     * @return string the column for order by
-     */
-    protected function getOrderSql(): string
-    {
-        switch ($this->DisplayParams->order) {
-            case 'cat':
-                return 'categoryt.id';
-            case 'date':
-            case 'rating':
-            case 'title':
-            case 'id':
-            case 'lastchange':
-                return 'entity.lastchange';
-            case 'comment':
-                return 'commentst.recent_comment';
-            case 'user':
-                return 'entity.userid';
-            default:
-                return 'date';
-        }
-    }
-
-    /**
      * Remove current entity from pinned of current user
      *
      * @return void
@@ -865,7 +832,7 @@ abstract class AbstractEntity
         $term = filter_var($term, FILTER_SANITIZE_STRING);
         $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
 
-        return $Entity->readShow();
+        return $Entity->readShow(new DisplayParams());
     }
 
     /**
@@ -880,7 +847,7 @@ abstract class AbstractEntity
         $term = filter_var($term, FILTER_SANITIZE_STRING);
         $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
 
-        return $Entity->readShow();
+        return $Entity->readShow(new DisplayParams());
     }
 
     /**

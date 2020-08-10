@@ -58,6 +58,33 @@ class DisplayParams
 
     }
 
+    /**
+     * Order by in sql
+     *
+     * @return string the column for order by
+     */
+    public function getOrderSql(): string
+    {
+        switch ($this->order) {
+            case 'cat':
+                return 'categoryt.id';
+            case 'rating':
+                return 'entity.rating';
+            case 'title':
+                return 'entity.title';
+            case 'id':
+                return 'entity.id';
+            case 'lastchange':
+                return 'entity.lastchange';
+            case 'comment':
+                return 'commentst.recent_comment';
+            case 'user':
+                return 'entity.userid';
+            default:
+                return 'date';
+        }
+    }
+
     private function setLimit(App $app): void
     {
         $limit = (int) ($app->Users->userData['limit_nb'] ?? 15);

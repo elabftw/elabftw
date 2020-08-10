@@ -225,7 +225,7 @@ abstract class AbstractEntity
             Tools::getSearchSql($displayParams->query, 'and', '', $this->type),
             $this->idFilter,
             'GROUP BY id ORDER BY',
-            $this->getOrderSql($displayParams->order),
+            $displayParams->getOrderSql(),
             $displayParams->sort,
             ', entity.id',
             $displayParams->sort,
@@ -689,33 +689,6 @@ abstract class AbstractEntity
             $pinArr[] = $entity->read();
         }
         return $pinArr;
-    }
-
-    /**
-     * Order by in sql
-     *
-     * @param string $order
-     *
-     * @return string the column for order by
-     */
-    protected function getOrderSql(string $order): string
-    {
-        switch ($order) {
-            case 'cat':
-                return 'categoryt.id';
-            case 'date':
-            case 'rating':
-            case 'title':
-            case 'id':
-            case 'lastchange':
-                return 'entity.lastchange';
-            case 'comment':
-                return 'commentst.recent_comment';
-            case 'user':
-                return 'entity.userid';
-            default:
-                return 'date';
-        }
     }
 
     /**

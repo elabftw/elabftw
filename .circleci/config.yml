@@ -78,7 +78,8 @@ jobs:
       - run:
           name: Run unit tests
           command: yarn run unit
-      - snyk/scan
+      # disable this for now, not really useful with github vulns scan and makes the PR fail because of missing secret
+      #- snyk/scan
       - run:
           name: Code coverage
           command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml

@@ -17,6 +17,7 @@ use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use function mb_strlen;
+use function explode;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -313,7 +314,7 @@ class Tools
     {
         $sql = ' AND ';
         // search character is the separator for and/or
-        $qArr = \explode(' ', $query);
+        $qArr = explode(' ', $query);
         $sql .= '(';
         foreach ($qArr as $key => $value) {
             // add the andor after the first

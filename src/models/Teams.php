@@ -14,7 +14,6 @@ use function array_diff;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;

@@ -76,11 +76,6 @@ class ApiController implements ControllerInterface
     /** @var string $param used by backupzip to get the period */
     private $param;
 
-    /**
-     * Constructor
-     *
-     * @param Request $request
-     */
     public function __construct(App $app)
     {
         $this->App = $app;
@@ -323,9 +318,10 @@ class ApiController implements ControllerInterface
      */
     private function getEntity(): Response
     {
-        $this->Entity->setDisplayParams(new DisplayParams($this->App));
         if ($this->id === null) {
-            return new JsonResponse($this->Entity->readShow(true));
+            $DisplayParams = new DisplayParams();
+            $DisplayParams->adjust($this->App);
+            return new JsonResponse($this->Entity->readShow($DisplayParams, true));
         }
         $this->Entity->canOrExplode('read');
         // add the uploaded files

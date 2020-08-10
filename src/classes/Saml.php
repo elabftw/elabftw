@@ -44,7 +44,7 @@ class Saml
     /**
      * Get the settings array
      *
-     * @param int $id id of the selected idp
+     * @param int|null $id id of the selected idp
      * @return array
      */
     public function getSettings(?int $id = null): array
@@ -58,7 +58,7 @@ class Saml
      * On login we don't have an id but we don't need the settings
      * from a particular idp (just the service provider)
      *
-     * @param int $id id of the idp we want
+     * @param int|null $id id of the idp we want
      */
     private function setSettings(?int $id = null): void
     {

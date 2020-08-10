@@ -116,9 +116,8 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App);
-        // and make the entity add filters in the sql to comply with query
-        $this->Entity->setDisplayParams($DisplayParams);
+        $DisplayParams = new DisplayParams();
+        $DisplayParams->adjust($this->App);
 
         // only show public to anon
         if ($this->App->Session->get('anon')) {
@@ -140,6 +139,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $template = 'show.html';
 
         $renderArr = array(
+            'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'pinnedArr' => $this->Entity->getPinned(),

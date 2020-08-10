@@ -15,6 +15,7 @@ use function in_array;
 
 /**
  * This class holds the values for limit, offset, order and sort
+ * A new instance will contain the default values
  *
  */
 class DisplayParams
@@ -37,68 +38,67 @@ class DisplayParams
     /** @var string $searchType if this variable is not empty the error message shown will be different if there are no results */
     public $searchType = '';
 
-    /** @var App $App */
-    private $App;
-
-    public function __construct(App $app)
+    /**
+     * Use the user preferences and request to adjust parameters
+     */
+    public function adjust(App $app): void
     {
-        $this->App = $app;
-
-        $this->setLimit();
-        $this->setOffset();
-        $this->setQuery();
-        $this->setSort();
-        $this->setOrder();
+        $this->setLimit($app);
+        $this->setOffset($app);
+        $this->setQuery($app);
+        $this->setSort($app);
+        $this->setOrder($app);
         // RELATED FILTER
-        if (Check::id((int) $this->App->Request->query->get('related')) !== false) {
+        if (Check::id((int) $app->Request->query->get('related')) !== false) {
             $this->searchType = 'related';
         }
-        if ((Check::id((int) $this->App->Request->query->get('cat')) !== false) || !empty($this->App->Request->query->get('tags')[0])) {
+        if ((Check::id((int) $app->Request->query->get('cat')) !== false) || !empty($app->Request->query->get('tags')[0])) {
             $this->searchType = 'something';
         }
+
     }
 
-    private function setLimit(): void
+    private function setLimit(App $app): void
     {
-        $limit = (int) ($this->App->Users->userData['limit_nb'] ?? 15);
-        if ($this->App->Request->query->has('limit')) {
-            $limit = Check::limit((int) $this->App->Request->query->get('limit'));
+        $limit = (int) ($app->Users->userData['limit_nb'] ?? 15);
+        if ($app->Request->query->has('limit')) {
+            $limit = Check::limit((int) $app->Request->query->get('limit'));
         }
         $this->limit = $limit;
     }
 
-    private function setOffset(): void
+    private function setOffset(App $app): void
     {
-        if ($this->App->Request->query->has('offset') && Check::id((int) $this->App->Request->query->get('offset')) !== false) {
-            $this->offset = (int) $this->App->Request->query->get('offset');
+        if ($app->Request->query->has('offset') && Check::id((int) $app->Request->query->get('offset')) !== false) {
+            $this->offset = (int) $app->Request->query->get('offset');
         }
     }
 
-    private function setQuery(): void
+    private function setQuery(App $app): void
     {
-        if (!empty($this->App->Request->query->get('q'))) {
-            $this->query = $this->App->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
+        if (!empty($app->Request->query->get('q'))) {
+            $this->query = $app->Request->query->filter('q', null, FILTER_SANITIZE_STRING);
             $this->searchType = 'query';
         }
     }
 
-    private function setOrder(): void
+    private function setOrder(App $app): void
     {
         // NOTE: in 7.4 we will be able to use ??= here
         // load the pref from the user
-        $this->order = $this->App->Users->userData['orderby'] ?? $this->order;
+        $this->order = $app->Users->userData['orderby'] ?? $this->order;
 
         // now get pref from the filter-order-sort menu
-        $this->order = $this->App->Request->query->get('order') ?? $this->order;
+        $this->order = $app->Request->query->get('order') ?? $this->order;
     }
 
-    private function setSort(): void
+    private function setSort(App $app): void
     {
         // load the pref from the user
-        $this->sort = $this->App->Users->userData['sort'] ?? $this->sort;
+        $this->sort = $app->Users->userData['sort'] ?? $this->sort;
 
         // now get pref from the filter-order-sort menu
-        $this->sort = $this->App->Request->query->get('sort') ?? $this->sort;
+        $this->sort = $app->Request->query->get('sort') ?? $this->sort;
 
         if (!in_array($this->sort, array('asc', 'desc'), true)) {
             $this->sort = 'desc';

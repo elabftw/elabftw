@@ -39,9 +39,8 @@ try {
         $SamlAuth = new SamlAuth($settings);
         $returnUrl = $settings['baseurl'] . '/index.php?acs';
         $SamlAuth->login($returnUrl);
-
-    // login as anonymous
     } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) {
+        // login as anonymous
         $Teams = new Teams($App->Users);
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {
             $Auth->loginAsAnon((int) $Request->request->get('team_id'));
@@ -51,15 +50,14 @@ try {
                 $location = '../../experiments.php';
             }
         }
-
-    // Two Factor Authentication
     } elseif ($App->Session->has('mfa_secret')) {
+        // Two Factor Authentication
         // Abort activation by user
         $Mfa = new Mfa($App->Request, $App->Session);
         if ($App->Session->has('enable_mfa') && $Request->request->get('Submit') === 'cancel') {
             $location = $Mfa->abortEnable();
         } else {
-           // Check verification code
+            // Check verification code
             $verifyMFACode = $Mfa->verifyCode();
             if ($App->Session->has('enable_mfa')) {
                 if ($verifyMFACode) {
@@ -75,9 +73,8 @@ try {
                 }
             }
         }
-
-    // LOGIN: internal credential check
     } else {
+        // LOGIN: internal credential check
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
             //throw new ImproperActionException(_('A mandatory field is missing!'));

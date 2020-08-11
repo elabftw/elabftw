@@ -18,6 +18,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -51,6 +52,9 @@ abstract class AbstractEntity
     /** @var Users $Users our user */
     public $Users;
 
+    /** @var Pins $Pins */
+    public $Pins;
+
     /** @var string $type experiments or items */
     public $type = '';
 
@@ -61,7 +65,7 @@ abstract class AbstractEntity
     public $page = '';
 
     /** @var array $filters an array of arrays with filters for sql query */
-    public $filters;
+    public $filters = array();
 
     /** @var string $idFilter sql of ids to include */
     public $idFilter;
@@ -74,12 +78,6 @@ abstract class AbstractEntity
 
     /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
-
-    /** @var string $queryFilter inserted in sql */
-    public $queryFilter = '';
-
-    /** @var DisplayParams $DisplayParams */
-    public $DisplayParams;
 
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
@@ -104,7 +102,7 @@ abstract class AbstractEntity
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
-        $this->filters = array();
+        $this->Pins = new Pins($this);
         $this->idFilter = '';
 
         if ($id !== null) {
@@ -185,6 +183,7 @@ abstract class AbstractEntity
      * The goal here is to decrease the number of read columns to reduce memory footprint
      * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
      * Only logged in users use this function
+     * @param DisplayParams $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
      *
      *                   \||/
@@ -201,7 +200,7 @@ abstract class AbstractEntity
      *
      *          Here be dragons!
      */
-    public function readShow(bool $extended = false): array
+    public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
         $sql = $this->getReadSqlBeforeWhere($extended, $extended);
         $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
@@ -226,16 +225,16 @@ abstract class AbstractEntity
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
-            $this->queryFilter,
+            Tools::getSearchSql($displayParams->query, 'and', '', $this->type),
             $this->idFilter,
             'GROUP BY id ORDER BY',
-            $this->getOrderSql(),
-            $this->DisplayParams->sort,
+            $displayParams->getOrderSql(),
+            $displayParams->sort,
             ', entity.id',
-            $this->DisplayParams->sort,
+            $displayParams->sort,
             // add one so we can display Next page if there are more things to display
-            'LIMIT ' . (string) ($this->DisplayParams->limit + 1),
-            'OFFSET ' . (string) $this->DisplayParams->offset,
+            'LIMIT ' . (string) ($displayParams->limit + 1),
+            'OFFSET ' . (string) $displayParams->offset,
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -287,7 +286,7 @@ abstract class AbstractEntity
     /**
      * Read the tags of the entity
      *
-     * @param array $items the results of all items from readShow()
+     * @param array<array-key, mixed> $items the results of all items from readShow()
      *
      * @return array
      */
@@ -352,41 +351,9 @@ abstract class AbstractEntity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        /* disable this for now: we don't change the userid upon edition anymore
-            or the item might seemingly change team
-        if ($this instanceof Database) {
-            // if we are the admin doing an edit on a visibility = user item, we don't want to change the userid
-            // first get the visibility
-            $sql = 'SELECT userid, canread FROM items WHERE id = :id';
-            $req2 = $this->Db->prepare($sql);
-            $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
-            if ($req2->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            $item = $req2->fetch();
-
-            $newUserid = $this->Users->userData['userid'];
-            if ($item['canread'] === 'user') {
-                $newUserid = $item['userid'];
-            }
-            $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
-        }
-         */
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);
-    }
-
-    /**
-     * Set the DisplayParams property and build the sql params for it
-     *
-     * @param DisplayParams $displayParams
-     * @return void
-     */
-    public function setDisplayParams(DisplayParams $displayParams): void
-    {
-        $this->DisplayParams = $displayParams;
-        $this->queryFilter = Tools::getSearchSql($this->DisplayParams->query, 'and', '', $this->type);
     }
 
     /**
@@ -401,9 +368,17 @@ abstract class AbstractEntity
         $this->canOrExplode('write');
         Check::visibility($value);
         Check::rw($rw);
+        // check if the permissions are enforced
+        $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
+            if ($Team->getDoForceCanread() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canread';
         } else {
+            if ($Team->getDoForceCanwrite() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canwrite';
         }
 
@@ -454,7 +429,7 @@ abstract class AbstractEntity
      * Verify we can read/write an item
      * Here be dragons! Cognitive load > 9000
      *
-     * @param array|null $item one item array
+     * @param array<string, mixed>|null $item one item array
      * @return array
      */
     public function getPermissions(?array $item = null): array
@@ -484,60 +459,6 @@ abstract class AbstractEntity
         }
 
         return array('read' => false, 'write' => false);
-    }
-
-    /**
-     * Get an array formatted for the autocomplete input (link and bind)
-     *
-     * @param string $term the query
-     * @param string $source experiments or items
-     * @return array
-     */
-    public function getAutocomplete(string $term, string $source): array
-    {
-        if ($source === 'experiments') {
-            $items = $this->getExpList($term);
-        } elseif ($source === 'items') {
-            $items = $this->getDbList($term);
-        } else {
-            throw new \InvalidArgumentException;
-        }
-        $linksArr = array();
-        foreach ($items as $item) {
-            $linksArr[] = $item['id'] . ' - ' . $item['category'] . ' - ' . substr($item['title'], 0, 60);
-        }
-        return $linksArr;
-    }
-
-    /**
-     * Get an array of a mix of experiments and database items
-     * for use with the mention plugin of tinymce (# and $ autocomplete)
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getMentionList(string $term): array
-    {
-        $mentionArr = array();
-
-        // add items from database
-        $itemsArr = $this->getDbList($term);
-        foreach ($itemsArr as $item) {
-            $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
-                $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',
-            );
-        }
-
-        // complete the list with experiments
-        // fix #191
-        $experimentsArr = $this->getExpList($term);
-        foreach ($experimentsArr as $item) {
-            $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
-                $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
-            );
-        }
-
-        return $mentionArr;
     }
 
     /**
@@ -665,84 +586,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Add/remove current entity as pinned for current user
-     *
-     * @return void
-     */
-    public function togglePin(): void
-    {
-        $this->canOrExplode('read');
-        $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
-    }
-
-    /**
-     * Get the items pinned by current users to display in show mode
-     *
-     * @return array
-     */
-    public function getPinned(): array
-    {
-        $sql = 'SELECT DISTINCT entity_id FROM pin2users WHERE users_id = :users_id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-
-        $ids = $req->fetchAll();
-        $pinArr = array();
-        $entity = clone $this;
-        foreach ($ids as $id) {
-            $entity->setId((int) $id['entity_id']);
-            $pinArr[] = $entity->read();
-        }
-        return $pinArr;
-    }
-
-    /**
-     * Order by in sql
-     *
-     * @return string the column for order by
-     */
-    protected function getOrderSql(): string
-    {
-        switch ($this->DisplayParams->order) {
-            case 'cat':
-                return 'categoryt.id';
-            case 'date':
-            case 'rating':
-            case 'title':
-            case 'id':
-            case 'lastchange':
-                return 'entity.lastchange';
-            case 'comment':
-                return 'commentst.recent_comment';
-            case 'user':
-                return 'entity.userid';
-            default:
-                return 'date';
-        }
-    }
-
-    /**
-     * Remove current entity from pinned of current user
-     *
-     * @return void
-     */
-    protected function rmFromPinned(): void
-    {
-        $this->canOrExplode('read');
-
-        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND users_id = :users_id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-    }
-
-    /**
      * Get the SQL string for read before the WHERE
      *
      * @param bool $getTags do we get the tags too?
@@ -851,53 +694,5 @@ abstract class AbstractEntity
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->type);
-    }
-
-    /**
-     * Get a list of experiments with title starting with $term and optional user filter
-     *
-     * @param string $term the query
-     * @return array
-     */
-    private function getExpList(string $term): array
-    {
-        $Entity = new Experiments($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
-
-        return $Entity->readShow();
-    }
-
-    /**
-     * Get a list of items with a filter on the $term
-     *
-     * @param string $term the query
-     * @return array
-     */
-    private function getDbList(string $term): array
-    {
-        $Entity = new Database($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
-
-        return $Entity->readShow();
-    }
-
-    /**
-     * Add current entity to pinned of current user
-     *
-     * @return void
-     */
-    private function addToPinned(): void
-    {
-        $this->canOrExplode('read');
-
-        $sql = 'INSERT INTO pin2users(users_id, entity_id, type) VALUES (:users_id, :entity_id, :type)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
     }
 }

@@ -19,7 +19,7 @@ use PDO;
  */
 class UsersHelper
 {
-    /** @var Db $db db connection */
+    /** @var Db $Db db connection */
     private $Db;
 
     public function __construct()

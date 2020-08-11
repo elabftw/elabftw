@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
@@ -48,6 +49,8 @@ class SearchController extends AbstractEntityController
      */
     protected function getItemsArr(string $searchType): array
     {
-        return $this->Entity->readShow();
+        $DisplayParams = new DisplayParams();
+        $DisplayParams->adjust($this->App);
+        return $this->Entity->readShow($DisplayParams);
     }
 }

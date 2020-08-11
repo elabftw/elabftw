@@ -66,7 +66,7 @@ class Steps implements CrudInterface
      * Import a step from a complete step array
      * Used when importing from zip archive (json)
      *
-     * @param array $step
+     * @param array<string, mixed> $step
      * @return void
      */
     public function import(array $step): void

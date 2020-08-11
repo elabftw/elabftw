@@ -74,7 +74,7 @@ class Users
      * Create a new user. If no password is provided, it's because we create it from SAML.
      *
      * @param string $email
-     * @param array $teams
+     * @param array<array-key, mixed> $teams
      * @param string $firstname
      * @param string $lastname
      * @param string $password
@@ -355,7 +355,7 @@ class Users
     /**
      * Update user from the editusers template
      *
-     * @param array $params POST
+     * @param array<string, mixed> $params POST
      * @return void
      */
     public function update(array $params): void
@@ -418,7 +418,7 @@ class Users
     /**
      * Update preferences from user control panel
      *
-     * @param array $params
+     * @param array<string, mixed> $params
      * @return void
      */
     public function updatePreferences(array $params): void
@@ -557,7 +557,7 @@ class Users
     /**
      * Update things from UCP
      *
-     * @param array $params
+     * @param array<string, mixed> $params
      * @return void
      */
     public function updateAccount(array $params): void

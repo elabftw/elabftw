@@ -144,6 +144,6 @@ class Database extends AbstractEntity implements CreateInterface
         }
 
         // delete from pinned
-        $this->rmFromPinned();
+        $this->Pins->rmFromPinned();
     }
 }

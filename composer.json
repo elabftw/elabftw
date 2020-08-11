@@ -66,6 +66,9 @@
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
       ],
+      "Elabftw\\Maps\\": [
+        "src/maps"
+      ],
       "Elabftw\\Models\\": [
         "src/models"
       ],

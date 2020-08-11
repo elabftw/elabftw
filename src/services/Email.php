@@ -137,7 +137,7 @@ class Email
      * Send an email to the admin of a team
      *
      * @param int $team
-     * @param array $userInfo to get the email and name of new user
+     * @param array<string, mixed> $userInfo to get the email and name of new user
      * @return void
      */
     public function alertAdmin($team, $userInfo): void

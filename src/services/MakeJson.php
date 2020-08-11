@@ -53,7 +53,7 @@ class MakeJson extends AbstractMake
     public function getJson(): array
     {
         $res = array();
-        foreach ($this->idArr as $key => $id) {
+        foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
             $res[] = $this->Entity->read(true);
         }

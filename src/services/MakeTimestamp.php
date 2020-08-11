@@ -284,7 +284,7 @@ class MakeTimestamp extends AbstractMake
     /**
      * Run a process
      *
-     * @param array $args arguments including the executable
+     * @param array<string> $args arguments including the executable
      * @param string|null $cwd command working directory
      * @return string
      */

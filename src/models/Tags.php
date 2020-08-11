@@ -294,7 +294,7 @@ class Tags implements CrudInterface
     /**
      * Get a list of entity id filtered by tags
      *
-     * @param array $tags tags from the query string
+     * @param array<array-key, string> $tags tags from the query string
      * @param int $team current logged in team
      * @return array
      */

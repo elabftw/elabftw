@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
 
@@ -62,6 +63,11 @@ class Experiments extends AbstractEntity implements CreateInterface
         if ($this->Users->userData['default_write'] !== null) {
             $canwrite = $this->Users->userData['default_write'];
         }
+
+        // enforce the permissions if the admin has set them
+        $Team = new Team((int) $this->Users->userData['team']);
+        $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
+        $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
@@ -229,7 +235,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $this->Db->execute($req);
 
         // delete from pinned
-        $this->rmFromPinned();
+        $this->Pins->rmFromPinned();
     }
 
     /**

@@ -10,9 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use function dirname;
 use Elabftw\Elabftw\ReleaseCheck;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\Config;
+use function is_readable;
 
 /**
  * To get Twig
@@ -28,7 +30,7 @@ trait TwigTrait
      */
     protected function getTwig(Config $config): \Twig\Environment
     {
-        $elabRoot = \dirname(__DIR__, 2);
+        $elabRoot = dirname(__DIR__, 2);
         $loader = new \Twig\Loader\FilesystemLoader("$elabRoot/src/templates");
         $cache = "$elabRoot/cache/twig";
         if (!is_dir($cache) && !mkdir($cache, 0700) && !is_dir($cache)) {
@@ -59,7 +61,7 @@ trait TwigTrait
 
         // custom test to check for a file
         $test = new \Twig\TwigTest('readable', function (string $path) {
-            return \is_readable(\dirname(__DIR__, 2) . '/uploads/' . $path);
+            return is_readable(dirname(__DIR__, 2) . '/uploads/' . $path);
         });
         $TwigEnvironment->addTest($test);
 

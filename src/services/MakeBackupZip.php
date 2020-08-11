@@ -148,7 +148,7 @@ class MakeBackupZip extends AbstractMake
     /**
      * Add attached files
      *
-     * @param array $filesArr the files array
+     * @param array<array-key, array<string, string>> $filesArr the files array
      * @return void
      */
     private function addAttachedFiles($filesArr): void
@@ -195,13 +195,6 @@ class MakeBackupZip extends AbstractMake
         $this->Entity->setId($id);
         $this->Entity->populate();
         $uploadedFilesArr = $this->Entity->Uploads->readAll();
-        $entityArr = $this->Entity->entityData;
-        // save the uploads in entityArr for the json file
-        $entityArr['uploads'] = $uploadedFilesArr;
-        // add links
-        $entityArr['links'] = $this->Entity->Links->readAll();
-        // add steps
-        $entityArr['steps'] = $this->Entity->Steps->readAll();
         $this->folder = Filter::forFilesystem($fullname) . '/' . $this->getBaseFileName();
 
         $this->addTimestampFiles($id);

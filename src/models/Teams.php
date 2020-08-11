@@ -11,8 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function array_diff;
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
@@ -80,7 +78,7 @@ class Teams implements CrudInterface
      * Make sure that all the teams are existing
      * If they do not exist, create them if it's allowed by sysadmin
      *
-     * @param array $teams
+     * @param array<array-key, mixed> $teams
      * @return array an array of teams id
      */
     public function validateTeams(array $teams): array
@@ -105,7 +103,7 @@ class Teams implements CrudInterface
      * Add one user to n teams
      *
      * @param int $userid
-     * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
      *
      * @return void
      */
@@ -128,7 +126,7 @@ class Teams implements CrudInterface
      * Remove a user from teams
      *
      * @param int $userid
-     * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
      *
      * @return void
      */
@@ -153,7 +151,7 @@ class Teams implements CrudInterface
      * are the same teams than the one sent by the IDP
      *
      * @param int $userid
-     * @param array $teams
+     * @param array<array-key, mixed> $teams
      *
      * @return void
      */
@@ -249,100 +247,6 @@ class Teams implements CrudInterface
             return array();
         }
         return $res;
-    }
-
-    /**
-     * Update team
-     *
-     * @param array $post POST
-     * @return void
-     */
-    public function update(array $post): void
-    {
-        // CHECKS
-        /* TODO provide an upload button
-        if (isset($post['stampcert'])) {
-            $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
-            $elabRoot = \dirname(__DIR__, 2);
-            if (!is_readable(realpath($elabRoot . '/web/' . $cert_chain))) {
-                throw new Exception('Cannot read provided certificate file.');
-            }
-        }
-         */
-
-        if (isset($post['stamppass']) && !empty($post['stamppass'])) {
-            $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(\SECRET_KEY));
-        } else {
-            $teamConfigArr = $this->read();
-            $stamppass = $teamConfigArr['stamppass'];
-        }
-
-        $deletableXp = 0;
-        if ($post['deletable_xp'] == 1) {
-            $deletableXp = 1;
-        }
-
-        $publicDb = 0;
-        if ($post['public_db'] == 1) {
-            $publicDb = 1;
-        }
-
-        $linkName = 'Documentation';
-        if (isset($post['link_name'])) {
-            $linkName = Filter::sanitize($post['link_name']);
-        }
-
-        $linkHref = 'https://doc.elabftw.net';
-        if (isset($post['link_href'])) {
-            $linkHref = Filter::sanitize($post['link_href']);
-        }
-
-        $sql = 'UPDATE teams SET
-            deletable_xp = :deletable_xp,
-            public_db = :public_db,
-            link_name = :link_name,
-            link_href = :link_href,
-            stamplogin = :stamplogin,
-            stamppass = :stamppass,
-            stampprovider = :stampprovider,
-            stampcert = :stampcert
-            WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':deletable_xp', $deletableXp, PDO::PARAM_INT);
-        $req->bindParam(':public_db', $publicDb, PDO::PARAM_INT);
-        $req->bindParam(':link_name', $linkName);
-        $req->bindParam(':link_href', $linkHref);
-        $req->bindParam(':stamplogin', $post['stamplogin']);
-        $req->bindParam(':stamppass', $stamppass);
-        $req->bindParam(':stampprovider', $post['stampprovider']);
-        $req->bindParam(':stampcert', $post['stampcert']);
-        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
-
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Edit the name of a team, called by ajax
-     *
-     * @param int $id The id of the team
-     * @param string $name The new name we want
-     * @param string $orgid The id of the team in the organisation (from IDP for instance)
-     * @return void
-     */
-    public function updateName(int $id, string $name, string $orgid = ''): void
-    {
-        $name = Filter::sanitize($name);
-        $orgid = Filter::sanitize($orgid);
-
-        $sql = 'UPDATE teams
-            SET name = :name,
-                orgid = :orgid
-            WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':orgid', $orgid);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 
     /**

@@ -28,7 +28,7 @@ class Permissions
     /** @var Teams $Teams instance of Teams */
     private $Teams;
 
-    /** @var TeamGroups $TeamsGroups instance of TeamsGroups */
+    /** @var TeamGroups $TeamGroups instance of TeamsGroups */
     private $TeamGroups;
 
     /** @var array $item the item to check */
@@ -38,7 +38,7 @@ class Permissions
      * Constructor
      *
      * @param Users $users
-     * @param array $item
+     * @param array<string, mixed> $item
      */
     public function __construct(Users $users, array $item)
     {
@@ -58,7 +58,7 @@ class Permissions
         $write = $this->getWrite();
 
         // if we have write access, then we have read access for sure
-        if ($write === true) {
+        if ($write) {
             return array('read' => true, 'write' => $write);
         }
 

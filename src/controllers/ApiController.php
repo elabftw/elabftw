@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -38,6 +40,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ApiController implements ControllerInterface
 {
+    /** @var App $App */
+    private $App;
+
     /** @var Request $Request instance of Request */
     private $Request;
 
@@ -71,14 +76,10 @@ class ApiController implements ControllerInterface
     /** @var string $param used by backupzip to get the period */
     private $param;
 
-    /**
-     * Constructor
-     *
-     * @param Request $request
-     */
-    public function __construct(Request $request)
+    public function __construct(App $app)
     {
-        $this->Request = $request;
+        $this->App = $app;
+        $this->Request = $app->Request;
         // Check if the Authorization Token was sent along
         if (!$this->Request->server->has('HTTP_AUTHORIZATION')) {
             throw new UnauthorizedException('No access token provided!');
@@ -177,7 +178,7 @@ class ApiController implements ControllerInterface
      */
     private function parseReq(): void
     {
-        $args = explode('/', rtrim($this->Request->query->get('req'), '/'));
+        $args = explode('/', rtrim($this->Request->query->get('req') ?? '', '/'));
 
         // assign the id if there is one
         $id = null;
@@ -318,7 +319,9 @@ class ApiController implements ControllerInterface
     private function getEntity(): Response
     {
         if ($this->id === null) {
-            return new JsonResponse($this->Entity->readShow(true));
+            $DisplayParams = new DisplayParams();
+            $DisplayParams->adjust($this->App);
+            return new JsonResponse($this->Entity->readShow($DisplayParams, true));
         }
         $this->Entity->canOrExplode('read');
         // add the uploaded files
@@ -727,7 +730,7 @@ class ApiController implements ControllerInterface
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create($this->Request->request->get('tag'));
+        $this->Entity->Tags->create($this->Request->request->get('tag') ?? '');
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -776,9 +779,9 @@ class ApiController implements ControllerInterface
         }
         $this->Entity->setId($this->id);
         $id = $this->Scheduler->create(
-            $this->Request->request->get('start'),
-            $this->Request->request->get('end'),
-            $this->Request->request->get('title'),
+            $this->Request->request->get('start') ?? '',
+            $this->Request->request->get('end') ?? '',
+            $this->Request->request->get('title') ?? '',
         );
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
@@ -858,9 +861,9 @@ class ApiController implements ControllerInterface
     private function updateEntity(): Response
     {
         $this->Entity->update(
-            $this->Request->request->get('title'),
-            $this->Request->request->get('date'),
-            $this->Request->request->get('body')
+            $this->Request->request->get('title') ?? 'Untitled',
+            $this->Request->request->get('date') ?? '',
+            $this->Request->request->get('body') ?? '',
         );
         return new JsonResponse(array('result' => 'success'));
     }

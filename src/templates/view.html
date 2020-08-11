@@ -64,7 +64,7 @@
     {% endif %}
     <i class='fas fa-eye ml-2' title='{{ 'Visibility'|trans }}'></i> {{ Entity.getCan('read') }}
     <i class='fas fa-pencil-alt ml-2' title='{{ 'Edit'|trans }}'></i> {{ Entity.getCan('write') }}
-    <span id='pinIcon' class='ml-2'><i class='fas fa-thumbtack clickable {{ Entity.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i></span>
+    <span id='pinIcon' class='ml-2'><i class='fas fa-thumbtack clickable {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}' title='{{ 'Toggle pin'|trans }}'></i></span>
   </p>
 
   <!-- DATE -->

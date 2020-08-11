@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
@@ -67,12 +68,7 @@ try {
         // get attribute from config
         $teamAttribute = $Saml->Config->configArr['saml_team'];
 
-        // several teams can be returned by the IDP
         $teams = $Session->get('samlUserdata')[$teamAttribute];
-        // or one but with ',' inside and we'll split on that
-        if (\count($teams) === 1) {
-            $teams = explode(',', $teams[0]);
-        }
         // if no team attribute is sent by the IDP, use the default team
         if (empty($teams)) {
             // we directly get the id from the stored config
@@ -83,6 +79,11 @@ try {
             $teams = array((string) $teamId);
         }
 
+        // several teams can be returned by the IDP
+        // or one but with ',' inside and we'll split on that
+        if (count($teams) === 1) {
+            $teams = explode(',', $teams[0]);
+        }
         if ($userid === 0) {
             // the user doesn't exist yet in the db
 

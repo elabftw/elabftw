@@ -26,10 +26,11 @@
       {% endif %}
 
       {% if App.Session.has('auth') and App.Session.get('is_admin') %}
+      {% set unvalidatedUsersCount = App.Users.readAllFromTeam(0)|length %}
         <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-          {% if App.Users.readAllFromTeam(0)|length > 0 %}
-            <span class='badge badge-dark p-1'>{{ App.Users.readAllFromTeam(0)|length }}</span>
+          {% if unvalidatedUsersCount > 0 %}
+            <span class='badge badge-dark p-1'>{{ unvalidatedUsersCount }}</span>
             <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
           {% endif %}
         </a>

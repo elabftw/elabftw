@@ -441,6 +441,7 @@ $(document).ready(function() {
         $.getJSON(url, {
           mention: 1,
           term: query,
+          type: type,
         }).done(function(data) {
           process(data);
         });

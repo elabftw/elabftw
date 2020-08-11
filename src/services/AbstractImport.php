@@ -48,7 +48,7 @@ abstract class AbstractImport
         $this->Db = Db::getConnection();
         $this->Users = $users;
         $this->target = (int) $request->request->get('target');
-        $this->canread = Check::visibility($request->request->get('visibility'));
+        $this->canread = Check::visibility($request->request->get('visibility') ?? '');
         $this->UploadedFile = $request->files->all()['file'];
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());

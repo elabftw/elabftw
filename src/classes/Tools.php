@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
+use function explode;
 use function filter_var;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
@@ -244,7 +245,7 @@ class Tools
      * Used for debugging only
      *
      * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
-     * @param array $arr
+     * @param array<mixed> $arr
      * @return string
      */
     public static function printArr(array $arr): string
@@ -313,7 +314,7 @@ class Tools
     {
         $sql = ' AND ';
         // search character is the separator for and/or
-        $qArr = \explode(' ', $query);
+        $qArr = explode(' ', $query);
         $sql .= '(';
         foreach ($qArr as $key => $value) {
             // add the andor after the first
@@ -364,7 +365,7 @@ class Tools
     /**
      * Transform a query object in a query string
      *
-     * @param array $query the query array given by Request
+     * @param array<string, mixed> $query the query array given by Request
      * @return string
      */
     public static function qFilter(array $query): string

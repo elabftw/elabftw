@@ -137,7 +137,7 @@ class ImportZip extends AbstractImport
     /**
      * The main SQL to create a new item with the title and body we have
      *
-     * @param array $item the item to insert
+     * @param array<string, mixed> $item the item to insert
      * @throws ImproperActionException
      * @return void
      */

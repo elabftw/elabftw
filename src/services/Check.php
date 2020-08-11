@@ -12,6 +12,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use function in_array;
+use function mb_strlen;
 
 /**
  * When values need to be checked
@@ -30,7 +32,7 @@ class Check
      */
     public static function passwordLength(string $password): bool
     {
-        if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
+        if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;
@@ -133,7 +135,7 @@ class Check
             'user',
         );
 
-        if (!\in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
+        if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
             throw new IllegalActionException('The visibility parameter is wrong.');
         }
 

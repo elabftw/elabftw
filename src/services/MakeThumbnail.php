@@ -14,7 +14,10 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
+use function extension_loaded;
+use function filesize;
 use Gmagick;
+use function is_readable;
 
 /**
  * Create a thumbnail from a file
@@ -81,12 +84,12 @@ final class MakeThumbnail
      */
     public function makeThumb($force = false): void
     {
-        if (\is_readable($this->filePath) === false) {
+        if (is_readable($this->filePath) === false) {
             throw new FilesystemErrorException('File not found! (' . \substr($this->filePath, 0, 42) . '…)');
         }
 
         // do nothing for big files
-        if (\filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
+        if (filesize($this->filePath) > self::BIG_FILE_THRESHOLD) {
             return;
         }
 
@@ -97,7 +100,7 @@ final class MakeThumbnail
 
         // use gmagick preferentially
         // FIXME at the moment there is a bug with only png files on thumbnail generation, so use GD for png
-        if (\extension_loaded('gmagick') && Tools::getExt($this->filePath) !== 'png') {
+        if (extension_loaded('gmagick') && Tools::getExt($this->filePath) !== 'png') {
             $this->useGmagick();
 
         // if we don't have gmagick, try with gd

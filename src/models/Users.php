@@ -19,6 +19,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use function in_array;
+use function mb_strlen;
 use PDO;
 use function setcookie;
 
@@ -374,7 +375,7 @@ class Users
 
         $usergroup = Check::id((int) $params['usergroup']);
 
-        if (\mb_strlen($params['password']) > 1) {
+        if (mb_strlen($params['password']) > 1) {
             $this->updatePassword($params['password']);
         }
 

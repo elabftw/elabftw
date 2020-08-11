@@ -19,6 +19,7 @@ use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Exception;
+use function in_array;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -98,7 +99,7 @@ try {
     }
 
     // Check if we are banned after too much failed login attempts
-    if (\in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
+    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
         throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
     }
 

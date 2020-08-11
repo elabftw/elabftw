@@ -56,7 +56,7 @@ try {
     $commonTplBody = $Templates->readCommonBody();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
-    $unvalidatedUsersArr = array_filter($allTeamUsersArr, function($u) {
+    $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
         return $u['validated'] === '0';
     });
     // Users search

@@ -11,7 +11,8 @@
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="false"
     errorLevel="1"
-      findUnusedVariablesAndParams="true"
+    findUnusedVariablesAndParams="true"
+    runTaintAnalysis="true"
 >
     <projectFiles>
         <directory name="src" />

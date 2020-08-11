@@ -235,7 +235,7 @@ class Experiments extends AbstractEntity implements CreateInterface
         $this->Db->execute($req);
 
         // delete from pinned
-        $this->rmFromPinned();
+        $this->Pins->rmFromPinned();
     }
 
     /**

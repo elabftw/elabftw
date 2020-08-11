@@ -52,6 +52,9 @@ abstract class AbstractEntity
     /** @var Users $Users our user */
     public $Users;
 
+    /** @var Pins $Pins */
+    public $Pins;
+
     /** @var string $type experiments or items */
     public $type = '';
 
@@ -99,6 +102,7 @@ abstract class AbstractEntity
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
+        $this->Pins = new Pins($this);
         $this->filters = array();
         $this->idFilter = '';
 
@@ -583,59 +587,6 @@ abstract class AbstractEntity
     }
 
     /**
-     * Add/remove current entity as pinned for current user
-     *
-     * @return void
-     */
-    public function togglePin(): void
-    {
-        $this->canOrExplode('read');
-        $this->isPinned() ? $this->rmFromPinned() : $this->addToPinned();
-    }
-
-    /**
-     * Get the items pinned by current users to display in show mode
-     *
-     * @return array
-     */
-    public function getPinned(): array
-    {
-        $sql = 'SELECT DISTINCT entity_id FROM pin2users WHERE users_id = :users_id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-
-        $ids = $req->fetchAll();
-        $pinArr = array();
-        $entity = clone $this;
-        foreach ($ids as $id) {
-            $entity->setId((int) $id['entity_id']);
-            $pinArr[] = $entity->read();
-        }
-        return $pinArr;
-    }
-
-    /**
-     * Remove current entity from pinned of current user
-     *
-     * @return void
-     */
-    protected function rmFromPinned(): void
-    {
-        $this->canOrExplode('read');
-
-        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND users_id = :users_id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-    }
-
-    /**
      * Get the SQL string for read before the WHERE
      *
      * @param bool $getTags do we get the tags too?
@@ -744,23 +695,5 @@ abstract class AbstractEntity
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->type);
-    }
-
-    /**
-     * Add current entity to pinned of current user
-     *
-     * @return void
-     */
-    private function addToPinned(): void
-    {
-        $this->canOrExplode('read');
-
-        $sql = 'INSERT INTO pin2users(users_id, entity_id, type) VALUES (:users_id, :entity_id, :type)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
     }
 }

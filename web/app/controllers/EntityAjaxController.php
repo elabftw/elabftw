@@ -118,7 +118,7 @@ try {
 
     // TOGGLE PIN
     if ($Request->request->has('togglePin')) {
-        $Entity->togglePin();
+        $Entity->Pins->togglePin();
     }
 
     // CREATE STEP

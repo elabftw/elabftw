@@ -142,7 +142,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'pinnedArr' => $this->Entity->getPinned(),
+            'pinnedArr' => $this->Entity->Pins->getPinned(),
             'itemsArr' => $itemsArr,
             // generate light show page
             'searchPage' => $isSearchPage,

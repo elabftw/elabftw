@@ -168,7 +168,6 @@ class Users
             $Email->alertAdmin($teamIdArr[0], $userInfo);
             $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
-            // TODO put in session?
             $this->needValidation = true;
         }
         return $userid;

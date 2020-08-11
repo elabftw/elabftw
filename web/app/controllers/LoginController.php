@@ -54,7 +54,7 @@ try {
 
         // EMAIL
         if (!$Request->request->has('email') || !$Request->request->has('password')) {
-            //throw new ImproperActionException(_('A mandatory field is missing!'));
+            throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 
         $rememberme = 'off';

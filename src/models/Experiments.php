@@ -10,11 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
 use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
+use function random_bytes;
+use function sha1;
 
 /**
  * All about the experiments
@@ -343,6 +346,6 @@ class Experiments extends AbstractEntity implements CreateInterface
     private function generateElabid(): string
     {
         $date = Filter::kdate();
-        return $date . '-' . \sha1(\bin2hex(\random_bytes(16)));
+        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 }

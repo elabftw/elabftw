@@ -245,7 +245,7 @@ class Tools
      * Used for debugging only
      *
      * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
-     * @param array $arr
+     * @param array<mixed> $arr
      * @return string
      */
     public static function printArr(array $arr): string
@@ -365,7 +365,7 @@ class Tools
     /**
      * Transform a query object in a query string
      *
-     * @param array $query the query array given by Request
+     * @param array<string, mixed> $query the query array given by Request
      * @return string
      */
     public static function qFilter(array $query): string

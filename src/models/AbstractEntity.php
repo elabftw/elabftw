@@ -65,7 +65,7 @@ abstract class AbstractEntity
     public $page = '';
 
     /** @var array $filters an array of arrays with filters for sql query */
-    public $filters;
+    public $filters = array();
 
     /** @var string $idFilter sql of ids to include */
     public $idFilter;
@@ -103,7 +103,6 @@ abstract class AbstractEntity
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
-        $this->filters = array();
         $this->idFilter = '';
 
         if ($id !== null) {
@@ -287,7 +286,7 @@ abstract class AbstractEntity
     /**
      * Read the tags of the entity
      *
-     * @param array $items the results of all items from readShow()
+     * @param array<array-key, mixed> $items the results of all items from readShow()
      *
      * @return array
      */
@@ -430,7 +429,7 @@ abstract class AbstractEntity
      * Verify we can read/write an item
      * Here be dragons! Cognitive load > 9000
      *
-     * @param array|null $item one item array
+     * @param array<string, mixed>|null $item one item array
      * @return array
      */
     public function getPermissions(?array $item = null): array

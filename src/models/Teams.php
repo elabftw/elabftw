@@ -78,7 +78,7 @@ class Teams implements CrudInterface
      * Make sure that all the teams are existing
      * If they do not exist, create them if it's allowed by sysadmin
      *
-     * @param array $teams
+     * @param array<array-key, mixed> $teams
      * @return array an array of teams id
      */
     public function validateTeams(array $teams): array
@@ -103,7 +103,7 @@ class Teams implements CrudInterface
      * Add one user to n teams
      *
      * @param int $userid
-     * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
      *
      * @return void
      */
@@ -126,7 +126,7 @@ class Teams implements CrudInterface
      * Remove a user from teams
      *
      * @param int $userid
-     * @param array $teamIdArr this is the validated array of teams that exist coming from validateTeams
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist coming from validateTeams
      *
      * @return void
      */
@@ -151,7 +151,7 @@ class Teams implements CrudInterface
      * are the same teams than the one sent by the IDP
      *
      * @param int $userid
-     * @param array $teams
+     * @param array<array-key, mixed> $teams
      *
      * @return void
      */

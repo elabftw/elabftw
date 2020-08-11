@@ -339,7 +339,7 @@ class Uploads implements CrudInterface
     /**
      * Get the rotation angle from exif data
      *
-     * @param array $exifData
+     * @param array<string, mixed> $exifData
      * @return int
      */
     private function getRotationAngle(array $exifData): int

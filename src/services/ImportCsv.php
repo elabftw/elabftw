@@ -88,7 +88,7 @@ class ImportCsv extends AbstractImport
     /**
      * Generate a body from a row. Add column name in bold and content after that.
      *
-     * @param array $row row from the csv
+     * @param array<string, string> $row row from the csv
      * @return string
      */
     private function getBodyFromRow(array $row): string
@@ -107,7 +107,7 @@ class ImportCsv extends AbstractImport
     /**
      * Make sure the delimiter character is what is intended
      *
-     * @param Reader $csv
+     * @param Reader<mixed> $csv
      * @return void
      */
     private function checkDelimiter(Reader $csv): void

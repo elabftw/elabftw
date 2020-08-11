@@ -70,6 +70,10 @@ class App
      * Constructor
      *
      * @param Request $request
+     * @param Session<mixed> $session
+     * @param Config $config
+     * @param Logger $log
+     * @param Csrf $csrf
      */
     public function __construct(Request $request, Session $session, Config $config, Logger $log, Csrf $csrf)
     {
@@ -155,7 +159,7 @@ class App
      * Generate HTML from a twig template. The App object is injected into every template.
      *
      * @param string $template template located in app/tpl/
-     * @param array $variables the variables injected in the template
+     * @param array<string, mixed> $variables the variables injected in the template
      * @return string html
      */
     public function render(string $template, array $variables): string

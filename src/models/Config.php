@@ -71,7 +71,7 @@ class Config
     /**
      * Used in sysconfig.php to update config values
      *
-     * @param array $post (conf_name => conf_value)
+     * @param array<string, mixed> $post (conf_name => conf_value)
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @return void
      */

@@ -32,7 +32,7 @@ class Csrf
      * Constructor
      *
      * @param Request $request
-     * @param Session<mixed> $session
+     * @param Session $session
      */
     public function __construct(Request $request, Session $session)
     {

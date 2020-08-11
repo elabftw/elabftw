@@ -70,7 +70,7 @@ class App
      * Constructor
      *
      * @param Request $request
-     * @param Session<mixed> $session
+     * @param Session $session
      * @param Config $config
      * @param Logger $log
      * @param Csrf $csrf

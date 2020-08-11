@@ -107,7 +107,7 @@ class ImportCsv extends AbstractImport
     /**
      * Make sure the delimiter character is what is intended
      *
-     * @param Reader<mixed> $csv
+     * @param Reader $csv
      * @return void
      */
     private function checkDelimiter(Reader $csv): void

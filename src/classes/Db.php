@@ -104,7 +104,7 @@ final class Db
     /**
      * Execute a prepared statement and throw exception if it doesn't return true
      *
-     * @param PDOStatement<mixed> $req
+     * @param PDOStatement $req
      * @param array<mixed>|null $arr optional array to execute
      *
      * @return bool

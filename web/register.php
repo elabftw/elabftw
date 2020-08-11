@@ -43,8 +43,7 @@ try {
         throw new ImproperActionException(_('No local account creation is allowed!'));
     }
 
-    $Teams = new Teams($App->Users);
-    $teamsArr = $Teams->readAll();
+    $teamsArr = (new Teams($App->Users))->readAll();
 
     $template = 'register.html';
     $renderArr = array(

@@ -290,31 +290,22 @@ class Users
     /**
      * Read all users from the team
      *
-     * @param int|null $validated
      * @return array
      */
-    public function readAllFromTeam(?int $validated = null): array
+    public function readAllFromTeam(): array
     {
-        $valSql = '';
-        if (is_int($validated)) {
-            $valSql = ' users.validated = :validated AND ';
-        }
-
         $sql = "SELECT DISTINCT users.userid, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
             users.email,
             users.phone,
             users.cellphone,
             users.website,
-            users.skype
+            users.skype,
+            users.validated
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
             LEFT JOIN teams ON (teams.id = :team)
-            WHERE " . $valSql . ' teams.id = :team ORDER BY fullname';
+            WHERE teams.id = :team ORDER BY fullname";
         $req = $this->Db->prepare($sql);
-
-        if (is_int($validated)) {
-            $req->bindValue(':validated', $validated);
-        }
         $req->bindValue(':team', $this->team);
         $this->Db->execute($req);
 

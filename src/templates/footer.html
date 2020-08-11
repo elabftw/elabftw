@@ -26,7 +26,7 @@
       {% endif %}
 
       {% if App.Session.has('auth') and App.Session.get('is_admin') %}
-      {% set unvalidatedUsersCount = App.Users.readAllFromTeam(0)|length %}
+      {% set unvalidatedUsersCount = App.Users.readAllFromTeam()|filter(u => u.validated == 0)|length %}
         <a href='admin.php'>{{ 'Admin panel'|trans }}
 
           {% if unvalidatedUsersCount > 0 %}

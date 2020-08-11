@@ -41,7 +41,6 @@ $(document).ready(function() {
       $('#editUserToTeamAction').attr('value', action);
     },
     create: function(): void {
-      (document.getElementById('teamsCreateButton') as HTMLButtonElement).disabled = true;
       const name = $('#teamsName').val();
       $.post(this.controller, {
         teamsCreate: true,
@@ -51,14 +50,15 @@ $(document).ready(function() {
       });
     },
     update: function(id): void {
-      (document.getElementById('teamsUpdateButton_' + id) as HTMLButtonElement).disabled = true;
       const name = $('#teamName_' + id).val();
       const orgid = $('#teamOrgid_' + id).val();
+      const visible = $('#teamVisible_' + id).val();
       $.post(this.controller, {
         teamsUpdate: true,
         teamsUpdateId : id,
         teamsUpdateName : name,
-        teamsUpdateOrgid : orgid
+        teamsUpdateOrgid : orgid,
+        teamsUpdateVisible: visible,
       }).done(function(data) {
         Teams.destructor(data);
       });
@@ -79,10 +79,6 @@ $(document).ready(function() {
       }
     }
   };
-
-  $(document).on('keyup', '.teamNameInput', function() {
-    (document.getElementById('teamsUpdateButton_' + $(this).data('id')) as HTMLButtonElement).disabled = false;
-  });
 
   $(document).on('click', '#teamsCreateButton', function() {
     Teams.create();

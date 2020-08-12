@@ -37,7 +37,7 @@ class UserPreferences implements MapInterface
     /** @var string $displaySize */
     private $displaySize = 'lg';
 
-    /** @var string|null $orderby */
+    /** @var string $orderby */
     private $orderby;
 
     /** @var int $singleColumnLayout */
@@ -51,17 +51,8 @@ class UserPreferences implements MapInterface
         'todo' => 't',
     );
 
-    /** @var string $scCreate */
-    private $scCreate = 'c';
-
-    /** @var string $scEdit */
-    private $scEdit = 'e';
-
-    /** @var string $scSubmit */
-    private $scSubmit = 's';
-
-    /** @var string $scTodo */
-    private $scTodo = 't';
+    /** @var string $sort */
+    private $sort = 'desc';
 
     /** @var int $showTeam */
     private $showTeam = 0;
@@ -275,10 +266,10 @@ class UserPreferences implements MapInterface
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
         $this->setSingleColumnLayout($source['single_column_layout'] ?? (string) $this->singleColumnLayout);
-        $this->setShortcut('create', $source['sc_create'] ?? $this->shortcut['create']);
-        $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcut['edit']);
-        $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcut['submit']);
-        $this->setShortcut('todo', $source['sc_todo'] ?? $this->shortcut['todo']);
+        $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);
+        $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
+        $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcuts['submit']);
+        $this->setShortcut('todo', $source['sc_todo'] ?? $this->shortcuts['todo']);
         $this->setShowTeam($source['show_team'] ?? (string) $this->showTeam);
         $this->setShowTeamTemplates($source['show_team_templates'] ?? (string) $this->showTeamTemplates);
         $this->setCjkFonts($source['cjk_fonts'] ?? (string) $this->cjkFonts);

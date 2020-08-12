@@ -2,11 +2,13 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Maps\UserPreferences;
+
 class UsersTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->Users= new Users(1);
+        $this->Users= new Users(1, 1);
     }
 
     public function testPopulate()
@@ -17,7 +19,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdatePreferences()
     {
         $prefsArr = array(
-            'limit' => 12,
+            'limit_nb' => '12',
             'sc_create' => 'c',
             'sc_edit' => 'e',
             'sc_submit' => 's',
@@ -30,6 +32,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'default_vis' => 'organization',
             'display_size' => 'lg',
         );
-        $this->Users->updatePreferences($prefsArr);
+        $Prefs = new UserPreferences((int) $this->Users->userData['userid']);
+        $Prefs->hydrate($prefsArr);
+        $Prefs->save();
+
+        // reload from db
+        $u = new Users(1, 1);
+        $this->assertEquals($u->userData['limit_nb'], '12');
     }
 }

@@ -52,11 +52,6 @@ try {
         // CSRF
         $App->Csrf->validate();
 
-        // EMAIL
-        if (!$Request->request->has('email') || !$Request->request->has('password')) {
-            throw new ImproperActionException(_('A mandatory field is missing!'));
-        }
-
         $rememberme = 'off';
         if ($Request->request->has('rememberme')) {
             $rememberme = $Request->request->get('rememberme');

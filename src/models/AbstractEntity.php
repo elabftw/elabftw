@@ -212,7 +212,14 @@ abstract class AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' AND entity.userid = :userid)";
+        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' ";
+        // admin will see the experiments with visibility user for user of their team
+        if ($this->Users->userData['is_admin']) {
+            $sql .= "AND entity.userid = users2teams.users_id)";
+        } else {
+            // normal user will so only their own experiments
+            $sql .= "AND entity.userid = :userid)";
+        }
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {

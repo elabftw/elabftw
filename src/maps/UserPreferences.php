@@ -38,7 +38,7 @@ class UserPreferences implements MapInterface
     private $displaySize = 'lg';
 
     /** @var string $orderby */
-    private $orderby;
+    private $orderby = 'date';
 
     /** @var int $singleColumnLayout */
     private $singleColumnLayout = 0;

@@ -19,4 +19,11 @@ interface MapInterface
      * Save the object in sql
      */
     public function save(): bool;
+
+    /**
+     * Hydrate the object from a source (sql or post)
+     *
+     * @param array<string, mixed> $source
+     */
+    public function hydrate(array $source): void;
 }

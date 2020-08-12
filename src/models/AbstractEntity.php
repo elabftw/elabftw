@@ -215,10 +215,10 @@ abstract class AbstractEntity
         $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' ";
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
-            $sql .= "AND entity.userid = users2teams.users_id)";
+            $sql .= 'AND entity.userid = users2teams.users_id)';
         } else {
             // normal user will so only their own experiments
-            $sql .= "AND entity.userid = :userid)";
+            $sql .= 'AND entity.userid = :userid)';
         }
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {

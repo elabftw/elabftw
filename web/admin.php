@@ -55,8 +55,11 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $commonTplBody = $Templates->readCommonBody();
+    $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
-    $unvalidatedUsersArr = $App->Users->readAllFromTeam(0);
+    $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
+        return $u['validated'] === '0';
+    });
     // Users search
     $isSearching = false;
     $usersArr = array();
@@ -65,7 +68,6 @@ try {
         $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING), true);
     }
 
-    $allTeamUsersArr = $App->Users->readAllFromTeam(1);
 
     // all the tags for the team
     $tagsArr = $Tags->readAll();

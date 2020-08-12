@@ -28,9 +28,6 @@ class Scheduler
     /** @var Database $Database instance of Database */
     public $Database;
 
-    /** @var array $filters an array of arrays with filters for sql query */
-    private $filters;
-
     /**
      * Constructor
      *
@@ -40,7 +37,6 @@ class Scheduler
     {
         $this->Db = Db::getConnection();
         $this->Database = $database;
-        $this->filters = array();
     }
 
     /**

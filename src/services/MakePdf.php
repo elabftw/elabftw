@@ -10,12 +10,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use function file_exists;
+use function is_dir;
+use function mkdir;
 use Mpdf\Mpdf;
+use function preg_match;
 use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,8 +48,8 @@ class MakePdf extends AbstractMake
             $this->filePath = $this->getTmpPath() . $this->getUniqueString();
         } else {
             $this->filePath = $this->getUploadsPath() . $this->longName;
-            $dir = \dirname($this->filePath);
-            if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+            $dir = dirname($this->filePath);
+            if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
                 throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
             }
         }
@@ -318,10 +323,10 @@ class MakePdf extends AbstractMake
                 $ext = Tools::getExt($upload['real_name']);
                 $filePath = \dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
                 // if it's a TIF file, we can't add it like that to the pdf, but we can add the thumbnail
-                if (\preg_match('/(tiff|tif)$/i', $ext)) {
+                if (preg_match('/(tiff|tif)$/i', $ext)) {
                     $filePath .= '_th.jpg';
                 }
-                if (\file_exists($filePath) && preg_match('/(tiff|tif|jpg|jpeg|png|gif)$/i', $ext)) {
+                if (file_exists($filePath) && preg_match('/(tiff|tif|jpg|jpeg|png|gif)$/i', $ext)) {
                     $html .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
                 }
 

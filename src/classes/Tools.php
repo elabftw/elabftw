@@ -13,11 +13,13 @@ namespace Elabftw\Elabftw;
 use Elabftw\Models\Config;
 use function explode;
 use function filter_var;
+use function in_array;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use function mb_strlen;
+use function pathinfo;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -160,7 +162,7 @@ class Tools
     public static function getExt(string $filename): string
     {
         // Get file extension
-        $ext = \filter_var(\pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
+        $ext = filter_var(pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
         if ($ext !== null && $ext !== '' && $ext !== false) {
             return $ext;
         }
@@ -347,7 +349,7 @@ class Tools
     {
         $limits = array(10, 20, 50, 100);
         // if the current limit is already a standard one, no need to include it
-        if (\in_array($input, $limits, true)) {
+        if (in_array($input, $limits, true)) {
             return $limits;
         }
         // now find the place where to include our limit

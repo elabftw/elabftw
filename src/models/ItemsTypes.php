@@ -24,9 +24,6 @@ class ItemsTypes extends AbstractCategory
 {
     use EntityTrait;
 
-    /** @var array $filters an array of arrays with filters for sql query */
-    private $filters;
-
     /**
      * Constructor
      *
@@ -40,7 +37,6 @@ class ItemsTypes extends AbstractCategory
         if ($id !== null) {
             $this->setId($id);
         }
-        $this->filters = array();
     }
 
     /**

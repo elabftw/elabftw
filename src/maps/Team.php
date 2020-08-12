@@ -72,6 +72,9 @@ class Team implements MapInterface
     /** @var string $forceCanwrite */
     private $forceCanwrite;
 
+    /** @var int $visible */
+    private $visible;
+
     /**
      * Constructor
      *
@@ -210,6 +213,11 @@ class Team implements MapInterface
         }
     }
 
+    final public function setVisible($setting): void
+    {
+        $this->visible = Filter::toBinary($setting);
+    }
+
     public function save(): bool
     {
         $sql = 'UPDATE teams SET
@@ -226,7 +234,8 @@ class Team implements MapInterface
             stamplogin = :stamplogin,
             stamppass = :stamppass,
             stampprovider = :stampprovider,
-            stampcert = :stampcert
+            stampcert = :stampcert,
+            visible = :visible
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $this->name);
@@ -243,6 +252,7 @@ class Team implements MapInterface
         $req->bindParam(':stamppass', $this->stamppass);
         $req->bindParam(':stampprovider', $this->stampprovider);
         $req->bindParam(':stampcert', $this->stampcert);
+        $req->bindParam(':visible', $this->visible);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -285,5 +295,6 @@ class Team implements MapInterface
         $this->setDoForceCanwrite($team['do_force_canwrite'] ?? '');
         $this->setForceCanread($team['force_canread']);
         $this->setForceCanwrite($team['force_canwrite']);
+        $this->setVisible($team['visible']);
     }
 }

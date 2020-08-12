@@ -51,6 +51,7 @@ try {
         $Team = new Team((int) $Request->request->get('teamsUpdateId'));
         $Team->setOrgid($Request->request->get('teamsUpdateOrgid'));
         $Team->setName($Request->request->get('teamsUpdateName'));
+        $Team->setVisible($Request->request->get('teamsUpdateVisible'));
         $Team->save();
     }
 

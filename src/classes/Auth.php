@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Models\Teams;
@@ -106,7 +107,7 @@ class Auth
         $this->Session->remove('failed_attempt');
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
-        if (\count($teams) > 1) {
+        if (count($teams) > 1) {
             return $teams;
         }
         $this->loginInTeam($userid, (int) $teams[0]['id'], $rememberme);

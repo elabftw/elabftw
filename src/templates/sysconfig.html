@@ -181,37 +181,65 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
         <!-- DISPLAY TEAMS -->
         <div class='box'>
-            <h3>{{ 'Edit Existing Teams'|trans }}</h3>
-            <hr>
+          <h3>{{ 'Edit Existing Teams'|trans }}</h3>
+          <hr>
 
+          <ul class='list-group'>
             {% for team in teamsArr %}
-              {% set count = Teams.getStats(team.id) %}
-              <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
-              <input data-id='{{ team.id }}' class='form-control col-md-3 custom-control-inline teamNameInput' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
-              <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
-              <input data-id='{{ team.id }}' class='form-control col-md-3 custom-control-inline teamNameInput' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
-              <button data-id='{{ team.id }}' disabled id='teamsUpdateButton_{{ team.id }}' class='button btn btn-primary teamsUpdateButton'>
-                  {{ 'Save'|trans }}
-              </button>
-              {% if count.totusers == 0 %}
-              <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' class='button btn btn-danger teamsDestroyButton'>
-                  {{ 'Delete'|trans }}
-              </button>
-              {% else %}
-              <button data-id='{{ team.id }}' id='teamsArchiveButton_{{ team.id }}' class='button btn btn-neutral teamsArchiveButton'>
-                  {{ 'Archive'|trans }}
-              </button>
-              {% endif %}
-              <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
-              {% trans %}
-              Experiment
-              {% plural count.totxp %}
-              Experiments
-              {% endtrans %}
-              : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
-            {% endfor %}
-        </div>
+              <li class='list-group-item'>
+                <ul class='list-inline'>
+                  <li class='list-inline-item mb-2'>
+                    {% set count = Teams.getStats(team.id) %}
+                    <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
+                    <input data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
+                  </li>
 
+                  <li class='list-inline-item mb-2'>
+                    <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
+                    <input data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
+                  </li>
+
+                  <li class='list-inline-item mb-2'>
+                    {% if count.totusers == 0 %}
+                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' class='button btn btn-danger teamsDestroyButton'>
+                        {{ 'Delete'|trans }}
+                    </button>
+                    {% else %}
+                    <button data-id='{{ team.id }}' id='teamsArchiveButton_{{ team.id }}' class='button btn btn-neutral teamsArchiveButton'>
+                        {{ 'Archive'|trans }}
+                    </button>
+                  </li>
+
+                  {% endif %}
+
+                  <li class='list-inline-item mb-2'>
+                    <label for='teamVisible_{{ team.id }}'>{{ 'Visible on registration page'|trans }}</label>
+                    <select class='form-control' name='teamsVisible' id='teamVisible_{{ team.id }}'>
+                      <option value='1'{{ team.visible ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                      <option value='0'{{ not team.visible ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                    </select>
+                  </li>
+
+                  <li class='list-inline-item mb-2'>
+                    <button data-id='{{ team.id }}' id='teamsUpdateButton_{{ team.id }}' class='button btn btn-primary teamsUpdateButton'>
+                        {{ 'Save'|trans }}
+                    </button>
+                  </li>
+
+                  <li class='list-inline-item mb-2'>
+                    <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
+                    {% trans %}
+                    Experiment
+                    {% plural count.totxp %}
+                    Experiments
+                    {% endtrans %}
+                    : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.datetime }}<p>
+                  </li>
+                </ul>
+              </li>
+            {% endfor %}
+        </ul>
+      </div>
     </div>
 </div>
 

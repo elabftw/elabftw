@@ -8,5 +8,6 @@ START TRANSACTION;
     INSERT INTO config (conf_name, conf_value) VALUES ('logout_url', '');
     ALTER TABLE `teams` ADD `force_canread` VARCHAR(255) NOT NULL DEFAULT 'team', ADD `force_canwrite` VARCHAR(255) NOT NULL DEFAULT 'user';
     ALTER TABLE `teams` ADD `do_force_canread` INT(1) NOT NULL DEFAULT 0, ADD `do_force_canwrite` INT(1) NOT NULL DEFAULT 0;
+    ALTER TABLE `teams` ADD `visible` INT(1) NOT NULL DEFAULT 1;
     UPDATE config SET conf_value = 55 WHERE conf_name = 'schema';
 COMMIT;

@@ -83,7 +83,7 @@ class Team implements MapInterface
     {
         $this->id = $id;
         $this->Db = Db::getConnection();
-        $this->hydrate();
+        $this->hydrate($this->read());
     }
 
     final public function setName(?string $setting): void
@@ -259,6 +259,34 @@ class Team implements MapInterface
     }
 
     /**
+     * Fill this object's properties from the source
+     * Source can be sql query or post data
+     *
+     * @param array<string, mixed> $source
+     * @return void
+     */
+    public function hydrate(array $source): void
+    {
+        $this->setName($source['name'] ?? $this->name);
+        $this->setOrgid($source['orgid'] ?? $this->orgid);
+        $this->setDeletableXp($source['deletable_xp'] ?? (string) $this->deletableXp);
+        $this->setLinkName($source['link_name'] ?? $this->linkName);
+        $this->setLinkHref($source['link_href'] ?? $this->linkHref);
+        $this->setStamplogin($source['stamplogin'] ?? $this->stamplogin);
+        if (!empty($source['stamppass'])) {
+            $this->setStamppass($source['stamppass']);
+        }
+        $this->stampprovider = $source['stampprovider'] ?? $this->stampprovider;
+        $this->setStampcert($source['stampcert'] ?? $this->stampcert);
+        $this->setPublicDb($source['public_db'] ?? (string) $this->publicDb);
+        $this->setDoForceCanread($source['do_force_canread'] ?? (string) $this->doForceCanread);
+        $this->setDoForceCanwrite($source['do_force_canwrite'] ?? (string) $this->doForceCanwrite);
+        $this->setForceCanread($source['force_canread'] ?? $this->forceCanread);
+        $this->setForceCanwrite($source['force_canwrite'] ?? $this->forceCanwrite);
+        $this->setVisible($source['visible'] ?? (string) $this->visible);
+    }
+
+    /**
      * Read from the current team
      *
      * @return array
@@ -276,25 +304,5 @@ class Team implements MapInterface
         }
 
         return $res;
-    }
-
-    private function hydrate(): void
-    {
-        $team = $this->read();
-        $this->setName($team['name']);
-        $this->setOrgid($team['orgid']);
-        $this->setDeletableXp($team['deletable_xp']);
-        $this->setLinkName($team['link_name']);
-        $this->setLinkHref($team['link_href']);
-        $this->setStamplogin($team['stamplogin']);
-        $this->stamppass = $team['stamppass'];
-        $this->stampprovider = $team['stampprovider'];
-        $this->setStampcert($team['stampcert']);
-        $this->setPublicDb($team['public_db']);
-        $this->setDoForceCanread($team['do_force_canread'] ?? '');
-        $this->setDoForceCanwrite($team['do_force_canwrite'] ?? '');
-        $this->setForceCanread($team['force_canread']);
-        $this->setForceCanwrite($team['force_canwrite']);
-        $this->setVisible($team['visible']);
     }
 }

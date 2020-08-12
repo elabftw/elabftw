@@ -121,6 +121,36 @@ class Check
     }
 
     /**
+     * Check orderby param
+     *
+     * @param string $input
+     * @return string
+     */
+    public static function orderby(string $input): string
+    {
+        $allowed = array('cat', 'date', 'title', 'comment', 'lastchange');
+        if (!in_array($input, $allowed, true)) {
+            throw new ImproperActionException('Invalid orderby');
+        }
+        return $input;
+    }
+
+    /**
+     * Check sort param
+     *
+     * @param string $input
+     * @return string
+     */
+    public static function sort(string $input): string
+    {
+        $allowed = array('asc', 'desc');
+        if (!in_array($input, $allowed, true)) {
+            throw new ImproperActionException('Invalid sort');
+        }
+        return $input;
+    }
+
+    /**
      * Check if we have a correct value for visibility
      *
      * @param string $visibility

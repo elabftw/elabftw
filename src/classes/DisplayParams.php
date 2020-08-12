@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Services\Check;
-use function in_array;
 
 /**
  * This class holds the values for limit, offset, order and sort
@@ -124,10 +123,6 @@ class DisplayParams
         $this->sort = $app->Users->userData['sort'] ?? $this->sort;
 
         // now get pref from the filter-order-sort menu
-        $this->sort = $app->Request->query->get('sort') ?? $this->sort;
-
-        if (!in_array($this->sort, array('asc', 'desc'), true)) {
-            $this->sort = 'desc';
-        }
+        $this->sort = Check::sort($app->Request->query->get('sort') ?? $this->sort);
     }
 }

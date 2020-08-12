@@ -41,22 +41,7 @@ try {
     // UPDATE TEAM SETTINGS (first tab of admin panel)
     if ($Request->request->has('teamsUpdateFull')) {
         $Team = new Team((int) $App->Users->userData['team']);
-        $Team->setDeletableXp($Request->request->get('deletable_xp') ?? '');
-        $Team->setPublicDb($Request->request->get('public_db') ?? '');
-        $Team->setLinkName($Request->request->get('link_name') ?? 'Documentation');
-        $Team->setLinkHref($Request->request->get('link_href') ?? 'https://doc.elabftw.net');
-        $Team->setDoForceCanread($Request->request->get('do_force_canread') ?? '');
-        $Team->setForceCanread($Request->request->get('force_canread') ?? '');
-        $Team->setDoForceCanwrite($Request->request->get('do_force_canwrite') ?? '');
-        $Team->setForceCanwrite($Request->request->get('force_canwrite') ?? '');
-        $Team->setStamplogin($Request->request->get('stamplogin') ?? '');
-        if (!empty($Request->request->get('stamppass'))) {
-            $Team->setStamppass($Request->request->get('stamppass'));
-        }
-        $Team->setStampprovider($Request->request->get('stampprovider'));
-        $Team->setStampcert($Request->request->get('stampcert'));
-
-        // save the changes
+        $Team->hydrate($Request->request->all());
         $Team->save();
     }
 

@@ -16,7 +16,7 @@
   {% elseif count == 0 and searchType == '' and not App.Session.get('anon') and not App.Request.query.get('offset') %}
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
   {% else %}
-      {% if pinnedArr %}
+      {% if pinnedArr and not searchPage %}
         <div class='row display-flex'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}

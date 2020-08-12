@@ -15,10 +15,12 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
+use Elabftw\Maps\UserPreferences;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Exception;
+use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -34,7 +36,15 @@ try {
 
     // TAB 1 : PREFERENCES
     if ($Request->request->has('lang')) {
-        $App->Users->updatePreferences($Request->request->all());
+        $Prefs = new UserPreferences((int) $App->Users->userData['userid']);
+        $Prefs->hydrate($Request->request->all());
+        $Prefs->save();
+
+        if ($Request->request->get('pdf_sig') === 'on') {
+            setcookie('pdf_sig', '1', time() + 2592000, '/', '', true, true);
+        } else {
+            setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
+        }
     }
     // END TAB 1
 

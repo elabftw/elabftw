@@ -55,10 +55,10 @@ $(document).ready(function() {
       const visible = $('#teamVisible_' + id).val();
       $.post(this.controller, {
         teamsUpdate: true,
-        teamsUpdateId : id,
-        teamsUpdateName : name,
-        teamsUpdateOrgid : orgid,
-        teamsUpdateVisible: visible,
+        id : id,
+        name : name,
+        orgid : orgid,
+        visible : visible,
       }).done(function(data) {
         Teams.destructor(data);
       });

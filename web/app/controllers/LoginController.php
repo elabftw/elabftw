@@ -76,7 +76,9 @@ try {
     } else {
         // LOGIN: internal credential check
         // EMAIL
-        if (!$Request->request->has('email') || !$Request->request->has('password')) {
+        if ((empty($Request->request->get('email')) || empty($Request->request->get('password')))
+            && !($App->Session->has('team_selection_required') || $App->Session->has('mfa_verified'))
+        ) {
             throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 

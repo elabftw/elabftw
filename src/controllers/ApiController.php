@@ -147,6 +147,11 @@ class ApiController implements ControllerInterface
                     return $this->createLink();
                 }
 
+                // CHANGE CATEGORY
+                if ($this->Request->request->has('category')) {
+                    return $this->updateCategory();
+                }
+
                 if ($this->endpoint === 'events') {
                     return $this->createEvent();
                 }
@@ -865,6 +870,46 @@ class ApiController implements ControllerInterface
             $this->Request->request->get('date') ?? '',
             $this->Request->request->get('body') ?? '',
         );
+        return new JsonResponse(array('result' => 'success'));
+    }
+
+    /**
+     * @api {post} /:endpoint/:id Update category
+     * @apiName UpdateCategory
+     * @apiGroup Entity
+     * @apiParam {String} endpoint 'experiments' or 'items'
+     * @apiParam {Number} id Entity id
+     * @apiParam {Number} category for items the item type id, for experiments the status id
+     * @apiExample {python} Python example
+     * import elabapy
+     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
+     * # update status of experiment 42
+     * params = { "category": "2" }
+     * print(manager.post_experiment(42, params))
+     * # update database item 42
+     * print(manager.post_item(42, params))
+     * @apiExample {shell} Curl example
+     * export TOKEN="3148"
+     * # update experiment 42
+     * curl -X POST -F "category=2" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/experiments/42
+     * # update database item 42
+     * curl -X POST -F "category=2" -H "Authorization: $TOKEN" https://elab.example.org/api/v1/items/42
+     * @apiSuccess {String} result Success
+     * @apiError {String} error Error mesage
+     * @apiParamExample {Json} Request-Example:
+     *     {
+     *       "category": "2"
+     *     }
+     */
+
+    /**
+     * Update experiment or item (title, date and body)
+     *
+     * @return Response
+     */
+    private function updateCategory(): Response
+    {
+        $this->Entity->updateCategory((int) $this->Request->request->get('category'));
         return new JsonResponse(array('result' => 'success'));
     }
 

@@ -355,7 +355,7 @@ class Users
 
         // (Sys)admins can only disable 2FA
         $mfaSql = '';
-        if ($params['use_mfa'] === 'off') {
+        if (!isset($params['use_mfa']) || $params['use_mfa'] === 'off') {
             $mfaSql = ', mfa_secret = null';
         } elseif ($params['use_mfa'] === 'on' && !$this->userData['mfa_secret']) {
             throw new ImproperActionException('Only users themselves can activate two factor authentication!');

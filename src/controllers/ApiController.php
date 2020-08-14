@@ -780,7 +780,7 @@ class ApiController implements ControllerInterface
     private function createEvent(): Response
     {
         if ($this->id === null) {
-            throw new ImproperActionException(_('Item id missing!'));
+            throw new ImproperActionException('Item id missing!');
         }
         $this->Entity->setId($this->id);
         $id = $this->Scheduler->create(
@@ -818,7 +818,7 @@ class ApiController implements ControllerInterface
     private function destroyEvent(): Response
     {
         if ($this->id === null) {
-            throw new ImproperActionException(_('Event id missing!'));
+            throw new ImproperActionException('Event id missing!');
         }
         $this->Scheduler->setId($this->id);
         $this->Scheduler->destroy();

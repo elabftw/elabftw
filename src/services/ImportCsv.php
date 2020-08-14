@@ -118,7 +118,7 @@ class ImportCsv extends AbstractImport
         // get the first element
         $delimiter = (string) key($delimitersCount);
         if ($delimiter !== $this->delimiter) {
-            throw new ImproperActionException(sprintf('It looks like the delimiter is different from «%1$s». Make sure to use «%1$s» as delimiter!', $this->delimiter));
+            throw new ImproperActionException(sprintf(_('It looks like the delimiter is different from «%1$s». Make sure to use «%1$s» as delimiter!'), $this->delimiter));
         }
     }
 }

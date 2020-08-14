@@ -54,7 +54,7 @@ class Tools
         $crossLink = '';
 
         if ($cross) {
-            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times</a>";
+            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
         $begin = "<div class='alert alert-" . $alert .

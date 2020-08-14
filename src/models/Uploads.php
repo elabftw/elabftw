@@ -177,7 +177,7 @@ class Uploads implements CrudInterface
         $this->Db->execute($req);
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException('Nothing to show with this id');
+            throw new ImproperActionException(_('Nothing to show with this id'));
         }
         return $res;
     }
@@ -398,7 +398,7 @@ class Uploads implements CrudInterface
         if (filesize($file) < self::BIG_FILE_THRESHOLD) {
             $hash = hash_file($this->hashAlgorithm, $file);
             if ($hash === false) {
-                throw new ImproperActionException('Error creating hash from file!');
+                throw new ImproperActionException(_('Error creating hash from file!'));
             }
             return $hash;
         }
@@ -415,7 +415,7 @@ class Uploads implements CrudInterface
     private function checkExtension(string $realName): void
     {
         if (Tools::getExt($realName) === 'php') {
-            throw new ImproperActionException('PHP files are forbidden!');
+            throw new ImproperActionException(_('PHP files are forbidden!'));
         }
     }
 

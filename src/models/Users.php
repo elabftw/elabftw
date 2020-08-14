@@ -362,7 +362,7 @@ class Users
         // now make sure the new email is not already used by someone
         // it's okay if it's the same email as before though
         if (in_array($email, $emailsArr, true) && $email !== $this->userData['email']) {
-            throw new ImproperActionException('Email is already used by non archived user!');
+            throw new ImproperActionException(_('Email is already used by non archived user!'));
         }
 
         $validated = 0;
@@ -515,7 +515,7 @@ class Users
     {
         $UsersHelper = new UsersHelper();
         if ($UsersHelper->hasExperiments((int) $this->userData['userid'])) {
-            throw new ImproperActionException('Cannot delete a user that owns experiments!');
+            throw new ImproperActionException(_('Cannot delete a user that owns experiments!'));
         }
         $sql = 'DELETE FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);

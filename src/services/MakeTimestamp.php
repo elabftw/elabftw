@@ -116,7 +116,7 @@ class MakeTimestamp extends AbstractMake
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         if (!$req->execute()) {
-            throw new ImproperActionException('Cannot get elabid!');
+            throw new ImproperActionException(_('Cannot get elabid!'));
         }
         return $req->fetch(PDO::FETCH_COLUMN) . '-timestamped.pdf';
     }
@@ -199,7 +199,7 @@ class MakeTimestamp extends AbstractMake
     public function timestamp(): void
     {
         if (!$this->Entity->isTimestampable()) {
-            throw new ImproperActionException('Timestamping is not allowed for this experiment.');
+            throw new ImproperActionException(_('Timestamping is not allowed for this experiment.'));
         }
 
         // generate the pdf of the experiment that will be timestamped
@@ -328,7 +328,7 @@ class MakeTimestamp extends AbstractMake
     private function getResponseTime(): string
     {
         if (!is_readable($this->responsefilePath)) {
-            throw new ImproperActionException('The token is not readable.');
+            throw new ImproperActionException(_('The token is not readable.'));
         }
 
         $output = $this->runProcess(array(
@@ -382,7 +382,7 @@ class MakeTimestamp extends AbstractMake
                 }
             }
         }
-        throw new ImproperActionException('Could not get response time!');
+        throw new ImproperActionException(_('Could not get response time!'));
     }
 
     /**
@@ -436,7 +436,7 @@ class MakeTimestamp extends AbstractMake
     {
         $hash = hash_file($this->stampParams['hash'], $file);
         if ($hash === false) {
-            throw new ImproperActionException('The file is not readable.');
+            throw new ImproperActionException(_('The file is not readable.'));
         }
         return $hash;
     }
@@ -477,7 +477,7 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
         if (!$req->execute()) {
-            throw new ImproperActionException('Cannot insert into SQL!');
+            throw new ImproperActionException(_('Cannot insert into SQL!'));
         }
     }
 
@@ -493,7 +493,7 @@ class MakeTimestamp extends AbstractMake
         $certPath = \dirname(__DIR__, 2) . '/' . $this->stampParams['stampcert'];
 
         if (!is_readable($certPath)) {
-            throw new ImproperActionException('Cannot read the certificate file!');
+            throw new ImproperActionException(_('Cannot read the certificate file!'));
         }
 
         try {
@@ -582,7 +582,7 @@ class MakeTimestamp extends AbstractMake
         $req->bindParam(':hash_algorithm', $this->stampParams['hash']);
 
         if (!$req->execute()) {
-            throw new ImproperActionException('Cannot insert into SQL!');
+            throw new ImproperActionException(_('Cannot insert into SQL!'));
         }
     }
 }

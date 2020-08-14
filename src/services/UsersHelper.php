@@ -60,7 +60,7 @@ class UsersHelper
 
         $res = $req->fetchAll();
         if ($res === false) {
-            throw new ImproperActionException('Could not find a team for this user!');
+            throw new ImproperActionException(_('Could not find a team for this user!'));
         }
         return $res;
     }

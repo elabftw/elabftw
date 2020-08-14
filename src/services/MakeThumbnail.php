@@ -70,7 +70,7 @@ final class MakeThumbnail
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mime = $finfo->file($this->filePath);
         if ($mime === false) {
-            throw new ImproperActionException('Cannot detect the file type for thumbnail!');
+            throw new ImproperActionException(_('Cannot detect the file type for thumbnail!'));
         }
         $this->mime = $mime;
         $this->thumbPath = $this->filePath . '_th.jpg';

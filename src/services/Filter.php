@@ -142,7 +142,7 @@ class Filter
         $body = strip_tags($input, $whitelist);
         // use strlen() instead of mb_strlen() because we want the size in bytes
         if (strlen($body) > self::MAX_BODY_SIZE) {
-            throw new ImproperActionException('Content is too big! Cannot save!');
+            throw new ImproperActionException(_('Content is too big! Cannot save!'));
         }
         return $body;
     }

@@ -79,6 +79,6 @@ abstract class AbstractImport
         if (in_array($this->UploadedFile->getMimeType(), $mimes, true)) {
             return true;
         }
-        throw new ImproperActionException("This doesn't look like the right kind of file. Import aborted.");
+        throw new ImproperActionException(_("This doesn't look like the right kind of file. Import aborted."));
     }
 }

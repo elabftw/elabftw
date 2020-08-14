@@ -47,7 +47,7 @@ try {
         }
 
         if (!$SamlAuth->isAuthenticated()) {
-            throw new ImproperActionException('Not authenticated!');
+            throw new ImproperActionException(_('Not authenticated!'));
         }
 
         $Session->set('samlUserdata', $SamlAuth->getAttributes());
@@ -60,7 +60,7 @@ try {
         }
 
         if ($email === null) {
-            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
+            throw new ImproperActionException(_('Could not find email in response from IDP! Aborting.'));
         }
 
         $userid = $Auth->getUseridFromEmail($email);
@@ -74,7 +74,7 @@ try {
             // we directly get the id from the stored config
             $teamId = (int) $Saml->Config->configArr['saml_team_default'];
             if ($teamId === 0) {
-                throw new ImproperActionException('Could not find team ID to assign user!');
+                throw new ImproperActionException(_('Could not find team ID to assign user!'));
             }
             $teams = array((string) $teamId);
         }
@@ -123,7 +123,7 @@ try {
             $location = 'login.php';
             $Response = new RedirectResponse($location);
         } else {
-            throw new ImproperActionException('Could not login!');
+            throw new ImproperActionException(_('Could not login!'));
         }
     }
 } catch (ImproperActionException $e) {

@@ -69,7 +69,7 @@ class Teams implements CrudInterface
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false) {
-            throw new ImproperActionException('Could not find team!');
+            throw new ImproperActionException(_('Could not find team!'));
         }
         return (int) $res;
     }
@@ -92,7 +92,7 @@ class Teams implements CrudInterface
                 if ($Config->configArr['saml_team_create']) {
                     $teamIdArr[] = $this->create($team);
                 } else {
-                    throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.', (int) $e->getCode(), $e);
+                    throw new ImproperActionException(_('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.'), (int) $e->getCode(), $e);
                 }
             }
         }
@@ -135,7 +135,7 @@ class Teams implements CrudInterface
         // make sure that the user is in more than one team before removing the team
         $UsersHelper = new UsersHelper();
         if (count($UsersHelper->getTeamsFromUserid($userid)) === 1) {
-            throw new ImproperActionException('Cannot remove team from user in only one team!');
+            throw new ImproperActionException(_('Cannot remove team from user in only one team!'));
         }
         foreach ($teamIdArr as $teamId) {
             $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
@@ -261,7 +261,7 @@ class Teams implements CrudInterface
         $count = $this->getStats($id);
 
         if ($count['totxp'] !== '0' || $count['totdb'] !== '0' || $count['totusers'] !== '0') {
-            throw new ImproperActionException('The team is not empty! Aborting deletion!');
+            throw new ImproperActionException(_('The team is not empty! Aborting deletion!'));
         }
 
         // foreign keys will take care of deleting associated data (like status or experiments_templates)

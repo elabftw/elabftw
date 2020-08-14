@@ -29,7 +29,7 @@ try {
     $Saml = new Saml(new Config(), new Idps());
     $settingsArr = $Saml->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
-        throw new ImproperActionException('No Service Provider configured. Aborting.');
+        throw new ImproperActionException(_('No Service Provider configured. Aborting.'));
     }
 
     // Now we only validate SP settings

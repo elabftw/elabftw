@@ -159,7 +159,7 @@ abstract class AbstractEntity
             $this->Db->execute($req);
             $firstname = $req->fetchColumn();
             if (is_bool($firstname) || $firstname === null) {
-                throw new ImproperActionException('Could not find the firstname of the locker!');
+                throw new ImproperActionException(_('Could not find the firstname of the locker!'));
             }
             throw new ImproperActionException(
                 sprintf(_("This experiment was locked by %s. You don't have the rights to unlock this."), $firstname)

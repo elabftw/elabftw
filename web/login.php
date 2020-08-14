@@ -19,6 +19,7 @@ use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Exception;
+use function in_array;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,8 +34,44 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
+    $Teams = new Teams($App->Users);
+
     // Check if already logged in
     if ($Session->has('auth') || $Session->has('anon')) {
+        $Response = new RedirectResponse('experiments.php');
+        $Response->send();
+        exit;
+    }
+
+    // Check for external authentication by web server
+    $remoteUser = $App->Request->server->get($App->Config->configArr['extauth_remote_user']);
+
+    if (isset($remoteUser)) {
+        $firstname = $App->Request->server->get($App->Config->configArr['extauth_firstname']);
+        $lastname = $App->Request->server->get($App->Config->configArr['extauth_lastname']);
+        $email = $App->Request->server->get($App->Config->configArr['extauth_email']);
+
+        // try and get the team
+        $teamId = $App->Request->server->get($App->Config->configArr['extauth_teams']);
+        // no team found!
+        if (empty($teamId)) {
+            // check for the default team
+            $teamId = (int) $App->Config->configArr['saml_team_default'];
+            // or throw error if sysadmin configured it like that
+            if ($teamId === 0) {
+                throw new ImproperActionException('Could not find team ID to assign user!');
+            }
+        }
+        $teams = array((string) $teamId);
+
+        if (($userid = $Auth->getUseridFromEmail($email)) === 0) {
+            $App->Users->create($email, $teams, $firstname, $lastname, '');
+            $App->Log->info('New user ' . $email . ' autocreated from external auth');
+            $userid = $Auth->getUseridFromEmail($email);
+        }
+        $Auth->login($userid);
+        // add this to the session so for logout we know we need to hit the logout_url from config to logout from external server too
+        $Session->set('is_ext_auth', 1);
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;
@@ -62,7 +99,7 @@ try {
     }
 
     // Check if we are banned after too much failed login attempts
-    if (\in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
+    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
         throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
     }
 
@@ -76,7 +113,6 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
 
-    $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
 
     $template = 'login.html';

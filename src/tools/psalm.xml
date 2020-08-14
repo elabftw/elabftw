@@ -10,6 +10,9 @@
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
     reportMixedIssues="false"
+    errorLevel="1"
+    findUnusedVariablesAndParams="true"
+    runTaintAnalysis="true"
 >
     <projectFiles>
         <directory name="src" />

@@ -94,7 +94,7 @@ class DatabaseCleaner implements CleanerInterface
      * Delete rows from a table
      *
      * @param string $table the mysql table to act upon
-     * @param array $results the results from the search
+     * @param array<array-key, mixed> $results the results from the search
      * @return void
      */
     private function deleteFrom(string $table, array $results): void

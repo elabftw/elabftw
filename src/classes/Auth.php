@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function count;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Models\Teams;
@@ -17,6 +18,7 @@ use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use function mb_strlen;
 use PDO;
+use function setcookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -95,7 +97,7 @@ class Auth
     {
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
-        if (\count($teams) > 1) {
+        if (count($teams) > 1) {
             return array($userid, $teams);
         }
         $this->loginInTeam($userid, (int) $teams[0]['id']);
@@ -317,8 +319,8 @@ class Auth
             'httponly' => true,
             'samesite' => 'Lax',
         );
-        \setcookie('token', $token, $cookieOptions);
-        \setcookie('token_team', (string) $team, $cookieOptions);
+        setcookie('token', $token, $cookieOptions);
+        setcookie('token_team', (string) $team, $cookieOptions);
 
         // Update the token in SQL
         $sql = 'UPDATE users SET token = :token WHERE userid = :userid';

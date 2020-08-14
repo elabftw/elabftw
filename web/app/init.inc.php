@@ -8,6 +8,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -47,7 +48,7 @@ try {
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
         $App = new App($Request, $Session, new Config(), new Logger('elabftw'), new Csrf($Request, $Session));
-    } catch (PDOException $e) {
+    } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//

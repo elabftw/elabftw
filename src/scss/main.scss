@@ -8,6 +8,7 @@
 $darkgray: #343434;
 $maingray: #797979;
 $lightgray: #f2f2f2;
+$lightgraybutnottoolight: #d6d6d6;
 $bordersgray: #dcdddc;
 $elabblue: #29aeb9;
 $darkblue: #1F8591;
@@ -27,6 +28,8 @@ $theme-colors: (
     "neutral": $maingray,
 );
 @import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-select/sass/bootstrap-select.scss';
+@import '../../node_modules/@fullcalendar/common/main';
 
 @import 'autocomplete';
 @import 'footer';
@@ -678,11 +681,6 @@ the form-control fails to do that so we do the border ourselves */
     float: left;
 }
 
-/* EXPERIMENTS/DATABASE - FILTER & ORDER */
-form#filter-order-sort select {
-    margin-left: 2px;
-}
-
 /*
  * fix the white space when columned items don't have the same height
  * see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643
@@ -904,21 +902,17 @@ svg.fa-trash-alt:hover {
     color: $darkred;
 }
 
-.bodyToggle {
-    display: none;
-}
-
-.bodyToggleImg {
-    float: right;
-    margin-top: 3px;
-}
-
 /* font awesome icons color */
 .svg-inline--fa {
     color: $maingray;
 }
 
-/* in the fullcalendar toolabar they are used in a button so we want them white */
+/* for icons such as pin */
+.grayed-out {
+    color: $lightgraybutnottoolight;
+}
+
+/* in the fullcalendar toolbar icons are used in a button so we want them white */
 .fc-toolbar {
     .svg-inline--fa {
         color: #fff;

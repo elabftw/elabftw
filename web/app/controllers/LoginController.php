@@ -34,7 +34,7 @@ try {
 
     // LOGIN WITH SAML
     if ($Request->request->has('saml_login')) {
-        $settings = $Saml->getSettings();
+        $settings = $Saml->getSettings((int) $Request->request->get('saml_login'));
         $SamlAuth = new SamlAuth($settings);
         $returnUrl = $settings['baseurl'] . '/index.php?acs';
         $SamlAuth->login($returnUrl);
@@ -51,11 +51,6 @@ try {
 
         // CSRF
         $App->Csrf->validate();
-
-        // EMAIL
-        if (!$Request->request->has('email') || !$Request->request->has('password')) {
-            //throw new ImproperActionException(_('A mandatory field is missing!'));
-        }
 
         $rememberme = 'off';
         if ($Request->request->has('rememberme')) {

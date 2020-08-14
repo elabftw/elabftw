@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function count;
+use Elabftw\Controllers\SearchController;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -19,6 +20,9 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use function filter_var;
+use function rtrim;
+use function trim;
 
 /**
  * The search page
@@ -34,10 +38,12 @@ $Tags = new Tags($Experiments);
 $tagsArr = $Tags->readAll();
 
 $ItemsTypes = new ItemsTypes($App->Users);
-$categoryArr = $ItemsTypes->readAll();
-
 $Status = new Status($App->Users);
-$statusArr = $Status->readAll();
+if ($Request->query->get('type') !== 'experiments') {
+    $categoryArr = $ItemsTypes->readAll();
+} else {
+    $categoryArr = $Status->readAll();
+}
 
 $TeamGroups = new TeamGroups($App->Users);
 $teamGroupsArr = $TeamGroups->readAll();
@@ -60,21 +66,19 @@ if ($Request->query->get('type') === 'experiments') {
 // TITLE
 $title = '';
 if ($Request->query->has('title') && !empty($Request->query->get('title'))) {
-    $title = \filter_var(\trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
-    $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type);
+    $title = filter_var(trim($Request->query->get('title')), FILTER_SANITIZE_STRING);
+    if ($title !== false) {
+        $Entity->titleFilter = Tools::getSearchSql($title, $andor, 'title', $Entity->type);
+    }
 }
 
 // BODY
 $body = '';
 if ($Request->query->has('body') && !empty($Request->query->get('body'))) {
-    $body = \filter_var(\trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
-    $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type);
-}
-
-// TAGS
-$selectedTagsArr = array();
-if ($Request->query->has('tags') && !empty($Request->query->get('tags'))) {
-    $selectedTagsArr = $Request->query->get('tags');
+    $body = filter_var(trim($Request->query->get('body')), FILTER_SANITIZE_STRING);
+    if ($body !== false) {
+        $Entity->bodyFilter = Tools::getSearchSql($body, $andor, 'body', $Entity->type);
+    }
 }
 
 // VISIBILITY
@@ -100,15 +104,14 @@ $renderArr = array(
     'Request' => $Request,
     'Experiments' => $Experiments,
     'Database' => $Database,
-    'categoryArr' => $categoryArr,
-    'statusArr' => $statusArr,
-    'teamGroupsArr' => $teamGroupsArr,
-    'usersArr' => $usersArr,
-    'title' => $title,
-    'body' => $body,
     'andor' => $andor,
-    'selectedTagsArr' => $selectedTagsArr,
+    'body' => $body,
+    'categoryArr' => $categoryArr,
     'tagsArr' => $tagsArr,
+    'teamGroupsArr' => $teamGroupsArr,
+    'title' => $title,
+    'statusArr' => $categoryArr,
+    'usersArr' => $usersArr,
 );
 echo $App->render('search.html', $renderArr);
 
@@ -136,7 +139,7 @@ if ($Request->query->count() > 0) {
     /////////////////////////////////////////////////////////////////
     if ($Request->query->has('type')) {
         // Tag search
-        if (!empty($selectedTagsArr)) {
+        if (!empty($Request->query->get('tags'))) {
             // get all the ids with that tag
             $ids = $Entity->Tags->getIdFromTags($Request->query->get('tags'), (int) $App->Users->userData['team']);
             if (count($ids) > 0) {
@@ -168,10 +171,9 @@ if ($Request->query->count() > 0) {
 
             // USERID FILTER
             if ($Request->query->has('owner')) {
+                $owner = $App->Users->userData['userid'];
                 if (Check::id((int) $Request->query->get('owner')) !== false) {
                     $owner = $Request->query->get('owner');
-                } elseif (empty($Request->query->get('owner'))) {
-                    $owner = $App->Users->userData['userid'];
                 }
                 // all the team is 0 as userid
                 if ($Request->query->get('owner') !== '0') {
@@ -195,26 +197,9 @@ if ($Request->query->count() > 0) {
             }
         }
 
-        // READ the results
-        $itemsArr = $Entity->readShow();
-        // get tags separately
-        $tagsArr = array();
-        if (count($itemsArr) > 0) {
-            $tagsArr = $Entity->getTags($itemsArr);
-        }
 
-        // RENDER THE SECOND PART OF THE PAGE
-        // with a subpart of show.html (no create new/filter menu, and no head)
-        echo $App->render('show.html', array(
-            'Entity' => $Entity,
-            'itemsArr' => $itemsArr,
-            'categoryArr' => $categoryArr,
-            // we are on the search page, so we don't want any "click here to create your first..."
-            'searchType' => 'something',
-            // generate light show page
-            'searchPage' => true,
-            'tagsArr' => $tagsArr,
-        ));
+        $Controller = new SearchController($App, $Entity);
+        echo $Controller->show(true)->getContent();
     }
 } else {
     // no search

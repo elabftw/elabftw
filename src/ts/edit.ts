@@ -6,9 +6,11 @@
  * @package elabftw
  */
 declare let key: any;
+declare let MathJax: any;
 import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
@@ -48,55 +50,69 @@ import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
-const Dropzone= require('dropzone/dist/dropzone-amd-module'); // eslint-disable-line @typescript-eslint/no-var-requires
+import Dropzone from 'dropzone';
+import i18next from 'i18next';
 
-$.ajaxSetup({
-  headers: {
-    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-  }
-});
-
-// UPLOAD FORM
-// config for dropzone, id is camelCased.
-Dropzone.options.elabftwDropzone = {
-  // i18n message to user
-  dictDefaultMessage: $('#info').data('upmsg'),
-  maxFilesize: $('#info').data('maxsize'), // MB
-  timeout: 900000,
-  headers: {
-    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-  },
-  init: function(): void {
-
-    // add additionnal parameters (id and type)
-    this.on('sending', function(file: string, xhr: string, formData: any) {
-      formData.append('upload', true);
-      formData.append('id', $('#info').data('id'));
-      formData.append('type', $('#info').data('type'));
-    });
-
-    // once it is done
-    this.on('complete', function(answer: any) {
-      // check the answer we get back from app/controllers/EntityController.php
-      const json = JSON.parse(answer.xhr.responseText);
-      notif(json);
-      // reload the #filesdiv once the file is uploaded
-      if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-        $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
-          displayMolFiles();
-        });
-      }
-    });
-  }
-};
+// the dropzone is created programmatically, disable autodiscover
+Dropzone.autoDiscover = false;
 
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'edit') {
+    return;
+  }
+
+  // UPLOAD FORM
+  const elabDropzone = new Dropzone('form#elabftw-dropzone', {
+    // i18n message to user
+    //dictDefaultMessage: $('#info').data('upmsg'),
+    dictDefaultMessage: i18next.t('dropzone-upload-area'),
+    maxFilesize: $('#info').data('maxsize'), // MB
+    timeout: 900000,
+    headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    },
+    init: function(): void {
+
+      // add additionnal parameters (id and type)
+      this.on('sending', function(file: string, xhr: string, formData: any) {
+        formData.append('upload', true);
+        formData.append('id', $('#info').data('id'));
+        formData.append('type', $('#info').data('type'));
+      });
+
+      // once it is done
+      this.on('complete', function(answer: any) {
+        // check the answer we get back from app/controllers/EntityController.php
+        const json = JSON.parse(answer.xhr.responseText);
+        notif(json);
+        // reload the #filesdiv once the file is uploaded
+        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+          $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
+            displayMolFiles();
+            const dropZone = Dropzone.forElement('#elabftw-dropzone');
+
+            // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
+            if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
+              let url = $('#uploadsDiv').children().last().find('img').attr('src');
+              // This is from the html element that shows the thumbnail. The ending appended to the original upload is: "_th.jpg"
+              // Removing this appendage allows us to have the original file. This is a hack to demonstrate the pasting functionality.
+              url = url.substring(0, url.length-7);
+              dropZone.tinyImageSuccess(url);
+              // This is to make sure that we do not end up adding a file to tinymce if a previous file was pasted and a consecutive file was uploaded using Dropzone.
+              // The 'undefined' check is not enough. That is just for before any file was pasted.
+              dropZone.tinyImageSuccess = null;
+            }
+          });
+        }
+      });
+    }
+  });
+
   // add the title in the page name (see #324)
   document.title = $('#title_input').val() + ' - eLabFTW';
 
   const type = $('#info').data('type');
   const id = $('#info').data('id');
-  const confirmText = $('#info').data('confirm');
   let location = 'experiments.php';
   if (type != 'experiments') {
     location = 'database.php';
@@ -185,7 +201,7 @@ $(document).ready(function() {
   class Entity {
 
     destroy() {
-      if (confirm(confirmText)) {
+      if (confirm(i18next.t('entity-delete-warning'))) {
         const controller = 'app/controllers/EntityAjaxController.php';
         $.post(controller, {
           destroy: true,
@@ -205,13 +221,14 @@ $(document).ready(function() {
       controller: string;
 
       constructor() {
-        this.controller = 'database.php';
+        this.controller = 'app/controllers/EntityAjaxController.php';
       }
 
       update(rating: any) {
         $.post(this.controller, {
           rating: rating,
-          id: id
+          id: id,
+          type: 'items',
         }).done(function(json) {
           notif(json);
         });
@@ -291,7 +308,16 @@ $(document).ready(function() {
 
   // DISPLAY MARKDOWN EDITOR
   if ($('#body_area').hasClass('markdown-textarea')) {
-    ($('.markdown-textarea') as any).markdown();
+    ($('.markdown-textarea') as any).markdown({
+      onPreview: function() {
+        // ask mathjax to reparse the page
+        // if we call typeset directly it doesn't work
+        // so add a timeout
+        setTimeout(function() {
+          MathJax.typeset();
+        }, 1);
+      }
+    });
   }
 
   // INSERT IMAGE AT CURSOR POSITION IN TEXT
@@ -318,13 +344,9 @@ $(document).ready(function() {
   // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
   $(document).on('click', '.plusMinusButton',  function() {
     if ($(this).html() === '+') {
-      $(this).html('-');
-      $(this).addClass('btn-neutral');
-      $(this).removeClass('btn-primary');
+      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
     } else {
-      $(this).html('+');
-      $(this).removeClass('btn-neutral');
-      $(this).addClass('btn-primary');
+      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
     }
   });
 
@@ -332,7 +354,7 @@ $(document).ready(function() {
   $('#datepicker').datepicker({dateFormat: 'yymmdd'});
   // If the title is 'Untitled', clear it on focus
   $('#title_input').focus(function(){
-    if ($(this).val() === $('#info').data('untitled')) {
+    if ($(this).val() === i18next.t('entity-default-title')) {
       $('#title_input').val('');
     }
   });
@@ -355,10 +377,10 @@ $(document).ready(function() {
   });
   // STAR RATING
   const StarC = new Star();
-  $('.rating-cancel').on('click', function() {
+  $(document).on('click', '.rating-cancel', function() {
     StarC.update(0);
   });
-  $('.star').on('click', function() {
+  $(document).on('click', '.star', function() {
     StarC.update($(this).data('rating').current[0].innerText);
   });
 
@@ -373,6 +395,19 @@ $(document).ready(function() {
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
+    images_reuse_filename: true,
+    paste_data_images: true,
+    images_upload_handler: function (blobInfo, success, failure) {
+      let dropZone = Dropzone.forElement('#elabftw-dropzone');
+      // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
+      if (typeof blobInfo.blob().name=== 'undefined'){
+        let fileOfBlob = new File([blobInfo.blob()], prompt('Enter filename with extension e.g. .jpeg'));
+        dropZone.addFile(fileOfBlob);
+      } else {
+        dropZone.addFile(blobInfo.blob());
+        dropZone.tinyImageSuccess = success;
+      }
+    },
     content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [
       {text: 'Bash', value: 'bash'},
@@ -392,7 +427,7 @@ $(document).ready(function() {
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'}
     ],
-    language: $('#info').data('lang'),
+    language: $('#user-prefs').data('lang'),
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign']
@@ -406,6 +441,7 @@ $(document).ready(function() {
         $.getJSON(url, {
           mention: 1,
           term: query,
+          type: type,
         }).done(function(data) {
           process(data);
         });
@@ -423,6 +459,12 @@ $(document).ready(function() {
     // keyboard shortcut to insert today's date at cursor in editor
     setup: function(editor: any) {
       editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+      editor.addShortcut('ctrl+=', 'subscript', function() {
+        editor.execCommand('subscript');
+      });
+      editor.addShortcut('ctrl+shift+=', 'superscript', function() {
+        editor.execCommand('superscript');
+      });
       editor.on('keydown', function() {
         clearTimeout(typingTimer);
       });

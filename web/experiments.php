@@ -54,5 +54,13 @@ try {
     $renderArr = array('error' => Tools::error());
     $Response->setContent($App->render($template, $renderArr));
 } finally {
+    // autologout if there is elabid for an experiment in view mode
+    // so we don't stay logged in as anon
+    if ($App->Request->query->has('elabid')
+        && $App->Request->query->get('mode') === 'view'
+        && !$App->Request->getSession()->has('auth')) {
+        $Session->invalidate();
+    }
+
     $Response->send();
 }

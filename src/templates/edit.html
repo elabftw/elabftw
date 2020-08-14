@@ -13,9 +13,15 @@
 
 {% embed 'view-edit.html' %}
   {% block backtoview %}
-  <a href='?mode=view&id={{ Entity.id }}'>
-    <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'View mode'|trans }}
-  </a>
+    <a href='?mode=view&id={{ Entity.id }}'>
+      <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'View mode'|trans }}
+    </a>
+  {% endblock %}
+  {% block createnew %}
+    {% include('create-new.html') %}
+  {% endblock %}
+  {% block createmodal %}
+    {% include('show-view-edit.html') %}
   {% endblock %}
 {% endembed %}
 
@@ -156,7 +162,7 @@
             {% if editor == 'md' %}
                     <textarea id='body_area' class='markdown-textarea' data-language='{{ lang }}' name='body'>{{ Entity.entityData.body|raw }}</textarea>
             {% else %}
-                <textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
+                <textarea id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body|raw }}</textarea>
             {% endif %}
 
             <div class='submitButtonDiv'>
@@ -179,7 +185,7 @@
   <!-- JSON EDITOR -->
   <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-    <button class='button btn btn-primary plusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
+    <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
     <div id='jsonEditorDiv' class='collapse mt-2'>
       <div id='jsonEditorContainer'></div>
       <div class='submitButtonDiv'>
@@ -235,17 +241,10 @@
 {% endif %}
 
 <div id='info'
-    data-upmsg='{{ 'Drop files here to upload'|trans }}'
+    data-page='edit'
     data-maxsize='{{ maxUploadSize }}'
     data-type='{{ Entity.type }}'
-    data-id='{{ Entity.id }}'
-    data-locale='{{ App.Users.userData.lang }}'
-    data-confirm="{{ 'The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'|trans }}"
-    data-confirmtag="{{ 'Delete this tag?'|trans }}"
-    data-confirmstep="{{ 'Delete this step?'|trans }}"
-    data-confirmlink="{{ 'Delete this link?'|trans }}"
-    data-untitled="{{ 'Untitled'|trans }}"
-    data-lang="{{ Entity.Users.userData.lang }}">
+    data-id='{{ Entity.id }}'>
 </div>
 <div id='shortcuts'
     data-create='{{ Entity.Users.userData.sc_create }}'
@@ -255,6 +254,4 @@
 <!-- Load the JSONEditor CSS -->
 <link href='app/css/jsoneditor/jsoneditor.min.css' rel='stylesheet' type='text/css'>
 
-<script src='app/js/edit.bundle.js?v={{ v }}'></script>
-<script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 {% endblock body %}

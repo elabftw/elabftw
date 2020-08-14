@@ -165,7 +165,7 @@
 
 <form class='box' method='post' autocomplete='off' action='app/controllers/CreateUserController.php'>
   <h3>{{ 'Add account'|trans }}</h3>
-  <p>Note: new user will need to use the "Forgot password" button on the login page to set a password.</p>
+  <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
     {{ App.Csrf.getHiddenInput|raw }}
     {# because the select will be disabled, the team won't be sent, so add it as hidden for admin page #}
@@ -223,5 +223,3 @@
     </div>
   </div>
 </form>
-
-<script src='app/js/editusers.bundle.js?v={{ v }}'></script>

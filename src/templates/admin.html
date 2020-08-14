@@ -56,6 +56,38 @@
       <label for='link_href'>{{ 'Address where this link should point:'|trans }}</label>
       <input class='mb-4 form-control col-md-4' type='text' value='{{ App.teamConfigArr.link_href }}' name='link_href' id='link_href' />
 
+      <label for='do_force_canread'>{{ 'Enforce read permissions?'|trans }}</label>
+      <select class='form-control col-md-4' name='do_force_canread' id='do_force_canread'>
+        <option value='1'{{ App.teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not App.teamConfigArr.do_force_canread ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+      </select>
+      <span class='smallgray'>{{ 'Select if you want to enforce read permissions on experiments'|trans }}</span>
+
+      <label for='force_canread'>{{ 'Enforced read permissions on experiments'|trans }}</label>
+      <select class='form-control col-md-4' name='force_canread' id='force_canread'>
+        <option value='public'{{ App.teamConfigArr.force_canread == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
+        <option value='organization'{{ App.teamConfigArr.force_canread == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
+        <option value='team'{{ App.teamConfigArr.force_canread == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
+        <option value='user'{{ App.teamConfigArr.force_canread == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+      </select>
+      <span class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</span>
+
+      <label for='do_force_canwrite'>{{ 'Enforce write permissions?'|trans }}</label>
+      <select class='form-control col-md-4' name='do_force_canwrite' id='do_force_canwrite'>
+        <option value='1'{{ App.teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+        <option value='0'{{ not App.teamConfigArr.do_force_canwrite ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+      </select>
+      <span class='smallgray'>{{ 'Select if you want to enforce write permissions on experiments'|trans }}</span>
+
+      <label for='force_canwrite'>{{ 'Enforced write permissions on experiments'|trans }}</label>
+      <select class='form-control col-md-4' name='force_canwrite' id='force_canwrite'>
+        <option value='public'{{ App.teamConfigArr.force_canwrite == 'public' ? " selected='selected'" }}>{{ 'Public'|trans }}</option>
+        <option value='organization'{{ App.teamConfigArr.force_canwrite == 'organization' ? " selected='selected'" }}>{{ 'Organization'|trans }}</option>
+        <option value='team'{{ App.teamConfigArr.force_canwrite == 'team' ? " selected='selected'" }}>{{ 'Team'|trans }}</option>
+        <option value='user'{{ App.teamConfigArr.force_canwrite == 'user' ? " selected='selected'" }}>{{ 'User'|trans }}</option>
+      </select>
+      <span class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</span>
+
       <span class='m-0 button btn btn-neutral togglableNext'>{{ 'Override general timestamping config'|trans }}</span>
       <div class='togglableHidden mt-2'>
         <label for='stampprovider'>{{ 'URL for external timestamping service:'|trans }}</label>
@@ -109,7 +141,7 @@
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
           <a href='#'>
-            <i class='fas fa-trash-alt clickable teamGroupDelete' data-id='{{ teamGroup.id }}' data-confirm="{{ 'Delete this?'|trans }}" style='float:right'></i>
+            <i class='fas fa-trash-alt clickable teamGroupDelete align_right' data-id='{{ teamGroup.id }}'></i>
           </a>
           <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
@@ -341,7 +373,7 @@
 
       {{ App.Csrf.getHiddenInput|raw }}
       <label class='d-block' for='zipuploader'>{{ '3. Select a ZIP file to import:'|trans }}</label>
-      <input id='zipuploader' name='file' type='file' accept='.elabftw.zip' />
+      <input id='zipuploader' name='file' type='file' accept='.zip' />
       <input name='type' type='hidden' value='zip' />
 
       <div class='submitButtonDiv'>
@@ -359,15 +391,10 @@
     <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
     <div id='tag_manager'>
       {% for tag in tagsArr %}
-        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
+        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
     </div>
   </div>
 </div>
 
-<div id='info'
-  data-lang='{{ App.Users.userData.lang }}'
-  data-confirm='{{ 'Delete this?'| trans }}'>
-
-<script src='app/js/admin.bundle.js?v={{ v }}'></script>
 {% endblock body %}

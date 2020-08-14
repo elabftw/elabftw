@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
@@ -20,6 +21,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
+use Elabftw\Services\ListBuilder;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -27,7 +29,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Deal with things common to experiments and items like tags, uploads, quicksave and lock
  *
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -64,8 +66,12 @@ try {
 
     // GET MENTION LIST
     if ($Request->query->has('term') && $Request->query->has('mention')) {
-        $term = $Request->query->filter('term', null, FILTER_SANITIZE_STRING);
-        $Response->setData($Entity->getMentionList($term));
+        $term = $Request->query->get('term');
+        $ExperimentsHelper = new ListBuilder(new Experiments($App->Users));
+        $DatabaseHelper = new ListBuilder(new Database($App->Users));
+        // return list of itemd and experiments
+        $mentionArr = array_merge($DatabaseHelper->getMentionList($term), $ExperimentsHelper->getMentionList($term));
+        $Response->setData($mentionArr);
     }
 
     // GET BODY
@@ -83,9 +89,18 @@ try {
 
     // GET LINK LIST
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
-        // we don't care about the entity type as getAutocomplete() is available in AbstractEntity
-        $Entity = new Experiments($App->Users);
-        $Response->setData($Entity->getAutocomplete($Request->query->get('term'), $Request->query->get('source')));
+        $ListBuilder = new ListBuilder(new Database($App->Users));
+        $Response->setData($ListBuilder->getAutocomplete($Request->query->get('term')));
+    }
+
+    // GET BOUND EVENTS
+    if ($Request->query->has('getBoundEvents') && $Entity instanceof Experiments) {
+        $Entity->canOrExplode('read');
+        $events = $Entity->getBoundEvents();
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $events,
+        ));
     }
 
     /**
@@ -93,6 +108,7 @@ try {
      *
      */
 
+    // SAVE AS IMAGE
     if ($Request->request->has('saveAsImage')) {
         if ($App->Session->has('anon')) {
             throw new IllegalActionException('Anonymous user tried to access database controller.');
@@ -100,9 +116,14 @@ try {
         $Entity->Uploads->createFromString('png', $Request->request->get('realName'), $Request->request->get('content'));
     }
 
+    // TOGGLE PIN
+    if ($Request->request->has('togglePin')) {
+        $Entity->Pins->togglePin();
+    }
+
     // CREATE STEP
     if ($Request->request->has('createStep')) {
-        $Entity->Steps->create($Request->request->get('body'));
+        $Entity->Steps->create($Request->request->filter('body', null, FILTER_SANITIZE_STRING));
     }
 
     // FINISH STEP
@@ -130,6 +151,11 @@ try {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
+    // UPDATE RATING
+    if ($Request->request->has('rating') && $Entity instanceof Database) {
+        $Entity->setId((int) $Request->request->get('id'));
+        $Entity->updateRating((int) $Request->request->get('rating'));
+    }
 
     // TOGGLE LOCK
     if ($Request->request->has('lock')) {

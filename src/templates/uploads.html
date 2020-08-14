@@ -9,7 +9,7 @@
             {% endtrans %}
         </h3>
         {% if mode == 'edit' %}
-          <i class='fas fa-eye clickable align_right togglableNext' title='Toggle visibility'></i>
+          <i class='fas fa-eye clickable align_right togglableNext' title="{{ 'Toggle visibility'|trans }}"></i>
         {% endif %}
 
         <div class='row' id='uploadsDiv'>
@@ -153,4 +153,3 @@
     </div>
 {% endif %}
 </div>
-<script src='app/js/uploads.bundle.js?v={{ v }}'></script>

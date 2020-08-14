@@ -11,12 +11,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -50,6 +52,9 @@ abstract class AbstractEntity
     /** @var Users $Users our user */
     public $Users;
 
+    /** @var Pins $Pins */
+    public $Pins;
+
     /** @var string $type experiments or items */
     public $type = '';
 
@@ -60,7 +65,7 @@ abstract class AbstractEntity
     public $page = '';
 
     /** @var array $filters an array of arrays with filters for sql query */
-    public $filters;
+    public $filters = array();
 
     /** @var string $idFilter sql of ids to include */
     public $idFilter;
@@ -73,21 +78,6 @@ abstract class AbstractEntity
 
     /** @var string $bodyFilter inserted in sql */
     public $bodyFilter = '';
-
-    /** @var string $queryFilter inserted in sql */
-    public $queryFilter = '';
-
-    /** @var string $order inserted in sql */
-    public $order = 'date';
-
-    /** @var string $sort inserted in sql */
-    public $sort = 'DESC';
-
-    /** @var string $limit limit for sql */
-    public $limit = '';
-
-    /** @var string $offset offset for sql */
-    public $offset = '';
 
     /** @var bool $isReadOnly if we can read but not write to it */
     public $isReadOnly = false;
@@ -112,7 +102,7 @@ abstract class AbstractEntity
         $this->Users = $users;
         $this->Comments = new Comments($this, new Email(new Config(), $this->Users));
         $this->TeamGroups = new TeamGroups($this->Users);
-        $this->filters = array();
+        $this->Pins = new Pins($this);
         $this->idFilter = '';
 
         if ($id !== null) {
@@ -193,6 +183,7 @@ abstract class AbstractEntity
      * The goal here is to decrease the number of read columns to reduce memory footprint
      * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
      * Only logged in users use this function
+     * @param DisplayParams $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
      *
      *                   \||/
@@ -209,7 +200,7 @@ abstract class AbstractEntity
      *
      *          Here be dragons!
      */
-    public function readShow(bool $extended = false): array
+    public function readShow(DisplayParams $displayParams, bool $extended = false): array
     {
         $sql = $this->getReadSqlBeforeWhere($extended, $extended);
         $teamgroupsOfUser = $this->TeamGroups->getGroupsFromUser();
@@ -221,7 +212,14 @@ abstract class AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' AND entity.userid = :userid)";
+        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' ";
+        // admin will see the experiments with visibility user for user of their team
+        if ($this->Users->userData['is_admin']) {
+            $sql .= 'AND entity.userid = users2teams.users_id)';
+        } else {
+            // normal user will so only their own experiments
+            $sql .= 'AND entity.userid = :userid)';
+        }
         // add all the teamgroups in which the user is
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
@@ -234,15 +232,16 @@ abstract class AbstractEntity
             $this->titleFilter,
             $this->dateFilter,
             $this->bodyFilter,
-            $this->queryFilter,
+            Tools::getSearchSql($displayParams->query, 'and', '', $this->type),
             $this->idFilter,
             'GROUP BY id ORDER BY',
-            $this->order,
-            $this->sort,
+            $displayParams->getOrderSql(),
+            $displayParams->sort,
             ', entity.id',
-            $this->sort,
-            $this->limit,
-            $this->offset,
+            $displayParams->sort,
+            // add one so we can display Next page if there are more things to display
+            'LIMIT ' . (string) ($displayParams->limit + 1),
+            'OFFSET ' . (string) $displayParams->offset,
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -294,7 +293,7 @@ abstract class AbstractEntity
     /**
      * Read the tags of the entity
      *
-     * @param array $items the results of all items from readShow()
+     * @param array<array-key, mixed> $items the results of all items from readShow()
      *
      * @return array
      */
@@ -359,54 +358,9 @@ abstract class AbstractEntity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        /* disable this for now: we don't change the userid upon edition anymore
-            or the item might seemingly change team
-        if ($this instanceof Database) {
-            // if we are the admin doing an edit on a visibility = user item, we don't want to change the userid
-            // first get the visibility
-            $sql = 'SELECT userid, canread FROM items WHERE id = :id';
-            $req2 = $this->Db->prepare($sql);
-            $req2->bindParam(':id', $this->id, PDO::PARAM_INT);
-            if ($req2->execute() !== true) {
-                throw new DatabaseErrorException('Error while executing SQL query.');
-            }
-            $item = $req2->fetch();
-
-            $newUserid = $this->Users->userData['userid'];
-            if ($item['canread'] === 'user') {
-                $newUserid = $item['userid'];
-            }
-            $req->bindParam(':userid', $newUserid, PDO::PARAM_INT);
-        }
-         */
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);
-    }
-
-    /**
-     * Set a limit for sql read. The limit is n times the wanted number of
-     * displayed results so we can remove the ones without read access
-     * and still display enough of them
-     *
-     * @param int $num number of items to ignore
-     * @return void
-     */
-    public function setLimit(int $num): void
-    {
-        $num += 1;
-        $this->limit = 'LIMIT ' . (string) $num;
-    }
-
-    /**
-     * Add an offset to the displayed results
-     *
-     * @param int $num number of items to ignore
-     * @return void
-     */
-    public function setOffset(int $num): void
-    {
-        $this->offset = 'OFFSET ' . (string) $num;
     }
 
     /**
@@ -421,9 +375,17 @@ abstract class AbstractEntity
         $this->canOrExplode('write');
         Check::visibility($value);
         Check::rw($rw);
+        // check if the permissions are enforced
+        $Team = new Team((int) $this->Users->userData['team']);
         if ($rw === 'read') {
+            if ($Team->getDoForceCanread() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canread';
         } else {
+            if ($Team->getDoForceCanwrite() === 1) {
+                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
+            }
             $column = 'canwrite';
         }
 
@@ -474,7 +436,7 @@ abstract class AbstractEntity
      * Verify we can read/write an item
      * Here be dragons! Cognitive load > 9000
      *
-     * @param array|null $item one item array
+     * @param array<string, mixed>|null $item one item array
      * @return array
      */
     public function getPermissions(?array $item = null): array
@@ -504,60 +466,6 @@ abstract class AbstractEntity
         }
 
         return array('read' => false, 'write' => false);
-    }
-
-    /**
-     * Get an array formatted for the autocomplete input (link and bind)
-     *
-     * @param string $term the query
-     * @param string $source experiments or items
-     * @return array
-     */
-    public function getAutocomplete(string $term, string $source): array
-    {
-        if ($source === 'experiments') {
-            $items = $this->getExpList($term);
-        } elseif ($source === 'items') {
-            $items = $this->getDbList($term);
-        } else {
-            throw new \InvalidArgumentException;
-        }
-        $linksArr = array();
-        foreach ($items as $item) {
-            $linksArr[] = $item['id'] . ' - ' . $item['category'] . ' - ' . substr($item['title'], 0, 60);
-        }
-        return $linksArr;
-    }
-
-    /**
-     * Get an array of a mix of experiments and database items
-     * for use with the mention plugin of tinymce (# and $ autocomplete)
-     *
-     * @param string $term the query
-     * @return array
-     */
-    public function getMentionList(string $term): array
-    {
-        $mentionArr = array();
-
-        // add items from database
-        $itemsArr = $this->getDbList($term);
-        foreach ($itemsArr as $item) {
-            $mentionArr[] = array('name' => "<a href='database.php?mode=view&id=" .
-                $item['id'] . "'>[" . $item['category'] . '] ' . $item['title'] . '</a>',
-            );
-        }
-
-        // complete the list with experiments
-        // fix #191
-        $experimentsArr = $this->getExpList($term);
-        foreach ($experimentsArr as $item) {
-            $mentionArr[] = array('name' => "<a href='experiments.php?mode=view&id=" .
-                $item['id'] . "'>[" . ngettext('Experiment', 'Experiments', 1) . '] ' . $item['title'] . '</a>',
-            );
-        }
-
-        return $mentionArr;
     }
 
     /**
@@ -617,6 +525,9 @@ abstract class AbstractEntity
 
         $idArr = array();
         $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
         foreach ($res as $item) {
             $idArr[] = $item['id'];
         }
@@ -665,6 +576,23 @@ abstract class AbstractEntity
     }
 
     /**
+     * Check if the current entity is pin of current user
+     *
+     * @return bool
+     */
+    public function isPinned(): bool
+    {
+        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':users_id', $this->Users->userData['userid']);
+        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->type);
+
+        $this->Db->execute($req);
+        return $req->rowCount() > 0;
+    }
+
+    /**
      * Get the SQL string for read before the WHERE
      *
      * @param bool $getTags do we get the tags too?
@@ -675,7 +603,10 @@ abstract class AbstractEntity
     {
         if ($fullSelect) {
             // get all the columns of entity table
-            $select = 'SELECT DISTINCT entity.*,';
+            $select = 'SELECT DISTINCT entity.*,
+                GROUP_CONCAT(DISTINCT team_events.experiment IS NOT NULL) AS is_bound,
+                GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
+                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,';
         } else {
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,
@@ -737,17 +668,21 @@ abstract class AbstractEntity
             entity.id = steps_item_id
             AND stepst.finished = 0)';
 
+
         $from = 'FROM %1$s AS entity';
 
         if ($this instanceof Experiments) {
             $select .= ', entity.timestamped';
-            $eventsJoin = '';
+            $eventsColumn = 'experiment';
         } elseif ($this instanceof Database) {
-            $select .= ', categoryt.bookable,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id';
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.item = entity.id)';
+            $select .= ', categoryt.bookable';
+            $eventsColumn = 'item';
         } else {
             throw new IllegalActionException('Nope.');
+        }
+        $eventsJoin = '';
+        if ($fullSelect) {
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id)';
         }
 
         $sqlArr = array(
@@ -766,35 +701,5 @@ abstract class AbstractEntity
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->type);
-    }
-
-    /**
-     * Get a list of experiments with title starting with $term and optional user filter
-     *
-     * @param string $term the query
-     * @return array
-     */
-    private function getExpList(string $term): array
-    {
-        $Entity = new Experiments($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
-
-        return $Entity->readShow();
-    }
-
-    /**
-     * Get a list of items with a filter on the $term
-     *
-     * @param string $term the query
-     * @return array
-     */
-    private function getDbList(string $term): array
-    {
-        $Entity = new Database($this->Users);
-        $term = filter_var($term, FILTER_SANITIZE_STRING);
-        $Entity->titleFilter = " AND entity.title LIKE '%$term%'";
-
-        return $Entity->readShow();
     }
 }

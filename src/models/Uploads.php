@@ -40,8 +40,8 @@ class Uploads implements CrudInterface
 {
     use UploadTrait;
 
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
-    private const BIG_FILE_THRESHOLD = 5000000;
+    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
+    private const BIG_FILE_THRESHOLD = 50000000;
 
     /** @var AbstractEntity $Entity an entity */
     public $Entity;
@@ -339,7 +339,7 @@ class Uploads implements CrudInterface
     /**
      * Get the rotation angle from exif data
      *
-     * @param array $exifData
+     * @param array<string, mixed> $exifData
      * @return int
      */
     private function getRotationAngle(array $exifData): int
@@ -396,7 +396,11 @@ class Uploads implements CrudInterface
     private function getHash(string $file): string
     {
         if (filesize($file) < self::BIG_FILE_THRESHOLD) {
-            return hash_file($this->hashAlgorithm, $file);
+            $hash = hash_file($this->hashAlgorithm, $file);
+            if ($hash === false) {
+                throw new ImproperActionException('Error creating hash from file!');
+            }
+            return $hash;
         }
 
         return '';

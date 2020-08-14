@@ -12,14 +12,21 @@
     <section class='col-md-6'>
         <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
         <br>
-        <div class='mt-2' id='steps_div_{{ Entity_id }}'>
+        <div class='mt-2 sortable' id='steps_div_{{ Entity_id }}' data-axis='y' data-table='{{ Entity.type }}_steps'>
           {% for step in stepsArr %}
 
-            <div class='input-group mb-2 '>
+            <div class='input-group mb-2' id='step_{{ step.id }}'>
+              <div class='input-group-prepend'>
+                <div class='input-group-text'>
+                  <a class='stepOrder'>
+                    <i class='fas fa-sort fa-pull-right draggable sortableHandle'></i>
+                  </a>
+                </div>
+              </div>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
                   <a class='stepDestroy' data-stepid='{{ step.id }}' data-id='{{ Entity_id }}'>
-                    <i class='fas fa-trash-alt fa-pull-right clickable'></i>
+                    <i class='fas fa-trash-alt clickable'></i>
                   </a>
                 </div>
               </div>
@@ -29,7 +36,7 @@
                 </div>
               </div>
               <div class='pl-2 step-static form-control-plaintext {{ step.finished ? 'finished' }}'>
-                <span>{{ step.body|raw }}</span>
+                <span class='stepInput' data-type='{{ Entity.type }}' data-id='{{ Entity_id }}' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
                 {% if step.finished %}
                 <span class='mr-2 text-muted'>
                     {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
@@ -59,14 +66,18 @@
             {% if linksArr %}
             <ul class='list-group'>
                 {% for link in linksArr %}
-                <li class='list-group-item'>{{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                  <li class='list-group-item'>
+                    <i class='fas fa-link mr-1'></i>
+                    <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
                   {{ link.title|raw }}</a>
                   <a class='linkDestroy' data-linkid='{{ link.linkid }}' data-id='{{ Entity_id }}'>
                     <i title='{{ 'Delete'|trans }}' class='fas fa-lg fa-trash-alt fa-pull-right clickable'></i>
                   </a>
-                  <a class='linkImport' data-linkid='{{ link.itemid }}'>
-                    <i title='{{ 'Import'|trans }}' class='fas fa-lg fa-file-import fa-pull-right clickable'></i>
-                  </a>
+                  {% if Entity.type != 'experiments_templates' %}
+                    <a class='linkImport' data-linkid='{{ link.itemid }}'>
+                      <i title='{{ 'Import'|trans }}' class='fas fa-lg fa-file-import fa-pull-right clickable'></i>
+                    </a>
+                  {% endif %}
                 </li>
                 {% endfor %}
             </ul>

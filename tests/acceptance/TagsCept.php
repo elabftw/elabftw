@@ -14,6 +14,7 @@ $I->see('Tags');
 $I->fillField('//*[@id="createTagInput"]', 'New tag');
 $I->pressKey('//*[@id="createTagInput"]', \Facebook\WebDriver\WebDriverKeys::ENTER);
 $I->waitForJS('return jQuery.active == 0', 10);
+$I->wait(2);
 $I->seeInDatabase('tags', array('tag' => 'New tag'));
 
 $I->wantTo('Delete a tag from the tag manager');

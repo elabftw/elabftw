@@ -6,6 +6,9 @@
  * @package elabftw
  */
 $(document).ready(function() {
+  if (window.location.pathname !== '/change-pass.php') {
+    return;
+  }
   // check if passwords match
   $('#cpassword').keyup(function() {
     const password = $('#password').val();

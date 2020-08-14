@@ -33,6 +33,9 @@ $App->pageTitle = _('Admin panel');
 $Response = new Response();
 $Response->prepare($Request);
 
+$template = 'error.html';
+$renderArr = array();
+
 try {
     if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
@@ -49,11 +52,13 @@ try {
     $itemsTypesArr = $ItemsTypes->readAll();
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
-    $visibilityArr = $TeamGroups->getVisibilityList();
     $teamsArr = $Teams->readAll();
     $commonTplBody = $Templates->readCommonBody();
+    $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
-    $unvalidatedUsersArr = $App->Users->readAllFromTeam(0);
+    $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
+        return $u['validated'] === '0';
+    });
     // Users search
     $isSearching = false;
     $usersArr = array();
@@ -62,7 +67,6 @@ try {
         $usersArr = $App->Users->readFromQuery(filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING), true);
     }
 
-    $allTeamUsersArr = $App->Users->readAllFromTeam(1);
 
     // all the tags for the team
     $tagsArr = $Tags->readAll();
@@ -77,7 +81,7 @@ try {
         'itemsTypesArr' => $itemsTypesArr,
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,
-        'visibilityArr' => $visibilityArr,
+        'visibilityArr' => $TeamGroups->getVisibilityList(),
         'teamsArr' => $teamsArr,
         'commonTplBody' => $commonTplBody,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
@@ -85,16 +89,13 @@ try {
     );
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error(true));
+    $renderArr['error'] = Tools::error(true);
 } catch (DatabaseErrorException | FilesystemErrorException | ImproperActionException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
+    $renderArr['error'] = $e->getMessage();
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
+    $renderArr['error'] = Tools::error();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

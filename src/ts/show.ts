@@ -9,13 +9,12 @@ declare let key: any;
 declare let MathJax: any;
 import { insertParamAndReload, notif } from './misc';
 import 'bootstrap/js/src/modal.js';
+import i18next from 'i18next';
 
 $(document).ready(function(){
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
+  if ($('#info').data('page') !== 'show') {
+    return;
+  }
 
   // CREATE EXPERIMENT
   key($('#shortcuts').data('create'), function() {
@@ -23,19 +22,20 @@ $(document).ready(function(){
   });
 
   // validate the form upon change. fix #451
+  // add to the input itself, not the form for more flexibility
+  // for instance the tags input allow multiple selection, so we don't want to submit on change
   $('.autosubmit').on('change', function() {
-    $(this).submit();
+    $(this).closest('form').submit();
   });
 
-  // bodyToggleImg is the little +/- image
-  $('.bodyToggleImg').on('click', function() {
+  // TOGGLE BODY
+  // toggleBody is the little +/- image
+  $('.toggleBody').on('click', function() {
+    const randId = $(this).data('randid');
     // transform the + in - and vice versa
-    $(this).children().toggleClass('fa-minus-circle').toggleClass('fa-plus-circle');
-
+    $(this).find('[data-fa-i2svg]').toggleClass('fa-minus-circle fa-plus-circle');
     // get the id to show the toggleBody
-    let id = $(this).parent().attr('id');
-    const idArr = id.split('_');
-    id = idArr[1];
+    const id = $(this).data('id');
     // get html of body
     $.get('app/controllers/EntityAjaxController.php', {
       getBody : true,
@@ -43,13 +43,12 @@ $(document).ready(function(){
       type : $(this).data('type')
       // and put it in the div and show the div
     }).done(function(data) {
-      $('#bodyToggle_' + id).html(data.msg);
       // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-      const width = $('#parent_' + id).width() - 30;
-      // adjust the width of the children
-      $('#bodyToggle_' + id).css('width', width);
-      // display div
-      $('#bodyToggle_' + id).toggle();
+      const width = $('#parent_' + randId).width() - 30;
+      // add html content and adjust the width of the children
+      $('#' + randId).html(data.msg)
+        .css('width', width)
+        .toggle();
       // ask mathjax to reparse the page
       MathJax.typeset();
     });
@@ -70,7 +69,11 @@ $(document).ready(function(){
   function getCheckedBoxes() {
     const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
-      checkedBoxes.push($(this).data('id'));
+      checkedBoxes.push({
+        'id': $(this).data('id'),
+        // the randomid is used to get the parent container and hide it when delete
+        'randomid': $(this).data('randomid'),
+      });
     });
     return checkedBoxes;
   }
@@ -86,19 +89,6 @@ $(document).ready(function(){
     }
   });
 
-  // CLICK THE CREATE NEW BUTTON
-  // done with javascript because if it's a link the css is not clean
-  // and there is a gap with the separator
-  // also this allows different behavior for exp/items
-  $('.createNew').on('click', function() {
-    const path = window.location.pathname;
-    if (path.split('/').pop() === 'experiments.php') {
-      insertParamAndReload('create', 1);
-    } else {
-      $('#createModal').modal('toggle');
-    }
-  });
-
   // EXPAND ALL
   $('#expandAll').on('click', function() {
     if ($(this).data('status') === 'closed') {
@@ -108,7 +98,7 @@ $(document).ready(function(){
       $(this).data('status', 'closed');
       $(this).text($(this).data('expand'));
     }
-    $('.bodyToggleImg').each(function() {
+    $('.toggleBody').each(function() {
       $(this).trigger('click');
     });
   });
@@ -169,10 +159,10 @@ $(document).ready(function(){
       return;
     }
     // loop on it and update the status/item type
-    $.each(checked, function(index, value) {
+    $.each(checked, function(index) {
       ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
         updateCategory : true,
-        id : value,
+        id: checked[index]['id'],
         categoryId : $('#catChecked').val(),
         type : $('#type').data('type')
       }));
@@ -199,12 +189,12 @@ $(document).ready(function(){
       return;
     }
     // loop on it and update the status/item type
-    $.each(checked, function(index, value) {
+    $.each(checked, function(index) {
       ajaxs.push($.post('app/controllers/EntityAjaxController.php', {
         updatePermissions : true,
         rw: 'read',
-        id : value,
-        visibility : $('#visChecked').val(),
+        id: checked[index]['id'],
+        value: $('#visChecked').val(),
         type : $('#type').data('type')
       }));
     });
@@ -217,8 +207,9 @@ $(document).ready(function(){
     notif({'msg': 'Saved', 'res': true});
   });
 
-  // MAKE ZIP/CSV
-  $('.csvzip').on('click', function() {
+  // Export selected menu
+  $('#exportChecked').on('change', function() {
+    const what = $('#exportChecked').val();
     const checked = getCheckedBoxes();
     if (checked.length === 0) {
       const json = {
@@ -228,13 +219,7 @@ $(document).ready(function(){
       notif(json);
       return;
     }
-    // grey out the box to signal it has been clicked
-    $(this).attr('disabled', 'disabled');
-    // also display a wait text
-    $(this).html('Please wait…');
-    const type = $('#type').data('type');
-    const what = $(this).data('what');
-    window.location.href = 'make.php?what=' + what + '&type=' + type + '&id=' + checked.join('+');
+    window.location.href = `make.php?what=${what}&type=${$('#type').data('type')}&id=${checked.map(value => value.id).join('+')}`;
   });
 
   // THE DELETE BUTTON FOR CHECKED BOXES
@@ -249,19 +234,19 @@ $(document).ready(function(){
       notif(json);
       return;
     }
-    if (!confirm($('#info').data('confirm'))) {
-      return false;
+    if (!confirm(i18next.t('entity-delete-warning'))) {
+      return;
     }
     // loop on it and delete stuff
-    $.each(checked, function(index, value) {
+    $.each(checked, function(index) {
       $.post('app/controllers/EntityAjaxController.php', {
         destroy: true,
-        id: value,
+        id: checked[index]['id'],
         type: $('#type').data('type')
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          $('#parent_' + value).hide(200);
+          $('#parent_' + checked[index]['randomid']).hide(200);
         }
       });
     });

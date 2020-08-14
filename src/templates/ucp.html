@@ -10,6 +10,43 @@
     </ul>
 </menu>
 
+<!-- Modal for edit permissions -->
+<div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='permModalLabel'>{{ 'Edit permissions'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <!-- CAN READ -->
+        <div class='form-group'>
+          <i class='fas fa-eye' title='Visibility'></i>
+          <label for='canread_select'>{{ 'Visibility'|trans }}</label>
+          <select id='canread_select' class='permissionSelect form-control' data-rw='read'>
+            {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+          <!-- CAN WRITE -->
+          <i class='fas fa-pencil-alt' title='Can write'></i>
+          <label for='canwrite_select'>{{ 'Can write'|trans }}</label>
+          <select id='canwrite_select' class='permissionSelect form-control' data-rw='write'>
+            {% for key, value in visibilityArr %}
+            <option value='{{ key }}'>{{ value|trans }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TAB 1 - USER PREFERENCES -->
 <div class='divhandle' id='tab1div'>
   <form class='form-group' action='app/controllers/UcpController.php' method='post'>
@@ -33,7 +70,7 @@
       <h3>{{ 'Display'|trans }}</h3>
       <hr>
       <label for='limit'>{{ 'Items per page:'|trans }}</label>
-      <input id='limit' class='form-control col-md-2' type='text' size='2' maxlength='2' value='{{ App.Users.userData.limit_nb }}' name='limit'>
+      <input id='limit' class='form-control col-md-2' type='text' size='2' maxlength='2' value='{{ App.Users.userData.limit_nb }}' name='limit_nb'>
 
       <label for='display_size'>{{ 'Display size:'|trans }}</label>
       <select id='display_size' name='display_size' class='form-control col-md-3'>
@@ -137,6 +174,11 @@
           {{ App.Users.userData.show_team == '1' ? " checked='checked'" }}
         />
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
+        <br>
+        <input id='show_team_templates' type='checkbox' name='show_team_templates'
+               {{ App.Users.userData.show_team_templates == '1' ? " checked='checked'" }}
+        />
+        <label for='show_team_templates'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
         <br>
         <input id='chem_editor' type='checkbox' name='chem_editor'
           {{ App.Users.userData.chem_editor == '1' ? " checked='checked'" }}
@@ -283,7 +325,7 @@
     <ul class='nav nav-pills sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
         <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_1'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
-        <li class='subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
+        <li class='subtabhandle clickable badge badge-secondary badgetab' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
         {% endfor %}
     </ul>
     <hr>
@@ -310,6 +352,7 @@
 
     {% for template in templatesArr %}
       <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+        {% if template.isWritable %}
         <!-- TAGS -->
         <i class='fas fa-tags'></i>
         <label>{{ 'Tags'|trans }}</label>
@@ -329,10 +372,17 @@
           </span>
           <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
         </div>
-          <a class='saveToFile' title='Download template' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
+          <div class='dropdown' style="position: relative; bottom: 5px">
+            <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
+            <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+            <!-- MANAGE PERMISSIONS -->
+            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read="{{ template.canread }}" data-write="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+          </div>
+        </div>
+        <a class='saveToFile' title='{{ 'Download template'|trans }}' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
               <i class='fas fa-download fa-pull-right clickable'></i>
           </a>
-          <a class='destroy-template' title='Destroy template' data-id='{{ template.id }}'>
+          <a class='destroy-template' title='{{ 'Destroy template'|trans }}' data-id='{{ template.id }}'>
               <i class='fas fa-trash-alt fa-pull-right mr-1 clickable'></i>
           </a>
 
@@ -350,9 +400,85 @@
             </div>
           </form>
           {% include('steps-links-edit.html') %}
-        </div>
+
+        {% else %}
+
+          {{ 'This template is not editable'|trans|msg('ok', false) }}
+          <div class='box'>
+            <h4>{{ template.name }} ({{ template.fullname }})</h4>
+
+            {% if template.tags|length > 0 %}
+              <span class='tags'><i class='fas fa-tags'></i></span>
+              {% set tagsValueArr = template.tags|split('|') %}
+              {% for tag in tagsValueArr %}
+                <span class='tag'>{{ tag|raw }}</span>
+              {% endfor %}
+            {% endif %}
+
+            <div class='mt-2'>
+              {% if template.canread > 0 %}
+                {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
+                  <i class='fas fa-eye'></i> {{ teamGroup.name }}
+                {% endfor %}
+              {% else %}
+                <i class='fas fa-eye'></i> {{ template.canread }}
+              {% endif %}
+
+              {% if template.canwrite > 0 %}
+                {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
+                  <i class='fas fa-pencil-alt'></i> {{ teamGroup.name }}
+                {% endfor %}
+              {% else %}
+                <i class='fas fa-pencil-alt'></i> {{ template.canwrite }}
+              {% endif %}
+            </div>
+
+            <div id='body_view' class='txt'>{{ template.body|raw }}</div>
+            <div class='row'>
+              <div class='col-md-6'>
+                {% set stepsArr = Entity.Steps.readFromId(template.id) %}
+                {% if stepsArr %}
+                  <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
+                  <div class='mt-2'>
+                    {% for step in stepsArr %}
+                      <div class='input-group mb-2' id='step_{{ step.id }}'>
+                        <div class='input-group-prepend'>
+                          <div class='input-group-text'>
+                            <input type='checkbox' disabled autocomplete='off'>
+                          </div>
+                        </div>
+                        <div class='pl-2 step-static form-control-plaintext'>
+                          <span>{{ step.body|raw }}</span>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class='col-md-6'>
+                {% set linksArr = Entity.Links.readFromId(template.id) %}
+                {% if linksArr %}
+                  <div class='mt-2' id='links_div_{{ template.id }}'>
+                    <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
+                    <ul class='list-group'>
+                      {% for link in linksArr %}
+                        <li class='list-group-item'>
+                          <i class='fas fa-link mr-1'></i>
+                          {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+                          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                              {{ link.title|raw }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
     {% endfor %}
-    </div>
+  </div>
 </div>
 
 <!-- TAB 4 - API KEYS -->
@@ -377,7 +503,7 @@
             <td>{{ key.name }}</td>
             <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
             <td>{{ key.created_at }}</td>
-            <td><i class='fas fa-trash-alt fa-2x clickable keyDestroy' title='Delete' data-id='{{ key.id }}' data-confirm="{{ 'Delete this?'|trans }}" /></i></td>
+            <td><i class='fas fa-trash-alt fa-2x clickable keyDestroy' title='Delete' data-id='{{ key.id }}'></i></td>
           </tr>
       {% endfor %}
     </tbody>
@@ -400,9 +526,6 @@
 </div>
 <!-- END PAGE -->
 
-<div id='language' data-lang='{{ App.Users.userData.lang }}'></div>
-<div id='info' data-confirm="{{ 'Delete this?'|trans }}" data-confirmtag="{{ 'Delete this tag?'|trans }}" data-type='experiments_templates'></div>
+<div id='info' data-type='experiments_templates'></div>
 
-<!-- to export templates -->
-<script src='app/js/ucp.bundle.js?v={{ v }}'></script>
 {% endblock body %}

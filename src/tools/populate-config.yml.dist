@@ -49,6 +49,7 @@ users:
     firstname: Tata
     team: Bravo
     create_experiments: true
+    create_items: true
 
   - team: Bravo
 

@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Exception;
+
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
@@ -44,15 +46,15 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
          */
         // try bad value for ban_time
         $post = array('ban_time' => 'invalid');
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->Config->update($post);
         // try bad value for login_tries
         $post = array('login_tries' => 'invalid');
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->Config->update($post);
         // try with no password
         $post = array('smtp_password' => '');
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->Config->update($post);
     }
 

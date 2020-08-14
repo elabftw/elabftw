@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
@@ -19,6 +20,8 @@ use PDO;
  */
 class Steps implements CrudInterface
 {
+    use SortableTrait;
+
     /** @var AbstractEntity $Entity instance of Experiments, Templates or Database */
     public $Entity;
 
@@ -45,13 +48,17 @@ class Steps implements CrudInterface
     public function create(string $body): void
     {
         $this->Entity->canOrExplode('write');
+        // make sure the newly added step is at the bottom
+        // count the number of steps and add 1 to be sure we're last
+        $ordering = count($this->readAll()) + 1;
 
         // remove any | as they are used in the group_concat
         $body = str_replace('|', ' ', $body);
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body) VALUES(:item_id, :body)';
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
+        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
@@ -59,7 +66,7 @@ class Steps implements CrudInterface
      * Import a step from a complete step array
      * Used when importing from zip archive (json)
      *
-     * @param array $step
+     * @param array<string, mixed> $step
      * @return void
      */
     public function import(array $step): void
@@ -103,7 +110,7 @@ class Steps implements CrudInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id';
+        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -149,19 +156,36 @@ class Steps implements CrudInterface
         if ($fromTpl) {
             $table = 'experiments_templates';
         }
-        $stepsql = 'SELECT body FROM ' . $table . '_steps WHERE item_id = :id';
+        $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
         while ($steps = $stepreq->fetch()) {
-            $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body) VALUES(:item_id, :body)';
+            $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
             $req = $this->Db->prepare($sql);
             $this->Db->execute($req, array(
                 'item_id' => $newId,
                 'body' => $steps['body'],
+                'ordering' => $steps['ordering'],
             ));
         }
+    }
+
+    /**
+     * Update the body of a step
+     *
+     * @param int $id step id
+     * @param string $body new body
+     * @return void
+     */
+    public function updateBody(int $id, string $body)
+    {
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     /**

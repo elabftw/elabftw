@@ -87,4 +87,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['yarn', 'shell:tsc', 'uglify', 'cssmin', 'tinymce']);
   grunt.registerTask('css', 'cssmin');
   grunt.registerTask('tinymce', 'shell:tinymce');
+  grunt.registerTask('ts', ['shell:tsc']);
 };

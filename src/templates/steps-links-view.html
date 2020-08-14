@@ -1,9 +1,16 @@
+{% if Entity.type == 'experiments_templates' %}
+  {% set stepsArr = Entity.Steps.readFromId(template.id) %}
+  {% set linksArr = Entity.Links.readFromId(template.id) %}
+  {% set Entity_id = template.id %}
+{% else %}
+  {% set Entity_id = Entity.id %}
+{% endif %}
 <!-- STEPS -->
 {% if stepsArr %}
-    <ul class='list-group mt-2'>
+    <ul class='list-group mt-2' id='steps_div_{{ Entity_id }}' >
         {% for step in stepsArr %}
         <li class='list-group-item {{ step.finished ? 'finished' }}'>
-            <i class='fas fa-{{ step.finished ? 'check-square' : 'square' }} mr-1'></i>{{ step.body|raw }}
+          <input type='checkbox' {{ step.finished ? 'checked' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' />{{ step.body|raw }}
     {% if step.finished %}
     <span class='mr-2 text-muted'>
         {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
@@ -17,15 +24,50 @@
 <!-- LINKS -->
 {% if linksArr %}
   <div class='mt-2'>
+    <h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
     <ul class='list-group'>
       {% for link in linksArr %}
         <li class='list-group-item'>
           <i class='fas fa-link mr-1'></i>
           {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-          {{ link.name|raw }} - <a href='database.php?mode=view&id={{ link.itemid }}'>
+          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
               {{ link.title|raw }}</a>
         </li>
       {% endfor %}
     </ul>
   </div>
+{% endif %}
+
+<!-- RELATED ITEMS/EXPERIMENTS -->
+{% if Entity.type == 'items' %}
+  {% if relatedItemsArr %}
+    <div class='mt-2'>
+      <h4 class='d-inline'>{{ 'Related items'|trans }}</h4>
+      <ul class='list-group'>
+        {% for link in relatedItemsArr %}
+          <li class='list-group-item'>
+            <i class='fas fa-link mr-1'></i>
+            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
+                {{ link.title|raw }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if relatedExperimentsArr %}
+    <div class='mt-2'>
+      <h4 class='d-inline'>{{ 'Related experiments'|trans }}</h4>
+      <ul class='list-group'>
+        {% for link in relatedExperimentsArr %}
+          <li class='list-group-item'>
+            <i class='fas fa-link mr-1'></i>
+            <a href='experiments.php?mode=view&id={{ link.entityid }}'>
+                {{ link.title|raw }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 {% endif %}

@@ -42,11 +42,11 @@ $I->seeInDatabase('teams', array('public_db' => '0'));
 // LINK_NAME
 $I->wantTo('Change the link name');
 $I->fillField('link_name', 'DocDoc');
-$I->click('Save');
-$I->see('DocDoc');
+$I->click('div.submitButtonDiv:nth-child(14) > button:nth-child(1)');
+$I->seeInDatabase('teams', array('link_name' => 'DocDoc'));
 
 // LINK_HREF
 $I->wantTo('Change the link target');
 $I->fillField('link_href', 'https://new.elabftw.net');
-$I->click('Save');
+$I->click('div.submitButtonDiv:nth-child(14) > button:nth-child(1)');
 $I->seeInDatabase('teams', array('link_href' => 'https://new.elabftw.net'));

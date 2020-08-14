@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
@@ -19,8 +18,8 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use function in_array;
+use function mb_strlen;
 use PDO;
-use function setcookie;
 
 /**
  * Users
@@ -72,7 +71,7 @@ class Users
      * Create a new user. If no password is provided, it's because we create it from SAML.
      *
      * @param string $email
-     * @param array $teams
+     * @param array<array-key, mixed> $teams
      * @param string $firstname
      * @param string $lastname
      * @param string $password
@@ -162,10 +161,11 @@ class Users
         // now add the user to the team
         $Teams->addUserToTeams($userid, $teamIdArr);
         if ($validated === 0) {
+            $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
             $Email = new Email($Config, $this);
-            $Email->alertAdmin($teamIdArr[0]);
+            $Email->alertAdmin($teamIdArr[0], $userInfo);
+            $Email->alertUserNeedValidation($email);
             // set a flag to show correct message to user
-            // TODO put in session?
             $this->needValidation = true;
         }
         return $userid;
@@ -288,31 +288,22 @@ class Users
     /**
      * Read all users from the team
      *
-     * @param int|null $validated
      * @return array
      */
-    public function readAllFromTeam(?int $validated = null): array
+    public function readAllFromTeam(): array
     {
-        $valSql = '';
-        if (is_int($validated)) {
-            $valSql = ' users.validated = :validated AND ';
-        }
-
         $sql = "SELECT DISTINCT users.userid, CONCAT (users.firstname, ' ', users.lastname) AS fullname,
             users.email,
             users.phone,
             users.cellphone,
             users.website,
-            users.skype
+            users.skype,
+            users.validated
             FROM users
             CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
             LEFT JOIN teams ON (teams.id = :team)
-            WHERE " . $valSql . ' teams.id = :team';
+            WHERE teams.id = :team ORDER BY fullname";
         $req = $this->Db->prepare($sql);
-
-        if (is_int($validated)) {
-            $req->bindValue(':validated', $validated);
-        }
         $req->bindValue(':team', $this->team);
         $this->Db->execute($req);
 
@@ -351,7 +342,7 @@ class Users
     /**
      * Update user from the editusers template
      *
-     * @param array $params POST
+     * @param array<string, mixed> $params POST
      * @return void
      */
     public function update(array $params): void
@@ -359,7 +350,6 @@ class Users
         $firstname = Filter::sanitize($params['firstname']);
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
-        $UsersHelper = new UsersHelper();
 
         // check email is not already in db
         $usersEmails = $this->getAllEmails();
@@ -382,7 +372,7 @@ class Users
 
         $usergroup = Check::id((int) $params['usergroup']);
 
-        if (\mb_strlen($params['password']) > 1) {
+        if (mb_strlen($params['password']) > 1) {
             $this->updatePassword($params['password']);
         }
 
@@ -404,144 +394,9 @@ class Users
     }
 
     /**
-     * Update preferences from user control panel
-     *
-     * @param array $params
-     * @return void
-     */
-    public function updatePreferences(array $params): void
-    {
-        // LIMIT
-        $new_limit = Check::limit((int) $params['limit']);
-
-        // DISPLAY SIZE
-        $new_display_size = Check::displaySize($params['display_size']);
-
-        // ORDER BY
-        $new_orderby = null;
-        $whitelistOrderby = array(null, 'cat', 'date', 'title', 'comment', 'lastchange');
-        if (isset($params['orderby']) && in_array($params['orderby'], $whitelistOrderby, true)) {
-            $new_orderby = $params['orderby'];
-        }
-
-        // SORT
-        $new_sort = 'desc';
-        if (isset($params['sort']) && ($params['sort'] === 'asc' || $params['sort'] === 'desc')) {
-            $new_sort = $params['sort'];
-        }
-
-        // LAYOUT
-        $new_layout = Filter::onToBinary($params['single_column_layout'] ?? '');
-
-        // KEYBOARD SHORTCUTS
-        // only take first letter
-        $new_sc_create = $params['sc_create'][0];
-        if (!ctype_alpha($new_sc_create)) {
-            $new_sc_create = 'c';
-        }
-        $new_sc_edit = $params['sc_edit'][0];
-        if (!ctype_alpha($new_sc_edit)) {
-            $new_sc_edit = 'e';
-        }
-        $new_sc_submit = $params['sc_submit'][0];
-        if (!ctype_alpha($new_sc_submit)) {
-            $new_sc_submit = 's';
-        }
-        $new_sc_todo = $params['sc_todo'][0];
-        if (!ctype_alpha($new_sc_todo)) {
-            $new_sc_todo = 't';
-        }
-
-        // SHOW TEAM
-        $new_show_team = Filter::onToBinary($params['show_team'] ?? '');
-        // CJK FONTS
-        $new_cjk_fonts = Filter::onToBinary($params['cjk_fonts'] ?? '');
-        // PDF/A
-        $new_pdfa = Filter::onToBinary($params['pdfa'] ?? '');
-        // PDF format
-        $new_pdf_format = 'A4';
-        $formatsArr = array('A4', 'LETTER', 'ROYAL');
-        if (in_array($params['pdf_format'], $formatsArr, true)) {
-            $new_pdf_format = $params['pdf_format'];
-        }
-
-        // USE MARKDOWN
-        $new_use_markdown = Filter::onToBinary($params['use_markdown'] ?? '');
-        // INCLUDE FILES IN PDF
-        $new_inc_files_pdf = Filter::onToBinary($params['inc_files_pdf'] ?? '');
-        // CHEM EDITOR
-        $new_chem_editor = Filter::onToBinary($params['chem_editor'] ?? '');
-        // JSON EDITOR
-        $new_json_editor = Filter::onToBinary($params['json_editor'] ?? '');
-        // LANG
-        $new_lang = 'en_GB';
-        if (isset($params['lang']) && array_key_exists($params['lang'], Tools::getLangsArr())) {
-            $new_lang = $params['lang'];
-        }
-
-        // DEFAULT READ/WRITE
-        $new_default_read = Check::visibility($params['default_read'] ?? 'team');
-        $new_default_write = Check::visibility($params['default_write'] ?? 'team');
-
-        // Signature pdf
-        // only use cookie here because it's temporary code
-        if (isset($params['pdf_sig']) && $params['pdf_sig'] === 'on') {
-            setcookie('pdf_sig', '1', time() + 2592000, '/', '', true, true);
-        } else {
-            setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
-        }
-
-        $sql = 'UPDATE users SET
-            limit_nb = :new_limit,
-            display_size = :new_display_size,
-            orderby = :new_orderby,
-            sort = :new_sort,
-            sc_create = :new_sc_create,
-            sc_edit = :new_sc_edit,
-            sc_submit = :new_sc_submit,
-            sc_todo = :new_sc_todo,
-            show_team = :new_show_team,
-            chem_editor = :new_chem_editor,
-            json_editor = :new_json_editor,
-            lang = :new_lang,
-            default_read = :new_default_read,
-            default_write = :new_default_write,
-            single_column_layout = :new_layout,
-            cjk_fonts = :new_cjk_fonts,
-            pdfa = :new_pdfa,
-            pdf_format = :new_pdf_format,
-            use_markdown = :new_use_markdown,
-            inc_files_pdf = :new_inc_files_pdf
-            WHERE userid = :userid;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':new_limit', $new_limit);
-        $req->bindParam(':new_display_size', $new_display_size);
-        $req->bindParam(':new_orderby', $new_orderby);
-        $req->bindParam(':new_sort', $new_sort);
-        $req->bindParam(':new_sc_create', $new_sc_create);
-        $req->bindParam(':new_sc_edit', $new_sc_edit);
-        $req->bindParam(':new_sc_submit', $new_sc_submit);
-        $req->bindParam(':new_sc_todo', $new_sc_todo);
-        $req->bindParam(':new_show_team', $new_show_team);
-        $req->bindParam(':new_chem_editor', $new_chem_editor);
-        $req->bindParam(':new_json_editor', $new_json_editor);
-        $req->bindParam(':new_lang', $new_lang);
-        $req->bindParam(':new_default_read', $new_default_read);
-        $req->bindParam(':new_default_write', $new_default_write);
-        $req->bindParam(':new_layout', $new_layout);
-        $req->bindParam(':new_cjk_fonts', $new_cjk_fonts);
-        $req->bindParam(':new_pdfa', $new_pdfa);
-        $req->bindParam(':new_pdf_format', $new_pdf_format);
-        $req->bindParam(':new_use_markdown', $new_use_markdown);
-        $req->bindParam(':new_inc_files_pdf', $new_inc_files_pdf);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
      * Update things from UCP
      *
-     * @param array $params
+     * @param array<string, mixed> $params
      * @return void
      */
     public function updateAccount(array $params): void

@@ -18,9 +18,13 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MakeCsv;
+use Elabftw\Services\MakeJson;
+use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeStreamZip;
+use function substr_count;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -61,8 +65,17 @@ class MakeController implements ControllerInterface
             case 'csv':
                 return $this->makeCsv();
 
+            case 'json':
+                return $this->makeJson();
+
             case 'pdf':
                 return $this->makePdf();
+
+            case 'multiPdf':
+                if (substr_count($this->App->Request->query->get('id') ?? '', ' ') === 0) {
+                    return $this->makePdf();
+                }
+                return $this->makeMultiPdf();
 
             case 'report':
                 return $this->makeReport();
@@ -82,7 +95,7 @@ class MakeController implements ControllerInterface
      */
     private function makeCsv(): Response
     {
-        $Make = new MakeCsv($this->Entity, $this->App->Request->query->get('id'));
+        $Make = new MakeCsv($this->Entity, $this->App->Request->query->get('id') ?? '0');
         return new Response(
             $Make->getCsv(),
             200,
@@ -108,6 +121,46 @@ class MakeController implements ControllerInterface
         $Make = new MakePdf($this->Entity);
         return new Response(
             $Make->getPdf(),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
+                'Cache-Control' => 'no-store',
+                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
+            )
+        );
+    }
+
+    /**
+     * Create a JSON export
+     *
+     * @return JsonResponse
+     */
+    private function makeJson(): JsonResponse
+    {
+        $Make = new MakeJson($this->Entity, $this->App->Request->query->get('id') ?? '');
+        return new JsonResponse(
+            $Make->getJson(),
+            200,
+            array(
+                'Content-Type' => 'application/json',
+                'Content-disposition' => 'inline; filename="' . $Make->getFileName() . '"',
+                'Cache-Control' => 'no-store',
+                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
+            )
+        );
+    }
+
+    /**
+     * Create a multi entity PDF export
+     *
+     * @return Response
+     */
+    private function makeMultiPdf(): Response
+    {
+        $Make = new MakeMultiPdf($this->Entity, $this->App->Request->query->get('id') ?? '0');
+        return new Response(
+            $Make->getMultiPdf(),
             200,
             array(
                 'Content-Type' => 'application/pdf',
@@ -149,7 +202,7 @@ class MakeController implements ControllerInterface
      */
     private function makeZip(): Response
     {
-        $Make = new MakeStreamZip($this->Entity, $this->App->Request->query->get('id'));
+        $Make = new MakeStreamZip($this->Entity, $this->App->Request->query->get('id') ?? '0');
         $Response = new StreamedResponse();
         $Response->headers->set('X-Accel-Buffering', 'no');
         $Response->headers->set('Content-Type', 'application/zip');

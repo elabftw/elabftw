@@ -16,6 +16,10 @@ about: If something isn't working as expected.
 
 # Information
 
+<!-- Please make sure to fill this information! -->
+
 - Version of eLabFTW (visible in Sysadmin panel):
-- Operating system (e.g. GNU+Linux/MacOS/Windows):
+- Server operating system (e.g: Ubuntu, CentOS):
+- Docker (yes/no):
+- Client operating system (e.g: MacOS, Windows, GNU+Linux):
 - Browser (e.g. firefox, chrome):

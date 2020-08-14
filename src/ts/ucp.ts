@@ -6,8 +6,10 @@
  * @package elabftw
  */
 import { saveAs } from 'file-saver/dist/FileSaver.js';
-import { notif } from './misc';
+import { addDateOnCursor, notif } from './misc';
+import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
@@ -46,11 +48,9 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
+  if (window.location.pathname !== '/ucp.php') {
+    return;
+  }
   const Templates = {
     controller: 'app/controllers/EntityAjaxController.php',
     saveToFile: function(id, name): void {
@@ -62,7 +62,7 @@ $(document).ready(function() {
       saveAs(blob, name + '.elabftw.tpl');
     },
     destroy: function(id): void {
-      if (confirm('Delete this ?')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
         $.post(this.controller, {
           destroy: true,
           id: id,
@@ -86,6 +86,30 @@ $(document).ready(function() {
 
   $(document).on('click', '#import-from-file', function() {
     $('#import_tpl').toggle();
+  });
+
+  // CAN READ/WRITE SELECT PERMISSION
+  $(document).on('change', '.permissionSelect', function() {
+    const value = $(this).val();
+    const rw = $(this).data('rw');
+    $.post('app/controllers/EntityAjaxController.php', {
+      updatePermissions: true,
+      rw: rw,
+      id: $('.badgetabactive').data('id'),
+      type: 'experiments_templates',
+      value: value,
+    }).done(function(json) {
+      notif(json);
+    });
+  });
+
+
+  // select the already selected permission for templates
+  $(document).on('click', '.modalToggle', function() {
+    const read = $(this).data('read');
+    const write = $(this).data('write');
+    $('#canread_select option[value="' + read + '"]').prop('selected',true);
+    $('#canwrite_select option[value="' + write + '"]').prop('selected',true);
   });
 
   // input to upload an elabftw.tpl file
@@ -134,7 +158,17 @@ $(document).ready(function() {
         });
       }
     },
-    language : $('#language').data('lang')
+    // keyboard shortcut to insert today's date at cursor in editor
+    setup: function(editor: any) {
+      editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+      editor.addShortcut('ctrl+=', 'subscript', function() {
+        editor.execCommand('subscript');
+      });
+      editor.addShortcut('ctrl+shift+=', 'superscript', function() {
+        editor.execCommand('superscript');
+      });
+    },
+    language : $('#user-prefs').data('lang')
   });
 
   // DESTROY API KEY

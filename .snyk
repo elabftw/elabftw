@@ -1,41 +1,4 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.14.1
-# ignores vulnerabilities until expiry date; change duration by modifying expiry date
-ignore:
-  SNYK-JS-YARGSPARSER-560381:
-    - 3dmol > gulp-cli > yargs > yargs-parser:
-        reason: not affected
-        expires: '2020-08-06T15:26:46.375Z'
-  SNYK-JS-JQUERY-565129:
-    - jquery:
-        reason: waiting for new patch because 3.5.0 has big bug
-        expires: '2020-05-20T14:03:40.669Z'
-  SNYK-JS-JQUERY-567880:
-    - jquery:
-        reason: 3.5.0 is broken
-        expires: '2020-06-05T12:29:44.606Z'
-  SNYK-JS-JSONEDITOR-575026:
-    - jsoneditor:
-        reason: not affected
-        expires: '2020-08-06T15:17:26.459Z'
-  SNYK-JS-LODASH-567746:
-    - apidoc > lodash:
-        reason: None given
-        expires: '2020-08-06T15:17:26.459Z'
-    - apidoc > apidoc-core > lodash:
-        reason: None given
-        expires: '2020-08-06T15:17:26.461Z'
-    - apidoc > winston > async > lodash:
-        reason: None given
-        expires: '2020-08-06T15:17:26.461Z'
-# patches apply the minimum changes required to fix a vulnerability
-patch:
-  SNYK-JS-HTTPSPROXYAGENT-469131:
-    - pac-proxy-agent > https-proxy-agent:
-        patched: '2019-10-15T14:14:01.703Z'
-    - proxy-agent > https-proxy-agent:
-        patched: '2019-10-15T14:14:01.703Z'
-    - proxy-agent > pac-proxy-agent > https-proxy-agent:
-        patched: '2019-10-15T14:14:01.703Z'
-    - https-proxy-agent:
-        patched: '2019-10-15T14:14:01.703Z'
+ignore: {}
+patch: {}

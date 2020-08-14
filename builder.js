@@ -11,7 +11,6 @@
  * because I don't want any path clash with the web folder when
  * doing autocompletion.
  */
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -19,9 +18,25 @@ module.exports = {
   entry: {
     main: [
       './src/ts/common.ts',
+      './src/ts/i18n.ts',
       './src/ts/steps-links.ts',
       './src/ts/tabs.ts',
       './src/ts/tags.ts',
+      './src/ts/admin.ts',
+      './src/ts/edit.ts',
+      './src/ts/jsoneditor.ts',
+      './src/ts/team.ts',
+      './src/ts/uploads.ts',
+      './src/ts/todolist.ts',
+      './src/ts/ucp.ts',
+      './src/ts/view.ts',
+      './src/ts/comments.ts',
+      './src/ts/editusers.ts',
+      './src/ts/profile.ts',
+      './src/ts/search.ts',
+      './src/ts/show.ts',
+      './src/ts/sysconfig.ts',
+      './src/ts/change-pass.ts',
       'bootstrap/js/src/alert.js',
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
@@ -50,38 +65,10 @@ module.exports = {
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js',
     ],
-    admin: './src/ts/admin.ts',
-    changepass: './src/ts/change-pass.ts',
-    edit: [
-      './src/ts/edit.ts',
-      './src/ts/jsoneditor.ts',
-    ],
-    editusers: './src/ts/editusers.ts',
-    profile: './src/ts/profile.ts',
-    search: './src/ts/search.ts',
-    show: './src/ts/show.ts',
-    sysconfig: './src/ts/sysconfig.ts',
-    team: './src/ts/team.ts',
-    todolist: './src/ts/todolist.ts',
-    ucp: './src/ts/ucp.ts',
-    uploads: './src/ts/uploads.ts',
-    view: [
-      './src/ts/view.ts',
-      './src/ts/comments.ts',
-    ],
   },
   plugins: [
     // only load the moment locales that we are interested in
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/),
-    // insert the paths of the bundles into the html template
-    // this creates a web/app/js/script-tags.html file that we can copy paste into the real html template in src/template/head.html
-    new HtmlWebpackPlugin({
-      filename: 'scripts-tags.html',
-      template: 'src/js/scripts-tags.html',
-      inject: false,
-      // we only want the vendors chunks
-      excludeChunks: ['admin', 'changepass', 'edit', 'editusers', 'profile', 'search', 'show', 'sysconfig', 'team', 'todolist', 'ucp', 'uploads', 'view'],
-    }),
   ],
   mode: 'production',
   output: {
@@ -120,29 +107,42 @@ module.exports = {
           loader: 'ts-loader',
         },
       },
+      {
+        test: /\.css$/i,
+        use: 'css-loader',
+      },
       // transpile things with babel so javascript works with Edge
       {
         test: /\.m?js$/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env'],
+            compact: false,
           }
         }
       },
       // expose jquery and moment globally
       {
         test: require.resolve('jquery'),
-        use: [
-          { loader: 'expose-loader', options: 'jQuery' },
-          { loader: 'expose-loader', options: '$' },
-        ]
+        loader: 'expose-loader',
+        options: {
+          exposes: ['$', 'jQuery'],
+        },
       },
       {
         test: require.resolve('moment'),
-        use: [
-          { loader: 'expose-loader', options: 'moment' },
-        ]
+        loader: 'expose-loader',
+          options: {
+            exposes: 'moment',
+          },
+      },
+      // use a custom loader for 3Dmol.js
+      {
+        test: /3Dmol-nojquery.js$/,
+        use: {
+          loader: path.resolve('src/ts/3Dmol-loader.ts'),
+        }
       }
     ]
   }

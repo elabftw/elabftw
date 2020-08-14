@@ -1,4 +1,0 @@
-<!-- this file is used by the htmlWebpackPlugin to generate the html code for chunks -->
-<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-  <script src='app/js/<%= htmlWebpackPlugin.files.chunks[chunk].entry %>'></script>
-<% } %>

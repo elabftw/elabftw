@@ -63,15 +63,28 @@ class Templates extends AbstractEntity
         if ($userid === null) {
             $userid = $this->Users->userData['userid'];
         }
+
+        $canread = 'team';
+        $canwrite = 'user';
+
+        if (isset($this->Users->userData['default_read'])) {
+            $canread = $this->Users->userData['default_read'];
+        }
+        if (isset($this->Users->userData['default_write'])) {
+            $canwrite = $this->Users->userData['default_write'];
+        }
+
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $body = Filter::body($body);
 
-        $sql = 'INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)';
+        $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam('body', $body);
         $req->bindParam('userid', $userid, PDO::PARAM_INT);
+        $req->bindParam('canread', $canread, PDO::PARAM_STR);
+        $req->bindParam('canwrite', $canwrite, PDO::PARAM_STR);
         $this->Db->execute($req);
     }
 
@@ -102,12 +115,14 @@ class Templates extends AbstractEntity
     {
         $template = $this->read();
 
-        $sql = 'INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)';
+        $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':name', $template['name']);
         $req->bindParam(':body', $template['body']);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam('canread', $template['canread'], PDO::PARAM_STR);
+        $req->bindParam('canwrite', $template['canwrite'], PDO::PARAM_STR);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -133,7 +148,7 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = 'SELECT id, name, body, userid FROM experiments_templates WHERE id = :id AND team = :team';
+        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -182,9 +197,7 @@ class Templates extends AbstractEntity
      */
     public function readFromTeam(): array
     {
-        $sql = "SELECT experiments_templates.id,
-            experiments_templates.body,
-            experiments_templates.name,
+        $sql = "SELECT experiments_templates.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
             FROM experiments_templates
@@ -199,11 +212,71 @@ class Templates extends AbstractEntity
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
+
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
         }
-        return $res;
+
+        // loop the array and only add the ones we can read to return to template
+        $finalArr = array();
+        foreach ($res as $item) {
+            $permissions = $this->getPermissions($item);
+            if ($permissions['read']) {
+                $item['isWritable'] = $permissions['write'];
+                $finalArr[] = $item;
+            }
+        }
+
+        return $finalArr;
+    }
+
+    /*
+     * Read all the templates in the experiment_templates table including the currentuser
+     *  and default template ( userid = 0 )
+     */
+    public function readInclusive(): array
+    {
+        if (!$this->Users->userData['show_team_templates']) {
+            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
+        }
+
+        $sql = "SELECT DISTINCT experiments_templates.*,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+                GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,
+                GROUP_CONCAT(DISTINCT tags.id) as tags_id
+                FROM experiments_templates
+                LEFT JOIN users ON (experiments_templates.userid = users.userid)
+                LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
+                LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+                WHERE experiments_templates.userid != 0 ";
+
+        foreach ($this->filters as $filter) {
+            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
+        }
+
+        $sql .= 'GROUP BY id ORDER BY experiments_templates.id ASC';
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+
+        // loop the array and only add the ones we can read to return to template
+        $finalArr = array();
+        foreach ($res as $item) {
+            $permissions = $this->getPermissions($item);
+            if ($permissions['read']) {
+                $item['isWritable'] = $permissions['write'];
+                $finalArr[] = $item;
+            }
+        }
+
+        return $finalArr;
     }
 
     /**

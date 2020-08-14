@@ -317,7 +317,7 @@ class UserPreferences implements MapInterface
 
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException(_('Could not find a user with that id!'));
+            throw new ImproperActionException('Could not find a user with that id!');
         }
 
         return $res;

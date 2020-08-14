@@ -59,7 +59,7 @@ try {
             $teamId = (int) $App->Config->configArr['saml_team_default'];
             // or throw error if sysadmin configured it like that
             if ($teamId === 0) {
-                throw new ImproperActionException(_('Could not find team ID to assign user!'));
+                throw new ImproperActionException('Could not find team ID to assign user!');
             }
         }
         $teams = array((string) $teamId);

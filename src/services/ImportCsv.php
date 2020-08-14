@@ -67,7 +67,7 @@ class ImportCsv extends AbstractImport
         // now loop the rows and do the import
         foreach ($csv as $row) {
             if (empty($row['title'])) {
-                throw new ImproperActionException(_('Could not find the title column!'));
+                throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
 

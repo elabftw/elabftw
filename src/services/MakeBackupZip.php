@@ -48,7 +48,7 @@ class MakeBackupZip extends AbstractMake
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
-            throw new ImproperActionException(_('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.'));
+            throw new ImproperActionException('Fatal error! Missing extension: php-zip. Make sure it is installed and activated.');
         }
 
         $opt = new ArchiveOptions();
@@ -142,7 +142,7 @@ class MakeBackupZip extends AbstractMake
             return $this->Entity->entityData['category'] . ' - ' . Filter::forFilesystem($this->Entity->entityData['title']);
         }
 
-        throw new ImproperActionException(sprintf(_('Entity of type %s is not allowed in this context'), get_class($this->Entity)));
+        throw new ImproperActionException(sprintf('Entity of type %s is not allowed in this context', get_class($this->Entity)));
     }
 
     /**

@@ -78,7 +78,7 @@ class Check
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
         if ($color === false || \mb_strlen($color) !== 6) {
-            throw new ImproperActionException(_('Bad color'));
+            throw new ImproperActionException('Bad color');
         }
         return $color;
     }
@@ -130,7 +130,7 @@ class Check
     {
         $allowed = array('cat', 'date', 'title', 'comment', 'lastchange');
         if (!in_array($input, $allowed, true)) {
-            throw new ImproperActionException(_('Invalid orderby'));
+            throw new ImproperActionException('Invalid orderby');
         }
         return $input;
     }
@@ -145,7 +145,7 @@ class Check
     {
         $allowed = array('asc', 'desc');
         if (!in_array($input, $allowed, true)) {
-            throw new ImproperActionException(_('Invalid sort'));
+            throw new ImproperActionException('Invalid sort');
         }
         return $input;
     }

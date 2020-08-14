@@ -44,7 +44,7 @@ try {
         // this is because often users don't understand that their account needs to be
         // validated and just reset their password twenty times
         if ($App->Users->userData['validated'] === '0') {
-            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
+            throw new ImproperActionException('Your account is not validated. An admin of your team needs to validate it!');
         }
 
         // Get IP

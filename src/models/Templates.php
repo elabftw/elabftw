@@ -156,7 +156,7 @@ class Templates extends AbstractEntity
 
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException(_('No template found with this id!'));
+            throw new ImproperActionException('No template found with this id!');
         }
 
         return $res;

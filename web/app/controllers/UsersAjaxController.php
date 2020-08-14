@@ -57,7 +57,7 @@ try {
     // ARCHIVE USER TOGGLE
     if ($Request->request->has('toggleArchiveUser')) {
         if ($targetUser->userData['validated'] === '0') {
-            throw new ImproperActionException(_('You are trying to archive an unvalidated user. Maybe you want to delete the account?'));
+            throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
         }
 
         $targetUser->toggleArchive();

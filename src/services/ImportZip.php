@@ -81,7 +81,7 @@ class ImportZip extends AbstractImport
         // this is where we will extract the zip
         $this->tmpPath = \dirname(__DIR__, 2) . '/cache/elab/' . \bin2hex(\random_bytes(16));
         if (!is_dir($this->tmpPath) && !mkdir($this->tmpPath, 0700, true) && !is_dir($this->tmpPath)) {
-            throw new ImproperActionException(_('Unable to create temporary folder!') . ' (' . $this->tmpPath . ')');
+            throw new ImproperActionException('Unable to create temporary folder! (' . $this->tmpPath . ')');
         }
 
         $this->openFile();
@@ -112,7 +112,7 @@ class ImportZip extends AbstractImport
         $file = $this->tmpPath . '/.elabftw.json';
         $content = file_get_contents($file);
         if ($content === false) {
-            throw new ImproperActionException(_('Unable to read the json file!'));
+            throw new ImproperActionException('Unable to read the json file!');
         }
         $this->json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         if (isset($this->json[0]['elabid'])) {
@@ -168,7 +168,7 @@ class ImportZip extends AbstractImport
         }
 
         if (!$req->execute()) {
-            throw new ImproperActionException(_('Cannot import in database!'));
+            throw new ImproperActionException('Cannot import in database!');
         }
 
         $newItemId = $this->Db->lastInsertId();

@@ -60,7 +60,7 @@ class Email
         $mailer = $this->getMailer();
         $res = $mailer->send($message);
         if ($res === 0) {
-            throw new ImproperActionException(_('Could not send email!'));
+            throw new ImproperActionException('Could not send email!');
         }
         return $res;
     }
@@ -75,7 +75,7 @@ class Email
     public function testemailSend(string $email): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new ImproperActionException(_('Bad email!'));
+            throw new ImproperActionException('Bad email!');
         }
 
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";

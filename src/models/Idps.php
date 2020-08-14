@@ -140,7 +140,7 @@ class Idps implements CrudInterface
 
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException(_('Could not find active IDP!'));
+            throw new ImproperActionException('Could not find active IDP!');
         }
         return $res;
     }

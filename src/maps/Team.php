@@ -89,7 +89,7 @@ class Team implements MapInterface
     final public function setName(?string $setting): void
     {
         if ($setting === null) {
-            throw new ImproperActionException(_('Team name cannot be empty!'));
+            throw new ImproperActionException('Team name cannot be empty!');
         }
         $this->name = $setting;
     }
@@ -127,7 +127,7 @@ class Team implements MapInterface
     final public function setLinkHref(string $url): void
     {
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new ImproperActionException(_('Link target is not a valid URL'));
+            throw new ImproperActionException('Link target is not a valid URL');
         }
         $this->linkHref = $url;
     }
@@ -200,7 +200,7 @@ class Team implements MapInterface
     {
         if (!empty($url)) {
             if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                throw new ImproperActionException(_('Timestamping provider is not a valid URL'));
+                throw new ImproperActionException('Timestamping provider is not a valid URL');
             }
             $this->stampprovider = $url;
         }
@@ -300,7 +300,7 @@ class Team implements MapInterface
 
         $res = $req->fetch();
         if ($res === false) {
-            throw new ImproperActionException(_('Could not find a team with that id!'));
+            throw new ImproperActionException('Could not find a team with that id!');
         }
 
         return $res;

@@ -123,6 +123,8 @@ class DisplayParams
         $this->sort = $app->Users->userData['sort'] ?? $this->sort;
 
         // now get pref from the filter-order-sort menu
-        $this->sort = Check::sort($app->Request->query->get('sort') ?? $this->sort);
+        if (!empty($app->Request->query->get('sort'))) {
+            $this->sort = Check::sort($app->Request->query->get('sort'));
+        }
     }
 }

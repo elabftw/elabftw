@@ -26,9 +26,9 @@
     {% if ReleaseCheck.updateIsAvailable %}
         {{ '%s - A new version is available! %sUpdate elabftw%sRead changelog%s'|trans|format(
             ReleaseCheck.getReleaseDate,
-            "<a href='https://doc.elabftw.net/how-to-update.html'><button class='button btn btn-primary'>",
-            "</button></a><a href='" ~ ReleaseCheck.getChangelogLink ~ "'><button class='button btn btn-primary'>",
-            "</button></a>")|msg('warning') }}
+            "<a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>",
+            "</a><a href='" ~ ReleaseCheck.getChangelogLink ~ "' class='button btn btn-primary text-white'>",
+            "</a>")|msg('warning') }}
     {% endif %}
 
     {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
@@ -61,7 +61,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
       <hr>
-      <a href='make.php?what=report'><button class='button btn btn-primary'>{{ 'Generate report'|trans }}</button></a>
+      <a href='make.php?what=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
     </div>
 
     <div class='box'>
@@ -462,8 +462,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <label for='x509'>x509 Certificate in PEM format</label>
               <textarea class='form-control col-md-4' id='x509' name='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
 
-              <label for='x509'>x509 Certificate private key</label>
-              <textarea class='form-control col-md-4' id='x509' name='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
+              <label for='saml_privatekey'>x509 Certificate private key</label>
+              <textarea class='form-control col-md-4' id='saml_privatekey' name='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
 
               <label for='saml-team'>What attribute to look for the team name:</label>
               <input class='form-control col-md-4' type='text' id='saml-team' name='saml_team' value='{{ App.Config.configArr.saml_team }}' />
@@ -605,8 +605,8 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <label for='sloBinding'>SLO Binding</label>
                 <input class='form-control col-md-4' type='text' id='sloBinding' name='sloBinding' />
 
-                <label for='x509'>x509 Certificate</label>
-                <textarea class='form-control col-md-4' id='x509' name='x509' required></textarea>
+                <label for='x509_idp'>x509 Certificate</label>
+                <textarea class='form-control col-md-4' id='x509_idp' name='x509' required></textarea>
 
                 <label for='active'>Active</label>
                 <select class='form-control col-md-4' id='active' autocomplete='off' name='active'>
@@ -713,16 +713,16 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <label for='logout_url'>{{ 'Logout URL'|trans }}</label>
         <input class='form-control col-md-4' type='text' placeholder='https://idp.example.edu/saml/logout' value='{{ App.Config.configArr.logout_url }}' name='logout_url' id='logout_url' />
 
-        <label for='saml-team-default'>If no team attribute is found, to which team user is assigned?</label>
-        <select class='form-control col-md-4' name='saml_team_default' id='saml-team-default'>
+        <label for='extauth-team-default'>If no team attribute is found, to which team user is assigned?</label>
+        <select class='form-control col-md-4' name='saml_team_default' id='extauth-team-default'>
           {% for team in teamsArr %}
             <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
           {% endfor %}
           <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
         </select>
 
-        <label for='saml-team-create'>Create team sent by server if it doesn't exist already:</label>
-        <select class='form-control col-md-4' id='saml-team-create' name='saml_team_create'>
+        <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
+        <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
             <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
             <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
         </select>

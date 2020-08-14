@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let key: any;
-import { relativeMoment, notif } from './misc';
+import { relativeMoment, notif, makeSortableGreatAgain } from './misc';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 
 const Todolist = {
@@ -36,15 +36,17 @@ const Todolist = {
     $.get('app/controllers/AjaxController.php', {
       getTodoItems: true,
     }).done(function(json) {
-      let html = '';
+      let html = "<ul id='todoItems-list' class='sortable' data-axis='y' data-table='todolist'>";
       for (const entry of json.msg) {
         html += `<li id='todoItem_${entry.id}'>
         <i class='fas fa-trash-alt clickable align_right destroyTodoItem' data-id='${entry.id}'></i>
-        <span style='font-size:90%;display:block;'><i class='fas fa-sort sortableHandle'></i> <span class='relative-moment' title='${entry.creation_time}'></span></span>
+        <span style='font-size:90%;display:block;'><i class='fas fa-sort draggable sortableHandle'></i> <span class='relative-moment' title='${entry.creation_time}'></span></span>
         <span class='todoItem editable' data-id='${entry.id}'>${entry.body}</span>
       </li>`;
       }
+      html += '</ul>';
       $('#todoItemsDiv').html(html);
+      makeSortableGreatAgain();
       relativeMoment();
     });
   },

@@ -236,7 +236,7 @@
       </div>
     </div>
 
-    <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
+    <textarea class='mceditable' id='itemsTypesTemplate'></textarea>
     <div class='submitButtonDiv'>
       <button id='itemsTypesCreate' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
@@ -273,7 +273,7 @@
               <button data-id='{{ itemType.category_id }}' class='button btn btn-danger itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
             </li>
             <li class='list-inline-item mt-2 itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
-              <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
+              <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}'>{{ itemType.template }}</textarea>
             </li>
             <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
           </ul>
@@ -288,7 +288,7 @@
   <div class='box'>
     <h3>{{ 'Common Experiment Template'|trans }}</h3><hr>
     <p>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
-    <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+    <textarea style='height:400px' class='mceditable' id='commonTplTemplate'>
       {{ commonTplBody|raw }}
     </textarea>
     <div class='submitButtonDiv'>

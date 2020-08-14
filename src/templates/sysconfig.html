@@ -460,10 +460,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
               <input class='form-control col-md-4' type='text' id='saml-nameidformat' name='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ App.Config.configArr.saml_nameidformat }}' />
 
               <label for='x509'>x509 Certificate in PEM format</label>
-              <textarea class='form-control col-md-4' id='x509' name='saml_x509' />{{ App.Config.configArr.saml_x509 }}</textarea>
+              <textarea class='form-control col-md-4' id='x509' name='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
 
               <label for='x509'>x509 Certificate private key</label>
-              <textarea class='form-control col-md-4' id='x509' name='saml_privatekey' />{{ App.Config.configArr.saml_privatekey }}</textarea>
+              <textarea class='form-control col-md-4' id='x509' name='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
 
               <label for='saml-team'>What attribute to look for the team name:</label>
               <input class='form-control col-md-4' type='text' id='saml-team' name='saml_team' value='{{ App.Config.configArr.saml_team }}' />
@@ -606,7 +606,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <input class='form-control col-md-4' type='text' id='sloBinding' name='sloBinding' />
 
                 <label for='x509'>x509 Certificate</label>
-                <textarea class='form-control col-md-4' id='x509' name='x509' required /></textarea>
+                <textarea class='form-control col-md-4' id='x509' name='x509' required></textarea>
 
                 <label for='active'>Active</label>
                 <select class='form-control col-md-4' id='active' autocomplete='off' name='active'>

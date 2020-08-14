@@ -11,11 +11,11 @@
 
 <section class='text-center'>
   <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+  <h4 class='mt-4'>{{ 'Two Factor Authentication'|trans }}</h4>
   <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
     <!-- form key -->
     {{ App.Csrf.getHiddenInput|raw }}
     {% if App.Session.has('enable_mfa') %}
-      <h4>{{ 'Two Factor Authentication'|trans }}</h4>
       <p>{{ 'Open your authenticator application and scan the QR code.'|trans }}</p>
       <p><img src='{{ mfaQRCodeImageDataUri|raw }}'></p>
 

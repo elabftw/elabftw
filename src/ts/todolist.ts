@@ -36,7 +36,7 @@ const Todolist = {
     $.get('app/controllers/AjaxController.php', {
       getTodoItems: true,
     }).done(function(json) {
-      let html = "<ul id='todoItems-list' class='sortable' data-axis='y' data-table='todolist'>";
+      let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
       for (const entry of json.msg) {
         html += `<li id='todoItem_${entry.id}'>
         <i class='fas fa-trash-alt clickable align_right destroyTodoItem' data-id='${entry.id}'></i>

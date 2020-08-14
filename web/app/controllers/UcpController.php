@@ -63,7 +63,6 @@ try {
             if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
                 throw new ImproperActionException(_('The passwords do not match!'));
             }
-
             $App->Users->updatePassword($Request->request->get('newpass'));
         }
 

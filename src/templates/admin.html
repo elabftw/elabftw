@@ -311,7 +311,7 @@
       <select class='form-control col-md-4' id='target_csv' autocomplete='off' name='target'>
         <option selected disabled>--------</option>
         {% for itemsType in itemsTypesArr %}
-        <option value='{{ itemsType.category_id }}' name='category'>{{ itemsType.category }}</option>
+        <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
         {% endfor %}
       </select>
 

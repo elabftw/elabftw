@@ -5,9 +5,10 @@
       <input id="todo" type="text" />
       <input type="submit" class='button btn btn-primary' value="{{ 'Add'|trans }}">
   </form>
-  <ul id='todoItems-list' class='sortable' data-axis='y' data-table='todolist'>
-    <div id='todoItemsDiv'></div>
-  </ul>
+
+  <!-- this div will be filled with the list of todo items by js -->
+  <div id='todoItemsDiv'></div>
+
   {% if App.todoItems %}
   <a href="#" class='button btn btn-danger todoDestroyAll'>{{ 'Clear all'|trans }}</a>
   {% endif %}

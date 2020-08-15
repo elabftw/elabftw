@@ -51,7 +51,7 @@
 
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
-                <label for'searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
+                <label for='searchonly'>{{ 'Search only in experiments owned by:'|trans }} </label><br>
                 <select id='searchonly' name='owner' class='form-control mb-3'>
                     <option value=''>{{ 'Yourself'|trans }}</option>
                     <!-- add an option to search in the whole team (owner = 0) -->
@@ -139,14 +139,12 @@
         <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
 
         <div style='margin:30px;' class='text-center'>
-            <button id='searchButton' class='button btn btn-primary' value='Submit' type='submit'>
-                {{ 'Launch search'|trans }}
-            </button>
-            <a href='search.php'>
-              <span class='button btn btn-danger' value='clear' type='submit'>
-                {{ 'Clear all'|trans }}
-              </span>
-            </a>
+          <button id='searchButton' class='button btn btn-primary' value='Submit' type='submit'>
+            {{ 'Launch search'|trans }}
+          </button>
+          <a href='search.php' class='button btn btn-danger'>
+            {{ 'Clear all'|trans }}
+          </a>
         </div>
   </section>
 <!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it

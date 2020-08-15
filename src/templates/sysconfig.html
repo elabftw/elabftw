@@ -39,19 +39,17 @@
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
-<menu>
-    <ul>
-        <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Teams'|trans }}</li>
-        <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
-        <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
-        <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
-        <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
-        <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li>
-        <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
-        <li class='tabhandle' id='tab9'>{{ 'External auth'|trans }}</li>
-    </ul>
-</menu>
+<ul id='menu'>
+  <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
+  <li class='tabhandle' id='tab2'>{{ 'Teams'|trans }}</li>
+  <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
+  <li class='tabhandle' id='tab4'>{{ 'Timestamp'|trans }}</li>
+  <li class='tabhandle' id='tab5'>{{ 'Security'|trans }}</li>
+  <li class='tabhandle' id='tab6'>{{ 'Email'|trans }}</li>
+  <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li>
+  <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
+  <li class='tabhandle' id='tab9'>{{ 'External auth'|trans }}</li>
+</ul>
 
 <!-- TAB 1 SERVER -->
 <div class='divhandle' id='tab1div'>

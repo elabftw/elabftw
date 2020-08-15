@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<menu>
-    <ul>
-        <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
-        <li class='tabhandle' id='tab2'>{{ 'Information'|trans }}</li>
-        <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
-        <li class='tabhandle' id='tab4'>{{ 'Email'|trans }}</li>
-    </ul>
-</menu>
+<ul id='menu'>
+  <li class='tabhandle' id='tab1'>{{ 'Scheduler'|trans }}</li>
+  <li class='tabhandle' id='tab2'>{{ 'Information'|trans }}</li>
+  <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
+  <li class='tabhandle' id='tab4'>{{ 'Email'|trans }}</li>
+</ul>
 
 <!-- Modal for event click -->
 <div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel' aria-hidden='true'>

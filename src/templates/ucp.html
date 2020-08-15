@@ -323,7 +323,7 @@
 <div class='box'>
     <h3>{{ 'Experiment Templates'|trans }}</h3>
     <ul class='nav nav-pills sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
-        <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_1'>{{ 'Create new'|trans }}</li>
+        <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_0'>{{ 'Create new'|trans }}</li>
         {% for template in templatesArr %}
         <li class='subtabhandle clickable badge badge-secondary badgetab' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
         {% endfor %}
@@ -331,7 +331,7 @@
     <hr>
 
     <!-- CREATE NEW TPL TAB -->
-    <div class='subdivhandle' id='subtab_1div'>
+    <div class='subdivhandle' id='subtab_0div'>
         <div class='mb-2'>
         <i class='fas fa-upload' title='Import template'></i>
         <p id='import-from-file' class='d-inline clickable'>{{ 'Import from File'|trans }}</p>

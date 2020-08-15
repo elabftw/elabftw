@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
   /**
    * SUB TABS for templates
    */
-  initdiv = '#subtab_1div';
-  inittab = '#subtab_1';
+  initdiv = '#subtab_0div';
+  inittab = '#subtab_0';
   // init
   $('.subdivhandle').hide();
   $(initdiv).show();

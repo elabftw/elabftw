@@ -136,9 +136,9 @@
         <p>
         <label for='pdf_format'>{{ 'Select paper format for PDF'|trans }}</label>
         <select id='pdf_format' name='pdf_format'>
-            <option value='A4' {{ App.Users.userData.pdf_format == 'A4' ? 'selected' : '' }}>A4</option>
-            <option value='LETTER' {{ App.Users.userData.pdf_format == 'LETTER' ? 'selected' : '' }}>Letter</option>
-            <option value='ROYAL' {{ App.Users.userData.pdf_format == 'ROYAL' ? 'selected' : '' }}>Royal</option>
+            <option value='A4'{{ App.Users.userData.pdf_format == 'A4' ? ' selected' : '' }}>A4</option>
+            <option value='LETTER'{{ App.Users.userData.pdf_format == 'LETTER' ? ' selected' : '' }}>Letter</option>
+            <option value='ROYAL'{{ App.Users.userData.pdf_format == 'ROYAL' ? ' selected' : '' }}>Royal</option>
         </select>
         <br>
 
@@ -240,7 +240,7 @@
     </section>
 
     <div class='text-center mt-3'>
-        <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
     </p>
@@ -265,9 +265,9 @@
         <div class='col-md-6'>
           <h4>{{ 'Modify your password'|trans }}</h4>
           <label for='newpass'>{{ 'New password'|trans }}</label>
-          <input class='form-control' id='newpass' autocomplete='new-password' name="newpass" type="password" pattern=".{8,}" />
+          <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
           <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-          <input class='form-control' id='cnewpass' autocomplete='new-password' name="cnewpass" type="password" pattern=".{8,}" />
+          <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
         </div>
       </div>
 
@@ -292,21 +292,21 @@
         <div class='row'>
             <div class='col-md-6'>
                 <label for='phone'>{{ 'Phone'|trans }} </label>
-                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' cols='20' rows='1' />
+                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' />
             </div>
             <div class='col-md-6'>
                 <label for='cellphone'>{{ 'Mobile'|trans }}</label>
-                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' cols='20' rows='1' />
+                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <label for='skype'>{{ 'Skype'|trans }}</label>
-                <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' cols='20' rows='1' />
+                <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' />
             </div>
             <div class='col-md-6'>
                 <label for='website'>{{ 'Website'|trans }}</label>
-                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' cols='20' rows='1' />
+                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' />
             </div>
         </div>
 
@@ -345,7 +345,7 @@
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not App.Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
             <br>
             <div class='text-center'>
-                <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+                <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
             </div>
         </form>
     </div>
@@ -372,11 +372,11 @@
           </span>
           <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
         </div>
-          <div class='dropdown' style="position: relative; bottom: 5px">
-            <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
+          <div class='dropdown' style='position: relative; bottom: 5px'>
+            <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
             <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
             <!-- MANAGE PERMISSIONS -->
-            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read="{{ template.canread }}" data-write="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read='{{ template.canread }}' data-write='{{ template.canwrite }}'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
           </div>
         </div>
         <a class='saveToFile' title='{{ 'Download template'|trans }}' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
@@ -390,8 +390,8 @@
             {{ App.Csrf.getHiddenInput|raw }}
             <input type='hidden' name='tpl_form' />
             <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
-            <label for='tplName_{{' template.id' }}'>{{ 'Name'|trans }}</label>
-            <input id='tplName_{{' template.id' }}' name='tpl_name[]' class='form-control' value='{{ template.name|raw }}' />
+            <label for='tplName_{{ template.id }}'>{{ 'Name'|trans }}</label>
+            <input id='tplName_{{ template.id }}' name='tpl_name[]' class='form-control' value='{{ template.name|raw }}' />
             {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
             <label for='e{{ template.id }}'>{{ 'Template content'|trans }}</label>
             <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />

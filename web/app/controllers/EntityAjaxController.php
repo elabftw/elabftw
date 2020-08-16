@@ -287,7 +287,7 @@ try {
     }
 
     // CREATE TEMPLATE
-    if ($Request->request->has('create')) {
+    if ($Request->request->has('create') && $Entity instanceof Templates) {
         // template name must be 3 chars at least
         if (mb_strlen($Request->request->get('name')) < 3) {
             throw new ImproperActionException(_('The template name must be 3 characters long.'));

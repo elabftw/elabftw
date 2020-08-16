@@ -19,7 +19,7 @@
             {% if templatesArr|length > 0 %}
               {% for tpl in templatesArr %}
                 <a href='?create=true&tpl={{ tpl.id }}' class='dropdown-item'>
-                  {{ tpl.name|raw }}
+                    {{ tpl.name|raw }}
                 </a>
               {% endfor %}
             {% else %}
@@ -30,15 +30,15 @@
                   {{ 'Manage templates'|trans }}
                 </a>
           {% else %}
-            {% for category in categoryArr %}
+              {% for category in categoryArr %}
               <a href='?create=true&tpl={{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
                 {{ category.category }}
-              </a>
-            {% endfor %}
+                  </a>
+              {% endfor %}
           {% endif %}
-        </div>
-        <button type='button' class='btn btn-primary createNew'>{{ 'Create'|trans }}</button>
       </div>
+      <button type='button' class='btn btn-primary createNew'>{{ 'Create'|trans }}</button>
     </div>
+  </div>
   </div>
 {% endif %}

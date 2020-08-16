@@ -50,12 +50,12 @@ class Templates extends AbstractEntity
      * Create a template
      *
      * @param string $name
-     * @param string $body
+     * @param string|null $body
      * @param int|null $userid
      * @param int|null $team
      * @return void
      */
-    public function createNew(string $name, string $body, ?int $userid = null, ?int $team = null): void
+    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): void
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];

@@ -75,7 +75,7 @@ class Templates extends AbstractEntity
         }
 
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $body = Filter::body($body);
+        $body = Filter::body($body ?? '');
 
         $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);

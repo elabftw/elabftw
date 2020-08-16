@@ -148,10 +148,9 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id AND team = :team';
+        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch();

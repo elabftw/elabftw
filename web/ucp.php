@@ -38,7 +38,10 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readInclusive();
+    // only show the templates you can edit in ucp
+    $templatesArr = array_filter($Templates->readInclusive(), function ($t) {
+        return $t['isWritable'] === true;
+    });
 
     // TEAM GROUPS
     // Added Visibility clause

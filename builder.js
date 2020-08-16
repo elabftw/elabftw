@@ -66,6 +66,9 @@ module.exports = {
       'prismjs/components/prism-ruby.js',
     ],
   },
+  // uncomment this to find where the error is coming from
+  // makes the build slower
+  //devtool: 'inline-source-map',
   plugins: [
     // only load the moment locales that we are interested in
     new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(ca|de|en|es|fr|it|id|ja|kr|nl|pl|pt|pt-br|ru|sk|sl|zh-cn)$/),

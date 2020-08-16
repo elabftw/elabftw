@@ -63,6 +63,7 @@ try {
             $Entity = new Todolist($App->Users);
             break;
         case 'experiments_templates':
+            $Entity = new Templates($App->Users);
             break;
         case 'experiments_templates_steps':
             $model = new Templates($App->Users);

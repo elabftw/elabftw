@@ -255,7 +255,7 @@ class Templates extends AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
-        $sql .= 'GROUP BY id ORDER BY experiments_templates.id ASC';
+        $sql .= 'GROUP BY id ORDER BY experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

@@ -71,12 +71,11 @@ export function displayMolFiles(): void {
   });
 }
 
-// DISPLAY 3D MOL FILES 
+// DISPLAY 3D MOL FILES
 export function display3DMolecules(autoload = false): void {
   if (autoload) {
     $3Dmol.autoload();
   }
-  // 3DMOL
   // Top left menu to change the style of the displayed molecule
   $('.dropdown-item').on('click', '.3dmol-style', function() {
     const targetStyle = $(this).data('style');

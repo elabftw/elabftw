@@ -183,7 +183,7 @@ $(document).ready(function() {
         editor.execCommand('superscript');
       });
       editor.on('init', function() {
-         editor.getContainer().className += ' rounded';
+        editor.getContainer().className += ' rounded';
       });
     },
     language : $('#user-prefs').data('lang')

@@ -182,6 +182,9 @@ $(document).ready(function() {
       editor.addShortcut('ctrl+shift+=', 'superscript', function() {
         editor.execCommand('superscript');
       });
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
+      });
     },
     language : $('#user-prefs').data('lang')
   });

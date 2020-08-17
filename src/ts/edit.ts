@@ -472,6 +472,9 @@ $(document).ready(function() {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(doneTyping, doneTypingInterval);
       });
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
+      });
     },
     style_formats_merge: true,
     style_formats: [

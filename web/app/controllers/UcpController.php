@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,7 +19,6 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
-use Elabftw\Services\Filter;
 use Exception;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Deal with requests sent from the user control panel
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
 $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
 
@@ -71,22 +71,6 @@ try {
     // END TAB 2
 
     // TAB 3 : EXPERIMENTS TEMPLATES
-
-    // ADD NEW TPL
-    if ($Request->request->has('new_tpl_form')) {
-        $tab = '3';
-
-        // template name must be 3 chars at least
-        if (\mb_strlen($Request->request->get('new_tpl_name')) < 3) {
-            throw new ImproperActionException(_('The template name must be 3 characters long.'));
-        }
-
-        $tpl_name = $Request->request->filter('new_tpl_name', null, FILTER_SANITIZE_STRING);
-        $tpl_body = Filter::body($Request->request->get('new_tpl_body'));
-
-        $Templates = new Templates($App->Users);
-        $Templates->createNew($tpl_name, $tpl_body);
-    }
 
     // EDIT TEMPLATES
     if ($Request->request->has('tpl_form')) {

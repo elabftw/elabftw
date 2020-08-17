@@ -3,7 +3,7 @@
   <div class='row'>
 
     <!-- TEMPLATES TITLES BUTTONS -->
-    <div class='btn-group btn-group-toggle col-8' data-toggle='btn'>
+    <div class='btn-group btn-group-toggle col-8' data-toggle='btn' style='line-height: 250%'>
       <div class='sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
         {% for template in templatesArr %}
           <button type='button' class='subtabhandle clickable btn btn-secondary mr-1' autocomplete='off' aria-pressed='false' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #ccc;display: none' class='fas fa-sort sortableHandle draggable mr-1' data-fa-transform='rotate-90 down-1 mr-1'></i>{{ template.name|raw }}</button>

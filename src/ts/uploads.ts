@@ -8,8 +8,7 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { notif, displayMolFiles } from './misc';
-import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
+import { notif, displayMolFiles, display3DMolecules } from './misc';
 import i18next from 'i18next';
 
 $(document).ready(function() {
@@ -18,6 +17,7 @@ $(document).ready(function() {
     return;
   }
   displayMolFiles();
+  display3DMolecules();
 
   // REPLACE UPLOAD toggle form
   $(document).on('click', '.replaceUpload', function() {
@@ -86,6 +86,7 @@ $(document).ready(function() {
         if (json.res) {
           $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv', function() {
             displayMolFiles();
+            display3DMolecules(true);
           });
         }
       });
@@ -94,18 +95,4 @@ $(document).ready(function() {
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
-
-  // 3DMOL
-  // Top left menu to change the style of the displayed molecule
-  $('.dropdown-item').on('click', '.3dmol-style', function() {
-    const targetStyle = $(this).data('style');
-    let options = {};
-    const style = {};
-    if (targetStyle === 'cartoon') {
-      options = { color: 'spectrum' };
-    }
-    style[targetStyle] = options;
-
-    $3Dmol.viewers[$(this).data('divid')].setStyle(style).render();
-  });
 });

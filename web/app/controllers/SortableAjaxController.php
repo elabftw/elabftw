@@ -65,6 +65,10 @@ try {
         case 'experiments_templates':
             $Entity = new Templates($App->Users);
             break;
+        case 'experiments_templates_steps':
+            $model = new Templates($App->Users);
+            $Entity = $model->Steps;
+            break;
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');
     }

@@ -48,11 +48,21 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
-  if (window.location.pathname !== '/ucp.php') {
-    return;
-  }
   const Templates = {
     controller: 'app/controllers/EntityAjaxController.php',
+    create: function(name: string, body = ''): void {
+      $.post(this.controller, {
+        create: true,
+        name: name,
+        body: body,
+        type: 'experiments_templates'
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          window.location.replace('ucp.php?tab=3');
+        }
+      });
+    },
     saveToFile: function(id, name): void {
       // we have the name of the template used for filename
       // and we have the id of the editor to get the content from
@@ -77,12 +87,26 @@ $(document).ready(function() {
     }
   };
 
+
+  // TEMPLATES listeners
+  $(document).on('click', '.createNewTemplate', function() {
+    const name = prompt('Template title');
+    if (name) {
+      // no body on template creation
+      Templates.create(name);
+    }
+  });
+  // show the handles to reorder when the menu entry is clicked
+  $(document).on('click', '#toggleReorder', function() {
+    $('.sortableHandle').toggle();
+  });
   $(document).on('click', '.saveToFile', function() {
     Templates.saveToFile($(this).data('id'), $(this).data('name'));
   });
-  $(document).on('click', '.destroy-template', function() {
+  $(document).on('click', '.destroyTemplate', function() {
     Templates.destroy($(this).data('id'));
   });
+
 
   $(document).on('click', '#import-from-file', function() {
     $('#import_tpl').toggle();
@@ -95,14 +119,13 @@ $(document).ready(function() {
     $.post('app/controllers/EntityAjaxController.php', {
       updatePermissions: true,
       rw: rw,
-      id: $('.badgetabactive').data('id'),
+      id: $('#selectedTemplate').data('id'),
       type: 'experiments_templates',
       value: value,
     }).done(function(json) {
       notif(json);
     });
   });
-
 
   // select the already selected permission for templates
   $(document).on('click', '.modalToggle', function() {
@@ -113,7 +136,7 @@ $(document).ready(function() {
   });
 
   // input to upload an elabftw.tpl file
-  $('#import_tpl').hide().on('change', function() {
+  $('#import_tpl').on('change', function() {
     const title = (document.getElementById('import_tpl') as HTMLInputElement).value.replace('.elabftw.tpl', '').replace('C:\\fakepath\\', '');
     if (!window.FileReader) {
       alert('Please use a modern web browser. Import aborted.');
@@ -121,17 +144,9 @@ $(document).ready(function() {
     }
     const reader = new FileReader();
     reader.onload = function(e): void {
-      // switch for markdown mode
-      if ($('#new_tpl_txt').hasClass('mceditable')) {
-        tinymce.get('new_tpl_txt').setContent(e.target.result);
-      } else {
-        $('#new_tpl_txt').text(e.target.result as string);
-      }
-      $('#new_tpl_name').val(title);
+      Templates.create(title, e.target.result as string);
       $('#import_tpl').hide();
     };
-
-    reader.readAsText((this as any).files[0]);
   });
 
   // TinyMCE
@@ -166,6 +181,9 @@ $(document).ready(function() {
       });
       editor.addShortcut('ctrl+shift+=', 'superscript', function() {
         editor.execCommand('superscript');
+      });
+      editor.on('init', function() {
+        editor.getContainer().className += ' rounded';
       });
     },
     language : $('#user-prefs').data('lang')

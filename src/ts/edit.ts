@@ -7,7 +7,7 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
+import { addDateOnCursor, displayMolFiles, display3DMolecules, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/icons/default';
@@ -89,6 +89,7 @@ $(document).ready(function() {
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
             displayMolFiles();
+            display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
 
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
@@ -471,6 +472,9 @@ $(document).ready(function() {
       editor.on('keyup', function() {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(doneTyping, doneTypingInterval);
+      });
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
       });
     },
     style_formats_merge: true,

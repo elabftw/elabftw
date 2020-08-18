@@ -3,18 +3,18 @@
   <div class='row'>
 
     <!-- TEMPLATES TITLES BUTTONS -->
-    <div class='btn-group btn-group-toggle col-8' data-toggle='btn' style='line-height: 250%'>
+    <div class='btn-group btn-group-toggle col-8' data-toggle='btn'>
       <div class='sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
         {% for template in templatesArr %}
-          <button type='button' class='subtabhandle clickable btn btn-secondary mr-1' autocomplete='off' aria-pressed='false' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #ccc;display: none' class='fas fa-sort sortableHandle draggable mr-1' data-fa-transform='rotate-90 down-1 mr-1'></i>{{ template.name|raw }}</button>
+          <button type='button' class='subtabhandle clickable btn btn-secondary mr-1 mt-1' autocomplete='off' aria-pressed='false' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #ccc;display: none' class='fas fa-sort sortableHandle draggable mr-1' data-fa-transform='rotate-90 down-1 mr-1'></i>{{ template.name|raw }}</button>
         {% endfor %}
       </div>
     </div>
 
     <!-- CREATE NEW AND IMPORT BUTTONS -->
     {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-      <div class='col text-right'>
-        <div class='btn-group'>
+      <div class='col'>
+        <div class='btn-group align_right mt-1'>
           <div class='btn-group dropleft' role='group'>
             <button type='button' id='btnGroupDrop1' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
@@ -27,7 +27,7 @@
           </div>
           <button type='button' class='btn btn-primary createNewTemplate'>{{ 'Create'|trans }}</button>
         </div>
-        <input type='file' aria-hidden='true' style='display: none' accept='.tpl' id='import_tpl'>
+        <input type='file' aria-hidden='true' style='display: none' accept='.tpl' id='import_tpl' class='form-control align_right mt-1'>
       </div>
     {% endif %}
   </div>

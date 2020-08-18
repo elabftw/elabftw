@@ -19,16 +19,16 @@
             {% if templatesArr|length > 0 %}
               {% for tpl in templatesArr %}
                 <a href='?create=true&tpl={{ tpl.id }}' class='dropdown-item'>
-                    {{ tpl.name|raw }}
+                  {{ tpl.name|raw }}
                 </a>
               {% endfor %}
             {% else %}
             <h6 class='dropdown-header'>{{ 'No templates found'|trans }}</h6>
             {% endif %}
             <div class='dropdown-divider'></div>
-              <a href='ucp.php?tab=3' class='dropdown-item'>
-                {{ 'Manage templates'|trans }}
-              </a>
+            <a href='ucp.php?tab=3' class='dropdown-item'>
+              {{ 'Manage templates'|trans }}
+            </a>
           {% else %}
             {% for category in categoryArr %}
               <a href='?create=true&tpl={{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
@@ -37,8 +37,8 @@
             {% endfor %}
           {% endif %}
         </div>
-        <button type='button' class='btn btn-primary createNew'>{{ 'Create'|trans }}</button>
       </div>
+      <button type='button' class='btn btn-primary createNew'>{{ 'Create'|trans }}</button>
     </div>
   </div>
 {% endif %}

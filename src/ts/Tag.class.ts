@@ -12,7 +12,6 @@ export default class Tag {
   controller: string;
   type: string;
 
-
   constructor(type: string) {
     this.type = type;
     this.controller = 'app/controllers/TagsController.php';

@@ -130,7 +130,7 @@ class Steps implements CrudInterface
      */
     public function readFromId(int $id): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id';
+        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($req);

@@ -32,10 +32,6 @@ class OrderingParams
     {
         $this->table = $table;
         $this->ordering = $ordering;
-        // remove the 'Create new' for templates
-        if ($table === 'experiments_templates') {
-            unset($this->ordering[0]);
-        }
     }
 
     public function getTable(): string

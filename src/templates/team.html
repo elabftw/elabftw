@@ -122,47 +122,10 @@
 
 <!-- TAB 3 TEMPLATE -->
 <div class='divhandle' id='tab3div'>
-<div class='box'>
-    <h3>{{ 'Experiments Templates'|trans }}</h3>
-    {% if templatesArr|length > 0 %}
-        <ul class='nav nav-pills' role='tablist'>
-            {% for template in templatesArr %}
-                <li class='sortable subtabhandle clickable badge badge-secondary badgetab' id='subtab_{{ template.id }}'>{{ template.name|raw }}</li>
-            {% endfor %}
-        </ul>
-        {% for template in templatesArr %}
-        <div class='subdivhandle box' id='subtab_{{ template.id }}div'>
-
-            <h3>{{ template.name|raw }} ({{ template.fullname|raw }})
-                <button class='button btn btn-primary importTpl' data-id='{{ template.id }}'>{{ 'Import to your profile'|trans }}</button>
-                <a href='experiments.php?create=true&tpl={{ template.id }}' class='button btn btn-primary'>{{ 'Create experiment from template'|trans }}</a>
-            </h3>
-            <!-- TAGS -->
-            <i class='fas fa-tags'></i>
-            <label>{{ 'Tags'|trans }}</label>
-            <span class='tags'>
-                <!--  build the tag array -->
-                {% if template.tags|length > 0 %}
-                    {% set tagsIdArr = template.tags_id|split(',') %}
-                    {% set tagsValueArr = template.tags|split('|') %}
-                    {% for tag in tagsValueArr %}
-                        <span class='tag'>{{ tag|raw }}</span>
-                    {% endfor %}
-                {% endif %}
-            </span>
-
-            <div class='txt' id='e{{ template.id }}'>{{ template.body|raw }}</div>
-
-          {% set stepsArr = Entity.Steps.readFromId(template.id) %}
-          {% set linksArr = Entity.Links.readFromId(template.id) %}
-          {% include('steps-links-view.html') %}
-        </div>
-        {% endfor %}
-    {% else %}
-        <p>{{ 'No templates from other members of the team to display!'|trans }}</p>
-    {% endif %}
+  {% include('show-templates.html') %}
 </div>
-</div>
+
+        <!--p>{{ 'No templates from other members of the team to display!'|trans }}</p-->
 
 <!-- TAB 4 EMAIL -->
 <div class='divhandle' id='tab4div'>

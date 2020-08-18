@@ -460,22 +460,6 @@ section.item {
     }
 }
 
-/* BADGE */
-.badgetab {
-    padding: 5px;
-    margin: 0 20px 10px 0;
-}
-
-.badgetab:hover {
-    background-color: $lightgray;
-    color: black;
-}
-
-.badgetabactive {
-    background-color: $lightgray;
-    color: black;
-}
-
 /* BUTTONS */
 .button {
     border: none;

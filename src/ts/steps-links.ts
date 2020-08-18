@@ -7,142 +7,15 @@
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
-import { notif, relativeMoment, makeSortableGreatAgain } from './misc';
-import i18next from 'i18next';
+import Link from './Link.class';
+import Step from './Step.class';
 
 $(document).ready(function() {
   const type = $('#info').data('type');
 
-  class Link {
-
-    create(elem): void {
-      const id = elem.data('id');
-      // get link
-      const link = elem.val();
-      // fix for user pressing enter with no input
-      if (link.length > 0) {
-        // parseint will get the id, and not the rest (in case there is number in title)
-        const linkId = parseInt(link, 10);
-        if (!isNaN(linkId)) {
-          $.post('app/controllers/EntityAjaxController.php', {
-            createLink: true,
-            id: id,
-            linkId: linkId,
-            type: type
-          }).done(function () {
-            // reload the link list
-            $('#links_div_' + id).load('?mode=edit&id=' + id + ' #links_div_' + id);
-            // clear input field
-            elem.val('');
-          });
-        } // end if input is bad
-      } // end if input < 0
-    }
-
-    destroy(elem): void {
-      const id = elem.data('id');
-      const linkId = elem.data('linkid');
-      if (confirm(i18next.t('link-delete-warning'))) {
-        $.post('app/controllers/EntityAjaxController.php', {
-          destroyLink: true,
-          id: id,
-          linkId: linkId,
-          type: type
-        }).done(function(json) {
-          notif(json);
-          if (json.res) {
-            $('#links_div_' + id).load('?mode=edit&id=' + id + ' #links_div_' + id);
-          }
-        });
-      }
-    }
-  }
-
-  class Step {
-
-    create(elem): void {
-      const id = elem.data('id');
-      // get body
-      const body = elem.val();
-      // fix for user pressing enter with no input
-      if (body.length > 0) {
-        $.post('app/controllers/EntityAjaxController.php', {
-          createStep: true,
-          id: id,
-          body: body,
-          type: type
-        }).done(function() {
-          let loadUrl = '?mode=edit&id=' + id + ' #steps_div_' + id;
-          if (type === 'experiments_templates') {
-            loadUrl = '? #steps_div_' + id;
-          }
-          // reload the step list
-          $('#steps_div_' + id).load(loadUrl, function() {
-            relativeMoment();
-            makeSortableGreatAgain();
-          });
-          // clear input field
-          elem.val('');
-        });
-      } // end if input < 0
-    }
-
-    finish(elem): void {
-      // the id of the exp/item/tpl
-      const id = elem.data('id');
-      const stepId = elem.data('stepid');
-      // on the todolist we don't want to grab the type from the page
-      // because it's only steps from experiments
-      // so if the element has a data-type, take that instead
-      let itemType = type;
-      if (elem.data('type')) {
-        itemType = elem.data('type');
-      }
-
-      $.post('app/controllers/EntityAjaxController.php', {
-        finishStep: true,
-        id: id,
-        stepId: stepId,
-        type: itemType
-      }).done(function() {
-        const loadUrl = window.location + ' #steps_div_' + id;
-        // reload the step list
-        $('#steps_div_' + id).load(loadUrl, function() {
-          relativeMoment();
-          makeSortableGreatAgain();
-        });
-        $('#todo_step_' + stepId).prop('checked', true);
-      });
-    }
-
-    destroy(elem): void {
-      // the id of the exp/item/tpl
-      const id = elem.data('id');
-      const stepId = elem.data('stepid');
-      if (confirm(i18next.t('step-delete-warning'))) {
-        $.post('app/controllers/EntityAjaxController.php', {
-          destroyStep: true,
-          id: id,
-          stepId: stepId,
-          type: type
-        }).done(function(json) {
-          notif(json);
-          if (json.res) {
-            const loadUrl = window.location + ' #steps_div_' + id;
-            // reload the step list
-            $('#steps_div_' + id).load(loadUrl, function() {
-              relativeMoment();
-              makeSortableGreatAgain();
-            });
-          }
-        });
-      }
-    }
-  }
-
   ////////
   // STEPS
-  const StepC = new Step();
+  const StepC = new Step(type);
 
   // CREATE
   $(document).on('keypress blur', '.stepinput', function(e) {
@@ -188,7 +61,7 @@ $(document).ready(function() {
 
   ////////
   // LINKS
-  const LinkC = new Link();
+  const LinkC = new Link(type);
 
   // CREATE
   // listen keypress, add link when it's enter or on blur

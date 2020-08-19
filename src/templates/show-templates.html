@@ -13,8 +13,8 @@
 
     <!-- CREATE NEW AND IMPORT BUTTONS -->
     {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-      <div class='col'>
-        <div class='btn-group align_right mt-1'>
+      <div class='col text-right'>
+        <div class='btn-group mt-1'>
           <div class='btn-group dropleft' role='group'>
             <button type='button' id='btnGroupDrop1' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
@@ -27,7 +27,7 @@
           </div>
           <button type='button' class='btn btn-primary createNewTemplate'>{{ 'Create'|trans }}</button>
         </div>
-        <input type='file' aria-hidden='true' style='display: none' accept='.tpl' id='import_tpl' class='form-control align_right mt-1'>
+        <input type='file' aria-hidden='true' style='display: none' accept='.tpl' id='import_tpl' class='form-control mt-1'>
       </div>
     {% endif %}
   </div>

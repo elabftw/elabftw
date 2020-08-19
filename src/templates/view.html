@@ -216,6 +216,15 @@
 
 {{ include('uploads.html') }}
 
+  <!-- JSON EDITOR -->
+  <section class='box' id='json-editor'>
+    <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
+    <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
+    <div id='jsonEditorDiv' class='collapse mt-2'>
+      <div id='jsonEditorContainer'></div>
+    </div>
+  </section>
+
 {% if App.Session.get('auth') %}
     <section id='comment_container'>
         <div id='comment' class='box'>
@@ -263,5 +272,8 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
+
+<!-- Load the JSONEditor CSS -->
+<link href='app/css/jsoneditor/jsoneditor.min.css' rel='stylesheet' type='text/css'>
 
 {% endblock body %}

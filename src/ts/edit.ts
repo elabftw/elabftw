@@ -342,15 +342,6 @@ $(document).ready(function() {
     }
   });
 
-  // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
-  $(document).on('click', '.plusMinusButton',  function() {
-    if ($(this).html() === '+') {
-      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
-    } else {
-      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
-    }
-  });
-
   // DATEPICKER
   $('#datepicker').datepicker({dateFormat: 'yymmdd'});
   // If the title is 'Untitled', clear it on focus

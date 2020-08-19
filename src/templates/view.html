@@ -216,14 +216,7 @@
 
 {{ include('uploads.html') }}
 
-  <!-- JSON EDITOR -->
-  <section class='box' id='json-editor'>
-    <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-    <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
-    <div id='jsonEditorDiv' class='collapse mt-2'>
-      <div id='jsonEditorContainer'></div>
-    </div>
-  </section>
+{{ include('json-editor.html') }}
 
 {% if App.Session.get('auth') %}
     <section id='comment_container'>

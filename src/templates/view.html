@@ -216,7 +216,6 @@
 
 {{ include('uploads.html') }}
 
-{% if Entity.Users.userData.json_editor %}
   <!-- JSON EDITOR -->
   <section class='box' id='json-editor'>
     <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
@@ -225,7 +224,6 @@
       <div id='jsonEditorContainer'></div>
     </div>
   </section>
-{% endif %}
 
 {% if App.Session.get('auth') %}
     <section id='comment_container'>

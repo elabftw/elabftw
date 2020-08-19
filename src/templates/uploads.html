@@ -101,7 +101,7 @@
                 id='filecomment_{{ upload.id }}'>{{ upload.comment}}</p>
             {% endif %}
 
-            {% if ext matches '/(json)$/i' and App.Users.userData.json_editor %}
+            {% if ext matches '/(json)$/i' %}
             <div class='jsonLoader clickable' data-type='{{ upload.type }}' data-link='{{ upload.long_name }}' data-id='{{ upload.item_id }}' data-uploadid='{{ upload.id }}'>
               {% if mode == 'view' %}
                 <i class='fas fa-eye mr-1'>

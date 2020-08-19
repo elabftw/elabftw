@@ -16,18 +16,16 @@
 {% endif %}
 
 <!-- ADMIN PANEL MAIN MENU -->
-<menu>
-  <ul>
-    <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
-    <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
-    <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
-    <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-    <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
-    <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
-    <li class='tabhandle' id='tab7'>{{ 'Import'|trans }}</li>
-    <li class='tabhandle' id='tab8'>{{ 'Tag manager'|trans }}</li>
-  </ul>
-</menu>
+<ul id='menu'>
+  <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
+  <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
+  <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
+  <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
+  <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
+  <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
+  <li class='tabhandle' id='tab7'>{{ 'Import'|trans }}</li>
+  <li class='tabhandle' id='tab8'>{{ 'Tag manager'|trans }}</li>
+</ul>
 
 <!-- TAB 1 TEAM CONFIG -->
 <div class='divhandle' id='tab1div'>

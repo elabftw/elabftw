@@ -19,6 +19,7 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
+use Elabftw\Services\Filter;
 use Exception;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;

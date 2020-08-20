@@ -270,15 +270,15 @@ class UserPreferences implements MapInterface
         $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
         $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcuts['submit']);
         $this->setShortcut('todo', $source['sc_todo'] ?? $this->shortcuts['todo']);
-        $this->setShowTeam($source['show_team'] ?? (string) $this->showTeam);
-        $this->setShowTeamTemplates($source['show_team_templates'] ?? (string) $this->showTeamTemplates);
-        $this->setCjkFonts($source['cjk_fonts'] ?? (string) $this->cjkFonts);
-        $this->setPdfa($source['pdfa'] ?? (string) $this->pdfa);
+        $this->setShowTeam($source['show_team'] ?? '0');
+        $this->setShowTeamTemplates($source['show_team_templates'] ?? '0');
+        $this->setCjkFonts($source['cjk_fonts'] ?? '0');
+        $this->setPdfa($source['pdfa'] ?? '0');
         $this->setPdfFormat($source['pdf_format'] ?? $this->pdfFormat);
-        $this->setUseMarkdown($source['use_markdown'] ?? (string) $this->useMarkdown);
-        $this->setIncFilesPdf($source['inc_files_pdf'] ?? (string) $this->incFilesPdf);
-        $this->setChemEditor($source['chem_editor'] ?? (string) $this->chemEditor);
-        $this->setJsonEditor($source['json_editor'] ?? (string) $this->jsonEditor);
+        $this->setUseMarkdown($source['use_markdown'] ?? '0');
+        $this->setIncFilesPdf($source['inc_files_pdf'] ?? '0');
+        $this->setChemEditor($source['chem_editor'] ?? '0');
+        $this->setJsonEditor($source['json_editor'] ?? '0');
         $this->setDefaultRead($source['default_read'] ?? $this->defaultRead);
         $this->setDefaultWrite($source['default_write'] ?? $this->defaultWrite);
     }

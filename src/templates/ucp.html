@@ -95,7 +95,7 @@
         <option value='desc'{{ App.Users.userData.sort == 'desc' ? ' selected' }}>{{ 'DESC'|trans }}</option>
       </select>
 
-      <input id='layout' class='mt-2' type='checkbox' name='single_column_layout'
+      <input id='layout' class='mt-2' type='checkbox' name='single_column_layout' value='1'
           {{ App.Users.userData.single_column_layout == '1' ? ' checked' }}
       />
       <label for='layout'>{{ 'Use single column layout'|trans }}</label>
@@ -147,19 +147,19 @@
         </select>
         <br>
 
-        <input id='cjk_fonts' type='checkbox' name='cjk_fonts'
+        <input id='cjk_fonts' type='checkbox' name='cjk_fonts' value='1'
           {{ App.Users.userData.cjk_fonts == '1' ? ' checked' }}
         />
         <label for='cjk_fonts'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation (WARNING: this will dramatically increase the file size unless you disable PDF/A)'|trans }}</label>
         <br>
 
-        <input id='pdfa' type='checkbox' name='pdfa'
+        <input id='pdfa' type='checkbox' name='pdfa' value='1'
           {{ App.Users.userData.pdfa == '1' ? ' checked' }}
         />
         <label for='pdfa'>{{ 'Generate PDF/A compliant pdfs (will embed the fonts and make the file bigger)'|trans }}</label>
         <br>
 
-        <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf'
+        <input id='inc_files_pdf' type='checkbox' name='inc_files_pdf' value='1'
           {{ App.Users.userData.inc_files_pdf == '1' ? ' checked' }}
         />
         <label for='inc_files_pdf'>{{ 'Add attached files summary to the pdf'|trans }}</label>
@@ -177,27 +177,27 @@
         <h3>{{ 'Miscellaneous'|trans }}</h3>
       <hr>
         <p>
-        <input id='show_team' type='checkbox' name='show_team'
+        <input id='show_team' type='checkbox' name='show_team' value='1'
           {{ App.Users.userData.show_team == '1' ? ' checked' }}
         />
         <label for='show_team'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
         <br>
-        <input id='show_team_templates' type='checkbox' name='show_team_templates'
+        <input id='show_team_templates' type='checkbox' name='show_team_templates' value='1'
                {{ App.Users.userData.show_team_templates == '1' ? ' checked' }}
         />
         <label for='show_team_templates'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
         <br>
-        <input id='chem_editor' type='checkbox' name='chem_editor'
+        <input id='chem_editor' type='checkbox' name='chem_editor' value='1'
           {{ App.Users.userData.chem_editor == '1' ? ' checked' }}
         />
         <label for='chem_editor'>{{ 'Display the molecule editor in edit mode'|trans }}</label>
         <br>
-        <input id='json_editor' type='checkbox' name='json_editor'
+        <input id='json_editor' type='checkbox' name='json_editor' value='1'
           {{ App.Users.userData.json_editor == '1' ? ' checked' }}
         />
         <label for='json_editor'>{{ 'Display the JSON editor in edit mode'|trans }}</label>
         <br>
-        <input id='use_markdown' type='checkbox' name='use_markdown'
+        <input id='use_markdown' type='checkbox' name='use_markdown' value='1'
           {{ App.Users.userData.use_markdown == '1' ? ' checked' }}
         />
         <label for='use_markdown'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>

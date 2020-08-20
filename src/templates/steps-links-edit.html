@@ -32,7 +32,7 @@
               </div>
               <div class='input-group-prepend'>
                 <div class='input-group-text'>
-                  <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} autocomplete='off' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
+                  <input type='checkbox' {{ Entity.type == 'experiments_templates' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity_id }}' class='stepbox'>
                 </div>
               </div>
               <div class='pl-2 step-static form-control-plaintext {{ step.finished ? 'finished' }}'>

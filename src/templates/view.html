@@ -151,7 +151,7 @@
       {% set tagsValueArr = Entity.entityData.tags|split('|') %}
       {% for key, tag in tagsValueArr %}
           {# the key allows to get the id stored in tagsIdArr #}
-          <a class='tag' href='?mode=show&tags[]={{ tag|url_encode }}'>{{ tag|raw }}</a>
+          <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
       {% endfor %}
   {% endif %}
 
@@ -216,6 +216,8 @@
 
 {{ include('uploads.html') }}
 
+{{ include('json-editor.html') }}
+
 {% if App.Session.get('auth') %}
     <section id='comment_container'>
         <div id='comment' class='box'>
@@ -263,5 +265,8 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
+
+<!-- Load the JSONEditor CSS -->
+<link href='app/css/jsoneditor/jsoneditor.min.css' rel='stylesheet' type='text/css'>
 
 {% endblock body %}

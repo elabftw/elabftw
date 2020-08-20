@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<menu>
-    <ul>
+<ul id='menu'>
         <li class='tabhandle' id='tab1'>{{ 'Preferences'|trans }}</li>
         <li class='tabhandle' id='tab2'>{{ 'Account'|trans }}</li>
         <li class='tabhandle' id='tab3'>{{ 'Templates'|trans }}</li>
         <li class='tabhandle' id='tab4'>{{ 'API keys'|trans }}</li>
-    </ul>
-</menu>
+</ul>
 
 <!-- Modal for edit permissions -->
 <div class='modal fade' id='permModal' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
@@ -105,7 +103,6 @@
     <section class='box'>
         <h3>{{ 'Keyboard Shortcuts'|trans }}</h3>
         <p>{{ 'Only lowercase letters are allowed.'|trans }}</p>
-        <p>
             <table>
             <tr><th>{{ 'Action'|trans }}</th>
                 <th>{{ 'Shortcut'|trans }}</th></tr>
@@ -126,7 +123,6 @@
                 <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' name='sc_todo' />
                 </td></tr>
             </table>
-        </p>
     </section>
 
     <!-- PDF CONFIG -->
@@ -136,9 +132,9 @@
         <p>
         <label for='pdf_format'>{{ 'Select paper format for PDF'|trans }}</label>
         <select id='pdf_format' name='pdf_format'>
-            <option value='A4' {{ App.Users.userData.pdf_format == 'A4' ? 'selected' : '' }}>A4</option>
-            <option value='LETTER' {{ App.Users.userData.pdf_format == 'LETTER' ? 'selected' : '' }}>Letter</option>
-            <option value='ROYAL' {{ App.Users.userData.pdf_format == 'ROYAL' ? 'selected' : '' }}>Royal</option>
+            <option value='A4'{{ App.Users.userData.pdf_format == 'A4' ? ' selected' : '' }}>A4</option>
+            <option value='LETTER'{{ App.Users.userData.pdf_format == 'LETTER' ? ' selected' : '' }}>Letter</option>
+            <option value='ROYAL'{{ App.Users.userData.pdf_format == 'ROYAL' ? ' selected' : '' }}>Royal</option>
         </select>
         <br>
 
@@ -240,10 +236,9 @@
     </section>
 
     <div class='text-center mt-3'>
-        <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
-    </p>
   </form>
 
 </div>
@@ -265,9 +260,9 @@
         <div class='col-md-6'>
           <h4>{{ 'Modify your password'|trans }}</h4>
           <label for='newpass'>{{ 'New password'|trans }}</label>
-          <input class='form-control' id='newpass' autocomplete='new-password' name="newpass" type="password" pattern=".{8,}" />
+          <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
           <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-          <input class='form-control' id='cnewpass' autocomplete='new-password' name="cnewpass" type="password" pattern=".{8,}" />
+          <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
         </div>
       </div>
 
@@ -292,21 +287,21 @@
         <div class='row'>
             <div class='col-md-6'>
                 <label for='phone'>{{ 'Phone'|trans }} </label>
-                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' cols='20' rows='1' />
+                <input class='form-control' id='phone' name='phone' value='{{ App.Users.userData.phone }}' />
             </div>
             <div class='col-md-6'>
                 <label for='cellphone'>{{ 'Mobile'|trans }}</label>
-                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' cols='20' rows='1' />
+                <input class='form-control' id='cellphone' name='cellphone' value='{{ App.Users.userData.cellphone }}' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <label for='skype'>{{ 'Skype'|trans }}</label>
-                <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' cols='20' rows='1' />
+                <input class='form-control' id='skype' name='skype' value='{{ App.Users.userData.skype }}' />
             </div>
             <div class='col-md-6'>
                 <label for='website'>{{ 'Website'|trans }}</label>
-                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' cols='20' rows='1' />
+                <input class='form-control' id='website' name='website' type='url' value='{{ App.Users.userData.website }}' />
             </div>
         </div>
 
@@ -319,166 +314,7 @@
 </div>
 <!-- TAB 3 - USER TEMPLATES -->
 <div class='divhandle' id='tab3div'>
-
-<div class='box'>
-    <h3>{{ 'Experiment Templates'|trans }}</h3>
-    <ul class='nav nav-pills sortable' data-axis='x' data-table='experiments_templates' role='tablist'>
-        <li class='subtabhandle clickable badge badge-secondary badgetab badgetabactive nonSortable' id='subtab_1'>{{ 'Create new'|trans }}</li>
-        {% for template in templatesArr %}
-        <li class='subtabhandle clickable badge badge-secondary badgetab' data-id='{{ template.id }}' id='subtab_{{ template.id }}'><i style='color: #fff' class='fas fa-sort sortableHandle'></i> {{ template.name|raw }}</li>
-        {% endfor %}
-    </ul>
-    <hr>
-
-    <!-- CREATE NEW TPL TAB -->
-    <div class='subdivhandle' id='subtab_1div'>
-        <div class='mb-2'>
-        <i class='fas fa-upload' title='Import template'></i>
-        <p id='import-from-file' class='d-inline clickable'>{{ 'Import from File'|trans }}</p>
-        </div>
-        <form action='app/controllers/UcpController.php' method='post'>
-            {{ App.Csrf.getHiddenInput|raw }}
-            <input type='hidden' name='new_tpl_form' />
-            <input type='file' accept='.tpl' id='import_tpl'>
-            <input required type='text' class='form-control' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='{{ 'Name of the Template'|trans }}' />
-            <br>
-            <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='{{ not App.Users.userData.use_markdown ? 'mceditable'}}' rows='50' cols='60'></textarea>
-            <br>
-            <div class='text-center'>
-                <button type="submit" name="Submit" class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-            </div>
-        </form>
-    </div>
-
-    {% for template in templatesArr %}
-      <div class='subdivhandle' id='subtab_{{ template.id }}div'>
-        {% if template.isWritable %}
-        <!-- TAGS -->
-        <i class='fas fa-tags'></i>
-        <label>{{ 'Tags'|trans }}</label>
-        <div class='tags'>
-          <span id='tags_div_{{ template.id }}'>
-            <!--  build the tag array -->
-            {% if template.tags|length > 0 %}
-              {% set tagsIdArr = template.tags_id|split(',') %}
-              {% set tagsValueArr = template.tags|split('|') %}
-              {% for key, tag in tagsValueArr %}
-                {# the key allows to get the id stored in tagsIdArr #}
-                <a class='tag m-1 tag-delete tagUnreferenceForTemplate clickable' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
-                    {{ tag|raw }}
-                </a>
-              {% endfor %}
-            {% endif %}
-          </span>
-          <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
-        </div>
-          <div class='dropdown' style="position: relative; bottom: 5px">
-            <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
-            <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
-            <!-- MANAGE PERMISSIONS -->
-            <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read="{{ template.canread }}" data-write="{{ template.canwrite }}"><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
-          </div>
-        </div>
-        <a class='saveToFile' title='{{ 'Download template'|trans }}' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
-              <i class='fas fa-download fa-pull-right clickable'></i>
-          </a>
-          <a class='destroy-template' title='{{ 'Destroy template'|trans }}' data-id='{{ template.id }}'>
-              <i class='fas fa-trash-alt fa-pull-right mr-1 clickable'></i>
-          </a>
-
-          <form action='app/controllers/UcpController.php' method='post'>
-            {{ App.Csrf.getHiddenInput|raw }}
-            <input type='hidden' name='tpl_form' />
-            <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
-            <label for='tplName_{{' template.id' }}'>{{ 'Name'|trans }}</label>
-            <input id='tplName_{{' template.id' }}' name='tpl_name[]' class='form-control' value='{{ template.name|raw }}' />
-            {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-            <label for='e{{ template.id }}'>{{ 'Template content'|trans }}</label>
-            <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
-            <div class='text-center'>
-              <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-            </div>
-          </form>
-          {% include('steps-links-edit.html') %}
-
-        {% else %}
-
-          {{ 'This template is not editable'|trans|msg('ok', false) }}
-          <div class='box'>
-            <h4>{{ template.name }} ({{ template.fullname }})</h4>
-
-            {% if template.tags|length > 0 %}
-              <span class='tags'><i class='fas fa-tags'></i></span>
-              {% set tagsValueArr = template.tags|split('|') %}
-              {% for tag in tagsValueArr %}
-                <span class='tag'>{{ tag|raw }}</span>
-              {% endfor %}
-            {% endif %}
-
-            <div class='mt-2'>
-              {% if template.canread > 0 %}
-                {% for teamGroup in teamGroupsArr if teamGroup.id == template.canread %}
-                  <i class='fas fa-eye'></i> {{ teamGroup.name }}
-                {% endfor %}
-              {% else %}
-                <i class='fas fa-eye'></i> {{ template.canread }}
-              {% endif %}
-
-              {% if template.canwrite > 0 %}
-                {% for teamGroup in teamGroupsArr if teamGroup.id == template.canwrite %}
-                  <i class='fas fa-pencil-alt'></i> {{ teamGroup.name }}
-                {% endfor %}
-              {% else %}
-                <i class='fas fa-pencil-alt'></i> {{ template.canwrite }}
-              {% endif %}
-            </div>
-
-            <div id='body_view' class='txt'>{{ template.body|raw }}</div>
-            <div class='row'>
-              <div class='col-md-6'>
-                {% set stepsArr = Entity.Steps.readFromId(template.id) %}
-                {% if stepsArr %}
-                  <i class='fas fa-check-square mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
-                  <div class='mt-2'>
-                    {% for step in stepsArr %}
-                      <div class='input-group mb-2' id='step_{{ step.id }}'>
-                        <div class='input-group-prepend'>
-                          <div class='input-group-text'>
-                            <input type='checkbox' disabled autocomplete='off'>
-                          </div>
-                        </div>
-                        <div class='pl-2 step-static form-control-plaintext'>
-                          <span>{{ step.body|raw }}</span>
-                        </div>
-                      </div>
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              </div>
-              <div class='col-md-6'>
-                {% set linksArr = Entity.Links.readFromId(template.id) %}
-                {% if linksArr %}
-                  <div class='mt-2' id='links_div_{{ template.id }}'>
-                    <i class='fas fa-link mr-1 align-baseline'></i><h4 class='d-inline'>{{ 'Linked items'|trans }}</h4>
-                    <ul class='list-group'>
-                      {% for link in linksArr %}
-                        <li class='list-group-item'>
-                          <i class='fas fa-link mr-1'></i>
-                          {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-                          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.name|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                              {{ link.title|raw }}</a>
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
+  {% include('show-templates.html') %}
 </div>
 
 <!-- TAB 4 - API KEYS -->

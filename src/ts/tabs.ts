@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if (tab % 1 !== 0) {
     tab = 1;
   }
-  let initdiv = '#tab' + tab + 'div';
-  let inittab = '#tab' + tab;
+  const initdiv = '#tab' + tab + 'div';
+  const inittab = '#tab' + tab;
   // init
   $('.divhandle').hide();
   $(initdiv).show();
@@ -31,19 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
   /**
    * SUB TABS for templates
    */
-  initdiv = '#subtab_1div';
-  inittab = '#subtab_1';
-  // init
+  // hide all subtabs on init
   $('.subdivhandle').hide();
-  $(initdiv).show();
-  $(inittab).addClass('selected');
-
-  $('.subtabhandle' ).on('click', function(event) {
-    const tabhandle = '#' + event.target.id;
+  $('.subtabhandle').on('click', function(event) {
     const divhandle = '#' + event.target.id + 'div';
     $('.subdivhandle').hide();
     $(divhandle).show();
-    $('.subtabhandle').removeClass('badgetabactive');
-    $(tabhandle).addClass('badgetabactive');
+    // store the selected template id in there so we can get it back for updating permissions
+    $('#selectedTemplate').data('id', event.target.id.split('_')[1]);
   });
 });

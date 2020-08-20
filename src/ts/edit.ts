@@ -7,7 +7,7 @@
  */
 declare let key: any;
 declare let MathJax: any;
-import { addDateOnCursor, displayMolFiles, insertParamAndReload, notif, quickSave } from './misc';
+import { addDateOnCursor, displayMolFiles, display3DMolecules, insertParamAndReload, notif, quickSave } from './misc';
 import 'jquery-ui/ui/widgets/datepicker';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/icons/default';
@@ -89,6 +89,7 @@ $(document).ready(function() {
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
             displayMolFiles();
+            display3DMolecules(true);
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
 
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
@@ -341,15 +342,6 @@ $(document).ready(function() {
     }
   });
 
-  // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR
-  $(document).on('click', '.plusMinusButton',  function() {
-    if ($(this).html() === '+') {
-      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
-    } else {
-      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
-    }
-  });
-
   // DATEPICKER
   $('#datepicker').datepicker({dateFormat: 'yymmdd'});
   // If the title is 'Untitled', clear it on focus
@@ -471,6 +463,9 @@ $(document).ready(function() {
       editor.on('keyup', function() {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(doneTyping, doneTypingInterval);
+      });
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
       });
     },
     style_formats_merge: true,

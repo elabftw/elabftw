@@ -12,13 +12,13 @@ import JSONEditor from 'jsoneditor';
 
 // editor div
 $(document).ready(function() {
-  if ($('#info').data('page') !== 'edit') {
+  if (!($('#info').data('page') === 'edit' || $('#info').data('page') === 'view')) {
     return;
   }
   const container = document.getElementById('jsonEditorContainer');
 
   const options = {
-    modes: ['tree','code','view','form','text'],
+    modes: (($('#info').data('page') === 'edit') ? ['tree','code','view','form','text']:['view']),
     onModeChange: function(newMode) {
       if (newMode==='code' || newMode==='text'){
         $('#jsoneditor').height('800px');

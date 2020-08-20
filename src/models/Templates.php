@@ -50,12 +50,12 @@ class Templates extends AbstractEntity
      * Create a template
      *
      * @param string $name
-     * @param string $body
+     * @param string|null $body
      * @param int|null $userid
      * @param int|null $team
      * @return void
      */
-    public function createNew(string $name, string $body, ?int $userid = null, ?int $team = null): void
+    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): void
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];
@@ -75,7 +75,7 @@ class Templates extends AbstractEntity
         }
 
         $name = filter_var($name, FILTER_SANITIZE_STRING);
-        $body = Filter::body($body);
+        $body = Filter::body($body ?? '');
 
         $sql = 'INSERT INTO experiments_templates(team, name, body, userid, canread, canwrite) VALUES(:team, :name, :body, :userid, :canread, :canwrite)';
         $req = $this->Db->prepare($sql);
@@ -148,10 +148,9 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id AND team = :team';
+        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch();
@@ -255,7 +254,7 @@ class Templates extends AbstractEntity
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
-        $sql .= 'GROUP BY id ORDER BY experiments_templates.id ASC';
+        $sql .= 'GROUP BY id ORDER BY experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

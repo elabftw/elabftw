@@ -62,6 +62,11 @@ function tinyMceInitLight() {
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
+    setup: function(editor: any) {
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
+      });
+    },
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign']

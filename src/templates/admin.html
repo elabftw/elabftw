@@ -16,18 +16,16 @@
 {% endif %}
 
 <!-- ADMIN PANEL MAIN MENU -->
-<menu>
-  <ul>
-    <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
-    <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
-    <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
-    <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-    <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
-    <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
-    <li class='tabhandle' id='tab7'>{{ 'Import'|trans }}</li>
-    <li class='tabhandle' id='tab8'>{{ 'Tag manager'|trans }}</li>
-  </ul>
-</menu>
+<ul id='menu'>
+  <li class='tabhandle' id='tab1'>{{ 'Team'|trans }}</li>
+  <li class='tabhandle' id='tab2'>{{ 'Groups'|trans }}</li>
+  <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
+  <li class='tabhandle' id='tab4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
+  <li class='tabhandle' id='tab5'>{{ 'Types of items'|trans }}</li>
+  <li class='tabhandle' id='tab6'>{{ 'Experiments template'|trans }}</li>
+  <li class='tabhandle' id='tab7'>{{ 'Import'|trans }}</li>
+  <li class='tabhandle' id='tab8'>{{ 'Tag manager'|trans }}</li>
+</ul>
 
 <!-- TAB 1 TEAM CONFIG -->
 <div class='divhandle' id='tab1div'>
@@ -236,7 +234,7 @@
       </div>
     </div>
 
-    <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
+    <textarea class='mceditable' id='itemsTypesTemplate'></textarea>
     <div class='submitButtonDiv'>
       <button id='itemsTypesCreate' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
@@ -273,7 +271,7 @@
               <button data-id='{{ itemType.category_id }}' class='button btn btn-danger itemsTypesDestroy'>{{ 'Delete'|trans }}</button>
             </li>
             <li class='list-inline-item mt-2 itemsTypesEditor' id='itemsTypesEditor_{{ itemType.category_id }}'>
-              <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}' />{{ itemType.template }}</textarea>
+              <textarea class='' id='itemsTypesTemplate_{{ itemType.category_id }}'>{{ itemType.template }}</textarea>
             </li>
             <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
           </ul>
@@ -288,7 +286,7 @@
   <div class='box'>
     <h3>{{ 'Common Experiment Template'|trans }}</h3><hr>
     <p>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
-    <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+    <textarea style='height:400px' class='mceditable' id='commonTplTemplate'>
       {{ commonTplBody|raw }}
     </textarea>
     <div class='submitButtonDiv'>
@@ -311,7 +309,7 @@
       <select class='form-control col-md-4' id='target_csv' autocomplete='off' name='target'>
         <option selected disabled>--------</option>
         {% for itemsType in itemsTypesArr %}
-        <option value='{{ itemsType.category_id }}' name='category'>{{ itemsType.category }}</option>
+        <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
         {% endfor %}
       </select>
 

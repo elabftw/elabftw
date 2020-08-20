@@ -47,7 +47,7 @@
     "@types/tinymce": "^4.5.23",
     "@typescript-eslint/eslint-plugin": "^2.12.0",
     "@typescript-eslint/parser": "^2.12.0",
-    "apidoc": "^0.24.0",
+    "apidoc": "^0.25.0",
     "babel-loader": "^8.0.6",
     "css-loader": "^4.1.1",
     "eslint": "^6.8.0",

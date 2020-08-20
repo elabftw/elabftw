@@ -3,42 +3,40 @@
   <div class='col-md-2'>
     <div class='btn-group align_right'>
       <div class='btn-group dropleft' role='group'>
-        <button type='button' class='btn btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-          <span class='sr-only'>Toggle create new menu</span>
+        <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+          <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
         </button>
-        <ul class='dropdown-menu' aria-label='Create new'>
+        <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
           {% if Entity.type == 'experiments' %}
-            <a href='?create=true'><li class='dropdown-item'>
+            <a href='?create=true' class='dropdown-item'>
               {% trans %}
               Experiment
               {% plural 1 %}
               Experiments
               {% endtrans %}
-            </li></a>
+            </a>
             <div class='dropdown-divider'></div>
             {% if templatesArr|length > 0 %}
               {% for tpl in templatesArr %}
-                <a href='?create=true&tpl={{ tpl.id }}'>
-                  <li class='dropdown-item'>
-                    {{ tpl.name|raw }}
-                  </li>
+                <a href='?create=true&tpl={{ tpl.id }}' class='dropdown-item'>
+                  {{ tpl.name|raw }}
                 </a>
               {% endfor %}
             {% else %}
             <h6 class='dropdown-header'>{{ 'No templates found'|trans }}</h6>
             {% endif %}
             <div class='dropdown-divider'></div>
-                <a href='ucp.php?tab=3'>
-                    <li class='dropdown-item'>{{ 'Manage templates'|trans }}</li>
-                </a>
+            <a href='ucp.php?tab=3' class='dropdown-item'>
+              {{ 'Manage templates'|trans }}
+            </a>
           {% else %}
-              {% for category in categoryArr %}
-                  <a href='?create=true&tpl={{ category.category_id }}'>
-                      <li style='color:#{{ category.color }}' class='dropdown-item'>{{ category.category }}</li>
-                  </a>
-              {% endfor %}
+            {% for category in categoryArr %}
+              <a href='?create=true&tpl={{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
+                {{ category.category }}
+              </a>
+            {% endfor %}
           {% endif %}
-        </ul>
+        </div>
       </div>
       <button type='button' class='btn btn-primary createNew'>{{ 'Create'|trans }}</button>
     </div>

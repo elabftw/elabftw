@@ -8,6 +8,7 @@
 declare let ChemDoodle: any;
 import tinymce from 'tinymce/tinymce';
 import 'jquery-ui/ui/widgets/sortable';
+import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 
 interface ResponseMsg {
   res: boolean;
@@ -69,6 +70,26 @@ export function displayMolFiles(): void {
     });
   });
 }
+
+// DISPLAY 3D MOL FILES
+export function display3DMolecules(autoload = false): void {
+  if (autoload) {
+    $3Dmol.autoload();
+  }
+  // Top left menu to change the style of the displayed molecule
+  $('.dropdown-item').on('click', '.3dmol-style', function() {
+    const targetStyle = $(this).data('style');
+    let options = {};
+    const style = {};
+    if (targetStyle === 'cartoon') {
+      options = { color: 'spectrum' };
+    }
+    style[targetStyle] = options;
+
+    $3Dmol.viewers[$(this).data('divid')].setStyle(style).render();
+  });
+}
+
 // for editXP/DB, ctrl-shift-D will add the date
 export function addDateOnCursor(): void {
   const todayDate = new Date();

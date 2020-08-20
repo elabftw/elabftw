@@ -216,7 +216,10 @@
 
 {{ include('uploads.html') }}
 
-{{ include('json-editor.html') }}
+<!-- only show the json editor if there is at least one file with a .json extension -->
+{% if uploadsArr|filter(u => u.real_name|getExt == 'json') %}
+  {{ include('json-editor.html') }}
+{% endif %}
 
 {% if App.Session.get('auth') %}
     <section id='comment_container'>
@@ -265,8 +268,5 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-edit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
-
-<!-- Load the JSONEditor CSS -->
-<link href='app/css/jsoneditor/jsoneditor.min.css' rel='stylesheet' type='text/css'>
 
 {% endblock body %}

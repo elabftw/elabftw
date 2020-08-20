@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use function count;
 use Elabftw\Controllers\SearchController;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -198,8 +199,12 @@ if ($Request->query->count() > 0) {
         }
 
 
-        $Controller = new SearchController($App, $Entity);
-        echo $Controller->show(true)->getContent();
+        try {
+            $Controller = new SearchController($App, $Entity);
+            echo $Controller->show(true)->getContent();
+        } catch (ImproperActionException $e) {
+            echo Tools::displayMessage($e->getMessage(), 'ko', false);
+        }
     }
 } else {
     // no search

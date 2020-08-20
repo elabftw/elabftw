@@ -26,9 +26,9 @@
     {% if ReleaseCheck.updateIsAvailable %}
         {{ '%s - A new version is available! %sUpdate elabftw%sRead changelog%s'|trans|format(
             ReleaseCheck.getReleaseDate,
-            "<a href='https://doc.elabftw.net/how-to-update.html'><button class='button btn btn-primary'>",
-            "</button></a><a href='" ~ ReleaseCheck.getChangelogLink ~ "'><button class='button btn btn-primary'>",
-            "</button></a>")|msg('warning') }}
+            "<a href='https://doc.elabftw.net/how-to-update.html' class='button btn btn-primary text-white'>",
+            "</a><a href='" ~ ReleaseCheck.getChangelogLink ~ "' class='button btn btn-primary text-white'>",
+            "</a>")|msg('warning') }}
     {% endif %}
 
     {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
@@ -39,8 +39,7 @@
 <p>Docker image version: {{ elabimgVersion }}<br />
 MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
-<menu>
-    <ul>
+<ul id='menu'>
         <li class='tabhandle' id='tab1'>{{ 'Server'|trans }}</li>
         <li class='tabhandle' id='tab2'>{{ 'Teams'|trans }}</li>
         <li class='tabhandle' id='tab3'>{{ 'Users'|trans }}</li>
@@ -50,8 +49,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <li class='tabhandle' id='tab7'>{{ 'SAML'|trans }}</li>
         <li class='tabhandle' id='tab8'>{{ 'Privacy policy'|trans }}</li>
         <li class='tabhandle' id='tab9'>{{ 'External auth'|trans }}</li>
-    </ul>
-</menu>
+</ul>
 
 <!-- TAB 1 SERVER -->
 <div class='divhandle' id='tab1div'>
@@ -61,7 +59,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <hr>
       <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
       <hr>
-      <a href='make.php?what=report'><button class='button btn btn-primary'>{{ 'Generate report'|trans }}</button></a>
+      <a href='make.php?what=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
     </div>
 
     <div class='box'>
@@ -606,7 +604,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                 <input class='form-control col-md-4' type='text' id='sloBinding' name='sloBinding' />
 
                 <label for='x509_idp'>x509 Certificate</label>
-                <textarea class='form-control col-md-4' id='x509_idp' name='x509' required /></textarea>
+                <textarea class='form-control col-md-4' id='x509_idp' name='x509' required></textarea>
 
                 <label for='active'>Active</label>
                 <select class='form-control col-md-4' id='active' autocomplete='off' name='active'>

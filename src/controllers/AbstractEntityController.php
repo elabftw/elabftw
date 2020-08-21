@@ -192,6 +192,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'stepsArr' => $this->Entity->Steps->readAll(),
             'templatesArr' => $this->Templates->readAll(),
             'timestampInfo' => $this->Entity->getTimestampInfo(),
+            'uploadsArr' => $this->Entity->Uploads->readAll(),
         );
 
         // RELATED ITEMS AND EXPERIMENTS
@@ -241,6 +242,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'revNum' => $Revisions->readCount(),
             'stepsArr' => $this->Entity->Steps->readAll(),
             'templatesArr' => $this->Templates->readAll(),
+            'uploadsArr' => $this->Entity->Uploads->readAll(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
 

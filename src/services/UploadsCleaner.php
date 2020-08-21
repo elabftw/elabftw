@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi

@@ -28,13 +28,13 @@
             <div class='dropdown-divider'></div>
             <a href='ucp.php?tab=3' class='dropdown-item'>
               {{ 'Manage templates'|trans }}
-                </a>
+            </a>
           {% else %}
-              {% for category in categoryArr %}
+            {% for category in categoryArr %}
               <a href='?create=true&tpl={{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
                 {{ category.category }}
-                  </a>
-              {% endfor %}
+              </a>
+            {% endfor %}
           {% endif %}
         </div>
       </div>

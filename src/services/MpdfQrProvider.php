@@ -33,8 +33,8 @@ class MpdfQrProvider implements IQRCodeProvider
     /**
      * Constructor
      *
-     * @param array $background RGB background color. Default [255, 255, 255].
-     * @param array $color RGB foreground and border color. Default [0, 0, 0].
+     * @param array<int> $background RGB background color. Default [255, 255, 255].
+     * @param array<int> $color RGB foreground and border color. Default [0, 0, 0].
      * @param int $compression Compression level: from 0 (default, no compression) to 9.
      */
     public function __construct(array $background = array(255, 255, 255), array $color = array(0, 0, 0), int $compression = 0)

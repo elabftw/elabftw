@@ -39,7 +39,7 @@ class Mfa
      * Constructor
      *
      * @param Request $request
-     * @param Session $session
+     * @param Session<mixed> $session
      */
     public function __construct(Request $request, Session $session)
     {

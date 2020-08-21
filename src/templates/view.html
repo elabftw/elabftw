@@ -151,7 +151,7 @@
       {% set tagsValueArr = Entity.entityData.tags|split('|') %}
       {% for key, tag in tagsValueArr %}
           {# the key allows to get the id stored in tagsIdArr #}
-          <a class='tag' href='?mode=show&tags[]={{ tag|url_encode }}'>{{ tag|raw }}</a>
+          <a class='tag' href='?mode=show&tags%5B%5D={{ tag|url_encode }}'>{{ tag|raw }}</a>
       {% endfor %}
   {% endif %}
 
@@ -215,6 +215,11 @@
 
 
 {{ include('uploads.html') }}
+
+<!-- only show the json editor if there is at least one file with a .json extension -->
+{% if uploadsArr|filter(u => u.real_name|getExt == 'json') %}
+  {{ include('json-editor.html') }}
+{% endif %}
 
 {% if App.Session.get('auth') %}
     <section id='comment_container'>

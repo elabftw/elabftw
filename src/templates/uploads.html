@@ -1,6 +1,5 @@
 <!-- UPLOADED FILES -->
 <div id='filesdiv'>
-{% set uploadsArr = Entity.Uploads.readAll %}
 {% if uploadsArr %}
     <div class='box'>
         <i class='fas fa-paperclip mr-1 align-baseline'></i><h3 class='d-inline'>{% trans %}Attached file
@@ -77,7 +76,7 @@
                                   </ul>
                                 </div>
 
-                                <div class='row viewer_3Dmoljs'
+                                <div class='viewer_3Dmoljs'
                                   data-href='app/download.php?f={{ upload.long_name }}'
                                   data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
                                   data-backgroundcolor='0xffffff'
@@ -94,38 +93,38 @@
         {# if we are in view mode, we don't show the comment if it's the default text. This is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because you are in view mode #}
 
         {% if mode == 'edit' or upload.comment != 'Click to add a comment' %}
-            <i class='fas fa-comments'></i>
-            <p class='file-comment editable d-inline'
-                data-type='{{ upload.type }}'
-                data-itemid='{{ upload.item_id }}'
-                id='filecomment_{{ upload.id }}'>{{ upload.comment}}</p>
-            {% endif %}
+          <i class='fas fa-comments'></i>
+          <p class='file-comment editable d-inline'
+            data-type='{{ upload.type }}'
+            data-itemid='{{ upload.item_id }}'
+            id='filecomment_{{ upload.id }}'>{{ upload.comment}}</p>
+        {% endif %}
 
-            {% if mode == 'edit' and ext matches '/(json)$/i' and App.Users.userData.json_editor %}
-            <div class='jsonLoader clickable' data-type='{{ upload.type }}' data-link='{{ upload.long_name }}' data-id='{{ upload.item_id }}' data-uploadid='{{ upload.id }}'>
-                <i class='fas fa-pencil-alt mr-1'></i><p class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
-            </div>
-            {% endif %}
+        {% if ext matches '/(json)$/i' %}
+          <div class='jsonLoader clickable' data-type='{{ upload.type }}' data-link='{{ upload.long_name }}' data-id='{{ upload.item_id }}' data-uploadid='{{ upload.id }}'>
+            <i class='fas fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i><p class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
+          </div>
+        {% endif %}
 
-            <!-- INSERT IN TEXT in edit mode for images -->
-            {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-              <div class='inserter clickable' data-link='{{ upload.long_name }}'>
-                  <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Insert in text at cursor position'|trans }}</p>
-              </div>
-            {% endif %}
-            <!-- Annotate image -->
-            {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif)$/i' %}
-              <div class='clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
-                  <i class='fas fa-paint-brush mr-1'></i><p class='d-inline'>{{ 'Annotate this image'|trans }}</p>
-              </div>
-            {% endif %}
+        <!-- INSERT IN TEXT in edit mode for images -->
+        {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
+          <div class='inserter clickable' data-link='{{ upload.long_name }}'>
+            <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Insert in text at cursor position'|trans }}</p>
+          </div>
+        {% endif %}
+        <!-- Annotate image -->
+        {% if mode == 'edit' and ext matches '/(jpg|jpeg|png|gif)$/i' %}
+          <div class='clickable annotateImg' data-itemid='{{ upload.item_id }}' data-id='{{ upload.id }}' data-type='{{ upload.type }}' data-path='{{ upload.long_name }}'>
+            <i class='fas fa-paint-brush mr-1'></i><p class='d-inline'>{{ 'Annotate this image'|trans }}</p>
+          </div>
+        {% endif %}
 
-            {# SAVE AS IMAGE #}
-            {% if mode == 'edit' and ext matches '/(mol)$/i' %}
-            <div class='saveAsImage clickable' data-name='{{ upload.real_name }}'>
-                <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Save as image'|trans }}</p>
-            </div>
-            {% endif %}
+        {# SAVE AS IMAGE #}
+        {% if mode == 'edit' and ext matches '/(mol)$/i' %}
+        <div class='saveAsImage clickable' data-name='{{ upload.real_name }}'>
+          <i class='fas fa-image mr-1'></i><p class='d-inline'>{{ 'Save as image'|trans }}</p>
+        </div>
+        {% endif %}
 
         </div>
 

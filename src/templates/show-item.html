@@ -34,7 +34,7 @@
 
             <p class='item-info'>
               <!-- checkbox -->
-              <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' autocomplete='off' aria-label='Select' style='width:15px;vertical-align:-3px;' />
+              <input class='item-checkbox' type='checkbox' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:-3px;' />
               <!-- edit icon -->
               {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
                 <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
@@ -70,7 +70,7 @@
               {% if itemtagsArr|length > 0 %}
                 <span class='tags'><i class='fas fa-tags mr-1'></i>
                   {% for tag in itemtagsArr %}
-                    <a class='tag' href='{{ Entity.page }}.php?mode=show&tags[]={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                    <a class='tag' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                   {% endfor %}
                 </span>
               {% endif %}

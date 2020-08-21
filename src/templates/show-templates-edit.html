@@ -1,0 +1,59 @@
+<div id='getSelectedTemplate' data-id=''></div>
+{% for template in templatesArr %}
+  <div class='subdivhandle' id='subtab_{{ template.id }}div'>
+    <!-- TAGS -->
+    <i class='fas fa-tags'></i>
+    <label>{{ 'Tags'|trans }}</label>
+    <div class='tags'>
+      <span id='tags_div_{{ template.id }}'>
+        <!--  build the tag array -->
+        {% if template.tags|length > 0 %}
+          {% set tagsIdArr = template.tags_id|split(',') %}
+          {% set tagsValueArr = template.tags|split('|') %}
+          {% for key, tag in tagsValueArr %}
+            {# the key allows to get the id stored in tagsIdArr #}
+            <a class='tag m-1 tag-delete tagUnreference clickable' data-id='{{ template.id }}' data-tagid='{{ tagsIdArr[key] }}'>
+                {{ tag|raw }}
+            </a>
+          {% endfor %}
+        {% endif %}
+      </span>
+      <input type='text' style='width:auto' class='createTagInput ml-1' id='createTagInput_{{ template.id }}' data-id='{{ template.id }}' placeholder='{{ 'Add a tag'|trans }}' />
+    </div>
+
+    <!-- MORE OPTIONS DROPDOWN MENU (···) -->
+    <div class='dropdown'>
+      <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
+      <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
+        <!-- MANAGE PERMISSIONS -->
+        <a class='dropdown-item modalToggle' data-modal='permModal' href='#' data-read='{{ template.canread }}' data-write='{{ template.canwrite }}'>
+          <i class='fas fa-share-alt'></i> {{ 'Manage Permissions'|trans }}
+        </a>
+        <!-- DOWNLOAD -->
+        <a href='#' class='dropdown-item saveToFile' data-name='{{ template.name }}' data-id='e{{ template.id }}'>
+          <i class='fas fa-download'></i> {{ 'Download template'|trans }}
+        </a>
+        <!-- DESTROY -->
+        <div class='dropdown-divider'></div>
+        <a href='#' class='dropdown-item destroyTemplate hover-danger' data-id='{{ template.id }}'>
+          <i class='fas fa-trash-alt'></i> {{ 'Destroy template'|trans }}
+        </a>
+      </div>
+    </div>
+
+    <form action='app/controllers/UcpController.php' method='post'>
+      {{ App.Csrf.getHiddenInput|raw }}
+      <input type='hidden' name='tpl_form' />
+      <input type='hidden' name='tpl_id[]' value='{{ template.id }}' />
+      <label for='tplName_{{ template.id }}'>{{ 'Name'|trans }}</label>
+      <input id='tplName_{{ template.id }}' name='tpl_name[]' class='form-control' value='{{ template.name|raw }}' />
+      {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+      <label for='e{{ template.id }}'>{{ 'Template content'|trans }}</label>
+      <textarea id='e{{ template.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ template.body }}</textarea><br />
+      <div class='text-center'>
+        <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </form>
+    {% include('steps-links-edit.html') %}
+  </div>
+{% endfor %}

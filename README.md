@@ -85,3 +85,10 @@ This project is backed by [Institut Curie](https://science.curie.fr/) and [Delta
 </p>
 
 Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)
+
+# Related projects
+
+These projects were created by users of eLabFTW, check them out if interested!
+
+* [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects
+* [shabihsherjeel/nionswift_elabftw_plugin](https://github.com/shabihsherjeel/nionswift_elabftw_plugin): python plugin for [Nionswift](https://github.com/nion-software/nionswift)

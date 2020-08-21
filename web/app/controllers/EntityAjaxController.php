@@ -23,6 +23,7 @@ use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
 use Exception;
+use function mb_strlen;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -283,6 +284,19 @@ try {
             'res' => true,
             'msg' => _('File deleted successfully') . $msg,
         ));
+    }
+
+    // CREATE TEMPLATE
+    if ($Request->request->has('create') && $Entity instanceof Templates) {
+        // template name must be 3 chars at least
+        if (mb_strlen($Request->request->get('name')) < 3) {
+            throw new ImproperActionException(_('The template name must be 3 characters long.'));
+        }
+
+        $name = $Request->request->filter('name', null, FILTER_SANITIZE_STRING);
+        $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
+
+        $Entity->createNew($name, $body);
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(

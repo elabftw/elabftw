@@ -68,10 +68,10 @@
 
 <section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='dropdown'>
-    <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' /></i>
+    <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
     <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
-      <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}' /></i> {{ 'Manage Permissions'|trans }}</a>
+      <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
       <!-- SWITCH EDITOR -->
       <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->
@@ -80,28 +80,28 @@
       {% endif %}
 
       <div class='dropdown-divider'></div>
-      <a class='dropdown-item entityDestroy hover-danger' href='#'><i class='fas fa-trash-alt' title='{{ 'Delete'|trans }}' /></i> {{ 'Delete'|trans }}</a>
+      <a class='dropdown-item entityDestroy hover-danger' href='#'><i class='fas fa-trash-alt' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
     </div>
   </div>
 
     <!-- TAGS -->
     <i class='fas fa-tags mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
     <div class='tags'>
-        <span id='tags_div'>
-            <!--  build the tag array -->
-            {% if Entity.entityData.tags|length > 0 %}
-                {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
-                {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-                {% for tag in tagsValueArr %}
-                    <span class='tag m-1 clickable'>
-                        <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}'>
-                            {{ tag|raw }}
-                        </a>
-                    </span>
-                {% endfor %}
-            {% endif %}
-        </span>
-        <input type='text' id='createTagInput' class='mb-2' placeholder='{{ 'Add a tag'|trans }}' />
+      <span id='tags_div_{{ Entity.id }}'>
+        <!--  build the tag array -->
+        {% if Entity.entityData.tags|length > 0 %}
+          {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+          {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+          {% for tag in tagsValueArr %}
+            <span class='tag m-1 clickable'>
+              <a class='tag-delete tagUnreference' data-tagid='{{ tagsIdArr[loop.index0] }}' data-id='{{ Entity.id }}'>
+                {{ tag|raw }}
+              </a>
+            </span>
+          {% endfor %}
+        {% endif %}
+      </span>
+      <input type='text' id='createTagInput' data-id='{{ Entity.id }}' class='createTagInput mb-2' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
 
     <!--  MAIN FORM -->
@@ -149,7 +149,7 @@
             </div>
             <!-- TITLE -->
             <h4>{{ 'Title'|trans }}</h4>
-            <input id='title_input' type='text' name='title' rows='1' value='{{ Entity.entityData.title|raw }}' required />
+            <input id='title_input' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
 
             <!-- BODY -->
             {% if Entity.type == 'experiments' %}
@@ -182,17 +182,7 @@
 {{ include('uploads.html') }}
 
 {% if Entity.Users.userData.json_editor %}
-  <!-- JSON EDITOR -->
-  <section class='box' id='json-editor'>
-    <i class='fas fa-list mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'JSON Editor'|trans }}</h3>
-    <button class='button btn btn-primary plusMinusButton jsonEditorPlusMinusButton' data-toggle='collapse' data-target='#jsonEditorDiv' aria-expanded='false' aria-controls='jsonEditorDiv'>+</button>
-    <div id='jsonEditorDiv' class='collapse mt-2'>
-      <div id='jsonEditorContainer'></div>
-      <div class='submitButtonDiv'>
-        <button type='submit' class='button btn btn-primary jsonSaver'>{{ 'Save'|trans }}</button>
-      </div>
-    </div>
-  </section>
+  {{ include('json-editor.html') }}
 {% endif %}
 
 <!-- DOODLE -->
@@ -202,7 +192,7 @@
   <div id='doodleDiv' class='collapse mt-2'>
     <div class='row'>
       <div>
-        <canvas class='doodle' id='doodleCanvas' width='600px' height='600px'></canvas>
+        <canvas class='doodle' id='doodleCanvas' width='600' height='600'></canvas>
       </div>
 
       <div class='col-xs-12 col-sm-6 col-md-4 col-lg-4' id='doodle_controls'>
@@ -250,8 +240,5 @@
     data-create='{{ Entity.Users.userData.sc_create }}'
     data-submit='{{ Entity.Users.userData.sc_submit }}'>
 </div>
-
-<!-- Load the JSONEditor CSS -->
-<link href='app/css/jsoneditor/jsoneditor.min.css' rel='stylesheet' type='text/css'>
 
 {% endblock body %}

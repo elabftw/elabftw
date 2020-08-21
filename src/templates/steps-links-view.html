@@ -7,10 +7,12 @@
 {% endif %}
 <!-- STEPS -->
 {% if stepsArr %}
+  <div class='mt-2'>
+    <h4 class='d-inline'>{{ 'Steps'|trans }}</h4>
     <ul class='list-group mt-2' id='steps_div_{{ Entity_id }}' >
         {% for step in stepsArr %}
         <li class='list-group-item {{ step.finished ? 'finished' }}'>
-          <input type='checkbox' {{ step.finished ? 'checked' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' />{{ step.body|raw }}
+          <input type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.entityData.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' />{{ step.body|raw }}
     {% if step.finished %}
     <span class='mr-2 text-muted'>
         {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
@@ -19,6 +21,7 @@
         </li>
         {% endfor %}
     </ul>
+  </div>
 {% endif %}
 
 <!-- LINKS -->

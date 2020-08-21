@@ -36,11 +36,20 @@ $(document).ready(function() {
   relativeMoment();
   displayMolFiles();
 
+  // SHOW/HIDE THE DOODLE CANVAS/CHEM EDITOR/JSON EDITOR
+  $(document).on('click', '.plusMinusButton',  function() {
+    if ($(this).html() === '+') {
+      $(this).html('-').addClass('btn-neutral').removeClass('btn-primary');
+    } else {
+      $(this).html('+').removeClass('btn-neutral').addClass('btn-primary');
+    }
+  });
+
   // SHOW/HIDE PASSWORDS
   $('.togglePassword').on('click', function(event) {
     event.preventDefault();
     $(this).find('[data-fa-i2svg]').toggleClass('fa-eye fa-eye-slash');
-    const input = $($(this).attr('toggle'));
+    const input = $($(this).data('toggle'));
     if (input.attr('type') === 'password') {
       input.attr('type', 'text');
     } else {

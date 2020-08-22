@@ -70,6 +70,13 @@ $(document).ready(function() {
       currentFileItemID = $(this).data('uploadid');
     });
 
+    // Clear the JSONEditor and unload the file
+    $(document).on('click', '.jsonClear', function() {
+      currentFileItemID = undefined;
+      editor.set({});
+      $('#jsonEditorTitle').html('File was unloaded.');
+    });
+
     // The save function is now defined separately
     const saveJsonFile = function(){
       if (typeof currentFileItemID === 'undefined') {

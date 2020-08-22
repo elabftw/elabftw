@@ -237,7 +237,7 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('File uploaded successfully'),
-            'uploadId' => $uploadId
+            'uploadId' => $uploadId,
         ));
     }
 

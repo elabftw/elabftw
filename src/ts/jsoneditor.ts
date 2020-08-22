@@ -47,7 +47,7 @@ $(document).ready(function() {
     // the loader action appears under .json uploaded files
     $(document).on('click', '.jsonLoader', function() {
       // add the filename as a title
-      $("#json-editor-title").html('Filename: ' + $(this).data('name'));
+      $('#json-editor-title').html('Filename: ' + $(this).data('name'));
       $.get('app/download.php', {
         f: $(this).data('link')
       }).done(function(data) {
@@ -81,7 +81,7 @@ $(document).ready(function() {
           return;
         }
         // add the new name for the file as a title
-        $("#json-editor-title").html('Filename: ' + realName + '.json');
+        $('#json-editor-title').html('Filename: ' + realName + '.json');
         const id = $('#main_form').find('input[name="id"]').attr('value');
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
@@ -92,9 +92,9 @@ $(document).ready(function() {
           string: JSON.stringify(editor.get())
         }).done(function(json) {
           $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv', function() {
-               // a bit of a hack to find the details of the new file JSON editor just uploaded
-               currentFileUploadID = $("a:contains('"+realName+".json')").last().parent().children('.jsonLoader').data('id');
-               currentFileItemID = $("a:contains('"+realName+".json')").last().parent().children('.jsonLoader').data('uploadid');
+            // a bit of a hack to find the details of the new file JSON editor just uploaded
+            currentFileUploadID = $('a:contains('+realName+'.json)').last().parent().children('.jsonLoader').data('id');
+            currentFileItemID = $('a:contains('+realName+'.json)').last().parent().children('.jsonLoader').data('uploadid');
           });
           notif(json);
         });
@@ -118,7 +118,7 @@ $(document).ready(function() {
           }
         });
       }
-    }
+    };
 
     // Add support for 'Save as' by resetting the currentFileUploadID and currentFileItemID to undefined
     $(document).on('click', '.jsonSaveAs', function () {

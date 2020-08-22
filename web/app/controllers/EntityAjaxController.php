@@ -229,11 +229,16 @@ try {
         if ($App->Session->has('anon')) {
             throw new IllegalActionException('Anonymous user tried to access database controller.');
         }
-        $Entity->Uploads->createFromString(
+        $uploadId = $Entity->Uploads->createFromString(
             $Request->request->get('fileType'),
             $Request->request->get('realName'),
             $Request->request->get('string')
         );
+        $Response->setData(array(
+            'res' => true,
+            'msg' => _('File uploaded successfully'),
+            'uploadId' => $uploadId
+        ));
     }
 
     // DESTROY ENTITY

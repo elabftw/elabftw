@@ -41,13 +41,12 @@ $(document).ready(function() {
       return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
     };
 
-    let currentFileUploadID: string;
     let currentFileItemID: string;
 
     // the loader action appears under .json uploaded files
     $(document).on('click', '.jsonLoader', function() {
       // add the filename as a title
-      $('#json-editor-title').html('Filename: ' + $(this).data('name'));
+      $('#jsonEditorTitle').html('Filename: ' + $(this).data('name'));
       $.get('app/download.php', {
         f: $(this).data('link')
       }).done(function(data) {
@@ -68,34 +67,29 @@ $(document).ready(function() {
           }
         }
       });
-      currentFileUploadID = $(this).data('id');
       currentFileItemID = $(this).data('uploadid');
     });
 
     // The save function is now defined separately
     const saveJsonFile = function(){
-      if (typeof currentFileUploadID === 'undefined') {
+      if (typeof currentFileItemID === 'undefined') {
         // we are creating a new file
         const realName = prompt('Enter name of the file');
         if (realName == null) {
           return;
         }
         // add the new name for the file as a title
-        $('#json-editor-title').html('Filename: ' + realName + '.json');
-        const id = $('#main_form').find('input[name="id"]').attr('value');
+        $('#jsonEditorTitle').html('Filename: ' + realName + '.json');
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
           type: 'experiments',
-          id: id,
+          id: $('#info').data('id'),
           realName: realName,
           fileType: 'json',
           string: JSON.stringify(editor.get())
         }).done(function(json) {
-          $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv', function() {
-            // a bit of a hack to find the details of the new file JSON editor just uploaded
-            currentFileUploadID = $('a:contains('+realName+'.json)').last().parent().children('.jsonLoader').data('id');
-            currentFileItemID = $('a:contains('+realName+'.json)').last().parent().children('.jsonLoader').data('uploadid');
-          });
+          $('#filesdiv').load('experiments.php?mode=edit&id=' + $('#info').data('id') + ' #filesdiv');
+          currentFileItemID = String(json.uploadId);
           notif(json);
         });
       } else {
@@ -104,7 +98,7 @@ $(document).ready(function() {
         const blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
         formData.append('replace', 'true');
         formData.append('upload_id', currentFileItemID);
-        formData.append('id', currentFileUploadID);
+        formData.append('id', $('#info').data('id'));
         formData.append('type', 'experiments');
         formData.append('file', blob);
 
@@ -120,9 +114,9 @@ $(document).ready(function() {
       }
     };
 
-    // Add support for 'Save as' by resetting the currentFileUploadID and currentFileItemID to undefined
+    // Add support for 'Save as' by resetting the currentFileItemID to undefined
     $(document).on('click', '.jsonSaveAs', function () {
-      currentFileUploadID = currentFileItemID = undefined;
+      currentFileItemID = undefined;
       saveJsonFile();
     });
 

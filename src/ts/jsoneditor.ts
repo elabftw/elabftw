@@ -46,16 +46,16 @@ $(document).ready(function() {
 
     // the loader action appears under .json uploaded files
     $(document).on('click', '.jsonLoader', function() {
+      // add the filename as a title
+      $("#json-editor-title").html('Filename: ' + $(this).data('name'));
       $.get('app/download.php', {
         f: $(this).data('link')
       }).done(function(data) {
         try {
           editor.set(JSON.parse(data));
-          $('#jsonEditorDiv').collapse('toggle');
+          $('#jsonEditorDiv').collapse('show');
           if ($('.jsonEditorPlusMinusButton').html() === '+') {
             $('.jsonEditorPlusMinusButton').html('-').addClass('btn-neutral').removeClass('btn-primary');
-          } else {
-            $('.jsonEditorPlusMinusButton').html('+').removeClass('btn-neutral').addClass('btn-primary');
           }
         } catch(e) {
           // If it is just a parsing error, then we let the user edit the file.
@@ -72,13 +72,16 @@ $(document).ready(function() {
       currentFileItemID = $(this).data('uploadid');
     });
 
-    $(document).on('click', '.jsonSaver', function(){
+    // The save function is now defined separately
+    const saveJsonFile = function(){
       if (typeof currentFileUploadID === 'undefined') {
         // we are creating a new file
         const realName = prompt('Enter name of the file');
         if (realName == null) {
           return;
         }
+        // add the new name for the file as a title
+        $("#json-editor-title").html('Filename: ' + realName + '.json');
         const id = $('#main_form').find('input[name="id"]').attr('value');
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
@@ -88,7 +91,11 @@ $(document).ready(function() {
           fileType: 'json',
           string: JSON.stringify(editor.get())
         }).done(function(json) {
-          $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv');
+          $('#filesdiv').load('experiments.php?mode=edit&id=' + id + ' #filesdiv', function() {
+               // a bit of a hack to find the details of the new file JSON editor just uploaded
+               currentFileUploadID = $("a:contains('"+realName+".json')").last().parent().children('.jsonLoader').data('id');
+               currentFileItemID = $("a:contains('"+realName+".json')").last().parent().children('.jsonLoader').data('uploadid');
+          });
           notif(json);
         });
       } else {
@@ -111,6 +118,14 @@ $(document).ready(function() {
           }
         });
       }
+    }
+
+    // Add support for 'Save as' by resetting the currentFileUploadID and currentFileItemID to undefined
+    $(document).on('click', '.jsonSaveAs', function () {
+      currentFileUploadID = currentFileItemID = undefined;
+      saveJsonFile();
     });
+
+    $(document).on('click', '.jsonSaver', saveJsonFile);
   }
 });

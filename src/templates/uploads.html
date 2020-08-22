@@ -101,7 +101,7 @@
         {% endif %}
 
         {% if ext matches '/(json)$/i' %}
-          <div class='jsonLoader clickable' data-type='{{ upload.type }}' data-link='{{ upload.long_name }}' data-id='{{ upload.item_id }}' data-uploadid='{{ upload.id }}'>
+          <div class='jsonLoader clickable' data-type='{{ upload.type }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-id='{{ upload.item_id }}' data-uploadid='{{ upload.id }}'>
             <i class='fas fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i><p class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
           </div>
         {% endif %}

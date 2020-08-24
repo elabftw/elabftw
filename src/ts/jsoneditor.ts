@@ -43,6 +43,7 @@ $(document).ready(function() {
     };
 
     let currentFileItemID: string;
+    let itemID: string;
 
     // the loader action appears under .json uploaded files
     $(document).on('click', '.jsonLoader', function() {
@@ -70,6 +71,7 @@ $(document).ready(function() {
         $("#jsonEditorContainer")[0].scrollIntoView();
       });
       currentFileItemID = $(this).data('uploadid');
+      itemID = $(this).data('id');
     });
 
     // Clear the JSONEditor and unload the file
@@ -92,12 +94,12 @@ $(document).ready(function() {
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
           type: 'experiments',
-          id: $('#info').data('id'),
+          id: itemID,
           realName: realName,
           fileType: 'json',
           string: JSON.stringify(editor.get())
         }).done(function(json) {
-          $('#filesdiv').load('experiments.php?mode=edit&id=' + $('#info').data('id') + ' #filesdiv');
+          $('#filesdiv').load('experiments.php?mode=edit&id=' + itemID + ' #filesdiv');
           currentFileItemID = String(json.uploadId);
           notif(json);
         });
@@ -107,7 +109,7 @@ $(document).ready(function() {
         const blob = new Blob([JSON.stringify(editor.get())], { type: 'application/json' });
         formData.append('replace', 'true');
         formData.append('upload_id', currentFileItemID);
-        formData.append('id', $('#info').data('id'));
+        formData.append('id', itemID);
         formData.append('type', 'experiments');
         formData.append('file', blob);
 

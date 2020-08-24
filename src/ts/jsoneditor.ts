@@ -68,7 +68,7 @@ $(document).ready(function() {
             notif({'res': false, 'msg':'JSON Editor: ' + e.message});
           }
         }
-        $("#jsonEditorContainer")[0].scrollIntoView();
+        $('#jsonEditorContainer')[0].scrollIntoView();
       });
       currentFileItemID = $(this).data('uploadid');
       itemID = $(this).data('id');

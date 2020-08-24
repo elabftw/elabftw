@@ -85,9 +85,13 @@ $(document).ready(function() {
     const saveJsonFile = function(){
       if (typeof currentFileItemID === 'undefined') {
         // we are creating a new file
-        const realName = prompt('Enter name of the file');
+        let realName = prompt('Enter name of the file');
         if (realName == null) {
           return;
+        }
+        // strip the filename of the .json extension from the name if available
+        if (realName.slice(-5).includes('.json')) {
+          realName = realName.slice(0, -5);
         }
         // add the new name for the file as a title
         $('#jsonEditorTitle').html(i18next.t('json-filename')+': ' + realName + '.json');

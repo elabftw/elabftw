@@ -11,6 +11,7 @@ const t = {
     "step-delete-warning": "Hapus langkah ini?",
     "tag-delete-warning": "Hapus label ini?",
     "upload-file-comment": "File komentar",
+    "json-filename": "Nama file",
   }
 };
 

@@ -11,6 +11,7 @@ const t = {
     "step-delete-warning": "このステップを削除しますか？",
     "tag-delete-warning": "このタグを削除しますか？",
     "upload-file-comment": "ファイルコメント",
+    "json-filename": "ファイル名",
   }
 };
 

@@ -34,3 +34,6 @@ _('Delete this tag?');
 /** @psalm-suppress UnusedFunctionCall */
 // upload-file-comment
 _('File comment');
+/** @psalm-suppress UnusedFunctionCall */
+// json-filename
+_('Filename');

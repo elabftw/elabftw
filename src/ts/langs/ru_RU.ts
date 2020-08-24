@@ -11,6 +11,7 @@ const t = {
     "step-delete-warning": "Удалить этот этап?",
     "tag-delete-warning": "Удалить этот тег?",
     "upload-file-comment": "Файловый комментарий",
+    "json-filename": "имя файла",
   }
 };
 

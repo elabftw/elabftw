@@ -11,6 +11,7 @@ const t = {
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "upload-file-comment": "Komentar datoteke",
+    "json-filename": "Ime datoteke",
   }
 };
 

@@ -11,6 +11,7 @@ const t = {
     "step-delete-warning": "删除此步骤？",
     "tag-delete-warning": "删除这个标签？",
     "upload-file-comment": "档案评论",
+    "json-filename": "文档名称",
   }
 };
 

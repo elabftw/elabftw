@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "upload-file-comment": "Komentar datoteke",
     "filename": "Ime datoteke",
+    "request-filename": "Vnesite ime datoteke",
   }
 };
 

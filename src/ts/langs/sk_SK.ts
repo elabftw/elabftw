@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",
     "filename": "Názov súboru",
+    "request-filename": "Zadajte názov súboru",
   }
 };
 

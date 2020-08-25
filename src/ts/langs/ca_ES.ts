@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "upload-file-comment": "Comentari d’arxiu",
     "filename": "Nom de l'arxiu",
+    "request-filename": "Introduïu el nom del fitxer",
   }
 };
 

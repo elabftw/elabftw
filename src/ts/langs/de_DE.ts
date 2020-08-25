@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Schlagwort löschen?",
     "upload-file-comment": "Dateikommentar",
     "filename": "Dateiname",
+    "request-filename": "Geben Sie den Namen der Datei ein",
   }
 };
 

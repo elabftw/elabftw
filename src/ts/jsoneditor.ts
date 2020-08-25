@@ -85,7 +85,7 @@ $(document).ready(function() {
     const saveJsonFile = function(){
       if (typeof currentFileItemID === 'undefined') {
         // we are creating a new file
-        let realName = prompt('Enter name of the file');
+        let realName = prompt(i18next.t('request-filename'));
         if (realName == null) {
           return;
         }

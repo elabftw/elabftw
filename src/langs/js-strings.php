@@ -29,6 +29,9 @@ _('Delete this link?');
 // please-wait
 _('Please wait…');
 /** @psalm-suppress UnusedFunctionCall */
+// request-filename
+_('Enter name of the file');
+/** @psalm-suppress UnusedFunctionCall */
 // step-delete-warning
 _('Delete this step?');
 /** @psalm-suppress UnusedFunctionCall */

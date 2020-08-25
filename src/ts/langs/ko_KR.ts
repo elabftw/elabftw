@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "upload-file-comment": "파일 코멘트",
     "filename": "파일 이름",
+    "request-filename": "파일 이름 입력",
   }
 };
 

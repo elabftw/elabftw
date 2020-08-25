@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "删除这个标签？",
     "upload-file-comment": "档案评论",
     "filename": "文档名称",
+    "request-filename": "输入文件名",
   }
 };
 

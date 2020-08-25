@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Dit label verwijderen?",
     "upload-file-comment": "Bestandscommentaar",
     "filename": "Bestandsnaam",
+    "request-filename": "Voer de naam van het bestand in",
   },
 };
 

@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Hapus label ini?",
     "upload-file-comment": "File komentar",
     "filename": "Nama file",
+    "request-filename": "Masukkan nama file",
   }
 };
 

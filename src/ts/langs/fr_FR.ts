@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "Supprimer ce tag ?",
     "upload-file-comment": "Commentaire du fichier",
     "filename": "Nom de fichier",
+    "request-filename": "Entrez le nom du fichier",
   }
 };
 

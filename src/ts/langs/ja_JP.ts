@@ -12,6 +12,7 @@ const t = {
     "tag-delete-warning": "このタグを削除しますか？",
     "upload-file-comment": "ファイルコメント",
     "filename": "ファイル名",
+    "request-filename": "ファイルの名前を入力してください",
   }
 };
 

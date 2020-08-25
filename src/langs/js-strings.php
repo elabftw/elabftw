@@ -17,6 +17,9 @@ _('Untitled');
 // entity-delete-warning
 _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?');
 /** @psalm-suppress UnusedFunctionCall */
+// filename
+_('Filename');
+/** @psalm-suppress UnusedFunctionCall */
 // generic-delete-warning
 _('Delete this?');
 /** @psalm-suppress UnusedFunctionCall */
@@ -34,6 +37,3 @@ _('Delete this tag?');
 /** @psalm-suppress UnusedFunctionCall */
 // upload-file-comment
 _('File comment');
-/** @psalm-suppress UnusedFunctionCall */
-// filename
-_('Filename');

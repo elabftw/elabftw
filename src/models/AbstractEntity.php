@@ -167,7 +167,7 @@ abstract class AbstractEntity
         }
 
         // check if the experiment is timestamped. Disallow unlock in this case.
-        if ($locked === 1 && $this->entityData['timestamped'] && $this instanceof Experiments) {
+        if ($locked === 1 && $this instanceof Experiments && $this->entityData['timestamped']) {
             throw new ImproperActionException(_('You cannot unlock or edit in any way a timestamped experiment.'));
         }
 

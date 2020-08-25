@@ -11,7 +11,7 @@ const t = {
     "step-delete-warning": "Usunąć ten krok?",
     "tag-delete-warning": "Usunąć ten tag?",
     "upload-file-comment": "Komentarz do pliku",
-    "json-filename": "Nazwa pliku",
+    "filename": "Nazwa pliku",
   }
 };
 

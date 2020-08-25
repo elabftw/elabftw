@@ -11,7 +11,7 @@ const t = {
     "step-delete-warning": "Voleu eliminar aquest pas?",
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "upload-file-comment": "Comentari d’arxiu",
-    "json-filename": "Nom de l'arxiu",
+    "filename": "Nom de l'arxiu",
   }
 };
 

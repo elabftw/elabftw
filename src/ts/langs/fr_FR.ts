@@ -10,7 +10,8 @@ const t = {
     "please-wait": "Veuillez patienter…",
     "step-delete-warning": "Supprimer cette étape ?",
     "tag-delete-warning": "Supprimer ce tag ?",
-    "upload-file-comment": "Nom de fichier",
+    "upload-file-comment": "Commentaire du fichier",
+    "filename": "Nom de fichier",
   }
 };
 

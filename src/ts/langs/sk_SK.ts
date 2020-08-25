@@ -11,7 +11,7 @@ const t = {
     "step-delete-warning": "Odstrániť tento krok?",
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",
-    "json-filename": "Názov súboru",
+    "filename": "Názov súboru",
   }
 };
 

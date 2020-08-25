@@ -48,7 +48,7 @@ $(document).ready(function() {
     // the loader action appears under .json uploaded files
     $(document).on('click', '.jsonLoader', function() {
       // add the filename as a title
-      $('#jsonEditorTitle').html(i18next.t('json-filename')+': ' + $(this).data('name'));
+      $('#jsonEditorTitle').html(i18next.t('filename') + ': ' + $(this).data('name'));
       $.get('app/download.php', {
         f: $(this).data('link')
       }).done(function(data) {
@@ -94,7 +94,7 @@ $(document).ready(function() {
           realName = realName.slice(0, -5);
         }
         // add the new name for the file as a title
-        $('#jsonEditorTitle').html(i18next.t('json-filename')+': ' + realName + '.json');
+        $('#jsonEditorTitle').html(i18next.t('filename') + ': ' + realName + '.json');
         $.post('app/controllers/EntityAjaxController.php', {
           addFromString: true,
           type: 'experiments',

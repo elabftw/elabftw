@@ -11,7 +11,7 @@ const t = {
     "step-delete-warning": "Cancellare questo passaggio?",
     "tag-delete-warning": "Si vuol eliminare questo tag?",
     "upload-file-comment": "Commento sul file",
-    "json-filename": "Nome del file",
+    "filename": "Nome del file",
   }
 };
 

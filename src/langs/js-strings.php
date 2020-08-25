@@ -35,5 +35,5 @@ _('Delete this tag?');
 // upload-file-comment
 _('File comment');
 /** @psalm-suppress UnusedFunctionCall */
-// json-filename
+// filename
 _('Filename');

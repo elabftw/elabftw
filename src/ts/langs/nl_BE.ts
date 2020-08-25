@@ -11,7 +11,7 @@ const t = {
     "step-delete-warning": "Deze stap verwijderen?",
     "tag-delete-warning": "Dit label verwijderen?",
     "upload-file-comment": "Bestandscommentaar",
-    "json-filename": "Bestandsnaam",
+    "filename": "Bestandsnaam",
   },
 };
 

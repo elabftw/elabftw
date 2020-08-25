@@ -17,6 +17,9 @@ _('Untitled');
 // entity-delete-warning
 _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?');
 /** @psalm-suppress UnusedFunctionCall */
+// filename
+_('Filename');
+/** @psalm-suppress UnusedFunctionCall */
 // generic-delete-warning
 _('Delete this?');
 /** @psalm-suppress UnusedFunctionCall */
@@ -25,6 +28,9 @@ _('Delete this link?');
 /** @psalm-suppress UnusedFunctionCall */
 // please-wait
 _('Please wait…');
+/** @psalm-suppress UnusedFunctionCall */
+// request-filename
+_('Enter name of the file');
 /** @psalm-suppress UnusedFunctionCall */
 // step-delete-warning
 _('Delete this step?');

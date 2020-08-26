@@ -90,7 +90,13 @@ try {
 
     // GET LINK LIST
     if ($Request->query->has('term') && !$Request->query->has('mention')) {
-        $ListBuilder = new ListBuilder(new Database($App->Users));
+        // bind autocomplete targets the experiments
+        if ($Request->query->get('source') === 'experiments') {
+            $Entity = new Experiments($App->Users);
+        } else {
+            $Entity = new Database($App->Users);
+        }
+        $ListBuilder = new ListBuilder($Entity);
         $Response->setData($ListBuilder->getAutocomplete($Request->query->get('term')));
     }
 

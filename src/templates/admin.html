@@ -350,11 +350,11 @@
       <label for='target_zip'>{{ '1. Select where to import:'|trans }}</label>
       <select class='form-control col-md-4' id='target_zip' autocomplete='off' name='target'>
         <option selected disabled>-------</option>
-        <option disabled>Import in database</option>
+        <option disabled>{{ 'Import in database'|trans }}</option>
         {% for itemsType in itemsTypesArr %}
           <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
         {% endfor %}
-        <option disabled>Import in experiments</option>
+        <option disabled>{{ 'Import in experiments'|trans }}</option>
         {% for user in allTeamUsersArr %}
           <option value='{{ user.userid }}'>{{ user.fullname|raw }}</option>
         {% endfor %}

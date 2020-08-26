@@ -242,9 +242,7 @@ class Templates extends AbstractEntity
         return $this->readInclusive();
     }
 
-    /*
-     * Read all the templates in the experiment_templates table including the currentuser
-     */
+    // Read all the templates in the experiment_templates table including the currentuser
     public function readInclusive(): array
     {
         $sql = "SELECT DISTINCT experiments_templates.*,

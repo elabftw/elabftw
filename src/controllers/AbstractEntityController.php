@@ -149,7 +149,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchType' => $isSearchPage ? 'something' : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             'tagsArrForSelect' => $tagsArrForSelect,
-            'templatesArr' => $this->Templates->readInclusive(),
+            'templatesArr' => $this->Templates->readForUser(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );
         $Response = new Response();

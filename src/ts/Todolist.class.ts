@@ -18,6 +18,7 @@ export default class Todolist {
   create(e): void {
     e.preventDefault();
     const body = $('#todo').val();
+    const that = this;
     if (body !== '') {
       $.post(this.controller, {
         create: true,
@@ -25,7 +26,7 @@ export default class Todolist {
       }).done(function(json) {
         if (json.res) {
           // reload the todolist
-          this.getTodoItems();
+          that.getTodoItems();
           // and clear the input
           $('#todo').val('');
         } else {

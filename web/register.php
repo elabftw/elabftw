@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * register.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -26,6 +27,8 @@ $App->pageTitle = _('Register');
 $Response = new Response();
 $Response->prepare($Request);
 
+$template = 'error.html';
+$renderArr = array();
 try {
     // Check if we're logged in
     if ($Session->has('auth') || $Session->has('anon')) {
@@ -41,8 +44,7 @@ try {
         throw new ImproperActionException(_('No local account creation is allowed!'));
     }
 
-    $Teams = new Teams($App->Users);
-    $teamsArr = $Teams->readAll();
+    $teamsArr = (new Teams($App->Users))->readAll();
 
     $template = 'register.html';
     $renderArr = array(
@@ -51,16 +53,11 @@ try {
         'hideTitle' => true,
     );
 } catch (ImproperActionException $e) {
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
+    $renderArr['error'] = $e->getMessage();
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array('Exception' => $e));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
+    $renderArr['error'] = Tools::error();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

@@ -5,22 +5,28 @@
 
 {% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' %}
   <link rel='stylesheet' href='app/css/bootstrap-markdown.min.css' type='text/css'>
-  <script src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
 {% endif %}
 
-<!-- BACK TO LINK -->
-{% if App.Session.has('lastquery') %}
-  {% set lastquery = App.Session.get('lastquery')|qFilter %}
-{% else %}
-  {% set lastquery = 'mode=show' %}
-{% endif %}
+<div class='row'>
+  <div class='col-md-10'>
+    <!-- BACK TO LINK -->
+    {% if App.Session.has('lastquery') %}
+      {% set lastquery = App.Session.get('lastquery')|qFilter %}
+    {% else %}
+      {% set lastquery = 'mode=show' %}
+    {% endif %}
 
-<a href='?{{ lastquery }}'>
-  <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'Back to listing'|trans }}
-</a>
-{% block backtoview %}{% endblock %}
+    <a href='?{{ lastquery }}'>
+      <i class='fas fa-chevron-circle-left mr-1 link-like'></i>{{ 'Back to listing'|trans }}
+    </a>
+    {% block backtoview %}{% endblock %}
+  </div>
+  {% block createnew %}{% endblock %}
+</div>
 
 <!-- show message if we are not owner -->
 {% if Entity.entityData.userid != Entity.Users.userData.userid and Entity.type == 'experiments' %}
   {{ 'Experiment of %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
 {% endif %}
+
+{% block createmodal %}{% endblock %}

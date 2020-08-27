@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Status;
 
@@ -54,6 +55,8 @@ class ExperimentsController extends AbstractEntityController
             $this->Entity->addFilter('entity.userid', $this->App->Users->userData['userid']);
         }
 
-        return $this->Entity->readShow();
+        $DisplayParams = new DisplayParams();
+        $DisplayParams->adjust($this->App);
+        return $this->Entity->readShow($DisplayParams);
     }
 }

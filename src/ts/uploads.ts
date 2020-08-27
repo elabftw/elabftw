@@ -8,16 +8,16 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { notif, displayMolFiles } from './misc';
-import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
+import { notif, displayMolFiles, display3DMolecules } from './misc';
+import i18next from 'i18next';
 
 $(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
+  const pages = ['edit', 'view'];
+  if (!pages.includes($('#info').data('page'))) {
+    return;
+  }
   displayMolFiles();
+  display3DMolecules();
 
   // REPLACE UPLOAD toggle form
   $(document).on('click', '.replaceUpload', function() {
@@ -39,21 +39,16 @@ $(document).ready(function() {
 
       return(value);
     }, {
-      tooltip : 'File comment',
-      placeholder: 'File comment',
-      indicator : 'Saving...',
+      tooltip : i18next.t('upload-file-comment'),
+      placeholder: i18next.t('upload-file-comment'),
       name : 'fileComment',
       onedit: function() {
         if ($(this).text() === 'Click to add a comment') {
           $(this).text('');
         }
       },
-      submit : 'Save',
-      onblur : 'ignore',
-      cancel : 'Cancel',
-      submitcssclass : 'button btn btn-primary',
-      cancelcssclass : 'button btn btn-danger',
-      style : 'display:inline'
+      onblur : 'submit',
+      style : 'display:inline',
     });
   });
 
@@ -91,6 +86,7 @@ $(document).ready(function() {
         if (json.res) {
           $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv', function() {
             displayMolFiles();
+            display3DMolecules(true);
           });
         }
       });
@@ -99,18 +95,4 @@ $(document).ready(function() {
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
-
-  // 3DMOL
-  // Top left menu to change the style of the displayed molecule
-  $('.dropdown-item').on('click', '.3dmol-style', function() {
-    const targetStyle = $(this).data('style');
-    let options = {};
-    const style = {};
-    if (targetStyle === 'cartoon') {
-      options = { color: 'spectrum' };
-    }
-    style[targetStyle] = options;
-
-    $3Dmol.viewers[$(this).data('divid')].setStyle(style).render();
-  });
 });

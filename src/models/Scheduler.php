@@ -28,9 +28,6 @@ class Scheduler
     /** @var Database $Database instance of Database */
     public $Database;
 
-    /** @var array $filters an array of arrays with filters for sql query */
-    private $filters;
-
     /**
      * Constructor
      *
@@ -40,7 +37,6 @@ class Scheduler
     {
         $this->Db = Db::getConnection();
         $this->Database = $database;
-        $this->filters = array();
     }
 
     /**
@@ -160,7 +156,7 @@ class Scheduler
     /**
      * Update the start (and end) of an event (when you drag and drop it)
      *
-     * @param array $delta timedelta
+     * @param array<string, string> $delta timedelta
      * @return void
      */
     public function updateStart(array $delta): void
@@ -190,7 +186,7 @@ class Scheduler
     /**
      * Update the end of an event (when you resize it)
      *
-     * @param array $delta timedelta
+     * @param array<string, string> $delta timedelta
      * @return void
      */
     public function updateEnd(array $delta): void

@@ -69,18 +69,21 @@ try {
         $TeamGroups->destroy((int) $Request->request->get('teamGroupGroup'));
     }
 } catch (ImproperActionException $e) {
+    $Response = new JsonResponse();
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),
     ));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $Response = new JsonResponse();
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true),
     ));
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+    $Response = new JsonResponse();
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

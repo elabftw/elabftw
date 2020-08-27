@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * sysconfig.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -27,6 +28,9 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('eLabFTW Configuration');
 $Response = new Response();
 $Response->prepare($Request);
+
+$template = 'error.html';
+$renderArr = array();
 
 try {
     if (!$App->Session->get('is_sysadmin')) {
@@ -87,12 +91,10 @@ try {
         'usersArr' => $usersArr,
     );
 } catch (IllegalActionException $e) {
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error(true));
+    $renderArr['error'] = Tools::error(true);
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
+    $renderArr['error'] = $e->getMessage();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

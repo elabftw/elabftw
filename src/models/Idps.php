@@ -65,25 +65,6 @@ class Idps implements CrudInterface
     }
 
     /**
-     * Read info about an IDP
-     *
-     * @param int $id
-     * @return array
-     */
-    public function read(int $id): array
-    {
-        $sql = 'SELECT * FROM idps WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
      * Read all IDPs
      *
      * @return array
@@ -145,10 +126,16 @@ class Idps implements CrudInterface
      *
      * @return array
      */
-    public function getActive(): array
+    public function getActive(?int $id = null): array
     {
-        $sql = 'SELECT * FROM idps WHERE active = 1 LIMIT 1';
+        $sql = 'SELECT * FROM idps WHERE active = 1';
+        if ($id !== null) {
+            $sql .= ' AND id = :id';
+        }
         $req = $this->Db->prepare($sql);
+        if ($id !== null) {
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         $res = $req->fetch();

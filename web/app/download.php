@@ -28,7 +28,7 @@ try {
         throw new IllegalActionException('Missing parameter for download');
     }
     // Nullbyte hack fix
-    if (strpos($_GET['f'], "\0") === true) {
+    if (strpos($_GET['f'], "\0") !== false) {
         throw new IllegalActionException('Null byte detected');
     }
 
@@ -72,9 +72,8 @@ try {
     if (\function_exists('mime_content_type')) {
         $mtype = mime_content_type($file_path);
     } elseif (function_exists('finfo_file')) {
-        $finfo = finfo_open(FILEINFO_MIME); // return mime type
-        $mtype = finfo_file($finfo, $file_path);
-        finfo_close($finfo);
+        $finfo = new \finfo(FILEINFO_MIME);
+        $mtype = $finfo->file($file_path);
     }
 
     // Make sure program execution doesn't time out
@@ -89,8 +88,6 @@ try {
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
     header('Cache-Control: public');
     header('Content-Type: ' . $mtype);
-    // force download for file extensions not supported by browser
-    //if (!preg_match('/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg)$/i', Tools::getExt($_GET['name']))) {
     if (isset($_GET['forceDownload'])) {
         header('Content-Description: File Transfer');
         header('Content-Disposition: attachment; filename=' . $filename);

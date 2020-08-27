@@ -30,7 +30,9 @@ try {
     // get total number of experiments
     $Entity = new Experiments($App->Users);
     $Entity->addFilter('entity.userid', $App->Users->userData['userid']);
-    $itemsArr = $Entity->readShow();
+    $DisplayParams = new DisplayParams();
+    $DisplayParams->limit = 9999999;
+    $itemsArr = $Entity->readShow($DisplayParams);
     $count = count($itemsArr);
 
     // generate stats for the pie chart with experiments status

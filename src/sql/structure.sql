@@ -204,6 +204,8 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
+  `canread` varchar(255) NOT NULL,
+  `canwrite` varchar(255) NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -422,7 +424,7 @@ CREATE TABLE `tags2entity` (
 CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
-  `deletable_xp` tinyint(1) NOT NULL DEFAULT '1',
+  `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -432,7 +434,12 @@ CREATE TABLE `teams` (
   `stampcert` text,
   `stamphash` varchar(10) DEFAULT 'sha256',
   `orgid` varchar(255) DEFAULT NULL,
-  `public_db` tinyint(1) NOT NULL DEFAULT '0'
+  `public_db` tinyint(1) NOT NULL DEFAULT 0,
+  `force_canread` varchar(255) NOT NULL DEFAULT 'team',
+  `force_canwrite` varchar(255) NOT NULL DEFAULT 'user',
+  `do_force_canread` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `do_force_canwrite` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
+  `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -551,6 +558,7 @@ CREATE TABLE `users` (
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `show_team` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `show_team_templates` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `json_editor` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
@@ -560,8 +568,8 @@ CREATE TABLE `users` (
   `default_write` varchar(255) NULL DEFAULT 'user',
   `single_column_layout` tinyint(1) NOT NULL DEFAULT '0',
   `cjk_fonts` tinyint(1) NOT NULL DEFAULT '0',
-  `orderby` varchar(255) DEFAULT NULL,
-  `sort` varchar(255) DEFAULT NULL,
+  `orderby` varchar(255) NOT NULL DEFAULT 'date',
+  `sort` varchar(255) NOT NULL DEFAULT 'desc',
   `use_markdown` tinyint(1) NOT NULL DEFAULT '0',
   `inc_files_pdf` tinyint(1) NOT NULL DEFAULT '1',
   `archived` tinyint(1) NOT NULL DEFAULT '0',
@@ -1068,9 +1076,50 @@ ALTER TABLE `users2teams`
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
 
 
+--
+-- Table structure for table `pin2users`
+--
+
+CREATE TABLE `pin2users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL
+);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_pin2users_userid` (`users_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `pin2users`
+--
+ALTER TABLE `pin2users`
+  ADD CONSTRAINT `fk_pin2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+--
 --
 -- Constraints for table `users2team_groups`
 --

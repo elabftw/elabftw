@@ -43,6 +43,11 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($this->Templates->readFromTeam()));
     }
 
+    public function testReadInclusive()
+    {
+        $this->assertTrue(is_array($this->Templates->readInclusive()));
+    }
+
     public function testReadCommonBody()
     {
         $this->Templates->Users->userData['use_markdown'] = 1;

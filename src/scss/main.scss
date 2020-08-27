@@ -8,6 +8,7 @@
 $darkgray: #343434;
 $maingray: #797979;
 $lightgray: #f2f2f2;
+$lightgraybutnottoolight: #d6d6d6;
 $bordersgray: #dcdddc;
 $elabblue: #29aeb9;
 $darkblue: #1F8591;
@@ -27,6 +28,8 @@ $theme-colors: (
     "neutral": $maingray,
 );
 @import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-select/sass/bootstrap-select.scss';
+@import '../../node_modules/@fullcalendar/common/main';
 
 @import 'autocomplete';
 @import 'footer';
@@ -236,18 +239,14 @@ li.tip {
 }
 
 /*  MENU is below main nav */
-menu {
+ul#menu {
     line-height: 200%;
     margin: 30px 0 20px;
-    padding: 0;
-}
-
-menu ul {
     padding: 0;
     border-bottom: 1px solid $bordersgray;
 }
 
-menu ul li {
+ul#menu li {
     display: inline;
     margin-right: 2%;
     text-transform: uppercase;
@@ -255,7 +254,7 @@ menu ul li {
     cursor: pointer;
 }
 
-menu ul li.selected {
+ul#menu li.selected {
     border-bottom: 5px solid $elabblue;
     padding-bottom: 0;
 }
@@ -461,22 +460,6 @@ section.item {
     }
 }
 
-/* BADGE */
-.badgetab {
-    padding: 5px;
-    margin: 0 20px 10px 0;
-}
-
-.badgetab:hover {
-    background-color: $lightgray;
-    color: black;
-}
-
-.badgetabactive {
-    background-color: $lightgray;
-    color: black;
-}
-
 /* BUTTONS */
 .button {
     border: none;
@@ -676,11 +659,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .config_form label {
     float: left;
-}
-
-/* EXPERIMENTS/DATABASE - FILTER & ORDER */
-form#filter-order-sort select {
-    margin-left: 2px;
 }
 
 /*
@@ -904,21 +882,17 @@ svg.fa-trash-alt:hover {
     color: $darkred;
 }
 
-.bodyToggle {
-    display: none;
-}
-
-.bodyToggleImg {
-    float: right;
-    margin-top: 3px;
-}
-
 /* font awesome icons color */
 .svg-inline--fa {
     color: $maingray;
 }
 
-/* in the fullcalendar toolabar they are used in a button so we want them white */
+/* for icons such as pin */
+.grayed-out {
+    color: $lightgraybutnottoolight;
+}
+
+/* in the fullcalendar toolbar icons are used in a button so we want them white */
 .fc-toolbar {
     .svg-inline--fa {
         color: #fff;

@@ -152,7 +152,7 @@ class MakeStreamZip extends AbstractMake
     /**
      * Add attached files
      *
-     * @param array $filesArr the files array
+     * @param array<array-key, array<string, string>> $filesArr the files array
      * @return void
      */
     private function addAttachedFiles($filesArr): void

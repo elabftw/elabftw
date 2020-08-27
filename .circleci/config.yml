@@ -78,9 +78,10 @@ jobs:
       - run:
           name: Run unit tests
           command: yarn run unit
-      - snyk/scan
-      - run:
-          name: Code coverage
-          command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
-      - codecov/upload:
-          file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml
+      # disable this for now, not really useful with github vulns scan and makes the PR fail because of missing secret
+      #- snyk/scan
+      #- run:
+      #    name: Code coverage
+      #     command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
+      #- codecov/upload:
+      #    file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml

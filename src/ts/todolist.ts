@@ -6,24 +6,29 @@
  * @package elabftw
  */
 declare let key: any;
-import { relativeMoment, notif } from './misc';
 import 'jquery-jeditable/src/jquery.jeditable.js';
+import Todolist from './Todolist.class';
 
 $(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-  // TODOLIST TOGGLE
+  const TodolistC = new Todolist();
+
+  // reopen todolist panel if it was previously opened
+  if (localStorage.getItem('isTodolistOpen') === '1') {
+    TodolistC.toggle();
+  }
+  // TOGGLE
   // use shortcut
-  key($('#todoSc').data('toggle'), function() {
-    $('#todoList').toggle();
-  });
+  if ($('#todoSc').length) {
+    key($('#todoSc').data('toggle'), function() {
+      TodolistC.toggle();
+    });
+  }
   // or click the button
   $(document).on('click', '.todoToggle', function() {
-    $('#todoList').toggle();
+    TodolistC.toggle();
   });
+
+  // EDIT
   $(document).on('mouseenter', '.todoItem', function() {
     ($(this) as any).editable(function(value) {
       $.post('app/controllers/TodolistController.php', {
@@ -41,65 +46,14 @@ $(document).ready(function() {
     });
   });
 
-
-  const Todolist = {
-    controller: 'app/controllers/TodolistController.php',
-    // add a todo item
-    create: function(e): void {
-      e.preventDefault();
-      const body = $('#todo').val();
-      if (body !== '') {
-        $.post(this.controller, {
-          create: true,
-          body: body
-        }).done(function(json) {
-          if (json.res) {
-            // reload the todolist
-            $('#todoItems-list').load('? #todoItems-list>*', function() {
-              relativeMoment();
-            });
-            // and clear the input
-            $('#todo').val('');
-          } else {
-            notif(json);
-          }
-        });
-      }
-    },
-    // remove one todo item
-    destroy: function(id): void {
-      $.post(this.controller, {
-        destroy: true,
-        id: id
-      }).done(function(json) {
-        if (json.res) {
-          // hide item
-          $('#todoItem_' + id).css('background', '#29AEB9');
-          $('#todoItem_' + id).toggle('blind');
-        }
-      });
-    },
-    // clear all the items
-    destroyAll: function(): void {
-      $.post(this.controller, {
-        destroyAll: true
-      }).done(function(json) {
-        if (json.res) {
-          // hide all items
-          $('#todoItems-list').children().toggle('blind');
-        }
-      });
-    },
-  };
-
   $('#todo-form').submit(function(e) {
-    Todolist.create(e);
+    TodolistC.create(e);
   });
   $(document).on('click', '.todoDestroyAll', function() {
-    Todolist.destroyAll();
+    TodolistC.destroyAll();
   });
 
   $(document).on('click', '.destroyTodoItem', function() {
-    Todolist.destroy($(this).data('id'));
+    TodolistC.destroy($(this).data('id'));
   });
 });

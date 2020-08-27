@@ -22,14 +22,16 @@ class OrderingParams
     /** @var array $ordering */
     private $ordering;
 
+    /**
+     * Constructor
+     *
+     * @param string $table
+     * @param array<mixed> $ordering
+     */
     public function __construct(string $table, array $ordering)
     {
         $this->table = $table;
         $this->ordering = $ordering;
-        // remove the 'Create new' for templates
-        if ($table === 'experiments_templates') {
-            unset($this->ordering[0]);
-        }
     }
 
     public function getTable(): string

@@ -24,8 +24,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$Response = new RedirectResponse('../../team.php?tab=4');
 try {
-    $Response = new RedirectResponse('../../team.php?tab=4');
 
     // CSRF
     $App->Csrf->validate();

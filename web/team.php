@@ -50,7 +50,9 @@ try {
     // disabled because takes too much resources
     //$TagCloud = new TagCloud((int) $App->Users->userData['team']);
 
-    $itemsArr = $Database->readShow();
+    $DisplayParams = new DisplayParams();
+    $DisplayParams->adjust($App);
+    $itemsArr = $Database->readShow($DisplayParams);
     $itemData = null;
 
     $allItems = true;
@@ -71,7 +73,7 @@ try {
     }
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readFromTeam();
+    $templatesArr = $Templates->readInclusive();
 
     $template = 'team.html';
     $renderArr = array(
@@ -85,7 +87,7 @@ try {
         'teamArr' => $teamArr,
         'teamsStats' => $teamsStats,
         'templatesArr' => $templatesArr,
-        'lang' => Tools::getCalendarLang($App->Users->userData['lang']),
+        'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

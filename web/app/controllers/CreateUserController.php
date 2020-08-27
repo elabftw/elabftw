@@ -21,10 +21,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once \dirname(__DIR__) . '/init.inc.php';
 
 // default location to redirect to
-// user can also be created from admin page
-if ($Request->request->get('frompage') === 'admin.php') {
-    $location = '../../admin.php?tab=3';
-}
+$location = '../../admin.php?tab=3';
+// user can also be created from sysconfig page
 if ($Request->request->get('frompage') === 'sysconfig.php') {
     $location = '../../sysconfig.php?tab=3';
 }

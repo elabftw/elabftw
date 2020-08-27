@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * change-pass.php
  *
@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -26,9 +27,11 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Reset password');
 
-$template = 'change-pass.html';
 $Response = new Response();
 $Response->prepare($Request);
+
+$template = 'error.html';
+$renderArr = array();
 
 try {
     // check URL parameters
@@ -45,14 +48,14 @@ try {
         throw new ImproperActionException(_('Invalid link. Reset links are only valid for one hour.'));
     }
 
+    $template = 'change-pass.html';
     $renderArr = array(
         'key' => $Request->query->filter('key', null, FILTER_SANITIZE_STRING),
         'deadline' => $Request->query->filter('deadline', null, FILTER_SANITIZE_STRING),
         'userid' => $Request->query->filter('userid', null, FILTER_SANITIZE_STRING),
     );
 } catch (Exception $e) {
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
+    $renderArr['error'] = $e->getMessage();
 } finally {
     $Response->setContent($App->render($template, $renderArr));
     $Response->send();

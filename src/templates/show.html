@@ -15,7 +15,7 @@
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
   {% elseif count == 0 and searchType == '' and not App.Session.get('anon') and not App.Request.query.get('offset') %}
       {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
-            {% else %}
+  {% else %}
       {% if pinnedArr and not searchPage %}
         <div class='row display-flex'>
           {% set isPinned = true %}
@@ -23,36 +23,36 @@
             {% include('show-item.html') %}
           {% endfor %}
           {% set isPinned = false %}
-      </div>
+        </div>
         <hr>
-          {% endif %}
-    <p class='smallgray' style='display:inline'>
-      <a href='#' id='expandAll' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a> - <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
-      <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> -
-        <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
-    </p>
+      {% endif %}
+      <p class='smallgray' style='display:inline'>
+        <a href='#' id='expandAll' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a> - <a href='#' id='selectAllBoxes'>{{ 'Select all'|trans }}</a>
+        <span id='advancedSelectOptions' style='display:none'> - <a href='#' id='unselectAllBoxes'>{{ 'Clear selection'|trans }}</a> -
+          <a href='#' id='invertSelection'>{{ 'Invert selection'|trans }}</a></span>
+      </p>
 
-    <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
-        <select autocomplete='off' id='catChecked'>
-            <option selected disabled>
-            {% if Entity.type == 'experiments' %}
-                {{ 'Change status'|trans }}
-            {% else %}
-                {{ 'Change item type'|trans }}
-            {% endif %}
-            </option>
+      <p id='withSelected' style='display:none'>{{ 'With selected:'|trans }}
+          <select autocomplete='off' id='catChecked'>
+              <option selected disabled>
+              {% if Entity.type == 'experiments' %}
+                  {{ 'Change status'|trans }}
+              {% else %}
+                  {{ 'Change item type'|trans }}
+              {% endif %}
+              </option>
 
-            {% for category in categoryArr %}
-                <option value='{{ category.category_id }}'>{{ category.category }}</option>
+              {% for category in categoryArr %}
+                  <option value='{{ category.category_id }}'>{{ category.category }}</option>
+              {% endfor %}
+          </select>
+
+          <select autocomplete='off' id='visChecked'>
+            <option selected disabled>{{ 'Change visibility'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'>{{ value }}</option>
             {% endfor %}
-        </select>
-
-        <select autocomplete='off' id='visChecked'>
-          <option selected disabled>{{ 'Change visibility'|trans }}</option>
-          {% for key, value in visibilityArr %}
-            <option value='{{ key }}'>{{ value }}</option>
-          {% endfor %}
-        </select>
+          </select>
 
           <select autocomplete='off' id='exportChecked'>
             <option selected disabled>{{ 'Export'|trans }}</option>
@@ -61,13 +61,13 @@
             <option value='multiPdf'>{{ 'Make PDF'|trans }}</option>
             <option value='json'>{{ 'Make JSON'|trans }}</option>
           </select>
-        <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
-    </p>
-    <div class='row display-flex'>
+          <button id='deleteChecked' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+      </p>
+      <div class='row display-flex'>
       {% for item in itemsArr|slice(0, DisplayParams.limit) %}
         {% include('show-item.html') %}
-              {% endfor %}
-    </div>
+      {% endfor %}
+      </div>
 
       <div class='text-center pageButtons mt-2'>
         {% if DisplayParams.offset != 0 %}
@@ -84,7 +84,7 @@
   <div id='info'
       data-page='show'
       data-type='{{ Entity.type }}'
-    data-locale='{{ App.Users.userData.lang }}'
+      data-locale='{{ App.Users.userData.lang }}'
       data-limit='{{ DisplayParams.limit }}'
       data-offset='{{ DisplayParams.offset }}'>
   </div>

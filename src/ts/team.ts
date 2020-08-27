@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
@@ -30,69 +31,100 @@ import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import { config } from '@fortawesome/fontawesome-svg-core';
 
-function schedulerCreate(start: string, end: string): void {
-  const title = prompt($('#info').data('addacomment'));
-  if (title) {
-    // add it to SQL
-    $.post('app/controllers/SchedulerController.php', {
-      create: true,
-      start: start,
-      end: end,
-      title: title,
-      item: $('#info').data('item')
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
-      }
-    });
-  }
-}
 document.addEventListener('DOMContentLoaded', function() {
+  if (window.location.pathname !== '/team.php') {
+    return;
+  }
+  // use this setting to prevent bug in fullcalendar
+  // see https://github.com/fullcalendar/fullcalendar/issues/5544
+  config.autoReplaceSvg = 'nest';
+  // this setting has a side-effect with the top right fa icon
+  // so we set it at a correct size again
+  $('.fa-user-circle').css('font-size', '130%');
+
+  // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
   if ($('#info').data('all')) {
     editable = false;
     selectable = false;
   }
+  // get the start parameter from url and use that as start time if it's there
+  const params = new URLSearchParams(document.location.search.substring(1));
+  const start = params.get('start');
+  let selectedDate = new Date().valueOf();
+  if (start !== null) {
+    selectedDate = new Date(decodeURIComponent(start)).valueOf();
+  }
+
+  // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
-    plugins: [ timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
-    header: {
+    plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
+    headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridWeek, listWeek',
+      right: 'timeGridWeek,listWeek,dayGridMonth',
     },
     themeSystem: 'bootstrap',
     // i18n
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: $('#info').data('lang'),
-    defaultView: 'timeGridWeek',
+    locale: $('#info').data('calendarlang'),
+    initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
     // draw an event while selecting
     selectMirror: true,
+    // if no item is selected, the calendar is not editable
     editable: editable,
     // allow "more" link when too many events
-    eventLimit: true,
+    dayMaxEventRows: true,
+    // set the date loaded
+    initialDate: selectedDate,
     // load the events as JSON
-    events: 'app/controllers/SchedulerController.php?item=' + $('#info').data('item'),
+    eventSources: [
+      {
+        url: 'app/controllers/SchedulerController.php',
+        extraParams: {
+          item: $('#info').data('item'),
+        },
+      },
+    ],
     // first day is monday
     firstDay: 1,
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // day start at 6 am
-    minTime: '06:00:00',
-    eventBackgroundColor: 'rgb(41,174,185)',
+    slotMinTime: '06:00:00',
+    eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
     // selection
     select: function(info): void {
       if (!editable) { return; }
-      schedulerCreate(info.startStr, info.endStr);
+      const title = prompt(i18next.t('comment-add'));
+      if (!title) {
+        // make the selected area disappear
+        calendar.unselect();
+        return;
+      }
+      $.post('app/controllers/SchedulerController.php', {
+        create: true,
+        start: info.startStr,
+        end: info.endStr,
+        title: title,
+        item: $('#info').data('item')
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.startStr));
+        }
+      });
     },
     // on click activate modal window
     eventClick: function(info): void {
@@ -115,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // fill the bound div
       $('#eventTitle').text(info.event.title);
       if (info.event.extendedProps.experiment != null) {
-        $('#eventBound').text('Event is bound to an experiment.');
+        $('#eventBound').html('Event is bound to an <a href="experiments.php?mode=view&id=' + info.event.extendedProps.experiment + '">experiment</a>.');
         $('#rmBind').show();
       }
       // bind an experiment to the event
@@ -129,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
           if (json.res) {
             $('#bindinput').val('');
             $('#eventModal').modal('toggle');
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
           }
         });
       });
@@ -141,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).done(function(json) {
           $('#eventModal').modal('toggle');
           notif(json);
-          window.location.replace('team.php?tab=1&item=' + $('#info').data('item'));
+          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
         });
       });
       // BIND AUTOCOMPLETE
@@ -196,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
     },
   });
   calendar.render();
+  calendar.updateSize();
 
 });
 

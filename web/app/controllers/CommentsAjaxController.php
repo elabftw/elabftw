@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -19,6 +20,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Exception;
+use function explode;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -26,7 +28,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Controller for the experiments comments
  *
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -62,7 +64,7 @@ try {
     // UPDATE
     if ($Request->request->has('update')) {
         // get the id from the sent value (comment_42)
-        $exploded = \explode('_', $Request->request->get('id'));
+        $exploded = explode('_', $Request->request->get('id'));
         $id = (int) $exploded[1];
         $res = $Entity->Comments->update($Request->request->get('update'), $id);
         $Response->setData(array(

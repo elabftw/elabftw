@@ -23,8 +23,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once \dirname(__DIR__) . '/init.inc.php';
 
+$tab = '1';
 try {
-    $tab = '1';
     if (!$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
@@ -54,7 +54,7 @@ try {
         }
     }
 
-    // TAB 1 and 4 to 7
+    // TAB 1, 4 to 7 and 9
     if ($Request->request->has('updateConfig')) {
         if ($Request->request->has('lang')) {
             $tab = '1';
@@ -74,6 +74,10 @@ try {
 
         if ($Request->request->has('saml_debug')) {
             $tab = '7';
+        }
+
+        if ($Request->request->has('extauth_remote_user')) {
+            $tab = '9';
         }
 
         $App->Config->update($Request->request->all());

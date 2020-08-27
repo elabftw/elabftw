@@ -6,6 +6,8 @@ coverage:
             - src/classes/*
             - src/services/*
             - src/traits/*
+            - src/maps/*
+            - src/controllers/*
 actor: Tester
 paths:
     tests: tests

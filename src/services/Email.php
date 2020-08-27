@@ -137,9 +137,10 @@ class Email
      * Send an email to the admin of a team
      *
      * @param int $team
+     * @param array<string, mixed> $userInfo to get the email and name of new user
      * @return void
      */
-    public function alertAdmin($team): void
+    public function alertAdmin($team, $userInfo): void
     {
         if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
             return;
@@ -158,7 +159,35 @@ class Email
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account: ') . $url . $footer);
+        ->setBody(_('Hi. A new user registered on elabftw (' . $userInfo['name'] . ' (' . $userInfo['email'] . '). Head to the admin panel to validate the account: ') . $url . $footer);
+        // SEND EMAIL
+        $this->send($message);
+    }
+
+    /**
+     * Send an email to a new user to notify that admin validation is required.
+     * This exists because experience shows that users don't read the notification and expect
+     * their account to work right away.
+     *
+     * @param string $email email of the user to notify
+     * @return void
+     */
+    public function alertUserNeedValidation($email): void
+    {
+        if ($this->Config->configArr['mail_from'] === 'notconfigured@example.com') {
+            return;
+        }
+        // Create the message
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
+        $message = (new Swift_Message())
+        // Give the message a subject
+        ->setSubject(_('[eLabFTW] Your account has been created'))
+        // Set the From address with an associative array
+        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
+        // Set the To
+        ->setTo($email)
+        // Give it a body
+        ->setBody(_('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.') . $footer);
         // SEND EMAIL
         $this->send($message);
     }

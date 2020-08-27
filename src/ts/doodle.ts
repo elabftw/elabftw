@@ -6,8 +6,12 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 
 $(document).ready(function() {
+  if ($('#info').data('page') !== 'edit') {
+    return;
+  }
   // store the clicks
   let clickX = [];
   let clickY = [];
@@ -66,7 +70,7 @@ $(document).ready(function() {
     const image = ($('#doodleCanvas')[0] as HTMLCanvasElement).toDataURL();
     let type = $(this).data('type');
     const id = $(this).data('id');
-    const realName = prompt('Enter name of the file');
+    const realName = prompt(i18next.t('request-filename'));
     if (realName == null) {
       return;
     }
@@ -113,4 +117,40 @@ $(document).ready(function() {
   $('#doodleCanvas').mouseleave(function() {
     isPainting = false;
   });
+
+  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
+  doodleCanvas.addEventListener('touchstart', function(e) {
+    const rect = this.getBoundingClientRect();
+    const touch = e.touches[0];
+    isPainting = true;
+    addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+  }, false);
+
+  doodleCanvas.addEventListener('touchmove', function(e) {
+    if (isPainting) {
+      const rect = this.getBoundingClientRect();
+      const touch = e.touches[0];
+      addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
+    }
+  }, false);
+
+  doodleCanvas.addEventListener('touchend', function() {
+    isPainting = false;
+  }, false);
+
+  doodleCanvas.addEventListener('touchcancel', function() {
+    isPainting = false;
+  }, false);
+
+  doodleCanvas.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+  }, false);
+
+  doodleCanvas.addEventListener('touchend', function (e) {
+    e.preventDefault();
+  }, false);
+
+  doodleCanvas.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+  }, false);
 });

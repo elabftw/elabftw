@@ -7,9 +7,11 @@
  */
 import { notif } from './misc';
 import $ from 'jquery';
+import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
@@ -60,17 +62,24 @@ function tinyMceInitLight() {
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
+    setup: function(editor: any) {
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
+      });
+    },
     charmap_append: [
       [0x2640, 'female sign'],
       [0x2642, 'male sign']
     ],
-    language : $('#info').data('lang')
+    language : $('#user-prefs').data('lang')
   });
 /* eslint-enable */
 }
 
 $(document).ready(function() {
-  const confirmText = $('#info').data('confirm');
+  if (window.location.pathname !== '/admin.php') {
+    return;
+  }
 
   // activate editors in new item type and common template
   tinyMceInitLight();
@@ -103,7 +112,7 @@ $(document).ready(function() {
       });
     },
     destroy: function(id): void {
-      if (confirm(confirmText)) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
         $.post(this.controller, {
           teamGroupDestroy: true,
           teamGroupGroup: id
@@ -214,15 +223,17 @@ $(document).ready(function() {
       });
     },
     destroy: function(id): void {
-      $.post(this.controller, {
-        statusDestroy: true,
-        id: id
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          $('#status_' + id).hide();
-        }
-      });
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        $.post(this.controller, {
+          statusDestroy: true,
+          id: id
+        }).done(function(json) {
+          notif(json);
+          if (json.res) {
+            $('#status_' + id).remove();
+          }
+        });
+      }
     }
   };
   $(document).on('click', '#statusCreate', function() {

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -94,7 +95,7 @@ class DatabaseCleaner implements CleanerInterface
      * Delete rows from a table
      *
      * @param string $table the mysql table to act upon
-     * @param array $results the results from the search
+     * @param array<array-key, mixed> $results the results from the search
      * @return void
      */
     private function deleteFrom(string $table, array $results): void

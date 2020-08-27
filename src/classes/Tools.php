@@ -11,12 +11,15 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
+use function explode;
 use function filter_var;
+use function in_array;
 use InvalidArgumentException;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use function mb_strlen;
+use function pathinfo;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -51,7 +54,7 @@ class Tools
         $crossLink = '';
 
         if ($cross) {
-            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times</a>";
+            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
         $begin = "<div class='alert alert-" . $alert .
@@ -159,7 +162,7 @@ class Tools
     public static function getExt(string $filename): string
     {
         // Get file extension
-        $ext = \filter_var(\pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
+        $ext = filter_var(pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
         if ($ext !== null && $ext !== '' && $ext !== false) {
             return $ext;
         }
@@ -244,7 +247,7 @@ class Tools
      * Used for debugging only
      *
      * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
-     * @param array $arr
+     * @param array<mixed> $arr
      * @return string
      */
     public static function printArr(array $arr): string
@@ -313,7 +316,7 @@ class Tools
     {
         $sql = ' AND ';
         // search character is the separator for and/or
-        $qArr = \explode(' ', $query);
+        $qArr = explode(' ', $query);
         $sql .= '(';
         foreach ($qArr as $key => $value) {
             // add the andor after the first
@@ -346,7 +349,7 @@ class Tools
     {
         $limits = array(10, 20, 50, 100);
         // if the current limit is already a standard one, no need to include it
-        if (\in_array($input, $limits, true)) {
+        if (in_array($input, $limits, true)) {
             return $limits;
         }
         // now find the place where to include our limit
@@ -364,7 +367,7 @@ class Tools
     /**
      * Transform a query object in a query string
      *
-     * @param array $query the query array given by Request
+     * @param array<string, mixed> $query the query array given by Request
      * @return string
      */
     public static function qFilter(array $query): string
@@ -380,6 +383,10 @@ class Tools
                 $res .= '&' . (string) $key . '=' . $value;
             }
         }
-        return filter_var($res, FILTER_SANITIZE_STRING);
+        $output = filter_var($res, FILTER_SANITIZE_STRING);
+        if ($output === false) {
+            return '';
+        }
+        return $output;
     }
 }

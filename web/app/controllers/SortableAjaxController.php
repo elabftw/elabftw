@@ -10,12 +10,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
 use Elabftw\Models\Templates;
@@ -26,7 +29,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * Update ordering of various things
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -48,11 +51,23 @@ try {
             }
             $Entity = new Status($App->Users);
             break;
+        case 'experiments_steps':
+            $model = new Experiments($App->Users);
+            $Entity = $model->Steps;
+            break;
+        case 'items_steps':
+            $model = new Database($App->Users);
+            $Entity = $model->Steps;
+            break;
         case 'todolist':
             $Entity = new Todolist($App->Users);
             break;
         case 'experiments_templates':
             $Entity = new Templates($App->Users);
+            break;
+        case 'experiments_templates_steps':
+            $model = new Templates($App->Users);
+            $Entity = $model->Steps;
             break;
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');

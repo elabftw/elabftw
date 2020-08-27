@@ -10,10 +10,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CreateInterface;
+use Elabftw\Maps\Team;
 use Elabftw\Services\Filter;
 use PDO;
+use function random_bytes;
+use function sha1;
 
 /**
  * All about the experiments
@@ -62,6 +66,11 @@ class Experiments extends AbstractEntity implements CreateInterface
         if ($this->Users->userData['default_write'] !== null) {
             $canwrite = $this->Users->userData['default_write'];
         }
+
+        // enforce the permissions if the admin has set them
+        $Team = new Team((int) $this->Users->userData['team']);
+        $canread = $Team->getDoForceCanread() === 1 ? $Team->getForceCanread() : $canread;
+        $canwrite = $Team->getDoForceCanwrite() === 1 ? $Team->getForceCanwrite() : $canwrite;
 
         // SQL for create experiments
         $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, datetime, userid)
@@ -112,6 +121,19 @@ class Experiments extends AbstractEntity implements CreateInterface
         }
 
         return $itemsArr;
+    }
+
+    public function getBoundEvents(): array
+    {
+        $sql = 'SELECT team_events.* from team_events WHERE experiment = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+        return $res;
     }
 
     /**
@@ -214,6 +236,9 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        // delete from pinned
+        $this->Pins->rmFromPinned();
     }
 
     /**
@@ -245,6 +270,42 @@ class Experiments extends AbstractEntity implements CreateInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Get the current unfinished steps from experiments owned by current user
+     *
+     * @return array
+     */
+    public function getSteps(): array
+    {
+        $sql = "SELECT experiments.id, experiments.title, stepst.finished, stepst.steps_body, stepst.steps_id
+            FROM experiments
+            CROSS JOIN (
+                SELECT item_id, finished,
+                GROUP_CONCAT(experiments_steps.body SEPARATOR '|') AS steps_body,
+                GROUP_CONCAT(experiments_steps.id SEPARATOR '|') AS steps_id
+                FROM experiments_steps
+                WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = experiments.id)
+            WHERE userid = :userid GROUP BY experiments.id ORDER BY experiments.id DESC";
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $res = $req->fetchAll();
+        if ($res === false) {
+            return array();
+        }
+
+        // clean up the results so we get a nice array with experiment id/title and steps with their id/body
+        // use reference to edit in place
+        foreach ($res as &$exp) {
+            $exp['steps'] = array_combine(explode('|', $exp['steps_id']), explode('|', $exp['steps_body']));
+            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
+        }
+
+        return $res;
     }
 
     /**
@@ -285,6 +346,6 @@ class Experiments extends AbstractEntity implements CreateInterface
     private function generateElabid(): string
     {
         $date = Filter::kdate();
-        return $date . '-' . \sha1(\bin2hex(\random_bytes(16)));
+        return $date . '-' . sha1(bin2hex(random_bytes(16)));
     }
 }

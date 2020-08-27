@@ -12,6 +12,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use function in_array;
+use function mb_strlen;
 
 /**
  * When values need to be checked
@@ -30,7 +32,7 @@ class Check
      */
     public static function passwordLength(string $password): bool
     {
-        if (\mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
+        if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
         }
         return true;
@@ -119,6 +121,36 @@ class Check
     }
 
     /**
+     * Check orderby param
+     *
+     * @param string $input
+     * @return string
+     */
+    public static function orderby(string $input): string
+    {
+        $allowed = array('cat', 'date', 'title', 'comment', 'lastchange');
+        if (!in_array($input, $allowed, true)) {
+            throw new ImproperActionException('Invalid orderby');
+        }
+        return $input;
+    }
+
+    /**
+     * Check sort param
+     *
+     * @param string $input
+     * @return string
+     */
+    public static function sort(string $input): string
+    {
+        $allowed = array('asc', 'desc');
+        if (!in_array($input, $allowed, true)) {
+            throw new ImproperActionException('Invalid sort');
+        }
+        return $input;
+    }
+
+    /**
      * Check if we have a correct value for visibility
      *
      * @param string $visibility
@@ -133,7 +165,7 @@ class Check
             'user',
         );
 
-        if (!\in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
+        if (!in_array($visibility, $validArr, true) && self::id((int) $visibility) === false) {
             throw new IllegalActionException('The visibility parameter is wrong.');
         }
 

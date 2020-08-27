@@ -41,6 +41,12 @@ class RevisionsCleaner implements CleanerInterface
         return 0;
     }
 
+    public function prune(): int
+    {
+        echo 'Not implemented';
+        return 0;
+    }
+
     /**
      * Remove every other row
      *

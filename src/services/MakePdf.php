@@ -10,12 +10,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function dirname;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use function file_exists;
+use function is_dir;
+use function mkdir;
 use Mpdf\Mpdf;
+use function preg_match;
+use function str_replace;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,8 +48,8 @@ class MakePdf extends AbstractMake
             $this->filePath = $this->getTmpPath() . $this->getUniqueString();
         } else {
             $this->filePath = $this->getUploadsPath() . $this->longName;
-            $dir = \dirname($this->filePath);
-            if (!\is_dir($dir) && !\mkdir($dir, 0700, true) && !\is_dir($dir)) {
+            $dir = dirname($this->filePath);
+            if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) {
                 throw new FilesystemErrorException('Cannot create folder! Check permissions of uploads folder.');
             }
         }
@@ -62,6 +68,24 @@ class MakePdf extends AbstractMake
     public function outputToFile(): void
     {
         $this->generate()->Output($this->filePath, 'F');
+    }
+
+    /**
+     * Build HTML content that will be fed to mpdf->WriteHTML()
+     *
+     * @return string
+     */
+    public function getContent(): string
+    {
+        $content = $this->buildHeader();
+        $content .= $this->buildBody();
+        $content .= $this->addLinkedItems();
+        $content .= $this->addSteps();
+        $content .= $this->addAttachedFiles();
+        $content .= $this->addComments();
+        $content .= $this->buildInfoBlock();
+
+        return $content;
     }
 
     /**
@@ -86,11 +110,11 @@ class MakePdf extends AbstractMake
     }
 
     /**
-     * Build the pdf
+     * Initialize Mpdf
      *
      * @return Mpdf
      */
-    private function generate(): Mpdf
+    public function initializeMpdf(bool $multiEntity = false): Mpdf
     {
         $format = $this->Entity->Users->userData['pdf_format'];
 
@@ -112,11 +136,28 @@ class MakePdf extends AbstractMake
         $mpdf->setAutoBottomMargin = 'stretch';
 
         // set metadata
-        $mpdf->SetAuthor($this->Entity->entityData['fullname']);
-        $mpdf->SetTitle($this->Entity->entityData['title']);
+        $mpdf->SetAuthor($this->Entity->Users->userData['fullname']);
+        $mpdf->SetTitle('eLabFTW pdf');
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords(\str_replace('|', ' ', $this->Entity->entityData['tags']));
         $mpdf->SetCreator('www.elabftw.net');
+
+        if (!$multiEntity) {
+            $mpdf->SetAuthor($this->Entity->entityData['fullname']);
+            $mpdf->SetTitle($this->Entity->entityData['title']);
+            $mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags']));
+        }
+
+        return $mpdf;
+    }
+
+    /**
+     * Build the pdf
+     *
+     * @return Mpdf
+     */
+    private function generate(): Mpdf
+    {
+        $mpdf = $this->initializeMpdf();
 
         // write content
         $mpdf->WriteHTML($this->getContent());
@@ -282,10 +323,10 @@ class MakePdf extends AbstractMake
                 $ext = Tools::getExt($upload['real_name']);
                 $filePath = \dirname(__DIR__, 2) . '/uploads/' . $upload['long_name'];
                 // if it's a TIF file, we can't add it like that to the pdf, but we can add the thumbnail
-                if (\preg_match('/(tiff|tif)$/i', $ext)) {
+                if (preg_match('/(tiff|tif)$/i', $ext)) {
                     $filePath .= '_th.jpg';
                 }
-                if (\file_exists($filePath) && preg_match('/(tiff|tif|jpg|jpeg|png|gif)$/i', $ext)) {
+                if (file_exists($filePath) && preg_match('/(tiff|tif|jpg|jpeg|png|gif)$/i', $ext)) {
                     $html .= "<br /><img class='attached-image' src='" . $filePath . "' alt='attached image' />";
                 }
 
@@ -393,6 +434,13 @@ Witness' signature:<br><br>
 </div>";
         }
 
+        // don't show the Tags line if there are none
+        $tags = '';
+        if ($this->Entity->entityData['tags']) {
+            $tags = '<strong>Tags:</strong> <em>' .
+                str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />';
+        }
+
         // we add a custom style for td for bug #350
         return '
 <html>
@@ -405,9 +453,7 @@ Witness' signature:<br><br>
     <div id="header">
         <h1>' . $this->Entity->entityData['title'] . '</h1>
         <p style="float:left; width:90%;">
-            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />
-            <strong>Tags:</strong> <em>' .
-                \str_replace('|', ' ', $this->Entity->entityData['tags']) . '</em> <br />
+            <strong>Date:</strong> ' . $date->format('Y-m-d') . '<br />' . $tags . '
             <strong>Created by:</strong> ' . $this->Entity->entityData['fullname'] . '
         </p>
         <p style="float:right; width:10%;"><br /><br />
@@ -421,24 +467,8 @@ Witness' signature:<br><br>
         <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
     </div>
 </htmlpagefooter>
+<sethtmlpageheader name="header" value="on" show-this-page="1" />
+<sethtmlpagefooter name="footer" value="on" />
 ';
-    }
-
-    /**
-     * Build HTML content that will be fed to mpdf->WriteHTML()
-     *
-     * @return string
-     */
-    private function getContent(): string
-    {
-        $content = $this->buildHeader();
-        $content .= $this->buildBody();
-        $content .= $this->addLinkedItems();
-        $content .= $this->addSteps();
-        $content .= $this->addAttachedFiles();
-        $content .= $this->addComments();
-        $content .= $this->buildInfoBlock();
-
-        return $content;
     }
 }

@@ -28,7 +28,7 @@ class Permissions
     /** @var Teams $Teams instance of Teams */
     private $Teams;
 
-    /** @var TeamGroups $TeamsGroups instance of TeamsGroups */
+    /** @var TeamGroups $TeamGroups instance of TeamsGroups */
     private $TeamGroups;
 
     /** @var array $item the item to check */
@@ -38,7 +38,7 @@ class Permissions
      * Constructor
      *
      * @param Users $users
-     * @param array $item
+     * @param array<string, mixed> $item
      */
     public function __construct(Users $users, array $item)
     {
@@ -58,7 +58,7 @@ class Permissions
         $write = $this->getWrite();
 
         // if we have write access, then we have read access for sure
-        if ($write === true) {
+        if ($write) {
             return array('read' => true, 'write' => $write);
         }
 
@@ -109,9 +109,45 @@ class Permissions
      */
     public function forTemplates(): array
     {
+        $write = $this->getWrite();
+
         if ($this->item['userid'] === $this->Users->userData['userid']) {
             return array('read' => true, 'write' => true);
         }
+
+        // if it's public, we can read it
+        if ($this->item['canread'] === 'public') {
+            return array('read' => true, 'write' => $write);
+        }
+
+        // starting from here, if we are anon we can't possibly have read access
+        if (isset($this->Users->userData['anon'])) {
+            return array('read' => false, 'write' => false);
+        }
+
+        if ($this->item['canread'] === 'organization') {
+            return array('read' => true, 'write' => $write);
+        }
+
+        // if the vis. setting is team, check we are in the same team than the $item
+        if ($this->item['canread'] === 'team') {
+            // items will have a team, make sure it's the same as the one we are logged in
+            if (isset($this->item['team']) && ((int) $this->item['team'] === $this->Users->userData['team'])) {
+                return array('read' => true, 'write' => $write);
+            }
+            // check if we have a team in common
+            if ($this->Teams->hasCommonTeamWithCurrent((int) $this->item['userid'], $this->Users->userData['team'])) {
+                return array('read' => true, 'write' => $write);
+            }
+        }
+
+        // if the vis. setting is a team group, check we are in the group
+        if (Check::id((int) $this->item['canread']) !== false) {
+            if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $this->item['canread'])) {
+                return array('read' => true, 'write' => $write);
+            }
+        }
+
         return array('read' => false, 'write' => false);
     }
 

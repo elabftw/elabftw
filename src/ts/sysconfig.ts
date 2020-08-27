@@ -6,7 +6,9 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
+import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
@@ -28,11 +30,9 @@ import 'tinymce/themes/silver';
 import 'tinymce/themes/mobile';
 
 $(document).ready(function() {
-  $.ajaxSetup({
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
+  if (window.location.pathname !== '/sysconfig.php') {
+    return;
+  }
   // TEAMS
   const Teams = {
     controller: 'app/controllers/SysconfigAjaxController.php',
@@ -41,7 +41,6 @@ $(document).ready(function() {
       $('#editUserToTeamAction').attr('value', action);
     },
     create: function(): void {
-      (document.getElementById('teamsCreateButton') as HTMLButtonElement).disabled = true;
       const name = $('#teamsName').val();
       $.post(this.controller, {
         teamsCreate: true,
@@ -51,14 +50,15 @@ $(document).ready(function() {
       });
     },
     update: function(id): void {
-      (document.getElementById('teamsUpdateButton_' + id) as HTMLButtonElement).disabled = true;
       const name = $('#teamName_' + id).val();
       const orgid = $('#teamOrgid_' + id).val();
+      const visible = $('#teamVisible_' + id).val();
       $.post(this.controller, {
         teamsUpdate: true,
-        teamsUpdateId : id,
-        teamsUpdateName : name,
-        teamsUpdateOrgid : orgid
+        id : id,
+        name : name,
+        orgid : orgid,
+        visible : visible,
       }).done(function(data) {
         Teams.destructor(data);
       });
@@ -79,10 +79,6 @@ $(document).ready(function() {
       }
     }
   };
-
-  $(document).on('keyup', '.teamNameInput', function() {
-    (document.getElementById('teamsUpdateButton_' + $(this).data('id')) as HTMLButtonElement).disabled = false;
-  });
 
   $(document).on('click', '#teamsCreateButton', function() {
     Teams.create();
@@ -176,7 +172,7 @@ $(document).ready(function() {
 
   $(document).on('click', '.idpsDestroy', function() {
     const elem = $(this);
-    if (confirm($(this).data('confirm'))) {
+    if (confirm(i18next.t('generic-delete-warning'))) {
       $.post('app/controllers/SysconfigAjaxController.php', {
         idpsDestroy: true,
         id: $(this).data('id')

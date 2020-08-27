@@ -40,8 +40,8 @@ class Uploads implements CrudInterface
 {
     use UploadTrait;
 
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (5 Mb) */
-    private const BIG_FILE_THRESHOLD = 5000000;
+    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
+    private const BIG_FILE_THRESHOLD = 50000000;
 
     /** @var AbstractEntity $Entity an entity */
     public $Entity;
@@ -127,9 +127,9 @@ class Uploads implements CrudInterface
      * @param string $fileType 'mol' or 'png'
      * @param string $realName name of the file
      * @param string $content content of the file
-     * @return void
+     * @return int
      */
-    public function createFromString(string $fileType, string $realName, string $content): void
+    public function createFromString(string $fileType, string $realName, string $content): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -157,9 +157,11 @@ class Uploads implements CrudInterface
             throw new FilesystemErrorException('Could not write to file!');
         }
 
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
+
+        return $uploadId;
     }
 
     /**
@@ -339,7 +341,7 @@ class Uploads implements CrudInterface
     /**
      * Get the rotation angle from exif data
      *
-     * @param array $exifData
+     * @param array<string, mixed> $exifData
      * @return int
      */
     private function getRotationAngle(array $exifData): int
@@ -396,7 +398,11 @@ class Uploads implements CrudInterface
     private function getHash(string $file): string
     {
         if (filesize($file) < self::BIG_FILE_THRESHOLD) {
-            return hash_file($this->hashAlgorithm, $file);
+            $hash = hash_file($this->hashAlgorithm, $file);
+            if ($hash === false) {
+                throw new ImproperActionException('Error creating hash from file!');
+            }
+            return $hash;
         }
 
         return '';
@@ -423,9 +429,9 @@ class Uploads implements CrudInterface
      * @param string $hash The hash string of our file
      * @param string|null $comment The file comment
      * @throws DatabaseErrorException
-     * @return void
+     * @return int
      */
-    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): void
+    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
     {
         if ($comment === null) {
             $comment = 'Click to add a comment';
@@ -463,5 +469,6 @@ class Uploads implements CrudInterface
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
         $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 }

@@ -21,15 +21,16 @@
     </a>
 
     <span>
-      {% if App.Session.has('auth') and (App.Session.get('is_sysadmin') == 1) %}
+      {% if App.Session.has('auth') and App.Session.get('is_sysadmin') %}
         <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
       {% endif %}
 
-      {% if App.Session.has('auth') and (App.Session.get('is_admin') == 1) %}
+      {% if App.Session.has('auth') and App.Session.get('is_admin') %}
+      {% set unvalidatedUsersCount = App.Users.readAllFromTeam()|filter(u => u.validated == 0)|length %}
         <a href='admin.php'>{{ 'Admin panel'|trans }}
 
-          {% if App.Users.readAllFromTeam(0)|length > 0 %}
-            <span class='badge badge-dark p-1'>{{ App.Users.readAllFromTeam(0)|length }}</span>
+          {% if unvalidatedUsersCount > 0 %}
+            <span class='badge badge-dark p-1'>{{ unvalidatedUsersCount }}</span>
             <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
           {% endif %}
         </a>
@@ -55,6 +56,8 @@
 
 </div><!-- end container -->
 </div><!-- end real-container -->
+
+<div id='user-prefs' data-lang='{{ App.Users.userData.lang }}'></div>
 
 </body>
 </html>

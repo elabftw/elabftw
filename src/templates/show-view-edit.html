@@ -1,0 +1,19 @@
+<!-- Modal for create new database -->
+<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='createModalLabel'>{{ 'Select type'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {% for category in categoryArr %}
+          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='?create=true&tpl={{ category.category_id }}'>{{ category.category }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end modal -->

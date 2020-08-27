@@ -36,7 +36,7 @@ Without a server, even an old computer with 1 GB of RAM and an old CPU can be us
 
 # Installation
 
-**eLabFTW** can easily be installed on any GNU/Linux server. It requires at least 512 MB of RAM (1 GB recommended) and 300 MB of disk space. Installation is done through Docker, so [Docker](https://www.docker.com/) needs to be installed on your computer. Since it runs in a Docker container, php, webservers or mysql do not have to be installed on your server.  Everything is provided by the containers so different versions and extensions do not matter. This makes upgrading versions much easier.
+**eLabFTW** can easily be installed on any GNU/Linux server. It requires at least 512 MB of RAM (1 GB recommended) and 300 MB of disk space. Installation is done through Docker, so [Docker](https://www.docker.com/) needs to be installed on the server. Since it runs in a Docker container, php, webservers or mysql do not have to be installed on your server.  Everything is provided by the containers so different versions and extensions do not matter. This makes upgrading versions much easier.
 
 The documentation explains everything:
 
@@ -85,3 +85,10 @@ This project is backed by [Institut Curie](https://science.curie.fr/) and [Delta
 </p>
 
 Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)
+
+# Related projects
+
+These projects were created by users of eLabFTW, check them out if interested!
+
+* [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects
+* [shabihsherjeel/nionswift_elabftw_plugin](https://github.com/shabihsherjeel/nionswift_elabftw_plugin): python plugin for [Nionswift](https://github.com/nion-software/nionswift)

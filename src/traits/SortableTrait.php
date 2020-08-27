@@ -27,22 +27,13 @@ trait SortableTrait
      */
     public function updateOrdering(OrderingParams $params): void
     {
-        if ($params->getTable() === 'todolist') {
-            $userOrTeam = 'userid';
-            $userOrTeamValue = $this->Users->userData['userid'];
-        } else {
-            $userOrTeam = 'team';
-            $userOrTeamValue = $this->Users->userData['team'];
-        }
-
         foreach ($params->getOrdering() as $ordering => $id) {
             $id = explode('_', $id);
             $id = (int) $id[1];
             // the table param is whitelisted here
-            $sql = 'UPDATE ' . $params->getTable() . ' SET ordering = :ordering WHERE id = :id AND ' . $userOrTeam . ' = :userOrTeam';
+            $sql = 'UPDATE ' . $params->getTable() . ' SET ordering = :ordering WHERE id = :id';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-            $req->bindParam(':userOrTeam', $userOrTeamValue);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $this->Db->execute($req);
         }

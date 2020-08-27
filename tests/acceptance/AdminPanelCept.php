@@ -16,37 +16,42 @@ $I->see('Configure your Team');
 $I->wantTo('Set deletable xp to yes');
 $I->selectOption('//*[@id="deletable_xp"]', 'Yes');
 // click save button
-$I->click('div.submitButtonDiv:nth-child(14) > button:nth-child(1)');
+$I->click('div.submitButtonDiv:nth-child(26) > button:nth-child(1)');
 $I->seeInDatabase('teams', array('deletable_xp' => '1'));
 
+$I->amOnPage('admin.php?tab=1');
 // DELETABLE XP NO
 $I->wantTo('Set deletable xp to no');
 $I->selectOption('//*[@id="deletable_xp"]', 'No');
 // click save button
-$I->click('div.submitButtonDiv:nth-child(14) > button:nth-child(1)');
+$I->click('div.submitButtonDiv:nth-child(26) > button:nth-child(1)');
 $I->seeInDatabase('teams', array('deletable_xp' => '0'));
 
+$I->amOnPage('admin.php?tab=1');
 // PUBLIC DB YES
 $I->wantTo('Set public db to yes');
 $I->selectOption('//*[@id="public_db"]', 'Yes');
 // click save button
-$I->click('div.submitButtonDiv:nth-child(14) > button:nth-child(1)');
+$I->click('div.submitButtonDiv:nth-child(26) > button:nth-child(1)');
 $I->seeInDatabase('teams', array('public_db' => '1'));
+$I->amOnPage('admin.php?tab=1');
 // PUBLIC DB NO
 $I->wantTo('Set public db to no');
 $I->selectOption('//*[@id="public_db"]', 'No');
 // click save button
-$I->click('div.submitButtonDiv:nth-child(14) > button:nth-child(1)');
+$I->click('div.submitButtonDiv:nth-child(26) > button:nth-child(1)');
 $I->seeInDatabase('teams', array('public_db' => '0'));
 
+$I->amOnPage('admin.php?tab=1');
 // LINK_NAME
 $I->wantTo('Change the link name');
 $I->fillField('link_name', 'DocDoc');
-$I->click('Save');
-$I->see('DocDoc');
+$I->click('div.submitButtonDiv:nth-child(26) > button:nth-child(1)');
+$I->seeInDatabase('teams', array('link_name' => 'DocDoc'));
 
+$I->amOnPage('admin.php?tab=1');
 // LINK_HREF
 $I->wantTo('Change the link target');
 $I->fillField('link_href', 'https://new.elabftw.net');
-$I->click('Save');
+$I->click('div.submitButtonDiv:nth-child(26) > button:nth-child(1)');
 $I->seeInDatabase('teams', array('link_href' => 'https://new.elabftw.net'));

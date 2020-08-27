@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TwigTrait;
@@ -64,9 +63,6 @@ class App
     /** @var array $warning the warning messages from flashBag */
     public $warning = array();
 
-    /** @var array $todoItems items on the todolist, populated if logged in */
-    public $todoItems = array();
-
     /** @var array $teamConfigArr the config for the current team */
     public $teamConfigArr = array();
 
@@ -74,6 +70,10 @@ class App
      * Constructor
      *
      * @param Request $request
+     * @param Session $session
+     * @param Config $config
+     * @param Logger $log
+     * @param Csrf $csrf
      */
     public function __construct(Request $request, Session $session, Config $config, Logger $log, Csrf $csrf)
     {
@@ -135,10 +135,6 @@ class App
     {
         $this->Users = $users;
 
-        // todolist
-        $Todolist = new Todolist($this->Users);
-        $this->todoItems = $Todolist->readAll();
-
         // team config
         $Teams = new Teams($this->Users);
         $this->teamConfigArr = $Teams->read();
@@ -163,7 +159,7 @@ class App
      * Generate HTML from a twig template. The App object is injected into every template.
      *
      * @param string $template template located in app/tpl/
-     * @param array $variables the variables injected in the template
+     * @param array<string, mixed> $variables the variables injected in the template
      * @return string html
      */
     public function render(string $template, array $variables): string

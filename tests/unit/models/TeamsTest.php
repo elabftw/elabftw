@@ -22,57 +22,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($this->Teams->read()));
     }
 
-    public function testUpdate()
-    {
-        $post = array(
-            'teamsUpdateFull' => 'true',
-            'deletable_xp' => '1',
-            'link_name' => 'Taggle',
-            'link_href' => 'https://www.elabftw.net',
-            'stampprovider' => 'http://zeitstempel.dfn.de/',
-            'stampcert' => 'src/dfn-cert/pki.dfn.pem',
-            'stamplogin' => '',
-            'public_db' => '0',
-            'stamppass' => 'something',
-        );
-        $this->Teams->update($post);
-
-        // test without stamppass
-        $post = array(
-            'teamsUpdateFull' => 'true',
-            'deletable_xp' => 1,
-            'link_name' => 'Taggle',
-            'link_href' => 'https://www.elabftw.net',
-            'stampprovider' => 'http://zeitstempel.dfn.de/',
-            'stampcert' => 'src/dfn-cert/pki.dfn.pem',
-            'stamplogin' => '',
-            'public_db' => '0',
-            'stamppass' => '',
-        );
-        $this->Teams->update($post);
-
-        // trigger Exception with bad file path
-        /* TODO
-        $this->expectException(\RuntimeException::class);
-        $post = array(
-            'teamsUpdateFull' => 'true',
-            'deletable_xp' => 1,
-            'link_name' => 'Taggle',
-            'link_href' => 'https://www.elabftw.net',
-            'stampprovider' => 'http://zeitstempel.dfn.de/',
-            'stampcert' => 'blah',
-            'stamplogin' => '',
-            'stamppass' => ''
-        );
-        $this->Teams->update($post);
-         */
-    }
-
-    public function testUpdateName()
-    {
-        $this->Teams->updateName(1, 'New name');
-    }
-
     public function testDestroy()
     {
         $id = $this->Teams->create('Destroy me');

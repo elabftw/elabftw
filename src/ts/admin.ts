@@ -359,15 +359,17 @@ $(document).ready(function() {
     }
   });
   // edit the team group name
-  ($('h3.teamgroup_name') as any).editable('app/controllers/TeamGroupsController.php', {
-    indicator : 'Saving...',
-    name : 'teamGroupUpdateName',
-    submit : 'Save',
-    cancel : 'Cancel',
-    cancelcssclass : 'button btn btn-danger',
-    submitcssclass : 'button btn btn-primary',
-    style : 'display:inline'
+  $(document).on('mouseenter', 'h3.teamgroup_name', function() {
+    ($(this) as any).editable('app/controllers/TeamGroupsController.php', {
+      indicator : 'Saving...',
+      name : 'teamGroupUpdateName',
+      submit : 'Save',
+      cancel : 'Cancel',
+      cancelcssclass : 'button btn btn-danger',
+      submitcssclass : 'button btn btn-primary',
+      style : 'display:inline'
 
+    });
   });
 
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
@@ -375,18 +377,20 @@ $(document).ready(function() {
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
 
-  ($('.tag-editable') as any).editable(function(value) {
-    $.post('app/controllers/TagsController.php', {
-      update: true,
-      newtag: value,
-      tag: $(this).data('tag')
-    });
+  $(document).on('mouseenter', '.tag-editable', function() {
+    ($(this) as any).editable(function(value) {
+      $.post('app/controllers/TagsController.php', {
+        update: true,
+        newtag: value,
+        tag: $(this).data('tag')
+      });
 
-    return(value);
-  }, {
-    tooltip : 'Click to edit',
-    indicator : 'Saving...',
-    onblur: 'submit',
-    style : 'display:inline'
+      return(value);
+    }, {
+      tooltip : 'Click to edit',
+      indicator : 'Saving...',
+      onblur: 'submit',
+      style : 'display:inline'
+    });
   });
 });

@@ -161,8 +161,9 @@ export function edittag(): void {
       update: true,
       newtag: value,
       tag: $(this).data('tag')
-    }).done(function() {
-      $('#tag_manager').load(window.location.href + ' #tag_manager', function() {
+    }).done(function(json) {
+      notif(json);
+      $('#tag_manager').load(window.location.href + ' #tag_manager > *', function() {
         edittag();
       });
     });

@@ -52,7 +52,7 @@ export default class Tag {
       tag: tag
     }).done(function(json) {
       notif(json);
-      $('#tag_manager').load(window.location.href + ' #tag_manager', function() {
+      $('#tag_manager').load(window.location.href + ' #tag_manager > *', function() {
         edittag();
       });
     });
@@ -64,8 +64,9 @@ export default class Tag {
       $.post(this.controller, {
         destroyTag: true,
         tagId: tagId
-      }).done(function() {
-        $('#tag_manager').load(window.location.href + ' #tag_manager', function() {
+      }).done(function(json) {
+        notif(json);
+        $('#tag_manager').load(window.location.href + ' #tag_manager > *', function() {
           edittag();
         });
       });

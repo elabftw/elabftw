@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, edittag } from './misc';
+import { edittag, notif } from './misc';
 import $ from 'jquery';
 import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { notif, edittag } from './misc';
 import $ from 'jquery';
 import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
@@ -375,18 +375,5 @@ $(document).ready(function() {
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
 
-  ($('.tag-editable') as any).editable(function(value) {
-    $.post('app/controllers/TagsController.php', {
-      update: true,
-      newtag: value,
-      tag: $(this).data('tag')
-    });
-
-    return(value);
-  }, {
-    tooltip : 'Click to edit',
-    indicator : 'Saving...',
-    onblur: 'submit',
-    style : 'display:inline'
-  });
+  edittag();
 });

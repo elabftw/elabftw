@@ -154,3 +154,24 @@ export function makeSortableGreatAgain(): void {
     }
   });
 }
+
+export function edittag(): void {
+  ($('.tag-editable') as any).editable(function(value) {
+    $.post('app/controllers/TagsController.php', {
+      update: true,
+      newtag: value,
+      tag: $(this).data('tag')
+    }).done(function() {
+      $('#tag_manager').load(window.location.href + ' #tag_manager', function() {
+        edittag();
+      });
+    });
+
+    return(value);
+  }, {
+    tooltip : 'Click to edit',
+    indicator : 'Saving...',
+    onblur: 'submit',
+    style : 'display:inline'
+  });
+}

@@ -164,7 +164,7 @@ export function edittag(): void {
         tag: $(this).data('tag')
       }).done(function(json) {
         notif(json);
-        // replace the content of div#tag_manager, don't add and additional div#tag_manager
+        // replace the content of div#tag_manager, don't add an additional div#tag_manager
         $('#tag_manager').load(window.location.href + ' #tag_manager > *', function() {
           edittag();
         });

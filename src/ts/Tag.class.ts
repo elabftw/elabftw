@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import { edittag, notif } from './misc';
 import i18next from 'i18next';
 
 export default class Tag {

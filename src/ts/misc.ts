@@ -157,16 +157,21 @@ export function makeSortableGreatAgain(): void {
 
 export function edittag(): void {
   ($('.tag-editable') as any).editable(function(value) {
-    $.post('app/controllers/TagsController.php', {
-      update: true,
-      newtag: value,
-      tag: $(this).data('tag')
-    }).done(function(json) {
-      notif(json);
-      $('#tag_manager').load(window.location.href + ' #tag_manager > *', function() {
-        edittag();
+    if ($(this).data('tag') !== value) {
+      $.post('app/controllers/TagsController.php', {
+        update: true,
+        newtag: value,
+        tag: $(this).data('tag')
+      }).done(function(json) {
+        notif(json);
+        // replace the content of div#tag_manager, don't add and additional div#tag_manager
+        $('#tag_manager').load(window.location.href + ' #tag_manager > *', function() {
+          edittag();
+        });
       });
-    });
+    } else {
+      return value;
+    }
   }, {
     tooltip : 'Click to edit',
     indicator : 'Saving...',

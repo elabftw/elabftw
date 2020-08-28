@@ -66,12 +66,12 @@ try {
 
     // UPDATE TAG
     if ($Request->request->has('update') && $App->Session->get('is_admin')) {
-        $Tags->update($Request->request->get('tag'), $Request->request->get('newtag'));
+        $Tags->update((int) $Request->request->get('tagId'), $Request->request->get('newtag'));
     }
 
     // DEDUPLICATE TAG
     if ($Request->request->has('deduplicate') && $Session->get('is_admin')) {
-        $deduplicated = $Tags->deduplicate($Request->request->get('tag'));
+        $deduplicated = $Tags->deduplicate((int) $Request->request->get('tagId'));
         $Response->setData(array('res' => true, 'msg' => "Removed $deduplicated duplicates"));
     }
 

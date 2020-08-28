@@ -377,12 +377,13 @@ $(document).ready(function() {
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
 
+  // make the tag editable
   $(document).on('mouseenter', '.tag-editable', function() {
     ($(this) as any).editable(function(value) {
       $.post('app/controllers/TagsController.php', {
         update: true,
         newtag: value,
-        tag: $(this).data('tag')
+        tagId: $(this).data('tagid'),
       });
 
       return(value);
@@ -390,7 +391,7 @@ $(document).ready(function() {
       tooltip : 'Click to edit',
       indicator : 'Saving...',
       onblur: 'submit',
-      style : 'display:inline'
+      style : 'display:inline',
     });
   });
 });

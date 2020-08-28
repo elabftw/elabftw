@@ -167,8 +167,6 @@ export function edittag(): void {
         edittag();
       });
     });
-
-    return(value);
   }, {
     tooltip : 'Click to edit',
     indicator : 'Saving...',

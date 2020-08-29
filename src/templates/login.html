@@ -3,10 +3,10 @@
 {% block body %}
 <!-- show message if there is a failed_attempt -->
 {% if App.Session.has('failed_attempt') and App.Session.get('failed_attempt') < App.Config.configArr.login_tries %}
-  {% set number_of_tries_left = App.Config.configArr.login_tries - App.Session.get('failed_attempt') %}
-  {{ 'Number of login attempt left before being banned for %s minutes: %s'|trans|format(
-    App.Config.configArr.ban_time,
-    number_of_tries_left)|msg('ko') }}
+    {% set number_of_tries_left = App.Config.configArr.login_tries - App.Session.get('failed_attempt') %}
+    {{ 'Number of login attempt left before being banned for %s minutes: %s'|trans|format(
+        App.Config.configArr.ban_time,
+        number_of_tries_left)|msg('ko') }}
 {% endif %}
 
 <!-- Modal for reset password -->
@@ -23,7 +23,7 @@
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
           <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
           <div class='text-center'>
-            <button class='button btn btn-primary mt-2' type='submit' name='Submit'>{{ 'Send reset link'|trans }}</button>
+            <button class='button btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
           </div>
         </form>
       </div>
@@ -35,7 +35,7 @@
 </div>
 
 <section class='text-center'>
-  <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+    <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
   {% if App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <!-- form key -->
@@ -53,7 +53,7 @@
   {% else %}
 
     {% if showLocal %}
-      <!-- Login form, the id is for an acceptance test -->
+      <!-- Login form , the id is for an acceptance test -->
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
         <!-- form key -->
         {{ App.Csrf.getHiddenInput|raw }}
@@ -74,7 +74,7 @@
 
           <!-- Remember me checkbox -->
           <div class='form-check mt-2'>
-            <input type='checkbox' class='form-check-input' checked='checked' name='rememberme' id='rememberme' />
+            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme' />
             <label for='rememberme' class='form-check-label'>{{ 'Remember me'|trans }}</label>
           </div>
         </div>
@@ -84,6 +84,7 @@
       <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
         "<a href='register.php'>",
         "</a>")|raw }}</p>
+
     {% endif %}
 
     {% if App.Config.configArr.saml_toggle %}

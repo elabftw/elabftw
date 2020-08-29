@@ -460,8 +460,8 @@
                 "parser"
             ],
             "time": "2020-08-18T01:19:12+00:00"
-                },
-                {
+        },
+        {
             "name": "league/csv",
             "version": "9.6.0",
             "source": {
@@ -5346,7 +5346,7 @@
                 "global state"
             ],
             "time": "2020-02-07T06:11:37+00:00"
-            },
+        },
         {
             "name": "sebastian/object-enumerator",
             "version": "4.0.2",

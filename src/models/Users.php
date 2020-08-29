@@ -17,7 +17,6 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
-use function filter_var;
 use function in_array;
 use function mb_strlen;
 use PDO;
@@ -98,8 +97,8 @@ class Users
             Check::passwordLength($password);
         }
 
-        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
         $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
@@ -426,6 +425,7 @@ class Users
         $params['cellphone'] = filter_var($params['cellphone'], FILTER_SANITIZE_STRING);
         // Check skype
         $params['skype'] = filter_var($params['skype'], FILTER_SANITIZE_STRING);
+
         // Check website
         $params['website'] = filter_var($params['website'], FILTER_VALIDATE_URL);
 

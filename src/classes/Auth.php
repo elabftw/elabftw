@@ -169,7 +169,6 @@ class Auth
         if ($this->Session->has('anon')) {
             return true;
         }
-
         // if we are already logged in with the session, skip everything
         if ($this->Session->has('auth')) {
             return true;
@@ -247,6 +246,7 @@ class Auth
             return false;
         }
         $token = $this->Request->cookies->filter('token', null, FILTER_SANITIZE_STRING);
+
 
         // Now compare current cookie with the token from SQL
         $sql = 'SELECT userid FROM users WHERE token = :token LIMIT 1';

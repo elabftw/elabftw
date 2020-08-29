@@ -9,7 +9,6 @@
         </h3>
         {% if mode == 'edit' %}
           <i class='fas fa-eye clickable align_right togglableNext' title="{{ 'Toggle visibility'|trans }}"></i>
-          <i class='fas fa-eye clickable align_right togglableNext' title='{{ 'Toggle visibility'|trans }}'></i>
         {% endif %}
 
         <div class='row' id='uploadsDiv'>
@@ -66,11 +65,9 @@
                                     </li>
                                     <li class='dropdown-item'>
                                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{'Line'|trans }}</span>
-                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
                                     </li>
                                     <li class='dropdown-item'>
                                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{'Sphere'|trans }}</span>
-                                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
                                     </li>
                                     <li class='dropdown-item'>
                                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
@@ -82,7 +79,6 @@
                                 <div class='viewer_3Dmoljs'
                                   data-href='app/download.php?f={{ upload.long_name }}'
                                   data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
-                                  data-style='{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}'
                                   data-backgroundcolor='0xffffff'
                                   id='3Dmol_{{ upload.id }}'>
                                 </div>

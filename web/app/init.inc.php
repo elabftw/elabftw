@@ -135,7 +135,6 @@ try {
         // load server configured lang if logged out
         $locale = $App->Config->configArr['lang'] . '.utf8';
     }
-
     // CONFIGURE GETTEXT
     $domain = 'messages';
     putenv("LC_ALL=$locale");

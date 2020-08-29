@@ -22,7 +22,7 @@ export default class Todolist {
       $.post(this.controller, {
         create: true,
         body: body
-      }).done(function(json) {
+      }).done(json => {
         if (json.res) {
           // reload the todolist
           this.getTodoItems();

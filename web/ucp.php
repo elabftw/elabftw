@@ -39,7 +39,7 @@ try {
 
     $Templates = new Templates($App->Users);
     // only show the templates you can edit in ucp
-    $templatesArr = array_filter($Templates->readInclusive(), function ($t) {
+    $templatesArr = array_filter($Templates->readForUser(), function ($t) {
         return $t['isWritable'] === true;
     });
 

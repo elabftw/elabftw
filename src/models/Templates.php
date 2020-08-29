@@ -230,16 +230,21 @@ class Templates extends AbstractEntity
         return $finalArr;
     }
 
-    /*
-     * Read all the templates in the experiment_templates table including the currentuser
-     *  and default template ( userid = 0 )
+    /**
+     * Read the templates for the user (in ucp or create new menu)
+     * depending on the user preference, we filter out on the owner or not
      */
-    public function readInclusive(): array
+    public function readForUser(): array
     {
         if (!$this->Users->userData['show_team_templates']) {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
+        return $this->readInclusive();
+    }
 
+    // Read all the templates in the experiment_templates table including the currentuser
+    public function readInclusive(): array
+    {
         $sql = "SELECT DISTINCT experiments_templates.*,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname,
                 GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,

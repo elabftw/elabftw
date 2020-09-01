@@ -190,7 +190,7 @@
   <div class='box'>
     <h3>{{ 'Edit an Existing Status'|trans }}</h3>
     <hr>
-    <ul class='list-group draggable sortable' data-axis='y' data-table='status'>
+    <ul class='list-group sortable' data-axis='y' data-table='status'>
       {% for status in statusArr %}
         <li id='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
@@ -202,7 +202,7 @@
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button></li>
 
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-danger statusDestroy' >{{ 'Delete'|trans }}</button></li>
-            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
+            <li class='list-inline-item'><i class='fas fa-sort draggable sortableHandle align_right fa-2x'></i></li>
           </ul>
         </li>
       {% endfor %}

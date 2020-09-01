@@ -154,3 +154,31 @@ export function makeSortableGreatAgain(): void {
     }
   });
 }
+
+
+/* eslint-disable */
+export function tinyMceInitLight() {
+  tinymce.init({
+    mode: 'specific_textareas',
+    editor_selector: 'mceditable',
+    skin_url: 'app/css/tinymce',
+    browser_spellcheck: true,
+    content_css: 'app/css/tinymce.css',
+    plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak',
+    pagebreak_separator: '<pagebreak>',
+    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
+    removed_menuitems: 'newdocument, image',
+    image_caption: true,
+    setup: function(editor: any) {
+      editor.on('init', function() {
+         editor.getContainer().className += ' rounded';
+      });
+    },
+    charmap_append: [
+      [0x2640, 'female sign'],
+      [0x2642, 'male sign']
+    ],
+    language : $('#user-prefs').data('lang')
+  });
+/* eslint-enable */
+}

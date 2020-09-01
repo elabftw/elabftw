@@ -82,6 +82,6 @@ jobs:
       #- snyk/scan
       - run:
           name: Code coverage
-           command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
+          command: ./vendor/bin/codecept run --skip api --skip acceptance --coverage --coverage-xml
       - codecov/upload:
           file: /home/circleci/elabftw/elabftw/tests/_output/coverage.xml

@@ -161,18 +161,18 @@ class Tags implements CrudInterface
     /**
      * Update a tag
      *
-     * @param string $tag tag value
+     * @param int $tagid tag id
      * @param string $newtag new tag value
      * @return void
      */
-    public function update(string $tag, string $newtag): void
+    public function update(int $tagid, string $newtag): void
     {
-        $this->Entity->canOrExplode('write');
         $newtag = Filter::tag($newtag);
 
-        $sql = 'UPDATE tags SET tag = :newtag WHERE tag = :tag AND team = :team';
+        // use the team in the query to prevent one admin from editing tags from another team
+        $sql = 'UPDATE tags SET tag = :newtag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag', $tag);
+        $req->bindParam(':id', $tagid);
         $req->bindParam(':newtag', $newtag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -182,11 +182,18 @@ class Tags implements CrudInterface
      * If we have the same tag (after correcting a typo),
      * remove the tags that are the same and reference only one
      *
-     * @param string $tag the tag to dedup
+     * @param int $tagid the tag to dedup
      * @return int the number of duplicates removed
      */
-    public function deduplicate(string $tag): int
+    public function deduplicate(int $tagid): int
     {
+        $sql = 'SELECT tag FROM tags WHERE id = :id AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $tagid);
+        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $tag = $req->fetchColumn();
+
         $sql = 'SELECT * FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag', $tag);

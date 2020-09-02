@@ -85,7 +85,6 @@ class Mfa
     public function abortEnable(): string
     {
         $this->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
-        $location = $this->Session->get('mfa_redirect');
 
         return (string) $this->cleanup(true);
     }

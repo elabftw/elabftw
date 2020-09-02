@@ -71,7 +71,9 @@
     <i data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' class='dropdown-toggle fas fa-ellipsis-h fa-2x fa-pull-right clickable' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'></i>
     <div class='dropdown-menu' aria-label='{{ 'More options'|trans }}'>
       <!-- MANAGE PERMISSIONS -->
-      <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+      {% if Entity.type == 'items' or Entity.entityData.userid == App.Users.userData.userid %}
+        <a class='dropdown-item modalToggle' data-modal='permModal' href='#'><i class='fas fa-share-alt' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Manage Permissions'|trans }}</a>
+      {% endif %}
       <!-- SWITCH EDITOR -->
       <a class='dropdown-item switchEditor' id='iHazEditor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt'></i> {{ 'Switch editor'|trans }}</a>
       <!-- REVISIONS -->

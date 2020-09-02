@@ -44,13 +44,16 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Experiments->Tags->update(1, 'new tag');
+        $this->assertTrue($this->Experiments->Tags->update(1, 'new super tag'));
     }
 
     public function testDeduplicate()
     {
-        $this->assertEquals(0, $this->Experiments->Tags->deduplicate(2));
-        $this->assertEquals(1, $this->Experiments->Tags->deduplicate(1));
+        $this->assertEquals(0, $this->Experiments->Tags->deduplicate());
+        $this->Experiments->Tags->create('correcttag');
+        $id = $this->Experiments->Tags->create('typotag');
+        $this->Experiments->Tags->update($id, 'correcttag');
+        $this->assertEquals(1, $this->Experiments->Tags->deduplicate());
     }
 
     public function testUnreference()

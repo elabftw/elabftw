@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -26,7 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Tags
  *
  */
-require_once \dirname(__DIR__) . '/init.inc.php';
+require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new JsonResponse();
 $Response->setData(array(
@@ -71,8 +72,8 @@ try {
 
     // DEDUPLICATE TAG
     if ($Request->request->has('deduplicate') && $Session->get('is_admin')) {
-        $deduplicated = $Tags->deduplicate((int) $Request->request->get('tagId'));
-        $Response->setData(array('res' => true, 'msg' => "Removed $deduplicated duplicates"));
+        $deduplicated = $Tags->deduplicate();
+        $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
     }
 
     // UNREFERENCE TAG

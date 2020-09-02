@@ -33,7 +33,8 @@
     "symfony/process": "^5.0",
     "league/commonmark": "^1.0",
     "symfony/filesystem": "^5.0",
-    "symfony/mime": "^5.1"
+    "symfony/mime": "^5.1",
+    "robthree/twofactorauth": "^1.7.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

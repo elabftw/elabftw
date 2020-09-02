@@ -163,9 +163,9 @@ class Tags implements CrudInterface
      *
      * @param int $tagid tag id
      * @param string $newtag new tag value
-     * @return void
+     * @return bool
      */
-    public function update(int $tagid, string $newtag): void
+    public function update(int $tagid, string $newtag): bool
     {
         $newtag = Filter::tag($newtag);
 
@@ -175,7 +175,7 @@ class Tags implements CrudInterface
         $req->bindParam(':id', $tagid);
         $req->bindParam(':newtag', $newtag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

@@ -113,7 +113,7 @@ $(document).ready(function() {
   });
 
   // CAN READ/WRITE SELECT PERMISSION
-  $(document).on('change', '.permissionSelect', function() {
+  $(document).on('change', '.permissionSelectTpl', function() {
     const value = $(this).val();
     const rw = $(this).data('rw');
     $.post('app/controllers/EntityAjaxController.php', {

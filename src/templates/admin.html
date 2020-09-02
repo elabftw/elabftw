@@ -387,9 +387,11 @@
   <div class='box'>
     <h3>{{ 'Manage tags of the team'|trans }}</h3>
     <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
-    <div id='tag_manager'>
+    <button class='button btn btn-primary tagDeduplicate'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
+    <hr>
+    <div class='mt-2' id='tag_manager'>
       {% for tag in tagsArr %}
-        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tagid='{{ tag.id }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
+        <p><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
     </div>
   </div>

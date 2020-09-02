@@ -46,10 +46,9 @@ export default class Tag {
   }
 
   // DEDUPLICATE
-  deduplicate(tagId: number): void {
+  deduplicate(): void {
     $.post(this.controller, {
       deduplicate: true,
-      tagId: tagId
     }).done(function(json) {
       notif(json);
       $('#tag_manager').load(window.location.href + ' #tag_manager > *');

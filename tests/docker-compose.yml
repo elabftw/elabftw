@@ -41,6 +41,7 @@ services:
             - ENABLE_IPV6=true
         volumes:
             - ..:/elabftw
+            - ../_coverage:/elabftw/tests/_output/coverage
         networks:
             - elabftw-net
     mysql:

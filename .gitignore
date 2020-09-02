@@ -4,7 +4,8 @@
 .scannerwork
 *.bak
 apidoc/html
-_srcdoc
+_srcdoc/
+_coverage/
 build
 cache
 config.php*

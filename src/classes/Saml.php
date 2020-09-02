@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
-use function rtrim;
 use Elabftw\Models\Idps;
+use function rtrim;
 
 /**
  * Saml settings

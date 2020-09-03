@@ -279,7 +279,7 @@ class TeamGroups implements CrudInterface
         return $groups;
     }
 
-    private function readGroupsFromUser(): array
+    public function readGroupsFromUser(): array
     {
         $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
             FROM team_groups

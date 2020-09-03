@@ -97,24 +97,6 @@ class TeamGroups implements CrudInterface
         return $fullGroups;
     }
 
-    private function readGroupsFromUser(): array
-    {
-        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
-            FROM team_groups
-            CROSS JOIN users2team_groups ON (
-                users2team_groups.userid = :userid AND team_groups.id = users2team_groups.groupid
-            )';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $groups = $req->fetchAll();
-        if ($groups === false) {
-            return array();
-        }
-        return $groups;
-    }
-
     /**
      * When we need to build a select menu with visibility + team groups
      *
@@ -293,6 +275,24 @@ class TeamGroups implements CrudInterface
         }
         foreach ($res as $group) {
             $groups[] = $group['groupid'];
+        }
+        return $groups;
+    }
+
+    private function readGroupsFromUser(): array
+    {
+        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
+            FROM team_groups
+            CROSS JOIN users2team_groups ON (
+                users2team_groups.userid = :userid AND team_groups.id = users2team_groups.groupid
+            )';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $groups = $req->fetchAll();
+        if ($groups === false) {
+            return array();
         }
         return $groups;
     }

@@ -645,7 +645,7 @@ abstract class AbstractEntity
 
         $usersJoin = 'LEFT JOIN users ON (entity.userid = users.userid)';
         $teamJoin = sprintf(
-            'CROSS JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = %s)',
+            'LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = %s)',
             $this->Users->userData['team']
         );
 

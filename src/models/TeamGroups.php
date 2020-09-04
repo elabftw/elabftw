@@ -113,16 +113,11 @@ class TeamGroups implements CrudInterface
             'team' => _('Only the team'),
             'user' => _('Only me'),
         );
-        $groups = $this->readAll();
+        $groups = $this->readGroupsFromUser();
 
         foreach ($groups as $group) {
-            // only add the teamGroup to the list if user is part of it
-            foreach ($group['users'] as $userInGroup) {
-                if (\in_array($this->Users->userData['fullname'], $userInGroup, true)) {
-                    $idArr[] = $group['id'];
-                    $nameArr[] = $group['name'];
-                }
-            }
+            $idArr[] = $group['id'];
+            $nameArr[] = $group['name'];
         }
 
         $tgArr = array_combine($idArr, $nameArr);
@@ -280,6 +275,24 @@ class TeamGroups implements CrudInterface
         }
         foreach ($res as $group) {
             $groups[] = $group['groupid'];
+        }
+        return $groups;
+    }
+
+    public function readGroupsFromUser(): array
+    {
+        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
+            FROM team_groups
+            CROSS JOIN users2team_groups ON (
+                users2team_groups.userid = :userid AND team_groups.id = users2team_groups.groupid
+            )';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $groups = $req->fetchAll();
+        if ($groups === false) {
+            return array();
         }
         return $groups;
     }

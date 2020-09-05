@@ -52,6 +52,8 @@ try {
 
     $DisplayParams = new DisplayParams();
     $DisplayParams->adjust($App);
+    // make limit very big because we want to see ALL the bookable items here
+    $DisplayParams->limit = 900000;
     $itemsArr = $Database->readShow($DisplayParams);
     $itemData = null;
 

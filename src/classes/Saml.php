@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
+use function rtrim;
 
 /**
  * Saml settings
@@ -88,7 +89,7 @@ class Saml
                 // returned to the requester, in this case our SP.
                 'assertionConsumerService' => array(
                     // URL Location where the <Response> from the IdP will be returned
-                    'url' => $this->Config->configArr['saml_baseurl'] . '/index.php?acs',
+                    'url' => rtrim($this->Config->configArr['saml_baseurl'] ?? '', '/') . '/index.php?acs',
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only

@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use function count;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,13 +61,18 @@ try {
     $statsJson = json_encode($stats);
     $colorsJson = json_encode($UserStats->colorsArr);
 
+    // get the team groups in which the user is
+    $TeamGroups = new TeamGroups($App->Users);
+    $teamGroupsArr = $TeamGroups->readGroupsFromUser();
+
     $template = 'profile.html';
     $renderArr = array(
         'UsersHelper' => $UsersHelper,
         'UserStats' => $UserStats,
         'colorsJson' => $colorsJson,
-        'statsJson' => $statsJson,
         'count' => $count,
+        'statsJson' => $statsJson,
+        'teamGroupsArr' => $teamGroupsArr,
     );
 } catch (Exception $e) {
     $template = 'error.html';

@@ -2,7 +2,7 @@
       {% set randomId = random() %}
       {% set opacity = '1' %}
       {% set owner = '' %}
-      {% if (Entity.Users.userData.userid != item.userid) and Entity.type == 'experiments' and not App.Session.has('anon') %}
+      {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('anon') %}
         {% set opacity = '0.7' %}
         {% set owner = item.fullname %}
       {% endif %}

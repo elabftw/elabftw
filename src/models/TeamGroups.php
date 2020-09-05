@@ -113,16 +113,11 @@ class TeamGroups implements CrudInterface
             'team' => _('Only the team'),
             'user' => _('Only me'),
         );
-        $groups = $this->readAll();
+        $groups = $this->readGroupsFromUser();
 
         foreach ($groups as $group) {
-            // only add the teamGroup to the list if user is part of it
-            foreach ($group['users'] as $userInGroup) {
-                if (\in_array($this->Users->userData['fullname'], $userInGroup, true)) {
-                    $idArr[] = $group['id'];
-                    $nameArr[] = $group['name'];
-                }
-            }
+            $idArr[] = $group['id'];
+            $nameArr[] = $group['name'];
         }
 
         $tgArr = array_combine($idArr, $nameArr);
@@ -209,10 +204,17 @@ class TeamGroups implements CrudInterface
     public function destroy(int $id): void
     {
         // TODO add fk to do that
-        $sql = "UPDATE experiments SET canread = 'team' WHERE canread = :id";
+        $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
-        // note: setting PDO::PARAM_INT here will throw error because it can also be string value!
-        $req->bindParam(':id', $id);
+        // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
+        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $this->Db->execute($req);
+
+        // same for items but canwrite is team
+        $sql = "UPDATE items SET canread = 'team', canwrite = 'team' WHERE canread = :id OR canwrite = :id";
+        $req = $this->Db->prepare($sql);
+        // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
+        $req->bindParam(':id', $id, PDO::PARAM_STR);
         $this->Db->execute($req);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';
@@ -280,6 +282,24 @@ class TeamGroups implements CrudInterface
         }
         foreach ($res as $group) {
             $groups[] = $group['groupid'];
+        }
+        return $groups;
+    }
+
+    public function readGroupsFromUser(): array
+    {
+        $sql = 'SELECT DISTINCT team_groups.id, team_groups.name
+            FROM team_groups
+            CROSS JOIN users2team_groups ON (
+                users2team_groups.userid = :userid AND team_groups.id = users2team_groups.groupid
+            )';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $groups = $req->fetchAll();
+        if ($groups === false) {
+            return array();
         }
         return $groups;
     }

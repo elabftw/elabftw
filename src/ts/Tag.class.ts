@@ -46,13 +46,12 @@ export default class Tag {
   }
 
   // DEDUPLICATE
-  deduplicate(tag: string): void {
+  deduplicate(): void {
     $.post(this.controller, {
       deduplicate: true,
-      tag: tag
     }).done(function(json) {
       notif(json);
-      $('#tag_manager').load(window.location.href + ' #tag_manager');
+      $('#tag_manager').load(window.location.href + ' #tag_manager > *');
     });
   }
 
@@ -62,8 +61,9 @@ export default class Tag {
       $.post(this.controller, {
         destroyTag: true,
         tagId: tagId
-      }).done(function() {
-        $('#tag_manager').load(window.location.href + ' #tag_manager');
+      }).done(function(json) {
+        notif(json);
+        $('#tag_manager').load(window.location.href + ' #tag_manager > *');
       });
     }
   }

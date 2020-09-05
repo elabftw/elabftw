@@ -190,7 +190,7 @@
   <div class='box'>
     <h3>{{ 'Edit an Existing Status'|trans }}</h3>
     <hr>
-    <ul class='list-group draggable sortable' data-axis='y' data-table='status'>
+    <ul class='list-group sortable' data-axis='y' data-table='status'>
       {% for status in statusArr %}
         <li id='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
@@ -202,7 +202,7 @@
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-primary statusSave'>{{ 'Save'|trans }}</button></li>
 
             <li class='list-inline-item'><button data-id='{{ status.category_id }}' class='button btn btn-danger statusDestroy' >{{ 'Delete'|trans }}</button></li>
-            <li class='list-inline-item'><i class='fas fa-sort sortableHandle align_right fa-2x'></i></li>
+            <li class='list-inline-item'><i class='fas fa-sort draggable sortableHandle align_right fa-2x'></i></li>
           </ul>
         </li>
       {% endfor %}
@@ -387,9 +387,11 @@
   <div class='box'>
     <h3>{{ 'Manage tags of the team'|trans }}</h3>
     <p>{{ 'From here you can edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
-    <div id='tag_manager'>
+    <button class='button btn btn-primary tagDeduplicate'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
+    <hr>
+    <div class='mt-2' id='tag_manager'>
       {% for tag in tagsArr %}
-        <p><i class='fas fa-clone clickable tagDeduplicate mr-1' title='Deduplicate' data-tag='{{ tag.tag }}'></i><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tag='{{ tag.tag }}'>{{ tag.tag|raw }}</span></p>
+        <p><i class='fas fa-trash-alt clickable tagDestroy mr-1' title='Delete' data-tagid='{{ tag.id }}'></i> <span class='tag-editable editable' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</span></p>
       {% endfor %}
     </div>
   </div>

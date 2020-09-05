@@ -13,6 +13,13 @@
         <span class='btn btn-secondary'>{{ team.name }}</span>
       {% endfor %}
       </h5>
+      {% if teamGroupsArr %}
+        <h5>{{ 'Groups'|trans }}:
+          {% for group in teamGroupsArr %}
+          <span class='btn btn-secondary'>{{ group.name }}</span>
+          {% endfor %}
+        </h5>
+      {% endif %}
       <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
     </div>
 </section>

@@ -44,10 +44,10 @@ class MFA extends Command
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('This command allows you to get a 2FA code if you provide a secret token.');
+            ->setHelp('This command allows you to get a 2FA code if you provide a secret token.')
 
             //
-            ->addArgument('secret', InputArgument::REQUIRED, 'Please provide the 2FA secret.')
+            ->addArgument('secret', InputArgument::REQUIRED, 'Please provide the 2FA secret.');
     }
 
     /**

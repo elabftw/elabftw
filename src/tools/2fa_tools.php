@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use dirname;
+use function dirname;
 use Elabftw\Services\MpdfQrProvider;
 use RobThree\Auth\TwoFactorAuth;
 use Symfony\Component\Console\Application;

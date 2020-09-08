@@ -162,7 +162,6 @@ class PopulateDatabase extends Command
                     $Templates->createNew($Faker->sentence, $Faker->realText(1000));
                 }
             }
-
         }
 
         // add more items types

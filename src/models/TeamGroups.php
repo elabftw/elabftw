@@ -204,10 +204,17 @@ class TeamGroups implements CrudInterface
     public function destroy(int $id): void
     {
         // TODO add fk to do that
-        $sql = "UPDATE experiments SET canread = 'team' WHERE canread = :id";
+        $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
         $req = $this->Db->prepare($sql);
-        // note: setting PDO::PARAM_INT here will throw error because it can also be string value!
-        $req->bindParam(':id', $id);
+        // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
+        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $this->Db->execute($req);
+
+        // same for items but canwrite is team
+        $sql = "UPDATE items SET canread = 'team', canwrite = 'team' WHERE canread = :id OR canwrite = :id";
+        $req = $this->Db->prepare($sql);
+        // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
+        $req->bindParam(':id', $id, PDO::PARAM_STR);
         $this->Db->execute($req);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';

@@ -19,6 +19,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
 use function is_string;
@@ -154,6 +155,14 @@ class PopulateDatabase extends Command
                 $ApiKeys = new ApiKeys($Users);
                 $ApiKeys->createKnown($user['api_key']);
             }
+
+            if ($user['create_templates'] ?? false) {
+                $Templates = new Templates($Users);
+                for ($i = 0; $i < 100; $i++) {
+                    $Templates->createNew($Faker->sentence, $Faker->realText(1000));
+                }
+            }
+
         }
 
         // add more items types

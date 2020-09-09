@@ -135,7 +135,7 @@ class PopulateDatabase extends Command
         $Session = new Session();
         $Request->setSession($Session);
 
-        $Mfa = New Mfa($Request, $Session);
+        $Mfa = new Mfa($Request, $Session);
 
         // create users
         // all users have the same password to make switching accounts easier

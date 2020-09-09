@@ -55,7 +55,7 @@ class MFA extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int 1
+     * @return int 0
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -69,7 +69,7 @@ class MFA extends Command
             '2FA code: ' . (string) $code,
         ));
 
-        return 1;
+        return 0;
     }
 }
 

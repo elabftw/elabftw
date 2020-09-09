@@ -59,7 +59,7 @@ $(document).ready(function() {
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          window.location.replace('ucp.php?tab=3');
+          window.location.replace(`ucp.php?tab=3&templateid=${json.msg}`);
         }
       });
     },
@@ -116,10 +116,11 @@ $(document).ready(function() {
   $(document).on('change', '.permissionSelectTpl', function() {
     const value = $(this).val();
     const rw = $(this).data('rw');
+    const id = $(this).data('id');
     $.post('app/controllers/EntityAjaxController.php', {
       updatePermissions: true,
       rw: rw,
-      id: $('#selectedTemplate').data('id'),
+      id: id,
       type: 'experiments_templates',
       value: value,
     }).done(function(json) {

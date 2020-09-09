@@ -55,7 +55,7 @@ class MFA extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return 1
+     * @return int 1
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

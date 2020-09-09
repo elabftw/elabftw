@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Mfa;
+use Elabftw\Elabftw\Mfa as ElabMfa;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
@@ -135,7 +135,7 @@ class PopulateDatabase extends Command
         $Session = new Session();
         $Request->setSession($Session);
 
-        $Mfa = new Mfa($Request, $Session);
+        $Mfa = new ElabMfa($Request, $Session);
 
         // create users
         // all users have the same password to make switching accounts easier

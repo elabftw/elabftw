@@ -19,6 +19,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class MfaTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var Session $Session Current session */
+    public $Session;
+
+    /** @var Request $Request Current request */
+    private $Request;
+
     protected function setUp(): void
     {
         $this->Request = Request::createFromGlobals();
@@ -26,15 +32,15 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->Session = new Session();
 
         $this->Request->setSession($this->Session);
-        $this->Mfa = new Mfa($Request, $this->Session);
+        $this->Mfa = new Mfa($this->Request, $this->Session);
     }
 
     public function testNeedVerification()
     {
         $path = 'path/to/some/file.php';
         $this->assertFalse($this->Mfa->needVerification(2, $path));
-        $this->asserFalse($this->Session->has('mfa_secret'));
-        $this->asserFalse($this->Session->has('mfa_redirect'));
+        $this->assertFalse($this->Session->has('mfa_secret'));
+        $this->assertFalse($this->Session->has('mfa_redirect'));
 
         $secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
         $this->assertTrue($this->Mfa->needVerification(1, $path));
@@ -77,16 +83,16 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $path = 'path/to/some/file.php';
         $this->Mfa->enable($path);
         $this->assertEquals($this->Mfa->cleanup(), $path);
-        $this->asserTrue($this->Session->has('enable_mfa'));
-        $this->asserFalse($this->Session->has('mfa_secret'));
-        $this->asserFalse($this->Session->has('mfa_redirect'));
+        $this->assertTrue($this->Session->has('enable_mfa'));
+        $this->assertFalse($this->Session->has('mfa_secret'));
+        $this->assertFalse($this->Session->has('mfa_redirect'));
         $this->Session->remove('enable_mfa');
 
         $this->Mfa->enable($path);
         $this->assertEquals($this->Mfa->cleanup(true), $path);
-        $this->asserFalse($this->Session->has('enable_mfa'));
-        $this->asserFalse($this->Session->has('mfa_secret'));
-        $this->asserFalse($this->Session->has('mfa_redirect'));
+        $this->assertFalse($this->Session->has('enable_mfa'));
+        $this->assertFalse($this->Session->has('mfa_secret'));
+        $this->assertFalse($this->Session->has('mfa_redirect'));
     }
 
     public function testSaveSecret()
@@ -96,8 +102,8 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->Mfa->enable($path);
 
         $this->assertEquals($this->Mfa->saveSecret(), $path);
-        $this->asserFalse($this->Session->has('enable_mfa'));
-        $this->asserFalse($this->Session->has('mfa_secret'));
-        $this->asserFalse($this->Session->has('mfa_redirect'));
+        $this->assertFalse($this->Session->has('enable_mfa'));
+        $this->assertFalse($this->Session->has('mfa_secret'));
+        $this->assertFalse($this->Session->has('mfa_redirect'));
     }
 }

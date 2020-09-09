@@ -155,7 +155,7 @@ class PopulateDatabase extends Command
             if ($user['create_mfa_secret'] ?? false) {
                 $Mfa->enable('path/to/some/file.php');
                 $Session->set('userid', $userid);
-                $Session->set('mfa_secret', 'EXAMPLE2FASECRET234567ABCDEFGHIJ')
+                $Session->set('mfa_secret', 'EXAMPLE2FASECRET234567ABCDEFGHIJ');
                 $Mfa->saveSecret();
             }
             if ($user['create_experiments'] ?? false) {

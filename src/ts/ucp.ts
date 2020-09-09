@@ -59,7 +59,7 @@ $(document).ready(function() {
       }).done(function(json) {
         notif(json);
         if (json.res) {
-          window.location.replace('ucp.php?tab=3');
+          window.location.replace(`ucp.php?tab=3&templateid=${json.msg}`);
         }
       });
     },

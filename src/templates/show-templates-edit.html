@@ -101,12 +101,12 @@
     <form action='app/controllers/UcpController.php' method='post'>
       {{ App.Csrf.getHiddenInput|raw }}
       <input type='hidden' name='tpl_form' />
-      <input type='hidden' name='tpl_id[]' value='{{ templateData.id }}' />
-      <label for='tplName_{{ templateData.id }}'>{{ 'Name'|trans }}</label>
-      <input id='tplName_{{ templateData.id }}' name='tpl_name[]' class='form-control' value='{{ templateData.name|raw }}' />
+      <input type='hidden' name='tpl_id' value='{{ templateData.id }}' />
+      <label for='tplName'>{{ 'Name'|trans }}</label>
+      <input id='tplName' name='tpl_name' class='form-control' value='{{ templateData.name|raw }}' />
       {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
       <label for='e{{ templateData.id }}'>{{ 'Template content'|trans }}</label>
-      <textarea id='e{{ templateData.id }}' name='tpl_body[]' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
+      <textarea id='e{{ templateData.id }}' name='tpl_body' class='mceditable' style='height:500px;'>{{ templateData.body }}</textarea><br />
       <div class='text-center'>
         <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>

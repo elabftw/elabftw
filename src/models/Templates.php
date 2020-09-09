@@ -53,9 +53,9 @@ class Templates extends AbstractEntity
      * @param string|null $body
      * @param int|null $userid
      * @param int|null $team
-     * @return void
+     * @return int
      */
-    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): void
+    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): int
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];
@@ -86,6 +86,7 @@ class Templates extends AbstractEntity
         $req->bindParam('canread', $canread, PDO::PARAM_STR);
         $req->bindParam('canwrite', $canwrite, PDO::PARAM_STR);
         $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 
     /**

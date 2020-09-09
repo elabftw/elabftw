@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
 $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
+$templateId = '';
 
 try {
     // CSRF
@@ -78,10 +79,11 @@ try {
 
         $Templates = new Templates($App->Users);
         $Templates->updateTpl(
-            (int) $Request->request->get('tpl_id')[0],
-            $Request->request->get('tpl_name')[0],
-            $Request->request->get('tpl_body')[0]
+            (int) $Request->request->get('tpl_id'),
+            $Request->request->get('tpl_name'),
+            $Request->request->get('tpl_body'),
         );
+        $templateId = '&templateid=' . $Request->request->get('tpl_id');
     }
 
     // TAB 4 : CREATE API KEY
@@ -96,7 +98,7 @@ try {
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
-    $Response = new RedirectResponse('../../ucp.php?tab=' . $tab);
+    $Response = new RedirectResponse('../../ucp.php?tab=' . $tab . $templateId);
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

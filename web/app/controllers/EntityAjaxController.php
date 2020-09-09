@@ -307,7 +307,11 @@ try {
         $name = $Request->request->filter('name', null, FILTER_SANITIZE_STRING);
         $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
 
-        $Entity->createNew($name, $body);
+        $id = $Entity->createNew($name, $body);
+        $Response->setData(array(
+            'res' => true,
+            'msg' => $id,
+        ));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(

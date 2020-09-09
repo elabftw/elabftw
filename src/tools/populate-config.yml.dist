@@ -34,19 +34,19 @@ users:
     api_key: apiKey4Test
     create_experiments: true
     create_items: true
-    create_templates: true
+    create_templates: false
 
   - email: titi@yopmail.com
     firstname: Titi
     team: Alpha
     create_experiments: true
-    create_templates: true
+    create_templates: false
 
   - email: demo@elabftw.net
     password: demodemo
     team: Alpha
     create_experiments: true
-    create_templates: true
+    create_templates: false
 
   - email: tata@yopmail.com
     firstname: Tata

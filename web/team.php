@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Exception;
@@ -41,6 +42,10 @@ try {
     $Teams = new Teams($App->Users);
     $teamArr = $Teams->read();
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
+
+    $TeamGroups = new TeamGroups($App->Users);
+    $teamGroupsArr = $TeamGroups->readAll();
+
 
     $Database = new Database($App->Users);
     // we only want the bookable type of items
@@ -75,7 +80,16 @@ try {
     }
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->readInclusive();
+    $templatesArr = $Templates->getTemplatesList();
+    $templateData = array();
+    if ($Request->query->has('templateid')) {
+        $Templates->setId((int) $Request->query->get('templateid'));
+        $templateData = $Templates->read();
+        $permissions = $Templates->getPermissions($templateData);
+        if ($permissions['read'] === false) {
+            throw new IllegalActionException('User tried to access a template without read permissions');
+        }
+    }
 
     $template = 'team.html';
     $renderArr = array(
@@ -87,7 +101,9 @@ try {
         'itemData' => $itemData,
         'selectedItem' => $selectedItem,
         'teamArr' => $teamArr,
+        'teamGroupsArr' => $teamGroupsArr,
         'teamsStats' => $teamsStats,
+        'templateData' => $templateData,
         'templatesArr' => $templatesArr,
         'calendarLang' => Tools::getCalendarLang($App->Users->userData['lang']),
     );

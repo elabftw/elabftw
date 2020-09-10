@@ -37,7 +37,5 @@ document.addEventListener('DOMContentLoaded', function() {
     const divhandle = '#' + event.target.id + 'div';
     $('.subdivhandle').hide();
     $(divhandle).show();
-    // store the selected template id in there so we can get it back for updating permissions
-    $('#selectedTemplate').data('id', event.target.id.split('_')[1]);
   });
 });

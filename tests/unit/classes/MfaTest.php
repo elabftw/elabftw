@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Services\MpdfQrProvider;
-use RobThree\Auth\TwoFactorAuth;
 use function strlen;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -56,26 +54,45 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Session->get('enable_mfa'));
     }
 
+    /*
+     * @depends testEnable
+     */
     public function testCleanupFalse()
     {
         $this->Mfa->enable($this->testPath);
 
-        $this->assertEquals($this->Mfa->cleanup(), $this->testPath);
+        $this->assertEquals($this->testPath, $this->Mfa->cleanup());
         $this->assertTrue($this->Session->has('enable_mfa'));
         $this->assertFalse($this->Session->has('mfa_secret'));
         $this->assertFalse($this->Session->has('mfa_redirect'));
     }
 
+    /*
+     * @depends testEnable
+     */
     public function testCleanupTrue()
     {
         $this->Mfa->enable($this->testPath);
 
-        $this->assertEquals($this->Mfa->cleanup(true), $this->testPath);
+        $this->assertEquals($this->testPath, $this->Mfa->cleanup(true));
         $this->assertFalse($this->Session->has('enable_mfa'));
         $this->assertFalse($this->Session->has('mfa_secret'));
         $this->assertFalse($this->Session->has('mfa_redirect'));
     }
 
+    /*
+     * @depends testEnable
+     * @depends testCleanupTrue
+     */
+    public function testAbortEnable()
+    {
+        $this->Mfa->enable($this->testPath);
+        $this->assertEquals($this->testPath, $this->Mfa->abortEnable());
+    }
+
+    /*
+     * @depends testCleanupTrue
+     */
     public function testSaveSecret()
     {
         $this->Session->set('userid', 1);
@@ -87,6 +104,20 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->Session->has('enable_mfa'));
         $this->assertFalse($this->Session->has('mfa_secret'));
         $this->assertFalse($this->Session->has('mfa_redirect'));
+    }
+
+    /*
+     * @depends testSaveSecret
+     */
+    public function testDisable()
+    {
+        $this->Session->set('userid', 3);
+        $this->Session->set('mfa_secret', $this->secret);
+        $this->Session->set('mfa_verified', time());
+        $this->Mfa->saveSecret();
+
+        $this->assertTrue($this->Mfa->disable(3));
+        $this->assertFalse($this->Session->has('mfa_verified'));
     }
 
     public function testNeedVerificationFalse()
@@ -105,8 +136,7 @@ class MfaTest extends \PHPUnit\Framework\TestCase
 
     public function testVerifyCodeFalse()
     {
-        $TwoFactorAuth = new TwoFactorAuth('eLabFTW', 6, 30, 'sha1', new MpdfQrProvider());
-        $this->Request->request->set('mfa_code', $TwoFactorAuth->getCode($this->secret));
+        $this->Request->request->set('mfa_code', $this->Mfa->TwoFactorAuth->getCode($this->secret));
         $this->Session->set('mfa_secret', $this->secret);
 
         $this->assertTrue($this->Mfa->verifyCode());
@@ -115,7 +145,6 @@ class MfaTest extends \PHPUnit\Framework\TestCase
 
     public function testVerifyCodeTrue()
     {
-        $TwoFactorAuth = new TwoFactorAuth('eLabFTW', 6, 30, 'sha1', new MpdfQrProvider());
         $this->Request->request->set('mfa_code', '123456');
         $this->Session->set('mfa_secret', $this->secret);
 

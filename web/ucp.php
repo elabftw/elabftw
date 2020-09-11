@@ -38,10 +38,7 @@ try {
     $teamGroupsArr = $TeamGroups->readAll();
 
     $Templates = new Templates($App->Users);
-    // only show the templates you can edit in ucp
-    $templatesArr = array_filter($Templates->readForUser(), function ($t) {
-        return $t['isWritable'] === true;
-    });
+    $templatesArr = $Templates->getWriteableTemplatesList();
     $templateData = array();
     if ($Request->query->has('templateid')) {
         $Templates->setId((int) $Request->query->get('templateid'));

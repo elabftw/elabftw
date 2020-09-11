@@ -252,6 +252,22 @@ class Templates extends AbstractEntity
     }
 
     /**
+     * Filter the readable templates to only get the ones where we can write to
+     * Use this to display templates in UCP
+     */
+    public function getWriteableTemplatesList(): array
+    {
+        $TeamGroups = new TeamGroups($this->Users);
+        return array_filter($this->getTemplatesList(), function ($t) use ($TeamGroups) {
+            return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
+                ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
+                ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
+                (in_array($t['canwrite'], $TeamGroups->getGroupsFromUser(), true));
+        });
+    }
+
+
+    /**
      * Get a list of fullname + id + name of template
      * Use this to build a select of the readable templates
      */
@@ -260,8 +276,9 @@ class Templates extends AbstractEntity
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
 
-        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.name,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname
+        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.name, experiments_templates.canwrite,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+                users2teams.teams_id, experiments_templates.userid
                 FROM experiments_templates
                 LEFT JOIN users ON (experiments_templates.userid = users.userid)
                 LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)

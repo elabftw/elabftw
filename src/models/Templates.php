@@ -248,7 +248,7 @@ class Templates extends AbstractEntity
         if (!$this->Users->userData['show_team_templates']) {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
-        return $this->readInclusive();
+        return $this->getTemplatesList();
     }
 
     /**
@@ -277,6 +277,11 @@ class Templates extends AbstractEntity
             }
         }
         $sql .= ')';
+
+        foreach ($this->filters as $filter) {
+            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
+        }
+
         $sql .= 'GROUP BY id ORDER BY fullname, experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
@@ -290,47 +295,6 @@ class Templates extends AbstractEntity
         }
 
         return $res;
-    }
-
-    // Read all the templates in the experiment_templates table including the currentuser
-    public function readInclusive(): array
-    {
-        $sql = "SELECT DISTINCT experiments_templates.*,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,
-                GROUP_CONCAT(DISTINCT tags.id) as tags_id
-                FROM experiments_templates
-                LEFT JOIN users ON (experiments_templates.userid = users.userid)
-                LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-                LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-                WHERE experiments_templates.userid != 0 ";
-
-        foreach ($this->filters as $filter) {
-            $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
-        }
-
-        $sql .= 'GROUP BY id ORDER BY fullname, experiments_templates.ordering ASC';
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-
-        // loop the array and only add the ones we can read to return to template
-        $finalArr = array();
-        foreach ($res as $item) {
-            $permissions = $this->getPermissions($item);
-            if ($permissions['read']) {
-                $item['isWritable'] = $permissions['write'];
-                $finalArr[] = $item;
-            }
-        }
-
-        return $finalArr;
     }
 
     /**

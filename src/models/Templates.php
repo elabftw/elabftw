@@ -266,7 +266,6 @@ class Templates extends AbstractEntity
         });
     }
 
-
     /**
      * Get a list of fullname + id + name of template
      * Use this to build a select of the readable templates

@@ -258,11 +258,13 @@ class Templates extends AbstractEntity
     public function getWriteableTemplatesList(): array
     {
         $TeamGroups = new TeamGroups($this->Users);
-        return array_filter($this->getTemplatesList(), function ($t) use ($TeamGroups) {
+        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+
+        return array_filter($this->getTemplatesList(), function ($t) use ($teamgroupsOfUser) {
             return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
                 ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
-                (in_array($t['canwrite'], $TeamGroups->getGroupsFromUser(), true));
+                (in_array($t['canwrite'], $teamgroupsOfUser, true));
         });
     }
 

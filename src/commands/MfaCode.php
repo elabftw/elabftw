@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * @author Marcel Bolten <marcel.bolten@msl.ubc.ca>
@@ -15,21 +14,18 @@ namespace Elabftw\Commands;
 use function dirname;
 use Elabftw\Services\MpdfQrProvider;
 use RobThree\Auth\TwoFactorAuth;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-require dirname(__DIR__, 2) . '/vendor/autoload.php';
-
 /**
- * Command line tool to emulate a 2FA phone app. It returns a 2FA code if a secret is provided.
+ * Command line tool to emulate a 2FA phone app. It returns a 2FA code calculated from the provided secret.
  */
-class MFA extends Command
+class MfaCode extends Command
 {
-    // the name of the command
-    protected static $defaultName = '2FA:code';
+    // the name of the command (the part after "bin/console")
+    protected static $defaultName = 'dev:2fa';
 
     /**
      * Set the help messages
@@ -39,14 +35,14 @@ class MFA extends Command
     protected function configure(): void
     {
         $this
-            // the short description shown while running "php 2fa_tools.php list"
+            // the short description shown while running "php bin/console list"
             ->setDescription('Get a 2FA code')
 
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp('This command allows you to get a 2FA code if you provide a secret token.')
 
-            //
+            // The secret token input
             ->addArgument('secret', InputArgument::REQUIRED, 'Please provide the 2FA secret.');
     }
 
@@ -72,7 +68,3 @@ class MFA extends Command
         return 0;
     }
 }
-
-$Application = new Application();
-$Application->add(new MFA());
-$Application->run();

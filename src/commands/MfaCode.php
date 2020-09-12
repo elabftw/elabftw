@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use function dirname;
 use Elabftw\Services\MpdfQrProvider;
 use RobThree\Auth\TwoFactorAuth;
 use Symfony\Component\Console\Command\Command;

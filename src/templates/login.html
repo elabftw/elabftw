@@ -121,7 +121,7 @@
               <div class='input-group-text'>{{ 'Select a team'|trans }}</div>
             </div>
             <select name='team_id' class='form-control' id='anon_login_select'>
-              {% for team in teamsArr %}
+              {% for team in teamsArr|filter(v => v.visible == 1) %}
                 <option value='{{ team.id }}'>{{ team.name }}</option>
               {% endfor %}
             </select>

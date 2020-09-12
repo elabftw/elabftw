@@ -77,7 +77,7 @@ try {
     // GET USER TEMPLATES
     if ($Request->query->has('getUserTpl')) {
         $Templates = new Templates($App->Users);
-        $userTemplates = $Templates->readAll();
+        $userTemplates = $Templates->readForUser();
         $res = array();
 
         foreach ($userTemplates as $template) {

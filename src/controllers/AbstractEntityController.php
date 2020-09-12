@@ -190,7 +190,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),
             'stepsArr' => $this->Entity->Steps->readAll(),
-            'templatesArr' => $this->Templates->readAll(),
+            'templatesArr' => $this->Templates->readForUser(),
             'timestampInfo' => $this->Entity->getTimestampInfo(),
             'uploadsArr' => $this->Entity->Uploads->readAll(),
         );
@@ -241,7 +241,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'edit',
             'revNum' => $Revisions->readCount(),
             'stepsArr' => $this->Entity->Steps->readAll(),
-            'templatesArr' => $this->Templates->readAll(),
+            'templatesArr' => $this->Templates->readForUser(),
             'uploadsArr' => $this->Entity->Uploads->readAll(),
             'visibilityArr' => $TeamGroups->getVisibilityList(),
         );

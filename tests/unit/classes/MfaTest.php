@@ -103,9 +103,6 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->Session->set('mfa_redirect', $this->testPath);
 
         $this->assertEquals($this->testPath, $this->Mfa->saveSecret());
-        $this->assertFalse($this->Session->has('enable_mfa'));
-        $this->assertFalse($this->Session->has('mfa_secret'));
-        $this->assertFalse($this->Session->has('mfa_redirect'));
     }
 
     /**
@@ -136,7 +133,7 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->secret, $this->Session->get('mfa_secret'));
     }
 
-    public function testVerifyCodeFalse()
+    public function testVerifyCodeTrue()
     {
         $TwoFactorAuth = new TwoFactorAuth('eLabFTW', 6, 30, 'sha1', new MpdfQrProvider());
         $this->Request->request->set('mfa_code', $TwoFactorAuth->getCode($this->secret));
@@ -146,7 +143,7 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Session->has('mfa_verified'));
     }
 
-    public function testVerifyCodeTrue()
+    public function testVerifyCodeFalse()
     {
         $this->Request->request->set('mfa_code', '123456');
         $this->Session->set('mfa_secret', $this->secret);

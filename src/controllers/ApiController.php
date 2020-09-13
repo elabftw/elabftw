@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -695,7 +696,7 @@ class ApiController implements ControllerInterface
      */
     private function createLink(): Response
     {
-        $this->Entity->Links->create((int) $this->Request->request->get('link'));
+        $this->Entity->Links->create(new ParamsProcessor(array('id' => (int) $this->Request->request->get('link'))));
         return new JsonResponse(array('result' => 'success'));
     }
 
@@ -735,7 +736,7 @@ class ApiController implements ControllerInterface
      */
     private function createTag(): Response
     {
-        $this->Entity->Tags->create($this->Request->request->get('tag') ?? '');
+        $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $this->Request->request->get('tag') ?? '')));
         return new JsonResponse(array('result' => 'success'));
     }
 

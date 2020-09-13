@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
@@ -20,7 +22,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->Steps->create('do this');
+        $this->Steps->create(new ParamsProcessor(array('template' => 'do this')));
     }
 
     public function testFinish()

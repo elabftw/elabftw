@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 
@@ -56,7 +57,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testReadRelated()
     {
         $this->Experiments->setId(1);
-        $this->Experiments->Links->create(1);
+        $this->Experiments->Links->create(new ParamsProcessor(array('id' => 1)));
         $this->assertTrue(is_array($this->Experiments->readRelated(1)));
     }
 

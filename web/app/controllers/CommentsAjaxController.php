@@ -51,9 +51,9 @@ try {
     }
 
     // CREATE
-    if ($Request->request->has('create')) {
+    if ($Request->request->get('action') === 'create') {
         $Entity->setId((int) $Request->request->get('id'));
-        $commentId = $Entity->Comments->create($Request->request->get('comment'));
+        $commentId = $Entity->Comments->create($Request->request->get('content'));
         $Response->setData(array(
             'res' => true,
             'msg' => _('Saved'),
@@ -75,9 +75,10 @@ try {
     }
 
     // DESTROY
-    if ($Request->request->has('destroy')) {
+    if ($Request->request->get('action') === 'destroy') {
         $Entity->Comments->destroy((int) $Request->request->get('id'));
     }
+
 } catch (Swift_TransportException $e) {
     // for swift error, don't display error to user as it might contain sensitive information
     // but log it and display general error. See #841

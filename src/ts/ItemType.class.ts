@@ -5,15 +5,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import Crud from './Crud.class';
 import { notif, tinyMceInitLight } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 
-export default class ItemType {
-  controller: string;
+export default class ItemType extends Crud {
 
   constructor() {
-    this.controller = 'app/controllers/ItemsTypesAjaxController.php';
+    super('app/controllers/ItemsTypesAjaxController.php');
   }
 
   create(): void {
@@ -32,17 +32,16 @@ export default class ItemType {
 
     const template = tinymce.get('itemsTypesTemplate').getContent();
 
-    $.post(this.controller, {
-      itemsTypesCreate: true,
-      name: name,
-      color: color,
-      bookable: bookable,
-      template: template
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace('admin.php?tab=5');
-      }
+    this.send({
+      action: 'create',
+      content: {
+        template: template,
+        name: name,
+        color: color,
+        bookable: bookable,
+      },
+    }).then(function() {
+      window.location.replace('admin.php?tab=5');
     });
   }
 
@@ -68,25 +67,24 @@ export default class ItemType {
     const template = tinymce.get('itemsTypesTemplate_' + id).getContent();
     $('#itemsTypesEditor_' + id).toggle();
 
-    $.post(this.controller, {
-      itemsTypesUpdate: true,
+    this.send({
+      action: 'update',
       id: id,
-      name: name,
-      color: color,
-      bookable: bookable,
-      template: template
-    }).done(function(json) {
-      notif(json);
+      content: {
+        template: template,
+        name: name,
+        color: color,
+        bookable: bookable,
+      },
     });
   }
 
   destroy(id): void {
-    $.post(this.controller, {
-      itemsTypesDestroy: true,
-      id: id
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
+    this.send({
+      action: 'destroy',
+      id: id,
+    }).then(function(response) {
+      if (response.res) {
         $('#itemstypes_' + id).hide();
         $('#itemstypesOrder_' + id).hide();
       }

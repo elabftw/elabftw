@@ -5,16 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, relativeMoment, makeSortableGreatAgain } from './misc';
+import Crud from './Crud.class';
+import { relativeMoment, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 
-export default class Step {
-  controller: string;
+export default class Step extends Crud {
   type: string;
 
   constructor(type: string) {
+    super('app/controllers/EntityAjaxController.php');
     this.type = type;
-    this.controller = 'app/controllers/EntityAjaxController.php';
   }
 
   create(elem): void {
@@ -23,20 +23,19 @@ export default class Step {
     const body = elem.val();
     // fix for user pressing enter with no input
     if (body.length > 0) {
-      $.post(this.controller, {
-        createStep: true,
+      this.send({
+        action: 'createStep',
         id: id,
-        body: body,
-        type: this.type
-      }).done(function() {
-        // reload the step list
-        $('#steps_div_' + id).load(window.location.href + ' #steps_div_' + id, function() {
-          relativeMoment();
-          makeSortableGreatAgain();
-        });
-        // clear input field
-        elem.val('');
+        content: body,
+        type: this.type,
       });
+      // reload the step list
+      $('#steps_div_' + id).load(window.location.href + ' #steps_div_' + id, function() {
+        relativeMoment();
+        makeSortableGreatAgain();
+      });
+      // clear input field
+      elem.val('');
     } // end if input < 0
   }
 
@@ -52,20 +51,19 @@ export default class Step {
       itemType = elem.data('type');
     }
 
-    $.post(this.controller, {
-      finishStep: true,
+    this.send({
+      action: 'finishStep',
       id: id,
-      stepId: stepId,
-      type: itemType
-    }).done(function() {
-      const loadUrl = window.location.href + ' #steps_div_' + id;
-      // reload the step list
-      $('#steps_div_' + id).load(loadUrl, function() {
-        relativeMoment();
-        makeSortableGreatAgain();
-      });
-      $('#todo_step_' + stepId).prop('checked', true);
+      content: stepId,
+      type: itemType,
     });
+    const loadUrl = window.location.href + ' #steps_div_' + id;
+    // reload the step list
+    $('#steps_div_' + id).load(loadUrl, function() {
+      relativeMoment();
+      makeSortableGreatAgain();
+    });
+    $('#todo_step_' + stepId).prop('checked', true);
   }
 
   destroy(elem): void {
@@ -73,21 +71,17 @@ export default class Step {
     const id = elem.data('id');
     const stepId = elem.data('stepid');
     if (confirm(i18next.t('step-delete-warning'))) {
-      $.post(this.controller, {
-        destroyStep: true,
+      this.send({
+        action: 'destroyStep',
         id: id,
-        stepId: stepId,
-        type: this.type
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          const loadUrl = window.location + ' #steps_div_' + id;
-          // reload the step list
-          $('#steps_div_' + id).load(loadUrl, function() {
-            relativeMoment();
-            makeSortableGreatAgain();
-          });
-        }
+        content: stepId,
+        type: this.type,
+      });
+      const loadUrl = window.location + ' #steps_div_' + id;
+      // reload the step list
+      $('#steps_div_' + id).load(loadUrl, function() {
+        relativeMoment();
+        makeSortableGreatAgain();
       });
     }
   }

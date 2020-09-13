@@ -40,28 +40,28 @@ try {
     $ItemsTypes = new ItemsTypes($App->Users);
 
     // CREATE ITEMS TYPES
-    if ($Request->request->has('itemsTypesCreate')) {
+    if ($Request->request->get('action') === 'create') {
         $ItemsTypes->create(
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            (int) $Request->request->get('bookable'),
-            $Request->request->get('template')
+            $Request->request->get('content')['name'],
+            $Request->request->get('content')['color'],
+            (int) $Request->request->get('content')['bookable'],
+            $Request->request->get('content')['template'],
         );
     }
 
     // UPDATE ITEM TYPE
-    if ($Request->request->has('itemsTypesUpdate')) {
+    if ($Request->request->get('action') === 'update') {
         $ItemsTypes->update(
             (int) $Request->request->get('id'),
-            $Request->request->get('name'),
-            $Request->request->get('color'),
-            (int) $Request->request->get('bookable'),
-            $Request->request->get('template')
+            $Request->request->get('content')['name'],
+            $Request->request->get('content')['color'],
+            (int) $Request->request->get('content')['bookable'],
+            $Request->request->get('content')['template'],
         );
     }
 
     // DESTROY ITEM TYPE
-    if ($Request->request->has('itemsTypesDestroy')) {
+    if ($Request->request->get('action') === 'destroy') {
         $ItemsTypes->destroy((int) $Request->request->get('id'));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {

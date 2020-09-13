@@ -9,12 +9,7 @@ declare let ChemDoodle: any;
 import tinymce from 'tinymce/tinymce';
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
-
-interface ResponseMsg {
-  res: boolean;
-  msg: string;
-  color?: string;
-}
+import { ResponseMsg } from './interfaces';
 
 const moment = require('moment'); // eslint-disable-line @typescript-eslint/no-var-requires
 

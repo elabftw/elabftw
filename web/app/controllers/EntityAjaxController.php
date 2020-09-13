@@ -129,28 +129,28 @@ try {
     }
 
     // CREATE STEP
-    if ($Request->request->has('createStep')) {
-        $Entity->Steps->create($Request->request->filter('body', null, FILTER_SANITIZE_STRING));
+    if ($Request->request->get('action') === 'createStep') {
+        $Entity->Steps->create($Request->request->filter('content', null, FILTER_SANITIZE_STRING));
     }
 
     // FINISH STEP
-    if ($Request->request->has('finishStep')) {
-        $Entity->Steps->finish((int) $Request->request->get('stepId'));
+    if ($Request->request->get('action') === 'finishStep') {
+        $Entity->Steps->finish((int) $Request->request->get('content'));
     }
 
     // DESTROY STEP
-    if ($Request->request->has('destroyStep')) {
-        $Entity->Steps->destroy((int) $Request->request->get('stepId'));
+    if ($Request->request->get('action') === 'destroyStep') {
+        $Entity->Steps->destroy((int) $Request->request->get('content'));
     }
 
     // CREATE LINK
-    if ($Request->request->has('createLink')) {
-        $Entity->Links->create((int) $Request->request->get('linkId'));
+    if ($Request->request->get('action') === 'createLink') {
+        $Entity->Links->create((int) $Request->request->get('content'));
     }
 
     // DESTROY LINK
-    if ($Request->request->has('destroyLink')) {
-        $Entity->Links->destroy((int) $Request->request->get('linkId'));
+    if ($Request->request->get('action') === 'destroyLink') {
+        $Entity->Links->destroy((int) $Request->request->get('content'));
     }
 
     // UPDATE VISIBILITY

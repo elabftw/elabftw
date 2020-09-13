@@ -22,8 +22,9 @@ export default class Comment extends Crud {
       id: $('#info').data('id') as number,
       content: $('#commentsCreateArea').val() as string,
       type: this.type,
+    }).then(() => {
+      $('#comment_container').load(window.location.href + ' #comment');
     });
-    $('#comment_container').load(window.location.href + ' #comment');
   }
 
   destroy(commentId: number): void {
@@ -32,8 +33,9 @@ export default class Comment extends Crud {
         action: 'destroy',
         id: commentId,
         type: this.type,
+      }).then(() => {
+        $('#comment_container').load(window.location.href + ' #comment');
       });
-      $('#comment_container').load(window.location.href + ' #comment');
     }
   }
 }

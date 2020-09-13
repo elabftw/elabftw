@@ -8,7 +8,9 @@
 
 interface ActionReq {
   action: string;
+  what?: string;
   content?: string|number|object;
+  params?: object;
   id?: number;
   type?: string;
 }

@@ -11,9 +11,11 @@ import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 
 export default class ItemType extends Crud {
+  what: string;
 
   constructor() {
-    super('app/controllers/ItemsTypesAjaxController.php');
+    super('app/controllers/AdminAjaxController.php');
+    this.what = 'itemsTypes';
   }
 
   create(): void {
@@ -34,7 +36,8 @@ export default class ItemType extends Crud {
 
     this.send({
       action: 'create',
-      content: {
+      what: this.what,
+      params: {
         template: template,
         name: name,
         color: color,
@@ -69,8 +72,9 @@ export default class ItemType extends Crud {
 
     this.send({
       action: 'update',
-      id: id,
-      content: {
+      what: this.what,
+      params: {
+        id: id,
         template: template,
         name: name,
         color: color,
@@ -82,7 +86,10 @@ export default class ItemType extends Crud {
   destroy(id): void {
     this.send({
       action: 'destroy',
-      id: id,
+      what: this.what,
+      params: {
+        id: id,
+      },
     }).then(function(response) {
       if (response.res) {
         $('#itemstypes_' + id).hide();

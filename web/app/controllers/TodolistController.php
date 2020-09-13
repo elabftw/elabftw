@@ -34,8 +34,8 @@ try {
     $Todolist = new Todolist($App->Users);
 
     // CREATE
-    if ($Request->request->has('create')) {
-        $id = $Todolist->create($Request->request->get('body'));
+    if ($Request->request->get('action') === 'create') {
+        $id = $Todolist->create($Request->request->get('content'));
         if ($id) {
             $Response->setData(array(
                 'res' => true,
@@ -56,17 +56,8 @@ try {
     }
 
     // DESTROY
-    if ($Request->request->has('destroy')) {
+    if ($Request->request->get('action') === 'destroy') {
         $Todolist->destroy((int) $Request->request->get('id'));
-        $Response->setData(array(
-            'res' => true,
-            'msg' => _('Item deleted successfully'),
-        ));
-    }
-
-    // DESTROY ALL
-    if ($Request->request->has('destroyAll')) {
-        $Todolist->destroyAll();
         $Response->setData(array(
             'res' => true,
             'msg' => _('Item deleted successfully'),

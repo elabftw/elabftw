@@ -5,13 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { relativeMoment, notif, makeSortableGreatAgain } from './misc';
+import Crud from './Crud.class';
+import { relativeMoment, makeSortableGreatAgain } from './misc';
 
-export default class Todolist {
-  controller: string;
+export default class Todolist extends Crud {
 
   constructor() {
-    this.controller = 'app/controllers/TodolistController.php';
+    super('app/controllers/TodolistController.php');
   }
 
   // add a todo item
@@ -19,17 +19,15 @@ export default class Todolist {
     e.preventDefault();
     const body = $('#todo').val();
     if (body !== '') {
-      $.post(this.controller, {
-        create: true,
-        body: body
-      }).done(json => {
-        if (json.res) {
+      this.send({
+        action: 'create',
+        content: body,
+      }).then((response) => {
+        if (response.res) {
           // reload the todolist
           this.getTodoItems();
           // and clear the input
           $('#todo').val('');
-        } else {
-          notif(json);
         }
       });
     }
@@ -72,26 +70,14 @@ export default class Todolist {
 
   // remove one todo item
   destroy(id): void {
-    $.post(this.controller, {
-      destroy: true,
-      id: id
-    }).done(function(json) {
-      if (json.res) {
+    this.send({
+      action: 'destroy',
+      id: id,
+    }).then((response) => {
+      if (response.res) {
         // hide item
         $('#todoItem_' + id).css('background', '#29AEB9');
         $('#todoItem_' + id).toggle('blind');
-      }
-    });
-  }
-
-  // clear all the items
-  destroyAll(): void {
-    $.post(this.controller, {
-      destroyAll: true
-    }).done(function(json) {
-      if (json.res) {
-        // hide all items
-        $('#todoItems-list').children().toggle('blind');
       }
     });
   }

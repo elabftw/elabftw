@@ -49,9 +49,6 @@ $(document).ready(function() {
   $('#todo-form').submit(function(e) {
     TodolistC.create(e);
   });
-  $(document).on('click', '.todoDestroyAll', function() {
-    TodolistC.destroyAll();
-  });
 
   $(document).on('click', '.destroyTodoItem', function() {
     TodolistC.destroy($(this).data('id'));

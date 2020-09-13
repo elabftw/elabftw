@@ -78,7 +78,6 @@ try {
     if ($Request->request->get('action') === 'destroy') {
         $Entity->Comments->destroy((int) $Request->request->get('id'));
     }
-
 } catch (Swift_TransportException $e) {
     // for swift error, don't display error to user as it might contain sensitive information
     // but log it and display general error. See #841

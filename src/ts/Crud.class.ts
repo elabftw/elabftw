@@ -17,15 +17,15 @@ export default class Crud {
 
   send(req: ActionReq) {
     return $.ajax({
-        type: 'post',
-        url: this.controller,
-        data: req,
-        success: function(response) {
-            notif(response);
-        },
-        error: function() {
-          notif({ 'res': false, 'msg': 'Oops' });
-        },
-     });
+      type: 'post',
+      url: this.controller,
+      data: req,
+      success: function(response) {
+        notif(response);
+      },
+      error: function() {
+        notif({ 'res': false, 'msg': 'Error processing request!' });
+      },
+    });
   }
 }

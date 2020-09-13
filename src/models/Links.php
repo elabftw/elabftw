@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Interfaces\CrudInterface;
 use PDO;
 
 /**

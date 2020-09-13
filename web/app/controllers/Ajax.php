@@ -18,8 +18,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
 use Elabftw\Models\Links;
+use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
@@ -116,6 +116,7 @@ try {
             break;
         case 'finish':
             $Model->finish($Params->id);
+            // no break
         case 'unreference':
             $Model->unreference($Params->id);
             break;

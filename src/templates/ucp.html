@@ -253,21 +253,47 @@
         <div class='col-md-6'>
           <h4>{{ 'Modify your personal informations'|trans }}</h4>
           <label for='currpass'>{{ 'Enter your password to edit your profile.'|trans }}</label>
-          <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='off' pattern='.{8,}' required />
+          <div class='input-group'>
+            <input class='form-control' id='currpass' name='currpass' type='password' autocomplete='off' pattern='.{8,}' required />
+            <div class='input-group-append'>
+              <span class='btn btn-light input-border togglePassword' tabindex='-1' data-toggle='#currpass'><i class='fas fa-eye' aria-hidden='true'></i></span>
+            </div>
+          </div>
           <label for='email'>{{ 'Email'|trans }}</label>
           <input class='form-control' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
         </div>
         <div class='col-md-6'>
           <h4>{{ 'Modify your password'|trans }}</h4>
           <label for='newpass'>{{ 'New password'|trans }}</label>
-          <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
+          <div class='input-group'>
+            <input class='form-control' id='newpass' autocomplete='new-password' name='newpass' type='password' pattern='.{8,}' />
+            <div class='input-group-append'>
+              <span class='btn btn-light input-border togglePassword' tabindex='-1' data-toggle='#newpass'><i class='fas fa-eye' aria-hidden='true'></i></span>
+            </div>
+          </div>
           <label for='cnewpass'>{{ 'Confirm new password'|trans }}</label>
-          <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
+          <div class='input-group'>
+            <input class='form-control' id='cnewpass' autocomplete='new-password' name='cnewpass' type='password' pattern='.{8,}' />
+            <div class='input-group-append'>
+              <span class='btn btn-light input-border togglePassword' tabindex='-1' data-toggle='#cnewpass'><i class='fas fa-eye' aria-hidden='true'></i></span>
+            </div>
+          </div>
         </div>
       </div>
 
         <hr><br>
+        <h4>{{ 'Two Factor Authentication'|trans }}</h4>
+        <div class='row'>
+          <div class='col-md-6'>
+            <label for='use_mfa'>{{ 'Use two-factor authentication?'|trans }}</label>
+            <select class='form-control' autocomplete='off' name='use_mfa' id='use_mfa'>
+              <option value='on'{{ App.Users.userData.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
+              <option value='off'{{ not App.Users.userData.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
+            </select>
+          </div>
+        </div>
 
+        <hr><br>
         <h4>{{ 'Modify your identity'|trans }}</h4>
 
         <div class='row'>

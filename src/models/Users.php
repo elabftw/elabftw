@@ -42,6 +42,7 @@ class Users
      * Constructor
      *
      * @param int|null $userid
+     * @param int|null $team
      */
     public function __construct(?int $userid = null, ?int $team = null)
     {
@@ -264,7 +265,7 @@ class Users
         // NOTE: previously, the ORDER BY started with the team, but that didn't work
         // with the DISTINCT, so it was removed.
         $sql = "SELECT DISTINCT users.userid,
-            users.firstname, users.lastname, users.email,
+            users.firstname, users.lastname, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users
@@ -351,6 +352,14 @@ class Users
         $lastname = Filter::sanitize($params['lastname']);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
+        // (Sys)admins can only disable 2FA
+        $mfaSql = '';
+        if (!isset($params['use_mfa']) || $params['use_mfa'] === 'off') {
+            $mfaSql = ', mfa_secret = null';
+        } elseif ($params['use_mfa'] === 'on' && !$this->userData['mfa_secret']) {
+            throw new ImproperActionException('Only users themselves can activate two factor authentication!');
+        }
+
         // check email is not already in db
         $usersEmails = $this->getAllEmails();
         $emailsArr = array();
@@ -381,8 +390,9 @@ class Users
             lastname = :lastname,
             email = :email,
             usergroup = :usergroup,
-            validated = :validated
-            WHERE userid = :userid';
+            validated = :validated';
+        $sql .= $mfaSql;
+        $sql .= ' WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);

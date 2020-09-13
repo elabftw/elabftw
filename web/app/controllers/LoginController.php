@@ -29,16 +29,19 @@ $location = '../../login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Saml = new Saml($App->Config, new Idps);
-    $Teams = new Teams($App->Users);
+    // CSRF
+    $App->Csrf->validate();
 
     // LOGIN WITH SAML
     if ($Request->request->has('saml_login')) {
+        $Saml = new Saml($App->Config, new Idps);
         $settings = $Saml->getSettings((int) $Request->request->get('saml_login'));
         $SamlAuth = new SamlAuth($settings);
         $returnUrl = $settings['baseurl'] . '/index.php?acs';
         $SamlAuth->login($returnUrl);
-    } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) { // login as anonymous
+    } elseif ($Request->request->has('team_id') && $App->Config->configArr['anon_users']) {
+        // login as anonymous
+        $Teams = new Teams($App->Users);
         if ($Teams->isExisting((int) $Request->request->get('team_id'))) {
             $Auth->loginAsAnon((int) $Request->request->get('team_id'));
             if ($Request->cookies->has('redirect')) {
@@ -47,51 +50,83 @@ try {
                 $location = '../../experiments.php';
             }
         }
+    } elseif ($App->Session->has('mfa_secret')) {
+        // Two Factor Authentication
+        // Abort activation by user
+        $Mfa = new Mfa($App->Request, $App->Session);
+        if ($App->Session->has('enable_mfa') && $Request->request->get('Submit') === 'cancel') {
+            $location = $Mfa->abortEnable();
+        } else {
+            // Check verification code
+            $verifyMFACode = $Mfa->verifyCode();
+            if ($App->Session->has('enable_mfa')) {
+                if ($verifyMFACode) {
+                    $location = $Mfa->saveSecret();
+                } else {
+                    $App->Session->getFlashBag()->add('ko', _('Two Factor Authentication not enabled!'));
+                }
+            } else {
+                if ($verifyMFACode) {
+                    $location = $Mfa->cleanup();
+                } else {
+                    $Auth->increaseFailedAttempt();
+                }
+            }
+        }
     } else {
-
-        // CSRF
-        $App->Csrf->validate();
-
-        $rememberme = 'off';
-        if ($Request->request->has('rememberme')) {
-            $rememberme = $Request->request->get('rememberme');
+        // LOGIN: internal credential check
+        // EMAIL
+        if ((empty($Request->request->get('email')) || empty($Request->request->get('password')))
+            && !($App->Session->has('team_selection_required') || $App->Session->has('mfa_verified'))
+        ) {
+            throw new ImproperActionException(_('A mandatory field is missing!'));
         }
 
-        // the actual login
-        $team = null;
-        if ($Session->has('team_selection_required')) {
-            $team = (int) $Request->request->get('team_selection');
-            $userid = (int) $Session->get('auth_userid');
-            $Auth->loginInTeam($userid, $team);
-        } else {
+        $App->Session->set('rememberme', 'off');
+        if ($Request->request->has('rememberme')) {
+            $App->Session->set('rememberme', $Request->request->get('rememberme'));
+        }
+
+        if (!$App->Session->has('auth_userid')) {
+            // If checkCredentials fails there will be an exception and the subsequent code will not be executed.
             $userid = $Auth->checkCredentials($Request->request->get('email'), $Request->request->get('password'));
-            $loginResult = $Auth->login($userid, $rememberme);
+            $App->Session->set('auth_userid', $userid);
+        }
+
+        // Redirect to verify MFA code if necesssary
+        $Mfa = new Mfa($App->Request, $App->Session);
+        if ($Mfa->needVerification($App->Session->get('auth_userid'), 'LoginController.php')) {
+            $Response->send();
+            exit();
+        }
+
+        // The actual login
+        $team = null;
+        if ($App->Session->has('team_selection_required')) {
+            $Auth->loginInTeam(
+                $App->Session->get('auth_userid'),
+                (int) $Request->request->get('team_selection'),
+                $App->Session->get('rememberme')
+            );
+
+            $App->Session->remove('rememberme');
+            $App->Session->remove('team_selection_required');
+            $App->Session->remove('auth_userid');
+        } else {
+            $loginResult = $Auth->login($App->Session->get('auth_userid'), $App->Session->get('rememberme'));
+ 
             if ($loginResult === true) {
+                $App->Session->remove('rememberme');
+                $App->Session->remove('auth_userid');
+ 
                 if ($Request->cookies->has('redirect')) {
                     $location = $Request->cookies->get('redirect');
                 } else {
                     $location = '../../experiments.php';
                 }
-            } elseif ($loginResult === false) {
-                // increase failed attempts counter
-                if (!$Session->has('failed_attempt')) {
-                    $Session->set('failed_attempt', 1);
-                } else {
-                    $n = $Session->get('failed_attempt');
-                    $n++;
-                    $Session->set('failed_attempt', $n);
-                }
-                // log the attempt if the login failed
-                $App->Log->warning('Failed login attempt', array('ip' => $_SERVER['REMOTE_ADDR']));
-                // inform the user
-                $Session->getFlashBag()->add(
-                    'ko',
-                    _("Login failed. Either you mistyped your password or your account isn't activated yet.")
-                );
             } elseif (is_array($loginResult)) {
-                $Session->set('team_selection_required', 1);
-                $Session->set('auth_userid', $loginResult[0]);
-                $Session->set('team_selection', $loginResult[1]);
+                $App->Session->set('team_selection_required', 1);
+                $App->Session->set('team_selection', $loginResult);
                 $location = '../../login.php';
             }
         }

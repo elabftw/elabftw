@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<!-- show message if there is a failed_attempt -->
-{% if Session.has('failed_attempt') and Session.get('failed_attempt') < App.Config.configArr.login_tries %}
-    {% set number_of_tries_left = App.Config.configArr.login_tries - Session.get('failed_attempt') %}
-    {{ 'Number of login attempt left before being banned for %s minutes: %s'|trans|format(
-        App.Config.configArr.ban_time,
-        number_of_tries_left)|msg('ko') }}
-{% endif %}
+{{ include('failed-attempt.html') }}
 
 <!-- Modal for reset password -->
 <div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel' aria-hidden='true'>
@@ -36,15 +30,14 @@
 
 <section class='text-center'>
     <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
-  {% if Session.get('team_selection_required') == 1 %}
+  {% if App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <!-- form key -->
       {{ App.Csrf.getHiddenInput|raw }}
-      <input type='hidden' name='auth_userid' value='{{ Session.get('auth_userid') }}' />
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
         <select name='team_selection' id='team_selection_select' class='form-control'>
-          {% for teams in Session.get('team_selection') %}
+          {% for teams in App.Session.get('team_selection') %}
             <option value='{{ teams.id }}'>{{ teams.name }}</option>
           {% endfor %}
         </select>
@@ -62,7 +55,7 @@
         <br>
         <div class='col-md-4 mx-auto text-left form-group'>
           <label for='email'>{{ 'Email'|trans }}</label>
-          <input class='form-control mb-4' id='email' name='email' type='email' value='{{ Session.has('email') ? Session.get('email') }}' required />
+          <input class='form-control mb-4' id='email' name='email' type='email' value='{{ App.Session.has('email') ? App.Session.get('email') }}' required />
           <label for='password'>{{ 'Password'|trans }}</label>
           <!-- add tabindex=-1 to the forget password so we can switch from login to password with tab -->
           <a href='#' class='align_right underlined resetPassword modalToggle' tabindex='-1' data-modal='resetModal'>{{ 'Forgot password?'|trans }}</a>

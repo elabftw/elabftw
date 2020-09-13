@@ -142,6 +142,17 @@ try {
     bindtextdomain($domain, \dirname(__DIR__, 2) . '/src/langs');
     textdomain($domain);
     // END i18n
+
+    // Clean up after user initiated mfa activation but did not succeed/complete.
+    if ($App->Session->has('auth')
+        && $App->Session->has('enable_mfa')
+        && !(basename($App->Request->getScriptName()) === 'login.php'
+            || basename($App->Request->getScriptName()) === 'LoginController.php')
+    ) {
+        $Mfa = new Mfa($App->Request, $App->Session);
+        $location = $Mfa->cleanup(true);
+        $App->ko[] = _('Two Factor Authentication not enabled!');
+    }
 } catch (UnauthorizedException $e) {
     // do nothing here, controller will display the error
 } catch (ImproperActionException | InvalidSchemaException | Exception $e) {

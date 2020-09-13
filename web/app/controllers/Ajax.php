@@ -19,6 +19,8 @@ use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Status;
+use Elabftw\Models\Links;
+use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
 use Exception;
@@ -43,6 +45,19 @@ try {
         $params = $Request->query->get('params') ?? array();
     }
 
+    $id = null;
+    if (isset($Request->request->get('params')['itemId'])) {
+        $id = (int) $Request->request->get('params')['itemId'];
+    }
+    if ($Request->request->get('type') === 'experiments') {
+        $Entity = new Experiments($App->Users, $id);
+    } elseif ($Request->request->get('type') === 'experiments_templates') {
+        $Entity = new Templates($App->Users, $id);
+    } else {
+        $Entity = new Database($App->Users, $id);
+    }
+
+
     switch ($what) {
 
         case 'status':
@@ -61,18 +76,15 @@ try {
             $Model = new ItemsTypes($App->Users);
             break;
 
+        case 'step':
+            $Model = new Steps($Entity);
+            break;
+
+        case 'link':
+            $Model = new Links($Entity);
+            break;
+
         case 'tag':
-            $id = null;
-            if (isset($Request->request->get('params')['itemId'])) {
-                $id = (int) $Request->request->get('params')['itemId'];
-            }
-            if ($Request->request->get('type') === 'experiments') {
-                $Entity = new Experiments($App->Users, $id);
-            } elseif ($Request->request->get('type') === 'experiments_templates') {
-                $Entity = new Templates($App->Users, $id);
-            } else {
-                $Entity = new Database($App->Users, $id);
-            }
             $Model = new Tags($Entity);
             break;
         case 'user':
@@ -80,7 +92,7 @@ try {
             break;
 
         default:
-            throw new IllegalActionException('Bad what param on AdminAjaxController');
+            throw new IllegalActionException('Bad what param on Ajax controller');
     }
 
     $Params = new ParamsProcessor($params);
@@ -102,11 +114,13 @@ try {
             $deduplicated = $Model->deduplicate();
             $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
             break;
+        case 'finish':
+            $Model->finish($Params->id);
         case 'unreference':
             $Model->unreference($Params->id);
             break;
         default:
-            throw new IllegalActionException('Bad action param on AdminAjaxController');
+            throw new IllegalActionException('Bad action param on Ajax controller');
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(

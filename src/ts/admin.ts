@@ -90,7 +90,7 @@ $(document).ready(function() {
           request.params = {
             name: term,
           };
-          $.getJSON('app/controllers/PostAjaxController.php', request, function(data) {
+          $.getJSON('app/controllers/Ajax.php', request, function(data) {
             cache[term] = data;
             response(data);
           });

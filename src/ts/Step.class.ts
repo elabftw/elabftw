@@ -13,7 +13,7 @@ export default class Step extends Crud {
   type: string;
 
   constructor(type: string) {
-    super('app/controllers/EntityAjaxController.php');
+    super('app/controllers/Ajax.php');
     this.type = type;
   }
 
@@ -24,10 +24,13 @@ export default class Step extends Crud {
     // fix for user pressing enter with no input
     if (body.length > 0) {
       this.send({
-        action: 'createStep',
-        id: id,
-        content: body,
+        action: 'create',
+        what: 'step',
         type: this.type,
+        params: {
+          itemId: id,
+          template: body,
+        },
       });
       // reload the step list
       $('#steps_div_' + id).load(window.location.href + ' #steps_div_' + id, function() {
@@ -52,10 +55,13 @@ export default class Step extends Crud {
     }
 
     this.send({
-      action: 'finishStep',
-      id: id,
-      content: stepId,
+      action: 'finish',
+      what: 'step',
       type: itemType,
+      params: {
+        itemId: id,
+        id: stepId,
+      },
     });
     const loadUrl = window.location.href + ' #steps_div_' + id;
     // reload the step list
@@ -72,10 +78,13 @@ export default class Step extends Crud {
     const stepId = elem.data('stepid');
     if (confirm(i18next.t('step-delete-warning'))) {
       this.send({
-        action: 'destroyStep',
-        id: id,
-        content: stepId,
+        action: 'destroy',
+        what: 'step',
         type: this.type,
+        params: {
+          itemId: id,
+          id: stepId,
+        },
       });
       const loadUrl = window.location + ' #steps_div_' + id;
       // reload the step list

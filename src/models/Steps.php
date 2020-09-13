@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -42,10 +43,8 @@ class Steps implements CrudInterface
     /**
      * Add a step
      *
-     * @param string $body the text for the step
-     * @return void
      */
-    public function create(string $body): void
+    public function create(ParamsProcessor $params): void
     {
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
@@ -53,7 +52,7 @@ class Steps implements CrudInterface
         $ordering = count($this->readAll()) + 1;
 
         // remove any | as they are used in the group_concat
-        $body = str_replace('|', ' ', $body);
+        $body = str_replace('|', ' ', $params->template);
         $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

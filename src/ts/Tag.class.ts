@@ -12,7 +12,7 @@ export default class Tag extends Crud {
   type: string;
 
   constructor(type: string) {
-    super('app/controllers/PostAjaxController.php');
+    super('app/controllers/Ajax.php');
     this.type = type;
   }
 

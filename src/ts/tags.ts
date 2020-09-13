@@ -44,7 +44,7 @@ $(document).ready(function() {
       request.params = {
         name: term,
       };
-      $.getJSON('app/controllers/PostAjaxController.php', request, function(data) {
+      $.getJSON('app/controllers/Ajax.php', request, function(data) {
         cache[term] = data;
         response(data);
       });
@@ -54,7 +54,7 @@ $(document).ready(function() {
   // make the tag editable
   $(document).on('mouseenter', '.tag-editable', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/PostAjaxController.php', {
+      $.post('app/controllers/Ajax.php', {
         action: 'update',
         what: 'tag',
         params: {

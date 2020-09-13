@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Elabftw\ParamsProcessor;
 use PDO;
 
 /**
@@ -38,12 +39,10 @@ class Links implements CrudInterface
 
     /**
      * Add a link to an experiment
-     *
-     * @param int $link ID of database item
-     * @return void
      */
-    public function create(int $link): void
+    public function create(ParamsProcessor $params): void
     {
+        $link = $params->id;
         $Database = new Database($this->Entity->Users, $link);
         $Database->canOrExplode('read');
         $this->Entity->canOrExplode('write');

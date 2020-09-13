@@ -128,31 +128,6 @@ try {
         $Entity->Pins->togglePin();
     }
 
-    // CREATE STEP
-    if ($Request->request->get('action') === 'createStep') {
-        $Entity->Steps->create($Request->request->filter('content', null, FILTER_SANITIZE_STRING));
-    }
-
-    // FINISH STEP
-    if ($Request->request->get('action') === 'finishStep') {
-        $Entity->Steps->finish((int) $Request->request->get('content'));
-    }
-
-    // DESTROY STEP
-    if ($Request->request->get('action') === 'destroyStep') {
-        $Entity->Steps->destroy((int) $Request->request->get('content'));
-    }
-
-    // CREATE LINK
-    if ($Request->request->get('action') === 'createLink') {
-        $Entity->Links->create((int) $Request->request->get('content'));
-    }
-
-    // DESTROY LINK
-    if ($Request->request->get('action') === 'destroyLink') {
-        $Entity->Links->destroy((int) $Request->request->get('content'));
-    }
-
     // UPDATE VISIBILITY
     if ($Request->request->has('updatePermissions')) {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));

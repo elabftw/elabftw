@@ -12,7 +12,7 @@ export default class Link extends Crud {
   type: string;
 
   constructor(type: string) {
-    super('app/controllers/EntityAjaxController.php');
+    super('app/controllers/Ajax.php');
     this.type = type;
   }
 
@@ -26,10 +26,13 @@ export default class Link extends Crud {
       const linkId = parseInt(link, 10);
       if (!isNaN(linkId)) {
         this.send({
-          action: 'createLink',
-          id: id,
-          content: linkId,
+          action: 'create',
+          what: 'link',
           type: this.type,
+          params: {
+            itemId: id,
+            id: linkId,
+          },
         });
         // reload the link list
         $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
@@ -43,10 +46,13 @@ export default class Link extends Crud {
     const id = elem.data('id') as number;
     if (confirm(i18next.t('link-delete-warning'))) {
       this.send({
-        action: 'destroyLink',
-        id: id,
-        content: elem.data('linkid') as number,
+        action: 'destroy',
+        what: 'link',
         type: this.type,
+        params: {
+          itemId: id,
+          id: elem.data('linkid') as number,
+        },
       });
       $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
     }

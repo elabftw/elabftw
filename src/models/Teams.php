@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 
 use function array_diff;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Filter;
@@ -197,10 +198,14 @@ class Teams implements CrudInterface
         // create default item type
         $ItemsTypes = new ItemsTypes($this->Users);
         $ItemsTypes->create(
-            'Edit me',
-            '#32a100',
-            0,
-            '<p>Go to the admin panel to edit/add more items types!</p>',
+            new ParamsProcessor(
+                array(
+                    'name' => 'Edit me',
+                    'color' => '#32a100',
+                    'bookable' => 0,
+                    'template' => '<p>Go to the admin panel to edit/add more items types!</p>',
+                )
+            ),
             $newId
         );
 

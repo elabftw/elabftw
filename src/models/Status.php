@@ -35,14 +35,17 @@ class Status extends AbstractCategory
      * Create a new status
      *
      */
-    public function create(ParamsProcessor $params): int
+    public function create(ParamsProcessor $params, int $team = null): int
     {
+        if ($team === null) {
+            $team = $this->Users->userData['team'];
+        }
         $sql = 'INSERT INTO status(name, color, team, is_timestampable, is_default)
             VALUES(:name, :color, :team, :is_timestampable, 0)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $params->name);
-        $req->bindParam(':color', $params->color);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':name', $params->name, PDO::PARAM_STR);
+        $req->bindParam(':color', $params->color, PDO::PARAM_STR);
+        $req->bindParam(':team', $team, PDO::PARAM_INT);
         $req->bindParam(':is_timestampable', $params->isTimestampable, PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -57,34 +60,44 @@ class Status extends AbstractCategory
      */
     public function createDefault(int $team): bool
     {
-        return $this->create(new ParamsProcessor(array(
-            'name' => 'Running',
-            'color' => '#29AEB9',
-            'isTimestampable' => 0,
-            'isDefault' => 1,
-            'team' => $team,
-        ))) &&
-            $this->create(new ParamsProcessor(array(
+        return $this->create(
+            new ParamsProcessor(
+                array(
+                    'name' => 'Running',
+                    'color' => '#29AEB9',
+                    'isTimestampable' => 0,
+                    'isDefault' => 1,
+                )
+            ),
+            $team
+        ) &&
+            $this->create(
+                new ParamsProcessor(array(
                 'name' => 'Success',
                 'color' => '#54AA08',
                 'isTimestampable' => 1,
                 'isDefault' => 0,
-                'team' => $team,
-        ))) &&
-            $this->create(new ParamsProcessor(array(
+                )),
+                $team
+            ) &&
+            $this->create(
+                new ParamsProcessor(array(
                 'name' => 'Need to be redone',
                 'color' => '#C0C0C0',
                 'isTimestampable' => 1,
                 'isDefault' => 0,
-                'team' => $team,
-        ))) &&
-            $this->create(new ParamsProcessor(array(
+                )),
+                $team
+            ) &&
+            $this->create(
+                new ParamsProcessor(array(
                 'name' => 'Fail',
                 'color' => '#C24F3D',
                 'isTimestampable' => 1,
                 'isDefault' => 0,
-                'team' => $team,
-            )));
+                )),
+                $team
+            );
     }
 
     /**

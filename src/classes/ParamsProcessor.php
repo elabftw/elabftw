@@ -37,8 +37,8 @@ class ParamsProcessor
         $this->color = Check::color($params['color'] ?? '#cccccc');
         $this->isTimestampable = $params['isTimestampable'] ?? 0 ? 1 : 0;
         $this->isDefault = $params['isDefault'] ?? 0 ? 1 : 0;
-        $this->id = (int) $params['id'] ?? 0;
+        $this->id = (int) ($params['id'] ?? 0);
         $this->template = Filter::body($params['template'] ?? '');
-        $this->bookable = (int) $params['bookable'] ?? 0 ? 1 : 0;
+        $this->bookable = (int) ($params['bookable'] ?? 0) ? 1 : 0;
     }
 }

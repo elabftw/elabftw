@@ -12,6 +12,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Mfa;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
@@ -183,11 +184,15 @@ class PopulateDatabase extends Command
         $ItemsTypes = new ItemsTypes($Users1);
         foreach ($yaml['items_types'] as $items_types) {
             $ItemsTypes->create(
-                $items_types['name'],
-                $items_types['color'],
-                (int) $items_types['bookable'],
-                $items_types['template'],
-                $items_types['team'],
+                new ParamsProcessor(
+                    array(
+                        'name' => $items_types['name'],
+                        'color' => $items_types['color'],
+                        'bookable' => (int) $items_types['bookable'],
+                        'template' => $items_types['template'],
+                    )
+                ),
+                $items_types['team']
             );
         }
 

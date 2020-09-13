@@ -13,8 +13,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 
@@ -138,10 +136,6 @@ class ItemsTypes extends AbstractCategory
      */
     public function update(ParamsProcessor $params): void
     {
-        $name = filter_var($params['name'], FILTER_SANITIZE_STRING);
-        $color = Check::color($params['color']);
-        $template = Filter::body($params['template']);
-
         $sql = 'UPDATE items_types SET
             name = :name,
             team = :team,

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Database;
@@ -214,7 +215,7 @@ class ImportZip extends AbstractImport
     {
         $tagsArr = explode('|', $tags);
         foreach ($tagsArr as $tag) {
-            $this->Entity->Tags->create($tag);
+            $this->Entity->Tags->create(new ParamsProcessor(array('tag' => $tag)));
         }
     }
 

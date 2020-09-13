@@ -31,6 +31,8 @@ class ParamsProcessor
 
     public $template;
 
+    public $tag;
+
     public function __construct(array $params)
     {
         $this->name = Filter::sanitize($params['name'] ?? 'Unnamed');

@@ -11,9 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\Filter;
 use PDO;
 
 /**
@@ -41,20 +42,17 @@ class Tags implements CrudInterface
     /**
      * Create a tag
      *
-     * @param string $tag
-     * @return int
      */
-    public function create(string $tag): int
+    public function create(ParamsProcessor $params): int
     {
         $this->Entity->canOrExplode('write');
-        $tag = Filter::tag($tag);
 
         $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq2 = $this->Db->prepare($insertSql2);
         // check if the tag doesn't exist already for the team
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag', $tag);
+        $req->bindParam(':tag', $params->tag);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
@@ -63,7 +61,7 @@ class Tags implements CrudInterface
         if ($req->rowCount() === 0) {
             $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
             $insertReq = $this->Db->prepare($insertSql);
-            $insertReq->bindParam(':tag', $tag);
+            $insertReq->bindParam(':tag', $params->tag);
             $insertReq->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
             $this->Db->execute($insertReq);
             $tagId = $this->Db->lastInsertId();
@@ -160,20 +158,18 @@ class Tags implements CrudInterface
 
     /**
      * Update a tag
-     *
-     * @param int $tagid tag id
-     * @param string $newtag new tag value
-     * @return bool
      */
-    public function update(int $tagid, string $newtag): bool
+    public function update(ParamsProcessor $params): bool
     {
-        $newtag = Filter::tag($newtag);
+        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+            throw new IllegalActionException('Only an admin can update a tag!');
+        }
 
         // use the team in the query to prevent one admin from editing tags from another team
-        $sql = 'UPDATE tags SET tag = :newtag WHERE id = :id AND team = :team';
+        $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $tagid);
-        $req->bindParam(':newtag', $newtag);
+        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
+        $req->bindParam(':tag', $params->tag, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -186,6 +182,9 @@ class Tags implements CrudInterface
      */
     public function deduplicate(): int
     {
+        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+            throw new IllegalActionException('Only an admin can deduplicate!');
+        }
         // first get the ids of all the tags that are duplicated in the team
         $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
             SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
@@ -238,6 +237,9 @@ class Tags implements CrudInterface
      */
     public function destroy(int $tagId): void
     {
+        if ($this->Entity->Users->userData['is_admin'] !== '1') {
+            throw new IllegalActionException('Only an admin can update a tag!');
+        }
         // first unreference the tag
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
         $req = $this->Db->prepare($sql);

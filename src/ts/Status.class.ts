@@ -13,7 +13,7 @@ export default class Status extends Crud {
   what: string;
 
   constructor() {
-    super('app/controllers/AdminAjaxController.php');
+    super('app/controllers/PostAjaxController.php');
     this.what = 'status';
   }
 

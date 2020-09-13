@@ -34,6 +34,7 @@ class ParamsProcessor
     public function __construct(array $params)
     {
         $this->name = Filter::sanitize($params['name'] ?? 'Unnamed');
+        $this->tag = Filter::tag($params['tag'] ?? 'blah');
         $this->color = Check::color($params['color'] ?? '#cccccc');
         $this->isTimestampable = $params['isTimestampable'] ?? 0 ? 1 : 0;
         $this->isDefault = $params['isDefault'] ?? 0 ? 1 : 0;

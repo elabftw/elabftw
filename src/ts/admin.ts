@@ -85,7 +85,12 @@ $(document).ready(function() {
             response(cache[term]);
             return;
           }
-          $.getJSON('app/controllers/AdminAjaxController.php', request, function(data) {
+          request.what = 'user';
+          request.action = 'getList';
+          request.params = {
+            name: term,
+          };
+          $.getJSON('app/controllers/PostAjaxController.php', request, function(data) {
             cache[term] = data;
             response(data);
           });
@@ -190,22 +195,4 @@ $(document).ready(function() {
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
-
-  // make the tag editable
-  $(document).on('mouseenter', '.tag-editable', function() {
-    ($(this) as any).editable(function(value) {
-      $.post('app/controllers/TagsController.php', {
-        update: true,
-        newtag: value,
-        tagId: $(this).data('tagid'),
-      });
-
-      return(value);
-    }, {
-      tooltip : 'Click to edit',
-      indicator : 'Saving...',
-      onblur: 'submit',
-      style : 'display:inline',
-    });
-  });
 });

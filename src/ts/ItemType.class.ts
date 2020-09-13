@@ -14,7 +14,7 @@ export default class ItemType extends Crud {
   what: string;
 
   constructor() {
-    super('app/controllers/AdminAjaxController.php');
+    super('app/controllers/PostAjaxController.php');
     this.what = 'itemsTypes';
   }
 

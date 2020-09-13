@@ -118,8 +118,8 @@ try {
             }
         } elseif (is_array($loginResult)) {
             $Session->set('team_selection_required', 1);
-            $Session->set('auth_userid', $loginResult[0]);
-            $Session->set('team_selection', $loginResult[1]);
+            $Session->set('auth_userid', $userid);
+            $Session->set('team_selection', $loginResult);
             $location = 'login.php';
             $Response = new RedirectResponse($location);
         } else {

@@ -335,7 +335,7 @@ class ApiController implements ControllerInterface
         // add the linked items
         $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
         // add the steps
-        $this->Entity->entityData['steps'] = $this->Entity->Steps->readAll();
+        $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
 
         return new JsonResponse($this->Entity->entityData);
     }

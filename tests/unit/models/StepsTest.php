@@ -30,9 +30,9 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->Steps->finish(1);
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $this->assertTrue(is_array($this->Steps->readAll()));
+        $this->assertTrue(is_array($this->Steps->read()));
     }
 
     public function testDestroy()

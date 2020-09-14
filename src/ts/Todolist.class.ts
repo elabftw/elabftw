@@ -37,8 +37,9 @@ export default class Todolist extends Crud {
   }
 
   getTodoItems(): void {
-    $.get('app/controllers/AjaxController.php', {
-      getTodoItems: true,
+    $.get('app/controllers/Ajax.php', {
+      action: 'readAll',
+      what: 'todolist',
     }).done(function(json) {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
       for (const entry of json.msg) {
@@ -56,8 +57,10 @@ export default class Todolist extends Crud {
   }
 
   getSteps(): void {
-    $.get('app/controllers/AjaxController.php', {
-      getExperimentsSteps: true,
+    $.get('app/controllers/Ajax.php', {
+      action: 'readAll',
+      what: 'step',
+      type: 'experiments',
     }).done(function(json) {
       let html = '';
       for (const exp of json.msg) {

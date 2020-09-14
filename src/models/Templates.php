@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
-use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Traits\SortableTrait;
 use function is_bool;
 use PDO;

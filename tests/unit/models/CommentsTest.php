@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Elabftw\ParamsProcessor;
+use Elabftw\Exceptions\ImproperActionException;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {

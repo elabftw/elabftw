@@ -216,7 +216,7 @@ class MakeStreamZip extends AbstractMake
             // add links
             $entityArr['links'] = $this->Entity->Links->readAll();
             // add steps
-            $entityArr['steps'] = $this->Entity->Steps->readAll();
+            $entityArr['steps'] = $this->Entity->Steps->read();
             $this->folder = $this->getBaseFileName();
 
             $this->addTimestampFiles($id);

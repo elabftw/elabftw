@@ -20,7 +20,6 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
-use Elabftw\Models\Todolist;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -79,24 +78,6 @@ try {
         }
 
         $Response->setData($res);
-    }
-
-    // GET TODOITEMS
-    if ($Request->query->has('getTodoItems')) {
-        $Todolist = new Todolist($App->Users);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $Todolist->readAll(),
-        ));
-    }
-
-    // GET EXPERIMENTS STEPS FOR TODOLIST
-    if ($Request->query->has('getExperimentsSteps')) {
-        $Experiments = new Experiments($App->Users);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $Experiments->getSteps(),
-        ));
     }
 
     // UPDATE STEP BODY

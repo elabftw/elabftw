@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Models\Comments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -118,6 +117,13 @@ try {
     $Params = new ParamsProcessor($params);
 
     switch ($action) {
+        case 'readAll':
+            $res = $Model->readAll();
+            $Response->setData(array(
+                'res' => true,
+                'msg' => $res,
+            ));
+            // no break
         case 'getList':
             $Response->setData($Model->getList($Params->name));
             break;

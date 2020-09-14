@@ -346,7 +346,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $stepsArr = $this->Entity->Steps->readAll();
+        $stepsArr = $this->Entity->Steps->read();
         if (empty($stepsArr)) {
             return $html;
         }

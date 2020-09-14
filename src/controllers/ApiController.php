@@ -333,7 +333,7 @@ class ApiController implements ControllerInterface
         // add the uploaded files
         $this->Entity->entityData['uploads'] = $this->Entity->Uploads->readAll();
         // add the linked items
-        $this->Entity->entityData['links'] = $this->Entity->Links->readAll();
+        $this->Entity->entityData['links'] = $this->Entity->Links->read();
         // add the steps
         $this->Entity->entityData['steps'] = $this->Entity->Steps->read();
 

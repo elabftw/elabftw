@@ -35,6 +35,12 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($this->Steps->read()));
     }
 
+    public function testUpdate()
+    {
+        $this->Steps->Update(new ParamsProcessor(array('id' => 1, 'template' => 'updated step body')));
+        $this->assertEquals('updated step body', $this->Steps->read()[0]['body']);
+    }
+
     public function testDestroy()
     {
         $this->Steps->destroy(1);

@@ -48,7 +48,7 @@ class Links implements CrudInterface
         $this->Entity->canOrExplode('write');
 
         // check if this link doesn't exist already
-        $links = $this->readAll();
+        $links = $this->read();
         foreach ($links as $existingLink) {
             if ((int) $existingLink['itemid'] === $link) {
                 return;
@@ -67,7 +67,7 @@ class Links implements CrudInterface
      *
      * @return array links of the entity
      */
-    public function readAll(): array
+    public function read(): array
     {
         $sql = 'SELECT items.id AS itemid,
             ' . $this->Entity->type . '_links.id AS linkid,
@@ -154,34 +154,6 @@ class Links implements CrudInterface
             if ($partialRes !== false) {
                 $res[$type] = $partialRes;
             }
-        }
-        return $res;
-    }
-
-    /**
-     * Get links from an id
-     *
-     * @param int $id
-     * @return array
-     */
-    public function readFromId(int $id): array
-    {
-        $sql = 'SELECT items.id AS itemid,
-            ' . $this->Entity->type . '_links.id AS linkid,
-            items.title,
-            items_types.name,
-            items_types.color
-            FROM ' . $this->Entity->type . '_links
-            LEFT JOIN items ON (' . $this->Entity->type . '_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.category = items_types.id)
-            WHERE ' . $this->Entity->type . '_links.item_id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
         }
         return $res;
     }

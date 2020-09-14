@@ -39,12 +39,15 @@ $(document).ready(function() {
   // EDITABLE STEPS
   $(document).on('mouseenter', '.stepInput', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/AjaxController.php', {
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'step',
         type: $(this).data('type'),
-        updateStep: true,
-        body: value,
-        id: $(this).data('id'),
-        stepid: $(this).data('stepid'),
+        params: {
+          template: value,
+          itemId: $(this).data('id'),
+          id: $(this).data('stepid'),
+        },
       });
 
       return(value);

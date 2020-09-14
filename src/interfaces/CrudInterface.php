@@ -20,7 +20,7 @@ interface CrudInterface
      *
      * @return array
      */
-    public function readAll(): array;
+    //public function readAll(): array;
 
     /**
      * Destroy with id

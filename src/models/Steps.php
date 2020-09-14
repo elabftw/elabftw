@@ -158,26 +158,6 @@ class Steps implements CrudInterface
     }
 
     /**
-     * Get steps from an id
-     *
-     * @param int $id
-     * @return array
-     */
-    public function readFromId(int $id): array
-    {
-        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
      * Copy the steps from one entity to an other
      *
      * @param int $id The id of the original entity
@@ -210,17 +190,17 @@ class Steps implements CrudInterface
     /**
      * Update the body of a step
      *
-     * @param int $id step id
-     * @param string $body new body
-     * @return void
      */
-    public function updateBody(int $id, string $body)
+    public function update(ParamsProcessor $params): int
     {
+        $this->Entity->canOrExplode('write');
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':body', $params->template, PDO::PARAM_STR);
+        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
     }
 
     /**

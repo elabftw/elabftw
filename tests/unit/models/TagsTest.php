@@ -45,7 +45,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Experiments->Tags->update(new ParamsProcessor(array('id' => 1, 'tag' => 'new super tag'))));
+        $this->assertEquals('new super tag', $this->Experiments->Tags->update(new ParamsProcessor(array('id' => 1, 'tag' => 'new super tag'))));
     }
 
     public function testDeduplicate()

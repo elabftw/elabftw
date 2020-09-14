@@ -76,7 +76,7 @@ class ItemsTypes extends AbstractCategory
             throw new ImproperActionException(_('Nothing to show with this id'));
         }
 
-        $res = $req->fetchAll();
+        $res = $req->fetch();
         if ($res === false || $res === null) {
             return '';
         }

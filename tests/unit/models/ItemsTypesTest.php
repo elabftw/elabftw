@@ -44,7 +44,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
             )
         );
         $this->ItemsTypes->setId((int) $last['category_id']);
-        $this->assertEquals('newbody', $this->ItemsTypes->read($last['category_id']));
+        $this->assertEquals('newbody', $this->ItemsTypes->read($last['category_id'])['template']);
         $this->ItemsTypes->destroy((int) $last['category_id']);
     }
 }

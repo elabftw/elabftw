@@ -100,6 +100,10 @@ class Status extends AbstractCategory
             );
     }
 
+    public function readAll(): array
+    {
+        return $this->read();
+    }
     /**
      * SQL to get all status from team
      *

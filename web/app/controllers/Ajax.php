@@ -25,6 +25,7 @@ use Elabftw\Models\Links;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
@@ -104,6 +105,13 @@ try {
             $Model = new Steps($Entity);
             break;
 
+        case 'teamgroup':
+            if (!$App->Session->get('is_admin')) {
+                throw new IllegalActionException('Non admin user tried to access admin controller.');
+            }
+            $Model = new TeamGroups($App->Users);
+            break;
+
         case 'tag':
             $Model = new Tags($Entity);
             break;
@@ -168,6 +176,14 @@ try {
                 'msg' => _('Saved'),
                 'value' => $res,
             ));
+            break;
+
+        case 'updateMember':
+            $Model->updateMember(
+                (int) $Request->request->get('params')['user'],
+                (int) $Request->request->get('params')['group'],
+                $Request->request->get('params')['how'],
+            );
             break;
 
         case 'updateCommon':

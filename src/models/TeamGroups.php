@@ -11,11 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Check;
 use function is_bool;
+use function mb_strlen;
 use PDO;
 
 /**
@@ -42,21 +44,19 @@ class TeamGroups implements CrudInterface
 
     /**
      * Create a team group
-     *
-     * @param string $name Name of the group
-     * @return void
      */
-    public function create(string $name): void
+    public function create(ParamsProcessor $params): int
     {
-        $name = filter_var($name, FILTER_SANITIZE_STRING);
-        if ($name === false || \mb_strlen($name) < 2) {
+        if (mb_strlen($params->name) < 2) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
         }
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:name, :team)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
+        $req->bindParam(':name', $params->name);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -150,22 +150,14 @@ class TeamGroups implements CrudInterface
     /**
      * Update the name of the group
      * The request comes from jeditable
-     *
-     * @param string $name Name of the group
-     * @param string $id teamgroup_1
-     * @return string $name Name of the group if success
      */
-    public function update(string $name, string $id): string
+    public function update(ParamsProcessor $params): string
     {
-        $idArr = explode('_', $id);
-        if (Check::id((int) $idArr[1]) === false) {
-            throw new IllegalActionException('Bad id');
-        }
         $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
+        $req->bindParam(':name', $params->name, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
+        $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         // the group name is returned so it gets back into jeditable input field
         return $name;

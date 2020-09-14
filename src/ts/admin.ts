@@ -135,15 +135,23 @@ $(document).ready(function() {
   });
   // edit the team group name
   $(document).on('mouseenter', 'h3.teamgroup_name', function() {
-    ($(this) as any).editable('app/controllers/TeamGroupsController.php', {
+    ($(this) as any).editable(function(value) {
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'teamgroup',
+        params: {
+          name: value,
+          id: $(this).data('id'),
+        },
+      });
+      return(value);
+    }, {
       indicator : 'Saving...',
-      name : 'teamGroupUpdateName',
       submit : 'Save',
       cancel : 'Cancel',
       cancelcssclass : 'button btn btn-danger',
       submitcssclass : 'button btn btn-primary',
       style : 'display:inline'
-
     });
   });
 

@@ -141,7 +141,7 @@
           <a href='#'>
             <i class='fas fa-trash-alt clickable teamGroupDelete align_right' data-id='{{ teamGroup.id }}'></i>
           </a>
-          <h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
+          <h3 title='Click to Edit' class='inline editable teamgroup_name' data-id='{{ teamGroup.id }}'>{{ teamGroup.name }}</h3>
           {% for user in teamGroup.users %}
             <span class='user-badge clickable rmUserFromGroup' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'>{{ user.fullname|raw }}</span>
           {% endfor %}

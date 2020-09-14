@@ -172,8 +172,6 @@ class Steps implements CrudInterface
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
-        $this->Entity->canOrExplode('read');
-
         $table = $this->Entity->type;
         if ($fromTpl) {
             $table = 'experiments_templates';

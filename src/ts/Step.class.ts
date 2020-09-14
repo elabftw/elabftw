@@ -31,14 +31,15 @@ export default class Step extends Crud {
           itemId: id,
           template: body,
         },
+      }).then(() => {
+        // reload the step list
+        $('#steps_div_' + id).load(window.location.href + ' #steps_div_' + id, function() {
+          relativeMoment();
+          makeSortableGreatAgain();
+        });
+        // clear input field
+        elem.val('');
       });
-      // reload the step list
-      $('#steps_div_' + id).load(window.location.href + ' #steps_div_' + id, function() {
-        relativeMoment();
-        makeSortableGreatAgain();
-      });
-      // clear input field
-      elem.val('');
     } // end if input < 0
   }
 
@@ -62,14 +63,16 @@ export default class Step extends Crud {
         itemId: id,
         id: stepId,
       },
+    }).then(() => {
+      const loadUrl = window.location.href + ' #steps_div_' + id;
+      console.log(loadUrl);
+      // reload the step list
+      $('#steps_div_' + id).load(loadUrl, function() {
+        relativeMoment();
+        makeSortableGreatAgain();
+      });
+      $('#todo_step_' + stepId).prop('checked', true);
     });
-    const loadUrl = window.location.href + ' #steps_div_' + id;
-    // reload the step list
-    $('#steps_div_' + id).load(loadUrl, function() {
-      relativeMoment();
-      makeSortableGreatAgain();
-    });
-    $('#todo_step_' + stepId).prop('checked', true);
   }
 
   destroy(elem): void {
@@ -85,12 +88,13 @@ export default class Step extends Crud {
           itemId: id,
           id: stepId,
         },
-      });
-      const loadUrl = window.location + ' #steps_div_' + id;
-      // reload the step list
-      $('#steps_div_' + id).load(loadUrl, function() {
-        relativeMoment();
-        makeSortableGreatAgain();
+      }).then(() => {
+        const loadUrl = window.location + ' #steps_div_' + id;
+        // reload the step list
+        $('#steps_div_' + id).load(loadUrl, function() {
+          relativeMoment();
+          makeSortableGreatAgain();
+        });
       });
     }
   }

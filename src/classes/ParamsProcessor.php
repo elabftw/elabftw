@@ -43,6 +43,7 @@ class ParamsProcessor
         $this->isTimestampable = $params['isTimestampable'] ?? 0 ? 1 : 0;
         $this->isDefault = $params['isDefault'] ?? 0 ? 1 : 0;
         $this->id = (int) ($params['id'] ?? 0);
+        // TODO rename to body?
         $this->template = Filter::body($params['template'] ?? '');
         $this->bookable = (int) ($params['bookable'] ?? 0) ? 1 : 0;
         $this->comment = Filter::comment($params['comment'] ?? 'blah');

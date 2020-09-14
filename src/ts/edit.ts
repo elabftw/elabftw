@@ -164,11 +164,15 @@ $(document).ready(function() {
   // GET MOL FILES
   function getListFromMolFiles(): void {
     const mols: any = [];
-    $.get('app/controllers/AjaxController.php', {
-      getFiles: true,
+    $.get('app/controllers/Ajax.php', {
+      action: 'readAll',
+      what: 'upload',
       type: type,
-      id: id,
-    }).done(function(uploadedFiles) {
+      params: {
+        itemId: id,
+      },
+    }).done(function(json) {
+      const uploadedFiles = json.msg;
       uploadedFiles.forEach(function(upload: any) {
         if (upload.real_name.split('.').pop() === 'mol') {
           mols.push([upload.real_name, upload.long_name]);
@@ -487,7 +491,7 @@ $(document).ready(function() {
       }
     ],
     // this will GET templates from current user
-    templates: 'app/controllers/AjaxController.php?getUserTpl'
+    templates: 'app/controllers/Ajax.php?action=readForTinymce&what=template&type=experiments_templates'
   });
   /* eslint-enable */
 

@@ -155,9 +155,12 @@ $(document).ready(function() {
 
   // DESTROY API KEY
   $(document).on('click', '.keyDestroy', function() {
-    $.post('app/controllers/AjaxController.php', {
-      destroyApiKey: true,
-      id: $(this).data('id')
+    $.post('app/controllers/Ajax.php', {
+      action: 'destroy',
+      what: 'apikey',
+      params: {
+        id: $(this).data('id'),
+      },
     }).done(function(json) {
       notif(json);
       $('#apiTable').load('ucp.php #apiTable');

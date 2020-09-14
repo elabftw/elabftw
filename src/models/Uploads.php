@@ -192,6 +192,8 @@ class Uploads implements CrudInterface
      */
     public function readAll(): array
     {
+        $this->Entity->canOrExplode('read');
+
         $sql = 'SELECT * FROM uploads WHERE item_id = :id AND type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

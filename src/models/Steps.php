@@ -44,7 +44,7 @@ class Steps implements CrudInterface
      * Add a step
      *
      */
-    public function create(ParamsProcessor $params): void
+    public function create(ParamsProcessor $params): int
     {
         $this->Entity->canOrExplode('write');
         // make sure the newly added step is at the bottom
@@ -59,6 +59,8 @@ class Steps implements CrudInterface
         $req->bindParam(':body', $body);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -96,9 +98,10 @@ class Steps implements CrudInterface
 
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
             finished_time = NOW()
-            WHERE id = :id';
+            WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $stepid, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
@@ -109,6 +112,8 @@ class Steps implements CrudInterface
      */
     public function read(): array
     {
+        $this->Entity->canOrExplode('read');
+
         $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -167,6 +172,8 @@ class Steps implements CrudInterface
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
+        $this->Entity->canOrExplode('read');
+
         $table = $this->Entity->type;
         if ($fromTpl) {
             $table = 'experiments_templates';
@@ -191,16 +198,17 @@ class Steps implements CrudInterface
      * Update the body of a step
      *
      */
-    public function update(ParamsProcessor $params): int
+    public function update(ParamsProcessor $params): bool
     {
         $this->Entity->canOrExplode('write');
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id';
+
+        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET body = :body WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':body', $params->template, PDO::PARAM_STR);
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
-        return $this->Db->lastInsertId();
+        return $this->Db->execute($req);
     }
 
     /**
@@ -213,9 +221,10 @@ class Steps implements CrudInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id= :id';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 }

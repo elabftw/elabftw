@@ -259,7 +259,9 @@ class Templates extends AbstractEntity
      */
     public function updateCommon(string $body): void
     {
-        $body = Filter::body($body);
+        if (!$this->Users->userData['is_admin']) {
+            throw new IllegalActionException('Non admin user tried to update common template.');
+        }
         $sql = "UPDATE experiments_templates SET
             name = 'default',
             team = :team,

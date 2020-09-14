@@ -17,7 +17,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Users = new Users(1);
         $this->Experiments = new Experiments($this->Users, 1);
-        $this->Steps = new Steps($this->Experiments);
+        $this->Steps = $this->Experiments->Steps;
     }
 
     public function testCreate()
@@ -37,7 +37,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Steps->Update(new ParamsProcessor(array('id' => 1, 'template' => 'updated step body')));
+        $this->Steps->update(new ParamsProcessor(array('id' => 1, 'template' => 'updated step body')));
         $this->assertEquals('updated step body', $this->Steps->read()[0]['body']);
     }
 

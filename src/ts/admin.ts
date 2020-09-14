@@ -184,8 +184,13 @@ $(document).ready(function() {
   // COMMON TEMPLATE
   $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
     const template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/AjaxController.php', {
-      commonTplUpdate: template
+    $.post('app/controllers/Ajax.php', {
+      action: 'updateCommon',
+      what: 'template',
+      type: 'experiments_templates',
+      params: {
+        template: template,
+      },
     }).done(function(json) {
       notif(json);
     });

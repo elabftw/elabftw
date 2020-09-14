@@ -139,7 +139,7 @@ try {
             break;
         case 'finish':
             $Model->finish($Params->id);
-            // no break
+            break;
         case 'unreference':
             $Model->unreference($Params->id);
             break;

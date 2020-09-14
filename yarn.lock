@@ -5478,9 +5478,9 @@ matchdep@^2.0.0:
     stack-trace "0.0.10"
 
 mathjax@3.1.*:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/mathjax/-/mathjax-3.1.0.tgz#8abfe5328cf2771b3083c7aaa0fe65c51b08d090"
-  integrity sha512-W71QY6DBDAhKhsIRbqzB38VV6Mk1IVAx23IjNc00oAPa4jyoeDQOwMIBPnG5ATqOAYevrBrwaNbycERGoYBBhA==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/mathjax/-/mathjax-3.1.2.tgz#95c0d45ce2330ef7b6a815cebe7d61ecc26bbabd"
+  integrity sha512-BojKspBv4nNWzO1wC6VEI+g9gHDOhkaGHGgLxXkasdU4pwjdO5AXD5M/wcLPkXYPjZ/N+6sU8rjQTlyvN2cWiQ==
 
 maxmin@^1.1.0:
   version "1.1.0"

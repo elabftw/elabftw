@@ -99,6 +99,10 @@ try {
             $Model = new Tags($Entity);
             break;
 
+        case 'template':
+            $Model = $Entity;
+            break;
+
         case 'todolist':
             $Model = new Todolist($App->Users);
             break;
@@ -118,17 +122,20 @@ try {
             $Response->setData($Model->getList($Params->name));
             break;
         case 'create':
-            $Model->create($Params);
+            $res = $Model->create($Params);
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'value' => $res,
+            ));
             break;
         case 'update':
             $res = $Model->update($Params);
-            if ($Model instanceof Comments) {
-                $Response->setData(array(
-                    'res' => true,
-                    'msg' => _('Saved'),
-                    'value' => $res,
-                ));
-            }
+            $Response->setData(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'value' => $res,
+            ));
             break;
         case 'destroy':
             $Model->destroy($Params->id);
@@ -136,6 +143,9 @@ try {
         case 'deduplicate':
             $deduplicated = $Model->deduplicate();
             $Response->setData(array('res' => true, 'msg' => sprintf(_('Deduplicated %d tags'), $deduplicated)));
+            break;
+        case 'duplicate':
+            $Model->duplicate();
             break;
         case 'finish':
             $Model->finish($Params->id);

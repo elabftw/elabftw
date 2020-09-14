@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { addDateOnCursor, notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';

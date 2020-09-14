@@ -40,12 +40,6 @@ try {
     // CSRF
     $App->Csrf->validate();
 
-    // DUPLICATE/IMPORT TPL
-    if ($Request->request->has('importTpl')) {
-        $Templates = new Templates($App->Users, (int) $Request->request->get('id'));
-        $Templates->duplicate();
-    }
-
     // UPDATE COMMON TEMPLATE
     if ($Request->request->has('commonTplUpdate')) {
         if (!$App->Session->get('is_admin')) {

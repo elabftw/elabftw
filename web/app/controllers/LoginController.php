@@ -114,11 +114,11 @@ try {
             $App->Session->remove('auth_userid');
         } else {
             $loginResult = $Auth->login($App->Session->get('auth_userid'), $App->Session->get('rememberme'));
- 
+
             if ($loginResult === true) {
                 $App->Session->remove('rememberme');
                 $App->Session->remove('auth_userid');
- 
+
                 if ($Request->cookies->has('redirect')) {
                     $location = $Request->cookies->get('redirect');
                 } else {

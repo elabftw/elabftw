@@ -31,10 +31,13 @@ $(document).ready(function() {
   // EDIT
   $(document).on('mouseenter', '.todoItem', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/TodolistController.php', {
-        update: true,
-        body: value,
-        id: $(this).data('id'),
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'todolist',
+        params: {
+          template: value,
+          id: $(this).data('id'),
+        },
       });
 
       return(value);

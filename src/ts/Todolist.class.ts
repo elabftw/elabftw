@@ -11,7 +11,7 @@ import { relativeMoment, makeSortableGreatAgain } from './misc';
 export default class Todolist extends Crud {
 
   constructor() {
-    super('app/controllers/TodolistController.php');
+    super('app/controllers/Ajax.php');
   }
 
   // add a todo item
@@ -21,7 +21,10 @@ export default class Todolist extends Crud {
     if (body !== '') {
       this.send({
         action: 'create',
-        content: body,
+        what: 'todolist',
+        params: {
+          template: body,
+        },
       }).then((response) => {
         if (response.res) {
           // reload the todolist
@@ -72,7 +75,10 @@ export default class Todolist extends Crud {
   destroy(id): void {
     this.send({
       action: 'destroy',
-      id: id,
+      what: 'todolist',
+      params: {
+        id: id,
+      },
     }).then((response) => {
       if (response.res) {
         // hide item

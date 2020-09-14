@@ -26,6 +26,7 @@ use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
+use Elabftw\Models\Todolist;
 use Exception;
 use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -70,14 +71,6 @@ try {
             $Model = $Entity->Comments;
             break;
 
-        case 'status':
-            // status is only from admin panel
-            if (!$App->Session->get('is_admin')) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
-            $Model = new Status($App->Users);
-            break;
-
         case 'itemsTypes':
             // items types is only from admin panel
             if (!$App->Session->get('is_admin')) {
@@ -86,17 +79,30 @@ try {
             $Model = new ItemsTypes($App->Users);
             break;
 
-        case 'step':
-            $Model = new Steps($Entity);
-            break;
-
         case 'link':
             $Model = new Links($Entity);
+            break;
+
+        case 'status':
+            // status is only from admin panel
+            if (!$App->Session->get('is_admin')) {
+                throw new IllegalActionException('Non admin user tried to access admin controller.');
+            }
+            $Model = new Status($App->Users);
+            break;
+
+        case 'step':
+            $Model = new Steps($Entity);
             break;
 
         case 'tag':
             $Model = new Tags($Entity);
             break;
+
+        case 'todolist':
+            $Model = new Todolist($App->Users);
+            break;
+
         case 'user':
             $Model = $App->Users;
             break;

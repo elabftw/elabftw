@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Database;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -26,6 +27,7 @@ use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Templates;
 use Exception;
+use Swift_TransportException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 require_once dirname(__DIR__) . '/init.inc.php';
@@ -37,6 +39,9 @@ $Response->setData(array(
 ));
 
 try {
+    // CSRF
+    $App->Csrf->validate();
+
     if ($Request->getMethod() === 'POST') {
         $what = $Request->request->get('what');
         $action = $Request->request->get('action');
@@ -61,6 +66,9 @@ try {
 
 
     switch ($what) {
+        case 'comment':
+            $Model = $Entity->Comments;
+            break;
 
         case 'status':
             // status is only from admin panel
@@ -107,7 +115,14 @@ try {
             $Model->create($Params);
             break;
         case 'update':
-            $Model->update($Params);
+            $res = $Model->update($Params);
+            if ($Model instanceof Comments) {
+                $Response->setData(array(
+                    'res' => true,
+                    'msg' => _('Saved'),
+                    'value' => $res,
+                ));
+            }
             break;
         case 'destroy':
             $Model->destroy($Params->id);
@@ -125,6 +140,14 @@ try {
         default:
             throw new IllegalActionException('Bad action param on Ajax controller');
     }
+} catch (Swift_TransportException $e) {
+    // for swift error, don't display error to user as it might contain sensitive information
+    // but log it and display general error. See #841
+    $App->Log->error('', array('exception' => $e));
+    $Response->setData(array(
+        'res' => false,
+        'msg' => _('Error sending email'),
+    ));
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,

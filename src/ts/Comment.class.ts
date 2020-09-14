@@ -12,16 +12,19 @@ export default class Comment extends Crud {
   type: string;
 
   constructor(type: string) {
-    super('app/controllers/CommentsAjaxController.php');
+    super('app/controllers/Ajax.php');
     this.type = type;
   }
 
   create(): void {
     this.send({
       action: 'create',
-      id: $('#info').data('id') as number,
-      content: $('#commentsCreateArea').val() as string,
+      what: 'comment',
       type: this.type,
+      params: {
+        itemId: $('#info').data('id') as number,
+        comment: $('#commentsCreateArea').val() as string,
+      },
     }).then(() => {
       $('#comment_container').load(window.location.href + ' #comment');
     });
@@ -31,8 +34,11 @@ export default class Comment extends Crud {
     if (confirm(i18next.t('generic-delete-warning'))) {
       this.send({
         action: 'destroy',
-        id: commentId,
+        what: 'comment',
         type: this.type,
+        params: {
+          id: commentId,
+        },
       }).then(() => {
         $('#comment_container').load(window.location.href + ' #comment');
       });

@@ -33,6 +33,8 @@ class ParamsProcessor
 
     public $tag;
 
+    public $comment;
+
     public function __construct(array $params)
     {
         $this->name = Filter::sanitize($params['name'] ?? 'Unnamed');
@@ -43,5 +45,6 @@ class ParamsProcessor
         $this->id = (int) ($params['id'] ?? 0);
         $this->template = Filter::body($params['template'] ?? '');
         $this->bookable = (int) ($params['bookable'] ?? 0) ? 1 : 0;
+        $this->comment = Filter::comment($params['comment'] ?? 'blah');
     }
 }

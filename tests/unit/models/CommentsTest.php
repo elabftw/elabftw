@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Elabftw\ParamsProcessor;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,7 +34,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->assertIsInt($this->Comments->create('Ohai'));
+        $this->assertIsInt($this->Comments->create(new ParamsProcessor(array('comment' => 'Ohai'))));
     }
 
     public function testReadAll()
@@ -43,10 +44,10 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate()
     {
-        $this->Comments->Update('Updated', 1);
+        $this->Comments->Update(new ParamsProcessor(array('comment' => 'Updated', 'id' => 1)));
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update('a', 1);
+        $this->Comments->Update(new ParamsProcessor(array('comment' => 'a', 'id' => 1)));
     }
 
     public function testDestroy()

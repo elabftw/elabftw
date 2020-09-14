@@ -10,11 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 /**
- * Interface for things like Steps, Links, Comments
- * DEPRECATED
+ * For things that can be updated
  */
-interface CrudInterface
+interface UpdatableInterface
 {
-    public function read(): array;
+    // return a string here for jeditable consumption
+    public function update(ParamsProcessor $params): string;
 }

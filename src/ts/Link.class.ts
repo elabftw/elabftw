@@ -33,11 +33,12 @@ export default class Link extends Crud {
             itemId: id,
             id: linkId,
           },
+        }).then(() => {
+          // reload the link list
+          $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
+          // clear input field
+          elem.val('');
         });
-        // reload the link list
-        $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
-        // clear input field
-        elem.val('');
       } // end if input is bad
     } // end if input < 0
   }
@@ -53,8 +54,9 @@ export default class Link extends Crud {
           itemId: id,
           id: elem.data('linkid') as number,
         },
+      }).then(() => {
+        $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
       });
-      $('#links_div_' + id).load(window.location.href + ' #links_div_' + id);
     }
   }
 }

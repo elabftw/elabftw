@@ -22,7 +22,8 @@ use PDO;
 /**
  * All about the teams
  */
-class Teams implements CrudInterface
+//class Teams implements CrudInterface
+class Teams
 {
     /** @var Users $Users instance of Users */
     public $Users;

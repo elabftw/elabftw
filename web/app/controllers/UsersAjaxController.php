@@ -37,14 +37,14 @@ try {
     $App->Csrf->validate();
 
     // you need to be at least admin to validate/archive/delete a user
-    if (!$Session->get('is_admin')) {
+    if (!$App->Session->get('is_admin')) {
         throw new IllegalActionException('Non admin user tried to edit another user.');
     }
     $UsersHelper = new UsersHelper();
     $targetUser = new Users((int) $Request->request->get('userid'));
     $targetUserTeams = $UsersHelper->getTeamsIdFromUserid((int) $targetUser->userData['userid']);
 
-    if (!in_array((string) $App->Users->userData['team'], $targetUserTeams, true) && !$Session->get('is_sysadmin')) {
+    if (!in_array((string) $App->Users->userData['team'], $targetUserTeams, true) && !$App->Session->get('is_sysadmin')) {
         throw new IllegalActionException('User tried to edit user from other team.');
     }
 

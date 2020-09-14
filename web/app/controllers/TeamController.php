@@ -37,7 +37,7 @@ try {
         }
         $Email = new Email($App->Config, $App->Users);
         $sent = $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'), true);
-        $Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
+        $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException $e) {
     // show message to user

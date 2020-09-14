@@ -36,7 +36,8 @@ use function unlink;
 /**
  * All about the file uploads
  */
-class Uploads implements CrudInterface
+//class Uploads implements CrudInterface
+class Uploads
 {
     use UploadTrait;
 

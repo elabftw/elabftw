@@ -148,6 +148,14 @@ try {
             $Response->setData($res);
             break;
 
+        case 'read':
+            $res = $Model->read();
+            $Response->setData(array(
+                'res' => true,
+                'msg' => $res,
+            ));
+            break;
+
         case 'readAll':
             $res = $Model->readAll();
             $Response->setData(array(

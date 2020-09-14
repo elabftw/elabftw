@@ -59,7 +59,7 @@ try {
     if ($App->Request->query->has('elabid')
         && $App->Request->query->get('mode') === 'view'
         && !$App->Request->getSession()->has('auth')) {
-        $Session->invalidate();
+        $App->Session->invalidate();
     }
 
     $Response->send();

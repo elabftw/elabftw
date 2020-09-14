@@ -19,33 +19,35 @@ use Elabftw\Services\Filter;
  */
 class ParamsProcessor
 {
-    public $name;
+    public $name = 'Unnamed';
 
-    public $color;
+    public $color = '#cccccc';
 
-    public $isTimestampable;
+    public $isTimestampable = 0;
 
-    public $isDefault;
+    public $isDefault = 0;
 
-    public $id;
+    public $id = 0;
 
-    public $template;
+    public $template = '';
 
-    public $tag;
+    public $tag = 'blah';
 
-    public $comment;
+    public $comment = 'blah';
+
+    public $bookable = 0;
 
     public function __construct(array $params)
     {
-        $this->name = Filter::sanitize($params['name'] ?? 'Unnamed');
-        $this->tag = Filter::tag($params['tag'] ?? 'blah');
-        $this->color = Check::color($params['color'] ?? '#cccccc');
-        $this->isTimestampable = $params['isTimestampable'] ?? 0 ? 1 : 0;
-        $this->isDefault = $params['isDefault'] ?? 0 ? 1 : 0;
-        $this->id = (int) ($params['id'] ?? 0);
+        $this->name = Filter::sanitize($params['name'] ?? $this->name);
+        $this->tag = Filter::tag($params['tag'] ?? $this->tag);
+        $this->color = Check::color($params['color'] ?? $this->color);
+        $this->isTimestampable = $params['isTimestampable'] ?? $this->isTimestampable ? 1 : 0;
+        $this->isDefault = $params['isDefault'] ?? $this->isDefault ? 1 : 0;
+        $this->id = (int) ($params['id'] ?? $this->id);
         // TODO rename to body?
-        $this->template = Filter::body($params['template'] ?? '');
-        $this->bookable = (int) ($params['bookable'] ?? 0) ? 1 : 0;
-        $this->comment = Filter::comment($params['comment'] ?? 'blah');
+        $this->template = Filter::body($params['template'] ?? $this->template);
+        $this->bookable = $params['bookable'] ?? $this->bookable ? 1 : 0;
+        $this->comment = Filter::comment($params['comment'] ?? $this->comment);
     }
 }

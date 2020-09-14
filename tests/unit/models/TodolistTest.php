@@ -20,9 +20,9 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue((bool) Check::id($this->Todolist->create(new ParamsProcessor(array('template' => $body)))));
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $this->assertTrue(is_array($this->Todolist->readAll()));
+        $this->assertTrue(is_array($this->Todolist->read()));
     }
 
     public function testUpdate()

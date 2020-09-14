@@ -35,9 +35,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue((bool) Check::id($new));
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $all = $this->Status->readAll();
+        $all = $this->Status->read();
         $this->assertTrue(is_array($all));
     }
 
@@ -73,10 +73,5 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         //$this->Status->destroy(2);
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy(1);
-    }
-
-    public function testDestroyAll()
-    {
-        $this->Status->destroyAll();
     }
 }

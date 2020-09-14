@@ -14,13 +14,15 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\UpdatableInterface;
 use PDO;
 
 /**
  * All about the tag
  */
-class Tags implements CrudInterface
+class Tags implements CreatableInterface, UpdatableInterface, DestroyableInterface
 {
     /** @var AbstractEntity $Entity an instance of AbstractEntity */
     public $Entity;
@@ -159,7 +161,7 @@ class Tags implements CrudInterface
     /**
      * Update a tag
      */
-    public function update(ParamsProcessor $params): bool
+    public function update(ParamsProcessor $params): string
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
@@ -171,7 +173,9 @@ class Tags implements CrudInterface
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $req->bindParam(':tag', $params->tag, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+
+        return $params->tag;
     }
 
     /**
@@ -231,11 +235,8 @@ class Tags implements CrudInterface
 
     /**
      * Destroy a tag completely. Unreference it from everywhere and then delete it
-     *
-     * @param int $tagId id of the tag
-     * @return void
      */
-    public function destroy(int $tagId): void
+    public function destroy(int $tagId): bool
     {
         if ($this->Entity->Users->userData['is_admin'] !== '1') {
             throw new IllegalActionException('Only an admin can update a tag!');
@@ -250,7 +251,7 @@ class Tags implements CrudInterface
         $sql = 'DELETE FROM tags WHERE id = :tag_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

@@ -11,10 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for things like Steps, Links, Comments
- * DEPRECATED
+ * For things that can be read
  */
-interface CrudInterface
+interface ReadableInterface
 {
     public function read(): array;
 }

@@ -18,7 +18,8 @@ use PDO;
 /**
  * Store informations about different identity providers for auth with SAML
  */
-class Idps implements CrudInterface
+//class Idps implements CrudInterface
+class Idps
 {
     /** @var Db $Db SQL Database */
     protected $Db;

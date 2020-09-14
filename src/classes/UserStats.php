@@ -76,7 +76,7 @@ class UserStats
     {
         // get all status name and id
         $Status = new Status($this->Users);
-        $statusAll = $Status->readAll();
+        $statusAll = $Status->read();
 
         // populate arrays
         foreach ($statusAll as $status) {

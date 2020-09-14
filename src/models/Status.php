@@ -105,7 +105,7 @@ class Status extends AbstractCategory
      *
      * @return array All status from the team
      */
-    public function readAll(): array
+    public function read(): array
     {
         $sql = 'SELECT status.id AS category_id,
             status.name AS category,
@@ -164,7 +164,7 @@ class Status extends AbstractCategory
      * Update a status
      *
      */
-    public function update(ParamsProcessor $params): void
+    public function update(ParamsProcessor $params): string
     {
         // make sure there is only one default status
         if ($params->isDefault === 1) {
@@ -186,13 +186,15 @@ class Status extends AbstractCategory
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        return $params->name;
     }
 
     /**
      * Destroy a status
      *
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         // don't allow deletion of a status with experiments
         if ($this->countItems($id) > 0) {
@@ -203,16 +205,7 @@ class Status extends AbstractCategory
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Not implemented
-     *
-     * @return void
-     */
-    public function destroyAll(): void
-    {
+        return $this->Db->execute($req);
     }
 
     /**

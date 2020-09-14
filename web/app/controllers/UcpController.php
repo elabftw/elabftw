@@ -112,7 +112,7 @@ try {
             $Request->request->get('name'),
             (int) $Request->request->get('canWrite')
         );
-        $Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
+        $App->Session->getFlashBag()->add('warning', sprintf(_("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again: %s"), $key));
     }
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));

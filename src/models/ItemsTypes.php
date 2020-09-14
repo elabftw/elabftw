@@ -63,10 +63,8 @@ class ItemsTypes extends AbstractCategory
 
     /**
      * Read the body (template) of the item_type from an id
-     *
-     * @return string
      */
-    public function read(): string
+    public function read(): array
     {
         $sql = 'SELECT template FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -78,11 +76,11 @@ class ItemsTypes extends AbstractCategory
             throw new ImproperActionException(_('Nothing to show with this id'));
         }
 
-        $res = $req->fetchColumn();
+        $res = $req->fetchAll();
         if ($res === false || $res === null) {
             return '';
         }
-        return (string) $res;
+        return $res;
     }
 
     /**
@@ -134,7 +132,7 @@ class ItemsTypes extends AbstractCategory
      * Update an item type
      *
      */
-    public function update(ParamsProcessor $params): void
+    public function update(ParamsProcessor $params): string
     {
         $sql = 'UPDATE items_types SET
             name = :name,
@@ -151,15 +149,15 @@ class ItemsTypes extends AbstractCategory
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        return $params->template;
     }
 
     /**
      * Destroy an item type
      *
-     * @param int $id
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         // don't allow deletion of an item type with items
         if ($this->countItems($id) > 0) {
@@ -169,7 +167,7 @@ class ItemsTypes extends AbstractCategory
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

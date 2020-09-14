@@ -185,7 +185,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $renderArr = array(
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
-            'commentsArr' => $this->Entity->Comments->readAll(),
+            'commentsArr' => $this->Entity->Comments->read(),
             'linksArr' => $this->Entity->Links->read(),
             'mode' => 'view',
             'revNum' => $Revisions->readCount(),

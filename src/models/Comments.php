@@ -13,7 +13,10 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ReadableInterface;
+use Elabftw\Interfaces\UpdatableInterface;
 use Elabftw\Services\Email;
 use PDO;
 use Swift_Message;
@@ -22,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * All about the comments
  */
-class Comments implements CrudInterface
+class Comments implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
 {
     /** @var AbstractEntity $Entity instance of Experiments or Database */
     public $Entity;
@@ -71,7 +74,7 @@ class Comments implements CrudInterface
      *
      * @return array comments for this entity
      */
-    public function readAll(): array
+    public function read(): array
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
@@ -107,17 +110,15 @@ class Comments implements CrudInterface
 
     /**
      * Destroy a comment
-     *
-     * @param int $id id of the comment
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+
+        return $this->Db->execute($req);
     }
 
     /**

@@ -17,15 +17,15 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->create('Group Name');
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $this->assertTrue(is_array($this->TeamGroups->readAll()));
+        $this->assertTrue(is_array($this->TeamGroups->read()));
     }
 
     public function testReadName()
     {
         $this->TeamGroups->create('Group Name');
-        $all = $this->TeamGroups->readAll();
+        $all = $this->TeamGroups->read();
         $last = array_pop($all);
         $id = (int) $last['id'];
         $this->assertEquals('Group Name', $this->TeamGroups->readName($id));

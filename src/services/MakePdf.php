@@ -248,7 +248,7 @@ class MakePdf extends AbstractMake
     {
         $html = '';
 
-        $commentsArr = $this->Entity->Comments->readAll();
+        $commentsArr = $this->Entity->Comments->read();
         if (empty($commentsArr)) {
             return $html;
         }

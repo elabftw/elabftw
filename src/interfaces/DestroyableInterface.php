@@ -11,10 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * Interface for things like Steps, Links, Comments
- * DEPRECATED
+ * For things that can be destroyed
  */
-interface CrudInterface
+interface DestroyableInterface
 {
-    public function read(): array;
+    public function destroy(int $id): bool;
 }

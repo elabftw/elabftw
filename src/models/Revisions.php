@@ -20,7 +20,8 @@ use PDO;
 /**
  * All about the revisions
  */
-class Revisions implements CrudInterface
+//class Revisions implements CrudInterface
+class Revisions
 {
     /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
     private const MIN_DELTA = 100;

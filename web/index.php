@@ -33,8 +33,8 @@ try {
         $SamlAuth = new SamlAuth($settings);
 
         $requestID = null;
-        if ($Session->has('AuthNRequestID')) {
-            $requestID = $Session->get('AuthNRequestID');
+        if ($App->Session->has('AuthNRequestID')) {
+            $requestID = $App->Session->get('AuthNRequestID');
         }
 
         $SamlAuth->processResponse($requestID);
@@ -50,11 +50,11 @@ try {
             throw new ImproperActionException('Not authenticated!');
         }
 
-        $Session->set('samlUserdata', $SamlAuth->getAttributes());
+        $App->Session->set('samlUserdata', $SamlAuth->getAttributes());
 
         // GET EMAIL
         $emailAttribute = $Saml->Config->configArr['saml_email'];
-        $email = $Session->get('samlUserdata')[$emailAttribute];
+        $email = $App->Session->get('samlUserdata')[$emailAttribute];
         if (is_array($email)) {
             $email = $email[0];
         }
@@ -68,7 +68,7 @@ try {
         // get attribute from config
         $teamAttribute = $Saml->Config->configArr['saml_team'];
 
-        $teams = $Session->get('samlUserdata')[$teamAttribute];
+        $teams = $App->Session->get('samlUserdata')[$teamAttribute];
         // if no team attribute is sent by the IDP, use the default team
         if (empty($teams)) {
             // we directly get the id from the stored config
@@ -89,12 +89,12 @@ try {
 
             // GET FIRSTNAME AND LASTNAME
             $firstnameAttribute = $Saml->Config->configArr['saml_firstname'];
-            $firstname = $Session->get('samlUserdata')[$firstnameAttribute];
+            $firstname = $App->Session->get('samlUserdata')[$firstnameAttribute];
             if (is_array($firstname)) {
                 $firstname = $firstname[0];
             }
             $lastnameAttribute = $Saml->Config->configArr['saml_lastname'];
-            $lastname = $Session->get('samlUserdata')[$lastnameAttribute];
+            $lastname = $App->Session->get('samlUserdata')[$lastnameAttribute];
             if (is_array($lastname)) {
                 $lastname = $lastname[0];
             }
@@ -117,9 +117,9 @@ try {
                 $location = '../../experiments.php';
             }
         } elseif (is_array($loginResult)) {
-            $Session->set('team_selection_required', 1);
-            $Session->set('auth_userid', $userid);
-            $Session->set('team_selection', $loginResult);
+            $App->Session->set('team_selection_required', 1);
+            $App->Session->set('auth_userid', $userid);
+            $App->Session->set('team_selection', $loginResult);
             $location = 'login.php';
             $Response = new RedirectResponse($location);
         } else {

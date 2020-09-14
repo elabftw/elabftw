@@ -12,14 +12,17 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ReadableInterface;
+use Elabftw\Interfaces\UpdatableInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * All about the steps
  */
-class Steps implements CrudInterface
+class Steps implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
 {
     use SortableTrait;
 
@@ -196,7 +199,7 @@ class Steps implements CrudInterface
      * Update the body of a step
      *
      */
-    public function update(ParamsProcessor $params): bool
+    public function update(ParamsProcessor $params): string
     {
         $this->Entity->canOrExplode('write');
 
@@ -205,17 +208,15 @@ class Steps implements CrudInterface
         $req->bindParam(':body', $params->template, PDO::PARAM_STR);
         $req->bindParam(':id', $params->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
 
-        return $this->Db->execute($req);
+        return $params->template;
     }
 
     /**
      * Delete a step
-     *
-     * @param int $id ID of the step
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $this->Entity->canOrExplode('write');
 
@@ -223,6 +224,6 @@ class Steps implements CrudInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

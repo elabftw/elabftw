@@ -213,7 +213,7 @@ class Team implements MapInterface
         }
     }
 
-    final public function setVisible($setting): void
+    final public function setVisible(string $setting): void
     {
         $this->visible = Filter::toBinary($setting);
     }

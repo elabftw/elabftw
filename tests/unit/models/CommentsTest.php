@@ -37,9 +37,9 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Comments->create(new ParamsProcessor(array('comment' => 'Ohai'))));
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $this->assertIsArray($this->Comments->readAll());
+        $this->assertIsArray($this->Comments->read());
     }
 
     public function testUpdate()

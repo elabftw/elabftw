@@ -28,7 +28,7 @@ export default class Todolist extends Crud {
       }).then((response) => {
         if (response.res) {
           // reload the todolist
-          this.getTodoItems();
+          this.read();
           // and clear the input
           $('#todo').val('');
         }
@@ -36,9 +36,9 @@ export default class Todolist extends Crud {
     }
   }
 
-  getTodoItems(): void {
+  read(): void {
     $.get('app/controllers/Ajax.php', {
-      action: 'readAll',
+      action: 'read',
       what: 'todolist',
     }).done(function(json) {
       let html = '<ul id="todoItems-list" class="sortable" data-axis="y" data-table="todolist">';
@@ -98,7 +98,7 @@ export default class Todolist extends Crud {
       localStorage.setItem('isTodolistOpen', '0');
     } else {
       $('#container').css('width', '70%').css('margin-right', '0');
-      this.getTodoItems();
+      this.read();
       this.getSteps();
       localStorage.setItem('isTodolistOpen', '1');
     }

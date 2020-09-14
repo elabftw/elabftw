@@ -110,6 +110,6 @@ try {
     fclose($file);
 } catch (Exception $e) {
     $App->Log->error('', array('exception' => $e));
-    $Session->getFlashBag()->add('ko', $e->getMessage());
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
     header('Location: ../experiments.php');
 }

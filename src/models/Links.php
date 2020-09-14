@@ -12,13 +12,15 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ReadableInterface;
 use PDO;
 
 /**
  * All about the experiments links
  */
-class Links implements CrudInterface
+class Links implements CreatableInterface, ReadableInterface, DestroyableInterface
 {
     /** @var AbstractEntity $Entity instance of Experiments */
     public $Entity;
@@ -40,7 +42,7 @@ class Links implements CrudInterface
     /**
      * Add a link to an experiment
      */
-    public function create(ParamsProcessor $params): void
+    public function create(ParamsProcessor $params): int
     {
         $link = $params->id;
         $Database = new Database($this->Entity->Users, $link);
@@ -51,7 +53,7 @@ class Links implements CrudInterface
         $links = $this->read();
         foreach ($links as $existingLink) {
             if ((int) $existingLink['itemid'] === $link) {
-                return;
+                return 0;
             }
         }
         // create new link
@@ -60,6 +62,8 @@ class Links implements CrudInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -189,17 +193,14 @@ class Links implements CrudInterface
 
     /**
      * Delete a link
-     *
-     * @param int $id ID of our link
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $this->Entity->canOrExplode('write');
 
         $sql = 'DELETE FROM ' . $this->Entity->type . '_links WHERE id= :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

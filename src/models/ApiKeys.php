@@ -21,7 +21,8 @@ use PDO;
 /**
  * Api keys
  */
-class ApiKeys implements CrudInterface
+//class ApiKeys implements CrudInterface
+class ApiKeys
 {
     /** @var Db $Db SQL Database */
     private $Db;

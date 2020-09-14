@@ -11,13 +11,17 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\CreatableInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ReadableInterface;
+use Elabftw\Interfaces\UpdatableInterface;
 use Elabftw\Traits\SortableTrait;
 
 /**
  * A category is a status for experiments and item type for db item
  */
-abstract class AbstractCategory implements CrudInterface
+//abstract class AbstractCategory implements CrudInterface
+abstract class AbstractCategory implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
 {
     use SortableTrait;
 

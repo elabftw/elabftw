@@ -23,7 +23,6 @@ use Elabftw\Models\Templates;
 use Elabftw\Services\Check;
 use Elabftw\Services\ListBuilder;
 use Exception;
-use function mb_strlen;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -229,7 +228,7 @@ try {
         }
 
         // check for deletable xp
-        if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$Session->get('is_admin')
+        if ($Entity instanceof Experiments && (!$App->teamConfigArr['deletable_xp'] && !$App->Session->get('is_admin')
             || $App->Config->configArr['deletable_xp'] === '0')) {
             throw new ImproperActionException('You cannot delete experiments!');
         }
@@ -269,23 +268,6 @@ try {
         $Response->setData(array(
             'res' => true,
             'msg' => _('File deleted successfully') . $msg,
-        ));
-    }
-
-    // CREATE TEMPLATE
-    if ($Request->request->has('create') && $Entity instanceof Templates) {
-        // template name must be 3 chars at least
-        if (mb_strlen($Request->request->get('name')) < 3) {
-            throw new ImproperActionException(_('The template name must be 3 characters long.'));
-        }
-
-        $name = $Request->request->filter('name', null, FILTER_SANITIZE_STRING);
-        $body = $Request->request->filter('body', null, FILTER_SANITIZE_STRING);
-
-        $id = $Entity->createNew($name, $body);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => $id,
         ));
     }
 } catch (ImproperActionException | InvalidCsrfTokenException | UnauthorizedException $e) {

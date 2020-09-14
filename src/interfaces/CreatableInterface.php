@@ -10,11 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 /**
- * Interface for things like Steps, Links, Comments
- * DEPRECATED
+ * For things that can be created
  */
-interface CrudInterface
+interface CreatableInterface
 {
-    public function read(): array;
+    // returns the new id inserted
+    public function create(ParamsProcessor $params): int;
 }

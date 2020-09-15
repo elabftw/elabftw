@@ -14,10 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Check;
 use function is_bool;
 use function mb_strlen;
@@ -26,7 +23,7 @@ use PDO;
 /**
  * Everything related to the team groups
  */
-class TeamGroups implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+class TeamGroups implements CrudInterface
 {
     /** @var Db $Db SQL Database */
     private $Db;

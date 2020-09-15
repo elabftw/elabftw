@@ -104,6 +104,7 @@ class Status extends AbstractCategory
     {
         return $this->read();
     }
+
     /**
      * SQL to get all status from team
      *

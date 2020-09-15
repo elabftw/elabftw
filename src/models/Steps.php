@@ -12,17 +12,14 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
 /**
  * All about the steps
  */
-class Steps implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+class Steps implements CrudInterface
 {
     use SortableTrait;
 

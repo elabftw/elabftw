@@ -13,10 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Services\Email;
 use PDO;
 use Swift_Message;
@@ -25,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * All about the comments
  */
-class Comments implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+class Comments implements CrudInterface
 {
     /** @var AbstractEntity $Entity instance of Experiments or Database */
     public $Entity;

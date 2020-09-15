@@ -13,10 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreatableInterface;
-use Elabftw\Interfaces\DestroyableInterface;
-use Elabftw\Interfaces\ReadableInterface;
-use Elabftw\Interfaces\UpdatableInterface;
+use Elabftw\Interfaces\CrudInterface;
 use Elabftw\Traits\SortableTrait;
 use function mb_strlen;
 use PDO;
@@ -24,7 +21,7 @@ use PDO;
 /**
  * All about the todolist
  */
-class Todolist implements CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+class Todolist implements CrudInterface
 {
     use SortableTrait;
 

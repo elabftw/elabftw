@@ -2,9 +2,9 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\IllegalActionException;
-
 use Elabftw\Elabftw\ParamsProcessor;
+
+use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {

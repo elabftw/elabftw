@@ -415,8 +415,10 @@ section.item {
     }
 }
 
-.item-show-lg .title {
-    padding-left: 20px;
+.item-show-lg {
+    .title {
+        padding-left: 20px;
+    }
 }
 
 .item-info {

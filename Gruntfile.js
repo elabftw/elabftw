@@ -73,6 +73,10 @@ module.exports = function(grunt) {
       tinymce: {
         // copy the mobile font file
         command: 'cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff'
+      },
+      ove: {
+        // copy files for open vector editor
+        command: 'cp -R node_modules/open-vector-editor/umd/. web/app/ove/'
       }
     }
   });
@@ -84,7 +88,7 @@ module.exports = function(grunt) {
 
   // before minifying js it is preferable to do 'yarn install' to update the dependencies
   grunt.registerTask('yarn', 'shell:yarninstall');
-  grunt.registerTask('default', ['yarn', 'shell:tsc', 'uglify', 'cssmin', 'tinymce']);
+  grunt.registerTask('default', ['yarn', 'shell:tsc', 'uglify', 'cssmin', 'tinymce', 'shell:ove']);
   grunt.registerTask('css', 'cssmin');
   grunt.registerTask('tinymce', 'shell:tinymce');
   grunt.registerTask('ts', ['shell:tsc']);

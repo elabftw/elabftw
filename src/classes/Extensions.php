@@ -107,4 +107,10 @@ final class Extensions
         'mpeg',
         'flv',
     );
+
+    /** @var array DNA dna files */
+    public const DNA = array(
+        'gb',
+        'ape',
+    );
 }

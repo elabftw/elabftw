@@ -288,6 +288,9 @@ class Uploads implements CrudInterface
         if (in_array($ext, Extensions::DOCUMENT, true)) {
             return 'fa-file-word';
         }
+        if (in_array($ext, Extensions::DNA, true)) {
+            return 'fa-dna';
+        }
 
         return 'fa-file';
     }

@@ -301,8 +301,14 @@ class Experiments extends AbstractEntity implements CreateInterface
         // clean up the results so we get a nice array with experiment id/title and steps with their id/body
         // use reference to edit in place
         foreach ($res as &$exp) {
-            $exp['steps'] = array_combine(explode('|', $exp['steps_id']), explode('|', $exp['steps_body']));
-            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
+            $stepIDs = explode('|', $exp['steps_id']);
+            $stepsBodies = explode('|', $exp['steps_body']);
+
+            foreach ($stepIDs as $key => $stepID) {
+                $expSteps[] = array($stepID, $stepsBodies[$key]);
+            }
+            $exp['steps'] = $expSteps;
+            unset($exp['steps_body'], $exp['steps_id'], $exp['finished'], $expSteps);
         }
 
         return $res;

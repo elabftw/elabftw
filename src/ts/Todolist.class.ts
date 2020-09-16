@@ -61,7 +61,7 @@ export default class Todolist {
       let html = '';
       for (const exp of json.msg) {
         html += `<li><h3><a href='experiments.php?mode=view&id=${exp.id}'>${exp.title}</a></h3>`;
-        for (let stepsData of Object.entries(exp.steps)) {
+        for (const stepsData of Object.entries(exp.steps)) {
           const stepId = stepsData[1][0];
           const stepBody = stepsData[1][1];
           html += `<div><input type='checkbox' class='stepbox mr-1' id='todo_step_${stepId}' data-id='${exp.id}' data-type='experiments' data-stepid='${stepId}' />${stepBody}</div>`;

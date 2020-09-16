@@ -283,8 +283,8 @@ class Experiments extends AbstractEntity implements CreateInterface
             FROM experiments
             CROSS JOIN (
                 SELECT item_id, finished,
-                GROUP_CONCAT(experiments_steps.body SEPARATOR '|') AS steps_body,
-                GROUP_CONCAT(experiments_steps.id SEPARATOR '|') AS steps_id
+                GROUP_CONCAT(experiments_steps.body ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_body,
+                GROUP_CONCAT(experiments_steps.id ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_id
                 FROM experiments_steps
                 WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = experiments.id)
             WHERE userid = :userid GROUP BY experiments.id ORDER BY experiments.id DESC";

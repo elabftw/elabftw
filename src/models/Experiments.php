@@ -304,11 +304,12 @@ class Experiments extends AbstractEntity implements CreateInterface
             $stepIDs = explode('|', $exp['steps_id']);
             $stepsBodies = explode('|', $exp['steps_body']);
 
+            $expSteps = array();
             foreach ($stepIDs as $key => $stepID) {
                 $expSteps[] = array($stepID, $stepsBodies[$key]);
             }
             $exp['steps'] = $expSteps;
-            unset($exp['steps_body'], $exp['steps_id'], $exp['finished'], $expSteps);
+            unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
         }
 
         return $res;

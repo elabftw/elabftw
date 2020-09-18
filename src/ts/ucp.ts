@@ -9,7 +9,6 @@ import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { addDateOnCursor, notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
-import Template from './Template.class';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/charmap';
@@ -49,8 +48,44 @@ import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
-
-  const TemplateC = new Template();
+  const Templates = {
+    controller: 'app/controllers/EntityAjaxController.php',
+    create: function(name: string, body = ''): void {
+      $.post(this.controller, {
+        create: true,
+        name: name,
+        body: body,
+        type: 'experiments_templates'
+      }).done(function(json) {
+        notif(json);
+        if (json.res) {
+          window.location.replace(`ucp.php?tab=3&templateid=${json.msg}`);
+        }
+      });
+    },
+    saveToFile: function(id, name): void {
+      // we have the name of the template used for filename
+      // and we have the id of the editor to get the content from
+      // we don't use activeEditor because it requires a click inside the editing area
+      const content = tinymce.get(id).getContent();
+      const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+      saveAs(blob, name + '.elabftw.tpl');
+    },
+    destroy: function(id): void {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        $.post(this.controller, {
+          destroy: true,
+          id: id,
+          type: 'experiments_templates'
+        }).done(function(json) {
+          notif(json);
+          if (json.res) {
+            window.location.replace('ucp.php?tab=3');
+          }
+        });
+      }
+    }
+  };
 
 
   // TEMPLATES listeners
@@ -58,7 +93,7 @@ $(document).ready(function() {
     const name = prompt('Template title');
     if (name) {
       // no body on template creation
-      TemplateC.create(name);
+      Templates.create(name);
     }
   });
   // show the handles to reorder when the menu entry is clicked
@@ -66,11 +101,12 @@ $(document).ready(function() {
     $('.sortableHandle').toggle();
   });
   $(document).on('click', '.saveToFile', function() {
-    TemplateC.saveToFile($(this).data('id'), $(this).data('name'));
+    Templates.saveToFile($(this).data('id'), $(this).data('name'));
   });
   $(document).on('click', '.destroyTemplate', function() {
-    TemplateC.destroy($(this).data('id'));
+    Templates.destroy($(this).data('id'));
   });
+
 
   $(document).on('click', '#import-from-file', function() {
     $('#import_tpl').toggle();
@@ -96,8 +132,8 @@ $(document).ready(function() {
   $(document).on('click', '.modalToggle', function() {
     const read = $(this).data('read');
     const write = $(this).data('write');
-    $('#canread_select option[value="' + read + '"]').prop('selected', true);
-    $('#canwrite_select option[value="' + write + '"]').prop('selected', true);
+    $('#canread_select option[value="' + read + '"]').prop('selected',true);
+    $('#canwrite_select option[value="' + write + '"]').prop('selected',true);
   });
 
   // input to upload an elabftw.tpl file
@@ -109,7 +145,7 @@ $(document).ready(function() {
     }
     const reader = new FileReader();
     reader.onload = function(e): void {
-      TemplateC.create(title, e.target.result as string);
+      Templates.create(title, e.target.result as string);
       $('#import_tpl').hide();
     };
   });

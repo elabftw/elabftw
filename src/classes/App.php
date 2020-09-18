@@ -79,11 +79,7 @@ class App
     {
         $this->Request = $request;
         $this->Session = $session;
-
-        // Don't get 'ok' flashes during mfa
-        if (!$this->Session->has('mfa_secret')) {
-            $this->ok = $this->Session->getFlashBag()->get('ok');
-        }
+        $this->ok = $this->Session->getFlashBag()->get('ok');
         $this->ko = $this->Session->getFlashBag()->get('ko');
         $this->warning = $this->Session->getFlashBag()->get('warning');
 

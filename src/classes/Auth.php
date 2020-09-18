@@ -71,21 +71,12 @@ class Auth
         $this->Db->execute($req);
 
         if ($req->rowCount() !== 1) {
-            $this->increaseFailedAttempt();
             throw new InvalidCredentialsException();
         }
 
         return (int) $req->fetchColumn();
     }
 
-    /**
-     * actual login with userid and team
-     *
-     * @param int $userid
-     * @param int $team
-     * @param string $setCookie default on
-     * @return void
-     */
     public function loginInTeam(int $userid, int $team, string $setCookie = 'on'): void
     {
         $this->populateUserDataFromUserid($userid);
@@ -99,18 +90,17 @@ class Auth
      * Login with email and password
      *
      * @param int $userid
-     * @param string $rememberme default
-     * @return mixed Return true or an array with the teams where login is possible for display on the team selection page
+     * @return mixed Return true if user provided correct credentials or an array with the userid
+     * and the teams where login is possible for display on the team selection page
      */
-    public function login(int $userid, string $rememberme = 'on')
+    public function login(int $userid)
     {
-        $this->Session->remove('failed_attempt');
         $UsersHelper = new UsersHelper();
         $teams = $UsersHelper->getTeamsFromUserid($userid);
         if (count($teams) > 1) {
-            return $teams;
+            return array($userid, $teams);
         }
-        $this->loginInTeam($userid, (int) $teams[0]['id'], $rememberme);
+        $this->loginInTeam($userid, (int) $teams[0]['id']);
 
         return true;
     }
@@ -198,22 +188,6 @@ class Auth
     }
 
     /**
-     * Increase the failed attempts counter
-     *
-     * @return void
-     */
-    public function increaseFailedAttempt(): void
-    {
-        if (!$this->Session->has('failed_attempt')) {
-            $this->Session->set('failed_attempt', 1);
-        } else {
-            $n = $this->Session->get('failed_attempt');
-            $n++;
-            $this->Session->set('failed_attempt', $n);
-        }
-    }
-
-    /**
      * Get the salt for the user so we can generate a correct hash
      *
      * @param string $email
@@ -227,7 +201,6 @@ class Auth
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || $res === null) {
-            $this->increaseFailedAttempt();
             throw new ImproperActionException(_("Login failed. Either you mistyped your password or your account isn't activated yet."));
         }
         return (string) $res;

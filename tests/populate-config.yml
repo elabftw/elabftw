@@ -33,7 +33,6 @@ users:
     team: Alpha
     api_key: apiKey4Test
     password: phpunitftw
-    create_mfa_secret: true
     create_experiments: true
     create_items: true
 

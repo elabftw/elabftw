@@ -19,7 +19,6 @@ use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Maps\UserPreferences;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
-use Elabftw\Services\Filter;
 use Exception;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -58,34 +57,18 @@ try {
             throw new ImproperActionException(_('Please input your current password!'));
         }
         $App->Users->updateAccount($Request->request->all());
-
-        // CHANGE PASSWORD
-        if (!empty($Request->request->get('newpass'))) {
-            // check the confirm password
-            if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
-                throw new ImproperActionException(_('The passwords do not match!'));
-            }
-            $App->Users->updatePassword($Request->request->get('newpass'));
-        }
-
-        // TWO FACTOR AUTHENTICATION
-        $useMFA = Filter::onToBinary($Request->request->get('use_mfa') ?? '');
-        $Mfa = new Mfa($App->Request, $App->Session);
-
-        // No MFA secret yet but user wants to enable
-        if ($useMFA && !$App->Users->userData['mfa_secret']) {
-            $App->Session->getFlashBag()->add('ok', _('Saved'));
-            // This will redirect user right away to verify mfa code
-            $location = $Mfa->enable('../../ucp.php?tab=2');
-            $Response = new RedirectResponse($location);
-            $Response->send();
-            exit();
-
-        // Disable MFA
-        } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
-            $Mfa->disable((int) $App->Users->userData['userid']);
-        }
     }
+
+    // TAB 2 : CHANGE PASSWORD
+    if (!empty($Request->request->get('newpass'))) {
+        // check the confirm password
+        if ($Request->request->get('newpass') !== $Request->request->get('cnewpass')) {
+            throw new ImproperActionException(_('The passwords do not match!'));
+        }
+
+        $App->Users->updatePassword($Request->request->get('newpass'));
+    }
+
     // END TAB 2
 
     // TAB 3 : EXPERIMENTS TEMPLATES
@@ -102,7 +85,6 @@ try {
         );
         $templateId = '&templateid=' . $Request->request->get('tpl_id');
     }
-    // END TAB 3
 
     // TAB 4 : CREATE API KEY
     if ($Request->request->has('createApiKey')) {

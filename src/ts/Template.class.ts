@@ -33,12 +33,12 @@ export default class Template {
   }
 
   saveToFile(id, name): void {
-    // we have the name of the template used for filename
-    // and we have the id of the editor to get the content from
-    // we don't use activeEditor because it requires a click inside the editing area
-    const content = tinymce.get(id).getContent();
-    const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
-    saveAs(blob, name + '.elabftw.tpl');
+      // we have the name of the template used for filename
+      // and we have the id of the editor to get the content from
+      // we don't use activeEditor because it requires a click inside the editing area
+      const content = tinymce.get(id).getContent();
+      const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+      saveAs(blob, name + '.elabftw.tpl');
   }
 
   destroy(id): void {

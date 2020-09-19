@@ -53,7 +53,7 @@ export default class Step extends Crud {
         itemId: itemId,
         id: stepId,
       },
-    })
+    });
   }
 
   finish(elem): void {

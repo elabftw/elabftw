@@ -19,6 +19,7 @@
 [![Joss](http://joss.theoj.org/papers/10.21105/joss.00146/status.svg)](http://joss.theoj.org/papers/10.21105/joss.00146)<br>
 [![Carbon offset](https://img.shields.io/ecologi/carbon/deltablot)](https://ecologi.com/deltablot)
 [![Trees](https://img.shields.io/ecologi/trees/deltablot)](https://ecologi.com/deltablot)
+[![Plant more](https://img.shields.io/badge/trees-plant%20more%20trees-brightgreen)](https://ecologi.com/?r=5f668f69232cc100192fbd04)
 
 # Description
 

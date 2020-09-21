@@ -283,8 +283,8 @@ class Experiments extends AbstractEntity implements CreateInterface
             FROM experiments
             CROSS JOIN (
                 SELECT item_id, finished,
-                GROUP_CONCAT(experiments_steps.body SEPARATOR '|') AS steps_body,
-                GROUP_CONCAT(experiments_steps.id SEPARATOR '|') AS steps_id
+                GROUP_CONCAT(experiments_steps.body ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_body,
+                GROUP_CONCAT(experiments_steps.id ORDER BY experiments_steps.ordering SEPARATOR '|') AS steps_id
                 FROM experiments_steps
                 WHERE finished = 0 GROUP BY item_id) AS stepst ON (stepst.item_id = experiments.id)
             WHERE userid = :userid GROUP BY experiments.id ORDER BY experiments.id DESC";
@@ -301,7 +301,14 @@ class Experiments extends AbstractEntity implements CreateInterface
         // clean up the results so we get a nice array with experiment id/title and steps with their id/body
         // use reference to edit in place
         foreach ($res as &$exp) {
-            $exp['steps'] = array_combine(explode('|', $exp['steps_id']), explode('|', $exp['steps_body']));
+            $stepIDs = explode('|', $exp['steps_id']);
+            $stepsBodies = explode('|', $exp['steps_body']);
+
+            $expSteps = array();
+            foreach ($stepIDs as $key => $stepID) {
+                $expSteps[] = array($stepID, $stepsBodies[$key]);
+            }
+            $exp['steps'] = $expSteps;
             unset($exp['steps_body'], $exp['steps_id'], $exp['finished']);
         }
 

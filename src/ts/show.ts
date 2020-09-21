@@ -66,7 +66,7 @@ $(document).ready(function(){
   // END PAGINATION
 
   // THE CHECKBOXES
-  function getCheckedBoxes() {
+  function getCheckedBoxes(): Array<object> {
     const checkedBoxes = [];
     $('input[type=checkbox]:checked').each(function() {
       checkedBoxes.push({

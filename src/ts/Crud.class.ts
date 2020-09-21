@@ -15,15 +15,15 @@ export default class Crud {
     this.controller = controller;
   }
 
-  send(req: ActionReq) {
+  send(req: ActionReq): JQueryPromise<any> {
     return $.ajax({
       type: 'post',
       url: this.controller,
       data: req,
-      success: function(response) {
+      success: function(response): void {
         notif(response);
       },
-      error: function() {
+      error: function(): void {
         notif({ 'res': false, 'msg': 'Error processing request!' });
       },
     });

@@ -8,7 +8,6 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
-import i18next from 'i18next';
 
 $(document).ready(function() {
   let type = $('#info').data('type');

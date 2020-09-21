@@ -62,7 +62,7 @@ $(document).ready(function() {
   }
 
   // UPLOAD FORM
-  const elabDropzone = new Dropzone('form#elabftw-dropzone', {
+  new Dropzone('form#elabftw-dropzone', {
     // i18n message to user
     //dictDefaultMessage: $('#info').data('upmsg'),
     dictDefaultMessage: i18next.t('dropzone-upload-area'),

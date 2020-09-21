@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import { addDateOnCursor, notif } from './misc';
-import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import Template from './Template.class';
 import 'tinymce/icons/default';

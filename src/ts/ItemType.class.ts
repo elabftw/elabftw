@@ -7,7 +7,6 @@
  */
 import Crud from './Crud.class';
 import { notif, tinyMceInitLight } from './misc';
-import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 
 export default class ItemType extends Crud {

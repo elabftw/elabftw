@@ -7,7 +7,6 @@
  */
 import { notif, tinyMceInitLight } from './misc';
 import $ from 'jquery';
-import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import TeamGroup from './TeamGroup.class';

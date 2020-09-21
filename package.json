@@ -60,7 +60,7 @@
     "grunt-shell": "3.0.*",
     "lodash": ">=4.17.13",
     "snyk": "^1.360.0",
-    "ts-loader": "^8.0.0",
+    "ts-loader": "^8.0.4",
     "typescript": "^3.7.3",
     "webpack": "^4.39.0",
     "webpack-bundle-analyzer": "^3.6.0",

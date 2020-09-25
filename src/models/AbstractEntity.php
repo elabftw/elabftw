@@ -626,7 +626,7 @@ abstract class AbstractEntity
                 entity.lastchange,';
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
-            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY ordering SEPARATOR '|'), '|', 1) AS next_step,
             categoryt.id AS category_id,
             categoryt.name AS category,
             categoryt.color,

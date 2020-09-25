@@ -29,6 +29,9 @@ _('Delete this link?');
 // please-wait
 _('Please wait…');
 /** @psalm-suppress UnusedFunctionCall */
+// replace-edited-file
+_('Do you want to replace the file on the server with this edit?');
+/** @psalm-suppress UnusedFunctionCall */
 // request-filename
 _('Enter name of the file');
 /** @psalm-suppress UnusedFunctionCall */

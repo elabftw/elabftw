@@ -9,6 +9,7 @@ const t = {
     "generic-delete-warning": "¿Eliminar esto?",
     "link-delete-warning": "¿Eliminar este enlace?",
     "please-wait": "Por favor espera",
+    "replace-edited-file": "¿Desea reemplazar el archivo en el servidor con esta edición?",
     "request-filename": "Ingrese el nombre del archivo",
     "step-delete-warning": "¿Eliminar este paso?",
     "tag-delete-warning": "Eliminar esta etiqueta?",

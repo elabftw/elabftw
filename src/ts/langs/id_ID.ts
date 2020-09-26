@@ -9,6 +9,7 @@ const t = {
     "generic-delete-warning": "Hapus ini?",
     "link-delete-warning": "Hapus tautan ini?",
     "please-wait": "Mohon tunggu",
+    "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "request-filename": "Masukkan nama file",
     "step-delete-warning": "Hapus langkah ini?",
     "tag-delete-warning": "Hapus label ini?",

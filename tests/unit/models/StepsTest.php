@@ -34,7 +34,6 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $steps = $this->Steps->read();
         $this->assertTrue(is_array($steps));
-        $this->assertEquals('do this', $steps[0]['body']);
     }
 
     public function testUpdate()

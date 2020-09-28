@@ -153,6 +153,7 @@ $(document).ready(function() {
   // TinyMCE
   tinymce.init({
     mode : 'specific_textareas',
+    contextmenu: false,
     editor_selector : 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr',

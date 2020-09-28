@@ -1833,16 +1833,16 @@
         },
         {
             "name": "symfony/mime",
-            "version": "v5.1.5",
+            "version": "v5.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mime.git",
-                "reference": "89a2c9b4cb7b5aa516cf55f5194c384f444c81dc"
+                "reference": "4404d6545125863561721514ad9388db2661eec5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mime/zipball/89a2c9b4cb7b5aa516cf55f5194c384f444c81dc",
-                "reference": "89a2c9b4cb7b5aa516cf55f5194c384f444c81dc",
+                "url": "https://api.github.com/repos/symfony/mime/zipball/4404d6545125863561721514ad9388db2661eec5",
+                "reference": "4404d6545125863561721514ad9388db2661eec5",
                 "shasum": ""
             },
             "require": {
@@ -1906,7 +1906,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-08-17T10:01:29+00:00"
+            "time": "2020-09-02T16:23:27+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -3761,6 +3761,20 @@
             "keywords": [
                 "Xdebug",
                 "performance"
+            ],
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-08-19T10:27:58+00:00"
         },

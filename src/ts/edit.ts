@@ -376,6 +376,9 @@ $(document).ready(function() {
     StarC.update($(this).data('rating').current[0].innerText);
   });
 
+  // Object to hold control data for selected image
+  let tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+
   /* eslint-disable */
   tinymce.init({
     mode: 'specific_textareas',
@@ -391,10 +394,40 @@ $(document).ready(function() {
     paste_data_images: true,
     images_upload_handler: function (blobInfo, success, failure) {
       let dropZone = Dropzone.forElement('#elabftw-dropzone');
+      // Edgecase for editing an image using tinymce ImageTools
+      // Check if it was selected. This is set by an event hook below
+      if (tinymceEditImage.selected == true && confirm(i18next.t('replace-edited-file'))){
+        // Use jquery to replace the file on the server
+        const formData = new FormData();
+        formData.append('replace', 'true');
+        formData.append('upload_id', tinymceEditImage.uploadId);
+        formData.append('id', tinymceEditImage.itemId);
+        formData.append('type', 'experiments');
+        formData.append('file', blobInfo.blob());
+
+        $.post({
+          url: 'app/controllers/EntityAjaxController.php',
+          data: formData,
+          processData: false,
+          contentType: false
+        }).done(function(json){
+            notif(json);
+            // Send the same url we stored before the edit menu was clicked to tinymce
+            success(tinymceEditImage.url);
+            tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+          }
+        );
+      }
       // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-      if (typeof blobInfo.blob().name=== 'undefined'){
-        let fileOfBlob = new File([blobInfo.blob()], prompt('Enter filename with extension e.g. .jpeg'));
-        dropZone.addFile(fileOfBlob);
+      else if (typeof blobInfo.blob().name=== 'undefined'){
+        let fname = prompt('Enter filename with extension e.g. .jpeg');
+        if (typeof fname !== 'undefined' && fname !== null)
+        {
+          let fileOfBlob = new File([blobInfo.blob()], fname);
+          dropZone.addFile(fileOfBlob);
+          dropZone.tinyImageSuccess = success;
+        }
+        else {tinymce.activeEditor.undoManager.undo();} // Just disregard the edit if the name prompt is cancelled
       } else {
         dropZone.addFile(blobInfo.blob());
         dropZone.tinyImageSuccess = success;
@@ -489,6 +522,34 @@ $(document).ready(function() {
     // this will GET templates from current user
     templates: 'app/controllers/AjaxController.php?getUserTpl'
   });
+
+  // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
+  tinymce.activeEditor.on('SelectionChange', function(e) {
+    // Check if the user has selected an image
+    if (tinymce.activeEditor.selection.getNode().tagName == 'IMG')
+    {
+      // Save all the details needed for replacing upload
+      // Then check for and get those details when you are handling file uploads
+      let url = tinymce.activeEditor.selection.getNode().src;
+      url = url.slice(url.lastIndexOf('app/'));
+      // Sometimes tinymce adds an identifier on modification
+      // This checks for and removes it
+      if (url.lastIndexOf('&') != -1){
+        url = url.slice(0, url.lastIndexOf('&'))
+      }
+      // Find the element in the uploads html section to got uploadid and itemid
+      let uploadsDestroyEl = $('a[href="'+url+'"]' ).prev();
+      tinymceEditImage.selected = true;
+      tinymceEditImage.uploadId = uploadsDestroyEl.data('id');
+      tinymceEditImage.itemId = uploadsDestroyEl.data('itemid');
+      tinymceEditImage.url = url;
+    }
+    else
+    {
+      tinymceEditImage = {selected:false, uploadId:'', itemId:'', url:''};
+    }
+  });
+
   /* eslint-enable */
 
   // IMPORT BODY OF LINKED ITEM INTO EDITOR

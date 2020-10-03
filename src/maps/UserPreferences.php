@@ -265,7 +265,7 @@ class UserPreferences implements MapInterface
         $this->setDisplaySize($source['display_size'] ?? $this->displaySize);
         $this->setSort($source['sort'] ?? $this->sort);
         $this->setOrderby($source['orderby'] ?? $this->orderby);
-        $this->setSingleColumnLayout($source['single_column_layout'] ?? (string) $this->singleColumnLayout);
+        $this->setSingleColumnLayout($source['single_column_layout'] ?? '0');
         $this->setShortcut('create', $source['sc_create'] ?? $this->shortcuts['create']);
         $this->setShortcut('edit', $source['sc_edit'] ?? $this->shortcuts['edit']);
         $this->setShortcut('submit', $source['sc_submit'] ?? $this->shortcuts['submit']);

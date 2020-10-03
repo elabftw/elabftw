@@ -9,6 +9,7 @@ const t = {
     "generic-delete-warning": "Želite izbrisati?",
     "link-delete-warning": "Želite izbrisati to povezavo?",
     "please-wait": "Prosim počakaj",
+    "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",
     "request-filename": "Vnesite ime datoteke",
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "tag-delete-warning": "Želite izbrisati to oznako?",

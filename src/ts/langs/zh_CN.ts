@@ -9,6 +9,7 @@ const t = {
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
     "please-wait": "请稍候",
+    "replace-edited-file": "您是否要用此编辑替换服务器上的文件？",
     "request-filename": "输入文件名",
     "step-delete-warning": "删除此步骤？",
     "tag-delete-warning": "删除这个标签？",

@@ -16,7 +16,10 @@
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Release](https://img.shields.io/github/release/elabftw/elabftw.svg)](https://github.com/elabftw/elabftw/releases/latest)
 [![StackShare](https://img.shields.io/badge/tech-stack-0690fa.svg?style=flat)](https://stackshare.io/elabftw/elabftw)
-[![Joss](http://joss.theoj.org/papers/10.21105/joss.00146/status.svg)](http://joss.theoj.org/papers/10.21105/joss.00146)
+[![Joss](http://joss.theoj.org/papers/10.21105/joss.00146/status.svg)](http://joss.theoj.org/papers/10.21105/joss.00146)<br>
+[![Carbon offset](https://img.shields.io/ecologi/carbon/deltablot)](https://ecologi.com/deltablot)
+[![Trees](https://img.shields.io/ecologi/trees/deltablot)](https://ecologi.com/deltablot)
+[![Plant more](https://img.shields.io/badge/trees-plant%20more%20trees-brightgreen)](https://ecologi.com/?r=5f668f69232cc100192fbd04)
 
 # Description
 

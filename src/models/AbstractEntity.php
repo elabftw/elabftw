@@ -626,7 +626,7 @@ abstract class AbstractEntity
                 entity.lastchange,';
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
-            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY ordering SEPARATOR '|'), '|', 1) AS next_step,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
             categoryt.id AS category_id,
             categoryt.name AS category,
             categoryt.color,
@@ -668,6 +668,8 @@ abstract class AbstractEntity
         $stepsJoin = 'LEFT JOIN (
             SELECT %1$s_steps.item_id AS steps_item_id,
             %1$s_steps.body AS next_step,
+            %1$s_steps.ordering AS steps_ordering,
+            %1$s_steps.id AS steps_id,
             %1$s_steps.finished AS finished
             FROM %1$s_steps)
             AS stepst ON (

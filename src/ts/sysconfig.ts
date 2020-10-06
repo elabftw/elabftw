@@ -188,6 +188,7 @@ $(document).ready(function() {
   tinymce.init({
     mode: 'specific_textareas',
     editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
+    contextmenu: false,
     browser_spellcheck: true, // eslint-disable-line @typescript-eslint/camelcase
     skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
     height: '500',

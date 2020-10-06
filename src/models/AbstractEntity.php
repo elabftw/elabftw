@@ -211,8 +211,14 @@ abstract class AbstractEntity
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
+        // teamFilter is to restrict to the team for items only
+        // as they have a team column
+        $teamFilter = '';
+        if ($this instanceof Database) {
+            $teamFilter = ' AND users2teams.teams_id = entity.team';
+        }
         // add pub/org/team filter
-        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid) OR (entity.canread = 'user' ";
+        $sql .= " AND ( entity.canread = 'public' OR entity.canread = 'organization' OR (entity.canread = 'team' AND users2teams.users_id = entity.userid" . $teamFilter . ") OR (entity.canread = 'user' ";
         // admin will see the experiments with visibility user for user of their team
         if ($this->Users->userData['is_admin']) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
@@ -620,7 +626,7 @@ abstract class AbstractEntity
                 entity.lastchange,';
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
-            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step SEPARATOR '|'), '|', 1) AS next_step,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
             categoryt.id AS category_id,
             categoryt.name AS category,
             categoryt.color,
@@ -662,6 +668,8 @@ abstract class AbstractEntity
         $stepsJoin = 'LEFT JOIN (
             SELECT %1$s_steps.item_id AS steps_item_id,
             %1$s_steps.body AS next_step,
+            %1$s_steps.ordering AS steps_ordering,
+            %1$s_steps.id AS steps_id,
             %1$s_steps.finished AS finished
             FROM %1$s_steps)
             AS stepst ON (

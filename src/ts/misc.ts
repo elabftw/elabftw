@@ -6,7 +6,6 @@
  * @package elabftw
  */
 declare let ChemDoodle: any;
-import tinymce from 'tinymce/tinymce';
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
 import { ResponseMsg } from './interfaces';
@@ -82,39 +81,6 @@ export function display3DMolecules(autoload = false): void {
   });
 }
 
-// for editXP/DB, ctrl-shift-D will add the date
-export function addDateOnCursor(): void {
-  const todayDate = new Date();
-  const today = todayDate.toISOString().split('T')[0];
-  tinymce.activeEditor.execCommand('mceInsertContent', false, today + ' ');
-}
-
-// called when you click the save button of tinymce
-export function quickSave(type: string, id: string): void {
-  $.post('app/controllers/EntityAjaxController.php', {
-    quickSave: true,
-    type : type,
-    id : id,
-    // we need this to get the updated content
-    title : (document.getElementById('title_input') as HTMLInputElement).value,
-    date : (document.getElementById('datepicker') as HTMLInputElement).value,
-    body : tinymce.activeEditor.getContent()
-  }).done(function(json, textStatus, xhr) {
-    // detect if the session timedout
-    if (xhr.getResponseHeader('X-Elab-Need-Auth') === '1') {
-      // store the modifications in local storage to prevent any data loss
-      localStorage.setItem('body', tinymce.activeEditor.getContent());
-      localStorage.setItem('id', id);
-      localStorage.setItem('type', type);
-      localStorage.setItem('date', new Date().toLocaleString());
-      // reload the page so user gets redirected to the login page
-      location.reload();
-      return;
-    }
-    notif(json);
-  });
-}
-
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: any, value: any): void {
   const params = new URLSearchParams(document.location.search.slice(1));
@@ -145,33 +111,4 @@ export function makeSortableGreatAgain(): void {
       });
     }
   });
-}
-
-
-/* eslint-disable */
-export function tinyMceInitLight() {
-  tinymce.init({
-    mode: 'specific_textareas',
-    editor_selector: 'mceditable',
-    contextmenu: false,
-    skin_url: 'app/css/tinymce',
-    browser_spellcheck: true,
-    content_css: 'app/css/tinymce.css',
-    plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak',
-    pagebreak_separator: '<pagebreak>',
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
-    removed_menuitems: 'newdocument, image',
-    image_caption: true,
-    setup: function(editor: any) {
-      editor.on('init', function() {
-         editor.getContainer().className += ' rounded';
-      });
-    },
-    charmap_append: [
-      [0x2640, 'female sign'],
-      [0x2642, 'male sign']
-    ],
-    language : $('#user-prefs').data('lang')
-  });
-/* eslint-enable */
 }

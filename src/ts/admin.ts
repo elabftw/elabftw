@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, tinyMceInitLight } from './misc';
+import { notif } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
@@ -13,51 +13,15 @@ import TeamGroup from './TeamGroup.class';
 import Status from './Status.class';
 import ItemType from './ItemType.class';
 import tinymce from 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/pagebreak';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/save';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/template';
-import 'tinymce/themes/silver';
-import 'tinymce/themes/mobile';
-import '../js/tinymce-langs/ca_ES.js';
-import '../js/tinymce-langs/de_DE.js';
-import '../js/tinymce-langs/en_GB.js';
-import '../js/tinymce-langs/es_ES.js';
-import '../js/tinymce-langs/fr_FR.js';
-import '../js/tinymce-langs/id_ID.js';
-import '../js/tinymce-langs/it_IT.js';
-import '../js/tinymce-langs/ja_JP.js';
-import '../js/tinymce-langs/ko_KR.js';
-import '../js/tinymce-langs/nl_BE.js';
-import '../js/tinymce-langs/pl_PL.js';
-import '../js/tinymce-langs/pt_BR.js';
-import '../js/tinymce-langs/pt_PT.js';
-import '../js/tinymce-langs/ru_RU.js';
-import '../js/tinymce-langs/sk_SK.js';
-import '../js/tinymce-langs/sl_SI.js';
-import '../js/tinymce-langs/zh_CN.js';
+import { getTinymceBaseConfig } from './tinymce';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
 
-  // activate editors in new item type and common template
-  tinyMceInitLight();
+  // activate editor for common template
+  tinymce.init(getTinymceBaseConfig('admin'));
 
   // VALIDATE USERS
   $(document).on('click', '.usersValidate', function() {

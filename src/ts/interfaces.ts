@@ -19,7 +19,13 @@ interface ResponseMsg {
   color?: string;
 }
 
+interface CheckableItem {
+  id: string;
+  randomid: string;
+}
+
 export {
   ActionReq,
   ResponseMsg,
+  CheckableItem,
 };

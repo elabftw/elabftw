@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import Crud from './Crud.class';
-import { notif, tinyMceInitLight } from './misc';
+import { notif } from './misc';
+import { getTinymceBaseConfig } from './tinymce';
 import tinymce from 'tinymce/tinymce';
 
 export default class ItemType extends Crud {
@@ -49,7 +50,7 @@ export default class ItemType extends Crud {
 
   showEditor(id): void {
     $('#itemsTypesTemplate_' + id).addClass('mceditable');
-    tinyMceInitLight();
+    tinymce.init(getTinymceBaseConfig('items_types'));
     $('#itemsTypesEditor_' + id).toggle();
   }
 

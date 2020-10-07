@@ -31,7 +31,7 @@ $template = 'error.html';
 $renderArr = array();
 try {
     // Check if we're logged in
-    if ($Session->has('auth') || $Session->has('anon')) {
+    if ($App->Session->has('auth') || $App->Session->has('anon')) {
         throw new ImproperActionException(sprintf(
             _('Please %slogout%s before you register another account.'),
             "<a style='alert-link' href='app/logout.php'>",

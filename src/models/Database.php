@@ -42,6 +42,7 @@ class Database extends AbstractEntity implements CreateInterface
     public function create(int $category): int
     {
         $itemsTypes = new ItemsTypes($this->Users, $category);
+        $body = $itemsTypes->read();
 
         // SQL for create DB item
         $sql = 'INSERT INTO items(team, title, date, body, userid, category)
@@ -51,7 +52,7 @@ class Database extends AbstractEntity implements CreateInterface
             'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Filter::kdate(),
-            'body' => $itemsTypes->read(),
+            'body' => $body['template'],
             'userid' => $this->Users->userData['userid'],
             'category' => $category,
         ));

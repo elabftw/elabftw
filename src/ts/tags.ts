@@ -8,7 +8,6 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import Tag from './Tag.class';
-import i18next from 'i18next';
 
 $(document).ready(function() {
   let type = $('#info').data('type');
@@ -39,11 +38,37 @@ $(document).ready(function() {
         response(cache[term]);
         return;
       }
-      $.getJSON('app/controllers/TagsController.php', request, function(data) {
+      request.what = 'tag';
+      request.action = 'getList';
+      request.params = {
+        name: term,
+      };
+      $.getJSON('app/controllers/Ajax.php', request, function(data) {
         cache[term] = data;
         response(data);
       });
     }
+  });
+
+  // make the tag editable
+  $(document).on('mouseenter', '.tag-editable', function() {
+    ($(this) as any).editable(function(value) {
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'tag',
+        params: {
+          tag: value,
+          id: $(this).data('tagid'),
+        },
+      });
+
+      return(value);
+    }, {
+      tooltip : 'Click to edit',
+      indicator : 'Saving...',
+      onblur: 'submit',
+      style : 'display:inline',
+    });
   });
 
   // UNREFERENCE (remove link between tag and entity)

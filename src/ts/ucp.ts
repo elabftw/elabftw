@@ -5,9 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { saveAs } from 'file-saver/dist/FileSaver.js';
 import { addDateOnCursor, notif } from './misc';
-import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import Template from './Template.class';
 import 'tinymce/icons/default';
@@ -157,9 +155,12 @@ $(document).ready(function() {
 
   // DESTROY API KEY
   $(document).on('click', '.keyDestroy', function() {
-    $.post('app/controllers/AjaxController.php', {
-      destroyApiKey: true,
-      id: $(this).data('id')
+    $.post('app/controllers/Ajax.php', {
+      action: 'destroy',
+      what: 'apikey',
+      params: {
+        id: $(this).data('id'),
+      },
     }).done(function(json) {
       notif(json);
       $('#apiTable').load('ucp.php #apiTable');

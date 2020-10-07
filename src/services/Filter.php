@@ -14,6 +14,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
 use function htmlspecialchars_decode;
 use function mb_strlen;
+use function nl2br;
 use function strip_tags;
 use function strlen;
 use function strtr;
@@ -92,6 +93,15 @@ class Filter
             return '';
         }
         return $output;
+    }
+
+    public static function comment(string $input): string
+    {
+        $output = self::sanitize($input);
+        if (mb_strlen($output) < 2) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 2));
+        }
+        return nl2br($output);
     }
 
     /**

@@ -10,9 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 /**
- * For things that can be created, read, updated and destroyed
+ * For things that can be updated
  */
-interface CrudInterface extends CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+interface UpdatableInterface
 {
+    // return a string here for jeditable consumption
+    public function update(ParamsProcessor $params): string;
 }

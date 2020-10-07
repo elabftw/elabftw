@@ -7,7 +7,6 @@
  */
 import { notif, tinyMceInitLight } from './misc';
 import $ from 'jquery';
-import i18next from 'i18next';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import TeamGroup from './TeamGroup.class';
@@ -85,7 +84,12 @@ $(document).ready(function() {
             response(cache[term]);
             return;
           }
-          $.getJSON('app/controllers/AdminAjaxController.php', request, function(data) {
+          request.what = 'user';
+          request.action = 'getList';
+          request.params = {
+            name: term,
+          };
+          $.getJSON('app/controllers/Ajax.php', request, function(data) {
             cache[term] = data;
             response(data);
           });
@@ -130,15 +134,23 @@ $(document).ready(function() {
   });
   // edit the team group name
   $(document).on('mouseenter', 'h3.teamgroup_name', function() {
-    ($(this) as any).editable('app/controllers/TeamGroupsController.php', {
+    ($(this) as any).editable(function(value) {
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'teamgroup',
+        params: {
+          name: value,
+          id: $(this).data('id'),
+        },
+      });
+      return(value);
+    }, {
       indicator : 'Saving...',
-      name : 'teamGroupUpdateName',
       submit : 'Save',
       cancel : 'Cancel',
       cancelcssclass : 'button btn btn-danger',
       submitcssclass : 'button btn btn-primary',
       style : 'display:inline'
-
     });
   });
 
@@ -179,8 +191,13 @@ $(document).ready(function() {
   // COMMON TEMPLATE
   $('#commonTplTemplate').closest('div').find('.button').on('click', function() {
     const template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/AjaxController.php', {
-      commonTplUpdate: template
+    $.post('app/controllers/Ajax.php', {
+      action: 'updateCommon',
+      what: 'template',
+      type: 'experiments_templates',
+      params: {
+        template: template,
+      },
     }).done(function(json) {
       notif(json);
     });
@@ -190,22 +207,4 @@ $(document).ready(function() {
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
   $('.randomColor').val(colorInput);
-
-  // make the tag editable
-  $(document).on('mouseenter', '.tag-editable', function() {
-    ($(this) as any).editable(function(value) {
-      $.post('app/controllers/TagsController.php', {
-        update: true,
-        newtag: value,
-        tagId: $(this).data('tagid'),
-      });
-
-      return(value);
-    }, {
-      tooltip : 'Click to edit',
-      indicator : 'Saving...',
-      onblur: 'submit',
-      style : 'display:inline',
-    });
-  });
 });

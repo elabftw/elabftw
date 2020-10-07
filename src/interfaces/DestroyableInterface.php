@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * For things that can be created, read, updated and destroyed
+ * For things that can be destroyed
  */
-interface CrudInterface extends CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+interface DestroyableInterface
 {
+    public function destroy(int $id): bool;
 }

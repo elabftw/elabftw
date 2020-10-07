@@ -43,11 +43,11 @@ $Status = new Status($App->Users);
 if ($Request->query->get('type') !== 'experiments') {
     $categoryArr = $ItemsTypes->readAll();
 } else {
-    $categoryArr = $Status->readAll();
+    $categoryArr = $Status->read();
 }
 
 $TeamGroups = new TeamGroups($App->Users);
-$teamGroupsArr = $TeamGroups->readAll();
+$teamGroupsArr = $TeamGroups->read();
 
 $usersArr = $App->Users->readAllFromTeam();
 

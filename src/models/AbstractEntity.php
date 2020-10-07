@@ -116,7 +116,7 @@ abstract class AbstractEntity
      * @param int $tpl a template/category
      * @return int the new id
      */
-    abstract public function create(int $tpl): int;
+    //abstract public function create(int $tpl): int;
 
     /**
      * Duplicate an item
@@ -130,7 +130,7 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    abstract public function destroy(): void;
+    //abstract public function destroy(?int $id = null): void;
 
     /**
      * Lock/unlock

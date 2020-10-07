@@ -13,14 +13,14 @@ namespace Elabftw\Models;
 use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use function mb_strlen;
 use PDO;
 
 /**
  * All about the revisions
  */
-class Revisions implements CrudInterface
+class Revisions implements DestroyableInterface
 {
     /** @var int MIN_DELTA the min number of characters different between two versions to trigger save */
     private const MIN_DELTA = 100;
@@ -134,16 +134,13 @@ class Revisions implements CrudInterface
 
     /**
      * Destroy a revision
-     *
-     * @param int $id
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM ' . $this->Entity->type . '_revisions WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     public function prune(): int

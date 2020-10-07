@@ -11,8 +11,9 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 /**
- * For things that can be created, read, updated and destroyed
+ * For things that can be read
  */
-interface CrudInterface extends CreatableInterface, ReadableInterface, UpdatableInterface, DestroyableInterface
+interface ReadableInterface
 {
+    public function read(): array;
 }

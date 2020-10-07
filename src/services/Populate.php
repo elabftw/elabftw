@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
@@ -47,7 +48,7 @@ class Populate
             // variable tag number
             $Tags = new Tags($Entity);
             for ($j = 0; $j <= $Faker->numberBetween(0, 5); $j++) {
-                $Tags->create($Faker->word);
+                $Tags->create(new ParamsProcessor(array('tag' => $Faker->word)));
             }
             // random date in the past 5 years
             $Entity->update($Faker->sentence, $Faker->dateTimeBetween('-5 years')->format('Ymd'), $Faker->realText(1000));
@@ -74,8 +75,8 @@ class Populate
 
             // maybe add a few steps
             if ($Faker->randomDigit > 8) {
-                $Entity->Steps->create($Faker->word);
-                $Entity->Steps->create($Faker->word);
+                $Entity->Steps->create(new ParamsProcessor(array('template' => $Faker->word)));
+                $Entity->Steps->create(new ParamsProcessor(array('template' => $Faker->word)));
             }
         }
         printf("Generated %d %s \n", $iter, $Entity->type);

@@ -31,10 +31,13 @@ $(document).ready(function() {
   // EDIT
   $(document).on('mouseenter', '.todoItem', function() {
     ($(this) as any).editable(function(value) {
-      $.post('app/controllers/TodolistController.php', {
-        update: true,
-        body: value,
-        id: $(this).data('id'),
+      $.post('app/controllers/Ajax.php', {
+        action: 'update',
+        what: 'todolist',
+        params: {
+          template: value,
+          id: $(this).data('id'),
+        },
       });
 
       return(value);
@@ -48,9 +51,6 @@ $(document).ready(function() {
 
   $('#todo-form').submit(function(e) {
     TodolistC.create(e);
-  });
-  $(document).on('click', '.todoDestroyAll', function() {
-    TodolistC.destroyAll();
   });
 
   $(document).on('click', '.destroyTodoItem', function() {

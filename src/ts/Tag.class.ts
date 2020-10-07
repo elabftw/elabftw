@@ -5,28 +5,29 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import Crud from './Crud.class';
 import i18next from 'i18next';
 
-export default class Tag {
-  controller: string;
+export default class Tag extends Crud {
   type: string;
 
   constructor(type: string) {
+    super('app/controllers/Ajax.php');
     this.type = type;
-    this.controller = 'app/controllers/TagsController.php';
   }
 
   // REFERENCE A TAG
   save(tag: string, itemId: number): void {
     // POST request
-    $.post(this.controller, {
-      createTag: true,
-      tag: tag,
-      itemId: itemId,
-      type: this.type
-    }).done(function(json) {
-      notif(json);
+    this.send({
+      action: 'create',
+      what: 'tag',
+      type: this.type,
+      params: {
+        tag: tag,
+        itemId: itemId,
+      },
+    }).then(() => {
       $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId);
     });
   }
@@ -34,12 +35,15 @@ export default class Tag {
   // REMOVE THE TAG FROM AN ENTITY
   unreference(tagId: number, itemId: number): void {
     if (confirm(i18next.t('tag-delete-warning'))) {
-      $.post(this.controller, {
-        unreferenceTag: true,
+      this.send({
+        action: 'unreference',
+        what: 'tag',
         type: this.type,
-        itemId: itemId,
-        tagId: tagId
-      }).done(function() {
+        params: {
+          id: tagId,
+          itemId: itemId,
+        },
+      }).then(() => {
         $('#tags_div_' + itemId).load(window.location.href + ' #tags_div_' + itemId);
       });
     }
@@ -47,10 +51,10 @@ export default class Tag {
 
   // DEDUPLICATE
   deduplicate(): void {
-    $.post(this.controller, {
-      deduplicate: true,
-    }).done(function(json) {
-      notif(json);
+    this.send({
+      action: 'deduplicate',
+      what: 'tag',
+    }).then(() => {
       $('#tag_manager').load(window.location.href + ' #tag_manager > *');
     });
   }
@@ -58,11 +62,13 @@ export default class Tag {
   // REMOVE A TAG COMPLETELY (from admin panel/tag manager)
   destroy(tagId: number): void {
     if (confirm(i18next.t('tag-delete-warning'))) {
-      $.post(this.controller, {
-        destroyTag: true,
-        tagId: tagId
-      }).done(function(json) {
-        notif(json);
+      this.send({
+        action: 'destroy',
+        what: 'tag',
+        params: {
+          id: tagId,
+        },
+      }).then(() => {
         $('#tag_manager').load(window.location.href + ' #tag_manager > *');
       });
     }

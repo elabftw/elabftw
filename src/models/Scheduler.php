@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTime;
+use function strlen;
+use function substr;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
@@ -164,11 +166,11 @@ class Scheduler
         if (empty($event)) {
             return;
         }
-        $oldStart = new DateTime($event['start']);
-        $oldEnd = new DateTime($event['end']);
+        $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
+        $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
-        if (\strlen($delta['milliseconds']) > 3) {
-            $seconds = \substr($delta['milliseconds'], 0, -3);
+        if (strlen($delta['milliseconds']) > 3) {
+            $seconds = substr($delta['milliseconds'], 0, -3);
         }
         $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
@@ -194,10 +196,10 @@ class Scheduler
         if (empty($event)) {
             return;
         }
-        $oldEnd = new DateTime($event['end']);
+        $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
-        if (\strlen($delta['milliseconds']) > 3) {
-            $seconds = \substr($delta['milliseconds'], 0, -3);
+        if (strlen($delta['milliseconds']) > 3) {
+            $seconds = substr($delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
 

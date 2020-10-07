@@ -49,9 +49,9 @@ try {
 
     // disable login if too much failed_attempts
     $BannedUsers = new BannedUsers($App->Config);
+    // get user info
+    $fingerprint = md5($App->Request->server->get('REMOTE_ADDR') . $App->Request->server->get('HTTP_USER_AGENT') ?? '');
     if ($App->Session->has('failed_attempt') && $App->Session->get('failed_attempt') >= $App->Config->configArr['login_tries']) {
-        // get user info
-        $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list
         $BannedUsers->create($fingerprint);
 
@@ -59,7 +59,7 @@ try {
     }
 
     // Check if we are banned after too much failed login attempts
-    if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $BannedUsers->readAll(), true)) {
+    if (in_array($fingerprint, $BannedUsers->readAll(), true)) {
         throw new ImproperActionException(_('You cannot login now because of too many failed login attempts.'));
     }
 

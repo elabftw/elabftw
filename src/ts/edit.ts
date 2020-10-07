@@ -12,6 +12,7 @@ import 'jquery-ui/ui/widgets/datepicker';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
@@ -389,12 +390,13 @@ $(document).ready(function() {
     editor_selector: 'mceditable',
     browser_spellcheck: true,
     skin_url: 'app/css/tinymce',
-    plugins: 'autosave table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
+    plugins: 'autosave anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template',
     pagebreak_separator: '<pagebreak>',
     toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link | save',
     removed_menuitems: 'newdocument, image',
     image_caption: true,
     images_reuse_filename: true,
+    contextmenu: false,
     paste_data_images: true,
     images_upload_handler: function (blobInfo, success, failure) {
       let dropZone = Dropzone.forElement('#elabftw-dropzone');

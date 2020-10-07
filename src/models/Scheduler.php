@@ -118,7 +118,7 @@ class Scheduler
             LEFT JOIN items_types ON items.category = items_types.id
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
-            AND team_events.start > :start AND team_events.end < :end";
+            AND team_events.start > :start AND team_events.end <= :end";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item', $this->Database->id, PDO::PARAM_INT);
         $req->bindParam(':start', $start);

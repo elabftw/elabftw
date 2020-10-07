@@ -102,8 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     firstDay: 1,
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
-    // day start at 6 am
-    slotMinTime: '06:00:00',
+    // adjust the background color of event to the color of the item type
     eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
     // selection
     select: function(info): void {

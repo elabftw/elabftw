@@ -38,9 +38,10 @@ $(document).ready(function(){
     const id = $(this).data('id');
     // get html of body
     $.get('app/controllers/EntityAjaxController.php', {
-      getBody : true,
-      id : id,
-      type : $(this).data('type')
+      getBody: true,
+      id: id,
+      type: $(this).data('type'),
+      editor: 'tiny',
       // and put it in the div and show the div
     }).done(function(data) {
       // get the width of the parent. The -30 is to make it smaller than parent even with the margins

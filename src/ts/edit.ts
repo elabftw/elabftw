@@ -270,7 +270,18 @@ $(document).ready(function() {
   }
 
   // DATEPICKER
-  $('#datepicker').datepicker({dateFormat: 'yymmdd'});
+  $('#datepicker').datepicker({
+    dateFormat: 'yymmdd',
+    onClose: (date) => {
+      $.post('app/controllers/EntityAjaxController.php', {
+        updateDate: true,
+        type : type,
+        id : id,
+        date : date,
+      }).done((json) => notif(json));
+    },
+  });
+
   // If the title is 'Untitled', clear it on focus
   $('#title_input').focus(function(){
     if ($(this).val() === i18next.t('entity-default-title')) {
@@ -436,5 +447,14 @@ $(document).ready(function() {
   }
   $(document).on('click', '.linkImport', function() {
     importBody($(this));
+  });
+  // update title on blur
+  $('#main_form').on('blur', '#title_input', function() {
+    $.post('app/controllers/EntityAjaxController.php', {
+      updateTitle: true,
+      type : type,
+      id : id,
+      title : $(this).val(),
+    }).done((json) => notif(json));
   });
 });

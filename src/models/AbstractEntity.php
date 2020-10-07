@@ -369,6 +369,40 @@ abstract class AbstractEntity
         $this->Db->execute($req);
     }
 
+    public function updateTitle(string $title): void
+    {
+        $this->canOrExplode('write');
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        }
+
+        $title = Filter::title($title);
+        $sql = 'UPDATE ' . $this->type . ' SET title = :title WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
+    public function updateDate(string $date): void
+    {
+        $this->canOrExplode('write');
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        }
+
+        $date = Filter::kdate($date);
+        $sql = 'UPDATE ' . $this->type . ' SET date = :date WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':date', $date);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
     /**
      * Update read or write permissions for an entity
      *

@@ -11,14 +11,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTime;
-use function strlen;
-use function substr;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\EntityTrait;
 use PDO;
+use function strlen;
+use function substr;
 
 /**
  * All about the team's scheduler

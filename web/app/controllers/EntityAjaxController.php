@@ -132,6 +132,16 @@ try {
         $Entity->updatePermissions($Request->request->get('rw'), $Request->request->get('value'));
     }
 
+    // UPDATE TITLE
+    if ($Request->request->has('updateTitle')) {
+        $Entity->updateTitle($Request->request->get('title'));
+    }
+
+    // UPDATE DATE
+    if ($Request->request->has('updateDate')) {
+        $Entity->updateDate($Request->request->get('date'));
+    }
+
     // UPDATE RATING
     if ($Request->request->has('rating') && $Entity instanceof Database) {
         $Entity->setId((int) $Request->request->get('id'));

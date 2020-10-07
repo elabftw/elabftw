@@ -25,6 +25,8 @@
                     {% endif %}
 
                     {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg)$/i' %}
+                    {# don't make the thumbnail clickable if it's a tif #}
+                      {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
                         <a href='app/download.php?f={{ upload.long_name }}'
                            {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}
                                data-fancybox='group'
@@ -33,13 +35,16 @@
                                title='{{ upload.comment }}' data-caption='{{ upload.comment }}'
                            {% endif %}
                            >
+                        {% endif %}
                     {% set thumb_name = upload.long_name ~ '_th.jpg' %}
                     {% if thumb_name is readable %}
                        <img class='thumb img-thumbnail rounded mx-auto d-block' src='app/download.php?f={{ upload.long_name }}_th.jpg' alt='thumbnail' />
                    {% else %}
                       <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
                    {% endif %}
+                     {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg)$/i' %}
                         </a>
+                     {% endif %}
                             {% elseif ext == 'mol' and App.Users.userData.chem_editor %}
                             <div class='text-center'>
                                 <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}'></canvas>

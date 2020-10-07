@@ -392,6 +392,7 @@ $(document).ready(function() {
     removed_menuitems: 'newdocument, image',
     image_caption: true,
     images_reuse_filename: true,
+    contextmenu: false,
     paste_data_images: true,
     images_upload_handler: function (blobInfo, success, failure) {
       let dropZone = Dropzone.forElement('#elabftw-dropzone');

@@ -161,6 +161,7 @@ export function tinyMceInitLight() {
   tinymce.init({
     mode: 'specific_textareas',
     editor_selector: 'mceditable',
+    contextmenu: false,
     skin_url: 'app/css/tinymce',
     browser_spellcheck: true,
     content_css: 'app/css/tinymce.css',

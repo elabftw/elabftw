@@ -21,6 +21,13 @@
   <!-- CSS -->
   <link rel='stylesheet' media='all' href='app/ove/main.css' />
 
+  <script defer src='app/js/vendors~main.bundle.js?v={{ v }}'></script>
+  <!-- the main JS bundle with all the elabftw TS code (see builder.js) -->
+  <script defer src='app/js/main.bundle.js?v={{ v }}'></script>
+  <!-- concatenated JS built by grunt for non es6 libraries (see Gruntfile.js) -->
+  <script defer src='app/js/vendor.min.js?v={{ v }}'></script>
+  <script defer src='app/js/bootstrap-markdown.min.js?v={{ v }}'></script>
+
   <script defer src='app/ove/open-vector-editor.min.js'></script>
   <script defer src='app/ove/standalone.js'></script>
 </head>
@@ -31,6 +38,6 @@
 <h2 {% if hideTitle %}style='display:none'{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h2>
 -->
 <!-- the div that gets populated with the plasmid editor -->
-<div id='ove'></div>
+<div id='ove' data-href='app/download.php?f={{ upload_long_name }}'></div>
 </body>
 </html>

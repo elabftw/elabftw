@@ -1,5 +1,4 @@
 var data = {};
-
 var convertToFeaturedDNASequence = function (openVESequence) {
   data.sequenceData = {
     features: [],
@@ -51,7 +50,7 @@ var convertToFeaturedDNASequence = function (openVESequence) {
 }
 
 var editorProps = {
-  showMenuBar: true,
+  showMenuBar: false,
   isFullscreen: true,
   showReadOnly: true, //default true
   showCircularity: true,
@@ -112,7 +111,7 @@ var editorProps = {
     toolList: [
       //'saveTool',
       //'downloadTool',
-      'importTool',
+      //'importTool',
       //'undoTool',
       //'redoTool',
       //'cutsiteTool',
@@ -120,7 +119,7 @@ var editorProps = {
       //'alignmentTool',
       // 'oligoTool',
       //'orfTool',
-      'viewTool',
+      //'viewTool',
       //'editTool',
       //'findTool',
       //'visibilityTool'
@@ -128,40 +127,57 @@ var editorProps = {
   },
 };
 
-var editorState = {
-  // note, sequence data passed here will be coerced to fit the Teselagen data model
-  readOnly: true,
-  // Open Vector Editor data model
-  sequenceData: {},
-  updateSequenceData: {},
-  // clear the sequenceDataHistory if there is any left over from a previous sequence
-  sequenceDataHistory: {},
-  annotationVisibility: {
-    features: true
-  },
-  panelsShown: [
-    [{
-        id: 'circular',
-        name: 'Plasmid',
-        active: true
-      }
-    ],
-    [{
-        id: 'sequence',
-        name: 'Sequence Map',
-        active: true
-      },/* {
-        id: 'rail',
-        name: 'Linear Map',
-        active: false
-      },*/ {
-        id: 'properties',
-        name: 'Properties',
-        active: false
-      }
-    ]
-  ]
-};
-
 const editor = window.createVectorEditor(document.getElementById('ove'), editorProps);
-editor.updateEditor(editorState);
+
+function whenAvailable(name, callback) {
+  var interval = 50; // ms
+  window.setTimeout(function() {
+    if (window[name]) {
+      callback(window[name]);
+    } else {
+      whenAvailable(name, callback);
+    }
+  }, interval);
+}
+
+whenAvailable("OVEsequenceData", function(t) {
+  console.log(window.OVEsequenceData[0].parsedSequence);
+
+  var editorState = {
+    // note, sequence data passed here will be coerced to fit the Teselagen data model
+    readOnly: true,
+    // Open Vector Editor data model
+    sequenceData: window.OVEsequenceData[0].parsedSequence,
+    updateSequenceData: {},
+    // clear the sequenceDataHistory if there is any left over from a previous sequence
+    sequenceDataHistory: {},
+    annotationVisibility: {
+      features: true
+    },
+    panelsShown: [
+      [{
+          id: 'circular',
+          name: 'Plasmid',
+          active: true
+        }
+      ],
+      [{
+          id: 'sequence',
+          name: 'Sequence Map',
+          active: true
+        }, {
+          id: 'rail',
+          name: 'Linear Map',
+          active: false
+        }, {
+          id: 'properties',
+          name: 'Properties',
+          active: false
+        }
+      ]
+    ]
+  };
+  console.log(editorState);
+
+  editor.updateEditor(editorState);
+});

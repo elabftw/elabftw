@@ -28,7 +28,7 @@ $Response->prepare($Request);
 
 try {
     if ($Request->query->has('f')) {
-        $uploadID = (int) $Request->query->get('f');
+        $uploadLongName = (string) $Request->query->get('f');
     }
 
     $Entity = new Database($App->Users);
@@ -36,7 +36,7 @@ try {
 
     $template = 'ove.html';
     $renderArr = array(
-        'uploadsArr' => $Entity->Uploads->readFromId($uploadID),
+        'upload_long_name' => $uploadLongName,
         'hideTitle' => true,
     );
 

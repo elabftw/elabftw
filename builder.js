@@ -37,6 +37,7 @@ module.exports = {
       './src/ts/show.ts',
       './src/ts/sysconfig.ts',
       './src/ts/change-pass.ts',
+      './src/ts/ove.ts',
       'bootstrap/js/src/alert.js',
       'bootstrap/js/src/button.js',
       'bootstrap/js/src/collapse.js',
@@ -64,6 +65,7 @@ module.exports = {
       'prismjs/components/prism-python.js',
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js',
+      'bio-parsers/src/parsers/genbankToJson.js',
     ],
   },
   // uncomment this to find where the error is coming from

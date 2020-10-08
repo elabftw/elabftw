@@ -85,7 +85,7 @@
 
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
               <div class='text-center'>
-                <a href='ove.php?f={{ upload.id }}' target='_blank'>
+                <a href='ove.php?f={{ upload.long_name }}' target='_blank'>
                   <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>
                   open plasmid editor
                 </a>

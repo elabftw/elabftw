@@ -27,7 +27,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->id = $this->Scheduler->create('2016-07-22T19:42:00', '2016-07-23T19:42:00', 'Yep');
+        $this->id = $this->Scheduler->create('2016-07-22T19:42:00+02:00', '2016-07-23T19:42:00+02:00', 'Yep');
     }
 
     public function testUpdateStart()
@@ -44,7 +44,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy()
     {
-        $id = $this->Scheduler->create('2016-07-22T19:42:00', '2016-07-23T19:42:00', 'Yep');
+        $id = $this->Scheduler->create('2016-07-22T19:42:00+02:00', '2016-07-23T19:42:00+02:00', 'Yep');
         $this->Scheduler->setId($id);
         $this->Scheduler->destroy();
     }

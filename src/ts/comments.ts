@@ -18,7 +18,7 @@ $(document).ready(function() {
   });
 
   // MAKE them editable on mousehover
-  $(document).on('mouseenter', '.comment', function() {
+  $(document).on('mouseenter', '.comment-editable', function() {
     ($(this) as any).editable('app/controllers/Ajax.php', {
       type : 'textarea',
       submitdata: (revert, settings, submitdata) => {

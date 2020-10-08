@@ -8,26 +8,7 @@
 import { notif } from './misc';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/pagebreak';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/save';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/template';
-import 'tinymce/themes/silver';
-import 'tinymce/themes/mobile';
+import { getTinymceBaseConfig } from './tinymce';
 
 $(document).ready(function() {
   if (window.location.pathname !== '/sysconfig.php') {
@@ -185,18 +166,5 @@ $(document).ready(function() {
     }
   });
 
-  tinymce.init({
-    mode: 'specific_textareas',
-    editor_selector: 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
-    browser_spellcheck: true, // eslint-disable-line @typescript-eslint/camelcase
-    skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
-    height: '500',
-    plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak hr',
-    pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
-    removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
-    image_caption: false, // eslint-disable-line @typescript-eslint/camelcase
-    content_style: '.mce-content-body {font-size:10pt;}', // eslint-disable-line @typescript-eslint/camelcase
-    language: 'en_GB'
-  });
+  tinymce.init(getTinymceBaseConfig('sysconfig'));
 });

@@ -107,7 +107,7 @@ try {
         // Replace new password in database
         $App->Users->updatePassword($Request->request->get('password'));
         $App->Log->info('Password was changed for this user', array('userid' => $App->Session->get('userid')));
-        $Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
+        $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 } catch (ImproperActionException $e) {
     // show message to user

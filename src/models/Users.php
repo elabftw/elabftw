@@ -217,7 +217,7 @@ class Users
      * @param string $term
      * @return array
      */
-    public function lookFor(string $term): array
+    public function getList(string $term): array
     {
         $usersArr = $this->readFromQuery($term);
         $res = array();

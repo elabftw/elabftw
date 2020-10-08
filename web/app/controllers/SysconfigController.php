@@ -106,7 +106,7 @@ try {
         $App->Config->destroyStamppass();
     }
 
-    $Session->getFlashBag()->add('ok', _('Saved'));
+    $App->Session->getFlashBag()->add('ok', _('Saved'));
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

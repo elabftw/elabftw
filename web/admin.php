@@ -51,8 +51,8 @@ try {
     $UsersHelper = new UsersHelper();
 
     $itemsTypesArr = $ItemsTypes->readAll();
-    $statusArr = $Status->readAll();
-    $teamGroupsArr = $TeamGroups->readAll();
+    $statusArr = $Status->read();
+    $teamGroupsArr = $TeamGroups->read();
     $teamsArr = $Teams->readAll();
     $commonTplBody = $Templates->readCommonBody();
     $allTeamUsersArr = $App->Users->readAllFromTeam();

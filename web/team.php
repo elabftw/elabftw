@@ -44,7 +44,7 @@ try {
     $teamsStats = $Teams->getStats((int) $App->Users->userData['team']);
 
     $TeamGroups = new TeamGroups($App->Users);
-    $teamGroupsArr = $TeamGroups->readAll();
+    $teamGroupsArr = $TeamGroups->read();
 
 
     $Database = new Database($App->Users);

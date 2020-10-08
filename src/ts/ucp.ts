@@ -5,50 +5,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { saveAs } from 'file-saver/dist/FileSaver.js';
-import { addDateOnCursor, notif } from './misc';
-import i18next from 'i18next';
+import { notif } from './misc';
 import tinymce from 'tinymce/tinymce';
+import { getTinymceBaseConfig } from './tinymce';
 import Template from './Template.class';
-import 'tinymce/icons/default';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/pagebreak';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/save';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/template';
-import 'tinymce/themes/silver';
-import 'tinymce/themes/mobile';
-import '../js/tinymce-langs/ca_ES.js';
-import '../js/tinymce-langs/de_DE.js';
-import '../js/tinymce-langs/en_GB.js';
-import '../js/tinymce-langs/es_ES.js';
-import '../js/tinymce-langs/fr_FR.js';
-import '../js/tinymce-langs/id_ID.js';
-import '../js/tinymce-langs/it_IT.js';
-import '../js/tinymce-langs/ja_JP.js';
-import '../js/tinymce-langs/ko_KR.js';
-import '../js/tinymce-langs/nl_BE.js';
-import '../js/tinymce-langs/pl_PL.js';
-import '../js/tinymce-langs/pt_BR.js';
-import '../js/tinymce-langs/pt_PT.js';
-import '../js/tinymce-langs/ru_RU.js';
-import '../js/tinymce-langs/sk_SK.js';
-import '../js/tinymce-langs/sl_SI.js';
-import '../js/tinymce-langs/zh_CN.js';
 
 $(document).ready(function() {
+  if (window.location.pathname !== '/ucp.php') {
+    return;
+  }
 
   const TemplateC = new Template();
 
@@ -115,50 +80,16 @@ $(document).ready(function() {
   });
 
   // TinyMCE
-  tinymce.init({
-    mode : 'specific_textareas',
-    editor_selector : 'mceditable', // eslint-disable-line @typescript-eslint/camelcase
-    skin_url: 'app/css/tinymce', // eslint-disable-line @typescript-eslint/camelcase
-    plugins: 'table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr',
-    pagebreak_separator: '<pagebreak>', // eslint-disable-line @typescript-eslint/camelcase
-    toolbar1: 'undo redo | styleselect bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | codesample | link',
-    removed_menuitems: 'newdocument, image', // eslint-disable-line @typescript-eslint/camelcase
-    charmap_append: [ // eslint-disable-line @typescript-eslint/camelcase
-      [0x2640, 'female sign'],
-      [0x2642, 'male sign']
-    ],
-    mentions: {
-      // use # for autocompletion
-      delimiter: '#',
-      // get the source from json with get request
-      source: function (query, process): void {
-        const url = 'app/controllers/EntityAjaxController.php?mention=1&term=' + query;
-        $.getJSON(url, function(data) {
-          process(data);
-        });
-      }
-    },
-    // keyboard shortcut to insert today's date at cursor in editor
-    setup: function(editor: any) {
-      editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
-      editor.addShortcut('ctrl+=', 'subscript', function() {
-        editor.execCommand('subscript');
-      });
-      editor.addShortcut('ctrl+shift+=', 'superscript', function() {
-        editor.execCommand('superscript');
-      });
-      editor.on('init', function() {
-        editor.getContainer().className += ' rounded';
-      });
-    },
-    language : $('#user-prefs').data('lang')
-  });
+  tinymce.init(getTinymceBaseConfig('ucp'));
 
   // DESTROY API KEY
   $(document).on('click', '.keyDestroy', function() {
-    $.post('app/controllers/AjaxController.php', {
-      destroyApiKey: true,
-      id: $(this).data('id')
+    $.post('app/controllers/Ajax.php', {
+      action: 'destroy',
+      what: 'apikey',
+      params: {
+        id: $(this).data('id'),
+      },
     }).done(function(json) {
       notif(json);
       $('#apiTable').load('ucp.php #apiTable');

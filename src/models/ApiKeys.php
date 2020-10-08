@@ -12,7 +12,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
 use function filter_var;
 use function password_hash;
 use function password_verify;
@@ -21,7 +21,7 @@ use PDO;
 /**
  * Api keys
  */
-class ApiKeys implements CrudInterface
+class ApiKeys implements DestroyableInterface
 {
     /** @var Db $Db SQL Database */
     private $Db;
@@ -131,15 +131,12 @@ class ApiKeys implements CrudInterface
 
     /**
      * Destroy an api key
-     *
-     * @param int $id id of the key
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         $sql = 'DELETE FROM api_keys WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 }

@@ -5,30 +5,30 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import Crud from './Crud.class';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
+import { saveAs } from 'file-saver/dist/FileSaver.js';
 
-export default class Template {
-  controller: string;
+export default class Template extends Crud {
   type: string;
 
   constructor() {
+    super('app/controllers/Ajax.php');
     this.type = 'experiments_templates';
-    this.controller = 'app/controllers/EntityAjaxController.php';
   }
 
   create(name: string, body = ''): void {
-    $.post(this.controller, {
-      create: true,
-      name: name,
-      body: body,
+    this.send({
+      action: 'create',
       type: this.type,
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
-        window.location.replace(`ucp.php?tab=3&templateid=${json.msg}`);
-      }
+      what: 'template',
+      params: {
+        name: name,
+        template: body,
+      },
+    }).then((response) => {
+      window.location.replace(`ucp.php?tab=3&templateid=${response.value}`);
     });
   }
 
@@ -41,17 +41,28 @@ export default class Template {
     saveAs(blob, name + '.elabftw.tpl');
   }
 
-  destroy(id): void {
+  duplicate(id: number): void {
+    this.send({
+      action: 'duplicate',
+      what: 'template',
+      type: 'experiments_templates',
+      params: {
+        itemId: id,
+      },
+    });
+  }
+
+  destroy(id: number): void {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post(this.controller, {
-        destroy: true,
-        id: id,
+      this.send({
+        action: 'destroy',
+        what: 'template',
         type: this.type,
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
-          window.location.replace('ucp.php?tab=3');
-        }
+        params: {
+          id: id,
+        },
+      }).then(() => {
+        window.location.replace('ucp.php?tab=3');
       });
     }
   }

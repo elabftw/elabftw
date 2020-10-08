@@ -5,14 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import Crud from './Crud.class';
 import { notif } from './misc';
 import i18next from 'i18next';
 
-export default class Status {
-  controller: string;
+export default class Status extends Crud {
+  what: string;
 
   constructor() {
-    this.controller = 'app/controllers/StatusController.php';
+    super('app/controllers/Ajax.php');
+    this.what = 'status';
   }
 
   create(): void {
@@ -25,14 +27,16 @@ export default class Status {
     const color = $('#statusColor').val();
     const isTimestampable = +$('#statusTimestamp').is(':checked');
 
-    $.post(this.controller, {
-      statusCreate: true,
-      name: name,
-      color: color,
-      isTimestampable: isTimestampable
-    }).done(function(json) {
-      notif(json);
-      if (json.res) {
+    this.send({
+      action: 'create',
+      what: this.what,
+      params: {
+        name: name,
+        color: color,
+        isTimestampable: isTimestampable,
+      },
+    }).then((response) => {
+      if (response.res) {
         window.location.replace('admin.php?tab=4');
       }
     });
@@ -44,26 +48,29 @@ export default class Status {
     const isTimestampable = +$('#statusTimestamp_'+ id).is(':checked');
     const isDefault = $('#statusDefault_' + id).is(':checked');
 
-    $.post(this.controller, {
-      statusUpdate: true,
-      id: id,
-      name: name,
-      color: color,
-      isTimestampable: isTimestampable,
-      isDefault: isDefault ? 1 : 0,
-    }).done(function(json) {
-      notif(json);
+    this.send({
+      action: 'update',
+      what: this.what,
+      params: {
+        id: id,
+        name: name,
+        color: color,
+        isTimestampable: isTimestampable,
+        isDefault: isDefault ? 1 : 0,
+      },
     });
   }
 
   destroy(id): void {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post(this.controller, {
-        statusDestroy: true,
-        id: id
-      }).done(function(json) {
-        notif(json);
-        if (json.res) {
+      this.send({
+        action: 'destroy',
+        what: this.what,
+        params: {
+          id: id,
+        },
+      }).then((response) => {
+        if (response.res) {
           $('#status_' + id).remove();
         }
       });

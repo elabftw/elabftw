@@ -41,7 +41,7 @@ try {
         $Scheduler->create(
             $Request->request->get('start'),
             $Request->request->get('end'),
-            $Request->request->get('title')
+            $Request->request->get('title'),
         );
     }
 

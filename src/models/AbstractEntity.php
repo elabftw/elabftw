@@ -116,7 +116,7 @@ abstract class AbstractEntity
      * @param int $tpl a template/category
      * @return int the new id
      */
-    abstract public function create(int $tpl): int;
+    //abstract public function create(int $tpl): int;
 
     /**
      * Duplicate an item
@@ -130,7 +130,7 @@ abstract class AbstractEntity
      *
      * @return void
      */
-    abstract public function destroy(): void;
+    //abstract public function destroy(?int $id = null): void;
 
     /**
      * Lock/unlock
@@ -364,6 +364,40 @@ abstract class AbstractEntity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
+    public function updateTitle(string $title): void
+    {
+        $this->canOrExplode('write');
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        }
+
+        $title = Filter::title($title);
+        $sql = 'UPDATE ' . $this->type . ' SET title = :title WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+    }
+
+    public function updateDate(string $date): void
+    {
+        $this->canOrExplode('write');
+        // don't update if locked
+        if ($this->entityData['locked']) {
+            throw new ImproperActionException(_('Cannot update a locked entity!'));
+        }
+
+        $date = Filter::kdate($date);
+        $sql = 'UPDATE ' . $this->type . ' SET date = :date WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':date', $date);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -626,7 +660,7 @@ abstract class AbstractEntity
                 entity.lastchange,';
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
-            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY ordering SEPARATOR '|'), '|', 1) AS next_step,
+            SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
             categoryt.id AS category_id,
             categoryt.name AS category,
             categoryt.color,
@@ -668,6 +702,8 @@ abstract class AbstractEntity
         $stepsJoin = 'LEFT JOIN (
             SELECT %1$s_steps.item_id AS steps_item_id,
             %1$s_steps.body AS next_step,
+            %1$s_steps.ordering AS steps_ordering,
+            %1$s_steps.id AS steps_id,
             %1$s_steps.finished AS finished
             FROM %1$s_steps)
             AS stepst ON (

@@ -20,7 +20,7 @@ $(document).ready(function() {
 
   const options = {
     modes: (($('#info').data('page') === 'edit') ? ['tree','code','view','form','text']:['view']),
-    onModeChange: function(newMode) {
+    onModeChange: (newMode): void => {
       if (newMode==='code' || newMode==='text'){
         $('#jsoneditor').height('800px');
       } else {
@@ -82,7 +82,7 @@ $(document).ready(function() {
     });
 
     // The save function is now defined separately
-    const saveJsonFile = function(){
+    const saveJsonFile = (): void => {
       if (typeof currentFileItemID === 'undefined') {
         // we are creating a new file
         let realName = prompt(i18next.t('request-filename'));

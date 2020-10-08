@@ -12,8 +12,10 @@ namespace Elabftw\Models;
 
 use function array_diff;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CrudInterface;
+use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\ReadableInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -21,7 +23,7 @@ use PDO;
 /**
  * All about the teams
  */
-class Teams implements CrudInterface
+class Teams implements ReadableInterface, DestroyableInterface
 {
     /** @var Users $Users instance of Users */
     public $Users;
@@ -197,10 +199,14 @@ class Teams implements CrudInterface
         // create default item type
         $ItemsTypes = new ItemsTypes($this->Users);
         $ItemsTypes->create(
-            'Edit me',
-            '#32a100',
-            0,
-            '<p>Go to the admin panel to edit/add more items types!</p>',
+            new ParamsProcessor(
+                array(
+                    'name' => 'Edit me',
+                    'color' => '#32a100',
+                    'bookable' => 0,
+                    'template' => '<p>Go to the admin panel to edit/add more items types!</p>',
+                )
+            ),
             $newId
         );
 
@@ -251,11 +257,8 @@ class Teams implements CrudInterface
 
     /**
      * Delete a team only if all the stats are at zero
-     *
-     * @param int $id ID of the team
-     * @return void
      */
-    public function destroy(int $id): void
+    public function destroy(int $id): bool
     {
         // check for stats, should be 0
         $count = $this->getStats($id);
@@ -268,7 +271,7 @@ class Teams implements CrudInterface
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**

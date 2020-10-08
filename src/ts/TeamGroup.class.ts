@@ -5,23 +5,25 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif } from './misc';
+import Crud from './Crud.class';
 import i18next from 'i18next';
 
-export default class TeamGroup {
-  controller: string;
+export default class TeamGroup extends Crud {
 
   constructor() {
-    this.controller = 'app/controllers/TeamGroupsController.php';
+    super('app/controllers/Ajax.php');
   }
 
   create(): void {
     const name = $('#teamGroupCreate').val() as string;
     if (name.length > 0) {
-      $.post(this.controller, {
-        teamGroupCreate: name
-      }).done(function(json) {
-        notif(json);
+      this.send({
+        action: 'create',
+        what: 'teamgroup',
+        params: {
+          name: name,
+        },
+      }).then((json) => {
         if (json.res) {
           $('#team_groups_div').load('admin.php #team_groups_div');
           $('#teamGroupCreate').val('');
@@ -30,23 +32,29 @@ export default class TeamGroup {
     }
   }
 
-  update(action, user, group): void {
-    $.post(this.controller, {
-      teamGroupUpdate: true,
-      action: action,
-      teamGroupUser: user,
-      teamGroupGroup: group
-    }).done(function() {
+  update(how, user, group): void {
+    this.send({
+      action: 'updateMember',
+      what: 'teamgroup',
+      params: {
+        'user': user,
+        'group': group,
+        'how': how,
+      },
+    }).then(() => {
       $('#team_groups_div').load('admin.php #team_groups_div');
     });
   }
 
   destroy(id): void {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post(this.controller, {
-        teamGroupDestroy: true,
-        teamGroupGroup: id
-      }).done(function() {
+      this.send({
+        action: 'destroy',
+        what: 'teamgroup',
+        params: {
+          id: id,
+        },
+      }).then(() => {
         $('#team_groups_div').load('admin.php #team_groups_div');
       });
     }

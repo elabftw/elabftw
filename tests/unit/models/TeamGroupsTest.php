@@ -2,6 +2,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
+
 use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
@@ -14,26 +16,23 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate()
     {
-        $this->TeamGroups->create('Group Name');
+        $this->TeamGroups->create(new ParamsProcessor(array('name' => 'Group Name')));
     }
 
-    public function testReadAll()
+    public function testRead()
     {
-        $this->assertTrue(is_array($this->TeamGroups->readAll()));
+        $this->assertTrue(is_array($this->TeamGroups->read()));
     }
 
     public function testReadName()
     {
-        $this->TeamGroups->create('Group Name');
-        $all = $this->TeamGroups->readAll();
-        $last = array_pop($all);
-        $id = (int) $last['id'];
+        $id = $this->TeamGroups->create(new ParamsProcessor(array('name' => 'Group Name')));
         $this->assertEquals('Group Name', $this->TeamGroups->readName($id));
     }
 
     public function testUpdate()
     {
-        $this->assertEquals('New Name', $this->TeamGroups->update('New Name', 'teamgroup_1'));
+        $this->assertEquals('New Name', $this->TeamGroups->update(new ParamsProcessor(array('name' => 'New Name', 'id' => 1))));
     }
 
     public function testUpdateMember()

@@ -13,20 +13,24 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Database;
 use Elabftw\Models\Uploads;
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  *  Plasmid Editor
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Plasmid Editor');
+$App->pageTitle = _('Plasmid Viewer');
 
 $Response = new Response();
 $Response->prepare($Request);
+$template = 'error.html';
 
 try {
+    $uploadLongName = '';
     if ($Request->query->has('f')) {
         $uploadLongName = (string) $Request->query->get('f');
     }
@@ -41,8 +45,15 @@ try {
     );
 
     $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException | Error $e) {
-    $Response->setContent($e->getMessage());
+} catch (ImproperActionException $e) {
+    // show message to user
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (Exception $e) {
+    // log error and show general error message
+    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
+    $renderArr = array('error' => Tools::error());
+    $Response->setContent($App->render($template, $renderArr));
 } finally {
     $Response->send();
 }

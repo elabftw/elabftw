@@ -8,12 +8,13 @@
 import $ from 'jquery';
 import genbankToJson from 'bio-parsers/src/parsers/genbankToJson';
 declare global {
-  var OVEsequenceData;
+  interface Window {
+    OVEsequenceData: Record<string, any>;
+  }
 }
 
 $(document).ready(function() {
   if ($('#ove').length > 0) {
-    console.log('found OVE')
     const fileLocation = $('#ove').data('href');
     $.get(fileLocation, function(fileContent){
       genbankToJson(fileContent, function(sequenceData) {

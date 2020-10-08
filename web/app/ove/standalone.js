@@ -140,9 +140,7 @@ function whenAvailable(name, callback) {
   }, interval);
 }
 
-whenAvailable("OVEsequenceData", function(t) {
-  console.log(window.OVEsequenceData[0].parsedSequence);
-
+whenAvailable('OVEsequenceData', function(t) {
   var editorState = {
     // note, sequence data passed here will be coerced to fit the Teselagen data model
     readOnly: true,
@@ -177,7 +175,14 @@ whenAvailable("OVEsequenceData", function(t) {
       ]
     ]
   };
-  console.log(editorState);
+
+  // Change layout if linear sequence
+  if (window.OVEsequenceData[0].parsedSequence.circular == false) {
+    editorState.panelsShown[0][0].id = 'sequence';
+    editorState.panelsShown[0][0].name = 'Sequence Map';
+    editorState.panelsShown[1][2].active = true;
+    editorState.panelsShown[1].shift();
+  }
 
   editor.updateEditor(editorState);
 });

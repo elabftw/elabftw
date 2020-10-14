@@ -65,7 +65,6 @@ module.exports = {
       'prismjs/components/prism-python.js',
       'prismjs/components/prism-r.js',
       'prismjs/components/prism-ruby.js',
-      'bio-parsers/src/parsers/genbankToJson.js',
     ],
   },
   // uncomment this to find where the error is coming from

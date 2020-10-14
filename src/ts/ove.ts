@@ -6,7 +6,9 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import genbankToJson from 'bio-parsers/src/parsers/genbankToJson';
+import genbankToJson from 'bio-parsers/src/parsers/anyToJson';
+import * as $OVE from 'open-vector-editor/umd/open-vector-editor.js';
+
 declare global {
   interface Window {
     OVEsequenceData: Record<string, any>;

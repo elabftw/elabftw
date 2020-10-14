@@ -89,6 +89,10 @@
                                 </div>
 
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
+              <div class='OVE_preview' style='height: 250px; width: 100%'
+                data-href='app/download.php?f={{ upload.long_name }}'
+                id='OVE_{{ upload.id }}'>
+              </div>
               <div class='text-center'>
                 <a href='ove.php?f={{ upload.long_name }}' target='_blank'>
                   <i class='fas {{ Entity.Uploads.getIconFromExtension(ext) }} thumb rounded mx-auto d-block'></i>

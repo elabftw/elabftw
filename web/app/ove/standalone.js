@@ -50,22 +50,22 @@ var convertToFeaturedDNASequence = function (openVESequence) {
 }
 
 var editorProps = {
-  showMenuBar: false,
-  isFullscreen: true,
-  showReadOnly: true, //default true
-  showCircularity: true,
+  //showMenuBar: true,
+  //isFullscreen: false,
+  //withPreviewMode: true,
+  //withRotateCircularView: false,
   // onSave: function(event, sequence, editorState, onSuccess) {
   //  console.log('saving');
   // },
-  onImport: function (sequence) {
-    try {
-      console.log('sequence name', sequence.name);
-      document.title = sequence.name;
-    } catch (err) {
-      console.error('Import Error', err);
-    }
-    return sequence;
-  },
+  //onImport: function (sequence) {
+  //  try {
+  //    console.log('sequence name', sequence.name);
+  //    document.title = sequence.name;
+  //  } catch (err) {
+  //    console.error('Import Error', err);
+  //  }
+  //  return sequence;
+  //},
   onCopy: function (event, copiedSequenceData, editorState) {
     // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
     const clipboardData = event.clipboardData;
@@ -83,17 +83,17 @@ var editorProps = {
     // e.clipboardData.getData('application/json')
   },
 
-  onPaste: function (event, editorState) {
-    var clipboardData = event.clipboardData || event.originalEvent.clipboardData;
-    var jsonData = clipboardData.getData('application/json');
-    if (jsonData) {
-      jsonData = JSON.parse(jsonData);
-      jsonData = jsonData.openVECopied;
-    }
-    return jsonData || {
-      sequence: clipboardData.getData('text/plain')
-    };
-  },
+  //onPaste: function (event, editorState) {
+  //  var clipboardData = event.clipboardData || event.originalEvent.clipboardData;
+  //  var jsonData = clipboardData.getData('application/json');
+  //  if (jsonData) {
+  //    jsonData = JSON.parse(jsonData);
+  //    jsonData = jsonData.openVECopied;
+  //  }
+  //  return jsonData || {
+  //    sequence: clipboardData.getData('text/plain')
+  //  };
+  //},
 
   PropertiesProps: {
     // the list of tabs shown in the Properties panel
@@ -114,16 +114,22 @@ var editorProps = {
       //'importTool',
       //'undoTool',
       //'redoTool',
-      //'cutsiteTool',
-      //'featureTool',
+      'cutsiteTool',
+      'featureTool',
       //'alignmentTool',
-      // 'oligoTool',
-      //'orfTool',
-      //'viewTool',
-      //'editTool',
+      'oligoTool',
+      'orfTool',
+      'viewTool',
+      'editTool',
       //'findTool',
       //'visibilityTool'
     ]
+  },
+  StatusBarProps: {
+    //these are the defaults:
+    showCircularity: false,
+    showReadOnly: false,
+    showAvailability: false,
   },
 };
 
@@ -153,30 +159,30 @@ whenAvailable('OVEsequenceData', function(t) {
       features: true
     },
     panelsShown: [
-      [{
+      [
+        {
           id: 'circular',
           name: 'Plasmid',
           active: true
         }
-      ],
-      [{
-          id: 'sequence',
-          name: 'Sequence Map',
-          active: true
-        }, {
-          id: 'rail',
-          name: 'Linear Map',
-          active: false
-        }, {
-          id: 'properties',
-          name: 'Properties',
-          active: false
-        }
       ]
+//      [{
+//          id: 'sequence',
+//          name: 'Sequence Map',
+//          active: true
+//        }, {
+//          id: 'rail',
+//          name: 'Linear Map',
+//          active: false
+//        }, {
+//          id: 'properties',
+//          name: 'Properties',
+//          active: false
+//        }
+//      ]
     ]
   };
 
-  // Change layout if linear sequence
   if (window.OVEsequenceData[0].parsedSequence.circular == false) {
     editorState.panelsShown[0][0].id = 'sequence';
     editorState.panelsShown[0][0].name = 'Sequence Map';

@@ -8,6 +8,7 @@
 declare let key: any;
 declare let MathJax: any;
 import { displayMolFiles, display3DMolecules, insertParamAndReload, notif } from './misc';
+import { displayPlasmidViewer } from './ove';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import 'jquery-ui/ui/widgets/datepicker';
 import './doodle';
@@ -52,6 +53,7 @@ $(document).ready(function() {
           $('#filesdiv').load('?mode=edit&id=' + $('#info').data('id') + ' #filesdiv', function() {
             displayMolFiles();
             display3DMolecules(true);
+            displayPlasmidViewer();
             const dropZone = Dropzone.forElement('#elabftw-dropzone');
 
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload

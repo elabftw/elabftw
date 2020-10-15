@@ -89,6 +89,7 @@ $(document).ready(function() {
           $('#filesdiv').load('?mode=edit&id=' + itemid + ' #filesdiv', function() {
             displayMolFiles();
             display3DMolecules(true);
+            displayPlasmidViewer();
           });
         }
       });

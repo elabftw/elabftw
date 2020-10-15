@@ -8,7 +8,8 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { notif, displayMolFiles, display3DMolecules } from './misc';
+import { notif, displayMolFiles, display3DMolecules,  } from './misc';
+import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 
 $(document).ready(function() {
@@ -18,6 +19,7 @@ $(document).ready(function() {
   }
   displayMolFiles();
   display3DMolecules();
+  displayPlasmidViewer();
 
   // REPLACE UPLOAD toggle form
   $(document).on('click', '.replaceUpload', function() {

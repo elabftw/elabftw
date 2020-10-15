@@ -840,6 +840,12 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+.viewer_OVE {
+    height: 384px;
+    width: 100%;
+    //position: relative;
+}
+
 /* 3Dmol.js */
 .viewer_3Dmoljs {
     height: 250px;

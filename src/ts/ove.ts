@@ -15,6 +15,7 @@ import genbankToJson from 'bio-parsers/src/parsers/anyToJson';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(): void {
+  let editor: any = {};
   $('.viewer_OVE').each(function() {
     let viewerID = $(this).attr('id');
     $.get($(this).data('href'), function(fileContent) {
@@ -74,6 +75,7 @@ export function displayPlasmidViewer(): void {
         showMenuBar: false,
         isFullscreen: false,
         withPreviewMode: true,
+        editorName: viewerID,
         onCopy: function (event, copiedSequenceData, editorState) {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
           const clipboardData = event.clipboardData;
@@ -127,7 +129,7 @@ export function displayPlasmidViewer(): void {
         },
       };
 
-      let editor = window.createVectorEditor(document.getElementById(viewerID), editorProps);
+      editor.viewerID = window.createVectorEditor(document.getElementById(viewerID), editorProps);
 
       let editorState = {
         // note, sequence data passed here will be coerced to fit the Teselagen data model
@@ -165,6 +167,7 @@ export function displayPlasmidViewer(): void {
         ]
       };
 
+      // Change layout for linear sequences
       if (parsedSequence.circular == false) {
         editorState.panelsShown[0][0].id = 'sequence';
         editorState.panelsShown[0][0].name = 'Linear Sequence Map';
@@ -172,7 +175,7 @@ export function displayPlasmidViewer(): void {
         editorState.panelsShown[1].shift();
       }
 
-      editor.updateEditor(editorState);
+      editor.viewerID.updateEditor(editorState);
     }, 'text');
   });
 }

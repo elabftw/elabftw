@@ -6171,10 +6171,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-open-vector-editor@^10.2.4:
-  version "10.2.4"
-  resolved "https://registry.yarnpkg.com/open-vector-editor/-/open-vector-editor-10.2.4.tgz#3a818ee5b86090689a38d121b39401908f436c6e"
-  integrity sha512-TAZpzr661gXHked0ua6X0sOQ8r4oIEhB8LBUsJcggBds2z2zfDNc/kgrfw1xr2xlvfix3dQxPfI3SKhyiDnz1A==
+open-vector-editor@^12.0.4:
+  version "12.0.9"
+  resolved "https://registry.yarnpkg.com/open-vector-editor/-/open-vector-editor-12.0.9.tgz#c4d31d6ccc5f6cd3c51c5fff6417b1e4387872ee"
+  integrity sha512-b5zl3aPaY6jMXWnrVzUS1ej3auUCfcC/GAquYZrDdkqcJvizZVVfr2nOBVa9qNqk5zZHVLOvQfLD1E/WbUyIhw==
   dependencies:
     "@blueprintjs/core" "^3.31.0"
     "@blueprintjs/datetime" "^3.18.6"
@@ -6210,11 +6210,11 @@ open-vector-editor@^10.2.4:
     redux-thunk "2.3.0"
     reselect "^4.0.0"
     shortid "^2.2.15"
-    teselagen-react-components "^29.2.29"
+    teselagen-react-components "^29.2.38"
     tg-react-reflex "^2.0.10"
     typeface-ubuntu-mono "^0.0.54"
     ve-range-utils "^2.5.8"
-    ve-sequence-utils "^3.3.56"
+    ve-sequence-utils "^4.0.0"
 
 open@^7.0.3:
   version "7.3.0"
@@ -8487,10 +8487,10 @@ terser@^4.1.2:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-teselagen-react-components@^29.2.29:
-  version "29.2.37"
-  resolved "https://registry.yarnpkg.com/teselagen-react-components/-/teselagen-react-components-29.2.37.tgz#4e093162544954bb572ef8b3f63baacd51df4fe6"
-  integrity sha512-XWMvaCtLaux5EwJahzJ+Pni+GTUeDMA5AXCajoITW9OcnU3iY71gbiZm0wh6B90qlcwnYhYomvlDBp0sm+uIIg==
+teselagen-react-components@^29.2.38:
+  version "29.2.40"
+  resolved "https://registry.yarnpkg.com/teselagen-react-components/-/teselagen-react-components-29.2.40.tgz#713d625661d2bbd513791bcd2b12ffd03751bf32"
+  integrity sha512-2Hnatc/X7hvF2FtuhqaDw7xnhCxlc0fQTHzmyTSxZ0OVt55ECIuYHSbGrz5AbYKRFXCBkrPvYhFbA6ukvmBMEA==
   dependencies:
     "@blueprintjs/core" "^3.26.0"
     "@blueprintjs/datetime" "^3.16.1"
@@ -9156,10 +9156,10 @@ ve-range-utils@^2.5.8:
     lodash "^4.17.4"
     validate.io-nonnegative-integer-array "^1.0.1"
 
-ve-sequence-utils@^3.3.56:
-  version "3.3.56"
-  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-3.3.56.tgz#00b20525601fcd1b0633192bc03bc692ad674ec2"
-  integrity sha512-Yv9FbKKPmm7k5JLnY1Ma9lgqcy5LFFviE461+irBFtYDbhEQLBk17vUZOiHnE8h4ML3I2pPL4JkXivSM/2ssvw==
+ve-sequence-utils@^4.0.0:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-4.0.1.tgz#e078cfe4b3d465ddaabcab68c4fd1db98aa8c6db"
+  integrity sha512-/rpaqO2IjC0lAIoUxRTH3MHDERp+BCUEBCYmQv01fmNfGJC8Knhasi/VVEjHim54q6NK62oPHtHgatJq83xm4w==
   dependencies:
     bson-objectid "^1.1.1"
     escape-string-regexp "^1.0.5"

@@ -32,7 +32,7 @@
     "marked": "^1.1.1",
     "mathjax": "3.1.*",
     "moment": "^2.25.3",
-    "open-vector-editor": "^10.2.4",
+    "open-vector-editor": "^12.0.4",
     "popper.js": "1.16.*",
     "prismjs": "^1.21.0",
     "sass": "^1.23.7",

@@ -840,10 +840,26 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+// overwrite some default open-vector-editor settings
+// this is only working for the circular preview (single svg element)
+// the linear preview unfortunately is made from individual svg elements
 .viewer_OVE {
-    height: 384px;
-    width: 100%;
-    //position: relative;
+    .preview-mode-container {
+        display: block;
+        width: auto !important;
+
+        div {
+            box-shadow: none !important;
+        }
+    }
+    .veCircularView {
+        width: auto !important;
+        height: auto !important;
+    }
+    .circularViewSvg {
+        width: 100% !important;
+        height: 100% !important;
+    }
 }
 
 /* 3Dmol.js */

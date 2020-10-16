@@ -72,10 +72,11 @@ export function displayPlasmidViewer(): void {
       }
 
       let editorProps = {
-        showMenuBar: false,
-        isFullscreen: false,
-        withPreviewMode: true,
         editorName: viewerID,
+        withPreviewMode: true,
+        isFullscreen: false,
+        showMenuBar: false,
+        withRotateCircularView: false,
         onCopy: function (event, copiedSequenceData, editorState) {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
           const clipboardData = event.clipboardData;

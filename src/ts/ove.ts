@@ -147,15 +147,15 @@ export function displayPlasmidViewer(): void {
             id: 'circular',
             name: 'Plasmid Map',
             active: true
+          }, {
+            id: 'rail',
+            name: 'Linear Map',
+            active: false
           }],
           [{
             id: 'sequence',
             name: 'Linear Sequence Map',
             active: true
-          }, {
-            id: 'rail',
-            name: 'Linear Map',
-            active: false
           }, {
             id: 'properties',
             name: 'Properties',
@@ -166,10 +166,8 @@ export function displayPlasmidViewer(): void {
 
       // Change layout for linear sequences
       if (parsedSequence.circular == false) {
-        editorState.panelsShown[0][0].id = 'sequence';
-        editorState.panelsShown[0][0].name = 'Linear Sequence Map';
-        editorState.panelsShown[1][2].active = true;
-        editorState.panelsShown[1].shift();
+        editorState.panelsShown[0][1].active = true;
+        editorState.panelsShown[0].shift();
       }
 
       editor.viewerID.updateEditor(editorState);

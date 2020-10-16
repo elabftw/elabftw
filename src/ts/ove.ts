@@ -15,9 +15,9 @@ import genbankToJson from 'bio-parsers/src/parsers/anyToJson';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(): void {
-  let editor: any = {};
+  const editor: any = {};
   $('.viewer_OVE').each(function() {
-    let viewerID = $(this).attr('id');
+    const viewerID = $(this).attr('id');
     $.get($(this).data('href'), function(fileContent) {
 
       let parsedSequence: any = {};
@@ -26,8 +26,8 @@ export function displayPlasmidViewer(): void {
         parsedSequence = parsedData[0].parsedSequence;
       });
 
-      let data: any = {};
-      const convertToFeaturedDNASequence = function (openVESequence) {
+      const data: any = {};
+      const convertToFeaturedDNASequence = function (openVESequence): void {
         data.sequenceData = {
           features: [],
           sequence: openVESequence.sequence
@@ -35,19 +35,19 @@ export function displayPlasmidViewer(): void {
         data.registryData = {
           name: openVESequence.name
         };
-        let featureMap = {};
+        const featureMap = {};
 
         for (const prop in openVESequence.features) {
           if (!openVESequence.features.hasOwnProperty(prop))
             continue;
 
-          let feature = openVESequence.features[prop];
-          let existingFeature = featureMap[feature.id];
+          const feature = openVESequence.features[prop];
+          const existingFeature = featureMap[feature.id];
           if (existingFeature) {
             existingFeature.locations.push({
               genbankStart: feature.start + 1,
               end: feature.end + 1
-            })
+            });
           } else {
             featureMap[feature.id] = {
               id: feature.fid,
@@ -55,10 +55,9 @@ export function displayPlasmidViewer(): void {
               name: feature.name,
               forward: feature.forward,
               notes: [{
-                  name: 'note',
-                  value: feature.notes
-                }
-              ],
+                name: 'note',
+                value: feature.notes
+              }],
               start: feature.start,
               end: feature.end
             };
@@ -69,15 +68,15 @@ export function displayPlasmidViewer(): void {
             continue;
           data.sequenceData.features.push(featureMap[property]);
         }
-      }
+      };
 
-      let editorProps = {
+      const editorProps = {
         editorName: viewerID,
         withPreviewMode: true,
         isFullscreen: false,
         showMenuBar: false,
         withRotateCircularView: false,
-        onCopy: function (event, copiedSequenceData, editorState) {
+        onCopy: function (event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
           const clipboardData = event.clipboardData;
           console.log(editorState.sequenceData);
@@ -132,7 +131,7 @@ export function displayPlasmidViewer(): void {
 
       editor.viewerID = window.createVectorEditor(document.getElementById(viewerID), editorProps);
 
-      let editorState = {
+      const editorState = {
         // note, sequence data passed here will be coerced to fit the Teselagen data model
         readOnly: true,
         // Open Vector Editor data model
@@ -144,27 +143,24 @@ export function displayPlasmidViewer(): void {
           features: true
         },
         panelsShown: [
-          [
-            {
-              id: 'circular',
-              name: 'Plasmid Map',
-              active: true
-            }
-          ],
           [{
-              id: 'sequence',
-              name: 'Linear Sequence Map',
-              active: true
-            }, {
-              id: 'rail',
-              name: 'Linear Map',
-              active: false
-            }, {
-              id: 'properties',
-              name: 'Properties',
-              active: false
-            }
-          ]
+            id: 'circular',
+            name: 'Plasmid Map',
+            active: true
+          }],
+          [{
+            id: 'sequence',
+            name: 'Linear Sequence Map',
+            active: true
+          }, {
+            id: 'rail',
+            name: 'Linear Map',
+            active: false
+          }, {
+            id: 'properties',
+            name: 'Properties',
+            active: false
+          }]
         ]
       };
 

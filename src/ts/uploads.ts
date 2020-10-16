@@ -8,7 +8,7 @@
 import $ from 'jquery';
 import 'jquery-jeditable/src/jquery.jeditable.js';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { notif, displayMolFiles, display3DMolecules,  } from './misc';
+import { notif, displayMolFiles, display3DMolecules } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 

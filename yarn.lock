@@ -797,7 +797,14 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.2.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.2.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4":
+  version "7.12.1"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.1.tgz#b4116a6b6711d010b2dad3b7b6e43bf1b9954740"
+  integrity sha512-J5AIf3vPj3UwXaAzb5j1xM4WAQDX3EMgemF8rjCP3SoW09LfRKAXQKt6CoVYl230P6iWdRcBbnLDDdnqWxZSCA==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.10.1":
   version "7.11.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
   integrity sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
@@ -837,10 +844,10 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@blueprintjs/core@^3.26.0", "@blueprintjs/core@^3.31.0", "@blueprintjs/core@^3.33.0":
-  version "3.33.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.33.0.tgz#fe0b21029061fb9beee09f6230bab73ff17c087c"
-  integrity sha512-9gccauo44DsrW8IP75Qy7rKrRv3sgOTvs2Lv2DIEH9f+WZQjj37x+3bfiGKrzeWWRS5P1vP1uSgn89P/JZrD8w==
+"@blueprintjs/core@^3.26.0", "@blueprintjs/core@^3.31.0", "@blueprintjs/core@^3.34.0":
+  version "3.34.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.34.0.tgz#910b6fc35ba1542a867c0ca20563602ff729204e"
+  integrity sha512-idnBHEzC/ON3HaUWUsCr4p3PxIFjSi5FteE5ietDQneLphXiPa9UgwWsFQVMorAIBZsic2jEOQoNceYcpZ/+eg==
   dependencies:
     "@blueprintjs/icons" "^3.22.0"
     "@types/dom4" "^2.0.1"
@@ -855,11 +862,11 @@
     tslib "~1.13.0"
 
 "@blueprintjs/datetime@^3.16.1", "@blueprintjs/datetime@^3.18.6":
-  version "3.19.2"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/datetime/-/datetime-3.19.2.tgz#245d6243cdc78d76c87b6729a51f35f8193f6151"
-  integrity sha512-jqPTrmoe5yPPW9r8R0q5XTxue+w1ue3cDViHWO6l5Cu9UvqNnzB9pRX7G1K8llshbMx4vaiUEK77bgo75TF+RA==
+  version "3.19.3"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/datetime/-/datetime-3.19.3.tgz#aa79a96cbff5236c5a2f1fd66f1a1da34a9ff1c7"
+  integrity sha512-0V/RZIJvTmRh2zbIez03QNS355fiCjIO/EnDYVGTAj2RPXuEUKuFRyizojdlg1bd2T0OFSbDy9uNrMGzIrBhEQ==
   dependencies:
-    "@blueprintjs/core" "^3.33.0"
+    "@blueprintjs/core" "^3.34.0"
     classnames "^2.2"
     react-day-picker "7.4.8"
     react-lifecycles-compat "^3.0.4"
@@ -874,11 +881,11 @@
     tslib "~1.13.0"
 
 "@blueprintjs/select@^3.12.2", "@blueprintjs/select@^3.13.7":
-  version "3.14.2"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.14.2.tgz#a62e18e2f6648fa7cbf248d69502c155d4a7c7bd"
-  integrity sha512-TJ1wUqmmBrnFzlLSkUoaBKAYLvJLvzJNmGVD59yPjO6jCIbuOV/Edt1YzHmxK7OJN3ku/LwylJ7NjI3pKLRiWA==
+  version "3.14.3"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/select/-/select-3.14.3.tgz#ca26ba4161b0d2b261198e12abb3e97a02dbcc10"
+  integrity sha512-7psdf8SiqZUN1oUjtior1Y994+agKAO02o/7VYx93zfwW8dJkn5bTxGQnc0kDMXWWSFevsZMGfiQav78lZOgBw==
   dependencies:
-    "@blueprintjs/core" "^3.33.0"
+    "@blueprintjs/core" "^3.34.0"
     classnames "^2.2"
     tslib "~1.13.0"
 
@@ -2556,10 +2563,10 @@ color-name@^1.0.0, color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
-color-string@^1.5.2:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.5.3.tgz#c9bbc5f01b58b5492f3d6857459cb6590ce204cc"
-  integrity sha512-dC2C5qeWoYkxki5UAXapdjqO672AM4vZuPGRQfO8b5HKuKGBbKWpITyDYN7TOFKvRW7kOgAn3746clDBMDJyQw==
+color-string@^1.5.2, color-string@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.5.4.tgz#dd51cd25cfee953d138fe4002372cc3d0e504cb6"
+  integrity sha512-57yF5yt8Xa3czSEW1jfQDE79Idk0+AkN/4KWad6tbdxUmAs3MvjxlWSWD4deYytcRfoZ9nhKyFl1kj5tBvidbw==
   dependencies:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
@@ -2573,12 +2580,12 @@ color@3.0.x:
     color-string "^1.5.2"
 
 color@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/color/-/color-3.1.2.tgz#68148e7f85d41ad7649c5fa8c8106f098d229e10"
-  integrity sha512-vXTJhHebByxZn3lDvDJYw4lR5+uB3vuoHsuYA5AKuxRVn5wzzIfQKGLBmgdVRHKTJYeK5rvJcHnrd0Li49CFpg==
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/color/-/color-3.1.3.tgz#ca67fb4e7b97d611dcde39eceed422067d91596e"
+  integrity sha512-xgXAcTHa2HeFCGLE9Xs/R82hujGtu9Jd9x4NW3T34+OMs7VoPsjwzRczKHvTAHeJwWFwX5j15+MgAppE8ztObQ==
   dependencies:
     color-convert "^1.9.1"
-    color-string "^1.5.2"
+    color-string "^1.5.4"
 
 colors@^1.2.1:
   version "1.4.0"
@@ -6172,9 +6179,9 @@ onetime@^5.1.0:
     mimic-fn "^2.1.0"
 
 open-vector-editor@^12.0.4:
-  version "12.0.9"
-  resolved "https://registry.yarnpkg.com/open-vector-editor/-/open-vector-editor-12.0.9.tgz#c4d31d6ccc5f6cd3c51c5fff6417b1e4387872ee"
-  integrity sha512-b5zl3aPaY6jMXWnrVzUS1ej3auUCfcC/GAquYZrDdkqcJvizZVVfr2nOBVa9qNqk5zZHVLOvQfLD1E/WbUyIhw==
+  version "12.0.10"
+  resolved "https://registry.yarnpkg.com/open-vector-editor/-/open-vector-editor-12.0.10.tgz#3c49f9ffb9a8312beaa2a3769743438d2e349175"
+  integrity sha512-O5dc3AB6mdle3cDg4wPcg4OqdaFJZQ3tvyFrHdPA+gHf7y6KY6pNBpWh13l1F9+WYz0i9Xcp4CFV8+zhQzRdZA==
   dependencies:
     "@blueprintjs/core" "^3.31.0"
     "@blueprintjs/datetime" "^3.18.6"

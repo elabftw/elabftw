@@ -840,6 +840,12 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+// raise above .viewer_OVE
+.uploadsDestroy {
+    position: relative;
+    z-index: 10;
+}
+
 // overwrite some default open-vector-editor settings
 // this is only working for the circular preview (single svg element)
 // the linear preview unfortunately is made from individual svg elements
@@ -859,6 +865,10 @@ the form-control fails to do that so we do the border ourselves */
     .circularViewSvg {
         width: 100% !important;
         height: 100% !important;
+    }
+
+    .ve-propertiesPanel .bp3-tab-list {
+        overflow: auto !important;
     }
 }
 

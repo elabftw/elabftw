@@ -18,7 +18,7 @@
     "@fullcalendar/interaction": "^5.1.0",
     "@fullcalendar/list": "^5.1.0",
     "@fullcalendar/timegrid": "^5.1.0",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.3",
     "bootstrap-markdown-fa5": "2.10.*",
     "bootstrap-select": "^1.13.18",
     "dropzone": "5.7.*",

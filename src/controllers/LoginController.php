@@ -130,32 +130,27 @@ class LoginController implements ControllerInterface
 
     private function getAuthService(string $authType): AuthInterface
     {
-        switch($authType) {
+        switch ($authType) {
             // AUTH WITH LDAP
             case 'ldap':
                 return new LdapAuth($this->App->Config, $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
-                break;
 
             // AUTH WITH LOCAL DATABASE
             case 'local':
                 return new LocalAuth($this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
-                break;
 
             // AUTH WITH SAML
             case 'saml':
                 return new SamlAuth($this->App->Config, new Idps(), (int) $this->App->Request->request->get('idpId'));
-                break;
 
             // AUTH AS ANONYMOUS USER
             case 'anon':
                 return new AnonAuth($this->App->Config, (int) $this->App->Request->request->get('team_id'));
-                break;
 
             // AUTH in a team (after the team selection page)
             // we are already authenticated
             case 'team':
                 return new TeamAuth($this->App->Session->get('auth_userid'), (int) $this->App->Request->request->get('selected_team'));
-                break;
 
             // MFA AUTH
             case 'mfa':
@@ -166,7 +161,6 @@ class LoginController implements ControllerInterface
                     ),
                     $this->App->Request->get('mfa_code') ?? '',
                 );
-                break;
 
             default:
                 throw new ImproperActionException('Could not determine which authentication service to use.');

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function count;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\InvalidCredentialsException;

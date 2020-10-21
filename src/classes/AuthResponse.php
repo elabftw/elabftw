@@ -17,6 +17,7 @@ use Elabftw\Services\UsersHelper;
  */
 class AuthResponse
 {
+    /** @var int $userid */
     public $userid;
 
     /** @var array<int, array<int, string>> don't use an array of Team but just the ids and name */
@@ -25,10 +26,13 @@ class AuthResponse
     /** @var int $selectedTeam */
     public $selectedTeam;
 
+    /** @var bool $isAnonymous */
     public $isAnonymous = false;
 
+    /** @var string $mfaSecret */
     public $mfaSecret = '';
 
+    /** @var bool $hasVerifiedMfa */
     public $hasVerifiedMfa = false;
 
     public function setTeams(): void

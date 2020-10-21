@@ -75,8 +75,9 @@ class SamlAuth implements AuthInterface
         $email = $this->getEmail($samlUserdata);
         // GET TEAMS
         $teams = $this->getTeams($samlUserdata);
-        // GET USERID FROM EMAIL
-        $Users = $this->getUsers($email, $samlUserdata);
+        // GET POPULATED USERS OBJECT
+        $Users = $this->getUsers($email, $samlUserdata, $teams);
+        $userid = (int) $Users->userData['userid'];
 
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created
@@ -86,7 +87,7 @@ class SamlAuth implements AuthInterface
         }
 
         $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = (int) $Users->userData['userid'];
+        $AuthResponse->userid = $userid;
         $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
         $AuthResponse->setTeams();
 
@@ -126,9 +127,10 @@ class SamlAuth implements AuthInterface
         if (count($teams) === 1) {
             $teams = explode(',', $teams[0]);
         }
+        return $teams;
     }
 
-    private function getUsers(string $email, array $samlUserdata): Users
+    private function getUsers(string $email, array $samlUserdata, array $teams): Users
     {
         $Users = new Users();
         // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException

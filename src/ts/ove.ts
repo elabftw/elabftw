@@ -29,7 +29,7 @@ export function displayPlasmidViewer(): void {
       b.lastModified = new Date();
       b.name = fileName;
 
-      return <File>b;
+      return b as File;
     }
 
     function parseFile(fileContent): void {
@@ -37,7 +37,7 @@ export function displayPlasmidViewer(): void {
         const parsedSequence = parsedData[0].parsedSequence;
 
         const data: any = {};
-        const convertToFeaturedDNASequence = function (openVESequence): void {
+        const convertToFeaturedDNASequence = function(openVESequence): void {
           data.sequenceData = {
             features: [],
             sequence: openVESequence.sequence
@@ -86,7 +86,7 @@ export function displayPlasmidViewer(): void {
           isFullscreen: false,
           showMenuBar: false,
           withRotateCircularView: false,
-          onCopy: function (event, copiedSequenceData, editorState): void {
+          onCopy: function(event, copiedSequenceData, editorState): void {
             // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
             const clipboardData = event.clipboardData;
             clipboardData.setData('text/plain', copiedSequenceData.sequence);
@@ -185,11 +185,10 @@ export function displayPlasmidViewer(): void {
 
     // load DNA data either as File (.dna files Snapgene) or as String
     if (filename.slice(-4) === '.dna') {
-      let myBlob: Blob;
-      let xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
       xhr.open('GET', filename, true);
       xhr.responseType = 'blob';
-      xhr.onload = function(e) {
+      xhr.onload = function(): void {
         if (this.status == 200) {
           parseFile(blobToFile(this.response, realName));
         }

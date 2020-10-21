@@ -55,7 +55,7 @@ class LoginController implements ControllerInterface
                 );
 
                 // check the input code against the secret stored in session
-                if (!$MfaHelper->verifyCode($this->App->Request->get('mfa_code'))) {
+                if (!$MfaHelper->verifyCode($this->App->Request->get('mfa_code') ?? '')) {
                     throw new InvalidCredentialsException('The code you entered is not valid!');
                 }
 
@@ -130,43 +130,46 @@ class LoginController implements ControllerInterface
 
     private function getAuthService(string $authType): AuthInterface
     {
-        // AUTH WITH LDAP
-        if ($authType === 'ldap') {
-            return new LdapAuth($this->App->Config, $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
-        }
+        switch($authType) {
+            // AUTH WITH LDAP
+            case 'ldap':
+                return new LdapAuth($this->App->Config, $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
+                break;
 
-        // AUTH WITH LOCAL DATABASE
-        if ($authType === 'local') {
-            return new LocalAuth($this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
-        }
+            // AUTH WITH LOCAL DATABASE
+            case 'local':
+                return new LocalAuth($this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
+                break;
 
-        // AUTH WITH SAML
-        if ($authType === 'saml') {
-            return new SamlAuth($this->App->Config, new Idps(), (int) $this->App->Request->request->get('idpId'));
-        }
+            // AUTH WITH SAML
+            case 'saml':
+                return new SamlAuth($this->App->Config, new Idps(), (int) $this->App->Request->request->get('idpId'));
+                break;
 
-        // AUTH AS ANONYMOUS USER
-        if ($authType === 'anon') {
-            return new AnonAuth($this->App->Config, (int) $this->App->Request->request->get('team_id'));
-        }
+            // AUTH AS ANONYMOUS USER
+            case 'anon':
+                return new AnonAuth($this->App->Config, (int) $this->App->Request->request->get('team_id'));
+                break;
 
-        // AUTH in a team (after the team selection page)
-        // we are already authenticated
-        if ($authType === 'team') {
-            return new TeamAuth($this->App->Session->get('auth_userid'), (int) $this->App->Request->request->get('selected_team'));
-        }
+            // AUTH in a team (after the team selection page)
+            // we are already authenticated
+            case 'team':
+                return new TeamAuth($this->App->Session->get('auth_userid'), (int) $this->App->Request->request->get('selected_team'));
+                break;
 
-        // MFA AUTH
-        if ($authType === 'mfa') {
-            return new MfaAuth(
-                new MfaHelper(
-                    (int) $this->App->Session->get('auth_userid'),
-                    $this->App->Session->get('mfa_secret'),
-                ),
-                $this->App->Request->get('mfa_code'),
-            );
-        }
+            // MFA AUTH
+            case 'mfa':
+                return new MfaAuth(
+                    new MfaHelper(
+                        (int) $this->App->Session->get('auth_userid'),
+                        $this->App->Session->get('mfa_secret'),
+                    ),
+                    $this->App->Request->get('mfa_code') ?? '',
+                );
+                break;
 
-        throw new ImproperActionException('Could not determine which authentication service to use.');
+            default:
+                throw new ImproperActionException('Could not determine which authentication service to use.');
+        }
     }
 }

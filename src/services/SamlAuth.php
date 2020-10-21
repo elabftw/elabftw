@@ -72,57 +72,11 @@ class SamlAuth implements AuthInterface
         $samlUserdata = $this->SamlAuthLib->getAttributes();
 
         // GET EMAIL
-        $email = $samlUserdata[$this->Saml->Config->configArr['saml_email']];
-
-        if (is_array($email)) {
-            $email = $email[0];
-        }
-
-        if ($email === null) {
-            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
-        }
-
-        // GET TEAM
-        $teams = $samlUserdata[$this->Saml->Config->configArr['saml_team']];
-
-        // if no team attribute is sent by the IDP, use the default team
-        if (empty($teams)) {
-            // we directly get the id from the stored config
-            $teamId = (int) $this->Saml->Config->configArr['saml_team_default'];
-            if ($teamId === 0) {
-                throw new ImproperActionException('Could not find team ID to assign user!');
-            }
-            $teams = array((string) $teamId);
-        }
-
-        // several teams can be returned by the IDP
-        // or one but with ',' inside and we'll split on that
-        if (count($teams) === 1) {
-            $teams = explode(',', $teams[0]);
-        }
-
+        $email = $this->getEmail($samlUserdata);
+        // GET TEAMS
+        $teams = $this->getTeams($samlUserdata);
         // GET USERID FROM EMAIL
-        $Users = new Users();
-        // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException
-        try {
-            $Users->populateFromEmail($email);
-            $userid = (int) $Users->userData['userid'];
-        } catch (ResourceNotFoundException $e) {
-            // the user doesn't exist yet in the db
-
-            // GET FIRSTNAME AND LASTNAME
-            $firstname = $samlUserdata[$this->Saml->Config->configArr['saml_firstname']];
-            if (is_array($firstname)) {
-                $firstname = $firstname[0];
-            }
-            $lastname = $samlUserdata[$this->Saml->Config->configArr['saml_lastname']];
-            if (is_array($lastname)) {
-                $lastname = $lastname[0];
-            }
-
-            // CREATE USER (and force validation of user)
-            $userid = $Users->create($email, $teams, $firstname, $lastname, '', null, true);
-        }
+        $userid = $this->getUserid($email);
 
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created
@@ -145,5 +99,66 @@ class SamlAuth implements AuthInterface
         }
 
         return $AuthResponse;
+    }
+
+    private function getEmail(array $samlUserdata): string
+    {
+        $email = $samlUserdata[$this->Saml->Config->configArr['saml_email']];
+
+        if (is_array($email)) {
+            $email = $email[0];
+        }
+
+        if ($email === null) {
+            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
+        }
+        return $email;
+    }
+
+    private function getTeams(array $samlUserdata): array
+    {
+        $teams = $samlUserdata[$this->Saml->Config->configArr['saml_team']];
+
+        // if no team attribute is sent by the IDP, use the default team
+        if (empty($teams)) {
+            // we directly get the id from the stored config
+            $teamId = (int) $this->Saml->Config->configArr['saml_team_default'];
+            if ($teamId === 0) {
+                throw new ImproperActionException('Could not find team ID to assign user!');
+            }
+            $teams = array((string) $teamId);
+        }
+
+        // several teams can be returned by the IDP
+        // or one but with ',' inside and we'll split on that
+        if (count($teams) === 1) {
+            $teams = explode(',', $teams[0]);
+        }
+    }
+
+    private function getUserid(string $email): int
+    {
+        $Users = new Users();
+        // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException
+        try {
+            $Users->populateFromEmail($email);
+            $userid = (int) $Users->userData['userid'];
+        } catch (ResourceNotFoundException $e) {
+            // the user doesn't exist yet in the db
+
+            // GET FIRSTNAME AND LASTNAME
+            $firstname = $samlUserdata[$this->Saml->Config->configArr['saml_firstname']];
+            if (is_array($firstname)) {
+                $firstname = $firstname[0];
+            }
+            $lastname = $samlUserdata[$this->Saml->Config->configArr['saml_lastname']];
+            if (is_array($lastname)) {
+                $lastname = $lastname[0];
+            }
+
+            // CREATE USER (and force validation of user)
+            $userid = $Users->create($email, $teams, $firstname, $lastname, '', null, true);
+        }
+        return $userid;
     }
 }

@@ -51,7 +51,6 @@ class UsersHelper
      *
      * @param int $userid
      * @return array
-     * @deprecated
      */
     public function getTeamsFromUserid(int $userid): array
     {

@@ -50,6 +50,7 @@ class LoginHelper
         if ($setCookie) {
             $this->setToken();
         }
+        $this->updateLastLogin();
     }
 
     /**

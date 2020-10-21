@@ -110,7 +110,23 @@ final class Extensions
 
     /** @var array DNA dna files */
     public const DNA = array(
+        // handles FASTA files
+        'fasta',
+        'fas',
+        'fa',
+        'fna',
+        'ffn',
+        // handles genbank files (.gb, .gbk)
         'gb',
+        'gbk',
+        // handles ape files (.ape), those are basically a genbank files
         'ape',
+        // handles .sbol files
+        'sbol',
+        // handles snapgene (.dna) files
+        'dna',
+        // handles GFF files
+        'gff',
+        'gff3',
     );
 }

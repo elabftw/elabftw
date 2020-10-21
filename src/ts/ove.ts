@@ -12,20 +12,21 @@ declare global {
   }
 }
 
-import genbankToJson from 'bio-parsers/src/parsers/anyToJson';
+import anyToJson from 'bio-parsers/src/parsers/anyToJson';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(): void {
   const editor: any = {};
   $('.viewer_OVE').each(function() {
     const viewerID = $(this).attr('id');
-    $.get($(this).data('href'), function(fileContent) {
+    const filename = $(this).data('href');
 
+    $.get(filename, function(fileContent) {
       let parsedSequence: any = {};
-
-      genbankToJson(fileContent, function(parsedData) {
+      const fileContent = window.atob(fileContent);
+      anyToJson(fileContent, function(parsedData) {
         parsedSequence = parsedData[0].parsedSequence;
-      });
+      }, {'fileName': filename});
 
       const data: any = {};
       const convertToFeaturedDNASequence = function (openVESequence): void {

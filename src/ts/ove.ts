@@ -180,7 +180,10 @@ export function displayPlasmidViewer(): void {
         }
 
         editor.viewerID.updateEditor(editorState);
-      }, {'fileName': realName});
+      }, {
+        fileName: realName,
+        guessIfProtein: true
+      });
     }
 
     // load DNA data either as File (.dna files Snapgene) or as String

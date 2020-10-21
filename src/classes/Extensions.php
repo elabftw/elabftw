@@ -121,6 +121,8 @@ final class Extensions
         // GENBANK files (.gb, .gbk)
         'gb',
         'gbk',
+        // GENBANK protein files (.gp)
+        'gp',
         // APE files (.ape), basically genbank files
         'ape',
         // SBOL files (.xml)

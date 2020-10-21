@@ -59,9 +59,6 @@ try {
         // TODO what if we don't have a password (external, saml, ldap login), should we allow changing parameters on this page?
         $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
         $AuthResponse = $LocalAuth->tryAuth();
-        if (!$AuthResponse->isAuthenticated) {
-            throw new ImproperActionException(_('Please input your current password!'));
-        }
         $App->Users->updateAccount($Request->request->all());
 
         // CHANGE PASSWORD

@@ -27,7 +27,6 @@ class TeamAuth implements AuthInterface
         $this->AuthResponse = new AuthResponse();
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->selectedTeam = $team;
-        $this->AuthResponse->isAuthenticated = true;
     }
 
     /**

@@ -32,7 +32,6 @@ class AnonAuth implements AuthInterface
             throw new IllegalActionException('Cannot login as anon because it is not allowed by sysadmin!');
         }
         $this->AuthResponse = new AuthResponse();
-        $this->AuthResponse->isAuthenticated = true;
         $this->AuthResponse->userid = 0;
         $this->AuthResponse->isAnonymous = true;
         $this->AuthResponse->selectedTeam = $team;

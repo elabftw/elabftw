@@ -87,11 +87,9 @@ class Auth
 
         if (isset($AuthService)) {
             $AuthResponse = $AuthService->tryAuth();
-            if ($AuthResponse->isAuthenticated) {
-                $LoginHelper = new LoginHelper($AuthResponse, $this->Session);
-                $LoginHelper->login(false);
-                return true;
-            }
+            $LoginHelper = new LoginHelper($AuthResponse, $this->Session);
+            $LoginHelper->login(false);
+            return true;
         }
 
         return false;

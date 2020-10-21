@@ -14,6 +14,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
@@ -41,7 +42,7 @@ class LdapAuth implements AuthInterface
         $c = $config->configArr;
         $this->config = array(
             'hosts' => array($c['ldap_host']),
-            'port' => $c['ldap_port'],
+            'port' => (int) $c['ldap_port'],
             'base_dn' => $c['ldap_base_dn'],
             'username' => $c['ldap_username'],
             'password' => Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY)),
@@ -62,19 +63,28 @@ class LdapAuth implements AuthInterface
             throw new InvalidCredentialsException();
         }
         $AuthResponse = new AuthResponse();
-        $AuthResponse->isAuthenticated = true;
-        $UsersHelper = new UsersHelper();
         $Users = new Users();
-        $Users->populateFromEmail($this->email);
+        try {
+            $Users->populateFromEmail($this->email);
+        } catch (ResourceNotFoundException $e) {
+            // the user doesn't exist yet in the db
+            // GET FIRSTNAME AND LASTNAME
+            // TODO add options in config to select which attribute is used
+            $firstname = $record['givenname'][0];
+            $lastname = $record['sn'][0];
+
+            // GET TEAMS
+            //$teams = $record['departmentNumber'];
+            // TODO for now:
+            $teams = array('Alpha');
+            // CREATE USER (and force validation of user)
+            $userid = $Users->create($this->email, $teams, $firstname, $lastname, '', null, true);
+            $Users = new Users($userid);
+        }
 
         $AuthResponse->userid = (int) $Users->userData['userid'];
         $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $AuthResponse->selectableTeams = $UsersHelper->getTeamsFromUserid($AuthResponse->userid);
-
-        // if the user only has access to one team, use this one directly
-        if (count($AuthResponse->selectableTeams) === 1) {
-            $AuthResponse->selectedTeam = (int) $AuthResponse->selectableTeams[0]['id'];
-        }
+        $AuthResponse->setTeams();
 
         return $AuthResponse;
     }

@@ -76,7 +76,7 @@ class SamlAuth implements AuthInterface
         // GET TEAMS
         $teams = $this->getTeams($samlUserdata);
         // GET USERID FROM EMAIL
-        $userid = $this->getUserid($email);
+        $Users = $this->getUsers($email, $samlUserdata);
 
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created
@@ -86,17 +86,9 @@ class SamlAuth implements AuthInterface
         }
 
         $AuthResponse = new AuthResponse();
-        $AuthResponse->isAuthenticated = true;
-        $AuthResponse->userid = $userid;
+        $AuthResponse->userid = (int) $Users->userData['userid'];
         $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-
-        $UsersHelper = new UsersHelper();
-        $AuthResponse->selectableTeams = $UsersHelper->getTeamsFromUserid($AuthResponse->userid);
-
-        // if the user only has access to one team, use this one directly
-        if (count($AuthResponse->selectableTeams) === 1) {
-            $AuthResponse->selectedTeam = (int) $AuthResponse->selectableTeams[0]['id'];
-        }
+        $AuthResponse->setTeams();
 
         return $AuthResponse;
     }
@@ -136,13 +128,12 @@ class SamlAuth implements AuthInterface
         }
     }
 
-    private function getUserid(string $email): int
+    private function getUsers(string $email, array $samlUserdata): Users
     {
         $Users = new Users();
         // user might not exist yet and populateFromEmail() will throw a ResourceNotFoundException
         try {
             $Users->populateFromEmail($email);
-            $userid = (int) $Users->userData['userid'];
         } catch (ResourceNotFoundException $e) {
             // the user doesn't exist yet in the db
 
@@ -157,8 +148,8 @@ class SamlAuth implements AuthInterface
             }
 
             // CREATE USER (and force validation of user)
-            $userid = $Users->create($email, $teams, $firstname, $lastname, '', null, true);
+            $Users = new Users($Users->create($email, $teams, $firstname, $lastname, '', null, true));
         }
-        return $userid;
+        return $Users;
     }
 }

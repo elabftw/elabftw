@@ -97,11 +97,9 @@ try {
     if ($App->Request->server->get($App->Config->configArr['extauth_remote_user'])) {
         $ExternalAuth = new ExternalAuth($App);
         $AuthResponse = $ExternalAuth->tryAuth();
-        if ($AuthResponse->isAuthenticated) {
-            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
-            // never set a cookie for external auth
-            $LoginHelper->login(false);
-        }
+        $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+        // never set a cookie for external auth
+        $LoginHelper->login(false);
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;

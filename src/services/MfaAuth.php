@@ -34,7 +34,6 @@ class MfaAuth implements AuthInterface
 
     public function tryAuth(): AuthResponse
     {
-        $UsersHelper = new UsersHelper();
         $Users = new Users($this->MfaHelper->userid);
 
         if (!$this->MfaHelper->verifyCode($this->code)) {
@@ -42,17 +41,12 @@ class MfaAuth implements AuthInterface
         }
 
         $AuthResponse = new AuthResponse();
-        $AuthResponse->isAuthenticated = true;
         $AuthResponse->hasVerifiedMfa = true;
         $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
 
-        $AuthResponse->selectableTeams = $UsersHelper->getTeamsFromUserid($this->MfaHelper->userid);
         $AuthResponse->userid = $this->MfaHelper->userid;
+        $AuthResponse->setTeams();
 
-        // if the user only has access to one team, use this one directly
-        if (count($AuthResponse->selectableTeams) === 1) {
-            $AuthResponse->selectedTeam = (int) $AuthResponse->selectableTeams[0]['id'];
-        }
         return $AuthResponse;
     }
 }

@@ -65,7 +65,6 @@ class ExternalAuth implements AuthInterface
         $this->App->Session->set('is_ext_auth', 1);
 
         $AuthResponse = new AuthResponse();
-        $AuthResponse->isAuthenticated = true;
         $AuthResponse->userid = $userid;
         $AuthResponse->selectedTeam = $teamId;
         return $AuthResponse;

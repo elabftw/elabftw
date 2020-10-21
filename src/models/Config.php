@@ -236,7 +236,7 @@ class Config
             ('logout_url', ''),
             ('ldap_toggle', '0'),
             ('ldap_host', ''),
-            ('ldap_port', ''),
+            ('ldap_port', '389'),
             ('ldap_base_dn', ''),
             ('ldap_username', ''),
             ('ldap_password', ''),

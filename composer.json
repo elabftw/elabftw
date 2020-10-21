@@ -12,6 +12,7 @@
     "ext-gettext": "*",
     "ext-hash": "*",
     "ext-json": "*",
+    "ext-ldap": "*",
     "ext-mbstring": "*",
     "ext-openssl": "*",
     "ext-gd": "*",

@@ -87,7 +87,7 @@ class LoginController implements ControllerInterface
         // MFA //
         /////////
         // check if we need to do mfa auth too after a first successful authentication
-        if ($AuthResponse->mfaSecret && !$AuthResponse->hasVerifiedMfa && $AuthResponse->isAuthenticated) {
+        if ($AuthResponse->mfaSecret && !$AuthResponse->hasVerifiedMfa) {
             $this->App->Session->set('mfa_auth_required', true);
             $this->App->Session->set('mfa_secret', $AuthResponse->mfaSecret);
             // remember which user is authenticated

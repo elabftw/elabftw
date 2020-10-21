@@ -10,15 +10,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Maps\Team;
+use Elabftw\Services\UsersHelper;
 
 /**
  * Response object sent by an Auth service
  */
 class AuthResponse
 {
-    public $isAuthenticated = false;
-
     public $userid;
 
     /** @var array<int, array<int, string>> don't use an array of Team but just the ids and name */
@@ -33,5 +31,14 @@ class AuthResponse
 
     public $hasVerifiedMfa = false;
 
-    //public $setCookie = false;
+    public function setTeams(): void
+    {
+        $UsersHelper = new UsersHelper();
+        $this->selectableTeams = $UsersHelper->getTeamsFromUserid($this->userid);
+
+        // if the user only has access to one team, use this one directly
+        if (count($this->selectableTeams) === 1) {
+            $this->selectedTeam = (int) $this->selectableTeams[0]['id'];
+        }
+    }
 }

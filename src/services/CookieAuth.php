@@ -58,7 +58,6 @@ class CookieAuth implements AuthInterface
         }
 
         $AuthResponse = new AuthResponse();
-        $AuthResponse->isAuthenticated = true;
         $AuthResponse->userid = $userid;
         $AuthResponse->mfaSecret = $res['mfa_secret'];
         $AuthResponse->selectedTeam = $this->tokenTeam;

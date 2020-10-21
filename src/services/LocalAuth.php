@@ -55,17 +55,9 @@ class LocalAuth implements AuthInterface
         $res = $req->fetch();
 
         $AuthResponse = new AuthResponse();
-        $AuthResponse->isAuthenticated = true;
         $AuthResponse->userid = (int) $res['userid'];
         $AuthResponse->mfaSecret = $res['mfa_secret'];
-
-        $UsersHelper = new UsersHelper();
-        $AuthResponse->selectableTeams = $UsersHelper->getTeamsFromUserid($AuthResponse->userid);
-
-        // if the user only has access to one team, use this one directly
-        if (count($AuthResponse->selectableTeams) === 1) {
-            $AuthResponse->selectedTeam = (int) $AuthResponse->selectableTeams[0]['id'];
-        }
+        $AuthResponse->setTeams();
 
         return $AuthResponse;
     }

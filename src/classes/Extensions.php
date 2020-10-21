@@ -110,22 +110,25 @@ final class Extensions
 
     /** @var array DNA dna files */
     public const DNA = array(
-        // handles FASTA files
+        // DNA FASTA files
+        // this is problematic because of protein fasta files and the multi-fasta format
+        // only the first entry is shown for dna multi-fasta files
         'fasta',
         'fas',
         'fa',
         'fna',
         'ffn',
-        // handles genbank files (.gb, .gbk)
+        // GENBANK files (.gb, .gbk)
         'gb',
         'gbk',
-        // handles ape files (.ape), those are basically a genbank files
+        // APE files (.ape), basically genbank files
         'ape',
-        // handles .sbol files
-        'sbol',
-        // handles snapgene (.dna) files
+        // SBOL files (.xml)
+        // deactivated because xml is used for other data too
+        //'xml',
+        // SNAPGENE (.dna) files
         'dna',
-        // handles GFF files
+        // GFF files
         'gff',
         'gff3',
     );

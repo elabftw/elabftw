@@ -20,6 +20,8 @@ use Elabftw\Maps\UserPreferences;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
+use Elabftw\Services\LocalAuth;
+use Elabftw\Services\MfaHelper;
 use Exception;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -54,7 +56,10 @@ try {
     if ($Request->request->has('currpass')) {
         $tab = '2';
         // check that we got the good password
-        if (!$Auth->checkCredentials($App->Users->userData['email'], $Request->request->get('currpass'))) {
+        // TODO what if we don't have a password (external, saml, ldap login), should we allow changing parameters on this page?
+        $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
+        $AuthResponse = $LocalAuth->tryAuth();
+        if (!$AuthResponse->isAuthenticated) {
             throw new ImproperActionException(_('Please input your current password!'));
         }
         $App->Users->updateAccount($Request->request->all());
@@ -70,20 +75,27 @@ try {
 
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($Request->request->get('use_mfa') ?? '');
-        $Mfa = new Mfa($App->Request, $App->Session);
+        $MfaHelper = new MfaHelper((int) $App->Users->userData['userid']);
 
-        // No MFA secret yet but user wants to enable
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
-            $App->Session->getFlashBag()->add('ok', _('Saved'));
+            // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
+            // so we will require mfa, redirect the user to login
+            // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
+            // and after that we redirect on ucp back thanks to mfa_redirect
+            // the mfa_secret is not yet saved to the DB
+            $App->Session->set('mfa_auth_required', true);
+            $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
+            $App->Session->set('enable_mfa', true);
+            $App->Session->set('mfa_redirect', '../../ucp.php?tab=2');
+
             // This will redirect user right away to verify mfa code
-            $location = $Mfa->enable('../../ucp.php?tab=2');
-            $Response = new RedirectResponse($location);
+            $Response = new RedirectResponse('../../login.php');
             $Response->send();
-            exit();
+            exit;
 
         // Disable MFA
         } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
-            $Mfa->disable((int) $App->Users->userData['userid']);
+            $MfaHelper->removeSecret();
         }
     }
     // END TAB 2

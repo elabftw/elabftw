@@ -58,7 +58,7 @@ try {
     // so we don't stay logged in as anon
     if ($App->Request->query->has('elabid')
         && $App->Request->query->get('mode') === 'view'
-        && !$App->Request->getSession()->has('auth')) {
+        && !$App->Request->getSession()->has('is_auth')) {
         $App->Session->invalidate();
     }
 

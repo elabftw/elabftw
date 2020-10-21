@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -237,13 +238,13 @@ class Users
     {
         $sql = 'SELECT userid
             FROM users
-            WHERE email = :email AND archived = 0 LIMIT 1';
+            WHERE email = :email AND archived = 0 AND validated = 1 LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $email);
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false) {
-            throw new ImproperActionException(_('Email not found in database!'));
+            throw new ResourceNotFoundException(_('Email not found in database!'));
         }
         $this->populate((int) $res);
     }
@@ -265,7 +266,7 @@ class Users
         // NOTE: previously, the ORDER BY started with the team, but that didn't work
         // with the DISTINCT, so it was removed.
         $sql = "SELECT DISTINCT users.userid,
-            users.firstname, users.lastname, users.email, users.mfa_secret,
+            users.firstname, users.lastname, users.email,
             users.validated, users.usergroup, users.archived, users.last_login,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users

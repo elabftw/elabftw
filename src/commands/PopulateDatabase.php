@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Mfa;
 use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Models\ApiKeys;
@@ -23,6 +22,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
+use Elabftw\Services\MfaHelper;
 use Elabftw\Services\Populate;
 use function is_string;
 use Symfony\Component\Console\Command\Command;
@@ -136,7 +136,6 @@ class PopulateDatabase extends Command
         $Session = new Session();
         $Request->setSession($Session);
 
-        $Mfa = new Mfa($Request, $Session);
 
         $iterations = $yaml['iterations'] ?? 50;
 
@@ -157,10 +156,9 @@ class PopulateDatabase extends Command
             $Users = new Users($userid, $team);
 
             if ($user['create_mfa_secret'] ?? false) {
-                $Mfa->enable('path/to/some/file.php');
-                $Session->set('userid', $userid);
-                $Session->set('mfa_secret', 'EXAMPLE2FASECRET234567ABCDEFGHIJ');
-                $Mfa->saveSecret();
+                // TODO
+                $MfaHelper = new MfaHelper($userid);
+                $mfaSecret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
             }
             if ($user['create_experiments'] ?? false) {
                 $Populate->generate(new Experiments($Users), $iterations);

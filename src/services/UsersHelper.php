@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function array_column;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Maps\Team;
 use PDO;
 
 /**
@@ -49,6 +51,7 @@ class UsersHelper
      *
      * @param int $userid
      * @return array
+     * @deprecated
      */
     public function getTeamsFromUserid(int $userid): array
     {
@@ -66,6 +69,28 @@ class UsersHelper
     }
 
     /**
+     * Get the permissions for a user (admin/sysadmin/can lock)
+     *
+     * @return array<string, string>
+     */
+    public function getPermissions(int $userid): array
+    {
+        $default = array('is_admin' => '0', 'is_sysadmin' => '0', 'can_lock' => '0');
+
+        $sql = 'SELECT groups.is_sysadmin, groups.is_admin, groups.can_lock
+            FROM `groups`
+            CROSS JOIN users on (users.usergroup = groups.id) where users.userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if (!is_array($res)) {
+            return $default;
+        }
+        return $res;
+    }
+
+    /**
      * Get teams id from a userid
      *
      * @param int $userid
@@ -73,12 +98,7 @@ class UsersHelper
      */
     public function getTeamsIdFromUserid(int $userid): array
     {
-        $teams = $this->getTeamsFromUserid($userid);
-        $teamsIdArr = array();
-        foreach ($teams as $team) {
-            $teamsIdArr[] = $team['id'];
-        }
-        return $teamsIdArr;
+        return array_column($this->getTeamsFromUserid($userid), 'id');
     }
 
     /**
@@ -89,12 +109,7 @@ class UsersHelper
      */
     public function getTeamsNameFromUserid(int $userid): array
     {
-        $teams = $this->getTeamsFromUserid($userid);
-        $teamsArr = array();
-        foreach ($teams as $team) {
-            $teamsArr[] = $team['name'];
-        }
-        return $teamsArr;
+        return array_column($this->getTeamsFromUserid($userid), 'name');
     }
 
     /**

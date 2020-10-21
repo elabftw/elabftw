@@ -72,7 +72,7 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // CREATE
-        if ($this->App->Request->query->has('create')) {
+        if ($this->App->Request->query->has('create') && !$this->App->Session->get('is_anon')) {
             $id = $this->Entity->create((int) $this->App->Request->query->get('tpl'));
             return new RedirectResponse('?mode=edit&id=' . (string) $id);
         }
@@ -120,7 +120,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $DisplayParams->adjust($this->App);
 
         // only show public to anon
-        if ($this->App->Session->get('anon')) {
+        if ($this->App->Session->get('is_anon')) {
             $this->Entity->addFilter('entity.canread', 'public');
         }
 

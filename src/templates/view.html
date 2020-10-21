@@ -80,7 +80,7 @@
       </a>
   {% endif %}
 
-  {% if not App.Session.has('anon') %}
+  {% if not App.Session.has('is_anon') %}
   <a class='elab-tooltip' href='#'>
       <span>{{ 'Duplicate'|trans }}</span>
       <i class='far fa-copy clickable duplicateItem' data-id='{{ Entity.id }}'></i>
@@ -125,7 +125,7 @@
   {% endif %}
 
   {% if Entity.type == 'experiments' %}
-    {% if not App.Session.has('anon') %}
+    {% if not App.Session.has('is_anon') %}
     <a class='elab-tooltip' href='#'>
         <span>{{ 'Share'|trans }}</span>
         <i class='fas fa-share-alt clickable shareItem' data-id='{{ Entity.id }}'></i>
@@ -135,7 +135,7 @@
   {% endif %}
 
   <!-- show timestamp button if not timestamped already -->
-  {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('anon') %}
+  {% if not Entity.entityData.timestamped and Entity.isTimestampable and Entity.type == 'experiments' and not App.Session.has('is_anon') %}
     <a class='elab-tooltip' href='#'>
       <span>{{ 'Timestamp Experiment'|trans }}</span>
       <i class='far fa-calendar-check modalToggle' data-modal='timestampModal'></i>
@@ -221,7 +221,7 @@
   {{ include('json-editor.html') }}
 {% endif %}
 
-{% if App.Session.get('auth') %}
+{% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
     <section id='comment_container'>
         <div id='comment' class='box'>
             <i class='fas fa-comments mr-1 align-baseline'></i><h3 class='d-inline'>{{ 'Comments'|trans }}</h3>

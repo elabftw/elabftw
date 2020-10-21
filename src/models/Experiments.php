@@ -241,14 +241,9 @@ class Experiments extends AbstractEntity implements CreateInterface
         $this->Pins->cleanup();
     }
 
-    /**
-     * Get the team from the elabid
-     *
-     * @param string $elabid
-     * @return int
-     */
     public function getTeamFromElabid(string $elabid): int
     {
+        $elabid = Filter::sanitize($elabid);
         $sql = 'SELECT users2teams.teams_id FROM `experiments`
             CROSS JOIN users2teams ON (users2teams.users_id = experiments.userid)
             WHERE experiments.elabid = :elabid';

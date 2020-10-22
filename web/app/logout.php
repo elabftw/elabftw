@@ -39,7 +39,18 @@ if ($Session->has('samlUserdata')) {
 // kill session
 $Session->invalidate();
 // disable token cookie
-setcookie('token', '', time() - 3600, '/', '', true, true);
+$cookieOptions = array(
+    'expires' => time() - 3600,
+    'path' => '/',
+    'domain' => '',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Strict',
+);
+setcookie('token', '', $cookieOptions);
+setcookie('token_team', '', $cookieOptions);
+setcookie('redirect', '', $cookieOptions);
+setcookie('pdf_sig', '', $cookieOptions);
 
 // this will be present if we logged in through SAML
 if ($doSLO) {

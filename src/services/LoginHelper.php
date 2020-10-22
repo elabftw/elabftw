@@ -113,7 +113,7 @@ class LoginHelper
             'domain' => '',
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Lax',
+            'samesite' => 'Strict',
         );
         setcookie('token', $token, $cookieOptions);
         setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);

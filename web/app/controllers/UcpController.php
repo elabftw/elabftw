@@ -44,11 +44,21 @@ try {
         $Prefs->hydrate($Request->request->all());
         $Prefs->save();
 
+
+        $cookieValue = '0';
+        $cookieOptions = array(
+            'expires' => time() - 3600,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        );
         if ($Request->request->get('pdf_sig') === 'on') {
-            setcookie('pdf_sig', '1', time() + 2592000, '/', '', true, true);
-        } else {
-            setcookie('pdf_sig', '0', time() - 3600, '/', '', true, true);
+            $cookieValue = '1';
+            $cookieOptions['expires'] = time() + 2592000;
         }
+        setcookie('pdf_sig', $cookieValue, $cookieOptions);
     }
     // END TAB 1
 

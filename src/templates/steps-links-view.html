@@ -1,7 +1,7 @@
 {% if Entity.type == 'experiments_templates' %}
-  {% set stepsArr = Entity.Steps.readFromId(template.id) %}
-  {% set linksArr = Entity.Links.readFromId(template.id) %}
-  {% set Entity_id = template.id %}
+  {% set stepsArr = Entity.Steps.readFromId(templateData.id) %}
+  {% set linksArr = Entity.Links.readFromId(templateData.id) %}
+  {% set Entity_id = templateData.id %}
 {% else %}
   {% set Entity_id = Entity.id %}
 {% endif %}

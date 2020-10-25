@@ -127,9 +127,9 @@ class Uploads implements CrudInterface
      * @param string $fileType 'mol' or 'png'
      * @param string $realName name of the file
      * @param string $content content of the file
-     * @return void
+     * @return int
      */
-    public function createFromString(string $fileType, string $realName, string $content): void
+    public function createFromString(string $fileType, string $realName, string $content): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -157,9 +157,11 @@ class Uploads implements CrudInterface
             throw new FilesystemErrorException('Could not write to file!');
         }
 
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        $uploadId = $this->dbInsert($realName, $longName, $this->getHash($fullPath));
         $MakeThumbnail = new MakeThumbnail($fullPath);
         $MakeThumbnail->makeThumb();
+
+        return $uploadId;
     }
 
     /**
@@ -427,9 +429,9 @@ class Uploads implements CrudInterface
      * @param string $hash The hash string of our file
      * @param string|null $comment The file comment
      * @throws DatabaseErrorException
-     * @return void
+     * @return int
      */
-    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): void
+    private function dbInsert(string $realName, string $longName, string $hash, ?string $comment = null): int
     {
         if ($comment === null) {
             $comment = 'Click to add a comment';
@@ -467,5 +469,6 @@ class Uploads implements CrudInterface
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
         $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 }

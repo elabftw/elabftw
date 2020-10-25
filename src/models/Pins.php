@@ -85,12 +85,24 @@ class Pins
     }
 
     /**
+     * Remove all traces of that entity because it has been destroyed
+     */
+    public function cleanup(): void
+    {
+        $sql = 'DELETE FROM pin2users WHERE entity_id = :entity_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+
+        $this->Db->execute($req);
+    }
+
+    /**
      * Remove current entity from pinned of current user
-     * The method is public because it is called on entity destroy
      *
      * @return void
      */
-    public function rmFromPinned(): void
+    private function rmFromPinned(): void
     {
         $this->Entity->canOrExplode('read');
 

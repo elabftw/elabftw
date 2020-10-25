@@ -53,7 +53,7 @@ $(document).ready(function() {
 
   // DEDUPLICATE (from admin panel/tag manager)
   $(document).on('click', '.tagDeduplicate', function() {
-    TagC.deduplicate($(this).data('tag'));
+    TagC.deduplicate();
   });
 
   // DESTROY (from admin panel/tag manager)

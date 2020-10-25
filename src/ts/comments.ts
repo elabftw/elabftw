@@ -5,79 +5,48 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import Comment from './Comment.class';
 import { notif } from './misc';
-import i18next from 'i18next';
 
-const Comments = {
-  controller: 'app/controllers/CommentsAjaxController.php',
-  create: function(): void {
-    (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = true;
-    const comment = $('#commentsCreateArea').val();
-    const type = $('#info').data('type');
-    const id = $('#info').data('id');
+$(document).ready(function() {
+  const type = $('#info').data('type');
+  const CommentC = new Comment(type);
 
-    $.post(this.controller, {
-      create: true,
-      comment: comment,
-      type: type,
-      id: id,
-    }).done(function(json) {
-      notif(json);
-      $('#comment_container').load('?mode=view&id=' + id + ' #comment');
-      (document.getElementById('commentsCreateButton') as HTMLButtonElement).disabled = false;
-    });
-  },
-  destroy: function(commentId: string): void {
-    const id = $('#info').data('id');
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      $.post(this.controller, {
-        destroy: true,
-        type: $('#info').data('type'),
-        id: commentId
-      }).done(function(json) {
+  // CREATE COMMENTS
+  $(document).on('click', '#commentsCreateButton', function() {
+    CommentC.create();
+  });
+
+  // MAKE them editable on mousehover
+  $(document).on('mouseenter', '.comment', function() {
+    ($(this) as any).editable('app/controllers/CommentsAjaxController.php', {
+      name: 'update',
+      type : 'textarea',
+      submitdata: {
+        type: $(this).data('type')
+      },
+      width: '80%',
+      height: '200',
+      tooltip : 'Click to edit',
+      indicator : $(this).data('indicator'),
+      submit : $(this).data('submit'),
+      cancel : $(this).data('cancel'),
+      style : 'display:inline',
+      submitcssclass : 'button btn btn-primary mt-2',
+      cancelcssclass : 'button btn btn-danger mt-2',
+      callback : function(data: string) {
+        const json = JSON.parse(data);
         notif(json);
+        // show result in comment box
         if (json.res) {
-          $('#comment_container').load('?mode=view&id=' + id + ' #comment');
+          $(this).html(json.update);
         }
-      });
-    }
-  }
-};
-
-// CREATE COMMENTS
-$(document).on('click', '#commentsCreateButton', function() {
-  Comments.create();
-});
-
-$(document).on('mouseenter', '.comment', function() {
-  ($(this) as any).editable('app/controllers/CommentsAjaxController.php', {
-    name: 'update',
-    type : 'textarea',
-    submitdata: {
-      type: $(this).data('type')
-    },
-    width: '80%',
-    height: '200',
-    tooltip : 'Click to edit',
-    indicator : $(this).data('indicator'),
-    submit : $(this).data('submit'),
-    cancel : $(this).data('cancel'),
-    style : 'display:inline',
-    submitcssclass : 'button btn btn-primary mt-2',
-    cancelcssclass : 'button btn btn-danger mt-2',
-    callback : function(data: string) {
-      const json = JSON.parse(data);
-      notif(json);
-      // show result in comment box
-      if (json.res) {
-        $(this).html(json.update);
       }
-    }
+    });
+  });
+
+  // DESTROY COMMENTS
+  $(document).on('click', '.commentsDestroy', function() {
+    CommentC.destroy($(this).data('id'));
   });
 });
-
-// DESTROY COMMENTS
-$(document).on('click', '.commentsDestroy', function() {
-  Comments.destroy($(this).data('id'));
-});
-

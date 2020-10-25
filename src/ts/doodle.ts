@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { notif } from './misc';
+import i18next from 'i18next';
 
 $(document).ready(function() {
   if ($('#info').data('page') !== 'edit') {
@@ -69,7 +70,7 @@ $(document).ready(function() {
     const image = ($('#doodleCanvas')[0] as HTMLCanvasElement).toDataURL();
     let type = $(this).data('type');
     const id = $(this).data('id');
-    const realName = prompt('Enter name of the file');
+    const realName = prompt(i18next.t('request-filename'));
     if (realName == null) {
       return;
     }

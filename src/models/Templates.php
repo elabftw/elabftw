@@ -53,9 +53,9 @@ class Templates extends AbstractEntity
      * @param string|null $body
      * @param int|null $userid
      * @param int|null $team
-     * @return void
+     * @return int
      */
-    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): void
+    public function createNew(string $name, ?string $body = null, ?int $userid = null, ?int $team = null): int
     {
         if ($team === null) {
             $team = $this->Users->userData['team'];
@@ -86,6 +86,7 @@ class Templates extends AbstractEntity
         $req->bindParam('canread', $canread, PDO::PARAM_STR);
         $req->bindParam('canwrite', $canwrite, PDO::PARAM_STR);
         $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 
     /**
@@ -148,7 +149,15 @@ class Templates extends AbstractEntity
      */
     public function read(bool $getTags = false, bool $inTeam = true): array
     {
-        $sql = 'SELECT id, name, body, userid, canread, canwrite FROM experiments_templates WHERE id = :id';
+        $sql = "SELECT experiments_templates.id, experiments_templates.name, experiments_templates.body,
+            experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
+            FROM experiments_templates
+            LEFT JOIN users ON (experiments_templates.userid = users.userid)
+            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
+            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            WHERE experiments_templates.id = :id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -162,120 +171,79 @@ class Templates extends AbstractEntity
     }
 
     /**
-     * Read templates for a user
-     *
-     * @return array
+     * Read the templates for the user (in ucp or create new menu)
+     * depending on the user preference, we filter out on the owner or not
      */
-    public function readAll(): array
-    {
-        $sql = "SELECT experiments_templates.id,
-            experiments_templates.body,
-            experiments_templates.name,
-            GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
-            FROM experiments_templates
-            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            WHERE experiments_templates.userid = :userid
-            GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-        return $res;
-    }
-
-    /**
-     * Read the templates from the team. Don't take into account the userid = 0 (common templates)
-     * nor the current user templates
-     *
-     * @return array
-     */
-    public function readFromTeam(): array
-    {
-        $sql = "SELECT experiments_templates.*,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            GROUP_CONCAT(tags.tag SEPARATOR '|') as tags, GROUP_CONCAT(tags.id) as tags_id
-            FROM experiments_templates
-            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            LEFT JOIN users ON (experiments_templates.userid = users.userid)
-            WHERE experiments_templates.userid != 0 AND experiments_templates.userid != :userid
-            AND experiments_templates.team = :team
-            GROUP BY experiments_templates.id ORDER BY experiments_templates.ordering ASC";
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-
-        $res = $req->fetchAll();
-        if ($res === false) {
-            return array();
-        }
-
-        // loop the array and only add the ones we can read to return to template
-        $finalArr = array();
-        foreach ($res as $item) {
-            $permissions = $this->getPermissions($item);
-            if ($permissions['read']) {
-                $item['isWritable'] = $permissions['write'];
-                $finalArr[] = $item;
-            }
-        }
-
-        return $finalArr;
-    }
-
-    /*
-     * Read all the templates in the experiment_templates table including the currentuser
-     *  and default template ( userid = 0 )
-     */
-    public function readInclusive(): array
+    public function readForUser(): array
     {
         if (!$this->Users->userData['show_team_templates']) {
             $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
         }
+        return $this->getTemplatesList();
+    }
 
-        $sql = "SELECT DISTINCT experiments_templates.*,
+    /**
+     * Filter the readable templates to only get the ones where we can write to
+     * Use this to display templates in UCP
+     */
+    public function getWriteableTemplatesList(): array
+    {
+        $TeamGroups = new TeamGroups($this->Users);
+        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+
+        return array_filter($this->getTemplatesList(), function ($t) use ($teamgroupsOfUser) {
+            return $t['canwrite'] === 'public' || $t['canwrite'] === 'organization' ||
+                ($t['canwrite'] === 'team' && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
+                ($t['canwrite'] === 'user' && $t['userid'] === $this->Users->userData['userid']) ||
+                (in_array($t['canwrite'], $teamgroupsOfUser, true));
+        });
+    }
+
+    /**
+     * Get a list of fullname + id + name of template
+     * Use this to build a select of the readable templates
+     */
+    public function getTemplatesList(): array
+    {
+        $TeamGroups = new TeamGroups($this->Users);
+        $teamgroupsOfUser = $TeamGroups->getGroupsFromUser();
+
+        $sql = "SELECT DISTINCT experiments_templates.id, experiments_templates.name, experiments_templates.canwrite,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,
-                GROUP_CONCAT(DISTINCT tags.id) as tags_id
+                users2teams.teams_id, experiments_templates.userid, experiments_templates.body
                 FROM experiments_templates
                 LEFT JOIN users ON (experiments_templates.userid = users.userid)
-                LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-                LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-                WHERE experiments_templates.userid != 0 ";
+                LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
+                WHERE experiments_templates.userid != 0 AND (
+                    experiments_templates.canread = 'public' OR
+                    experiments_templates.canread = 'organization' OR
+                    (experiments_templates.canread = 'team' AND users2teams.users_id = experiments_templates.userid) OR
+                    (experiments_templates.canread = 'user' AND experiments_templates.userid = :userid)";
+        // add all the teamgroups in which the user is
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= " OR (experiments_templates.canread = $teamgroup)";
+            }
+        }
+        $sql .= ')';
 
         foreach ($this->filters as $filter) {
             $sql .= sprintf(" AND %s = '%s'", $filter['column'], $filter['value']);
         }
 
-        $sql .= 'GROUP BY id ORDER BY experiments_templates.ordering ASC';
+        $sql .= 'GROUP BY id ORDER BY fullname, experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
-
 
         $res = $req->fetchAll();
         if ($res === false) {
             return array();
         }
 
-        // loop the array and only add the ones we can read to return to template
-        $finalArr = array();
-        foreach ($res as $item) {
-            $permissions = $this->getPermissions($item);
-            if ($permissions['read']) {
-                $item['isWritable'] = $permissions['write'];
-                $finalArr[] = $item;
-            }
-        }
-
-        return $finalArr;
+        return $res;
     }
 
     /**

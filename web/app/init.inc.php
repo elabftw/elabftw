@@ -111,6 +111,10 @@ try {
             (int) $App->Session->get('userid'),
             (int) $App->Session->get('team')
         ));
+        if ($App->Session->has('tmp_disable_admin')) {
+            $App->Users->userData['is_admin'] = 0;
+            $App->Users->userData['is_sysadmin'] = 0;
+        }
     }
 
     // ANONYMOUS

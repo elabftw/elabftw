@@ -8,7 +8,7 @@
 import $ from 'jquery';
 import 'bootstrap/js/dist/modal.js';
 import 'bootstrap-select';
-import { relativeMoment, displayMolFiles, makeSortableGreatAgain } from './misc';
+import { relativeMoment, displayMolFiles, makeSortableGreatAgain, notif } from './misc';
 import i18next from 'i18next';
 
 $(document).ready(function() {
@@ -70,4 +70,14 @@ $(document).ready(function() {
     }
   });
 
+  // temporarily disable admin rights
+  $(document).on('click', '.adminRightsToggle', function() {
+    $.get('app/controllers/Ajax.php', {
+      action: 'toggle',
+      what: 'adminRights',
+    }).done(function(json) {
+      notif(json);
+      window.location.reload(true);
+    });
+  });
 });

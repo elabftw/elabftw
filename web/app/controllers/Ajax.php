@@ -85,9 +85,10 @@ try {
             $App->Session->set('tmp_disable_sysadmin', $App->Session->get('is_sysadmin'));
             $App->Session->set('is_sysadmin', 0);
         } elseif ($hasTmpDisableAdmin) {
-            $App->Session->remove('tmp_disable_admin');
             $App->Session->set('is_admin', 1);
             $App->Session->set('is_sysadmin', $App->Session->get('tmp_disable_sysadmin'));
+            $App->Session->remove('tmp_disable_sysadmin');
+            $App->Session->remove('tmp_disable_admin');
         }
 
         $Response->send();

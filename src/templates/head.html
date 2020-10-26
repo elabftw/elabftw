@@ -80,9 +80,9 @@
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs'></i> {{ 'User panel'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user'></i> {{ 'My Profile'|trans }}</a>
               <a class='dropdown-item todoToggle' href='#'><i class='fas fa-list'></i> {{ 'Todolist'|trans }}</a>
-              {% if App.Session.get('is_admin') or App.Session.get('tmp_disable_admin') %}
+              {% if App.Session.get('is_admin') or App.Session.has('tmp_disable_admin') %}
                 {% set onOffIcon = 'fa-toggle-on' %}
-                {% if App.Session.get('tmp_disable_admin') == 1 %}
+                {% if App.Session.has('tmp_disable_admin')%}
                   {% set onOffIcon = 'fa-toggle-off' %}
                 {% endif %}
                   <a class='dropdown-item adminRightsToggle' href='#'><i class='fas {{ onOffIcon }} fa-fw'></i> {{ 'Admin features'|trans }}</a>

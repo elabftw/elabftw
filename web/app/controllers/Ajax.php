@@ -132,7 +132,7 @@ try {
             break;
 
         case 'adminRights':
-            if (!($App->Session->get('is_admin') || $App->Session->get('tmp_disable_admin'))) {
+            if (!($App->Session->get('is_admin') || $App->Session->has('tmp_disable_admin'))) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
             break;
@@ -237,11 +237,6 @@ try {
                 $App->Session->set('is_admin', 1);
                 $App->Session->set('is_sysadmin', $App->Session->get('tmp_disable_sysadmin'));
             }
-
-            $Response->setData(array(
-                'res' => true,
-                'msg' => _('Saved'),
-            ));
             break;
 
         default:

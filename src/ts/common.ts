@@ -75,7 +75,7 @@ $(document).ready(function() {
     $.get('app/controllers/Ajax.php', {
       action: 'toggle',
       what: 'adminRights',
-    }).done(function(json) {
+    }).done(function() {
       window.location.reload(true);
     });
   });

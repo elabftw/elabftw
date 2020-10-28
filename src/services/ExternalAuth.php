@@ -64,7 +64,7 @@ class ExternalAuth implements AuthInterface
         } catch (ResourceNotFoundException $e) {
             // the user doesn't exist yet in the db
             // CREATE USER (and force validation of user)
-            $userid = $Users->create($email, $teams, $firstname, $lastname, '', null, true);
+            $Users->create($email, $teams, $firstname, $lastname, '', null, true);
             $Users->populateFromEmail($email);
             $this->App->Log->info('New user (' . $email . ') autocreated from external auth');
         }

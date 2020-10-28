@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Maps\Team;
 
 /**
  * Team auth service: for when you are already auth but you had to select a team
@@ -24,7 +23,7 @@ class TeamAuth implements AuthInterface
 
     public function __construct(int $userid, int $team)
     {
-        $this->AuthResponse = new AuthResponse();
+        $this->AuthResponse = new AuthResponse('team');
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->selectedTeam = $team;
     }

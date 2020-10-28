@@ -38,18 +38,22 @@ class SamlAuth implements AuthInterface
     /** @var SamlAuthLib $SamlAuthLib */
     private $SamlAuthLib;
 
+    /** @var AuthResponse $AuthResponse */
+    private $AuthResponse;
+
     public function __construct(Config $config, Idps $idps, ?int $idpId = null)
     {
         $this->Saml = new Saml($config, $idps);
         $this->settings = $this->Saml->getSettings($idpId);
         $this->SamlAuthLib = new SamlAuthLib($this->settings);
+        $this->AuthResponse = new AuthResponse('saml');
     }
 
     public function tryAuth(): AuthResponse
     {
         $returnUrl = $this->settings['baseurl'] . '/index.php?acs';
         $this->SamlAuthLib->login($returnUrl);
-        return new AuthResponse();
+        return $this->AuthResponse;
     }
 
     public function assertIdpResponse(): AuthResponse
@@ -86,12 +90,11 @@ class SamlAuth implements AuthInterface
             $Teams->syncFromIdp($userid, $teams);
         }
 
-        $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = $userid;
-        $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $AuthResponse->setTeams();
+        $this->AuthResponse->userid = $userid;
+        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->setTeams();
 
-        return $AuthResponse;
+        return $this->AuthResponse;
     }
 
     private function getEmail(array $samlUserdata): string

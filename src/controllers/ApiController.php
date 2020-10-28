@@ -613,7 +613,8 @@ class ApiController implements ControllerInterface
         if ($this->Entity instanceof Database) {
             return new Response('Creating database items is not supported.', 400);
         }
-        $id = $this->Entity->create(0);
+        $params = new ParamsProcessor(array('id' => 0));
+        $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 
@@ -661,7 +662,8 @@ class ApiController implements ControllerInterface
         if ($this->id === null) {
             return new Response('Invalid id', 400);
         }
-        $id = $this->Entity->create($this->id);
+        $params = new ParamsProcessor(array('id' => $this->id));
+        $id = $this->Entity->create($params);
         return new JsonResponse(array('result' => 'success', 'id' => $id));
     }
 

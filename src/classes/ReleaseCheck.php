@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\ReleaseCheckException;
 use Elabftw\Models\Config;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Use this to check for latest version
@@ -128,12 +129,8 @@ class ReleaseCheck
 
     /**
      * Make a GET request with Guzzle
-     *
-     * @param string $url URL to hit
-     * @throws \GuzzleHttp\Exception\RequestException
-     * @return \Psr\Http\Message\ResponseInterface
      */
-    private function get(string $url): \Psr\Http\Message\ResponseInterface
+    private function get(string $url): ResponseInterface
     {
         $client = new \GuzzleHttp\Client();
 

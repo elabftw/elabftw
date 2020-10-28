@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel');
+$App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExepectedObjectPropAccessButGotNull
 $Response = new Response();
 $Response->prepare($Request);
 

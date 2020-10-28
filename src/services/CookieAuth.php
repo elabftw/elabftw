@@ -31,11 +31,15 @@ class CookieAuth implements AuthInterface
     /** @var int $tokenTeam */
     private $tokenTeam;
 
+    /** @var AuthResponse $AuthResponse */
+    private $AuthResponse;
+
     public function __construct(string $token, string $tokenTeam)
     {
         $this->Db = Db::getConnection();
         $this->token = Check::token($token);
         $this->tokenTeam = (int) Filter::sanitize($tokenTeam);
+        $this->AuthResponse = new AuthResponse('cookie');
     }
 
     public function tryAuth(): AuthResponse
@@ -57,10 +61,9 @@ class CookieAuth implements AuthInterface
             throw new InvalidCredentialsException();
         }
 
-        $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = $userid;
-        $AuthResponse->mfaSecret = $res['mfa_secret'];
-        $AuthResponse->selectedTeam = $this->tokenTeam;
-        return $AuthResponse;
+        $this->AuthResponse->userid = $userid;
+        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
+        $this->AuthResponse->selectedTeam = $this->tokenTeam;
+        return $this->AuthResponse;
     }
 }

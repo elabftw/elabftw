@@ -79,6 +79,9 @@ class LoginHelper
         // ANON will get userid 0 here
         $this->Session->set('userid', $this->AuthResponse->userid);
 
+        // store the auth method so the logout page will know what to do
+        $this->Session->set('is_auth_by', $this->AuthResponse->isAuthBy);
+
         // ANON LOGIN
         if ($this->AuthResponse->isAnonymous) {
             $this->Session->set('is_anon', 1);

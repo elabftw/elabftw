@@ -37,6 +37,9 @@ class LdapAuth implements AuthInterface
     /** @var string $password */
     private $password = '';
 
+    /** @var AuthResponse $AuthResponse */
+    private $AuthResponse;
+
     public function __construct(Config $config, string $email, string $password)
     {
         $c = $config->configArr;
@@ -52,6 +55,7 @@ class LdapAuth implements AuthInterface
         $this->connection = new Connection($this->config);
         $this->email = $email;
         $this->password = $password;
+        $this->AuthResponse = new AuthResponse('ldap');
     }
 
     public function tryAuth(): AuthResponse
@@ -62,7 +66,6 @@ class LdapAuth implements AuthInterface
         if (!$this->connection->auth()->attempt('cn=' . $cn . ',' . $this->config['base_dn'], $this->password)) {
             throw new InvalidCredentialsException();
         }
-        $AuthResponse = new AuthResponse();
         $Users = new Users();
         try {
             $Users->populateFromEmail($this->email);
@@ -82,10 +85,10 @@ class LdapAuth implements AuthInterface
             $Users = new Users($userid);
         }
 
-        $AuthResponse->userid = (int) $Users->userData['userid'];
-        $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $AuthResponse->setTeams();
+        $this->AuthResponse->userid = (int) $Users->userData['userid'];
+        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->setTeams();
 
-        return $AuthResponse;
+        return $this->AuthResponse;
     }
 }

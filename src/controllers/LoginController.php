@@ -11,15 +11,13 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\Auth;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
 use Elabftw\Services\AnonAuth;
+use Elabftw\Services\ExternalAuth;
 use Elabftw\Services\LdapAuth;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\LoginHelper;
@@ -29,6 +27,7 @@ use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 /**
  * For all your authentication/login needs
@@ -47,6 +46,9 @@ class LoginController implements ControllerInterface
     {
         // ENABLE MFA FOR OUR USER
         if ($this->App->Session->has('enable_mfa')) {
+            $flashBag = $this->App->Session->getBag('flashes');
+            $flashKey = 'ko';
+            $flashValue = _('Two Factor Authentication was not enabled!');
             // Only save if user didn't click Cancel button
             if ($this->App->Request->request->get('Submit') === 'submit') {
                 $MfaHelper = new MfaHelper(
@@ -61,9 +63,12 @@ class LoginController implements ControllerInterface
 
                 // all good, save the secret in the database now that we now the user can authenticate against it
                 $MfaHelper->saveSecret();
-                $this->App->Session->getFlashBag()->add('ok', _('Two Factor Authentication is now enabled!'));
-            } else {
-                $this->App->Session->getFlashBag()->add('ko', _('Two Factor Authentication was not enabled!'));
+                $flashKey = 'ok';
+                $flashValue = _('Two Factor Authentication is now enabled!');
+            }
+
+            if ($flashBag instanceof FlashBag) {
+                $flashBag->add($flashKey, $flashValue);
             }
             $this->App->Session->remove('enable_mfa');
             $this->App->Session->remove('mfa_auth_required');
@@ -120,12 +125,9 @@ class LoginController implements ControllerInterface
         $this->App->Session->remove('rememberme');
         $this->App->Session->remove('auth_userid');
 
-        if ($this->App->Request->cookies->has('redirect')) {
-            $location = $this->App->Request->cookies->get('redirect');
-        } else {
-            $location = '../../experiments.php';
-        }
-        return new RedirectResponse($location);
+        return new RedirectResponse(
+            $this->App->Request->cookies->get('redirect') ?? '../../experiments.php'
+        );
     }
 
     private function getAuthService(string $authType): AuthInterface
@@ -142,6 +144,9 @@ class LoginController implements ControllerInterface
             // AUTH WITH SAML
             case 'saml':
                 return new SamlAuth($this->App->Config, new Idps(), (int) $this->App->Request->request->get('idpId'));
+
+            case 'external':
+                return new ExternalAuth($this->App);
 
             // AUTH AS ANONYMOUS USER
             case 'anon':

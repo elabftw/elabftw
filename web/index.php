@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
 use Elabftw\Services\LoginHelper;
 use Elabftw\Services\SamlAuth;
 use Exception;
@@ -33,9 +32,7 @@ try {
         $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
         $LoginHelper->login(false);
 
-        if ($App->Request->cookies->has('redirect')) {
-            $location = $App->Request->cookies->get('redirect');
-        }
+        $location = $App->Request->cookies->get('redirect') ?? $location;
 
         // if the user is in several teams, we need to redirect to the team selection
         if ($AuthResponse->selectedTeam === null) {

@@ -13,7 +13,6 @@ namespace Elabftw\Services;
 use function array_column;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Maps\Team;
 use PDO;
 
 /**

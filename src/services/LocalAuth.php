@@ -29,11 +29,15 @@ class LocalAuth implements AuthInterface
     /** @var string $password */
     private $password = '';
 
+    /** @var AuthResponse $AuthResponse */
+    private $AuthResponse;
+
     public function __construct(string $email, string $password)
     {
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitize($email);
         $this->password = Filter::sanitize($password);
+        $this->AuthResponse = new AuthResponse('local');
     }
 
     public function tryAuth(): AuthResponse
@@ -53,12 +57,11 @@ class LocalAuth implements AuthInterface
 
         $res = $req->fetch();
 
-        $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = (int) $res['userid'];
-        $AuthResponse->mfaSecret = $res['mfa_secret'];
-        $AuthResponse->setTeams();
+        $this->AuthResponse->userid = (int) $res['userid'];
+        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
+        $this->AuthResponse->setTeams();
 
-        return $AuthResponse;
+        return $this->AuthResponse;
     }
 
     /**

@@ -1,11 +1,17 @@
 <?php
-
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 declare(strict_types=1);
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $parameters = $containerConfigurator->parameters();
+return static function (ContainerConfigurator $containerConfigurator): void { /** @phpstan-ignore-line */
+    $parameters = $containerConfigurator->parameters(); /** @phpstan-ignore-line */
 
     $parameters->set('php_version_features', '7.3');
 

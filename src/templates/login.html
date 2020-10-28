@@ -45,7 +45,18 @@
       </div>
       <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
-  {% else %}
+  {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
+    <!-- user is already authed with external auth, so just present a continue button
+      we don't autologin anymore -->
+      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
+        <!-- form key -->
+        {{ App.Csrf.getHiddenInput|raw }}
+        <input type='hidden' name='auth_type' value='external'>
+        <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>
+        <br>
+        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Continue'|trans }}</button>
+      </form>
+    {% else %}
 
     {% if showLocal %}
       <!-- Login form , the id is for an acceptance test -->

@@ -101,7 +101,7 @@ class Check
                 'min_range' => 1,
                 'max_range' => 500,
             ),
-            FILTER_NULL_ON_FAILURE,
+            'flags' => FILTER_NULL_ON_FAILURE,
         );
         return filter_var($limit, FILTER_VALIDATE_INT, $filterOptions);
     }

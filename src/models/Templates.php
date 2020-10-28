@@ -40,12 +40,14 @@ class Templates extends AbstractEntity
     /**
      * Create a template
      */
-    public function create(ParamsProcessor $params, ?int $userid = null, ?int $team = null): int
+    public function create(ParamsProcessor $params): int
     {
-        if ($team === null) {
+        $team = $params->team;
+        if ($team === 0) {
             $team = $this->Users->userData['team'];
         }
-        if ($userid === null) {
+        $userid = $params->id;
+        if ($userid === 0) {
             $userid = $this->Users->userData['userid'];
         }
 
@@ -86,7 +88,7 @@ class Templates extends AbstractEntity
             <h1><span style='font-size: 14pt;'>Results :<br /></span></h1>
             <p>&nbsp;</p>";
 
-        $this->create(new ParamsProcessor(array('name' => 'default', 'template' => $defaultBody)), 0, $team);
+        $this->create(new ParamsProcessor(array('name' => 'default', 'template' => $defaultBody, 'id' => 0, 'team' => $team)));
     }
 
     /**

@@ -15,7 +15,6 @@ use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CrudInterface;
-use Elabftw\Services\Check;
 use function is_bool;
 use function mb_strlen;
 use PDO;

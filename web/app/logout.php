@@ -29,10 +29,13 @@ $redirectUrl = '../login.php';
 $doSLO = false;
 
 // now if we are logged in through external auth, hit the external auth url
-if ($Session->get('is_ext_auth')) {
+if ($Session->get('is_auth_by') === 'external') {
     $redirectUrl = $Config->configArr['logout_url'];
+    if (empty($redirectUrl)) {
+        $redirectUrl = '../login.php';
+    }
 }
-if ($Session->has('samlUserdata')) {
+if ($Session->get('is_auth_by') === 'saml') {
     $doSLO = true;
 }
 

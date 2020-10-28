@@ -172,8 +172,8 @@ class Scheduler
         if (strlen($delta['milliseconds']) > 3) {
             $seconds = substr($delta['milliseconds'], 0, -3);
         }
-        $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
-        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+        $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -201,7 +201,7 @@ class Scheduler
         if (strlen($delta['milliseconds']) > 3) {
             $seconds = substr($delta['milliseconds'], 0, -3);
         }
-        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds');
+        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);

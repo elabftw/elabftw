@@ -19,8 +19,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\BannedUsers;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
-use Elabftw\Services\ExternalAuth;
-use Elabftw\Services\LoginHelper;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use function implode;
@@ -86,20 +84,6 @@ try {
 
     // Check if already logged in
     if ($App->Session->has('is_auth')) {
-        $Response = new RedirectResponse('experiments.php');
-        $Response->send();
-        exit;
-    }
-
-    // EXTERNAL AUTH
-    // this is done here because when we are auth by the server there is no need to present a page
-    // to the user or a button to click, just login the user directly.
-    if ($App->Request->server->get($App->Config->configArr['extauth_remote_user'])) {
-        $ExternalAuth = new ExternalAuth($App);
-        $AuthResponse = $ExternalAuth->tryAuth();
-        $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
-        // never set a cookie for external auth
-        $LoginHelper->login(false);
         $Response = new RedirectResponse('experiments.php');
         $Response->send();
         exit;

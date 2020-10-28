@@ -13,7 +13,6 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Maps\Team;
 use Elabftw\Models\Config;
 
 /**
@@ -31,7 +30,7 @@ class AnonAuth implements AuthInterface
         if (!$config->configArr['anon_users']) {
             throw new IllegalActionException('Cannot login as anon because it is not allowed by sysadmin!');
         }
-        $this->AuthResponse = new AuthResponse();
+        $this->AuthResponse = new AuthResponse('anon');
         $this->AuthResponse->userid = 0;
         $this->AuthResponse->isAnonymous = true;
         $this->AuthResponse->selectedTeam = $team;

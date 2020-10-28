@@ -26,10 +26,14 @@ class MfaAuth implements AuthInterface
     /** @var string $code */
     private $code;
 
+    /** @var AuthResponse $AuthResponse */
+    private $AuthResponse;
+
     public function __construct(MfaHelper $mfa, string $code)
     {
         $this->MfaHelper = $mfa;
         $this->code = $code;
+        $this->AuthResponse = new AuthResponse('mfa');
     }
 
     public function tryAuth(): AuthResponse
@@ -40,13 +44,11 @@ class MfaAuth implements AuthInterface
             throw new InvalidCredentialsException('The code you entered is not valid!');
         }
 
-        $AuthResponse = new AuthResponse();
-        $AuthResponse->hasVerifiedMfa = true;
-        $AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->hasVerifiedMfa = true;
+        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->userid = $this->MfaHelper->userid;
+        $this->AuthResponse->setTeams();
 
-        $AuthResponse->userid = $this->MfaHelper->userid;
-        $AuthResponse->setTeams();
-
-        return $AuthResponse;
+        return $this->AuthResponse;
     }
 }

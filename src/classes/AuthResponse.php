@@ -45,8 +45,8 @@ class AuthResponse
 
     public function setTeams(): void
     {
-        $UsersHelper = new UsersHelper();
-        $this->selectableTeams = $UsersHelper->getTeamsFromUserid($this->userid);
+        $UsersHelper = new UsersHelper($this->userid);
+        $this->selectableTeams = $UsersHelper->getTeamsFromUserid();
 
         // if the user only has access to one team, use this one directly
         if (count($this->selectableTeams) === 1) {

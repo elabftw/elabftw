@@ -9,15 +9,15 @@
 
 namespace Elabftw\Services;
 
-class UsersHelperTest extends \PHPUnit\Framework\TestCase
+class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
     {
-        $this->UsersHelper = new UsersHelper(1);
+        $this->TeamsHelper = new TeamsHelper(1);
     }
 
-    public function testHasExperiments()
+    public function testGetGroup()
     {
-        $this->assertTrue($this->UsersHelper->hasExperiments());
+        $this->assertEquals(4, $this->TeamsHelper->getGroup());
     }
 }

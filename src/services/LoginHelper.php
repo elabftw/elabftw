@@ -92,8 +92,8 @@ class LoginHelper
 
         // NORMAL LOGIN
         // load the permissions
-        $UsersHelper = new UsersHelper();
-        $permissions = $UsersHelper->getPermissions($this->AuthResponse->userid);
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $permissions = $UsersHelper->getPermissions();
         $this->Session->set('is_admin', $permissions['is_admin']);
         $this->Session->set('is_sysadmin', $permissions['is_sysadmin']);
     }

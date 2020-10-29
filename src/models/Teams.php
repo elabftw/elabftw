@@ -135,8 +135,8 @@ class Teams implements ReadableInterface, DestroyableInterface
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
         // make sure that the user is in more than one team before removing the team
-        $UsersHelper = new UsersHelper();
-        if (count($UsersHelper->getTeamsFromUserid($userid)) === 1) {
+        $UsersHelper = new UsersHelper($userid);
+        if (count($UsersHelper->getTeamsFromUserid()) === 1) {
             throw new ImproperActionException('Cannot remove team from user in only one team!');
         }
         foreach ($teamIdArr as $teamId) {
@@ -162,8 +162,8 @@ class Teams implements ReadableInterface, DestroyableInterface
         $teamIdArr = $this->validateTeams($teams);
         // get the difference between the teams sent by idp
         // and the teams that the user is in
-        $UsersHelper = new UsersHelper();
-        $currentTeams = $UsersHelper->getTeamsIdFromUserid($userid);
+        $UsersHelper = new UsersHelper($userid);
+        $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
         $rmFromTeams = array_diff($currentTeams, $teamIdArr);
@@ -339,8 +339,8 @@ class Teams implements ReadableInterface, DestroyableInterface
 
     public function hasCommonTeamWithCurrent(int $userid, int $team): bool
     {
-        $UsersHelper = new UsersHelper();
-        $teams = $UsersHelper->getTeamsIdFromUserid($userid);
+        $UsersHelper = new UsersHelper($userid);
+        $teams = $UsersHelper->getTeamsIdFromUserid();
         return in_array((string) $team, $teams, true);
     }
 

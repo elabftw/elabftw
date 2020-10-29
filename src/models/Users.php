@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use function in_array;
 use function mb_strlen;
@@ -85,7 +86,6 @@ class Users
     {
         $Config = new Config();
         $Teams = new Teams($this);
-        $UsersHelper = new UsersHelper();
 
         // validate teams
         $Teams->validateTeams($teams);
@@ -112,7 +112,8 @@ class Users
         // get the group for the new user
         if ($group === null) {
             $teamId = $Teams->getTeamIdFromNameOrOrgid((string) $teams[0]);
-            $group = $UsersHelper->getGroup($teamId);
+            $TeamsHelper = new TeamsHelper($teamId);
+            $group = $TeamsHelper->getGroup();
         }
 
         // will new user be validated?
@@ -524,8 +525,8 @@ class Users
      */
     public function destroy(): void
     {
-        $UsersHelper = new UsersHelper();
-        if ($UsersHelper->hasExperiments((int) $this->userData['userid'])) {
+        $UsersHelper = new UsersHelper((int) $this->userData['userid']);
+        if ($UsersHelper->hasExperiments()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments!');
         }
         $sql = 'DELETE FROM users WHERE userid = :userid';

@@ -73,7 +73,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // CREATE
         if ($this->App->Request->query->has('create') && !$this->App->Session->get('is_anon')) {
-            $params = new ParamsProcessor($this->App->Request->query->all());
+            $params = new ParamsProcessor(array('id' => $this->App->Request->query->get('tpl')));
             $id = $this->Entity->create($params);
             return new RedirectResponse('?mode=edit&id=' . (string) $id);
         }

@@ -61,6 +61,6 @@ class ParamsProcessor
         $this->template = Filter::body($params['template'] ?? $this->template);
         $this->bookable = $params['bookable'] ?? $this->bookable ? 1 : 0;
         $this->comment = Filter::comment($params['comment'] ?? $this->comment);
-        $this->team = (int) $params['team'];
+        $this->team = (int) ($params['team'] ?? $this->team);
     }
 }

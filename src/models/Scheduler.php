@@ -163,9 +163,6 @@ class Scheduler
     public function updateStart(array $delta): void
     {
         $event = $this->readFromId();
-        if (empty($event)) {
-            return;
-        }
         $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
@@ -193,9 +190,6 @@ class Scheduler
     public function updateEnd(array $delta): void
     {
         $event = $this->readFromId();
-        if (empty($event)) {
-            return;
-        }
         $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
         $seconds = '0';
         if (strlen($delta['milliseconds']) > 3) {

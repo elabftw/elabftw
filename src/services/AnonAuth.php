@@ -13,7 +13,6 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Config;
 
 /**
  * Anonymous auth service
@@ -23,11 +22,9 @@ class AnonAuth implements AuthInterface
     /** @var AuthResponse $AuthResponse */
     private $AuthResponse;
 
-    public function __construct(Config $config, int $team)
+    public function __construct(array $configArr, int $team)
     {
-        // TODO this won't work for elabid! or will it?
-        // maybe this should not be here so we can have only the team as param
-        if (!$config->configArr['anon_users']) {
+        if (!$configArr['anon_users']) {
             throw new IllegalActionException('Cannot login as anon because it is not allowed by sysadmin!');
         }
         $this->AuthResponse = new AuthResponse('anon');

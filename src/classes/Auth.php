@@ -66,11 +66,11 @@ class Auth
             // only autologin on selected pages and if we are not authenticated with an account
             $autoAnon = array('experiments.php', 'database.php', 'search.php');
             if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                $AuthService = new AnonAuth($this->Config, (int) $this->Config->configArr['open_team'] ?? 1);
+                $AuthService = new AnonAuth($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
             }
         }
         // try to login with the cookie if we have one in the request
-        if ($this->Request->cookies->has('token')) {
+        if ($this->Request->cookies->has('token') && !$this->Request->query->has('elabid')) {
             $AuthService = new CookieAuth($this->Request->cookies->get('token'), $this->Request->cookies->get('token_team'));
 
         // try to login with the elabid for an experiment in view mode
@@ -81,7 +81,7 @@ class Auth
             // now we need to know in which team we autologin the user
             $Experiments = new Experiments(new Users(), (int) $this->Request->query->get('id'));
             $team = $Experiments->getTeamFromElabid($this->Request->query->get('elabid'));
-            $AuthService = new AnonAuth($this->Config, $team);
+            $AuthService = new AnonAuth($this->Config->configArr, $team);
         }
 
 

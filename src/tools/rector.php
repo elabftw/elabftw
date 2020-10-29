@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function(ContainerConfigurator $containerConfigurator): void { /** @phpstan-ignore-line */
+return static function (ContainerConfigurator $containerConfigurator): void { /** @phpstan-ignore-line */
     $parameters = $containerConfigurator->parameters(); /** @phpstan-ignore-line */
 
     $parameters->set('php_version_features', '7.3');

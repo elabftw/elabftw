@@ -45,7 +45,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->Scheduler->updateEnd($this->delta);
     }
      */
-
     public function testDestroy()
     {
         $id = $this->Scheduler->create('2016-07-22T19:42:00', '2016-07-23T19:42:00', 'Yep');

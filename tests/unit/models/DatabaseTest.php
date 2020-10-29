@@ -9,9 +9,9 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ParamsProcessor;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use Elabftw\Elabftw\ParamsProcessor;
 
 class DatabaseTest extends \PHPUnit\Framework\TestCase
 {

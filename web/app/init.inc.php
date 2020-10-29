@@ -16,6 +16,7 @@ use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Services\LoginHelper;
 use Exception;
 use function in_array;
 use Monolog\Logger;
@@ -63,35 +64,39 @@ try {
     //                                                //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     $Auth = new Auth($App);
-    // TODO just throw unauthorizedexception in tryauth
-    if (!$Auth->tryAuth()) {
-        // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
+    if ($Auth->needAuth()) {
+        try {
+            // this will throw an UnauthorizedException if we don't have a valid auth
+            $AuthResponse = $Auth->tryAuth();
+            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+            $LoginHelper->login(false);
+        } catch (UnauthorizedException $e) {
+            // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
 
-        // maybe we clicked an email link and we want to be redirected to the page upon successful login
-        // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
-        if (!stripos($App->Request->getRequestUri(), 'controllers')) {
-            $cookieOptions = array(
-                'expires' => time() + 300,
-                'path' => '/',
-                'domain' => '',
-                'secure' => true,
-                'httponly' => true,
-                'samesite' => 'Strict',
-            );
-            setcookie('redirect', $App->Request->getRequestUri(), $cookieOptions);
-        }
+            // maybe we clicked an email link and we want to be redirected to the page upon successful login
+            // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
+            // don't store a redirect cookie if we have been logged out and the redirect is to a controller page
+            if (!stripos($App->Request->getRequestUri(), 'controllers')) {
+                $cookieOptions = array(
+                    'expires' => time() + 300,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => true,
+                    'httponly' => true,
+                    'samesite' => 'Strict',
+                );
+                setcookie('redirect', $App->Request->getRequestUri(), $cookieOptions);
+            }
 
-        // used by ajax requests to detect a timed out session
-        header('X-Elab-Need-Auth: 1');
-        // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
-        if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
-            // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
-            header('Location: app/logout.php');
-        } else {
+            // used by ajax requests to detect a timed out session
+            header('X-Elab-Need-Auth: 1');
+            // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
+            if ($App->Request->headers->get('X-Requested-With') != 'XMLHttpRequest') {
+                // NO DON'T USE  THE FULL URL HERE BECAUSE IF SERVER IS HTTP it will fail badly
+                header('Location: app/logout.php?keep_redirect=1');
+            }
             throw new UnauthorizedException(_('Your session expired.'));
         }
-        exit;
     }
 
     // load the Users with a userid if we are auth and not anon

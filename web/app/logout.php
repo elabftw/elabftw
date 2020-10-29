@@ -16,6 +16,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use OneLogin\Saml2\Auth as SamlAuth;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -24,6 +25,7 @@ require_once \dirname(__DIR__, 2) . '/config.php';
 $Config = new Config();
 $Session = new Session();
 $Session->start();
+$Request = Request::createFromGlobals();
 
 $redirectUrl = '../login.php';
 $doSLO = false;
@@ -41,7 +43,7 @@ if ($Session->get('is_auth_by') === 'saml') {
 
 // kill session
 $Session->invalidate();
-// disable token cookie
+// options to disable a cookie
 $cookieOptions = array(
     'expires' => time() - 3600,
     'path' => '/',
@@ -52,7 +54,11 @@ $cookieOptions = array(
 );
 setcookie('token', '', $cookieOptions);
 setcookie('token_team', '', $cookieOptions);
-setcookie('redirect', '', $cookieOptions);
+// if we get redirected by init.inc.php we want to keep this cookie
+// if the user requested logout, remove it
+if (!$Request->query->get('keep_redirect')) {
+    setcookie('redirect', '', $cookieOptions);
+}
 setcookie('pdf_sig', '', $cookieOptions);
 
 // this will be present if we logged in through SAML

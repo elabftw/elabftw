@@ -11,12 +11,14 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function basename;
+use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Services\AnonAuth;
 use Elabftw\Services\CookieAuth;
-use Elabftw\Services\LoginHelper;
+use Elabftw\Services\SessionAuth;
 use function in_array;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -24,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Provide methods to login a user
  */
-class Auth
+class Auth implements AuthInterface
 {
     /** @var Config $Config */
     private $Config;
@@ -52,47 +54,10 @@ class Auth
      *
      * @return bool true if we are authenticated
      */
-    public function tryAuth(): bool
+    public function tryAuth(): AuthResponse
     {
-        // if we are already logged in with the session, skip everything
-        // same if we don't need to be authenticated
-        if ($this->Session->has('is_auth') || !$this->needAuth()) {
-            return true;
-        }
-
-        // autologin as anon if it's allowed by sysadmin
-        // don't do it if we have elabid in url
-        if ($this->Config->configArr['open_science'] && !$this->Request->query->has('elabid')) {
-            // only autologin on selected pages and if we are not authenticated with an account
-            $autoAnon = array('experiments.php', 'database.php', 'search.php');
-            if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                $AuthService = new AnonAuth($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
-            }
-        }
-        // try to login with the cookie if we have one in the request
-        if ($this->Request->cookies->has('token') && !$this->Request->query->has('elabid')) {
-            $AuthService = new CookieAuth($this->Request->cookies->get('token'), $this->Request->cookies->get('token_team'));
-
-        // try to login with the elabid for an experiment in view mode
-        } elseif ($this->Request->query->has('elabid')
-            && basename($this->Request->getScriptName()) === 'experiments.php'
-            && $this->Request->query->get('mode') === 'view') {
-
-            // now we need to know in which team we autologin the user
-            $Experiments = new Experiments(new Users(), (int) $this->Request->query->get('id'));
-            $team = $Experiments->getTeamFromElabid($this->Request->query->get('elabid'));
-            $AuthService = new AnonAuth($this->Config->configArr, $team);
-        }
-
-
-        if (isset($AuthService)) {
-            $AuthResponse = $AuthService->tryAuth();
-            $LoginHelper = new LoginHelper($AuthResponse, $this->Session);
-            $LoginHelper->login(false);
-            return true;
-        }
-
-        return false;
+        $AuthService = $this->getAuthService($this->getAuthType());
+        return $AuthService->tryAuth();
     }
 
     /**
@@ -116,7 +81,7 @@ class Auth
      *
      * @return bool True if we are authentified (or if we don't need to be)
      */
-    private function needAuth(): bool
+    public function needAuth(): bool
     {
         // pages where you don't need to be logged in
         // only the script name, not the path because we use basename() on it
@@ -133,5 +98,59 @@ class Auth
         );
 
         return !in_array(basename($this->Request->getScriptName()), $nologinArr, true);
+    }
+
+    private function getAuthType(): string
+    {
+        // if we are already logged in with the session, skip everything
+        // same if we don't need to be authenticated
+        if ($this->Session->has('is_auth')) {
+            return 'session';
+        }
+
+        // try to login with the elabid for an experiment in view mode
+        if ($this->Request->query->has('elabid')
+            && basename($this->Request->getScriptName()) === 'experiments.php'
+            && $this->Request->query->get('mode') === 'view') {
+            return 'elabid';
+        }
+
+        // try to login with the cookie if we have one in the request
+        if ($this->Request->cookies->has('token')) {
+            return 'cookie';
+        }
+
+        // autologin as anon if it's allowed by sysadmin
+        if ($this->Config->configArr['open_science']) {
+            return 'open';
+        }
+        throw new UnauthorizedException('Authentication required');
+    }
+
+    private function getAuthService(string $authType): AuthInterface
+    {
+        switch ($authType) {
+            // AUTH WITH COOKIE
+            case 'cookie':
+                return new CookieAuth($this->Request->cookies->get('token'), $this->Request->cookies->get('token_team'));
+            case 'session':
+                return new SessionAuth();
+            case 'elabid':
+                // now we need to know in which team we autologin the user
+                $Experiments = new Experiments(new Users(), (int) $this->Request->query->get('id'));
+                $team = $Experiments->getTeamFromElabid($this->Request->query->get('elabid'));
+                return new AnonAuth($this->Config->configArr, $team);
+            case 'open':
+                // don't do it if we have elabid in url
+                // only autologin on selected pages and if we are not authenticated with an account
+                $autoAnon = array('experiments.php', 'database.php', 'search.php');
+                if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
+                    return new AnonAuth($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
+                }
+                // no break
+            default:
+                throw new UnauthorizedException('Authentication required');
+
+        }
     }
 }

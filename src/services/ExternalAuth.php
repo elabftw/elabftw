@@ -71,13 +71,7 @@ class ExternalAuth implements AuthInterface
             $Users->populateFromEmail($email);
             $this->log->info('New user (' . $email . ') autocreated from external auth');
         }
-        $userid = (int) $Users->userData['userid'];
-        $UsersHelper = new UsersHelper($userid);
-        $availableTeams = $UsersHelper->getTeamsIdFromUserid();
-        $selectedTeam = (int) $availableTeams[0];
-        $Users = new Users($userid, $selectedTeam);
-
-        $this->AuthResponse->userid = $userid;
+        $this->AuthResponse->userid = (int) $Users->userData['userid'];
         $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;

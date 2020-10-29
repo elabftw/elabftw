@@ -11,13 +11,16 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
 
-class SessionAuthTest extends \PHPUnit\Framework\TestCase
+class TeamAuthTest extends \PHPUnit\Framework\TestCase
 {
     public function testTryAuth()
     {
-        $AuthService = new SessionAuth();
+        $AuthService = new TeamAuth(1, 1);
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals('session', $authResponse->isAuthBy);
+        $this->assertEquals('team', $authResponse->isAuthBy);
+        $this->assertEquals(1, $authResponse->userid);
+        $this->assertFalse($authResponse->isAnonymous);
+        $this->assertEquals(1, $authResponse->selectedTeam);
     }
 }

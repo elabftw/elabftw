@@ -9,6 +9,9 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
+
 class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 {
     protected function setUp(): void
@@ -19,5 +22,10 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
     public function testGetGroup()
     {
         $this->assertEquals(4, $this->TeamsHelper->getGroup());
+        // now create a new team and try to get group
+        $Teams = new Teams(new Users(1));
+        $team = $Teams->create('New team');
+        $TeamsHelper = new TeamsHelper($team);
+        $this->assertEquals(2, $TeamsHelper->getGroup());
     }
 }

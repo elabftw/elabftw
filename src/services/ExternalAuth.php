@@ -10,51 +10,54 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
+use Monolog\Logger;
 
 /**
  * Authenticate with server provided values
  */
 class ExternalAuth implements AuthInterface
 {
-    /** @var App $App */
-    private $App;
-
     /** @var AuthResponse $AuthResponse */
     private $AuthResponse;
 
-    public function __construct(App $app)
+    /** @var array $configArr */
+    private $configArr;
+
+    /** @var Logger $log */
+    private $log;
+
+    /** @var array $serverParams */
+    private $serverParams;
+
+    public function __construct(array $configArr, array $serverParams, Logger $log)
     {
-        $this->App = $app;
         $this->AuthResponse = new AuthResponse('external');
+        $this->configArr = $configArr;
+        $this->serverParams = $serverParams;
+        $this->log = $log;
     }
 
     public function tryAuth(): AuthResponse
     {
-        // use shorthands for lisibility
-        $srv = $this->App->Request->server;
-        $conf = $this->App->Config->configArr;
-
-        $firstname = $srv->get($conf['extauth_firstname']) ?? '?';
-        $lastname = $srv->get($conf['extauth_lastname']) ?? '?';
-        $email = $srv->get($conf['extauth_email']);
+        $firstname = $this->serverParams[$this->configArr['extauth_firstname']] ?? '?';
+        $lastname = $this->serverParams[$this->configArr['extauth_lastname']] ?? '?';
+        $email = $this->serverParams[$this->configArr['extauth_email']] ?? '?';
         // try and get the team
-        $teams = array($srv->get($conf['extauth_teams']));
+        $teams = array($this->serverParams[$this->configArr['extauth_teams']]);
 
         // no team found!
-        if (empty($teams)) {
-            // check for the default team
-            $teamId = (int) $this->App->Config->configArr['saml_team_default'];
+        if (empty($teams[0])) {
+            $defaultTeam = (int) $this->configArr['saml_team_default'];
             // or throw error if sysadmin configured it like that
-            if ($teamId === 0) {
+            if ($defaultTeam === 0) {
                 throw new ImproperActionException('Could not find team ID to assign user!');
             }
-            $teams = array((string) $teamId);
+            $teams = array((string) $defaultTeam);
         }
 
         // get userid
@@ -66,7 +69,7 @@ class ExternalAuth implements AuthInterface
             // CREATE USER (and force validation of user)
             $Users->create($email, $teams, $firstname, $lastname, '', null, true);
             $Users->populateFromEmail($email);
-            $this->App->Log->info('New user (' . $email . ') autocreated from external auth');
+            $this->log->info('New user (' . $email . ') autocreated from external auth');
         }
         $userid = (int) $Users->userData['userid'];
         $UsersHelper = new UsersHelper($userid);
@@ -75,7 +78,7 @@ class ExternalAuth implements AuthInterface
         $Users = new Users($userid, $selectedTeam);
 
         $this->AuthResponse->userid = $userid;
-        $this->AuthResponse->selectedTeam = $Users->userData['team'];
+        $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;
     }

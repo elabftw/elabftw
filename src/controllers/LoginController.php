@@ -146,7 +146,11 @@ class LoginController implements ControllerInterface
                 return new SamlAuth($this->App->Config, new Idps(), (int) $this->App->Request->request->get('idpId'));
 
             case 'external':
-                return new ExternalAuth($this->App);
+                return new ExternalAuth(
+                    $this->App->Config->configArr,
+                    $this->App->Request->server->all(),
+                    $this->App->Log,
+                );
 
             // AUTH AS ANONYMOUS USER
             case 'anon':

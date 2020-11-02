@@ -76,6 +76,33 @@ class Teams implements ReadableInterface, DestroyableInterface
         return (int) $res;
     }
 
+    public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
+    {
+        $res = array();
+        foreach ($input as $query) {
+            $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':query', $query);
+            $this->Db->execute($req);
+            $team = $req->fetch();
+            if ($team === false) {
+                $id = $this->createTeamIfAllowed($query);
+                $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id));
+            }
+            $res[] = $team;
+        }
+        return $res;
+    }
+
+    public function createTeamIfAllowed(string $name): int
+    {
+        $Config = new Config();
+        if ($Config->configArr['saml_team_create']) {
+            return $this->create($name);
+        }
+        throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.');
+    }
+
     /**
      * Make sure that all the teams are existing
      * If they do not exist, create them if it's allowed by sysadmin
@@ -85,18 +112,9 @@ class Teams implements ReadableInterface, DestroyableInterface
      */
     public function validateTeams(array $teams): array
     {
-        $Config = new Config();
         $teamIdArr = array();
         foreach ($teams as $team) {
-            try {
-                $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team ?? '');
-            } catch (ImproperActionException $e) {
-                if ($Config->configArr['saml_team_create']) {
-                    $teamIdArr[] = $this->create($team);
-                } else {
-                    throw new ImproperActionException('The administrator disabled team creation on SAML login. Contact your administrator for creating the team.', (int) $e->getCode(), $e);
-                }
-            }
+            $teamIdArr[] = $this->getTeamIdFromNameOrOrgid($team['name'] ?? '');
         }
         return $teamIdArr;
     }
@@ -137,7 +155,8 @@ class Teams implements ReadableInterface, DestroyableInterface
         // make sure that the user is in more than one team before removing the team
         $UsersHelper = new UsersHelper($userid);
         if (count($UsersHelper->getTeamsFromUserid()) === 1) {
-            throw new ImproperActionException('Cannot remove team from user in only one team!');
+            return;
+            //throw new ImproperActionException('Cannot remove team from user in only one team!');
         }
         foreach ($teamIdArr as $teamId) {
             $sql = 'DELETE FROM users2teams WHERE `users_id` = :userid AND `teams_id` = :team';
@@ -159,16 +178,17 @@ class Teams implements ReadableInterface, DestroyableInterface
      */
     public function syncFromIdp(int $userid, array $teams): void
     {
-        $teamIdArr = $this->validateTeams($teams);
+        $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
         $UsersHelper = new UsersHelper($userid);
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
-        $rmFromTeams = array_diff($currentTeams, $teamIdArr);
-
         $this->addUserToTeams($userid, $addToTeams);
+        $currentTeams = $UsersHelper->getTeamsIdFromUserid();
+
+        $rmFromTeams = array_diff($currentTeams, $teamIdArr);
         $this->rmUserFromTeams($userid, $rmFromTeams);
     }
 

@@ -52,7 +52,6 @@ class Auth implements AuthInterface
      *   | |___  __/ |  | |_) |  __/ |  | |_| \__ \
      *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
      *
-     * @return bool true if we are authenticated
      */
     public function tryAuth(): AuthResponse
     {

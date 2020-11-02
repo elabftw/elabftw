@@ -15,6 +15,7 @@ use Elabftw\Models\Idps;
 use Elabftw\Services\LoginHelper;
 use Elabftw\Services\SamlAuth;
 use Exception;
+use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,16 +24,19 @@ require_once 'app/init.inc.php';
 $location = '../../experiments.php';
 $Response = new RedirectResponse($location);
 
+// TODO FIXME saml breaks if this line is removed
+// never thought I would write a comment like this
+// but here it is....
+var_dump($Request->get('SAMLResponse'));
+
 try {
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs')) {
-        $AuthService = new SamlAuth($App->Config, new Idps());
+        $Saml = new Saml($App->Config, new Idps());
+        $settings = $Saml->getSettings();
+        $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
+
         $AuthResponse = $AuthService->assertIdpResponse();
-
-        $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
-        $LoginHelper->login(false);
-
-        $location = $App->Request->cookies->get('redirect') ?? $location;
 
         // if the user is in several teams, we need to redirect to the team selection
         if ($AuthResponse->selectedTeam === null) {
@@ -40,7 +44,11 @@ try {
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $App->Session->set('auth_userid', $AuthResponse->userid);
             $location = '../../login.php';
+        } else {
+            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+            $LoginHelper->login(false);
         }
+        $location = $App->Request->cookies->get('redirect') ?? $location;
     }
 
     $Response = new RedirectResponse($location);

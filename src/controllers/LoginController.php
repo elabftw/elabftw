@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Interfaces\AuthInterface;
@@ -25,6 +26,7 @@ use Elabftw\Services\MfaAuth;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
+use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -143,7 +145,10 @@ class LoginController implements ControllerInterface
 
             // AUTH WITH SAML
             case 'saml':
-                return new SamlAuth($this->App->Config, new Idps(), (int) $this->App->Request->request->get('idpId'));
+                $Saml = new Saml($this->App->Config, new Idps());
+                $idpId = (int) $this->App->Request->request->get('idpId');
+                $settings = $Saml->getSettings($idpId);
+                return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
 
             case 'external':
                 return new ExternalAuth(
@@ -159,7 +164,10 @@ class LoginController implements ControllerInterface
             // AUTH in a team (after the team selection page)
             // we are already authenticated
             case 'team':
-                return new TeamAuth($this->App->Session->get('auth_userid'), (int) $this->App->Request->request->get('selected_team'));
+                return new TeamAuth(
+                    $this->App->Session->get('auth_userid'),
+                    (int) $this->App->Request->request->get('selected_team'),
+                );
 
             // MFA AUTH
             case 'mfa':

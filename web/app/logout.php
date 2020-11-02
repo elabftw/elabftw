@@ -12,15 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function dirname;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use OneLogin\Saml2\Auth as SamlAuth;
+use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-require_once \dirname(__DIR__, 2) . '/vendor/autoload.php';
-require_once \dirname(__DIR__, 2) . '/config.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/config.php';
 
 $Config = new Config();
 $Session = new Session();
@@ -28,7 +29,6 @@ $Session->start();
 $Request = Request::createFromGlobals();
 
 $redirectUrl = '../login.php';
-$doSLO = false;
 
 // now if we are logged in through external auth, hit the external auth url
 if ($Session->get('is_auth_by') === 'external') {
@@ -36,9 +36,6 @@ if ($Session->get('is_auth_by') === 'external') {
     if (empty($redirectUrl)) {
         $redirectUrl = '../login.php';
     }
-}
-if ($Session->get('is_auth_by') === 'saml') {
-    $doSLO = true;
 }
 
 // kill session
@@ -62,11 +59,13 @@ if (!$Request->query->get('keep_redirect')) {
 setcookie('pdf_sig', '', $cookieOptions);
 
 // this will be present if we logged in through SAML
-if ($doSLO) {
+if ($Session->get('is_auth_by') === 'saml') {
+    //if ($Session->get('is_auth_by_saml')) {
     // initiate SAML SLO
-    $Saml = new Saml(new Config, new Idps);
-    $SamlAuth = new SamlAuth($Saml->getSettings());
-    $SamlAuth->logout();
+    $Saml = new Saml(new Config(), new Idps());
+    $settings = $Saml->getSettings();
+    $samlAuthLib = new SamlAuthLib($settings);
+    $samlAuthLib->logout();
 } else {
     // and redirect to login page or ext auth logout url
     $Response = new RedirectResponse($redirectUrl);

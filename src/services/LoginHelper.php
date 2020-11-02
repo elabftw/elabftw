@@ -84,6 +84,7 @@ class LoginHelper
         $this->Session->set('userid', $this->AuthResponse->userid);
 
         // store the auth method so the logout page will know what to do
+        // TODO this doesn't work if mfa or team second step
         $this->Session->set('is_auth_by', $this->AuthResponse->isAuthBy);
 
         // ANON LOGIN

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -19,9 +20,13 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
+use function filter_var;
+use function hash;
 use function in_array;
 use function mb_strlen;
 use PDO;
+use function random_bytes;
+use function time;
 
 /**
  * Users
@@ -87,8 +92,9 @@ class Users
         $Config = new Config();
         $Teams = new Teams($this);
 
-        // validate teams
-        $Teams->validateTeams($teams);
+        // make sure that all the teams in which the user will be are created/exist
+        // this might throw an exception if the team doesn't exist and we can't create it on the fly
+        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
         // check for duplicate of email
         if ($this->isDuplicateEmail($email)) {
             throw new ImproperActionException(_('Someone is already using that email address!'));
@@ -98,20 +104,20 @@ class Users
             Check::passwordLength($password);
         }
 
-        $firstname = \filter_var($firstname, FILTER_SANITIZE_STRING);
-        $lastname = \filter_var($lastname, FILTER_SANITIZE_STRING);
+        $firstname = filter_var($firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($lastname, FILTER_SANITIZE_STRING);
 
         // Create salt
-        $salt = \hash('sha512', \bin2hex(\random_bytes(16)));
+        $salt = hash('sha512', bin2hex(random_bytes(16)));
         // Create hash
-        $passwordHash = \hash('sha512', $salt . $password);
+        $passwordHash = hash('sha512', $salt . $password);
 
         // Registration date is stored in epoch
-        $registerDate = \time();
+        $registerDate = time();
 
         // get the group for the new user
         if ($group === null) {
-            $teamId = $Teams->getTeamIdFromNameOrOrgid((string) $teams[0]);
+            $teamId = (int) $teams[0]['id'];
             $TeamsHelper = new TeamsHelper($teamId);
             $group = $TeamsHelper->getGroup();
         }
@@ -122,10 +128,6 @@ class Users
             $validated = 1;
         }
 
-        // make sure that all the teams in which the user will be are created/exist
-        // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        // the $teamIdArr is an array of teams ID
-        $teamIdArr = $Teams->validateTeams($teams);
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -162,7 +164,7 @@ class Users
         $userid = $this->Db->lastInsertId();
 
         // now add the user to the team
-        $Teams->addUserToTeams($userid, $teamIdArr);
+        $Teams->addUserToTeams($userid, array_column($teams, 'id'));
         if ($validated === 0) {
             $userInfo = array('email' => $email, 'name' => $firstname . ' ' . $lastname);
             $Email = new Email($Config, $this);

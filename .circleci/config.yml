@@ -43,7 +43,7 @@ jobs:
       # copy the circleci config
       - run: sudo cp tests/config-circleci.php config.php
       - run: sudo apt-get update
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mariadb-server graphicsmagick libgraphicsmagick1-dev libldap2-dev
       - run: sudo service mysql start
       - run: sudo docker-php-ext-install gd gettext zip pdo_mysql exif ldap
       - run: yes|sudo pecl install gmagick-2.0.5RC1

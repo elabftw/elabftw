@@ -77,7 +77,7 @@ jobs:
           command: ./vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --using-cache=no
       - run:
           name: Run unit tests
-          command: yarn run unit
+          command: yarn run unit-ci
       # disable this for now, not really useful with github vulns scan and makes the PR fail because of missing secret
       #- snyk/scan
       - run:

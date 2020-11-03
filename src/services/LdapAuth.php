@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -25,9 +23,6 @@ use LdapRecord\Connection;
  */
 class LdapAuth implements AuthInterface
 {
-    /** @var array $config */
-    private $config;
-
     /** @var Connection $connection */
     private $connection;
 
@@ -40,30 +35,24 @@ class LdapAuth implements AuthInterface
     /** @var AuthResponse $AuthResponse */
     private $AuthResponse;
 
-    public function __construct(Config $config, string $email, string $password)
-    {
-        $c = $config->configArr;
-        $this->config = array(
-            'hosts' => array($c['ldap_host']),
-            'port' => (int) $c['ldap_port'],
-            'base_dn' => $c['ldap_base_dn'],
-            'username' => $c['ldap_username'],
-            'password' => Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY)),
-            'use_tls' => (bool) $c['ldap_use_tls'],
-        );
+    /** @var string $baseDn */
+    private $baseDn;
 
-        $this->connection = new Connection($this->config);
-        $this->email = $email;
+    public function __construct(Connection $connection, string $baseDn, string $email, string $password)
+    {
+        $this->connection = $connection;
+        $this->baseDn = $baseDn;
+        $this->email = Filter::sanitize($email);
         $this->password = $password;
         $this->AuthResponse = new AuthResponse('ldap');
     }
 
     public function tryAuth(): AuthResponse
     {
-        $query = $this->connection->query()->setDn($this->config['base_dn']);
+        $query = $this->connection->query()->setDn($this->baseDn);
         $record = $query->findbyOrFail('mail', $this->email);
         $cn = $record['cn'][0];
-        if (!$this->connection->auth()->attempt('cn=' . $cn . ',' . $this->config['base_dn'], $this->password)) {
+        if (!$this->connection->auth()->attempt('cn=' . $cn . ',' . $this->baseDn, $this->password)) {
             throw new InvalidCredentialsException();
         }
         $Users = new Users();

@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
@@ -26,6 +28,7 @@ use Elabftw\Services\MfaAuth;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
+use LdapRecord\Connection;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -137,7 +140,17 @@ class LoginController implements ControllerInterface
         switch ($authType) {
             // AUTH WITH LDAP
             case 'ldap':
-                return new LdapAuth($this->App->Config, $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
+                $c = $this->App->Config->configArr;
+                $ldapConfig = array(
+                    'hosts' => array($c['ldap_host']),
+                    'port' => (int) $c['ldap_port'],
+                    'base_dn' => $c['ldap_base_dn'],
+                    'username' => $c['ldap_username'],
+                    'password' => Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(\SECRET_KEY)),
+                    'use_tls' => (bool) $c['ldap_use_tls'],
+                );
+                $connection = new Connection($ldapConfig);
+                return new LdapAuth($connection, $c['base_dn'], $this->App->Request->request->get('email'), $this->App->Request->request->get('password'));
 
             // AUTH WITH LOCAL DATABASE
             case 'local':

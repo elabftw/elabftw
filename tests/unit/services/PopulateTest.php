@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Users;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Database;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Users;
 
 class PopulateTest extends \PHPUnit\Framework\TestCase
 {
